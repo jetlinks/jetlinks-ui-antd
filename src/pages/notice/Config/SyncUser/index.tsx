@@ -14,6 +14,7 @@ const SyncUser = observer(() => {
   const id = (location as any).query?.id;
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
+  const [list, setList] = useState<any[]>([]);
 
   const idMap = {
     dingTalk: '钉钉',
@@ -24,19 +25,14 @@ const SyncUser = observer(() => {
 
   const columns: ProColumns<any>[] = [
     {
-      dataIndex: 'id',
+      dataIndex: 'thirdPartyUserName',
       title: `${idMap[id]}用户名`,
-      render: (text: any, record: any) => (
-        <span>
-          {text}({record?.name})
-        </span>
-      ),
     },
     {
       dataIndex: 'userId',
       title: `用户`,
       render: (text: any, record: any) => (
-        <span>{record?.userId ? `${record?.username}(${record?.userName})` : '--'}</span>
+        <span>{record?.userId ? `${record?.userName}(${record?.username})` : '--'}</span>
       ),
     },
     {
@@ -44,8 +40,8 @@ const SyncUser = observer(() => {
       title: '绑定状态',
       render: (text: any, record: any) => (
         <Badge
-          status={record?.userId ? 'success' : 'error'}
-          text={record?.userId ? '已绑定' : '未绑定'}
+          status={record?.status === 1 ? 'success' : 'error'}
+          text={record?.status === 1 ? '已绑定' : '未绑定'}
         />
       ),
     },
@@ -65,13 +61,15 @@ const SyncUser = observer(() => {
           </Button>
         </Tooltip>,
         <Tooltip title={'解绑用户'} key="unbind">
-          {record?.userId && (
+          {record?.status === 1 && (
             <Button type="link">
               <Popconfirm
                 title={'确认解绑'}
                 onConfirm={async () => {
                   if (record?.bindingId) {
-                    const resp = await service.syncUser.unBindUser(record.bindingId);
+                    const resp = await service.syncUser.unBindUser(record.bindingId, {
+                      bindingId: record.bindingId,
+                    });
                     if (resp.status === 200) {
                       message.success('操作成功！');
                       actionRef.current?.reload();
@@ -139,6 +137,7 @@ const SyncUser = observer(() => {
                 title: 'name',
                 key: 'id',
               }}
+              selectedKeys={[dept || '']}
               onSelect={(key) => {
                 setDept(key[0] as string);
               }}
@@ -149,7 +148,7 @@ const SyncUser = observer(() => {
         <Col span={20}>
           {dept && (
             <ProTable
-              rowKey="id"
+              rowKey="thirdPartyUserId"
               actionRef={actionRef}
               search={false}
               columns={columns}
@@ -167,6 +166,7 @@ const SyncUser = observer(() => {
                     params.dept || '',
                   )
                   .then((resp: any) => {
+                    setList(resp);
                     return {
                       code: '',
                       result: {
@@ -179,7 +179,34 @@ const SyncUser = observer(() => {
                     };
                   })
               }
-              headerTitle={<Button>保存</Button>}
+              headerTitle={
+                <Popconfirm
+                  title="确认保存"
+                  onConfirm={async () => {
+                    const arr = list
+                      .filter((item) => item.status === 0)
+                      .map((i) => {
+                        return {
+                          userId: i.userId,
+                          providerName: i.userName,
+                          thirdPartyUserId: i.thirdPartyUserId,
+                        };
+                      });
+                    const resp = await service.syncUser.bindUser(
+                      id,
+                      state.current?.provider || '',
+                      state.current?.id || '',
+                      [...arr],
+                    );
+                    if (resp.status === 200) {
+                      message.success('操作成功！');
+                      actionRef.current?.reload();
+                    }
+                  }}
+                >
+                  <Button type="primary">保存</Button>
+                </Popconfirm>
+              }
             />
           )}
         </Col>

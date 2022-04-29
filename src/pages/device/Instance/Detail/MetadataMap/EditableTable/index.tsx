@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table } from 'antd';
 import { service } from '@/pages/device/Instance';
-import _ from 'lodash';
 import './index.less';
 
 const defaultImage = require('/public/images/metadata-map.png');
@@ -48,7 +47,11 @@ const EditableCell = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      handleSave({ ...record, originalId: values?.originalId });
+      handleSave({
+        ...record,
+        originalId: values?.originalId,
+        customMapping: values?.originalId !== '',
+      });
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -75,7 +78,7 @@ const EditableCell = ({
           }
         >
           <Select.Option value={''}>使用物模型属性</Select.Option>
-          {record.originalId !== record.metadataId && (
+          {record.customMapping && (
             <Select.Option value={record.originalId}>
               {temp?.name}({temp?.id})
             </Select.Option>
@@ -153,13 +156,21 @@ const EditableTable = (props: Props) => {
       resp = await service.queryProductMetadata(props.data.id);
     }
     if (resp.status === 200) {
-      const data = resp.result;
       const obj: any = {};
-      data.map((i: any) => {
-        obj[i?.metadataId] = i;
+      const data = (resp?.result || []).map((i: any) => {
+        const t = {
+          ...i,
+          originalId: i.customMapping ? i.originalId : '',
+        };
+        obj[i?.metadataId] = t;
+        return t;
       });
       if (lists.length > 0) {
-        setPmList(lists.filter((i) => !_.map(data, 'originalId').includes(i.id)));
+        const arr = lists.filter((i) => {
+          const t = data.find((item: any) => item?.originalId === i?.id);
+          return !t || (t && !t.customMapping);
+        });
+        setPmList(arr);
       } else {
         setPmList([]);
       }
@@ -205,7 +216,7 @@ const EditableTable = (props: Props) => {
     const newData = [...dataSource.data];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
-    if (item?.originalId !== row?.originalId) {
+    if (item?.originalId !== row?.originalId || row.customMapping !== item.customMapping) {
       const resp = await service[
         props.type === 'device' ? 'saveDeviceMetadata' : 'saveProductMetadata'
       ](props.data?.id, [
