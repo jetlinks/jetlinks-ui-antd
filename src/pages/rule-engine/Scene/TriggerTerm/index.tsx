@@ -34,56 +34,9 @@ interface Props {
 }
 
 const TriggerTerm = (props: Props, ref: any) => {
-  const requestParams = {
-    trigger: {
-      type: 'device',
-      device: {
-        productId: '0412-zj',
-        selector: 'device',
-        selectorValue: [
-          {
-            id: '0412-zj',
-            name: '0412-zj',
-          },
-        ],
-        operation: {
-          operator: 'reportProperty',
-          timer: {
-            trigger: 'week',
-            cron: '',
-            when: [1, 3, 5],
-            mod: 'period',
-            period: {
-              from: '09:30',
-              to: '14:30',
-              every: 1,
-              unit: 'hours',
-            },
-            once: {
-              time: '',
-            },
-          },
-          eventId: '',
-          readProperties: ['temparature', 'temperature-k', 'test-zhibioa'],
-          writeProperties: {},
-          functionId: '',
-          functionParameters: [
-            {
-              name: '',
-              value: {},
-            },
-          ],
-        },
-        defaultVariable: [],
-      },
-      timer: {},
-      defaultVariable: [],
-    },
-  };
-
   const parseTermRef = useRef<any>();
   const getParseTerm = () =>
-    service.getParseTerm(requestParams || props.params).then((data) => {
+    service.getParseTerm(props.params).then((data) => {
       Store.set('trigger-parse-term', data);
       parseTermRef.current = data;
       return data.map((item: any) => ({
@@ -97,55 +50,7 @@ const TriggerTerm = (props: Props, ref: any) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues:
-          {
-            trigger: [
-              {
-                terms: [
-                  {
-                    column: 'properties.temprature.current',
-                    termType: 'gt',
-                    source: 'manual',
-                    value: 123,
-                  },
-                  {
-                    column: 'properties.test-zhibioa.recent',
-                    termType: 'gt',
-                    source: 'metrics',
-                    value: '123',
-                  },
-                  {
-                    column: 'properties.test-zhibioa.current',
-                    termType: 'lte',
-                    source: 'manual',
-                    value: 223,
-                  },
-                ],
-              },
-              {
-                terms: [
-                  {
-                    column: 'properties.temprature.current',
-                    termType: 'btw',
-                    source: 'manual',
-                    value: 23,
-                  },
-                  {
-                    column: 'properties.temperature-k.current',
-                    termType: 'gt',
-                    source: 'manual',
-                    value: 123,
-                  },
-                  {
-                    column: '_now',
-                    termType: 'eq',
-                    source: 'manual',
-                    value: '2022-04-29 00:00:07',
-                  },
-                ],
-              },
-            ],
-          } || props.value,
+        initialValues: props.value,
 
         effects() {
           onFormValuesChange(async (f) => {
@@ -158,7 +63,7 @@ const TriggerTerm = (props: Props, ref: any) => {
             const value = (field as Field).value;
 
             // 找到选中的
-            const _data = await service.getParseTerm(requestParams || props.params);
+            const _data = await service.getParseTerm(props.params);
             if (!_data) return;
             // 树形搜索
             const treeValue = treeFilter(_data, value, 'column');
