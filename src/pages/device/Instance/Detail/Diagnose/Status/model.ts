@@ -27,6 +27,7 @@ export const DiagnoseStatusModel = model<{
   };
   list: ListProps[];
   model: boolean;
+  product: any;
 }>({
   status: {
     config: {
@@ -87,4 +88,5 @@ export const DiagnoseStatusModel = model<{
     },
   ],
   model: true,
+  product: {},
 });
