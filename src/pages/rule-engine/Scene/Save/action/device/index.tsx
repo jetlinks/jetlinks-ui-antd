@@ -9,6 +9,7 @@ interface DeviceProps {
   name: number;
   triggerType: string;
   form?: FormInstance;
+  value?: any;
   restField?: any;
   onProperties: (data: any) => void;
   onMessageTypeChange: (type: string) => void;
@@ -38,29 +39,11 @@ export default (props: DeviceProps) => {
   const [productId, setProductId] = useState<string>('');
   const [sourceList, setSourceList] = useState(DefaultSourceOptions);
   const [productList, setProductList] = useState<any[]>([]);
-  const [selector, setSelector] = useState(SourceEnum.fixed);
+  const [selector, setSelector] = useState(props.value ? props.value.selector : SourceEnum.fixed);
   const [messageType, setMessageType] = useState(MessageTypeEnum.WRITE_PROPERTY);
+  const [functionId, setFunctionId] = useState('');
   const [functionList, setFunctionList] = useState([]);
   const [tagList, setTagList] = useState([]);
-
-  const getProducts = async () => {
-    const resp = await getProductList({ paging: false });
-    if (resp && resp.status === 200) {
-      setProductList(resp.result);
-    }
-  };
-  useEffect(() => {
-    props.form?.resetFields([['actions', name, 'device', 'selector']]);
-    if (props.triggerType === 'device') {
-      setSourceList([...DefaultSourceOptions, { label: '按关系', value: SourceEnum.relation }]);
-    } else {
-      setSourceList(DefaultSourceOptions);
-    }
-  }, [props.triggerType]);
-
-  useEffect(() => {
-    getProducts();
-  }, []);
 
   const handleMetadata = (metadata?: string) => {
     try {
@@ -80,6 +63,93 @@ export default (props: DeviceProps) => {
     }
   };
 
+  const getProducts = async () => {
+    const resp = await getProductList({ paging: false });
+    if (resp && resp.status === 200) {
+      setProductList(resp.result);
+      if (props.value && props.value.productId) {
+        const productItem = resp.result.find((item: any) => item.id === props.value.productId);
+        if (productItem) {
+          handleMetadata(productItem.metadata);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    props.form?.resetFields([['actions', name, 'device', 'selector']]);
+    if (props.triggerType === 'device') {
+      setSourceList([...DefaultSourceOptions, { label: '按关系', value: SourceEnum.relation }]);
+    } else {
+      setSourceList(DefaultSourceOptions);
+    }
+  }, [props.triggerType]);
+
+  useEffect(() => {
+    if (productId && productList.length) {
+      const productItem = productList.find((item: any) => item.id === props.value.productId);
+      if (productItem) {
+        handleMetadata(productItem.metadata);
+      }
+    }
+  }, [productId]);
+
+  useEffect(() => {
+    if (functionId && functionList.length) {
+      const functionItem: any = functionList.find((item: any) => item.id === functionId);
+      if (functionItem) {
+        const properties = functionItem.valueType
+          ? functionItem.valueType.properties
+          : functionItem.inputs;
+        if (props.onFunctionChange) {
+          const array = [];
+          for (const datum of properties) {
+            array.push({
+              id: datum.id,
+              name: datum.name,
+              type: datum.valueType ? datum.valueType.type : '-',
+              format: datum.valueType ? datum.valueType.format : undefined,
+              options: datum.valueType ? datum.valueType.elements : undefined,
+              value: undefined,
+            });
+          }
+          props.onFunctionChange(array);
+        }
+      }
+    }
+  }, [functionId, functionList]);
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  useEffect(() => {
+    console.log('actions-device', props.value);
+    const deviceData = props.value;
+    if (deviceData) {
+      if (deviceData.productId) {
+        setProductId(deviceData.productId);
+      }
+
+      if (deviceData.selector) {
+        setSelector(deviceData.selector);
+      }
+
+      if (deviceData.message) {
+        if (deviceData.message.messageType) {
+          if (props.onMessageTypeChange) {
+            props.onMessageTypeChange(deviceData.message.messageType);
+          }
+          setMessageType(deviceData.message.messageType);
+        }
+
+        if (deviceData.message.functionId) {
+          setFunctionId(deviceData.message.functionId);
+        }
+      }
+    }
+  }, [props.value]);
+
   return (
     <>
       <Form.Item name={[name, 'device', 'productId']}>
@@ -88,48 +158,43 @@ export default (props: DeviceProps) => {
           placeholder={'请选择产品'}
           style={{ width: 220 }}
           listHeight={220}
-          onChange={(key: any, node: any) => {
+          onChange={() => {
             props.form?.resetFields([['actions', name, 'device', 'selector']]);
             props.form?.resetFields([['actions', name, 'device', 'selectorValues']]);
             props.form?.resetFields([['actions', name, 'device', 'message', 'functionId']]);
             // setMessageType(MessageTypeEnum.WRITE_PROPERTY)
-            setProductId(key);
-            handleMetadata(node.metadata);
           }}
           fieldNames={{ label: 'name', value: 'id' }}
         />
       </Form.Item>
       <Form.Item
         name={[name, 'device', 'selector']}
-        initialValue={SourceEnum.fixed}
-        {...props.restField}
+        initialValue={props.value ? props.value.selector : SourceEnum.fixed}
       >
-        <Select
-          options={sourceList}
-          style={{ width: 120 }}
-          onChange={(key) => {
-            setSelector(key);
-          }}
-        />
+        <Select options={sourceList} style={{ width: 120 }} />
       </Form.Item>
       {selector === SourceEnum.fixed && (
-        <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+        <Form.Item name={[name, 'device', 'selectorValues']}>
           <Device productId={productId} />
         </Form.Item>
       )}
       {selector === SourceEnum.tag && (
-        <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+        <Form.Item name={[name, 'device', 'selectorValues']}>
           <TagModal tagData={tagList} />
         </Form.Item>
       )}
       {selector === SourceEnum.relation && (
-        <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+        <Form.Item name={[name, 'device', 'selectorValues']}>
           <Select style={{ width: 300 }} />
         </Form.Item>
       )}
       <Form.Item
         name={[name, 'device', 'message', 'messageType']}
-        initialValue={MessageTypeEnum.WRITE_PROPERTY}
+        initialValue={
+          props.value && props.value.message && props.value.message.messageType
+            ? props.value.message.messageType
+            : MessageTypeEnum.WRITE_PROPERTY
+        }
         {...props.restField}
       >
         <Select
@@ -138,12 +203,6 @@ export default (props: DeviceProps) => {
             { label: '读取属性', value: MessageTypeEnum.READ_PROPERTY },
             { label: '设置属性', value: MessageTypeEnum.WRITE_PROPERTY },
           ]}
-          onSelect={(key: any) => {
-            if (props.onMessageTypeChange) {
-              props.onMessageTypeChange(key);
-            }
-            setMessageType(key);
-          }}
           style={{ width: 120 }}
         />
       </Form.Item>
@@ -154,23 +213,6 @@ export default (props: DeviceProps) => {
             fieldNames={{ label: 'name', value: 'id' }}
             style={{ width: 120 }}
             placeholder={'请选择功能'}
-            onSelect={(_: any, data: any) => {
-              const properties = data.valueType ? data.valueType.properties : data.inputs;
-              if (props.onFunctionChange) {
-                const array = [];
-                for (const datum of properties) {
-                  array.push({
-                    id: datum.id,
-                    name: datum.name,
-                    type: datum.valueType ? datum.valueType.type : '-',
-                    format: datum.valueType ? datum.valueType.format : undefined,
-                    options: datum.valueType ? datum.valueType.elements : undefined,
-                    value: undefined,
-                  });
-                }
-                props.onFunctionChange(array);
-              }
-            }}
           />
         </Form.Item>
       ) : null}

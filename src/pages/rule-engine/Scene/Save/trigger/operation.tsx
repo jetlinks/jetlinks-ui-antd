@@ -1,5 +1,5 @@
 import { Col, Row, Select } from 'antd';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionCall';
 
 interface OperatorProps {
@@ -10,7 +10,7 @@ interface OperatorProps {
 
 export default (props: OperatorProps) => {
   const [data, setData] = useState<any>({});
-  const [key, setKey] = useState('');
+  const [key, setKey] = useState<string | undefined>(undefined);
   const [propertiesItem, setPropertiesItem] = useState<any[]>([]);
 
   const objToArray = (_data: any) => {
@@ -19,39 +19,55 @@ export default (props: OperatorProps) => {
     });
   };
 
+  const findProperties = useCallback(
+    (_key: string, value: any) => {
+      if (props.propertiesList) {
+        const proItem = props.propertiesList.find((item: any) => item.id === _key);
+        if (proItem) {
+          return [
+            {
+              id: proItem.id,
+              name: proItem.name,
+              type: proItem.valueType ? proItem.valueType.type : '-',
+              format: proItem.valueType ? proItem.valueType.format : undefined,
+              options: proItem.valueType ? proItem.valueType.elements : undefined,
+              value: value,
+            },
+          ];
+        }
+        return [];
+      }
+      return [];
+    },
+    [props.propertiesList],
+  );
+
   useEffect(() => {
-    if (props.value) {
+    if (props.value && props.propertiesList?.length) {
       const _key = Object.keys(props.value)[0];
       setKey(_key);
-      setData(objToArray(props.value[_key]));
+      setData(objToArray(props.value));
+      setPropertiesItem(findProperties(_key, props.value[_key]));
     } else {
       setData({});
       setKey('');
     }
-  }, [props.value]);
+  }, [props.value, props.propertiesList]);
 
   return (
     <Row>
       <Col span={24}>
         <Select
           options={props.propertiesList || []}
+          value={key}
           fieldNames={{
             label: 'name',
             value: 'id',
           }}
           style={{ width: 300 }}
           placeholder={'请选择属性'}
-          onSelect={(id: any, _data: any) => {
-            setPropertiesItem([
-              {
-                id: _data.id,
-                name: _data.name,
-                type: _data.valueType ? _data.valueType.type : '-',
-                format: _data.valueType ? _data.valueType.format : undefined,
-                options: _data.valueType ? _data.valueType.elements : undefined,
-                value: undefined,
-              },
-            ]);
+          onSelect={(id: any) => {
+            // TODO 多选
             if (props.onChange) {
               props.onChange({ [id]: {} });
             }
@@ -64,7 +80,7 @@ export default (props: OperatorProps) => {
       {key && (
         <Col span={24}>
           <FunctionCall
-            value={[{ id: key, value: data[key] }]}
+            value={data}
             functionData={propertiesItem}
             onChange={(value) => {
               if (props.onChange) {

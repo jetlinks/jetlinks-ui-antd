@@ -15,7 +15,11 @@ export default (props: DatePickerFormat) => {
         // @ts-ignore
         <DatePicker
           {...extraProps}
-          value={typeof value === 'string' ? moment(value) : value}
+          value={
+            value
+              ? moment(value, props.format ? (props.format as string) : 'YYYY-MM-DD HH:mm:ss')
+              : undefined
+          }
           onChange={(date, dateString) => {
             if (onChange) {
               onChange(dateString, date);

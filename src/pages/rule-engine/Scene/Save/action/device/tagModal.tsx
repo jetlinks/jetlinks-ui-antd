@@ -3,15 +3,9 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 
-type TagValueType = {
-  column: string;
-  value: any;
-  type: string;
-};
-
 interface TagModalProps {
   tagData: any[];
-  value?: TagValueType[];
+  value?: any[];
   onChange?: (value: any[]) => void;
 }
 
@@ -46,18 +40,25 @@ export default (props: TagModalProps) => {
   }, [visible, props.tagData]);
 
   useEffect(() => {
-    if (props.value) {
+    if (
+      props.value &&
+      props.value[0] &&
+      props.value[0].name &&
+      props.tagData &&
+      props.tagData.length
+    ) {
       const names: string[] = [];
-      const newTagList = props.value
-        .filter((valueItem) => {
+      const newTagList = props.value[0].value
+        .filter((valueItem: any) => {
           return props.tagData.some((item) => valueItem.column === item.id);
         })
-        .map((valueItem) => {
+        .map((valueItem: any) => {
           const oldItem = props.tagData.find((item) => item.id === valueItem.column);
           if (oldItem) {
             names.push(oldItem.name);
             return {
               ...handleItem(oldItem),
+              value: valueItem.value,
               type: valueItem.type,
             };
           }
@@ -68,7 +69,7 @@ export default (props: TagModalProps) => {
     } else {
       setTagList([{}]);
     }
-  }, [props.value]);
+  }, [props.value, props.tagData]);
 
   const getItemNode = (record: any) => {
     const type = record.valueType;
@@ -123,7 +124,7 @@ export default (props: TagModalProps) => {
             {
               // @ts-ignore
               <DatePicker
-                value={record.value && moment(record.value)}
+                value={record.value && moment(record.value, 'YYYY-MM-DD HH:mm:ss')}
                 format={record.format || 'YYYY-MM-DD HH:mm:ss'}
                 style={{ width: '100%' }}
                 onChange={(_, date) => {
@@ -163,7 +164,7 @@ export default (props: TagModalProps) => {
               };
             });
           if (props.onChange) {
-            props.onChange(newValue);
+            props.onChange([{ value: newValue, name: '标签' }]);
           }
           setVisible(false);
           setTagList([{}]);

@@ -7,6 +7,8 @@ class Service extends BaseService<SceneItem> {
 
   stopScene = (id: string) => request(`${this.uri}/${id}/_disable`, { method: 'PUT' });
 
+  updateScene = (data: any) => request(`${this.uri}/${data.id}`, { method: 'PUT', data });
+
   getParseTerm = (data: Record<string, any>) =>
     request(`${this.uri}/parse-term-column`, {
       method: 'POST',
