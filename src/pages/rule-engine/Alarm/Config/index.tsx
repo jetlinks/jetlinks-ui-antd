@@ -53,8 +53,36 @@ const Config = () => {
     [],
   );
 
-  const inputForm = useMemo(() => createForm(), []);
-  const outputForm = useMemo(() => createForm(), []);
+  const inputForm = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        effects() {
+          onFormInit(async () => {
+            const resp = await service.getDataExchange('consume');
+            if (resp.status === 200) {
+              console.log(resp, 'resp');
+            }
+          });
+        },
+      }),
+    [],
+  );
+  const outputForm = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        effects() {
+          onFormInit(async () => {
+            const resp = await service.getDataExchange('producer');
+            if (resp.status === 200) {
+              console.log(resp, 'producer');
+            }
+          });
+        },
+      }),
+    [],
+  );
 
   const levelSchema: ISchema = {
     type: 'object',
@@ -174,16 +202,17 @@ const Config = () => {
     const outputConfig: IOConfigItem = await outputForm.submit();
     const inputResp = await service.saveOutputData({
       config: {
-        type: 'kafka',
         config: inputConfig,
       },
+      sourceType: 'kafka',
       exchangeType: 'producer',
     });
     const outputResp = await service.saveOutputData({
       config: {
-        type: 'kafka',
+        sourceType: 'kafka',
         config: outputConfig,
       },
+      sourceType: 'kafka',
       exchangeType: 'consume',
     });
 

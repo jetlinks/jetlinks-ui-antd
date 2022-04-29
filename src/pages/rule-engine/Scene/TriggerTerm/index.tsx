@@ -14,8 +14,8 @@ import {
   TreeSelect,
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
-import { createForm, onFieldValueChange, onFormValuesChange } from '@formily/core';
-import { forwardRef, useImperativeHandle, useMemo } from 'react';
+import { createForm, Field, onFieldReact, onFormValuesChange } from '@formily/core';
+import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import FTermArrayCards from '@/components/FTermArrayCards';
 import FTermTypeSelect from '@/components/FTermTypeSelect';
 import styles from './index.less';
@@ -34,27 +34,138 @@ interface Props {
 }
 
 const TriggerTerm = (props: Props, ref: any) => {
+  const requestParams = {
+    trigger: {
+      type: 'device',
+      device: {
+        productId: '0412-zj',
+        selector: 'device',
+        selectorValue: [
+          {
+            id: '0412-zj',
+            name: '0412-zj',
+          },
+        ],
+        operation: {
+          operator: 'reportProperty',
+          timer: {
+            trigger: 'week',
+            cron: '',
+            when: [1, 3, 5],
+            mod: 'period',
+            period: {
+              from: '09:30',
+              to: '14:30',
+              every: 1,
+              unit: 'hours',
+            },
+            once: {
+              time: '',
+            },
+          },
+          eventId: '',
+          readProperties: ['temparature', 'temperature-k', 'test-zhibioa'],
+          writeProperties: {},
+          functionId: '',
+          functionParameters: [
+            {
+              name: '',
+              value: {},
+            },
+          ],
+        },
+        defaultVariable: [],
+      },
+      timer: {},
+      defaultVariable: [],
+    },
+  };
+
+  const parseTermRef = useRef<any>();
+  const getParseTerm = () =>
+    service.getParseTerm(requestParams || props.params).then((data) => {
+      Store.set('trigger-parse-term', data);
+      parseTermRef.current = data;
+      return data.map((item: any) => ({
+        column: item.column,
+        name: item.name,
+        children: item.children,
+      }));
+    });
+
   const form = useMemo(
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.value,
+        initialValues:
+          {
+            trigger: [
+              {
+                terms: [
+                  {
+                    column: 'properties.temprature.current',
+                    termType: 'gt',
+                    source: 'manual',
+                    value: 123,
+                  },
+                  {
+                    column: 'properties.test-zhibioa.recent',
+                    termType: 'gt',
+                    source: 'metrics',
+                    value: '123',
+                  },
+                  {
+                    column: 'properties.test-zhibioa.current',
+                    termType: 'lte',
+                    source: 'manual',
+                    value: 223,
+                  },
+                ],
+              },
+              {
+                terms: [
+                  {
+                    column: 'properties.temprature.current',
+                    termType: 'btw',
+                    source: 'manual',
+                    value: 23,
+                  },
+                  {
+                    column: 'properties.temperature-k.current',
+                    termType: 'gt',
+                    source: 'manual',
+                    value: 123,
+                  },
+                  {
+                    column: '_now',
+                    termType: 'eq',
+                    source: 'manual',
+                    value: '2022-04-29 00:00:07',
+                  },
+                ],
+              },
+            ],
+          } || props.value,
+
         effects() {
           onFormValuesChange(async (f) => {
             if (props.onChange) {
               props.onChange(await f.submit());
             }
           });
-          onFieldValueChange('trigger.*.terms.*.column', (field, form1) => {
+          onFieldReact('trigger.*.terms.*.column', async (field, form1) => {
             const operator = field.query('.termType');
+            const value = (field as Field).value;
+
             // 找到选中的
-            const _data = Store.get('trigger-parse-term');
+            const _data = await service.getParseTerm(requestParams || props.params);
+            if (!_data) return;
             // 树形搜索
-            const treeValue = treeFilter(_data, field.value, 'column');
+            const treeValue = treeFilter(_data, value, 'column');
             // 找到
             const target =
               treeValue && treeValue[0].children
-                ? treeValue[0]?.children.find((item) => item.column === field.value)
+                ? treeValue[0]?.children.find((item) => item.column === value)
                 : treeValue[0];
 
             form1.setFieldState(operator, (state) => {
@@ -73,11 +184,12 @@ const TriggerTerm = (props: Props, ref: any) => {
                   : [{ label: '手动输入', value: 'manual' }];
             });
           });
-          onFieldValueChange('trigger.*.terms.*.source', (field, form1) => {
+          onFieldReact('trigger.*.terms.*.source', (field, form1) => {
             const params = field.query('.column').value();
             const value = field.query('.value');
             // 找到选中的
             const _data = Store.get('trigger-parse-term');
+            if (!_data) return;
             // 树形搜索
             const treeValue = treeFilter(_data, params, 'column');
             // 找到
@@ -86,8 +198,9 @@ const TriggerTerm = (props: Props, ref: any) => {
                 ? treeValue[0]?.children.find((item) => item.column === params)
                 : treeValue[0];
 
+            const source = (field as Field).value;
             if (target) {
-              if (field.value === 'manual') {
+              if (source === 'manual') {
                 // 手动输入
                 const valueType = target.dataType;
 
@@ -109,7 +222,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                     };
                   }
                 });
-              } else if (field.value === 'metrics') {
+              } else if (source === 'metrics') {
                 // 指标
                 form1.setFieldState(value, (state) => {
                   state.componentType = Select;
@@ -143,16 +256,6 @@ const TriggerTerm = (props: Props, ref: any) => {
       TreeSelect,
     },
   });
-
-  const getParseTerm = () =>
-    service.getParseTerm(props.params).then((data) => {
-      Store.set('trigger-parse-term', data);
-      return data.map((item: any) => ({
-        column: item.column,
-        name: item.name,
-        children: item.children,
-      }));
-    });
 
   const schema: ISchema = {
     type: 'object',

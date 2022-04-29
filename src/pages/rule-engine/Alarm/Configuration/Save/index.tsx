@@ -60,8 +60,11 @@ const Save = (props: Props) => {
 
   const getScene = () => {
     return service.getScene().then((resp) => {
-      Store.set('scene-data', resp);
-      return resp;
+      Store.set('scene-data', resp.result);
+      return resp.result.map((item: { id: string; name: string }) => ({
+        label: item.name,
+        value: item.id,
+      }));
     });
   };
   const form = useMemo(
@@ -89,8 +92,15 @@ const Save = (props: Props) => {
   const handleSave = async () => {
     const data: any = await form.submit();
     const list = Store.get('scene-data');
-    const scene = list.find((item: any) => item.value === data.sceneId);
-    const resp: any = await service.update({ ...data, sceneName: scene.label, state: 'disable' });
+    const scene = list.find((item: any) => item.id === data.sceneId);
+
+    const resp: any = await service.update({
+      ...data,
+      state: 'disabled',
+      sceneTriggerType: scene.triggerType,
+      sceneName: scene.name,
+    });
+
     if (resp.status === 200) {
       message.success('操作成功');
       props.close();

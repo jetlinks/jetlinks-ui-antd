@@ -132,6 +132,7 @@ const Configuration = () => {
                 record.state?.value === 'disabled' ? 'disabled' : 'enabled'
               }`,
               defaultMessage: record.state?.value === 'disabled' ? '禁用' : '启用',
+
             }),
           }}
           type="link"

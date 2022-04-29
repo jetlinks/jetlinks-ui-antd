@@ -50,7 +50,7 @@ export default (props: OperatorProps) => {
       setPropertiesItem(findProperties(_key, props.value[_key]));
     } else {
       setData({});
-      setKey('');
+      setKey(undefined);
     }
   }, [props.value, props.propertiesList]);
 
