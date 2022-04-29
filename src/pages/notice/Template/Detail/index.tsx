@@ -265,7 +265,7 @@ const Detail = observer(() => {
                   : {
                       id: item,
                       type: 'string',
-                      format: '--',
+                      format: 's%',
                     },
               );
               form1.setValuesIn('variableDefinitions', _result);
@@ -313,7 +313,7 @@ const Detail = observer(() => {
                   : {
                       id: item,
                       type: 'string',
-                      format: '--',
+                      format: 's%',
                     },
               );
               form1.setValuesIn('variableDefinitions', _result);
@@ -325,7 +325,6 @@ const Detail = observer(() => {
           });
           onFieldReact('variableDefinitions.*.type', (field) => {
             const value = (field as Field).value;
-            console.log(value, 'value');
             const formatPath = FormPath.transform(
               field.path,
               /\d+/,
@@ -637,6 +636,7 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请选择消息模版',
                         },
+                        required: true,
                         'x-decorator-props': {
                           gridSpan: 1,
                           tooltip: '微信公众号中配置的消息模版',
@@ -786,12 +786,12 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请选择收信人',
                         },
-                        'x-reactions': {
-                          dependencies: ['configId'],
-                          fulfill: {
-                            run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
-                          },
-                        },
+                        // 'x-reactions': {
+                        //   dependencies: ['configId'],
+                        //   fulfill: {
+                        //     run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
+                        //   },
+                        // },
                       },
                       departmentIdList: {
                         title: '收信部门',
@@ -804,12 +804,12 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请选择收信部门',
                         },
-                        'x-reactions': {
-                          dependencies: ['configId'],
-                          fulfill: {
-                            run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
-                          },
-                        },
+                        // 'x-reactions': {
+                        //   dependencies: ['configId'],
+                        //   fulfill: {
+                        //     run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
+                        //   },
+                        // },
                       },
                     },
                   },
