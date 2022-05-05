@@ -155,17 +155,19 @@ const TabComponent = observer((props: Props) => {
                     <div className="alarm-log-title-text">{item.alarmName}</div>
                   </div>
                   <div className="alarm-log-content">
-                    <div className="alarm-log-image">
-                      <img
-                        width={88}
-                        height={88}
-                        src={imgMap.get(props.type)}
-                        alt={''}
-                        style={{ marginRight: 20 }}
-                      />
-                      <div className="alarm-type">
-                        <div className="name">{titleMap.get(item.targetType)}</div>
-                        <div className="text">{item.targetName}</div>
+                    <div className="alarm-log-data">
+                      <div className="alarm-log-image">
+                        <img
+                          width={88}
+                          height={88}
+                          src={imgMap.get(props.type)}
+                          alt={''}
+                          style={{ marginRight: 20 }}
+                        />
+                        <div className="alarm-type">
+                          <div className="name">{titleMap.get(item.targetType)}</div>
+                          <div className="text">{item.targetName}</div>
+                        </div>
                       </div>
                       <div className="alarm-log-right">
                         <div className="alarm-log-time">
@@ -174,7 +176,10 @@ const TabComponent = observer((props: Props) => {
                             {moment(item.alarmDate).format('YYYY-MM-DD HH:mm:ss')}
                           </div>
                         </div>
-                        <div className="alarm-log-time" style={{ paddingLeft: 10 }}>
+                        <div
+                          className="alarm-log-time alarm-log-status"
+                          style={{ paddingLeft: 10 }}
+                        >
                           <div className="log-title">状态</div>
                           <div className="context">
                             <Badge status={item.state.value === 'warning' ? 'error' : 'default'} />

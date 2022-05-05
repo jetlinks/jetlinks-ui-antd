@@ -1,5 +1,7 @@
 @import '~antd/es/style/themes/default.less';
 
+@alarm-log-padding-left: 60px;
+
 .ellipsis {
   width: 100%;
   overflow: hidden;
@@ -11,7 +13,6 @@
   .alarm-log-item {
     display: flex;
     margin-bottom: 20px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
 
     .alarm-log-title {
       position: relative;
@@ -52,32 +53,43 @@
       background: url('/images/alarm/background.png') no-repeat;
       background-size: 100% 100%;
 
-      .alarm-log-image {
+      .alarm-log-data {
         display: flex;
         align-items: center;
+        min-width: 60%;
+        max-width: 100%;
 
-        .alarm-type {
-          max-width: 120px;
-          padding-right: 50px;
+        .alarm-log-image {
+          display: flex;
+          align-items: center;
+          padding-right: @alarm-log-padding-left;
           border-right: 1px solid rgba(0, 0, 0, 0.09);
-          .name {
-            color: #000;
-            font-size: 18px;
-          }
 
-          .text {
-            margin-top: 8px;
-            color: #666;
-            font-size: 14px;
-            .ellipsis();
+          .alarm-type {
+            max-width: 120px;
+
+            .name {
+              color: #000;
+              font-size: 18px;
+            }
+
+            .text {
+              margin-top: 8px;
+              color: #666;
+              font-size: 14px;
+              .ellipsis();
+            }
           }
         }
         .alarm-log-right {
           display: flex;
-          padding-left: 40px;
+          justify-content: space-between;
+          width: 50%;
+          padding-left: @alarm-log-padding-left;
+
           .alarm-log-time {
             max-width: 165px;
-            margin: 0 10px;
+
             .log-title {
               margin-top: 8px;
               color: #666;
@@ -91,9 +103,12 @@
               .ellipsis();
             }
           }
+
+          .alarm-log-status {
+            margin-left: @alarm-log-padding-left;
+          }
         }
       }
-
       .alarm-log-actions {
         .alarm-log-action {
           display: flex;
@@ -122,8 +137,10 @@
             }
           }
         }
+
         .alarm-log-action:hover {
           background-color: @primary-color;
+
           .icon,
           div {
             color: #fff;
@@ -131,5 +148,9 @@
         }
       }
     }
+  }
+
+  .alarm-log-item:hover {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
   }
 }
