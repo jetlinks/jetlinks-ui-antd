@@ -213,7 +213,7 @@ const Save = (props: Props) => {
       visible={visible}
       onOk={handleSave}
       onCancel={() => close()}
-      title="新增告警"
+      title={`${props.data ? '编辑' : '新增'}告警`}
     >
       <Form className={styles.form} form={form} layout="vertical">
         <SchemaField

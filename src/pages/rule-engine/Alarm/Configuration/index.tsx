@@ -182,7 +182,9 @@ const Configuration = () => {
         search={false}
         params={param}
         columns={columns}
-        request={(params) => service.query(params)}
+        request={(params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
         gridColumn={3}
         cardRender={(record) => (
           <AlarmConfig

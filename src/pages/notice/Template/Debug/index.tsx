@@ -203,9 +203,10 @@ const Debug = observer(() => {
     const data: { configId: string; variableDefinitions: any } = await form.submit();
     // 应该取选择的配置信息
     if (!state.current) return;
-    const resp = await service.debug(data.configId, state?.current.id, {
-      template: state.current,
-      context: data.variableDefinitions?.reduce(
+    const resp = await service.debug(
+      data.configId,
+      state?.current.id,
+      data.variableDefinitions?.reduce(
         (previousValue: any, currentValue: { id: any; value: any }) => {
           return {
             ...previousValue,
@@ -214,7 +215,7 @@ const Debug = observer(() => {
         },
         {},
       ),
-    });
+    );
     if (resp.status === 200) {
       message.success('操作成功!');
     }
