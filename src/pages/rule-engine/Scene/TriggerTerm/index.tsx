@@ -66,15 +66,10 @@ const TriggerTerm = (props: Props, ref: any) => {
             }
           });
           onFieldValueChange('trigger.*.terms.*.column', (field, form1) => {
-            console.log(field.modified, 'modified');
             if (field.modified) {
-              const value = field.query('.value').take();
-              console.log(value, 'value');
               form1.setFieldState(field.query('.value'), (state) => {
                 state.value = undefined;
               });
-              // value.setData(undefined);
-              // value.data = undefined;
             }
           });
           onFieldReact('trigger.*.terms.*.column', async (field, form1) => {
