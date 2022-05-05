@@ -63,7 +63,7 @@ const PropertyLog = (props: Props) => {
           pageIndex: 0,
         },
         start,
-        end,
+        new Date().getTime(),
       );
     }
   }, [visible]);
