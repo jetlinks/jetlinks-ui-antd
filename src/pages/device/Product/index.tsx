@@ -24,6 +24,7 @@ import ProductCard from '@/components/ProTableCard/CardItems/product';
 import { downloadObject } from '@/utils/util';
 import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
+import { omit } from 'lodash';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -113,6 +114,7 @@ const Product = observer(() => {
         productModel.current = record;
         history.push(`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], record.id)}`);
       }}
+      key="view"
       style={{ padding: 0 }}
     >
       <Tooltip
@@ -146,6 +148,7 @@ const Product = observer(() => {
     <PermissionButton
       isPermission={permission.export}
       type={'link'}
+      key="download"
       style={{ padding: 0 }}
       tooltip={{
         title: intl.formatMessage({
@@ -153,9 +156,17 @@ const Product = observer(() => {
           defaultMessage: '下载',
         }),
       }}
-      onClick={async () => {
+      onClick={() => {
+        const extra = omit(record, [
+          'transportProtocol',
+          'protocolName',
+          'accessId',
+          'accessName',
+          'accessProvider',
+          'messageProtocol',
+        ]);
         downloadObject(
-          record,
+          extra,
           intl.formatMessage({
             id: 'pages.device.product',
             defaultMessage: '产品',
@@ -167,6 +178,7 @@ const Product = observer(() => {
       <DownloadOutlined />
     </PermissionButton>,
     <PermissionButton
+      key="action"
       popConfirm={{
         title: intl.formatMessage({
           id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}.tips`,
@@ -496,9 +508,17 @@ const Product = observer(() => {
                 type={'link'}
                 key={'download'}
                 style={{ padding: 0 }}
-                onClick={async () => {
+                onClick={() => {
+                  const extra = omit(record, [
+                    'transportProtocol',
+                    'protocolName',
+                    'accessId',
+                    'accessName',
+                    'accessProvider',
+                    'messageProtocol',
+                  ]);
                   downloadObject(
-                    record,
+                    extra,
                     intl.formatMessage({
                       id: 'pages.device.product',
                       defaultMessage: '产品',

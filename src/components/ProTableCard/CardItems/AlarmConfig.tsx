@@ -10,15 +10,15 @@ export interface AlarmConfigProps extends ConfigurationItem {
   avatarSize?: number;
 }
 
-export const aliyunSms = require('/public/images/notice/sms.png');
+export const aliyunSms = require('/public/images/alarm/alarm-config.png');
 
 export default (props: AlarmConfigProps) => {
   return (
     <TableCard
       actions={props.actions}
       detail={props.detail}
-      status={props.state.value}
-      statusText={props.state.text}
+      status={props.state?.value}
+      statusText={props.state?.text}
       statusNames={{
         enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,
