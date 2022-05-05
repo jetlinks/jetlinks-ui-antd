@@ -169,7 +169,7 @@ export default (props: UserProps) => {
   };
 
   return (
-    <ItemGroup>
+    <ItemGroup compact>
       <Select
         value={source}
         options={options}

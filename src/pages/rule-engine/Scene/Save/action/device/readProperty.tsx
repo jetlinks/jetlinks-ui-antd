@@ -12,7 +12,7 @@ export default (props: ReadPropertyProps) => {
       value={props.value ? props.value[0] : undefined}
       options={props.properties}
       fieldNames={{ label: 'name', value: 'id' }}
-      style={{ width: 120 }}
+      style={{ width: '100%' }}
       onSelect={(key: any) => {
         if (props.onChange) {
           props.onChange([key]);
