@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
-import { Badge, message } from 'antd';
+import { message } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -10,16 +10,21 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { PermissionButton, ProTableCard } from '@/components';
-import { statusMap } from '@/pages/device/Instance';
+import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import SceneCard from '@/components/ProTableCard/CardItems/scene';
 import Service from './service';
-import { useHistory } from 'umi';
+import { useHistory, useIntl } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export const service = new Service('scene');
+
+enum TriggerWayType {
+  manual = '手动触发',
+  timer = '定时触发',
+  device = '设备触发',
+}
 
 const Scene = () => {
   const intl = useIntl();
@@ -36,7 +41,7 @@ const Scene = () => {
         style={{ padding: 0 }}
         isPermission={permission.update}
         tooltip={
-          type !== 'table'
+          type === 'table'
             ? {
                 title: intl.formatMessage({
                   id: 'pages.data.option.edit',
@@ -96,7 +101,7 @@ const Scene = () => {
           },
         }}
         tooltip={
-          type !== 'table'
+          type === 'table'
             ? {
                 title: intl.formatMessage({
                   id: `pages.data.option.${
@@ -131,7 +136,7 @@ const Scene = () => {
           onConfirm: async () => {},
         }}
         tooltip={
-          type !== 'table'
+          type === 'table'
             ? {
                 title: intl.formatMessage({
                   id: 'pages.device.instance.deleteTip',
@@ -160,14 +165,16 @@ const Scene = () => {
       }),
     },
     {
-      dataIndex: 'triggers',
+      dataIndex: 'triggerType',
       title: intl.formatMessage({
         id: 'pages.ruleEngine.scene.triggers',
         defaultMessage: '触发方式',
       }),
+      width: 120,
+      renderText: (record) => TriggerWayType[record],
     },
     {
-      dataIndex: 'describe',
+      dataIndex: 'description',
       title: intl.formatMessage({
         id: 'pages.system.description',
         defaultMessage: '说明',
@@ -182,21 +189,27 @@ const Scene = () => {
       width: '90px',
       valueType: 'select',
       renderText: (record) =>
-        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
+        record ? (
+          <BadgeStatus
+            status={record.value}
+            text={record.text}
+            statusNames={{
+              started: StatusColorEnum.processing,
+              disable: StatusColorEnum.error,
+              notActive: StatusColorEnum.warning,
+            }}
+          />
+        ) : (
+          ''
+        ),
       valueEnum: {
-        offline: {
-          text: intl.formatMessage({
-            id: 'pages.device.instance.status.offLine',
-            defaultMessage: '离线',
-          }),
+        disable: {
+          text: '禁用',
           status: 'offline',
         },
-        online: {
-          text: intl.formatMessage({
-            id: 'pages.device.instance.status.onLine',
-            defaultMessage: '在线',
-          }),
-          status: 'online',
+        started: {
+          text: '正常',
+          status: 'started',
         },
       },
     },

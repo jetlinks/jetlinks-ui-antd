@@ -1,10 +1,20 @@
 .group-item-compact {
   display: flex;
-  gap: 12px;
+  gap: 24px;
+  align-items: center;
 
-  > div {
+  > * {
     &:last-child {
       flex: 1;
+    }
+  }
+
+  &.compact {
+    gap: 0;
+    > * {
+      &:not(:last-child) {
+        margin-right: -1px;
+      }
     }
   }
 }

@@ -55,8 +55,8 @@ export default (props: OperatorProps) => {
   }, [props.value, props.propertiesList]);
 
   return (
-    <Row>
-      <Col span={24}>
+    <Row gutter={24}>
+      <Col span={6}>
         <Select
           options={props.propertiesList || []}
           value={key}
@@ -64,7 +64,7 @@ export default (props: OperatorProps) => {
             label: 'name',
             value: 'id',
           }}
-          style={{ width: 300 }}
+          style={{ width: '100%' }}
           placeholder={'请选择属性'}
           onSelect={(id: any) => {
             // TODO 多选
@@ -73,9 +73,9 @@ export default (props: OperatorProps) => {
             }
           }}
         />
-        <span style={{ margin: '0 12px', lineHeight: '32px' }}>
-          定时调用所选属性，修改后的属性值用于条件配置
-        </span>
+      </Col>
+      <Col span={18}>
+        <span style={{ lineHeight: '32px' }}>定时调用所选属性，修改后的属性值用于条件配置</span>
       </Col>
       {key && (
         <Col span={24}>

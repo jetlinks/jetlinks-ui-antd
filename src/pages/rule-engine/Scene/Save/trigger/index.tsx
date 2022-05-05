@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { FormInstance } from 'antd';
-import { Col, Form, Row, Select, Space, TreeSelect } from 'antd';
-import { TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
+import { Col, Form, Row, Select, TreeSelect } from 'antd';
+import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
 import { queryOrgTree, querySelector } from '@/pages/rule-engine/Scene/Save/trigger/service';
 import Device from '@/pages/rule-engine/Scene/Save/action/device/deviceModal';
@@ -137,98 +137,107 @@ export default observer((props: TriggerProps) => {
         setSelector(_device.selector);
       }
 
-      if (_device.operation && _device.operation.operator) {
+      if (_device.operation && 'operator' in _device.operation) {
         setOperation(_device.operation.operator);
+      } else {
+        setOperation(undefined);
       }
     }
   }, [props.triggerData]);
 
   return (
     <div className={classNames(props.className)}>
-      <Row>
-        <Col span={24}>
-          <Space>
-            <Form.Item name={['trigger', 'device', 'productId']}>
-              <Select
-                options={productList}
-                placeholder={'请选择产品'}
-                style={{ width: 220 }}
-                listHeight={220}
-                onChange={(key: any, node: any) => {
-                  props.form?.resetFields([['trigger', 'device', 'selector']]);
-                  props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
-                  props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
-                  props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
-                  setOperation(undefined);
-                  productIdChange(key, node.metadata);
-                }}
-                fieldNames={{ label: 'name', value: 'id' }}
-              />
-            </Form.Item>
+      <Row gutter={24}>
+        <Col span={6}>
+          <Form.Item name={['trigger', 'device', 'productId']}>
+            <Select
+              options={productList}
+              placeholder={'请选择产品'}
+              style={{ width: '100%' }}
+              listHeight={220}
+              onChange={(key: any, node: any) => {
+                props.form?.resetFields([['trigger', 'device', 'selector']]);
+                props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
+                props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
+                productIdChange(key, node.metadata);
+              }}
+              fieldNames={{ label: 'name', value: 'id' }}
+            />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item noStyle>
+            <ItemGroup>
+              <Form.Item
+                name={['trigger', 'device', 'selector']}
+                initialValue={
+                  props.triggerData && props.triggerData.device && props.triggerData.device.selector
+                    ? props.triggerData.device.selector
+                    : 'fixed'
+                }
+              >
+                <Select
+                  options={selectorOptions}
+                  fieldNames={{ label: 'name', value: 'id' }}
+                  style={{ width: 120 }}
+                />
+              </Form.Item>
+              {selector === 'all' && (
+                <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                  <AllDevice productId={productId} />
+                </Form.Item>
+              )}
+              {selector === 'fixed' && (
+                <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                  <Device productId={productId} />
+                </Form.Item>
+              )}
+              {selector === 'org' && (
+                <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                  <TreeSelect
+                    treeData={orgTree}
+                    fieldNames={{ label: 'name', value: 'id' }}
+                    placeholder={'请选择部门'}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              )}
+            </ItemGroup>
+          </Form.Item>
+        </Col>
+        <Col span={6}>
+          {functions.length || events.length || properties.length ? (
             <Form.Item
-              name={['trigger', 'device', 'selector']}
-              initialValue={
-                props.triggerData && props.triggerData.device && props.triggerData.device.selector
-                  ? props.triggerData.device.selector
-                  : 'fixed'
-              }
+              name={['trigger', 'device', 'operation', 'operator']}
+              initialValue={undefined}
             >
               <Select
-                options={selectorOptions}
-                fieldNames={{ label: 'name', value: 'id' }}
-                style={{ width: 120 }}
+                placeholder={'请选择触发类型'}
+                options={operatorOptions}
+                style={{ width: '100%' }}
               />
             </Form.Item>
-            {selector === 'all' && (
-              <Form.Item name={['trigger', 'device', 'selectorValues']}>
-                <AllDevice productId={productId} />
-              </Form.Item>
-            )}
-            {selector === 'fixed' && (
-              <Form.Item name={['trigger', 'device', 'selectorValues']}>
-                <Device productId={productId} />
-              </Form.Item>
-            )}
-            {selector === 'org' && (
-              <Form.Item name={['trigger', 'device', 'selectorValues']}>
-                <TreeSelect
-                  treeData={orgTree}
-                  fieldNames={{ label: 'name', value: 'id' }}
-                  placeholder={'请选择部门'}
-                  style={{ width: 300 }}
-                />
-              </Form.Item>
-            )}
-            {functions.length || events.length || properties.length ? (
-              <Form.Item name={['trigger', 'device', 'operation', 'operator']}>
-                <Select
-                  placeholder={'请选择触发类型'}
-                  options={operatorOptions}
-                  style={{ width: 140 }}
-                />
-              </Form.Item>
-            ) : null}
-          </Space>
+          ) : null}
         </Col>
-        {operation === OperatorEnum.invokeFunction || operation === OperatorEnum.writeProperty ? (
-          <Col>
-            <Form.Item name={['trigger', 'device', 'operation', 'timer']}>
-              <TimingTrigger />
-            </Form.Item>
-          </Col>
-        ) : null}
       </Row>
+      {operation === OperatorEnum.invokeFunction || operation === OperatorEnum.writeProperty ? (
+        <Form.Item name={['trigger', 'device', 'operation', 'timer']}>
+          <TimingTrigger />
+        </Form.Item>
+      ) : null}
       {operation === OperatorEnum.invokeFunction && (
         <>
-          <Row>
-            <Col span={12}>
+          <Row gutter={24}>
+            <Col span={6}>
               <Form.Item name={['trigger', 'device', 'operation', 'functionId']}>
                 <Select
+                  showSearch
                   options={functions}
                   fieldNames={{
                     label: 'name',
                     value: 'id',
                   }}
+                  style={{ width: '100%' }}
                   placeholder={'请选择功能'}
                   onSelect={(_: any, data: any) => {
                     const _properties = data.valueType ? data.valueType.properties : data.inputs;
@@ -245,13 +254,14 @@ export default observer((props: TriggerProps) => {
                     }
                     setFunctionItem(array);
                   }}
+                  filterOption={(input: string, option: any) =>
+                    option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <span style={{ margin: '0 12px', lineHeight: '32px' }}>
-                定时调用所选功能，功能返回值用于条件配置
-              </span>
+            <Col span={18}>
+              <span style={{ lineHeight: '32px' }}>定时调用所选功能，功能返回值用于条件配置</span>
             </Col>
           </Row>
           <Row>
@@ -280,8 +290,8 @@ export default observer((props: TriggerProps) => {
         </Row>
       )}
       {operation === OperatorEnum.readProperty && (
-        <Row>
-          <Col>
+        <Row gutter={24}>
+          <Col span={6}>
             <Form.Item name={['trigger', 'device', 'operation', 'readProperties']} noStyle>
               <Select
                 mode={'multiple'}
@@ -299,11 +309,14 @@ export default observer((props: TriggerProps) => {
                     </div>
                   );
                 }}
-                style={{ width: 300 }}
+                placeholder={'请选择属性'}
+                style={{ width: '100%' }}
                 fieldNames={{ label: 'name', value: 'id' }}
               />
             </Form.Item>
-            <span style={{ margin: '0 12px' }}>定时读取所选属性值，用于条件配置</span>
+          </Col>
+          <Col span={18}>
+            <span style={{ lineHeight: '32px' }}>定时读取所选属性值，用于条件配置</span>
           </Col>
         </Row>
       )}

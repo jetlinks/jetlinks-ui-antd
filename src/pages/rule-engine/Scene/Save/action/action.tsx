@@ -1,5 +1,5 @@
 import type { FormInstance } from 'antd';
-import { Button, Form, Select } from 'antd';
+import { Button, Col, Form, Row, Select } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
@@ -114,6 +114,7 @@ export default observer((props: ActionProps) => {
 
   const handleInit = useCallback(async (data: any) => {
     if (data) {
+      console.log('actions ', data);
       if (data.executor) {
         setType1(data.executor);
       }
@@ -142,41 +143,47 @@ export default observer((props: ActionProps) => {
 
   const MessageNodes = (
     <>
-      <Form.Item {...props.restField} name={[name, 'notify', 'notifyType']}>
-        <Select
-          options={messageType}
-          fieldNames={{ value: 'id', label: 'name' }}
-          placeholder={'请选择通知方式'}
-          style={{ width: 140 }}
-          onChange={async () => {
-            setTemplateData(undefined);
-            props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
-            props.form.resetFields([['actions', name, 'notify', 'templateId']]);
-          }}
-        />
-      </Form.Item>
-      <Form.Item {...props.restField} name={[name, 'notify', 'notifierId']}>
-        <Select
-          options={messageConfig}
-          loading={messageConfigLoading}
-          fieldNames={{ value: 'id', label: 'name' }}
-          onChange={() => {
-            setTemplateData(undefined);
-            props.form.resetFields([['actions', name, 'notify', 'templateId']]);
-          }}
-          style={{ width: 160 }}
-          placeholder={'请选择通知配置'}
-        />
-      </Form.Item>
-      <Form.Item {...props.restField} name={[name, 'notify', 'templateId']}>
-        <Select
-          options={messageTemplate}
-          loading={messageTemplateLoading}
-          fieldNames={{ value: 'id', label: 'name' }}
-          style={{ width: 160 }}
-          placeholder={'请选择通知模板'}
-        />
-      </Form.Item>
+      <Col span={7}>
+        <Form.Item {...props.restField} name={[name, 'notify', 'notifyType']}>
+          <Select
+            options={messageType}
+            fieldNames={{ value: 'id', label: 'name' }}
+            placeholder={'请选择通知方式'}
+            style={{ width: '100%' }}
+            onChange={async () => {
+              setTemplateData(undefined);
+              props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
+              props.form.resetFields([['actions', name, 'notify', 'templateId']]);
+            }}
+          />
+        </Form.Item>
+      </Col>
+      <Col span={7}>
+        <Form.Item {...props.restField} name={[name, 'notify', 'notifierId']}>
+          <Select
+            options={messageConfig}
+            loading={messageConfigLoading}
+            fieldNames={{ value: 'id', label: 'name' }}
+            onChange={() => {
+              setTemplateData(undefined);
+              props.form.resetFields([['actions', name, 'notify', 'templateId']]);
+            }}
+            style={{ width: '100%' }}
+            placeholder={'请选择通知配置'}
+          />
+        </Form.Item>
+      </Col>
+      <Col span={6}>
+        <Form.Item {...props.restField} name={[name, 'notify', 'templateId']}>
+          <Select
+            options={messageTemplate}
+            loading={messageTemplateLoading}
+            fieldNames={{ value: 'id', label: 'name' }}
+            style={{ width: '100%' }}
+            placeholder={'请选择通知模板'}
+          />
+        </Form.Item>
+      </Col>
     </>
   );
 
@@ -201,18 +208,20 @@ export default observer((props: ActionProps) => {
           <DeleteOutlined />
         </Button>
       </div>
-      <div style={{ display: 'flex', gap: 12 }}>
-        <Form.Item {...props.restField} name={[name, 'executor']}>
-          <Select
-            options={[
-              { label: '消息通知', value: 'notify' },
-              { label: '设备输出', value: 'device' },
-              { label: '延迟执行', value: 'delay' },
-            ]}
-            placeholder={'请选择动作方式'}
-            style={{ width: 140 }}
-          />
-        </Form.Item>
+      <Row gutter={24}>
+        <Col span={4}>
+          <Form.Item {...props.restField} name={[name, 'executor']}>
+            <Select
+              options={[
+                { label: '消息通知', value: 'notify' },
+                { label: '设备输出', value: 'device' },
+                { label: '延迟执行', value: 'delay' },
+              ]}
+              placeholder={'请选择动作方式'}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+        </Col>
         {type1 === 'notify' && MessageNodes}
         {type1 === 'device' && (
           <DeviceSelect
@@ -227,11 +236,14 @@ export default observer((props: ActionProps) => {
           />
         )}
         {type1 === 'delay' && (
-          <Form.Item name={[name, 'delay']}>
-            <InputNumber />
-          </Form.Item>
+          <Col span={6}>
+            <Form.Item name={[name, 'delay']}>
+              <InputNumber />
+            </Form.Item>
+          </Col>
         )}
-      </div>
+      </Row>
+
       {type1 === 'notify' && templateData ? (
         <MessageContent
           form={props.form}
@@ -252,9 +264,13 @@ export default observer((props: ActionProps) => {
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.READ_PROPERTY &&
       properties.length ? (
-        <Form.Item name={[name, 'device', 'message', 'properties']}>
-          <ReadProperty properties={properties} />
-        </Form.Item>
+        <Row gutter={24}>
+          <Col span={4}>
+            <Form.Item name={[name, 'device', 'message', 'properties']}>
+              <ReadProperty properties={properties} />
+            </Form.Item>
+          </Col>
+        </Row>
       ) : null}
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.INVOKE_FUNCTION &&
