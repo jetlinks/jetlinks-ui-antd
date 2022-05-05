@@ -23,6 +23,7 @@ import Service from '@/pages/rule-engine/Scene/service';
 import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
+import FInputGroup from '@/components/FInputGroup';
 
 const service = new Service('scene');
 
@@ -69,7 +70,7 @@ const TriggerTerm = (props: Props, ref: any) => {
             const treeValue = treeFilter(_data, value, 'column');
             // 找到
             const target =
-              treeValue && treeValue[0].children
+              treeValue && treeValue[0]?.children
                 ? treeValue[0]?.children.find((item) => item.column === value)
                 : treeValue[0];
 
@@ -159,6 +160,7 @@ const TriggerTerm = (props: Props, ref: any) => {
       FormGrid,
       FTermTypeSelect,
       TreeSelect,
+      FInputGroup,
     },
   });
 
@@ -207,7 +209,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator': 'FormItem',
                         'x-component': 'TreeSelect',
                         'x-decorator-props': {
-                          gridSpan: 4,
+                          gridSpan: 6,
                         },
                         'x-component-props': {
                           placeholder: '请选择参数',
@@ -227,21 +229,43 @@ const TriggerTerm = (props: Props, ref: any) => {
                           placeholder: '操作符',
                         },
                       },
-                      source: {
-                        type: 'string',
+                      inputGroup: {
+                        type: 'void',
+                        'x-component': 'FInputGroup',
                         'x-decorator': 'FormItem',
-                        'x-component': 'Select',
                         'x-decorator-props': {
-                          gridSpan: 1,
+                          gridSpan: 4,
+                          style: {
+                            width: '100%',
+                          },
                         },
-                      },
-                      value: {
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input',
-                        'x-component-props': {},
-                        'x-decorator-props': {
-                          gridSpan: 3,
+                        'x-component-props': {
+                          compact: true,
+                          style: {
+                            width: '100%',
+                          },
+                        },
+                        properties: {
+                          source: {
+                            type: 'string',
+                            'x-component': 'Select',
+                            'x-decorator': 'FormItem',
+                            'x-component-props': {
+                              style: {
+                                minWidth: '110px',
+                              },
+                            },
+                          },
+                          value: {
+                            type: 'string',
+                            'x-component': 'Input',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              style: {
+                                width: 'calc(100% - 110px)',
+                              },
+                            },
+                          },
                         },
                       },
                       remove: {
