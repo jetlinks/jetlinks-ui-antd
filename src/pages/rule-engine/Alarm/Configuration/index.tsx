@@ -24,6 +24,7 @@ const Configuration = () => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
+  const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Configuration');
 
   const [current, setCurrent] = useState<any>();
   const columns: ProColumns<ConfigurationItem>[] = [
@@ -64,8 +65,13 @@ const Configuration = () => {
             key="trigger"
             type="link"
             style={{ padding: 0 }}
-            isPermission={true}
+            isPermission={permission.tigger}
+            tooltip={{
+              title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '',
+            }}
+            disabled={record.state?.value === 'disabled'}
             popConfirm={{
+              disabled: record.state?.value === 'disabled',
               title: '确认手动触发?',
               onConfirm: async () => {
                 await service._execute(record.sceneId);
@@ -83,7 +89,7 @@ const Configuration = () => {
           </PermissionButton>
         ),
         <PermissionButton
-          isPermission={true}
+          isPermission={permission.update}
           key="edit"
           style={{ padding: 0 }}
           tooltip={{
@@ -101,7 +107,7 @@ const Configuration = () => {
           <EditOutlined />
         </PermissionButton>,
         <PermissionButton
-          isPermission={true}
+          isPermission={permission.action}
           key="action"
           style={{ padding: 0 }}
           popConfirm={{
@@ -140,19 +146,17 @@ const Configuration = () => {
         </PermissionButton>,
         <PermissionButton
           type="link"
-          isPermission={true}
+          isPermission={permission.delete}
           key="delete"
           disabled={record.state?.value !== 'disabled'}
           style={{ padding: 0 }}
           popConfirm={{
+            disabled: record.state?.value !== 'disabled',
             title: '确认删除?',
             onConfirm: () => service.remove(record.id),
           }}
           tooltip={{
-            title: intl.formatMessage({
-              id: 'pages.data.option.remove',
-              defaultMessage: '删除',
-            }),
+            title: record.state?.value === 'disabled' ? '删除' : '已启用，不能删除',
           }}
         >
           <DeleteOutlined />
@@ -188,9 +192,14 @@ const Configuration = () => {
                 <PermissionButton
                   key="trigger"
                   type="link"
-                  isPermission={true}
+                  tooltip={{
+                    title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '',
+                  }}
+                  disabled={record.state?.value === 'disabled'}
+                  isPermission={permission.tigger}
                   popConfirm={{
                     title: '确认手动触发?',
+                    disabled: record.state?.value === 'disabled',
                     onConfirm: async () => {
                       await service._execute(record.sceneId);
                       message.success(
@@ -208,7 +217,7 @@ const Configuration = () => {
                 </PermissionButton>
               ) : null,
               <PermissionButton
-                isPermission={true}
+                isPermission={permission.update}
                 key="edit"
                 type="link"
                 onClick={() => {
@@ -220,7 +229,7 @@ const Configuration = () => {
                 编辑
               </PermissionButton>,
               <PermissionButton
-                isPermission={true}
+                isPermission={permission.action}
                 style={{ padding: 0 }}
                 popConfirm={{
                   title: intl.formatMessage({
@@ -265,17 +274,18 @@ const Configuration = () => {
               <PermissionButton
                 type="link"
                 tooltip={{
-                  title: '删除',
+                  title: record.state?.value === 'disabled' ? '删除' : '已启用，不能删除',
                 }}
                 disabled={record.state?.value !== 'disabled'}
                 popConfirm={{
+                  disabled: record.state?.value !== 'disabled',
                   title: '确认删除?',
                   onConfirm: async () => {
                     await service.remove(record.id);
                     actionRef.current?.reset?.();
                   },
                 }}
-                isPermission={true}
+                isPermission={permission.delete}
                 key="delete"
               >
                 <DeleteOutlined />
@@ -286,7 +296,7 @@ const Configuration = () => {
         headerTitle={
           <Space>
             <PermissionButton
-              isPermission={true}
+              isPermission={permission.add}
               onClick={() => {
                 setCurrent(undefined);
                 setVisible(true);

@@ -1,7 +1,7 @@
 import SearchComponent from '@/components/SearchComponent';
 import { FileFilled, FileTextFilled, ToolFilled } from '@ant-design/icons';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, Card, Col, Empty, Pagination, Row, Space } from 'antd';
+import { Badge, Button, Card, Col, Empty, Pagination, Row, Space, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import './index.less';
 import SolveComponent from '../SolveComponent';
@@ -12,6 +12,8 @@ import { observer } from '@formily/reactive-react';
 import { service } from '@/pages/rule-engine/Alarm/Log';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
+import PermissionButton from '@/components/PermissionButton';
+import classNames from 'classnames';
 
 interface Props {
   type: string;
@@ -37,6 +39,7 @@ colorMap.set(4, '#999999');
 colorMap.set(5, '#C4C4C4');
 
 const TabComponent = observer((props: Props) => {
+  const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Log');
   const columns: ProColumns<any>[] = [
     {
       title: '名称',
@@ -166,7 +169,9 @@ const TabComponent = observer((props: Props) => {
                         />
                         <div className="alarm-type">
                           <div className="name">{titleMap.get(item.targetType)}</div>
-                          <div className="text">{item.targetName}</div>
+                          <div className="text">
+                            <Tooltip title={item.targetName}>{item.targetName}</Tooltip>
+                          </div>
                         </div>
                       </div>
                       <div className="alarm-log-right">
@@ -197,20 +202,26 @@ const TabComponent = observer((props: Props) => {
                     <div className="alarm-log-actions">
                       <Space>
                         {item.state.value === 'warning' && (
-                          <div className="alarm-log-action">
-                            <Button
-                              type={'link'}
-                              onClick={() => {
-                                AlarmLogModel.solveVisible = true;
-                                AlarmLogModel.current = item;
-                              }}
-                            >
-                              <div className="btn">
-                                <ToolFilled className="icon" />
-                                <div>告警处理</div>
-                                {/* action */}
-                              </div>
-                            </Button>
+                          <div
+                            className={classNames(
+                              permission.action ? 'alarm-log-action' : 'alarm-log-disabled',
+                            )}
+                          >
+                            <Tooltip title={permission.action ? '' : '暂无权限，请联系管理员'}>
+                              <Button
+                                type={'link'}
+                                disabled={!permission.action}
+                                onClick={() => {
+                                  AlarmLogModel.solveVisible = true;
+                                  AlarmLogModel.current = item;
+                                }}
+                              >
+                                <div className="btn">
+                                  <ToolFilled className="icon" />
+                                  <div>告警处理</div>
+                                </div>
+                              </Button>
+                            </Tooltip>
                           </div>
                         )}
                         <div className="alarm-log-action">
