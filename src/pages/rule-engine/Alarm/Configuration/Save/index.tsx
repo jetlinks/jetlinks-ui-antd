@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Radio, Select } from '@formily/antd';
-import type { ISchema } from '@formily/json-schema';
+import { ISchema } from '@formily/json-schema';
 import { PermissionButton } from '@/components';
 import { PlusOutlined } from '@ant-design/icons';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
@@ -74,7 +74,7 @@ const Save = (props: Props) => {
         validateFirst: true,
         effects() {},
       }),
-    [props.data],
+    [props.data, props.visible],
   );
 
   const getSupports = () => service.getTargetTypes();
@@ -212,6 +212,7 @@ const Save = (props: Props) => {
       width="40vw"
       visible={visible}
       onOk={handleSave}
+      forceRender={true}
       onCancel={() => close()}
       title={`${props.data ? '编辑' : '新增'}告警`}
     >

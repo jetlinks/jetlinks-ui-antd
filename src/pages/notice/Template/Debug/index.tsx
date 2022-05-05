@@ -78,7 +78,7 @@ const Debug = observer(() => {
         state1.value = data?.variableDefinitions;
       });
     }
-  }, [state.current]);
+  }, [state.current, state.debug]);
 
   const SchemaField = createSchemaField({
     components: {
@@ -225,6 +225,7 @@ const Debug = observer(() => {
       title="调试"
       width="40vw"
       destroyOnClose
+      forceRender={true}
       visible={state.debug}
       onCancel={() => (state.debug = false)}
       onOk={start}
