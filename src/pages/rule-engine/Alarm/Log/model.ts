@@ -21,18 +21,23 @@ export const AlarmLogModel = model<{
     {
       dataIndex: 'alarmTime',
       title: '告警时间',
+      valueType: 'dateTime',
     },
     {
-      dataIndex: 'alarmName',
+      dataIndex: 'alarmConfigName',
       title: '告警名称',
+      hideInSearch: true,
     },
     {
       dataIndex: 'description',
       title: '说明',
+      hideInSearch: true,
     },
     {
       dataIndex: 'action',
       title: '操作',
+      hideInSearch: true,
+      valueType: 'option',
     },
   ],
 });

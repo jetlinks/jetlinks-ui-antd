@@ -75,6 +75,7 @@ const PropertyLog = (props: Props) => {
       title="详情"
       visible={visible}
       onCancel={() => close()}
+      onOk={() => close()}
       width="45vw"
     >
       <div style={{ marginBottom: '20px' }}>
@@ -106,6 +107,7 @@ const PropertyLog = (props: Props) => {
                 et,
               );
             }}
+            style={{ minWidth: 220 }}
           >
             <Radio.Button value="today">今日</Radio.Button>
             <Radio.Button value="week">近一周</Radio.Button>

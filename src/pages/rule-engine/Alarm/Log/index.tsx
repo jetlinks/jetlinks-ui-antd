@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { AlarmLogModel } from './model';
 import TabComponent from './TabComponent';
 import Service from './service';
+import { Store } from 'jetlinks-store';
 
 export const service = new Service('alarm/record');
 
@@ -30,6 +31,7 @@ const Log = observer(() => {
   useEffect(() => {
     service.queryDefaultLevel().then((resp) => {
       if (resp.status === 200) {
+        Store.set('default-level', resp.result?.levels || []);
         AlarmLogModel.defaultLevel = resp.result?.levels || [];
       }
     });

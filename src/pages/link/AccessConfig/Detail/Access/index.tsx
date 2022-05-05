@@ -61,7 +61,7 @@ const Access = (props: Props) => {
   ProcotoleMapping.set('mqtt-client-gateway', 'MQTT');
   ProcotoleMapping.set('mqtt-server-gateway', 'MQTT');
   ProcotoleMapping.set('tcp-server-gateway', 'TCP');
-  ProcotoleMapping.set('child-device', 'Gateway');
+  ProcotoleMapping.set('child-device', '');
 
   const queryNetworkList = (id: string, params?: any) => {
     service.getNetworkList(MetworkTypeMapping.get(id), params).then((resp) => {

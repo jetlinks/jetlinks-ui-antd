@@ -40,20 +40,25 @@ const Detail = observer(() => {
     {
       dataIndex: 'alarmTime',
       title: '告警时间',
+      valueType: 'dateTime',
       render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       dataIndex: 'alarmConfigName',
       title: '告警名称',
+      hideInSearch: true,
     },
     {
       dataIndex: 'description',
       title: '说明',
+      hideInSearch: true,
     },
     {
       dataIndex: 'action',
       title: '操作',
-      render: (record: any) => (
+      hideInSearch: true,
+      valueType: 'option',
+      render: (_: any, record: any) => (
         <Button type="link">
           <SearchOutlined
             onClick={() => {
@@ -74,9 +79,10 @@ const Detail = observer(() => {
           initColumns.splice(2, 0, {
             dataIndex: 'targetName',
             title: '告警设备',
+            hideInSearch: true,
           });
         }
-        AlarmLogModel.columns = initColumns;
+        AlarmLogModel.columns = [...initColumns];
       }
     });
   }, [params.id]);
