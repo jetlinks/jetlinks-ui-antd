@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { BadgeStatus } from '@/components';
-import { StatusColorEnum } from '@/components/BadgeStatus';
 import type { StatusColorType } from '@/components/BadgeStatus';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 import './index.less';
 
 export interface TableCardProps {

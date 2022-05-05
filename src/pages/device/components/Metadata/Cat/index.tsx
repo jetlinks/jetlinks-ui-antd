@@ -1,4 +1,4 @@
-import { Drawer, Tabs } from 'antd';
+import { Button, Drawer, message, Space, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { productModel, service } from '@/pages/device/Product';
 import MonacoEditor from 'react-monaco-editor';
@@ -6,6 +6,7 @@ import { observer } from '@formily/react';
 import { InstanceModel } from '@/pages/device/Instance';
 import { useLocation } from 'umi';
 import InstanceService from '@/pages/device/Instance/service';
+import { downloadObject } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -63,6 +64,22 @@ const Cat = observer((props: Props) => {
       title="查看物模型"
       onClose={() => props.close()}
       visible={props.visible}
+      extra={
+        <Space>
+          <Button
+            type="primary"
+            onClick={async () => {
+              try {
+                downloadObject(JSON.parse(value), `设备-物模型`);
+              } catch (e) {
+                message.error('物模型格式错误!');
+              }
+            }}
+          >
+            导出模型文件
+          </Button>
+        </Space>
+      }
     >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>

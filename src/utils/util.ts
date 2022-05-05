@@ -37,7 +37,7 @@ export const downloadFile = (url: string, params?: Record<string, any>) => {
  * @param record
  * @param fileName
  */
-export const downloadObject = (record: Record<string, unknown>, fileName: string) => {
+export const downloadObject = (record: Record<string, any>, fileName: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
   ghostLink.download = `${fileName}-${

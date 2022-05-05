@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Radio, Select } from '@formily/antd';
-import { ISchema } from '@formily/json-schema';
+import type { ISchema } from '@formily/json-schema';
 import { PermissionButton } from '@/components';
 import { PlusOutlined } from '@ant-design/icons';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
@@ -213,7 +213,7 @@ const Save = (props: Props) => {
       visible={visible}
       onOk={handleSave}
       onCancel={() => close()}
-      title="新增告警"
+      title={`${props.data ? '编辑' : '新增'}告警`}
     >
       <Form className={styles.form} form={form} layout="vertical">
         <SchemaField

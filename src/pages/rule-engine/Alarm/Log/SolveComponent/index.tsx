@@ -26,6 +26,7 @@ const SolveComponent = (props: Props) => {
         form={form}
         onFinish={async (values: any) => {
           const resp = await service.handleLog(data?.id || '', {
+            id: data?.id || '',
             describe: values.describe,
             type: 'user',
             state: 'normal',

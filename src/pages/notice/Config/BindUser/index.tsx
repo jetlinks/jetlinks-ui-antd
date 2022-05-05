@@ -37,7 +37,7 @@ const BindUser = (props: Props) => {
   };
 
   useEffect(() => {
-    if (props.data?.id) {
+    if (props.data?.thirdPartyUserId) {
       getUsers(props.data.id);
     }
   }, [props.data]);

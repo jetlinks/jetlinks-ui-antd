@@ -161,10 +161,10 @@ const Status = observer((props: Props) => {
       } else {
         service.queryProductState(InstanceModel.detail?.productId || '').then((resp) => {
           if (resp.status === 200) {
-            DiagnoseStatusModel.product = resp.result;
             if (resp.result.accessId) {
               service.queryGatewayState(resp.result.accessId).then((response: any) => {
                 if (response.status === 200) {
+                  DiagnoseStatusModel.gateway = response.result;
                   const product: any = resp.result;
                   const address = response.result?.channelInfo?.addresses || [];
                   const _label = address.some((i: any) => i.health === -1);
@@ -212,7 +212,7 @@ const Status = observer((props: Props) => {
                                         title="确认启用"
                                         onConfirm={async () => {
                                           const res = await service.startNetwork(
-                                            DiagnoseStatusModel.product?.channelId,
+                                            DiagnoseStatusModel.gateway?.channelId,
                                           );
                                           if (res.status === 200) {
                                             message.success('操作成功！');

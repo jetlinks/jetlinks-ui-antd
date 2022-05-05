@@ -265,7 +265,7 @@ const Detail = observer(() => {
                   : {
                       id: item,
                       type: 'string',
-                      format: 's%',
+                      format: '%s',
                     },
               );
               form1.setValuesIn('variableDefinitions', _result);
@@ -313,7 +313,7 @@ const Detail = observer(() => {
                   : {
                       id: item,
                       type: 'string',
-                      format: 's%',
+                      format: '%s',
                     },
               );
               form1.setValuesIn('variableDefinitions', _result);
@@ -354,7 +354,7 @@ const Detail = observer(() => {
               case 'string':
                 format.setComponent(PreviewText.Input);
                 if (fieldModified) {
-                  format.setValue('s%');
+                  format.setValue('%s');
                 }
                 break;
               case 'number':
@@ -1200,7 +1200,7 @@ const Detail = observer(() => {
             column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '名称' },
+              'x-component-props': { title: '名称', width: '120px' },
               properties: {
                 name: {
                   type: 'string',

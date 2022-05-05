@@ -145,7 +145,13 @@ const Config = () => {
       </div>
       <div>
         {(metadata || []).map((i) => (
-          <Descriptions size="small" column={3} key={i.name} bordered title={<h4>{i.name}</h4>}>
+          <Descriptions
+            size="small"
+            column={3}
+            key={i.name}
+            bordered
+            title={<h4 style={{ fontSize: 15 }}>{i.name}</h4>}
+          >
             {(i?.properties || []).map((item: any) => (
               <Descriptions.Item
                 span={1}

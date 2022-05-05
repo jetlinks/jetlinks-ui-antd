@@ -14,7 +14,13 @@ import {
   TreeSelect,
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
-import { createForm, Field, onFieldReact, onFormValuesChange } from '@formily/core';
+import {
+  createForm,
+  Field,
+  onFieldReact,
+  onFieldValueChange,
+  onFormValuesChange,
+} from '@formily/core';
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import FTermArrayCards from '@/components/FTermArrayCards';
 import FTermTypeSelect from '@/components/FTermTypeSelect';
@@ -23,6 +29,7 @@ import Service from '@/pages/rule-engine/Scene/service';
 import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
+import FInputGroup from '@/components/FInputGroup';
 
 const service = new Service('scene');
 
@@ -34,56 +41,9 @@ interface Props {
 }
 
 const TriggerTerm = (props: Props, ref: any) => {
-  const requestParams = {
-    trigger: {
-      type: 'device',
-      device: {
-        productId: '0412-zj',
-        selector: 'device',
-        selectorValue: [
-          {
-            id: '0412-zj',
-            name: '0412-zj',
-          },
-        ],
-        operation: {
-          operator: 'reportProperty',
-          timer: {
-            trigger: 'week',
-            cron: '',
-            when: [1, 3, 5],
-            mod: 'period',
-            period: {
-              from: '09:30',
-              to: '14:30',
-              every: 1,
-              unit: 'hours',
-            },
-            once: {
-              time: '',
-            },
-          },
-          eventId: '',
-          readProperties: ['temparature', 'temperature-k', 'test-zhibioa'],
-          writeProperties: {},
-          functionId: '',
-          functionParameters: [
-            {
-              name: '',
-              value: {},
-            },
-          ],
-        },
-        defaultVariable: [],
-      },
-      timer: {},
-      defaultVariable: [],
-    },
-  };
-
   const parseTermRef = useRef<any>();
   const getParseTerm = () =>
-    service.getParseTerm(requestParams || props.params).then((data) => {
+    service.getParseTerm(props.params).then((data) => {
       Store.set('trigger-parse-term', data);
       parseTermRef.current = data;
       return data.map((item: any) => ({
@@ -97,55 +57,7 @@ const TriggerTerm = (props: Props, ref: any) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues:
-          {
-            trigger: [
-              {
-                terms: [
-                  {
-                    column: 'properties.temprature.current',
-                    termType: 'gt',
-                    source: 'manual',
-                    value: 123,
-                  },
-                  {
-                    column: 'properties.test-zhibioa.recent',
-                    termType: 'gt',
-                    source: 'metrics',
-                    value: '123',
-                  },
-                  {
-                    column: 'properties.test-zhibioa.current',
-                    termType: 'lte',
-                    source: 'manual',
-                    value: 223,
-                  },
-                ],
-              },
-              {
-                terms: [
-                  {
-                    column: 'properties.temprature.current',
-                    termType: 'btw',
-                    source: 'manual',
-                    value: 23,
-                  },
-                  {
-                    column: 'properties.temperature-k.current',
-                    termType: 'gt',
-                    source: 'manual',
-                    value: 123,
-                  },
-                  {
-                    column: '_now',
-                    termType: 'eq',
-                    source: 'manual',
-                    value: '2022-04-29 00:00:07',
-                  },
-                ],
-              },
-            ],
-          } || props.value,
+        initialValues: props.value,
 
         effects() {
           onFormValuesChange(async (f) => {
@@ -153,18 +65,25 @@ const TriggerTerm = (props: Props, ref: any) => {
               props.onChange(await f.submit());
             }
           });
+          onFieldValueChange('trigger.*.terms.*.column', (field, form1) => {
+            if (field.modified) {
+              form1.setFieldState(field.query('.value'), (state) => {
+                state.value = undefined;
+              });
+            }
+          });
           onFieldReact('trigger.*.terms.*.column', async (field, form1) => {
             const operator = field.query('.termType');
             const value = (field as Field).value;
 
             // 找到选中的
-            const _data = await service.getParseTerm(requestParams || props.params);
+            const _data = await service.getParseTerm(props.params);
             if (!_data) return;
             // 树形搜索
             const treeValue = treeFilter(_data, value, 'column');
             // 找到
             const target =
-              treeValue && treeValue[0].children
+              treeValue && treeValue[0]?.children
                 ? treeValue[0]?.children.find((item) => item.column === value)
                 : treeValue[0];
 
@@ -236,7 +155,7 @@ const TriggerTerm = (props: Props, ref: any) => {
           });
         },
       }),
-    [props.value],
+    [props.value, props.params],
   );
 
   useImperativeHandle(ref, () => ({
@@ -254,6 +173,7 @@ const TriggerTerm = (props: Props, ref: any) => {
       FormGrid,
       FTermTypeSelect,
       TreeSelect,
+      FInputGroup,
     },
   });
 
@@ -302,7 +222,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator': 'FormItem',
                         'x-component': 'TreeSelect',
                         'x-decorator-props': {
-                          gridSpan: 4,
+                          gridSpan: 6,
                         },
                         'x-component-props': {
                           placeholder: '请选择参数',
@@ -322,21 +242,43 @@ const TriggerTerm = (props: Props, ref: any) => {
                           placeholder: '操作符',
                         },
                       },
-                      source: {
-                        type: 'string',
+                      inputGroup: {
+                        type: 'void',
+                        'x-component': 'FInputGroup',
                         'x-decorator': 'FormItem',
-                        'x-component': 'Select',
                         'x-decorator-props': {
-                          gridSpan: 1,
+                          gridSpan: 4,
+                          style: {
+                            width: '100%',
+                          },
                         },
-                      },
-                      value: {
-                        type: 'string',
-                        'x-decorator': 'FormItem',
-                        'x-component': 'Input',
-                        'x-component-props': {},
-                        'x-decorator-props': {
-                          gridSpan: 3,
+                        'x-component-props': {
+                          compact: true,
+                          style: {
+                            width: '100%',
+                          },
+                        },
+                        properties: {
+                          source: {
+                            type: 'string',
+                            'x-component': 'Select',
+                            'x-decorator': 'FormItem',
+                            'x-component-props': {
+                              style: {
+                                minWidth: '110px',
+                              },
+                            },
+                          },
+                          value: {
+                            type: 'string',
+                            'x-component': 'Input',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              style: {
+                                width: 'calc(100% - 110px)',
+                              },
+                            },
+                          },
                         },
                       },
                       remove: {
