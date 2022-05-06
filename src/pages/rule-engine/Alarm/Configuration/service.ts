@@ -32,6 +32,23 @@ class Service extends BaseService<ConfigItem> {
       method: 'POST',
       data: {},
     });
+
+  public getAlarmCountById = (id: string) =>
+    request(`/${SystemConst.API_BASE}/alarm/record/_count`, {
+      method: 'POST',
+      data: {
+        terms: [
+          {
+            column: 'alarmConfigId',
+            value: id,
+          },
+        ],
+      },
+    });
+  public queryDefaultLevel = () =>
+    request(`/${SystemConst.API_BASE}/alarm/config/default/level`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
