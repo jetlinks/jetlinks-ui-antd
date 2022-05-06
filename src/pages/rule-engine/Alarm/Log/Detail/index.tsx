@@ -41,7 +41,9 @@ const Detail = observer(() => {
       dataIndex: 'alarmTime',
       title: '告警时间',
       valueType: 'dateTime',
-      render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      render: (text: any, record: any) => (
+        <span>{moment(record.alarmTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+      ),
     },
     {
       dataIndex: 'alarmConfigName',
