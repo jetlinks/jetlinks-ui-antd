@@ -7,6 +7,7 @@ interface TriggerWayProps {
   className?: string;
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
+  disabled?: boolean;
 }
 
 export enum TriggerWayType {
@@ -26,15 +27,17 @@ export default (props: TriggerWayProps) => {
   }, [props.value]);
 
   const onSelect = (_type: string) => {
-    setType(_type);
+    if (!props.disabled) {
+      setType(_type);
 
-    if (props.onChange) {
-      props.onChange(_type);
+      if (props.onChange) {
+        props.onChange(_type);
+      }
     }
   };
 
   return (
-    <div className={classNames('trigger-way-warp', props.className)}>
+    <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
       <div
         className={classNames('trigger-way-item', {
           active: type === TriggerWayType.manual,

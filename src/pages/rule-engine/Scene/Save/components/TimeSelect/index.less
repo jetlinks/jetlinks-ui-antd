@@ -1,0 +1,23 @@
+@import '~antd/es/style/themes/default.less';
+
+.time-select {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  height: 32px;
+  padding: 4px 6px;
+  background-color: #fff;
+  border: 1px solid @border-color-base;
+  border-radius: @border-radius-base;
+
+  .time-select-content {
+    flex-grow: 1;
+    width: 0;
+  }
+
+  &:hover,
+  &:focus {
+    border-color: @primary-color-hover;
+  }
+}
