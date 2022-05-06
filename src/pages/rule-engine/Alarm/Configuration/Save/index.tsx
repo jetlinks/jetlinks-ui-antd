@@ -1,6 +1,6 @@
 import { message, Modal, Typography } from 'antd';
 import { useMemo } from 'react';
-import { createForm } from '@formily/core';
+import { createForm, onFieldInit } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Radio, Select } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
@@ -72,7 +72,15 @@ const Save = (props: Props) => {
       createForm({
         initialValues: props.data,
         validateFirst: true,
-        effects() {},
+        effects() {
+          onFieldInit('*(sceneId,targetType)', async (field) => {
+            if (!props?.data?.id) return;
+            const resp = await service.getAlarmCountById(props.data.id);
+            field.setComponentProps({
+              disabled: resp.result > 0,
+            });
+          });
+        },
       }),
     [props.data, props.visible],
   );
