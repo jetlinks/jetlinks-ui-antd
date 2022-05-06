@@ -11,7 +11,7 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import { useLocation, useIntl } from 'umi';
+import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';

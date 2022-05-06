@@ -296,7 +296,7 @@ const Config = observer(() => {
               </div>
             }
             actions={[
-              (id === 'dingTalk' || id === 'weixin') && (
+              (record.provider === 'dingTalkMessage' || record.provider === 'corpMessage') && (
                 <PermissionButton
                   key="syncUser"
                   isPermission={true}
