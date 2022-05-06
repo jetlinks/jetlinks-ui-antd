@@ -46,31 +46,9 @@ const TabComponent = observer((props: Props) => {
       dataIndex: 'name',
     },
     {
-      title: '级别',
-      dataIndex: 'level',
-      valueType: 'select',
-      valueEnum: {
-        1: {
-          text: '级别一',
-          status: '1',
-        },
-        2: {
-          text: '级别二',
-          status: '2',
-        },
-        3: {
-          text: '级别三',
-          status: '3',
-        },
-        4: {
-          text: '级别四',
-          status: '4',
-        },
-        5: {
-          text: '级别五',
-          status: '5',
-        },
-      },
+      title: '最近告警时间',
+      dataIndex: 'alarmTime',
+      valueType: 'dateTime',
     },
     {
       title: '状态',
@@ -178,7 +156,7 @@ const TabComponent = observer((props: Props) => {
                         <div className="alarm-log-time">
                           <div className="log-title">最近告警时间</div>
                           <div className="context">
-                            {moment(item.alarmDate).format('YYYY-MM-DD HH:mm:ss')}
+                            {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
                           </div>
                         </div>
                         <div

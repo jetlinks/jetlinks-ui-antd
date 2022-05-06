@@ -90,8 +90,8 @@ const BindUser = (props: Props) => {
           [
             {
               userId: values.user,
-              providerName: props.data?.name,
-              thirdPartyUserId: props.data?.id,
+              providerName: props.data?.thirdPartyUserName,
+              thirdPartyUserId: props.data?.thirdPartyUserId,
             },
           ],
         );

@@ -6,6 +6,7 @@ import Status from './Status';
 import './index.less';
 import classNames from 'classnames';
 import { Store } from 'jetlinks-store';
+import { DiagnoseStatusModel } from './Status/model';
 
 interface ListProps {
   key: string;
@@ -126,6 +127,7 @@ const Diagnose = () => {
     return () => {
       Store.set('diagnose', []);
       Store.set('diagnose-status', []);
+      DiagnoseStatusModel.model = true;
     };
   }, []);
   return (

@@ -36,18 +36,33 @@ const SolveLog = (props: Props) => {
 
   const columns: ProColumns<AlarmLogSolveHistoryItem>[] = [
     {
-      dataIndex: 'handleTIme',
+      dataIndex: 'handleTime',
       title: '处理时间',
+      valueType: 'dateTime',
       render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       dataIndex: 'handleType',
       title: '处理类型',
-      render: (text: any) => <span>{typeMap.get(text) || ''}</span>,
+      render: (text: any, record: any) => (
+        <span>{typeMap.get(record?.handleType?.value) || ''}</span>
+      ),
+      valueType: 'select',
+      valueEnum: {
+        system: {
+          text: '系统',
+          status: 'system',
+        },
+        user: {
+          text: '人工',
+          status: 'user',
+        },
+      },
     },
     {
       dataIndex: 'createTime',
       title: '告警时间',
+      valueType: 'dateTime',
       render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
