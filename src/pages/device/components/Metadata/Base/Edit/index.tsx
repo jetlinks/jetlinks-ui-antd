@@ -439,7 +439,6 @@ const Edit = observer((props: Props) => {
       ],
     },
   } as any;
-  console.log(props.type, 'type');
   const propertySchema: ISchema = {
     type: 'object',
     properties: {

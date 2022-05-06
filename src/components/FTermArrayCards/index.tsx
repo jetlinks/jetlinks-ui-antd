@@ -91,7 +91,6 @@ export const FTermArrayCards: ComposedArrayCards = observer((props) => {
           }}
         />
       );
-      console.log(index, 'index');
       return (
         ArrayBase.Item && (
           <ArrayBase.Item key={index} index={index} record={item}>

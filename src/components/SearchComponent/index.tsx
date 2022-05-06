@@ -209,8 +209,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.value = 'eq';
                   });
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
-                    console.log(_field, 'productName');
-
                     state.componentType = 'Select';
                     // state.loading = true;
                     state.dataSource = __option;
