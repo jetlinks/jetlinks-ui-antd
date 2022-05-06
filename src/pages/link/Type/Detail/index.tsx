@@ -16,7 +16,7 @@ import {
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Field } from '@formily/core';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card, message } from 'antd';
 import styles from './index.less';
 import { useAsyncDataSource } from '@/utils/util';
@@ -43,9 +43,9 @@ const filterConfigByType = (data: any[], type: string) => {
     _temp = 'UDP';
   }
   // 只保留ports 包含type的数据
-  const _config = data.filter((item) => Object.keys(item.ports).includes(_temp));
+  const _config = data?.filter((item) => Object.keys(item.ports).includes(_temp));
   // 只保留ports的type数据
-  return _config.map((i) => {
+  return _config?.map((i) => {
     i.ports = i.ports[_temp];
     return i;
   });
@@ -121,12 +121,13 @@ const Save = observer(() => {
               state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
             });
           });
-          onFieldValueChange('grid.configuration.panel1.layout2.host', (field, f1) => {
+          onFieldReact('grid.configuration.panel1.layout2.host', async (field, f1) => {
             const value = (field as Field).value;
             const type = (field.query('type').take() as Field).value;
-            const _port = filterConfigByType(_.cloneDeep(configRef.current), type);
+            const resp = await service.getResourcesCurrent();
+            const current = resp?.result;
+            const _port = filterConfigByType(_.cloneDeep(current), type);
             const _host = _port.find((item) => item.host === value);
-            console.log(_host, 'host');
             f1.setFieldState('grid.configuration.panel1.layout2.port', (state) => {
               state.dataSource = _host?.ports.map((p: any) => ({ label: p, value: p }));
             });
