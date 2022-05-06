@@ -171,11 +171,11 @@ export default (props: DeviceModelProps) => {
             message.warning('请选择产品');
           } else {
             setVisible(true);
-            setSelectKeys([...value]);
+            setSelectKeys(value ? [...value] : []);
           }
         }}
         style={{ width: '100%' }}
-        value={value.map((item) => item.name).toString()}
+        value={value && value.map((item) => item.name).toString()}
         readOnly
       />
     </>

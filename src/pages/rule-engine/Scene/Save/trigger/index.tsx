@@ -61,7 +61,7 @@ export default observer((props: TriggerProps) => {
         setOrgTree(resp.result);
       }
     });
-  }, [queryOrgTree]);
+  }, [queryOrgTree, productId]);
 
   const handleMetadata = (metadata?: string) => {
     try {
