@@ -107,6 +107,8 @@ export default (props: DeviceModelProps) => {
     },
   ];
 
+  console.log(selectKeys);
+
   return (
     <>
       {visible && (
@@ -157,6 +159,18 @@ export default (props: DeviceModelProps) => {
                   newSelectKeys = newSelectKeys.filter((item) => item.value !== selectedRow.id);
                 }
                 setSelectKeys(newSelectKeys);
+              },
+              onSelectAll: (selected, selectedRows) => {
+                console.log(selectedRows);
+                if (selected) {
+                  setSelectKeys(
+                    selectedRows.map((selectedRow) => ({
+                      name: selectedRow.name,
+                      value: selectedRow.id,
+                    })),
+                  );
+                } else {
+                }
               },
             }}
             request={(params) => queryDevice(params)}
