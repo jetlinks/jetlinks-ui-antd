@@ -170,7 +170,9 @@ const Save: React.FC<Props> = props => {
               label="版本序号"
             >
               {getFieldDecorator('versionOrder', {
-                rules: [{ required: true, message: '版本序号必填' }],
+                rules: [{ required: true, message: '版本序号必填' },
+                { pattern: new RegExp(/^[+]{0,1}(\d+)$/, "g"), message: '版本号序号只支持正整数' }
+              ],
                 initialValue: props.data.versionOrder,
               })(<Input placeholder="输入版本序号" />)}
             </Form.Item>
