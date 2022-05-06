@@ -115,6 +115,10 @@ export default (props: DeviceModelProps) => {
           title={'设备'}
           width={880}
           onOk={() => {
+            if (!selectKeys.length) {
+              message.warning('请勾选设备');
+              return;
+            }
             if (props.onChange) {
               props.onChange(selectKeys);
             }

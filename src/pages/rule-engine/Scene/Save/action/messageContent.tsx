@@ -30,6 +30,7 @@ export default (props: MessageContentProps) => {
                 const type = item.expands?.businessType || item.type;
                 const _name = [props.name, 'notify', 'variables', item.id];
                 let initialValue = undefined;
+                const rules = [];
                 if (type === 'user') {
                   initialValue = {
                     source: 'relation',
@@ -41,9 +42,29 @@ export default (props: MessageContentProps) => {
                     value: undefined,
                   };
                 }
+                if (item.required) {
+                  rules.push({
+                    validator: async (_: any, value: any) => {
+                      if (!value.value) {
+                        if (['date'].includes(type)) {
+                          return Promise.reject(new Error('请选择' + item.name));
+                        } else {
+                          return Promise.reject(new Error('请输入' + item.name));
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  });
+                }
                 return (
                   <Col span={12} key={`${item.id}_${index}`}>
-                    <Form.Item name={_name} label={item.name} initialValue={initialValue}>
+                    <Form.Item
+                      name={_name}
+                      label={item.name}
+                      initialValue={initialValue}
+                      required={!!item.required}
+                      rules={rules}
+                    >
                       {type === 'user' ? (
                         <UserList
                           notifyType={props.notifyType}

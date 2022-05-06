@@ -1,6 +1,7 @@
 import { request } from '@@/plugin-request/request';
 import BaseService from '@/utils/BaseService';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
+import SystemConst from '@/utils/const';
 // import { defer, from, lastValueFrom, shareReplay } from 'rxjs';
 // import { filter, map } from 'rxjs/operators';
 
@@ -16,48 +17,12 @@ class Service extends BaseService<SceneItem> {
       method: 'POST',
       data,
     }).then((resp) => resp.result);
-  // getParseTerm = (data: Record<string, any>) => {
-  //   const oldParams = Store.get('request-params-parse-term');
-  //   const list = Store.get('parse-term');
-  //   const f = list && _.isEqual(oldParams, data);
-  //   console.log(oldParams, list, f, data, 'request');
-  //   return f ? new Promise(resolve => {
-  //     resolve(list);
-  //   }) : request(`${this.uri}/parse-term-column`, {
-  //     method: 'POST',
-  //     data,
-  //   }).then((resp) => {
-  //     Store.set('parse-term', resp.result);
-  //     console.log(Store.get('parse-term'), 'then-resp')
-  //     return resp.result
-  //   }).finally(() => {
-  //     Store.set('request-params-parse-term', data);
-  //   });
-  // };
 
-  // private cacheTerm$: Promise<any> | undefined;
-
-  // getParseTerm = (data: Record<string, any>) => {
-  //   if (!this.cacheTerm$) {
-  //     this.cacheTerm$ = lastValueFrom(
-  //       defer(() =>
-  //         from(
-  //           request(`${this.uri}/parse-term-column`, {
-  //             method: 'POST',
-  //             data,
-  //           }),
-  //         ),
-  //       ).pipe(
-  //         filter((item) => item.status === 200),
-  //         map((item) => {
-  //           return item.result;
-  //         }),
-  //         // shareReplay(1, 100),
-  //       ),
-  //     );
-  //   }
-  //   return this.cacheTerm$;
-  // };
+  sceneByAlarm = (id: string) =>
+    request(`${SystemConst.API_BASE}/alarm/config/_count`, {
+      method: 'POST',
+      data: { terms: [{ column: 'sceneId', value: id }] },
+    });
 }
 
 export default Service;
