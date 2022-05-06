@@ -11,12 +11,13 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Badge, message, Space } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
 import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import AlarmConfig from '@/components/ProTableCard/CardItems/AlarmConfig';
+import { Store } from 'jetlinks-store';
 
 const service = new Service('alarm/config');
 
@@ -39,6 +40,12 @@ const Configuration = () => {
     {
       title: '告警级别',
       dataIndex: 'level',
+      render: (text: any) => (
+        <span>
+          {(Store.get('default-level') || []).find((item: any) => item?.level === text)?.title ||
+            text}
+        </span>
+      ),
     },
     {
       title: '关联场景联动',
@@ -166,6 +173,14 @@ const Configuration = () => {
   ];
 
   const [param, setParam] = useState({});
+
+  useEffect(() => {
+    service.queryDefaultLevel().then((resp) => {
+      if (resp.status === 200) {
+        Store.set('default-level', resp.result?.levels || []);
+      }
+    });
+  }, []);
 
   return (
     <PageContainer>
