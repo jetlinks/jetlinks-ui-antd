@@ -11,6 +11,12 @@ export interface DeviceCardProps extends SceneItem {
 
 const defaultImage = require('/public/images/scene.png');
 
+enum TriggerWayType {
+  manual = '手动触发',
+  timer = '定时触发',
+  device = '设备触发',
+}
+
 export default (props: DeviceCardProps) => {
   return (
     <TableCard
@@ -35,11 +41,11 @@ export default (props: DeviceCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>触发方式</label>
-              <div className={'ellipsis'}>{'test'}</div>
+              <div className={'ellipsis'}>{TriggerWayType[props.triggerType]}</div>
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>{props.describe || '--'}</div>
+              <div className={'ellipsis'}>{props.description || '--'}</div>
             </div>
           </div>
         </div>

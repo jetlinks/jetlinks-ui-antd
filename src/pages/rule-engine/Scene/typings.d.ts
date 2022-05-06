@@ -17,7 +17,8 @@ interface SceneItem {
   triggers: Trigger[];
   id: string;
   name: string;
-  describe: string;
+  description: string;
+  triggerType: string;
 }
 
 type TriggerType = {

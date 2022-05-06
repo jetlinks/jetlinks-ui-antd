@@ -23,7 +23,7 @@ export default (props: AllDeviceProps) => {
 
   return (
     <Input
-      style={{ width: 300 }}
+      style={{ width: '100%' }}
       value={props.value ? props.value.map((item: any) => item.name).toString() : undefined}
       readOnly
     />

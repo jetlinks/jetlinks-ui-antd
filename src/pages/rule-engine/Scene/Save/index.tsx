@@ -11,7 +11,7 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import { useLocation } from 'umi';
+import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';
@@ -19,9 +19,8 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { TimingTrigger, TriggerWay } from './components';
 import { TriggerWayType } from './components/TriggerWay';
 import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
-import TriggerDevice from './trigger';
+import TriggerDevice from './trigger/device';
 import { service } from '../index';
-import { useIntl } from '@@/plugin-locale/localeExports';
 import './index.less';
 import { model } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
@@ -54,17 +53,22 @@ export default () => {
   const [parallel, setParallel] = useState(false); // 是否并行
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
   const [requestParams, setRequestParams] = useState<any>(undefined);
-  const [formDatas, setFormDatas] = useState({});
+  const [actionsData, setActionsData] = useState<any[]>([]);
 
   const getDetail = async (id: string) => {
     const resp = await service.detail(id);
     if (resp.status === 200 && resp.result) {
       const _data: any = resp.result;
-      console.log(_data);
       FormModel = _data;
       form.setFieldsValue(_data);
       setParallel(_data.parallel);
       setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
+      if (_data.trigger?.device?.selectorValues) {
+        setRequestParams({ trigger: _data.trigger });
+      }
+      if (_data.actions) {
+        setActionsData(_data.actions);
+      }
     }
   };
 
@@ -95,7 +99,7 @@ export default () => {
       setLoading(false);
       if (resp.status === 200) {
         message.success('操作成功');
-        form.setFieldsValue({ id: resp.result.id });
+        history.back();
       } else {
         message.error(resp.message);
       }
@@ -162,8 +166,6 @@ export default () => {
     </Space>
   );
 
-  console.log(formDatas);
-
   return (
     <PageContainer>
       <Card>
@@ -179,8 +181,10 @@ export default () => {
             } else {
               setRequestParams(undefined);
             }
+            if (allValues.actions) {
+              setActionsData(allValues.actions);
+            }
             FormModel = { ...allValues };
-            setFormDatas({ ...allValues });
           }}
         >
           <Form.Item
@@ -201,7 +205,10 @@ export default () => {
             <Input placeholder={'请输入名称'} />
           </Form.Item>
           <Form.Item label={<TitleComponent data={'触发方式'} style={{ margin: 0 }} />} required>
-            <Form.Item name={['trigger', 'type']}>
+            <Form.Item
+              name={['trigger', 'type']}
+              rules={[{ required: true, message: '请选择触发方式' }]}
+            >
               <TriggerWay onSelect={setTriggerType} />
             </Form.Item>
             {triggerType === TriggerWayType.timing && (
@@ -210,11 +217,9 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              <TriggerDevice
-                className={'trigger-type-content'}
-                form={form}
-                triggerData={FormModel.trigger}
-              />
+              <Form.Item name={['trigger', 'device']}>
+                <TriggerDevice className={'trigger-type-content'} />
+              </Form.Item>
             )}
           </Form.Item>
           {triggerType === TriggerWayType.device &&
@@ -268,26 +273,41 @@ export default () => {
               </Space>
             }
           >
-            <Form.List name="actions">
-              {(fields, { add, remove }) => (
-                <div className={'scene-actions'}>
-                  {fields.map(({ key, name, ...restField }) => (
-                    <ActionItems
-                      key={key}
-                      form={form}
-                      restField={restField}
-                      name={name}
-                      triggerType={triggerType}
-                      onRemove={() => remove(name)}
-                      actionItemData={FormModel.actions && FormModel.actions[name]}
-                    />
-                  ))}
-                  <Form.Item noStyle>
-                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                      新增
-                    </Button>
-                  </Form.Item>
-                </div>
+            <Form.List
+              name="actions"
+              rules={[
+                {
+                  validator: async (_: any, value: any) => {
+                    if (!value) {
+                      return Promise.reject(new Error('请添加执行动作'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              {(fields, { add, remove }, { errors }) => (
+                <>
+                  <div className={'scene-actions'}>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <ActionItems
+                        key={key}
+                        form={form}
+                        restField={restField}
+                        name={name}
+                        triggerType={triggerType}
+                        onRemove={() => remove(name)}
+                        actionItemData={actionsData.length && actionsData[name]}
+                      />
+                    ))}
+                    <Form.Item noStyle>
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        新增
+                      </Button>
+                    </Form.Item>
+                  </div>
+                  <Form.ErrorList errors={errors} />
+                </>
               )}
             </Form.List>
           </Form.Item>

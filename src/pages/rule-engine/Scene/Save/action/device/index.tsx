@@ -1,9 +1,10 @@
 import type { FormInstance } from 'antd';
-import { Form, Input, Select } from 'antd';
+import { Col, Form, Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
 import Device from './deviceModal';
 import TagModal from './tagModal';
+import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 
 interface DeviceProps {
   name: number;
@@ -153,70 +154,89 @@ export default (props: DeviceProps) => {
 
   return (
     <>
-      <Form.Item name={[name, 'device', 'productId']}>
-        <Select
-          options={productList}
-          placeholder={'请选择产品'}
-          style={{ width: 220 }}
-          listHeight={220}
-          onChange={() => {
-            props.form?.resetFields([['actions', name, 'device', 'selector']]);
-            props.form?.resetFields([['actions', name, 'device', 'selectorValues']]);
-            props.form?.resetFields([['actions', name, 'device', 'message', 'functionId']]);
-            // setMessageType(MessageTypeEnum.WRITE_PROPERTY)
-          }}
-          fieldNames={{ label: 'name', value: 'id' }}
-        />
-      </Form.Item>
-      <Form.Item
-        name={[name, 'device', 'selector']}
-        initialValue={props.value ? props.value.selector : SourceEnum.fixed}
-      >
-        <Select options={sourceList} style={{ width: 120 }} />
-      </Form.Item>
-      {selector === SourceEnum.fixed && (
-        <Form.Item name={[name, 'device', 'selectorValues']}>
-          <Device productId={productId} />
-        </Form.Item>
-      )}
-      {selector === SourceEnum.tag && (
-        <Form.Item name={[name, 'device', 'selectorValues']}>
-          <TagModal tagData={tagList} />
-        </Form.Item>
-      )}
-      {selector === SourceEnum.relation && (
-        <Form.Item name={[name, 'device', 'selectorValues']}>
-          <Select style={{ width: 300 }} />
-        </Form.Item>
-      )}
-      <Form.Item
-        name={[name, 'device', 'message', 'messageType']}
-        initialValue={
-          props.value && props.value.message && props.value.message.messageType
-            ? props.value.message.messageType
-            : MessageTypeEnum.WRITE_PROPERTY
-        }
-        {...props.restField}
-      >
-        <Select
-          options={[
-            { label: '功能调用', value: MessageTypeEnum.INVOKE_FUNCTION },
-            { label: '读取属性', value: MessageTypeEnum.READ_PROPERTY },
-            { label: '设置属性', value: MessageTypeEnum.WRITE_PROPERTY },
-          ]}
-          style={{ width: 120 }}
-        />
-      </Form.Item>
-      {messageType === MessageTypeEnum.INVOKE_FUNCTION ? (
-        <Form.Item name={[name, 'device', 'message', 'functionId']}>
+      <Col span={5}>
+        <Form.Item name={[name, 'device', 'productId']}>
           <Select
-            options={functionList}
+            showSearch
+            options={productList}
+            placeholder={'请选择产品'}
+            style={{ width: '100%' }}
+            listHeight={220}
+            onChange={() => {
+              props.form?.resetFields([['actions', name, 'device', 'selector']]);
+              props.form?.resetFields([['actions', name, 'device', 'selectorValues']]);
+              props.form?.resetFields([['actions', name, 'device', 'message', 'functionId']]);
+              // setMessageType(MessageTypeEnum.WRITE_PROPERTY)
+            }}
             fieldNames={{ label: 'name', value: 'id' }}
-            style={{ width: 120 }}
-            placeholder={'请选择功能'}
+            filterOption={(input: string, option: any) =>
+              option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
           />
         </Form.Item>
-      ) : null}
+      </Col>
+      <Col span={7}>
+        <ItemGroup compact>
+          <Form.Item
+            name={[name, 'device', 'selector']}
+            initialValue={props.value ? props.value.selector : SourceEnum.fixed}
+            {...props.restField}
+          >
+            <Select options={sourceList} style={{ width: 120 }} />
+          </Form.Item>
+          {selector === SourceEnum.fixed && (
+            <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+              <Device productId={productId} />
+            </Form.Item>
+          )}
+          {selector === SourceEnum.tag && (
+            <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+              <TagModal tagData={tagList} />
+            </Form.Item>
+          )}
+          {selector === SourceEnum.relation && (
+            <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+              <Select style={{ width: 300 }} />
+            </Form.Item>
+          )}
+        </ItemGroup>
+      </Col>
+      <Col span={4}>
+        <Form.Item
+          name={[name, 'device', 'message', 'messageType']}
+          initialValue={
+            props.value && props.value.message && props.value.message.messageType
+              ? props.value.message.messageType
+              : MessageTypeEnum.WRITE_PROPERTY
+          }
+          {...props.restField}
+        >
+          <Select
+            options={[
+              { label: '功能调用', value: MessageTypeEnum.INVOKE_FUNCTION },
+              { label: '读取属性', value: MessageTypeEnum.READ_PROPERTY },
+              { label: '设置属性', value: MessageTypeEnum.WRITE_PROPERTY },
+            ]}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
+      </Col>
+      <Col span={4}>
+        {messageType === MessageTypeEnum.INVOKE_FUNCTION ? (
+          <Form.Item name={[name, 'device', 'message', 'functionId']} {...props.restField}>
+            <Select
+              showSearch
+              options={functionList}
+              fieldNames={{ label: 'name', value: 'id' }}
+              style={{ width: '100%' }}
+              placeholder={'请选择功能'}
+              filterOption={(input: string, option: any) =>
+                option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            />
+          </Form.Item>
+        ) : null}
+      </Col>
       <Form.Item name={[name, 'device', 'source']} hidden>
         <Input />
       </Form.Item>

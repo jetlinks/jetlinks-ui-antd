@@ -39,7 +39,6 @@ export default (props: InputNumberProps) => {
     <InputNumber
       value={time}
       addonAfter={TimeTypeAfter}
-      style={{ width: 150 }}
       min={0}
       max={9999}
       onChange={(value) => {

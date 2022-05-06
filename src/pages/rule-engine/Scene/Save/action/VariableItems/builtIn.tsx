@@ -4,6 +4,7 @@ import { useRequest } from 'umi';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 import moment from 'moment';
+import { debounce } from 'lodash';
 
 type ChangeType = {
   source?: string;
@@ -57,7 +58,7 @@ export default (props: BuiltInProps) => {
     if (_upperKey) {
       obj.upperKey = _upperKey;
     }
-
+    console.log(_source, _value);
     if (props.onChange) {
       props.onChange(obj);
     }
@@ -70,45 +71,12 @@ export default (props: BuiltInProps) => {
     [source],
   );
 
-  const inputNodeByType = useCallback(
-    (data: any) => {
-      switch (data.type) {
-        case 'date':
-          return (
-            // @ts-ignore
-            <DatePicker
-              value={value ? moment(value) : undefined}
-              style={{ width: '100%' }}
-              format={data.format || 'YYYY-MM-DD HH:mm:ss'}
-              onChange={(date) => {
-                itemOnChange(date?.format(data.format || 'YYYY-MM-DD HH:mm:ss'));
-              }}
-            />
-          );
-        case 'number':
-          return (
-            <InputNumber
-              value={value}
-              placeholder={`请输入${data.name}`}
-              style={{ width: '100%' }}
-              onChange={itemOnChange}
-            />
-          );
-        default:
-          return (
-            <Input
-              value={value}
-              placeholder={`请输入${data.name}`}
-              onChange={(e) => itemOnChange(e.target.value)}
-            />
-          );
-      }
-    },
-    [value],
-  );
+  const inputChange = (e: any) => {
+    itemOnChange(e.target.value);
+  };
 
   return (
-    <ItemGroup>
+    <ItemGroup compact>
       <Select
         value={source}
         options={[
@@ -132,7 +100,35 @@ export default (props: BuiltInProps) => {
           placeholder={'请选择参数'}
         />
       ) : (
-        <div>{inputNodeByType(props.data)}</div>
+        <div>
+          {
+            // inputNodeByType(props.data)
+            props.data.type === 'date' ? (
+              // @ts-ignore
+              <DatePicker
+                value={value ? moment(value, 'YYYY-MM-DD HH:mm:ss') : undefined}
+                style={{ width: '100%' }}
+                format={'YYYY-MM-DD HH:mm:ss'}
+                onChange={(_: any, dateString) => {
+                  itemOnChange(dateString);
+                }}
+              />
+            ) : props.data.type === 'number' ? (
+              <InputNumber
+                value={value}
+                placeholder={`请输入${props.data.name}`}
+                style={{ width: '100%' }}
+                onChange={itemOnChange}
+              />
+            ) : (
+              <Input
+                value={value}
+                placeholder={`请输入${props.data.name}`}
+                onChange={debounce(inputChange, 300)}
+              />
+            )
+          }
+        </div>
       )}
     </ItemGroup>
   );

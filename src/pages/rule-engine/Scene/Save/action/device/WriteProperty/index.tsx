@@ -1,8 +1,9 @@
-import { DatePicker, FormInstance, Input, InputNumber, Select, Space } from 'antd';
+import { Col, DatePicker, FormInstance, Input, InputNumber, Row, Select } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from '@@/plugin-request/request';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import moment from 'moment';
+import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 
 interface WritePropertyProps {
   properties: any[];
@@ -67,7 +68,7 @@ export default (props: WritePropertyProps) => {
         case 'boolean':
           return (
             <Select
-              style={{ width: 300, textAlign: 'left' }}
+              style={{ width: '100%', textAlign: 'left' }}
               value={propertiesValue}
               options={[
                 { label: 'true', value: true },
@@ -85,7 +86,7 @@ export default (props: WritePropertyProps) => {
         case 'double':
           return (
             <InputNumber
-              style={{ width: 300 }}
+              style={{ width: '100%' }}
               value={propertiesValue}
               placeholder={'请输入'}
               onChange={(value) => {
@@ -97,7 +98,7 @@ export default (props: WritePropertyProps) => {
           return (
             // @ts-ignore
             <DatePicker
-              style={{ width: 300 }}
+              style={{ width: '100%' }}
               value={propertiesValue ? moment(propertiesValue, 'YYYY-MM-DD HH:mm:ss') : undefined}
               onChange={(date) => {
                 onChange(propertiesKey, date ? date.format('YYYY-MM-DD HH:mm:ss') : undefined);
@@ -107,7 +108,7 @@ export default (props: WritePropertyProps) => {
         default:
           return (
             <Input
-              style={{ width: 300 }}
+              style={{ width: '100%' }}
               value={propertiesValue}
               placeholder={'请输入'}
               onChange={(e) => onChange(propertiesKey, e.target.value)}
@@ -119,37 +120,43 @@ export default (props: WritePropertyProps) => {
   );
 
   return (
-    <Space>
-      <Select
-        value={propertiesKey}
-        options={props.properties}
-        fieldNames={{ label: 'name', value: 'id' }}
-        style={{ width: 120 }}
-        onSelect={(key: any) => {
-          onChange(key, undefined);
-        }}
-        placeholder={'请选择属性'}
-      ></Select>
-      <Select
-        value={source}
-        options={[
-          { label: '手动输入', value: 'fixed' },
-          { label: '内置参数', value: 'upper' },
-        ]}
-        style={{ width: 120 }}
-        onChange={(key) => {
-          setSource(key);
-        }}
-      />
-      {source === 'upper' ? (
+    <Row gutter={24}>
+      <Col span={4}>
         <Select
-          options={builtInList}
+          value={propertiesKey}
+          options={props.properties}
           fieldNames={{ label: 'name', value: 'id' }}
-          placeholder={'请选择参数'}
-        />
-      ) : (
-        <div>{inputNodeByType(propertiesType)}</div>
-      )}
-    </Space>
+          style={{ width: '100%' }}
+          onSelect={(key: any) => {
+            onChange(key, undefined);
+          }}
+          placeholder={'请选择属性'}
+        ></Select>
+      </Col>
+      <Col span={7}>
+        <ItemGroup compact>
+          <Select
+            value={source}
+            options={[
+              { label: '手动输入', value: 'fixed' },
+              { label: '内置参数', value: 'upper' },
+            ]}
+            style={{ width: 120 }}
+            onChange={(key) => {
+              setSource(key);
+            }}
+          />
+          {source === 'upper' ? (
+            <Select
+              options={builtInList}
+              fieldNames={{ label: 'name', value: 'id' }}
+              placeholder={'请选择参数'}
+            />
+          ) : (
+            <div>{inputNodeByType(propertiesType)}</div>
+          )}
+        </ItemGroup>
+      </Col>
+    </Row>
   );
 };

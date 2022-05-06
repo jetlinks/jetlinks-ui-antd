@@ -170,7 +170,7 @@ export default (props: DeviceModelProps) => {
             setSelectKeys([...value]);
           }
         }}
-        style={{ width: 300 }}
+        style={{ width: '100%' }}
         value={value.map((item) => item.name).toString()}
         readOnly
       />
