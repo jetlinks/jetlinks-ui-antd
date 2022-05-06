@@ -190,7 +190,7 @@ const Save = (props: Props) => {
           ),
         },
         'x-component-props': {
-          placeholder: '请输入名称',
+          placeholder: '请选择关联触发场景',
         },
       },
       description: {
@@ -201,7 +201,7 @@ const Save = (props: Props) => {
           gridSpan: 1,
         },
         'x-component-props': {
-          placeholder: '请输入描述信息',
+          placeholder: '请输入说明',
         },
       },
     },

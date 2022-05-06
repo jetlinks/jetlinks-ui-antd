@@ -1,4 +1,16 @@
-import { Badge, Button, Col, Input, message, Modal, Popconfirm, Row, Tooltip, Tree } from 'antd';
+import {
+  Badge,
+  Button,
+  Col,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Row,
+  Spin,
+  Tooltip,
+  Tree,
+} from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -88,27 +100,32 @@ const SyncUser = observer(() => {
 
   const [treeData, setTreeData] = useState([]);
 
+  const [loading, setLoading] = useState<boolean>(true);
   /**
    * 获取部门列表
    */
   const getDepartment = async () => {
     if (state.current?.id) {
       if (id === 'dingTalk') {
-        service.syncUser.dingTalkDept(state.current?.id).then((resp) => {
-          if (resp.status === 200) {
-            setTreeData(resp.result);
-            setDept(resp.result[0].id);
-            // console.log(resp.result[0].id, 'id');
-          }
-        });
+        service.syncUser
+          .dingTalkDept(state.current?.id)
+          .then((resp) => {
+            if (resp.status === 200) {
+              setTreeData(resp.result);
+              setDept(resp.result[0].id);
+            }
+          })
+          .finally(() => setLoading(false));
       } else if (id === 'weixin') {
-        service.syncUser.wechatDept(state.current?.id).then((resp) => {
-          if (resp.status === 200) {
-            setTreeData(resp.result);
-            setDept(resp.result[0].id);
-            // console.log(resp.result[0].id, 'id~~');
-          }
-        });
+        service.syncUser
+          .wechatDept(state.current?.id)
+          .then((resp) => {
+            if (resp.status === 200) {
+              setTreeData(resp.result);
+              setDept(resp.result[0].id);
+            }
+          })
+          .finally(() => setLoading(false));
       }
     }
   };
@@ -128,104 +145,106 @@ const SyncUser = observer(() => {
       onCancel={() => (state.syncUser = false)}
       width="80vw"
     >
-      <Row>
-        <Col span={4}>
-          <div style={{ borderRight: 'lightgray 1px solid', padding: '2px', height: '600px' }}>
-            <Input.Search style={{ marginBottom: 8 }} placeholder="请输入部门名称" />
-            <Tree
-              fieldNames={{
-                title: 'name',
-                key: 'id',
-              }}
-              selectedKeys={[dept || '']}
-              onSelect={(key) => {
-                setDept(key[0] as string);
-              }}
-              treeData={treeData}
-            />
-          </div>
-        </Col>
-        <Col span={20}>
-          {dept && (
-            <ProTable
-              rowKey="thirdPartyUserId"
-              actionRef={actionRef}
-              search={false}
-              columns={columns}
-              params={{ dept: dept }}
-              request={(params) =>
-                service
-                  .queryZipSyncUser(
-                    {
-                      dingTalk: 'dingtalk',
-                      weixin: 'wechat',
-                    }[id],
-                    id,
-                    state.current?.provider || '',
-                    state.current?.id || '',
-                    params.dept || '',
-                  )
-                  .then((resp: any) => {
-                    setList(resp);
-                    return {
-                      code: '',
-                      result: {
-                        data: resp || [],
-                        pageIndex: 0,
-                        pageSize: 0,
-                        total: 0,
-                      },
-                      status: 200,
-                    };
-                  })
-              }
-              headerTitle={
-                <Popconfirm
-                  title="确认保存"
-                  onConfirm={async () => {
-                    const arr = list
-                      .filter((item) => item.status === 0)
-                      .map((i) => {
-                        return {
-                          userId: i.userId,
-                          providerName: i.userName,
-                          thirdPartyUserId: i.thirdPartyUserId,
-                        };
-                      });
-                    const resp = await service.syncUser.bindUser(
+      <Spin spinning={loading}>
+        <Row>
+          <Col span={4}>
+            <div style={{ borderRight: 'lightgray 1px solid', padding: '2px', height: '600px' }}>
+              <Input.Search style={{ marginBottom: 8 }} placeholder="请输入部门名称" />
+              <Tree
+                fieldNames={{
+                  title: 'name',
+                  key: 'id',
+                }}
+                selectedKeys={[dept || '']}
+                onSelect={(key) => {
+                  setDept(key[0] as string);
+                }}
+                treeData={treeData}
+              />
+            </div>
+          </Col>
+          <Col span={20}>
+            {dept && (
+              <ProTable
+                rowKey="thirdPartyUserId"
+                actionRef={actionRef}
+                search={false}
+                columns={columns}
+                params={{ dept: dept }}
+                request={(params) =>
+                  service
+                    .queryZipSyncUser(
+                      {
+                        dingTalk: 'dingtalk',
+                        weixin: 'wechat',
+                      }[id],
                       id,
                       state.current?.provider || '',
                       state.current?.id || '',
-                      [...arr],
-                    );
-                    if (resp.status === 200) {
-                      message.success('操作成功！');
-                      actionRef.current?.reload();
-                    }
-                  }}
-                >
-                  <Button type="primary">保存</Button>
-                </Popconfirm>
-              }
-            />
-          )}
-        </Col>
-      </Row>
-      {visible && (
-        <BindUser
-          id={id}
-          close={() => {
-            setCurrent({});
-            setVisible(false);
-          }}
-          data={current}
-          reload={() => {
-            setCurrent({});
-            setVisible(false);
-            actionRef.current?.reload();
-          }}
-        />
-      )}
+                      params.dept || '',
+                    )
+                    .then((resp: any) => {
+                      setList(resp);
+                      return {
+                        code: '',
+                        result: {
+                          data: resp || [],
+                          pageIndex: 0,
+                          pageSize: 0,
+                          total: 0,
+                        },
+                        status: 200,
+                      };
+                    })
+                }
+                headerTitle={
+                  <Popconfirm
+                    title="确认保存"
+                    onConfirm={async () => {
+                      const arr = list
+                        .filter((item) => item.status === 0)
+                        .map((i) => {
+                          return {
+                            userId: i.userId,
+                            providerName: i.userName,
+                            thirdPartyUserId: i.thirdPartyUserId,
+                          };
+                        });
+                      const resp = await service.syncUser.bindUser(
+                        id,
+                        state.current?.provider || '',
+                        state.current?.id || '',
+                        [...arr],
+                      );
+                      if (resp.status === 200) {
+                        message.success('操作成功！');
+                        actionRef.current?.reload();
+                      }
+                    }}
+                  >
+                    <Button type="primary">保存</Button>
+                  </Popconfirm>
+                }
+              />
+            )}
+          </Col>
+        </Row>
+        {visible && (
+          <BindUser
+            id={id}
+            close={() => {
+              setCurrent({});
+              setVisible(false);
+            }}
+            data={current}
+            reload={() => {
+              setCurrent({});
+              setVisible(false);
+              actionRef.current?.reload();
+            }}
+          />
+        )}
+      </Spin>
     </Modal>
   );
 });
