@@ -194,10 +194,10 @@ export default (props: TimingTrigger) => {
               />
               {data.mod === PeriodModEnum.period ? (
                 <TimePicker.RangePicker
-                  format={'hh:mm:ss'}
+                  format={'HH:mm:ss'}
                   value={
                     data.period?.from
-                      ? [moment(data.period?.from, 'hh:mm:ss'), moment(data.period?.to, 'hh:mm:ss')]
+                      ? [moment(data.period?.from, 'HH:mm:ss'), moment(data.period?.to, 'hh:mm:ss')]
                       : undefined
                   }
                   onChange={(_, dateString) => {
