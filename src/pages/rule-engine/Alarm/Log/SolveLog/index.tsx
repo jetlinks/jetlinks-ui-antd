@@ -4,7 +4,6 @@ import ProTable from '@jetlinks/pro-table';
 import { Modal } from 'antd';
 import { useRef, useState } from 'react';
 import { service } from '@/pages/rule-engine/Alarm/Log';
-import moment from 'moment';
 
 interface Props {
   data: Partial<AlarmLogItem>;
@@ -39,7 +38,7 @@ const SolveLog = (props: Props) => {
       dataIndex: 'handleTime',
       title: '处理时间',
       valueType: 'dateTime',
-      render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      // render: (text: any, record: any) => <span>{moment(record.handleTime).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       dataIndex: 'handleType',
@@ -63,7 +62,7 @@ const SolveLog = (props: Props) => {
       dataIndex: 'createTime',
       title: '告警时间',
       valueType: 'dateTime',
-      render: (text: any) => <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      // render: (text: any, record: any) => <span>{moment(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       dataIndex: 'description',
@@ -72,7 +71,15 @@ const SolveLog = (props: Props) => {
   ];
 
   return (
-    <Modal title={'处理记录'} visible onCancel={props.close} onOk={() => {}} width={1200}>
+    <Modal
+      title={'处理记录'}
+      visible
+      onCancel={props.close}
+      onOk={() => {
+        props.close();
+      }}
+      width={1200}
+    >
       <SearchComponent<AlarmLogSolveHistoryItem>
         field={columns}
         target="bind-channel"
