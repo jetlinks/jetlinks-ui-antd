@@ -40,6 +40,10 @@ const DefaultShakeLimit = {
 
 export let FormModel = model<FormModelType>({});
 
+const CronRegEx = new RegExp(
+  '(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7])|([1-7])|(\\?)|(\\*)|(([1-7]L)|([1-7]\\#[1-4]))))|(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7] )|([1-7] )|(\\? )|(\\* )|(([1-7]L )|([1-7]\\#[1-4]) ))((19[789][0-9]|20[0-9][0-9])\\-(19[789][0-9]|20[0-9][0-9])))',
+);
+
 export default () => {
   const location = useLocation();
   const [form] = Form.useForm();
@@ -50,7 +54,7 @@ export default () => {
   const [triggerType, setTriggerType] = useState('');
   // const [triggerValue, setTriggerValue] = useState<any>();
   const [loading, setLoading] = useState(false);
-  const [parallel, setParallel] = useState(false); // 是否并行
+  const [parallel, setParallel] = useState(true); // 是否并行
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
   const [requestParams, setRequestParams] = useState<any>(undefined);
   const [actionsData, setActionsData] = useState<any[]>([]);
@@ -214,7 +218,51 @@ export default () => {
               <TriggerWay onSelect={setTriggerType} disabled={isEdit} />
             </Form.Item>
             {triggerType === TriggerWayType.timing && (
-              <Form.Item name={['trigger', 'timer']}>
+              <Form.Item
+                name={['trigger', 'timer']}
+                rules={[
+                  {
+                    validator: async (_: any, value: any) => {
+                      if (value) {
+                        if (value.trigger === 'cron') {
+                          if (!value.cron) {
+                            return Promise.reject(new Error('请输入cron表达式'));
+                          } else if (value.cron.length > 64) {
+                            return Promise.reject(new Error('最多可输入64个字符'));
+                          } else if (!CronRegEx.test(value.cron)) {
+                            return Promise.reject(new Error('请输入正确的cron表达式'));
+                          }
+                        } else {
+                          if (!value.when.length) {
+                            return Promise.reject(new Error('请选择时间'));
+                          }
+                          if (value.period) {
+                            if (!value.period.from || !value.period.to) {
+                              return Promise.reject(new Error('请选择时间周期'));
+                            }
+                            if (!value.period.every) {
+                              return Promise.reject(new Error('请输入周期频率'));
+                            }
+                          } else if (value.once) {
+                            if (!value.once.time) {
+                              return Promise.reject(new Error('请选择时间周期'));
+                            }
+                          }
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                initialValue={{
+                  trigger: 'week',
+                  mod: 'period',
+                  when: [],
+                  period: {
+                    unit: 'seconds',
+                  },
+                }}
+              >
                 <TimingTrigger className={'trigger-type-content'} />
               </Form.Item>
             )}
@@ -235,7 +283,7 @@ export default () => {
               />
             </Form.Item>
           ) : null}
-          <Form.Item hidden name={'parallel'} initialValue={false}>
+          <Form.Item hidden name={'parallel'} initialValue={true}>
             <Input />
           </Form.Item>
           <Form.Item

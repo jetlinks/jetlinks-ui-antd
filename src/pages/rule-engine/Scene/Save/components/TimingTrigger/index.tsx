@@ -99,16 +99,6 @@ export default (props: TimingTrigger) => {
     [data],
   );
 
-  const cronChange = useCallback(
-    (e: any) => {
-      onChange({
-        trigger: data.trigger,
-        cron: e.target.value,
-      });
-    },
-    [data],
-  );
-
   const TimeTypeAfter = (
     <Select
       value={data.period?.unit || 'seconds'}
@@ -171,10 +161,15 @@ export default (props: TimingTrigger) => {
             />
           ) : (
             <Input
-              value={data.cron}
+              value={props.value?.cron}
               placeholder={'请输入cron表达式'}
               style={{ width: 400 }}
-              onChange={cronChange}
+              onChange={(e) => {
+                onChange({
+                  trigger: data.trigger,
+                  cron: e.target.value,
+                });
+              }}
             />
           )}
         </ItemGroup>
