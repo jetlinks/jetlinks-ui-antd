@@ -32,6 +32,10 @@ class Service extends BaseService<ConfigItem> {
       method: 'POST',
       data: {},
     });
+  public queryDefaultLevel = () =>
+    request(`/${SystemConst.API_BASE}/alarm/config/default/level`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

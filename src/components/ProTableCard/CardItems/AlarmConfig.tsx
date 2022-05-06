@@ -3,6 +3,8 @@ import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { StatusColorEnum } from '@/components/BadgeStatus';
+import { Tooltip } from 'antd';
+import { Store } from 'jetlinks-store';
 
 export interface AlarmConfigProps extends ConfigurationItem {
   detail?: React.ReactNode;
@@ -31,16 +33,30 @@ export default (props: AlarmConfigProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <span className={'card-item-header-name ellipsis'}>{props?.name}</span>
           </div>
           <div className={'card-item-content'}>
             <div>
-              <label>告警名称</label>
-              <div className={'ellipsis'}>{props.name}</div>
+              <label>关联场景联动</label>
+              <div className={'ellipsis'}>
+                <Tooltip title={props?.sceneName || ''}>{props?.sceneName || ''}</Tooltip>
+              </div>
             </div>
             <div>
-              <label>说明</label>
-              <div className={'ellipsis'}>{props.description}</div>
+              <label>告警级别</label>
+              <div className={'ellipsis'}>
+                <Tooltip
+                  title={
+                    (Store.get('default-level') || []).find(
+                      (item: any) => item?.level === props?.level,
+                    )?.title || props?.level
+                  }
+                >
+                  {(Store.get('default-level') || []).find(
+                    (item: any) => item?.level === props?.level,
+                  )?.title || props?.level}
+                </Tooltip>
+              </div>
             </div>
           </div>
         </div>
