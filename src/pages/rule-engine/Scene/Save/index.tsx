@@ -185,7 +185,7 @@ export default () => {
             if (changeValue.trigger) {
               setRequestParams({ trigger: allValues.trigger });
             }
-            if (allValues.actions) {
+            if (changeValue.trigger) {
               setActionsData(allValues.actions);
             }
             FormModel = { ...allValues };
