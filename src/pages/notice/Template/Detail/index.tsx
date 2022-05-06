@@ -1251,6 +1251,11 @@ const Detail = observer(() => {
         'x-component-props': {
           rows: 4,
         },
+        'x-decorator-props': {
+          style: {
+            zIndex: 998,
+          },
+        },
       },
     },
   };
