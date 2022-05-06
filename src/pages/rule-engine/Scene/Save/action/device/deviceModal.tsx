@@ -38,6 +38,7 @@ export default (props: DeviceModelProps) => {
   const [selectKeys, setSelectKeys] = useState<ChangeValueType[]>(props.value || []);
   const [searchParam, setSearchParam] = useState({});
   const [value, setValue] = useState<ChangeValueType[]>(props.value || []);
+  const oldAllSelect = useRef<any[]>([]);
 
   useEffect(() => {
     setValue(props.value || []);
@@ -161,16 +162,18 @@ export default (props: DeviceModelProps) => {
                 setSelectKeys(newSelectKeys);
               },
               onSelectAll: (selected, selectedRows) => {
-                console.log(selectedRows);
+                let newSelectKeys = [...selectKeys];
                 if (selected) {
-                  setSelectKeys(
-                    selectedRows.map((selectedRow) => ({
-                      name: selectedRow.name,
-                      value: selectedRow.id,
-                    })),
-                  );
+                  oldAllSelect.current = selectedRows;
+                  selectedRows.forEach((item) => {
+                    newSelectKeys.push({ name: item.name, value: item.id });
+                  });
                 } else {
+                  newSelectKeys = newSelectKeys.filter((a) => {
+                    return !oldAllSelect.current.some((b) => b.id === a.value);
+                  });
                 }
+                setSelectKeys(newSelectKeys);
               },
             }}
             request={(params) => queryDevice(params)}
