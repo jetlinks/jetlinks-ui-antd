@@ -125,7 +125,7 @@ const Detail = observer(() => {
             const _provider = field.query('provider').value();
             if (_provider === 'corpMessage') {
               field.componentProps = {
-                disabled: true,
+                // disabled: true,
                 rows: 5,
                 placeholder:
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
