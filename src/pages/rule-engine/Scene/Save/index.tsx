@@ -54,10 +54,12 @@ export default () => {
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
   const [requestParams, setRequestParams] = useState<any>(undefined);
   const [actionsData, setActionsData] = useState<any[]>([]);
+  const [isEdit, setIsEdit] = useState(false);
 
   const getDetail = async (id: string) => {
     const resp = await service.detail(id);
     if (resp.status === 200 && resp.result) {
+      setIsEdit(true);
       const _data: any = resp.result;
       FormModel = _data;
       form.setFieldsValue(_data);
@@ -209,7 +211,7 @@ export default () => {
               name={['trigger', 'type']}
               rules={[{ required: true, message: '请选择触发方式' }]}
             >
-              <TriggerWay onSelect={setTriggerType} />
+              <TriggerWay onSelect={setTriggerType} disabled={isEdit} />
             </Form.Item>
             {triggerType === TriggerWayType.timing && (
               <Form.Item name={['trigger', 'timer']}>

@@ -4,7 +4,6 @@ import { useRequest } from 'umi';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 import moment from 'moment';
-import { debounce } from 'lodash';
 
 type ChangeType = {
   source?: string;
@@ -58,7 +57,6 @@ export default (props: BuiltInProps) => {
     if (_upperKey) {
       obj.upperKey = _upperKey;
     }
-    console.log(_source, _value);
     if (props.onChange) {
       props.onChange(obj);
     }
@@ -70,10 +68,6 @@ export default (props: BuiltInProps) => {
     },
     [source],
   );
-
-  const inputChange = (e: any) => {
-    itemOnChange(e.target.value);
-  };
 
   return (
     <ItemGroup compact>
@@ -122,9 +116,11 @@ export default (props: BuiltInProps) => {
               />
             ) : (
               <Input
-                value={value}
+                value={props.value?.value}
                 placeholder={`请输入${props.data.name}`}
-                onChange={debounce(inputChange, 300)}
+                onChange={(e) => {
+                  onChange(source, e.target.value);
+                }}
               />
             )
           }
