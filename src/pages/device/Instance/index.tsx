@@ -84,7 +84,6 @@ const Instance = () => {
           value: location.state[key],
         });
       });
-      console.log(_terms);
       setJumpParams([
         {
           terms: _terms,

@@ -122,7 +122,6 @@ const ProTableCard = <
           return {};
         }}
         onLoadingChange={(l) => {
-          console.log(l);
           setLoading(!!l);
         }}
         pagination={{
