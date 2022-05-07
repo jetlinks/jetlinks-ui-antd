@@ -198,6 +198,8 @@ const Config = () => {
   };
 
   const handleSaveIO = async () => {
+    outputForm.validate();
+    inputForm.validate();
     const inputConfig: IOConfigItem = await inputForm.submit();
     const outputConfig: IOConfigItem = await outputForm.submit();
     const inputResp = await service.saveOutputData({
@@ -276,8 +278,16 @@ const Config = () => {
   return (
     <PageContainer onTabChange={setTab} tabActiveKey={tab} tabList={list}>
       <Row>
-        <Col span={16}>{list.find((k) => k.key === tab)?.component}</Col>
-        <Col span={8}></Col>
+        <Col span={14}> {list.find((k) => k.key === tab)?.component}</Col>
+        <Col span={9} push={1}>
+          <Card>
+            <h1>功能说明</h1>
+            <p>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</p>
+            <p>2、告警级别将会在告警配置中被引用</p>
+            <p>3、该页面删除告警级别后，下方的告警级别会自动-1进行补位</p>
+            <p>4、最多可配置5个级别</p>
+          </Card>
+        </Col>
       </Row>
     </PageContainer>
   );
