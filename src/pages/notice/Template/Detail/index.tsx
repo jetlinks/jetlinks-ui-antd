@@ -242,7 +242,7 @@ const Detail = observer(() => {
               });
             }
           });
-          onFieldValueChange('template.*(subject,markdown.title)', (field, form1) => {
+          onFieldValueChange('template.*(subject,markdown.title,link.title)', (field, form1) => {
             const value = (field as Field).value;
             const _message = field.query('template.message').value();
 
@@ -460,13 +460,15 @@ const Detail = observer(() => {
     batchCheckEmail(value) {
       const regEmail = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
       let error;
-      value.some((item: string) => {
-        if (!regEmail.test(item)) {
-          error = item;
-          return true;
-        }
-        return false;
-      });
+      if (value) {
+        value.some((item: string) => {
+          if (!regEmail.test(item)) {
+            error = item;
+            return true;
+          }
+          return false;
+        });
+      }
       return error ? `${error}邮件格式错误` : '';
     },
   });
@@ -1116,6 +1118,7 @@ const Detail = observer(() => {
                         },
                         gridSpan: 23,
                       },
+                      required: true,
                       'x-component-props': {
                         type: 'file',
                         display: 'name',
