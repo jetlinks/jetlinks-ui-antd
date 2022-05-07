@@ -377,7 +377,16 @@ const Alarm: React.FC<Props> = props => {
                 pagination={{
                   current: data.pageIndex + 1,
                   total: data.total,
-                  pageSize: data.pageSize
+                  pageSize: data.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  style: { marginTop: -20 },
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${data.pageIndex + 1}/${Math.ceil(
+                      data.total / data.pageSize,
+                    )}页`,
                 }} />
             </Card>
           </Tabs.TabPane>

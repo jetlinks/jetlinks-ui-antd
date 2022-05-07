@@ -51,6 +51,7 @@ const Save: React.FC<Props> = props => {
       return;
     }
     const result = await actions.submit();
+    // console.log(result)
 
     data.name = props.data.name;
     data.target = props.target;
@@ -75,10 +76,11 @@ const Save: React.FC<Props> = props => {
         productName: props.name,
         triggers: trigger,
         actions: action,
-        properties: properties,
+        properties: result.values?.properties,
         shakeLimit: shakeLimit,
       };
     }
+    // console.log(data)
     props.save({ ...data });
   };
 
