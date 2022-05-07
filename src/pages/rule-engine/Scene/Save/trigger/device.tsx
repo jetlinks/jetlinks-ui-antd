@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Col, Row, Select, TreeSelect } from 'antd';
 import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
-import { queryOrgTree, querySelector } from '@/pages/rule-engine/Scene/Save/trigger/service';
+import { queryOrgTree } from '@/pages/rule-engine/Scene/Save/trigger/service';
 import Device from '@/pages/rule-engine/Scene/Save/action/device/deviceModal';
 import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionCall';
 import Operation from './operation';
@@ -49,7 +49,7 @@ export default (props: TriggerProps) => {
   const [productId, setProductId] = useState('');
   // const [selector, setSelector] = useState('fixed');
 
-  const [selectorOptions, setSelectorOptions] = useState<any[]>([]);
+  // const [selectorOptions, setSelectorOptions] = useState<any[]>([]);
   // const [operation, setOperation] = useState<string | undefined>(undefined);
   const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
 
@@ -66,21 +66,13 @@ export default (props: TriggerProps) => {
     }
   };
 
-  const getSelector = () => {
-    querySelector().then((resp) => {
-      if (resp && resp.status === 200) {
-        setSelectorOptions(resp.result);
-      }
-    });
-  };
-
-  const getOrgTree = useCallback(() => {
-    queryOrgTree(productId).then((resp) => {
-      if (resp && resp.status === 200) {
-        setOrgTree(resp.result);
-      }
-    });
-  }, [queryOrgTree]);
+  // const getSelector = () => {
+  //   querySelector().then((resp) => {
+  //     if (resp && resp.status === 200) {
+  //       setSelectorOptions(resp.result);
+  //     }
+  //   });
+  // };
 
   const handleMetadata = (metadata?: string) => {
     try {
@@ -116,9 +108,6 @@ export default (props: TriggerProps) => {
     (id: string, metadata: any) => {
       setProductId(id);
       handleMetadata(metadata);
-      if (props.value?.selector === 'org') {
-        getOrgTree();
-      }
     },
     [props.value],
   );
@@ -141,29 +130,24 @@ export default (props: TriggerProps) => {
 
   useEffect(() => {
     getProducts();
-    getSelector();
+    // getSelector();
   }, []);
 
-  // useEffect(() => {
-  //   const triggerData = props.triggerData;
-  //   console.log('trigger', triggerData);
-  //   if (triggerData && triggerData.device) {
-  //     const _device = triggerData.device;
-  //
-  //     if (_device.selector) {
-  //       if (_device.selector === 'org') {
-  //         getOrgTree();
-  //       }
-  //       setSelector(_device.selector);
-  //     }
-  //
-  //     if (_device.operation && 'operator' in _device.operation) {
-  //       setOperation(_device.operation.operator);
-  //     } else {
-  //       setOperation(undefined)
-  //     }
-  //   }
-  // }, [props.triggerData]);
+  useEffect(() => {
+    const triggerData: any = props.value;
+    console.log('trigger', triggerData);
+    if (triggerData) {
+      if (triggerData.selector) {
+        if (triggerData.selector === 'org') {
+          queryOrgTree(triggerData.productId).then((resp) => {
+            if (resp && resp.status === 200) {
+              setOrgTree(resp.result);
+            }
+          });
+        }
+      }
+    }
+  }, [props.value]);
 
   return (
     <div className={classNames(props.className)}>
@@ -198,12 +182,16 @@ export default (props: TriggerProps) => {
             <ItemGroup compact>
               <Select
                 value={props.value?.selector}
-                options={selectorOptions}
-                fieldNames={{ label: 'name', value: 'id' }}
+                options={[
+                  { label: '全部设备', value: 'all' },
+                  { label: '固定设备', value: 'fixed' },
+                  { label: '按部门', value: 'org' },
+                ]}
                 style={{ width: 120 }}
                 onSelect={(value: string) => {
                   const _value = { ...props.value };
                   _value.selector = value;
+                  _value.selectorValues = undefined;
                   onChange(_value);
                 }}
               />

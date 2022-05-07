@@ -38,6 +38,7 @@ export default (props: DeviceModelProps) => {
   const [selectKeys, setSelectKeys] = useState<ChangeValueType[]>(props.value || []);
   const [searchParam, setSearchParam] = useState({});
   const [value, setValue] = useState<ChangeValueType[]>(props.value || []);
+  const oldAllSelect = useRef<any[]>([]);
 
   useEffect(() => {
     setValue(props.value || []);
@@ -107,6 +108,8 @@ export default (props: DeviceModelProps) => {
     },
   ];
 
+  console.log(selectKeys);
+
   return (
     <>
       {visible && (
@@ -158,6 +161,20 @@ export default (props: DeviceModelProps) => {
                 }
                 setSelectKeys(newSelectKeys);
               },
+              onSelectAll: (selected, selectedRows) => {
+                let newSelectKeys = [...selectKeys];
+                if (selected) {
+                  oldAllSelect.current = selectedRows;
+                  selectedRows.forEach((item) => {
+                    newSelectKeys.push({ name: item.name, value: item.id });
+                  });
+                } else {
+                  newSelectKeys = newSelectKeys.filter((a) => {
+                    return !oldAllSelect.current.some((b) => b.id === a.value);
+                  });
+                }
+                setSelectKeys(newSelectKeys);
+              },
             }}
             request={(params) => queryDevice(params)}
             params={searchParam}
@@ -171,11 +188,11 @@ export default (props: DeviceModelProps) => {
             message.warning('请选择产品');
           } else {
             setVisible(true);
-            setSelectKeys([...value]);
+            setSelectKeys(value ? [...value] : []);
           }
         }}
         style={{ width: '100%' }}
-        value={value.map((item) => item.name).toString()}
+        value={value && value.map((item) => item.name).toString()}
         readOnly
       />
     </>
