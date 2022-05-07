@@ -8,11 +8,12 @@ import { useParams } from 'umi';
 import { Button, Drawer, message, Space } from 'antd';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
   close: () => void;
   data: any[];
+  reload: () => void;
 }
 
 const Edit = (props: Props) => {
@@ -40,10 +41,12 @@ const Edit = (props: Props) => {
     );
   };
 
-  const form = createForm({
-    validateFirst: true,
-    initialValues: initData,
-  });
+  const form = useMemo(() => {
+    return createForm({
+      validateFirst: true,
+      initialValues: initData,
+    });
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -143,6 +146,9 @@ const Edit = (props: Props) => {
                 if (resp.status === 200) {
                   message.success('操作成功！');
                   props.close();
+                  if (props.reload) {
+                    props.reload();
+                  }
                 }
               }
             }}

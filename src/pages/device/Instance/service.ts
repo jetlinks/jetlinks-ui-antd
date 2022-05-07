@@ -259,8 +259,14 @@ class Service extends BaseService<DeviceInstance> {
       method: 'GET',
     });
 
-  //接入方式
-  public queryGatewayList = () => request(`/${SystemConst.API_BASE}/gateway/device/providers`);
+  //接入网关
+  public queryGatewayList = () =>
+    request(`/${SystemConst.API_BASE}/gateway/device/_query/no-paging`, {
+      method: 'POST',
+      data: {
+        paging: false,
+      },
+    });
   // 保存设备关系
   public saveRelations = (id: string, data: any) =>
     request(`/${SystemConst.API_BASE}/device/instance/${id}/relations`, {
