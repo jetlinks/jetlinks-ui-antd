@@ -30,6 +30,7 @@ import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
 import FInputGroup from '@/components/FInputGroup';
+import { Button } from 'antd';
 
 const service = new Service('scene');
 
@@ -46,11 +47,40 @@ const TriggerTerm = (props: Props, ref: any) => {
     service.getParseTerm(props.params).then((data) => {
       Store.set('trigger-parse-term', data);
       parseTermRef.current = data;
-      return data.map((item: any) => ({
-        column: item.column,
-        name: item.name,
-        children: item.children,
-      }));
+      const handleName = (_data: any): any => (
+        <Space>
+          {_data.name}
+          <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.description}</div>
+        </Space>
+      );
+      const handleChildrenName = (_data: any[]): any[] => {
+        if (_data?.length > 0) {
+          return _data.map((it) => {
+            if (it.children) {
+              return {
+                ...it,
+                key: it.column,
+                name: handleName(it),
+                disabled: true,
+                children: handleChildrenName(it.children),
+              };
+            }
+            return { ...it, key: it.column, name: handleName(it) };
+          });
+        } else {
+          return [];
+        }
+      };
+      return data.map((item: any) => {
+        const disabled = item.children?.length > 0;
+        return {
+          column: item.column,
+          key: item.column,
+          name: handleName(item),
+          disabled: disabled,
+          children: handleChildrenName(item.children),
+        };
+      });
     });
 
   const form = useMemo(
@@ -227,6 +257,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-component-props': {
                           placeholder: '请选择参数',
                           fieldNames: { value: 'column', label: 'name', options: 'children' },
+                          // treeNodeLabelProp: 'name',
                         },
                         'x-reactions': '{{useAsyncDataSource(getParseTerm)}}',
                       },
@@ -320,6 +351,13 @@ const TriggerTerm = (props: Props, ref: any) => {
   return (
     <Form form={form} layout="vertical" className={styles.form}>
       <SchemaField schema={schema} scope={{ useAsyncDataSource, getParseTerm }} />
+      <Button
+        onClick={async () => {
+          console.log(await form.submit(), '保存');
+        }}
+      >
+        保存
+      </Button>
     </Form>
   );
 };

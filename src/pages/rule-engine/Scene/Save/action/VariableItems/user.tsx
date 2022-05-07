@@ -83,7 +83,7 @@ export default (props: UserProps) => {
   };
 
   useEffect(() => {
-    if (['dingTalk', 'weChart'].includes(props.notifyType)) {
+    if (['dingTalk', 'weixin'].includes(props.notifyType)) {
       if (source === 'fixed') {
         // 钉钉，微信用户
         getRelationUsers(props.notifyType, props.configId);
@@ -316,7 +316,7 @@ export default (props: UserProps) => {
       <Select
         value={source}
         options={
-          props.notifyType && ['dingTalk', 'weChart'].includes(props.notifyType)
+          props.notifyType && ['dingTalk', 'weixin'].includes(props.notifyType)
             ? options
             : otherOptions
         }
@@ -326,7 +326,7 @@ export default (props: UserProps) => {
           onchange(key, undefined);
         }}
       />
-      {props.notifyType && ['dingTalk', 'weChart'].includes(props.notifyType) ? userSelect : null}
+      {props.notifyType && ['dingTalk', 'weixin'].includes(props.notifyType) ? userSelect : null}
       {props.notifyType && ['email'].includes(props.notifyType) ? emailSelect : null}
       {props.notifyType && ['sms', 'voice'].includes(props.notifyType) ? voiceSelect : null}
     </ItemGroup>
