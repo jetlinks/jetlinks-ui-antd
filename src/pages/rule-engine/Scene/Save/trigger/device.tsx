@@ -219,14 +219,18 @@ export default (props: TriggerProps) => {
               )}
               {props.value?.selector === 'org' && (
                 <TreeSelect
-                  value={props.value?.selectorValues}
+                  value={
+                    props.value?.selectorValues && props.value?.selectorValues.length
+                      ? props.value?.selectorValues[0].id
+                      : undefined
+                  }
                   treeData={orgTree}
                   fieldNames={{ label: 'name', value: 'id' }}
                   placeholder={'请选择部门'}
                   style={{ width: '100%' }}
-                  onChange={(value) => {
+                  onChange={(value, label) => {
                     const _value = { ...props.value };
-                    _value.selectorValues = value;
+                    _value.selectorValues = [{ id: value, name: label[0] }];
                     onChange(_value);
                   }}
                 />

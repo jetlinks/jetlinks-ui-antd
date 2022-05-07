@@ -45,6 +45,7 @@ export default (props: MessageContentProps) => {
                 if (item.required) {
                   rules.push({
                     validator: async (_: any, value: any) => {
+                      console.log(value);
                       if (!value.value) {
                         if (['date'].includes(type)) {
                           return Promise.reject(new Error('请选择' + item.name));
