@@ -59,7 +59,7 @@ const SolveLog = (props: Props) => {
       },
     },
     {
-      dataIndex: 'createTime',
+      dataIndex: 'alarmTime',
       title: '告警时间',
       valueType: 'dateTime',
       // render: (text: any, record: any) => <span>{moment(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>,

@@ -1,5 +1,5 @@
 import type { FormInstance } from 'antd';
-import { Col, Form, Row } from 'antd';
+import { Col, Form, Input, Row } from 'antd';
 import {
   BuiltIn,
   OrgList,
@@ -56,6 +56,9 @@ export default (props: MessageContentProps) => {
                     },
                   });
                 }
+                if (type === 'link') {
+                  rules.push({ max: 64, message: '最多64个字符' });
+                }
                 return (
                   <Col span={12} key={`${item.id}_${index}`}>
                     <Form.Item
@@ -77,6 +80,8 @@ export default (props: MessageContentProps) => {
                         <InputFile />
                       ) : type === 'tag' ? (
                         <TagSelect configId={props.configId} />
+                      ) : type === 'link' ? (
+                        <Input placeholder={'请输入' + item.name} />
                       ) : (
                         <BuiltIn type={props.triggerType} data={item} />
                       )}

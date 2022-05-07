@@ -14,6 +14,7 @@ const componentMap = {
 interface Props {
   close: () => void;
   metadata: any[];
+  reload: () => void;
 }
 
 const Edit = (props: Props) => {
@@ -106,6 +107,9 @@ const Edit = (props: Props) => {
                     setTimeout(() => window.close(), 300);
                   }
                 } else {
+                  if (props.reload) {
+                    props.reload();
+                  }
                   props.close();
                 }
               }
