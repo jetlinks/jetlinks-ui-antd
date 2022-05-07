@@ -36,7 +36,11 @@ const Alarm: React.FC<Props> = props => {
     saveAlarmData: {},
     searchParam: {
       pageSize: 10,
-      sorts:[{name:"alarmTime",order: 'desc' }]
+      // sorts:[{name:"alarmTime",order: 'desc' }]
+      sorts: {
+        order: "desc",
+        field: "alarmTime"
+      }
     },
     searchAlarmParam: {
       pageSize: 10
@@ -335,7 +339,7 @@ const Alarm: React.FC<Props> = props => {
       ...searchParam,
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      sorts:[{name:"alarmTime",order: sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : searchParam.sorts[0].order}]
+      sorts:sorter
     });
   };
 
