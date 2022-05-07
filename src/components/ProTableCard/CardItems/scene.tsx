@@ -4,6 +4,7 @@ import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
+import { Tooltip } from 'antd';
 
 export interface DeviceCardProps extends SceneItem {
   tools: React.ReactNode[];
@@ -36,7 +37,9 @@ export default (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <span className={'card-item-header-name ellipsis'}>
+              <Tooltip title={props.name}>{props.name}</Tooltip>
+            </span>
           </div>
           <div className={'card-item-content'}>
             <div>

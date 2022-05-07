@@ -33,6 +33,18 @@ const Scene = () => {
   const [searchParams, setSearchParams] = useState<any>({});
   const history = useHistory();
 
+  const deleteById = async (id: string) => {
+    const alarmResp = await service.sceneByAlarm(id);
+    if (alarmResp.status === 200 && !alarmResp.result) {
+      const resp: any = await service.remove(id);
+      if (resp.status === 200) {
+        actionRef.current?.reload();
+      }
+    } else {
+      message.warning('该场景已绑定告警，不可删除');
+    }
+  };
+
   const Tools = (record: any, type: 'card' | 'table'): React.ReactNode[] => {
     return [
       <PermissionButton
@@ -125,33 +137,24 @@ const Scene = () => {
         type={'link'}
         style={{ padding: 0 }}
         isPermission={permission.delete}
+        disabled={record.state.value === 'started'}
         popConfirm={{
-          title: intl.formatMessage({
-            id:
-              record.state.value === 'started'
-                ? 'pages.data.option.remove.tips'
-                : 'pages.device.instance.deleteTip',
-          }),
+          title: '确认删除？',
           disabled: record.state.value === 'started',
-          onConfirm: async () => {},
+          onConfirm: () => {
+            deleteById(record.id);
+          },
         }}
-        tooltip={
-          type === 'table'
-            ? {
-                title: intl.formatMessage({
-                  id: 'pages.device.instance.deleteTip',
-                  defaultMessage: '删除',
-                }),
-              }
-            : undefined
-        }
+        tooltip={{
+          title:
+            record.state.value === 'started' ? (
+              <span>请先禁用该场景,再删除</span>
+            ) : (
+              <span>删除</span>
+            ),
+        }}
       >
         <DeleteOutlined />
-        {type === 'table' &&
-          intl.formatMessage({
-            id: 'pages.data.option.edit',
-            defaultMessage: '编辑',
-          })}
       </PermissionButton>,
     ];
   };

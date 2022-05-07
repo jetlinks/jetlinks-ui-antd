@@ -217,7 +217,7 @@ export default observer((props: ActionProps) => {
                 { label: '设备输出', value: 'device' },
                 { label: '延迟执行', value: 'delay' },
               ]}
-              placeholder={'请选择动作方式'}
+              placeholder={'请选择执行条件'}
               style={{ width: '100%' }}
             />
           </Form.Item>
