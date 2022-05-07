@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Divider, message, Row, Table } from 'antd';
+import { Button, Card, Col, Divider, message, Row, Table, Tooltip } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
@@ -12,6 +12,7 @@ import Service from '@/pages/rule-engine/Alarm/Config/service';
 import styles from './index.less';
 import { Image } from 'antd';
 import ReactMarkdown from 'react-markdown';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 export const service = new Service('alarm/config');
 const ioImg = require('/public/images/alarm/io.png');
@@ -411,7 +412,7 @@ const Config = () => {
     <Row>
       <Col span={14}>
         <Card>
-          <TitleComponent data="告警级别配置" />
+          <TitleComponent data={'告警级别配置'} />
           <Form form={levelForm}>
             <SchemaField schema={levelSchema} />
             <FormButtonGroup.Sticky>
@@ -440,12 +441,30 @@ const Config = () => {
       <Col span={14}>
         <div>
           <Card>
-            <TitleComponent data="告警数据输出" />
+            <TitleComponent
+              data={
+                <span>
+                  告警数据输出
+                  <Tooltip title={'将告警数据输出到其他第三方系统'}>
+                    <QuestionCircleOutlined style={{ marginLeft: 5 }} />
+                  </Tooltip>
+                </span>
+              }
+            />
             <Form form={outputForm} layout="vertical">
               <SchemaField schema={ioSchema} />
             </Form>
             <Divider />
-            <TitleComponent data="告警处理结果输入" />
+            <TitleComponent
+              data={
+                <span>
+                  告警处理结果输入
+                  <Tooltip title={'接收第三方系统处理的告警结果'}>
+                    <QuestionCircleOutlined style={{ marginLeft: 5 }} />
+                  </Tooltip>
+                </span>
+              }
+            />
             <Form form={inputForm} layout="vertical">
               <SchemaField schema={ioSchema} />
               <FormButtonGroup.Sticky>
@@ -488,7 +507,11 @@ const Config = () => {
   );
 
   const list = [
-    { key: 'config', tab: '告警级别', component: level },
+    {
+      key: 'config',
+      tab: '告警级别',
+      component: level,
+    },
     { key: 'io', tab: '数据流转', component: io },
   ];
 
