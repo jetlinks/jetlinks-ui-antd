@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useIntl, useLocation } from 'umi';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
@@ -52,7 +52,7 @@ export default () => {
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
   const [triggerType, setTriggerType] = useState('');
-  // const [triggerValue, setTriggerValue] = useState<any>();
+  const [triggerValue, setTriggerValue] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [parallel, setParallel] = useState(true); // 是否并行
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
@@ -60,23 +60,29 @@ export default () => {
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
 
-  const getDetail = async (id: string) => {
-    const resp = await service.detail(id);
-    if (resp.status === 200 && resp.result) {
-      setIsEdit(true);
-      const _data: any = resp.result;
-      FormModel = _data;
-      form.setFieldsValue(_data);
-      setParallel(_data.parallel);
-      setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
-      if (_data.trigger?.device?.selectorValues) {
-        setRequestParams({ trigger: _data.trigger });
+  const getDetail = useCallback(
+    async (id: string) => {
+      const resp = await service.detail(id);
+      if (resp.status === 200 && resp.result) {
+        setIsEdit(true);
+        const _data: any = resp.result;
+        FormModel = _data;
+        form.setFieldsValue(_data);
+        setParallel(_data.parallel);
+        setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
+
+        setTriggerValue(_data.terms || []);
+
+        if (_data.trigger?.device?.selectorValues) {
+          setRequestParams({ trigger: _data.trigger });
+        }
+        if (_data.actions) {
+          setActionsData(_data.actions);
+        }
       }
-      if (_data.actions) {
-        setActionsData(_data.actions);
-      }
-    }
-  };
+    },
+    [triggerRef],
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -92,7 +98,6 @@ export default () => {
     // 获取触发条件数据
     if (triggerRef.current) {
       triggerData = await triggerRef.current.getTriggerForm();
-      console.log(JSON.stringify(triggerData), 'trigger');
       if (!triggerData) {
         return;
       }
@@ -183,6 +188,7 @@ export default () => {
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
             if (changeValue.trigger) {
+              setTriggerValue([]);
               setRequestParams({ trigger: allValues.trigger });
             }
             if (allValues.actions) {
@@ -277,7 +283,7 @@ export default () => {
               <TriggerTerm
                 ref={triggerRef}
                 params={requestParams}
-                // value={triggerValue}
+                value={{ trigger: triggerValue }}
               />
             </Form.Item>
           ) : null}
@@ -384,36 +390,6 @@ export default () => {
         >
           保存
         </PermissionButton>
-        {/*<Button*/}
-        {/*  onClick={() => {*/}
-        {/*    setTriggerValue({*/}
-        {/*      trigger: [*/}
-        {/*        {*/}
-        {/*          terms: [*/}
-        {/*            {*/}
-        {/*              column: '_now',*/}
-        {/*              termType: 'eq',*/}
-        {/*              source: 'manual',*/}
-        {/*              value: '2022-04-21 14:26:04',*/}
-        {/*            },*/}
-        {/*          ],*/}
-        {/*        },*/}
-        {/*        {*/}
-        {/*          terms: [*/}
-        {/*            {*/}
-        {/*              column: 'properties.test-zhibioa.recent',*/}
-        {/*              termType: 'lte',*/}
-        {/*              source: 'metrics',*/}
-        {/*              value: '123',*/}
-        {/*            },*/}
-        {/*          ],*/}
-        {/*        },*/}
-        {/*      ],*/}
-        {/*    });*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  设置*/}
-        {/*</Button>*/}
       </Card>
     </PageContainer>
   );
