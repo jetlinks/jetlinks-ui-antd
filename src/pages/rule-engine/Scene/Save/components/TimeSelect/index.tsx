@@ -74,7 +74,7 @@ export default (props: TimeSelect) => {
   useEffect(() => {
     document.body.onclick = (e) => {
       const elem: any = e.target;
-      const isSelectDom = elem && elem.className.includes('time-select');
+      const isSelectDom = elem && elem.className?.includes?.('time-select');
 
       if (!isSelectDom) {
         setVisible(false);

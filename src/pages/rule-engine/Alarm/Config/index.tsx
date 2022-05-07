@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Divider, message, Row, Table, Tooltip } from 'antd';
+import { Button, Card, Col, Divider, message, Row, Table, Tooltip, Image } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
@@ -10,7 +10,6 @@ import FLevelInput from '@/components/FLevelInput';
 import type { IOConfigItem } from '@/pages/rule-engine/Alarm/Config/typing';
 import Service from '@/pages/rule-engine/Alarm/Config/service';
 import styles from './index.less';
-import { Image } from 'antd';
 import ReactMarkdown from 'react-markdown';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
