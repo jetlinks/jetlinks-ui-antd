@@ -133,7 +133,11 @@ const TabComponent = observer((props: Props) => {
                           item.level}
                       </div>
                     </div>
-                    <div className="alarm-log-title-text">{item.alarmName}</div>
+                    <div className="alarm-log-title-text">
+                      <Tooltip placement="topLeft" title={item.alarmName}>
+                        {item.alarmName}
+                      </Tooltip>
+                    </div>
                   </div>
                   <div className="alarm-log-content">
                     <div className="alarm-log-data">
@@ -148,7 +152,9 @@ const TabComponent = observer((props: Props) => {
                         <div className="alarm-type">
                           <div className="name">{titleMap.get(item.targetType)}</div>
                           <div className="text">
-                            <Tooltip title={item.targetName}>{item.targetName}</Tooltip>
+                            <Tooltip placement="topLeft" title={item.targetName}>
+                              {item.targetName}
+                            </Tooltip>
                           </div>
                         </div>
                       </div>
