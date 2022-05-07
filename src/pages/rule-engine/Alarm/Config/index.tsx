@@ -198,6 +198,8 @@ const Config = () => {
   };
 
   const handleSaveIO = async () => {
+    outputForm.validate();
+    inputForm.validate();
     const inputConfig: IOConfigItem = await inputForm.submit();
     const outputConfig: IOConfigItem = await outputForm.submit();
     const inputResp = await service.saveOutputData({
@@ -231,41 +233,64 @@ const Config = () => {
   };
 
   const level = (
-    <Card>
-      <TitleComponent data="告警级别配置" />
-      <Form form={levelForm}>
-        <SchemaField schema={levelSchema} />
-        <FormButtonGroup.Sticky>
-          <FormButtonGroup.FormItem>
-            <Button type="primary" onClick={handleSaveLevel}>
-              保存
-            </Button>
-          </FormButtonGroup.FormItem>
-        </FormButtonGroup.Sticky>
-      </Form>
-    </Card>
+    <Row>
+      <Col span={14}>
+        <Card>
+          <TitleComponent data="告警级别配置" />
+          <Form form={levelForm}>
+            <SchemaField schema={levelSchema} />
+            <FormButtonGroup.Sticky>
+              <FormButtonGroup.FormItem>
+                <Button type="primary" onClick={handleSaveLevel}>
+                  保存
+                </Button>
+              </FormButtonGroup.FormItem>
+            </FormButtonGroup.Sticky>
+          </Form>
+        </Card>
+      </Col>
+      <Col span={9} push={1}>
+        <Card>
+          <h1>功能说明</h1>
+          <p>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</p>
+          <p>2、告警级别将会在告警配置中被引用</p>
+          <p>3、该页面删除告警级别后，下方的告警级别会自动-1进行补位</p>
+          <p>4、最多可配置5个级别</p>
+        </Card>
+      </Col>
+    </Row>
   );
   const io = (
-    <div>
-      <Card>
-        <TitleComponent data="告警数据输出" />
-        <Form form={outputForm} layout="vertical">
-          <SchemaField schema={ioSchema} />
-        </Form>
-        <Divider />
-        <TitleComponent data="告警处理结果输入" />
-        <Form form={inputForm} layout="vertical">
-          <SchemaField schema={ioSchema} />
-          <FormButtonGroup.Sticky>
-            <FormButtonGroup.FormItem>
-              <Button type="primary" onClick={handleSaveIO}>
-                保存
-              </Button>
-            </FormButtonGroup.FormItem>
-          </FormButtonGroup.Sticky>
-        </Form>
-      </Card>
-    </div>
+    <Row>
+      <Col span={14}>
+        <div>
+          <Card>
+            <TitleComponent data="告警数据输出" />
+            <Form form={outputForm} layout="vertical">
+              <SchemaField schema={ioSchema} />
+            </Form>
+            <Divider />
+            <TitleComponent data="告警处理结果输入" />
+            <Form form={inputForm} layout="vertical">
+              <SchemaField schema={ioSchema} />
+              <FormButtonGroup.Sticky>
+                <FormButtonGroup.FormItem>
+                  <Button type="primary" onClick={handleSaveIO}>
+                    保存
+                  </Button>
+                </FormButtonGroup.FormItem>
+              </FormButtonGroup.Sticky>
+            </Form>
+          </Card>
+        </div>
+      </Col>
+      <Col span={9} push={1}>
+        <Card>
+          <h1>功能图示</h1>
+          <h1>功能说明</h1>
+        </Card>
+      </Col>
+    </Row>
   );
 
   const list = [
@@ -275,10 +300,7 @@ const Config = () => {
 
   return (
     <PageContainer onTabChange={setTab} tabActiveKey={tab} tabList={list}>
-      <Row>
-        <Col span={16}>{list.find((k) => k.key === tab)?.component}</Col>
-        <Col span={8}></Col>
-      </Row>
+      {list.find((k) => k.key === tab)?.component}
     </PageContainer>
   );
 };
