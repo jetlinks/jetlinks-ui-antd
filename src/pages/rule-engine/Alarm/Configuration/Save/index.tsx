@@ -137,6 +137,12 @@ const Save = (props: Props) => {
             'x-component-props': {
               placeholder: '请输入名称',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入名称',
+              },
+            ],
           },
           targetType: {
             title: '类型',
@@ -145,10 +151,17 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               gridSpan: 1,
             },
+            required: true,
             'x-reactions': '{{useAsyncDataSource(getSupports)}}',
             'x-component-props': {
               placeholder: '请选择类型',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择类型',
+              },
+            ],
           },
         },
       },
@@ -160,16 +173,29 @@ const Save = (props: Props) => {
           optionType: 'button',
           placeholder: '请选择类型',
         },
+        required: true,
         'x-reactions': '{{useAsyncDataSource(getLevel)}}',
         'x-decorator-props': {
           gridSpan: 1,
         },
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择级别',
+          },
+        ],
       },
       sceneId: {
         title: '关联触发场景',
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': '{{useAsyncDataSource(getScene)}}',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择关联触发场景',
+          },
+        ],
         'x-decorator-props': {
           gridSpan: 1,
           addonAfter: (
@@ -211,6 +237,12 @@ const Save = (props: Props) => {
         'x-component-props': {
           placeholder: '请输入说明',
         },
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
       },
     },
   };
