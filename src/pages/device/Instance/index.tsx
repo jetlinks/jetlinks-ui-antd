@@ -290,7 +290,7 @@ const Instance = () => {
       valueType: 'select',
       hideInTable: true,
       request: () =>
-        service.queryGatewayList().then((resp) =>
+        service.queryGatewayList().then((resp: any) =>
           resp.result.map((item: any) => ({
             label: item.name,
             value: `accessId is ${item.id}`,
