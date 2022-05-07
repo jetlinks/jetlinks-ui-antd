@@ -1,3 +1,4 @@
+import { TitleComponent } from '@/components';
 import { Button, Card, Col, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
@@ -28,7 +29,7 @@ const Provider = (props: Props) => {
   return (
     <>
       <Card>
-        <div className={styles.title}>自定义设备接入</div>
+        <TitleComponent data={'自定义设备接入'} />
         <Row gutter={[16, 16]}>
           {dataSource.map((item) => (
             <Col key={item.name} span={12}>
@@ -70,7 +71,7 @@ const Provider = (props: Props) => {
         </Row>
       </Card>
       <Card style={{ marginTop: 20 }}>
-        <div className={styles.title}>视频类设备接入</div>
+        <TitleComponent data={'视频类设备接入'} />
         <Row gutter={[16, 16]}>
           {mediaSource.map((item) => (
             <Col key={item.name} span={12}>
