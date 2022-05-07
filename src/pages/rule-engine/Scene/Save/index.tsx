@@ -182,10 +182,8 @@ export default () => {
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
-            if (allValues.trigger?.device?.selectorValues) {
+            if (changeValue.trigger) {
               setRequestParams({ trigger: allValues.trigger });
-            } else {
-              setRequestParams(undefined);
             }
             if (allValues.actions) {
               setActionsData(allValues.actions);
