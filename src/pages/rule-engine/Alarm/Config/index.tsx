@@ -1,18 +1,162 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Divider, message, Row } from 'antd';
+import { Button, Card, Col, Divider, Image, message, Row, Table } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
-import { ISchema } from '@formily/json-schema';
+import type { ISchema } from '@formily/json-schema';
 import { useMemo, useState } from 'react';
 import { createForm, onFieldReact, onFormInit } from '@formily/core';
 import FLevelInput from '@/components/FLevelInput';
-import { IOConfigItem } from '@/pages/rule-engine/Alarm/Config/typing';
+import type { IOConfigItem } from '@/pages/rule-engine/Alarm/Config/typing';
 import Service from '@/pages/rule-engine/Alarm/Config/service';
+import styles from './index.less';
+import ReactMarkdown from 'react-markdown';
 
 export const service = new Service('alarm/config');
+const ioImg = require('/public/images/alarm/io.png');
 const Config = () => {
   const [tab, setTab] = useState<'io' | 'config' | string>('config');
+  const outputData = [
+    {
+      key: 'alarmName',
+      name: '告警名称',
+      type: 'string',
+      desc: '推送的告警名称',
+      example: '烟感告警',
+    },
+    {
+      key: 'id',
+      name: '告警ID',
+      type: 'string',
+      desc: '告警唯一性标识',
+      example: '1515992841393119232',
+    },
+    {
+      key: 'targetType',
+      name: '告警类型',
+      type: 'string',
+      desc: '告警所属的业务类型，具体有产品、设备、部门、其他',
+      example: '产品',
+    },
+    {
+      key: 'targetId',
+      name: '告警目标ID',
+      type: 'string',
+      desc: '告警目标唯一性标识',
+      example: '运维部',
+    },
+    {
+      key: 'targetName',
+      name: '告警目标名称',
+      type: 'string',
+      desc: '告警目标实例名称',
+      example: '烟感告警',
+    },
+    {
+      key: 'alarmDate',
+      name: '最近告警时间',
+      type: 'date',
+      desc: '最近一次的告警触发时间',
+      example: '2021-01-01 09:00:00',
+    },
+    {
+      key: 'level',
+      name: '告警级别',
+      type: 'int',
+      desc: '告警严重程度指标',
+      example: '1',
+    },
+    {
+      key: 'state',
+      name: '告警状态',
+      type: 'object',
+      desc: 'value：告警状态 text：告警值',
+      example: '"text": "告警中", "value": "warning"',
+    },
+    {
+      key: 'description',
+      name: '告警说明',
+      type: 'string',
+      desc: '告警规则说明',
+      example: '1楼烟感统一告警规则设置',
+    },
+  ];
+  const outputColumns = [
+    {
+      title: '名称',
+      dataIndex: 'name',
+      key: 'name',
+      ellipsis: true,
+    },
+    {
+      title: '标识',
+      dataIndex: 'key',
+      key: 'key',
+      ellipsis: true,
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      key: 'type',
+      ellipsis: true,
+    },
+    {
+      title: '说明',
+      dataIndex: 'desc',
+      key: 'desc',
+      ellipsis: true,
+    },
+    {
+      title: '示例值',
+      dataIndex: 'example',
+      key: 'example',
+      ellipsis: true,
+    },
+  ];
+
+  const subData = [
+    {
+      key: 'id',
+      name: '告警ID',
+      type: 'string',
+      require: '是',
+      desc: '订阅的告警唯一性标识',
+      example: '1515992841393119232',
+    },
+    {
+      key: 'describe',
+      name: '处理内容',
+      type: 'string',
+      require: '是',
+      desc: '告警处理内容详细描述说明',
+      example: '已联系第三方人员进行告警处理，现告警已恢复',
+    },
+    {
+      key: 'state',
+      name: '告警状态',
+      type: 'string',
+      require: '是',
+      desc: '告警中, 无告警',
+      example: '告警中',
+    },
+    {
+      key: 'handleTime',
+      name: '处理时间',
+      type: 'long',
+      require: '否',
+      desc: '告警处理时间，不填是默认为消息处理时间',
+      example: '1651233650840',
+    },
+  ];
+
+  const subColumns = [...outputColumns];
+  subColumns.splice(3, 0, {
+    title: '必填',
+    dataIndex: 'require',
+    key: 'require',
+    ellipsis: true,
+  });
+
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -232,6 +376,36 @@ const Config = () => {
     }
   };
 
+  const outputText = `
+  ~~~json
+  {
+    "id": "1518055745863864320",
+    "alarmConfigId": "1511601633016569856",
+    "alarmName": "一楼烟感告警",
+    "targetType": "product",
+    "targetId": "product-01",
+    "targetName": "产品-001",
+    "alarmTime": "1651233650840",
+    "level": 3,
+    "state": {
+      "text": "告警中",
+      "value": "warning"
+    },
+    "description": "一楼烟感告警设置"
+  }
+  ~~~
+  `;
+
+  const subText = `
+  ~~~json
+  {
+    "id": "1518055745863864320",
+    "state": "normal",
+     "describe": "已处理"
+  }
+  ~~~
+  `;
+
   const level = (
     <Row>
       <Col span={14}>
@@ -249,14 +423,14 @@ const Config = () => {
           </Form>
         </Card>
       </Col>
-      <Col span={9} push={1}>
-        <Card>
+      <Col span={10}>
+        <div style={{ marginLeft: 20 }} className={styles.doc}>
           <h1>功能说明</h1>
-          <p>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</p>
-          <p>2、告警级别将会在告警配置中被引用</p>
-          <p>3、该页面删除告警级别后，下方的告警级别会自动-1进行补位</p>
-          <p>4、最多可配置5个级别</p>
-        </Card>
+          <div>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</div>
+          <div>2、告警级别将会在告警配置中被引用</div>
+          <div>3、该页面删除告警级别后，下方的告警级别会自动-1进行补位</div>
+          <div>4、最多可配置5个级别</div>
+        </div>
       </Col>
     </Row>
   );
@@ -284,11 +458,30 @@ const Config = () => {
           </Card>
         </div>
       </Col>
-      <Col span={9} push={1}>
-        <Card>
+      <Col span={10}>
+        <div style={{ marginLeft: 20 }} className={styles.doc}>
           <h1>功能图示</h1>
+          <div className={styles.image}>
+            <Image width="100%" src={ioImg} />
+          </div>
           <h1>功能说明</h1>
-        </Card>
+          <div>
+            1、平台支持将告警数据输出到kafka，第三方系统可订阅kafka中的告警数据，进行业务处理。
+          </div>
+          <h2>输出参数</h2>
+          <div>
+            <Table dataSource={outputData} pagination={false} columns={outputColumns} />
+          </div>
+          <h2>示例</h2>
+          <ReactMarkdown className={styles.code}>{outputText}</ReactMarkdown>
+          <div>2、平台支持订阅kafka中告警处理数据，并更新告警记录状态。</div>
+          <h2>订阅参数</h2>
+          <div>
+            <Table dataSource={subData} pagination={false} columns={subColumns} />
+          </div>
+          <h2>示例</h2>
+          <ReactMarkdown className={styles.code}>{subText}</ReactMarkdown>
+        </div>
       </Col>
     </Row>
   );
