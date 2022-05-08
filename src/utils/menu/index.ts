@@ -36,6 +36,9 @@ const extraRouteObj = {
       { code: 'Save2', name: '测试详情' },
     ],
   },
+  demo: {
+    children: [{ code: 'AMap', name: '地图' }],
+  },
 };
 
 /**
