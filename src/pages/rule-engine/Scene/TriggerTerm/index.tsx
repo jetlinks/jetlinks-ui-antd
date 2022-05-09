@@ -30,7 +30,6 @@ import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
 import FInputGroup from '@/components/FInputGroup';
-import { Button } from 'antd';
 
 const service = new Service('scene');
 
@@ -50,7 +49,10 @@ const TriggerTerm = (props: Props, ref: any) => {
       const handleName = (_data: any): any => (
         <Space>
           {_data.name}
-          <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.description}</div>
+          <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
+          {_data.description && (
+            <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
+          )}
         </Space>
       );
       const handleChildrenName = (_data: any[]): any[] => {
@@ -71,7 +73,7 @@ const TriggerTerm = (props: Props, ref: any) => {
           return [];
         }
       };
-      return data.map((item: any) => {
+      return data?.map((item: any) => {
         const disabled = item.children?.length > 0;
         return {
           column: item.column,
@@ -122,8 +124,11 @@ const TriggerTerm = (props: Props, ref: any) => {
                 label: item.name,
                 value: item.id,
               }));
+              if (target?.termTypes?.length > 0) {
+                state.value = 'eq';
+              }
             });
-            form1.setFieldState(field.query('.source'), (state) => {
+            form1.setFieldState(field.query('.value.source'), (state) => {
               state.dataSource =
                 target && target.metrics && target.metrics.length > 0
                   ? [
@@ -131,11 +136,13 @@ const TriggerTerm = (props: Props, ref: any) => {
                       { label: '指标', value: 'metrics' },
                     ]
                   : [{ label: '手动输入', value: 'manual' }];
+              state.value = 'manual';
             });
           });
-          onFieldReact('trigger.*.terms.*.source', (field, form1) => {
-            const params = field.query('.column').value();
-            const value = field.query('.value');
+          onFieldReact('trigger.*.terms.*.value.source', (field, form1) => {
+            console.log(field, 'field');
+            const params = field.query('..column').value();
+
             // 找到选中的
             const _data = Store.get('trigger-parse-term');
             if (!_data) return;
@@ -148,6 +155,8 @@ const TriggerTerm = (props: Props, ref: any) => {
                 : treeValue[0];
 
             const source = (field as Field).value;
+            const value = field.query(source === 'manual' ? '.value' : '.metric');
+            console.log(value, source, '指标测试', target);
             if (target) {
               if (source === 'manual') {
                 // 手动输入
@@ -273,8 +282,8 @@ const TriggerTerm = (props: Props, ref: any) => {
                           placeholder: '操作符',
                         },
                       },
-                      inputGroup: {
-                        type: 'void',
+                      value: {
+                        type: 'object',
                         'x-component': 'FInputGroup',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
@@ -307,6 +316,37 @@ const TriggerTerm = (props: Props, ref: any) => {
                             'x-decorator-props': {
                               style: {
                                 width: 'calc(100% - 110px)',
+                              },
+                            },
+                            'x-reactions': {
+                              dependencies: ['.source'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$deps[0]==="manual"}}',
+                                },
+                              },
+                            },
+                          },
+                          metric: {
+                            type: 'string',
+                            'x-component': 'Select',
+                            'x-decorator': 'FormItem',
+                            'x-component-props': {
+                              style: {
+                                width: '100%',
+                              },
+                            },
+                            'x-decorator-props': {
+                              style: {
+                                width: 'calc(100% - 110px)',
+                              },
+                            },
+                            'x-reactions': {
+                              dependencies: ['.source'],
+                              fulfill: {
+                                state: {
+                                  visible: '{{$deps[0]==="metrics"}}',
+                                },
                               },
                             },
                           },
@@ -351,13 +391,6 @@ const TriggerTerm = (props: Props, ref: any) => {
   return (
     <Form form={form} layout="vertical" className={styles.form}>
       <SchemaField schema={schema} scope={{ useAsyncDataSource, getParseTerm }} />
-      <Button
-        onClick={async () => {
-          console.log(await form.submit(), '保存');
-        }}
-      >
-        保存
-      </Button>
     </Form>
   );
 };
