@@ -71,13 +71,17 @@ const Debug = observer(() => {
   );
 
   useEffect(() => {
-    const data = state.current;
-    if (data?.variableDefinitions?.length > 0) {
-      form.setFieldState('variableDefinitions', (state1) => {
-        state1.visible = true;
-        state1.value = data?.variableDefinitions;
-      });
-    }
+    // const data = state.current;
+    // 从后端接口来获取变量参数
+    service.getVariableDefinitions(state.current?.id || '').then((resp) => {
+      const _template = resp.result;
+      if (_template?.variableDefinitions?.length > 0) {
+        form.setFieldState('variableDefinitions', (state1) => {
+          state1.visible = true;
+          state1.value = _template?.variableDefinitions;
+        });
+      }
+    });
   }, [state.current, state.debug]);
 
   const SchemaField = createSchemaField({
