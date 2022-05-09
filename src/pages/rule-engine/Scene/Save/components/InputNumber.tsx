@@ -11,7 +11,6 @@ export default (props: InputNumberProps) => {
   const [unit, setUnit] = useState(props.value?.unit || 'seconds');
 
   useEffect(() => {
-    console.log('timer', props.value);
     setTime(props.value?.time || 0);
     setUnit(props.value?.unit || 'seconds');
   }, [props.value]);
@@ -41,6 +40,7 @@ export default (props: InputNumberProps) => {
       addonAfter={TimeTypeAfter}
       min={0}
       max={9999}
+      placeholder={'请输入时间'}
       onChange={(value) => {
         if (props.onChange) {
           props.onChange({

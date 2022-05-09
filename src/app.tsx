@@ -250,6 +250,14 @@ export function render(oldRender: any) {
   if (history.location.pathname !== loginPath) {
     MenuService.queryOwnThree({ paging: false }).then((res) => {
       if (res && res.status === 200) {
+        if (isDev) {
+          res.result.push({
+            code: 'demo',
+            id: 'demo',
+            name: '例子',
+            url: '/demo',
+          });
+        }
         extraRoutes = handleRoutes(res.result);
         saveMenusCache(extraRoutes);
       }

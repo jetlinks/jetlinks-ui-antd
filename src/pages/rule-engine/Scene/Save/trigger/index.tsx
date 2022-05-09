@@ -150,7 +150,10 @@ export default observer((props: TriggerProps) => {
     <div className={classNames(props.className)}>
       <Row gutter={24}>
         <Col span={6}>
-          <Form.Item name={['trigger', 'device', 'productId']}>
+          <Form.Item
+            name={['trigger', 'device', 'productId']}
+            rules={[{ required: true, message: '请选择产品' }]}
+          >
             <Select
               options={productList}
               placeholder={'请选择产品'}
@@ -211,6 +214,7 @@ export default observer((props: TriggerProps) => {
             <Form.Item
               name={['trigger', 'device', 'operation', 'operator']}
               initialValue={undefined}
+              rules={[{ required: true, message: '请选择触发类型' }]}
             >
               <Select
                 placeholder={'请选择触发类型'}
@@ -230,7 +234,10 @@ export default observer((props: TriggerProps) => {
         <>
           <Row gutter={24}>
             <Col span={6}>
-              <Form.Item name={['trigger', 'device', 'operation', 'functionId']}>
+              <Form.Item
+                name={['trigger', 'device', 'operation', 'functionId']}
+                rules={[{ required: true, message: '请选择功能' }]}
+              >
                 <Select
                   showSearch
                   options={functions}
@@ -277,7 +284,10 @@ export default observer((props: TriggerProps) => {
       {operation === OperatorEnum.writeProperty && (
         <Row>
           <Col span={24}>
-            <Form.Item name={['trigger', 'device', 'operation', 'writeProperties']}>
+            <Form.Item
+              name={['trigger', 'device', 'operation', 'writeProperties']}
+              rules={[{ required: true, message: '请输入修改值' }]}
+            >
               <Operation
                 propertiesList={properties.filter((item) => {
                   if (item.expands) {
@@ -293,7 +303,11 @@ export default observer((props: TriggerProps) => {
       {operation === OperatorEnum.readProperty && (
         <Row gutter={24}>
           <Col span={6}>
-            <Form.Item name={['trigger', 'device', 'operation', 'readProperties']} noStyle>
+            <Form.Item
+              name={['trigger', 'device', 'operation', 'readProperties']}
+              noStyle
+              rules={[{ required: true, message: '请选择属性' }]}
+            >
               <Select
                 mode={'multiple'}
                 options={properties.filter((item) => {
@@ -317,7 +331,25 @@ export default observer((props: TriggerProps) => {
             </Form.Item>
           </Col>
           <Col span={18}>
-            <span style={{ lineHeight: '32px' }}>定时读取所选属性值，用于条件配置</span>
+            <span style={{ lineHeight: '32px' }}>定时读取所选属性值</span>
+          </Col>
+        </Row>
+      )}
+      {operation === OperatorEnum.reportEvent && (
+        <Row gutter={24}>
+          <Col span={6}>
+            <Form.Item
+              name={['trigger', 'device', 'operation', 'eventId']}
+              noStyle
+              rules={[{ required: true, message: '请选择事件' }]}
+            >
+              <Select
+                options={events}
+                placeholder={'请选择事件'}
+                style={{ width: '100%' }}
+                fieldNames={{ label: 'name', value: 'id' }}
+              />
+            </Form.Item>
           </Col>
         </Row>
       )}

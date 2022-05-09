@@ -88,6 +88,7 @@
     "monaco-editor-webpack-plugin": "^6.0.0",
     "omit.js": "^2.0.2",
     "react": "^17.0.0",
+    "react-amap": "^1.2.8",
     "react-dev-inspector": "^1.1.1",
     "react-dom": "^17.0.0",
     "react-helmet-async": "^1.0.4",
