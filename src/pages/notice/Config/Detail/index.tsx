@@ -53,6 +53,9 @@ export const docMap = {
   email: {
     embedded: <Email />,
   },
+  webhook: {
+    default: <div>webhook</div>,
+  },
 };
 
 const Detail = observer(() => {
@@ -87,6 +90,9 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
+    // if (id === 'webhook') {
+    //   setProvider('default');
+    // }
     if (state.current) {
       form.setValues(state.current);
     }
@@ -452,21 +458,103 @@ const Detail = observer(() => {
               },
             },
           },
-        },
-      },
-      description: {
-        title: '说明',
-        'x-decorator': 'FormItem',
-        'x-component': 'Input.TextArea',
-        'x-component-props': {
-          rows: 4,
-        },
-        'x-validator': [
-          {
-            max: 200,
-            message: '最多可输入200个字符',
+          webhook: {
+            type: 'void',
+            properties: {
+              url: {
+                title: 'Webhook',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入Webhook',
+                },
+                'x-component': 'Input',
+                'x-decorator': 'FormItem',
+              },
+              headers: {
+                title: '请求头',
+                type: 'array',
+                'x-decorator': 'FormItem',
+                'x-component': 'ArrayTable',
+                'x-component-props': {
+                  pagination: { pageSize: 9999 },
+                  scroll: { x: '100%' },
+                },
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 200, title: 'KEY' },
+                      properties: {
+                        key: {
+                          type: 'string',
+                          // 'x-decorator': 'Editable',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 200, title: 'VALUE' },
+                      properties: {
+                        value: {
+                          type: 'string',
+                          // 'x-decorator': 'Editable',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        title: '操作',
+                        dataIndex: 'operations',
+                        width: 200,
+                        fixed: 'right',
+                      },
+                      properties: {
+                        item: {
+                          type: 'void',
+                          'x-component': 'FormItem',
+                          properties: {
+                            remove: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.Remove',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: '添加条目',
+                  },
+                },
+              },
+            },
           },
-        ],
+        },
+        description: {
+          title: '说明',
+          'x-decorator': 'FormItem',
+          'x-component': 'Input.TextArea',
+          'x-component-props': {
+            rows: 4,
+          },
+          'x-validator': [
+            {
+              max: 200,
+              message: '最多可输入200个字符',
+            },
+          ],
+        },
       },
     },
   };
