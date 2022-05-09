@@ -28,6 +28,7 @@ const PathSimplifier = (props: PathSimplifierProps) => {
       speed: 10000,
       ...navOptions,
     });
+
     if (onCreated) {
       onCreated(pathNavRef.current!);
     }
@@ -35,7 +36,6 @@ const PathSimplifier = (props: PathSimplifierProps) => {
 
   const pathSimplifier = useCallback(
     (PathObj: PathSimplifier) => {
-      // @ts-ignore
       pathSimplifierRef.current = new PathObj({
         zIndex: 100,
         getPath: (_pathData: any) => {

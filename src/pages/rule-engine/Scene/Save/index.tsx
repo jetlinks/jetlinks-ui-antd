@@ -71,7 +71,7 @@ export default () => {
         setParallel(_data.parallel);
         setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
 
-        setTriggerValue(_data.terms || []);
+        setTriggerValue({ trigger: _data.terms || [] });
 
         if (_data.trigger?.device?.selectorValues) {
           setRequestParams({ trigger: _data.trigger });
@@ -103,7 +103,7 @@ export default () => {
       }
       formData.terms = triggerData.trigger;
     }
-    console.log(formData);
+    console.log('save', formData);
     if (formData) {
       setLoading(true);
       const resp = formData.id ? await service.updateScene(formData) : await service.save(formData);
@@ -271,7 +271,19 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              <Form.Item name={['trigger', 'device']}>
+              <Form.Item
+                name={['trigger', 'device']}
+                rules={[
+                  {
+                    validator: async (_: any, value: any) => {
+                      if (!value) {
+                        return Promise.reject(new Error('请选择产品'));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
                 <TriggerDevice className={'trigger-type-content'} />
               </Form.Item>
             )}
@@ -280,11 +292,7 @@ export default () => {
           requestParams &&
           requestParams.trigger?.device?.productId ? (
             <Form.Item label={AntiShake}>
-              <TriggerTerm
-                ref={triggerRef}
-                params={requestParams}
-                value={{ trigger: triggerValue }}
-              />
+              <TriggerTerm ref={triggerRef} params={requestParams} value={triggerValue} />
             </Form.Item>
           ) : null}
           <Form.Item hidden name={'parallel'} initialValue={true}>
@@ -305,8 +313,8 @@ export default () => {
                 <Tooltip
                   title={
                     <div>
-                      <div>串行：满足所有执行条件才会触发执行动作</div>
-                      <div>并行：满足任意条件时会触发执行动作</div>
+                      <div>串行：按顺序依次执行动作</div>
+                      <div>并行：同时执行所有动作</div>
                     </div>
                   }
                 >

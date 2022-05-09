@@ -14,59 +14,59 @@ type PathSimplifierOptions = {
   renderOptions?: {};
 };
 
-class PathSimplifier {
-  constructor(options: PathSimplifierOptions);
+interface PathSimplifier {
+  new (options: PathSimplifierOptions);
 
   readonly supportCanvas: boolean;
 
-  getZIndexOfPath(pathIndex: number): number;
+  getZIndexOfPath: (pathIndex: number) => number;
 
-  setZIndexOfPath(pathIndex: number, zIndex: number);
+  setZIndexOfPath: (pathIndex: number, zIndex: number) => void;
 
   /**
    * 是否置顶显示pathIndex对应的轨迹
    * @param pathIndex
    * @param isTop isTop为真，设置 zIndex 为 现存最大zIndex+1; isTop为假，设置 zIndex 为 构造参数中 getZIndex 的返回值
    */
-  toggleTopOfPath(pathIndex: number, isTop: boolean);
+  toggleTopOfPath: (pathIndex: number, isTop: boolean) => void;
 
-  getPathData(pathIndex: number): any;
+  getPathData: (pathIndex: number) => any;
 
-  createPathNavigator(pathIndex: number, options: {}): PathNavigator;
+  createPathNavigator: (pathIndex: number, options: {}) => PathNavigator;
 
-  getPathNavigators(): any[];
+  getPathNavigators: () => any[];
 
-  clearPathNavigators();
+  clearPathNavigators: () => void;
 
-  getSelectedPathData(): any;
+  getSelectedPathData: () => any;
 
-  getSelectedPathIndex(): number;
+  getSelectedPathIndex: () => number;
 
-  isSelectedPathIndex(pathIndex: number): boolean;
+  isSelectedPathIndex: (pathIndex: number) => boolean;
 
-  setSelectedPathIndex(pathIndex: number);
+  setSelectedPathIndex: (pathIndex: number) => void;
 
-  render();
+  render: () => void;
 
-  renderLater(delay: number[]);
+  renderLater: (delay: number[]) => void;
 
-  setData(data: any[]);
+  setData: (data: any[]) => void;
 
-  setFitView(pathIndex: number);
+  setFitView: (pathIndex: number) => void;
 
-  on(eventName: String, handler: Function);
+  on: (eventName: string, handler: Function) => void;
 
-  off(eventName: String, handler: Function);
+  off: (eventName: string, handler: Function) => void;
 
-  hide();
+  hide: () => void;
 
-  show();
+  show: () => void;
 
-  isHidden(): boolean;
+  isHidden: () => boolean;
 
-  getRender(): boolean;
+  getRender: () => boolean;
 
-  getRenderOptions(): any;
+  getRenderOptions: () => any;
 }
 
 interface PathNavigatorOptions {
@@ -78,51 +78,48 @@ interface PathNavigatorOptions {
   range?: number[];
 }
 
-class PathNavigator {
-  constructor(options: PathNavigatorOptions);
+interface PathNavigator {
+  new (options: PathNavigatorOptions);
 
-  start(pointIndex?: number);
+  start: (pointIndex?: number) => void;
 
-  pause();
+  pause: () => void;
 
-  resume();
+  resume: () => void;
 
-  stop();
+  stop: () => void;
 
-  destroy();
+  destroy: () => void;
 
-  getCursor(): any;
+  getCursor: () => any;
 
-  getNaviStatus(): string;
+  getNaviStatus: () => string;
 
-  getPathIndex(): number;
+  getPathIndex: () => number;
 
-  getPosition(): [number, number];
+  getPosition: () => [number, number];
 
-  getSpeed(): number;
+  getSpeed: () => number;
 
-  getMovedDistance(): number;
+  getMovedDistance: () => number;
 
-  getPathStartIdx(): number;
+  getPathStartIdx: () => number;
 
-  getPathEndIdx(): number;
+  getPathEndIdx: () => number;
 
-  moveByDistance(distance: number);
+  moveByDistance: (distance: number) => void;
 
-  moveToPoint(idx: number, tail: number);
+  moveToPoint: (idx: number, tail: number) => void;
 
-  isCursorAtPathEnd(): boolean;
+  isCursorAtPathEnd: () => boolean;
 
-  isCursorAtPathStart(): boolean;
+  isCursorAtPathStart: () => boolean;
 
-  setSpeed(speed: number);
+  setSpeed: (speed: number) => void;
 
-  setRange(startIndex: number, endIndex: number);
+  setRange: (startIndex: number, endIndex: number) => void;
 
-  on(eventName: String, handler: Function);
+  on: (eventName: string, handler: Function) => void;
 
-  off(eventName: String, handler: Function);
+  off: (eventName: string, handler: Function) => void;
 }
-
-type PathNavigatorType = PathNavigator;
-type PathSimplifierType = PathSimplifier;
