@@ -9,3 +9,5 @@ export { default as Modal } from './Modal';
 export { default as AIcon } from './AIcon';
 export { default as PermissionButton } from './PermissionButton';
 export { default as TitleComponent } from './TitleComponent';
+export { default as AMap } from './AMapComponent/amap';
+export { default as PathSimplifier } from './AMapComponent/PathSimplifier';

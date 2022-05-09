@@ -108,8 +108,6 @@ export default (props: DeviceModelProps) => {
     },
   ];
 
-  console.log(selectKeys);
-
   return (
     <>
       {visible && (
