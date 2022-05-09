@@ -19,7 +19,7 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { TimingTrigger, TriggerWay } from './components';
 import { TriggerWayType } from './components/TriggerWay';
 import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
-import TriggerDevice from './trigger/device';
+import TriggerDevice from './trigger';
 import { service } from '../index';
 import './index.less';
 import { model } from '@formily/reactive';
@@ -271,21 +271,22 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              <Form.Item
-                name={['trigger', 'device']}
-                rules={[
-                  {
-                    validator: async (_: any, value: any) => {
-                      if (!value) {
-                        return Promise.reject(new Error('请选择产品'));
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <TriggerDevice className={'trigger-type-content'} />
-              </Form.Item>
+              // <Form.Item
+              //   name={['trigger', 'device']}
+              //   rules={[
+              //     {
+              //       validator: async (_: any, value: any) => {
+              //         if (!value) {
+              //           return Promise.reject(new Error('请选择产品'));
+              //         }
+              //         return Promise.resolve();
+              //       },
+              //     },
+              //   ]}
+              // >
+              //   <TriggerDevice className={'trigger-type-content'} />
+              // </Form.Item>
+              <TriggerDevice className={'trigger-type-content'} form={form} />
             )}
           </Form.Item>
           {triggerType === TriggerWayType.device &&

@@ -27,11 +27,21 @@ export default (props: MessageContentProps) => {
       if (item.required) {
         rules.push({
           validator: async (_: any, value: any) => {
-            if (!value.value) {
-              if (['date'].includes(type)) {
-                return Promise.reject(new Error('请选择' + item.name));
-              } else {
-                return Promise.reject(new Error('请输入' + item.name));
+            if (type === 'file' && !value) {
+              return Promise.reject(new Error('请输入' + item.name));
+            } else {
+              if (!value || !value.value) {
+                if (['date', 'org', 'user'].includes(type)) {
+                  if (
+                    ['sms', 'voice', 'email'].includes(props.notifyType) &&
+                    value.source !== 'relation'
+                  ) {
+                    return Promise.reject(new Error('请输入' + item.name));
+                  }
+                  return Promise.reject(new Error('请选择' + item.name));
+                } else {
+                  return Promise.reject(new Error('请输入' + item.name));
+                }
               }
             }
             return Promise.resolve();

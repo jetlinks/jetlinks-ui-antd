@@ -1,38 +1,19 @@
-import { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import PathNavigator from './PathNavigator';
 
 interface PathSimplifierProps {
   __map__?: any;
   options?: Omit<PathSimplifierOptions, 'map'>;
-  pathNavigatorOptions?: PathNavigatorOptions;
-  speed?: number;
-  pathName?: string;
-  pathData?: PathDataType;
-  onCreated?: (nav: PathNavigator) => void;
+  pathData?: PathDataItemType[];
+  children?: React.ReactNode;
+  onCreated?: (nav: PathSimplifier) => void;
 }
 
 const PathSimplifier = (props: PathSimplifierProps) => {
-  const { pathData, pathName, __map__, onCreated, speed, pathNavigatorOptions, options } = props;
+  const { pathData, __map__, onCreated, options } = props;
 
   const pathSimplifierRef = useRef<PathSimplifier | null>(null);
-  const pathNavRef = useRef<PathNavigator | undefined>(undefined);
-
-  const createPathNav = (path: number[][], navOptions?: PathNavigatorOptions) => {
-    pathSimplifierRef.current?.setData([
-      {
-        name: pathName,
-        path,
-      },
-    ]);
-    pathNavRef.current = pathSimplifierRef.current?.createPathNavigator(0, {
-      loop: false,
-      speed: 10000,
-      ...navOptions,
-    });
-
-    if (onCreated) {
-      onCreated(pathNavRef.current!);
-    }
-  };
+  const [loading, setLoading] = useState(false);
 
   const pathSimplifier = useCallback(
     (PathObj: PathSimplifier) => {
@@ -48,7 +29,14 @@ const PathSimplifier = (props: PathSimplifierProps) => {
         ...options,
       });
       if (pathData) {
-        createPathNav(pathData, pathNavigatorOptions);
+        pathSimplifierRef.current?.setData(
+          pathData.map((item) => ({ name: item.name || '路线', path: item.path })),
+        );
+        setLoading(true);
+      }
+
+      if (onCreated) {
+        onCreated(pathSimplifierRef.current!);
       }
     },
     [props],
@@ -66,11 +54,21 @@ const PathSimplifier = (props: PathSimplifierProps) => {
     }
   };
 
-  useEffect(() => {
-    if (pathNavRef.current && speed !== undefined) {
-      pathNavRef.current?.setSpeed(speed);
-    }
-  }, [pathNavRef.current, speed]);
+  const renderChildren = () => {
+    return React.Children.map(props.children, (child, index) => {
+      if (child) {
+        if (typeof child === 'string') {
+          return child;
+        } else {
+          return React.cloneElement(child as any, {
+            __pathSimplifier__: pathSimplifierRef.current,
+            navKey: index,
+          });
+        }
+      }
+      return child;
+    });
+  };
 
   useEffect(() => {
     if (__map__) {
@@ -78,7 +76,9 @@ const PathSimplifier = (props: PathSimplifierProps) => {
     }
   }, [__map__]);
 
-  return null;
+  return <>{loading && renderChildren()}</>;
 };
+
+PathSimplifier.PathNavigator = PathNavigator;
 
 export default PathSimplifier;

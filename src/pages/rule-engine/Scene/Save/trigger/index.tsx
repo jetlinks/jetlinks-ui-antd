@@ -1,7 +1,7 @@
 // 已废弃
 import { useCallback, useEffect, useState } from 'react';
 import type { FormInstance } from 'antd';
-import { Col, Form, Row, Select, TreeSelect } from 'antd';
+import { Col, Form, Row, Select } from 'antd';
 import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
 import { queryOrgTree, querySelector } from '@/pages/rule-engine/Scene/Save/trigger/service';
@@ -10,6 +10,7 @@ import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionC
 import Operation from './operation';
 import classNames from 'classnames';
 import { observer } from '@formily/reactive-react';
+import OrgTreeSelect from './OrgTreeSelect';
 import { FormModel } from '../index';
 import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
 
@@ -46,6 +47,8 @@ export default observer((props: TriggerProps) => {
 
   const [functionItem, setFunctionItem] = useState<any[]>([]); // 单个功能-属性列表
   const [orgTree, setOrgTree] = useState<any>([]);
+
+  // const nameValue = Form.useWatch('name', props.form);
 
   const getSelector = () => {
     querySelector().then((resp) => {
@@ -155,6 +158,7 @@ export default observer((props: TriggerProps) => {
             rules={[{ required: true, message: '请选择产品' }]}
           >
             <Select
+              showSearch
               options={productList}
               placeholder={'请选择产品'}
               style={{ width: '100%' }}
@@ -164,51 +168,59 @@ export default observer((props: TriggerProps) => {
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                 props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
                 productIdChange(key, node.metadata);
+                props.form?.setFieldsValue({
+                  trigger: {
+                    device: {
+                      selector: 'fixed',
+                      selectorValues: undefined,
+                      operation: {},
+                    },
+                    productId: key,
+                  },
+                });
               }}
               fieldNames={{ label: 'name', value: 'id' }}
+              filterOption={(input: string, option: any) =>
+                option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             />
           </Form.Item>
         </Col>
-        <Col span={12}>
-          <Form.Item noStyle>
-            <ItemGroup>
-              <Form.Item
-                name={['trigger', 'device', 'selector']}
-                initialValue={
-                  props.triggerData && props.triggerData.device && props.triggerData.device.selector
-                    ? props.triggerData.device.selector
-                    : 'fixed'
-                }
-              >
-                <Select
-                  options={selectorOptions}
-                  fieldNames={{ label: 'name', value: 'id' }}
-                  style={{ width: 120 }}
-                />
-              </Form.Item>
-              {selector === 'all' && (
-                <Form.Item name={['trigger', 'device', 'selectorValues']}>
-                  <AllDevice productId={productId} />
-                </Form.Item>
-              )}
-              {selector === 'fixed' && (
-                <Form.Item name={['trigger', 'device', 'selectorValues']}>
-                  <Device productId={productId} />
-                </Form.Item>
-              )}
-              {selector === 'org' && (
-                <Form.Item name={['trigger', 'device', 'selectorValues']}>
-                  <TreeSelect
-                    treeData={orgTree}
+        {!!productId && (
+          <Col span={12}>
+            <Form.Item noStyle>
+              <ItemGroup>
+                <Form.Item name={['trigger', 'device', 'selector']} initialValue={'fixed'}>
+                  <Select
+                    options={selectorOptions}
                     fieldNames={{ label: 'name', value: 'id' }}
-                    placeholder={'请选择部门'}
-                    style={{ width: '100%' }}
+                    style={{ width: 120 }}
                   />
                 </Form.Item>
-              )}
-            </ItemGroup>
-          </Form.Item>
-        </Col>
+                {selector === 'all' && (
+                  <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                    <AllDevice productId={productId} />
+                  </Form.Item>
+                )}
+                {selector === 'fixed' && (
+                  <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                    <Device productId={productId} />
+                  </Form.Item>
+                )}
+                {selector === 'org' && (
+                  <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                    <OrgTreeSelect
+                      treeData={orgTree}
+                      fieldNames={{ label: 'name', value: 'id' }}
+                      placeholder={'请选择部门'}
+                      style={{ width: '100%' }}
+                    />
+                  </Form.Item>
+                )}
+              </ItemGroup>
+            </Form.Item>
+          </Col>
+        )}
         <Col span={6}>
           {functions.length || events.length || properties.length ? (
             <Form.Item
