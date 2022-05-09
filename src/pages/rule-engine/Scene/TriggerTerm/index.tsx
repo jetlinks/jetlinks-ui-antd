@@ -140,7 +140,6 @@ const TriggerTerm = (props: Props, ref: any) => {
             });
           });
           onFieldReact('trigger.*.terms.*.value.source', (field, form1) => {
-            console.log(field, 'field');
             const params = field.query('..column').value();
 
             // 找到选中的
@@ -156,7 +155,6 @@ const TriggerTerm = (props: Props, ref: any) => {
 
             const source = (field as Field).value;
             const value = field.query(source === 'manual' ? '.value' : '.metric');
-            console.log(value, source, '指标测试', target);
             if (target) {
               if (source === 'manual') {
                 // 手动输入
