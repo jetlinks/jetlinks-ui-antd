@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import type { MapProps } from 'react-amap';
 import { Map } from 'react-amap';
 import { getAMapUiPromise } from './APILoader';
+import SystemConst from '@/utils/const';
+import { Empty } from 'antd';
 
-interface AMapProps extends MapProps {
+interface AMapProps extends Omit<MapProps, 'amapkey' | 'useAMapUI'> {
   style?: React.CSSProperties;
   className?: string;
-  AMapUI?: string;
+  AMapUI?: string | boolean;
 }
 
 export default (props: AMapProps) => {
@@ -16,6 +18,8 @@ export default (props: AMapProps) => {
 
   const isOpenUi = 'AMapUI' in props || props.AMapUI;
 
+  const amapKey = localStorage.getItem(SystemConst.AMAP_KEY);
+
   const getAMapUI = () => {
     const version = typeof props.AMapUI === 'string' ? props.AMapUI : '1.1';
     getAMapUiPromise(version).then(() => {
@@ -23,19 +27,18 @@ export default (props: AMapProps) => {
     });
   };
 
-  // TODO 后期可以使用页面渲染时获取缓存中的key
-
   return (
     <div style={style || { width: '100%', height: '100%' }} className={className}>
-      {
+      {amapKey ? (
         // @ts-ignore
         <Map
           version={'2.0'}
+          amapkey={amapKey}
+          zooms={[3, 20]}
           onInstanceCreated={(map: any) => {
             if (onInstanceCreated) {
               onInstanceCreated(map);
             }
-            console.log(isOpenUi);
             if (isOpenUi) {
               getAMapUI();
             }
@@ -44,7 +47,9 @@ export default (props: AMapProps) => {
         >
           {isOpenUi ? (uiLoading ? props.children : null) : props.children}
         </Map>
-      }
+      ) : (
+        <Empty description={'请配置高德地图key'} />
+      )}
     </div>
   );
 };
