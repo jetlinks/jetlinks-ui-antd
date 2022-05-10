@@ -204,19 +204,21 @@ const Save = (props: Props) => {
               style={{ padding: 0 }}
               isPermission={true}
               onClick={() => {
-                // const tab: any = window.open(`${origin}/#/system/department?save=true`);
-                // tab!.onTabSaveSuccess = (value: any) => {
-                //   form.setFieldState('orgIdList', async (state) => {
-                // state.dataSource = await getOrg().then((resp) =>
-                //   resp.result?.map((item: Record<string, unknown>) => ({
-                //     ...item,
-                //     label: item.name,
-                //     value: item.id,
-                //   })),
-                // );
-                // state.value = [...(state.value || []), value.id];
-                // });
-                // };
+                const tab: any = window.open(`${origin}/#/iot/rule-engine/scene/Save`);
+                tab!.onTabSaveSuccess = (value: any) => {
+                  form.setFieldState('sceneId', async (state) => {
+                    state.dataSource = await getScene();
+                    // .then((resp) =>
+                    //   resp.result?.map((item: Record<string, unknown>) => ({
+                    //     ...item,
+                    //     label: item.name,
+                    //     value: item.id,
+                    //   })),
+                    // );
+                    console.log(value, 'value');
+                    state.value = value?.result?.id;
+                  });
+                };
               }}
             >
               <PlusOutlined />
