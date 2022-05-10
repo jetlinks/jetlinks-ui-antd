@@ -196,6 +196,13 @@ const Save = (props: Props) => {
             message: '请选择关联触发场景',
           },
         ],
+        'x-component-props': {
+          placeholder: '请选择关联触发场景',
+          showSearch: true,
+          showArrow: true,
+          filterOption: (input: string, option: any) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+        },
         'x-decorator-props': {
           gridSpan: 1,
           addonAfter: (
@@ -224,9 +231,6 @@ const Save = (props: Props) => {
               <PlusOutlined />
             </PermissionButton>
           ),
-        },
-        'x-component-props': {
-          placeholder: '请选择关联触发场景',
         },
       },
       description: {

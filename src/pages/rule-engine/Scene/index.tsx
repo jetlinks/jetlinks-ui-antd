@@ -174,6 +174,21 @@ const Scene = () => {
         defaultMessage: '触发方式',
       }),
       width: 120,
+      valueType: 'select',
+      valueEnum: {
+        manual: {
+          text: '手动触发',
+          status: 'manual',
+        },
+        timer: {
+          text: '定时触发',
+          status: 'timer',
+        },
+        device: {
+          text: '设备触发',
+          status: 'device',
+        },
+      },
       renderText: (record) => TriggerWayType[record],
     },
     {

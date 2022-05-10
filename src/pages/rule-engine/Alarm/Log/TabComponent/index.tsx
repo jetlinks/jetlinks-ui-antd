@@ -43,7 +43,7 @@ const TabComponent = observer((props: Props) => {
   const columns: ProColumns<any>[] = [
     {
       title: '名称',
-      dataIndex: 'name',
+      dataIndex: 'alarmName',
     },
     {
       title: '最近告警时间',
