@@ -198,7 +198,7 @@ const TriggerTerm = (props: Props, ref: any) => {
   useImperativeHandle(ref, () => ({
     getTriggerForm: async () => {
       await form.validate();
-      await form.submit();
+      return form.submit();
     },
   }));
   const SchemaField = createSchemaField({

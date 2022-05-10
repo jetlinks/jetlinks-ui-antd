@@ -267,6 +267,7 @@ export default (props: TriggerProps) => {
         </Col>
       </Row>
       {props.value?.operation?.operator === OperatorEnum.invokeFunction ||
+      props.value?.operation?.operator === OperatorEnum.readProperty ||
       props.value?.operation?.operator === OperatorEnum.writeProperty ? (
         <TimingTrigger
           value={props.value?.operation?.timer}
@@ -311,7 +312,7 @@ export default (props: TriggerProps) => {
               />
             </Col>
             <Col span={18}>
-              <span style={{ lineHeight: '32px' }}>定时调用所选功能，功能返回值用于条件配置</span>
+              <span style={{ lineHeight: '32px' }}>定时调用所选功能</span>
             </Col>
           </Row>
           <Row>

@@ -1,6 +1,7 @@
 import { Col, Row, Select } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionCall';
+import { debounce } from 'lodash';
 
 interface OperatorProps {
   propertiesList?: any[];
@@ -10,7 +11,7 @@ interface OperatorProps {
 
 export default (props: OperatorProps) => {
   const [data, setData] = useState<any>({});
-  const [key, setKey] = useState<string | undefined>(undefined);
+  const [key, setKey] = useState<string[] | undefined>(undefined);
   const [propertiesItem, setPropertiesItem] = useState<any[]>([]);
 
   const objToArray = (_data: any) => {
@@ -20,34 +21,44 @@ export default (props: OperatorProps) => {
   };
 
   const findProperties = useCallback(
-    (_key: string, value: any) => {
+    (_key: string[], value: any) => {
       if (props.propertiesList) {
-        const proItem = props.propertiesList.find((item: any) => item.id === _key);
-        if (proItem) {
-          return [
-            {
-              id: proItem.id,
-              name: proItem.name,
-              type: proItem.valueType ? proItem.valueType.type : '-',
-              format: proItem.valueType ? proItem.valueType.format : undefined,
-              options: proItem.valueType ? proItem.valueType.elements : undefined,
-              value: value,
-            },
-          ];
-        }
-        return [];
+        return _key.map((item) => {
+          const proItem = props.propertiesList!.find((a: any) => a.id === item);
+          return {
+            id: proItem.id,
+            name: proItem.name,
+            type: proItem.valueType ? proItem.valueType.type : '-',
+            format: proItem.valueType ? proItem.valueType.format : undefined,
+            options: proItem.valueType ? proItem.valueType.elements : undefined,
+            value: value[item],
+          };
+        });
       }
       return [];
     },
     [props.propertiesList],
   );
 
+  const functionDataChange = useCallback(
+    (value: any[]) => {
+      if (props.onChange) {
+        const _value = { ...props.value };
+        value.forEach((item: any) => {
+          _value[item.name] = item.value;
+        });
+        props.onChange(_value);
+      }
+    },
+    [props],
+  );
+
   useEffect(() => {
     if (props.value && props.propertiesList?.length) {
-      const _key = Object.keys(props.value)[0];
+      const _key = Object.keys(props.value);
       setKey(_key);
       setData(objToArray(props.value));
-      setPropertiesItem(findProperties(_key, props.value[_key]));
+      setPropertiesItem(findProperties(_key, props.value));
     } else {
       setData({});
       setKey(undefined);
@@ -58,6 +69,7 @@ export default (props: OperatorProps) => {
     <Row gutter={24}>
       <Col span={6}>
         <Select
+          mode="multiple"
           options={props.propertiesList || []}
           value={key}
           fieldNames={{
@@ -67,28 +79,33 @@ export default (props: OperatorProps) => {
           style={{ width: '100%' }}
           placeholder={'请选择属性'}
           onSelect={(id: any) => {
-            // TODO 多选
-            if (props.onChange) {
-              props.onChange({ [id]: {} });
+            if (props.value) {
+              const _value: any = { ...props.value };
+              if (id in props.value) {
+                delete _value[id];
+              } else {
+                _value[id] = undefined;
+              }
+              if (props.onChange) {
+                props.onChange(_value!);
+              }
+            } else {
+              if (props.onChange) {
+                props.onChange({ [id]: undefined });
+              }
             }
           }}
         />
       </Col>
       <Col span={18}>
-        <span style={{ lineHeight: '32px' }}>定时调用所选属性，修改后的属性值用于条件配置</span>
+        <span style={{ lineHeight: '32px' }}>定时调用所选属性</span>
       </Col>
       {key && (
         <Col span={24}>
           <FunctionCall
             value={data}
             functionData={propertiesItem}
-            onChange={(value) => {
-              if (props.onChange) {
-                props.onChange({
-                  [value[0].name]: value[0].value,
-                });
-              }
-            }}
+            onChange={debounce(functionDataChange, 300)}
           />
         </Col>
       )}
