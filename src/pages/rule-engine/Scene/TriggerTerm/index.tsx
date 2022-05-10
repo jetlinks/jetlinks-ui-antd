@@ -124,7 +124,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                 label: item.name,
                 value: item.id,
               }));
-              if (target?.termTypes?.length > 0) {
+              if (target?.termTypes?.length > 0 && !state.value) {
                 state.value = 'eq';
               }
             });
