@@ -24,6 +24,7 @@ export default (props: FunctionCallProps) => {
 
   useEffect(() => {
     setEditableRowKeys(props.functionData.map((d) => d.id));
+    console.log('functionData', props.functionData);
     formRef.current?.setFieldsValue({
       table: props.functionData,
     });
@@ -121,7 +122,6 @@ export default (props: FunctionCallProps) => {
       align: 'center',
       width: 260,
       renderFormItem: (_, row: any) => {
-        console.log('functionCall', row.record);
         return getItemNode(row.record);
       },
     },
@@ -130,6 +130,7 @@ export default (props: FunctionCallProps) => {
   return (
     <ProForm<{ table: FunctionTableDataType[] }>
       formRef={formRef}
+      name={'proForm'}
       submitter={false}
       onValuesChange={() => {
         const values = formRef.current?.getFieldsValue();

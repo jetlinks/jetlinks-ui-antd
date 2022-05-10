@@ -14,6 +14,11 @@ type PathSimplifierOptions = {
   renderOptions?: {};
 };
 
+type PathDataItemType = {
+  name?: string;
+  path: PathDataType;
+};
+
 interface PathSimplifier {
   new (options: PathSimplifierOptions);
 
@@ -75,7 +80,7 @@ interface PathNavigatorOptions {
   pathNavigatorStyle?: {};
   animInterval?: number;
   dirToPosInMillsecs?: number;
-  range?: number[];
+  range?: [number, number];
 }
 
 interface PathNavigator {

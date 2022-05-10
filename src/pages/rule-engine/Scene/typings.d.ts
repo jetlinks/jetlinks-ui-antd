@@ -24,6 +24,7 @@ interface SceneItem {
 type TriggerType = {
   type?: string;
   shakeLimit?: any;
+  operation?: any;
   device?: any;
   timer?: any;
 };

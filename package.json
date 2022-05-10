@@ -75,7 +75,7 @@
     "@types/react-syntax-highlighter": "^13.5.2",
     "@umijs/route-utils": "^1.0.36",
     "ahooks": "^2.10.9",
-    "antd": "^4.20.3",
+    "antd": "4.19.5",
     "bizcharts": "^4.1.16",
     "braft-editor": "^2.3.9",
     "classnames": "^2.3.1",

@@ -19,7 +19,7 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { TimingTrigger, TriggerWay } from './components';
 import { TriggerWayType } from './components/TriggerWay';
 import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
-import TriggerDevice from './trigger/device';
+import TriggerDevice from './trigger';
 import { service } from '../index';
 import './index.less';
 import { model } from '@formily/reactive';
@@ -52,11 +52,14 @@ export default () => {
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
   const [triggerType, setTriggerType] = useState('');
-  const [triggerValue, setTriggerValue] = useState<any>([]);
+
   const [loading, setLoading] = useState(false);
   const [parallel, setParallel] = useState(true); // 是否并行
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
+
   const [requestParams, setRequestParams] = useState<any>(undefined);
+  const [triggerValue, setTriggerValue] = useState<any>([]);
+
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -73,7 +76,7 @@ export default () => {
 
         setTriggerValue({ trigger: _data.terms || [] });
 
-        if (_data.trigger?.device?.selectorValues) {
+        if (_data.trigger?.device) {
           setRequestParams({ trigger: _data.trigger });
         }
         if (_data.actions) {
@@ -183,13 +186,20 @@ export default () => {
         <Form
           form={form}
           colon={false}
+          name="basicForm"
           layout={'vertical'}
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
-            if (changeValue.trigger) {
-              setTriggerValue([]);
-              setRequestParams({ trigger: allValues.trigger });
+            if (changeValue.trigger && changeValue.trigger.device) {
+              if (
+                changeValue.trigger.device.selectorValues ||
+                (changeValue.trigger.device.operation &&
+                  changeValue.trigger.device.operation.operator)
+              ) {
+                setTriggerValue([]);
+                setRequestParams({ trigger: allValues.trigger });
+              }
             }
             if (allValues.actions) {
               setActionsData(allValues.actions);
@@ -271,21 +281,26 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              <Form.Item
-                name={['trigger', 'device']}
-                rules={[
-                  {
-                    validator: async (_: any, value: any) => {
-                      if (!value) {
-                        return Promise.reject(new Error('请选择产品'));
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <TriggerDevice className={'trigger-type-content'} />
-              </Form.Item>
+              // <Form.Item
+              //   name={['trigger', 'device']}
+              //   rules={[
+              //     {
+              //       validator: async (_: any, value: any) => {
+              //         if (!value) {
+              //           return Promise.reject(new Error('请选择产品'));
+              //         }
+              //         return Promise.resolve();
+              //       },
+              //     },
+              //   ]}
+              // >
+              //   <TriggerDevice className={'trigger-type-content'} />
+              // </Form.Item>
+              <TriggerDevice
+                value={requestParams && requestParams.trigger}
+                className={'trigger-type-content'}
+                form={form}
+              />
             )}
           </Form.Item>
           {triggerType === TriggerWayType.device &&

@@ -267,6 +267,7 @@ export default (props: TriggerProps) => {
         </Col>
       </Row>
       {props.value?.operation?.operator === OperatorEnum.invokeFunction ||
+      props.value?.operation?.operator === OperatorEnum.readProperty ||
       props.value?.operation?.operator === OperatorEnum.writeProperty ? (
         <TimingTrigger
           value={props.value?.operation?.timer}

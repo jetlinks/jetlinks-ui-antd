@@ -25,18 +25,40 @@ export default (props: MessageContentProps) => {
     (item: any, type: string): any[] => {
       const rules = [];
       if (item.required) {
-        rules.push({
-          validator: async (_: any, value: any) => {
-            if (!value.value) {
-              if (['date'].includes(type)) {
+        if (type === 'user') {
+          rules.push({
+            validator: async (_: any, value: any) => {
+              console.log('user', value);
+              if (!value) {
                 return Promise.reject(new Error('请选择' + item.name));
               } else {
-                return Promise.reject(new Error('请输入' + item.name));
+                if (value.source === 'fixed' && !value.value) {
+                  return Promise.reject(new Error('请输入' + item.name));
+                } else if (value.source === 'relation' && !value.value && !value.relation) {
+                  return Promise.reject(new Error('请选择' + item.name));
+                }
               }
-            }
-            return Promise.resolve();
-          },
-        });
+              return Promise.resolve();
+            },
+          });
+        } else {
+          rules.push({
+            validator: async (_: any, value: any) => {
+              if (type === 'file' && !value) {
+                return Promise.reject(new Error('请输入' + item.name));
+              } else {
+                if (!value || !value.value) {
+                  if (['date', 'org'].includes(type)) {
+                    return Promise.reject(new Error('请选择' + item.name));
+                  } else {
+                    return Promise.reject(new Error('请输入' + item.name));
+                  }
+                }
+              }
+              return Promise.resolve();
+            },
+          });
+        }
       }
 
       if (type === 'link') {
