@@ -46,6 +46,7 @@ import { Store } from 'jetlinks-store';
 import FAutoComplete from '@/components/FAutoComplete';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
+import FMonacoEditor from '@/components/FMonacoEditor';
 
 export const docMap = {
   weixin: {
@@ -64,6 +65,9 @@ export const docMap = {
   },
   email: {
     embedded: <Email />,
+  },
+  webhook: {
+    http: <div>webhook</div>,
   },
 };
 
@@ -406,6 +410,7 @@ const Detail = observer(() => {
       FormGrid,
       ArrayTable,
       FAutoComplete,
+      FMonacoEditor,
     },
   });
 
@@ -511,7 +516,7 @@ const Detail = observer(() => {
         },
         required: true,
         'x-visible': typeList[id]?.length > 0,
-        'x-hidden': id === 'email',
+        'x-hidden': id === 'email' || id === 'webhook',
         'x-value': typeList[id][0]?.value,
         enum: typeList[id] || [],
       },
@@ -1145,6 +1150,67 @@ const Detail = observer(() => {
               },
             },
           },
+          webhook: {
+            type: 'void',
+            properties: {
+              contextAsBody: {
+                title: '请求体',
+                type: 'boolean',
+                'x-component': 'Radio.Group',
+                'x-decorator': 'FormItem',
+                default: true,
+                enum: [
+                  { label: '默认', value: true },
+                  { label: '自定义', value: false },
+                ],
+              },
+              body: {
+                'x-decorator': 'FormItem',
+                'x-component': 'FMonacoEditor',
+                required: true,
+                'x-component-props': {
+                  height: 250,
+                  theme: 'vs',
+                  language: 'json',
+                  editorDidMount: (editor1: any) => {
+                    editor1.onDidScrollChange?.(() => {
+                      editor1.getAction('editor.action.formatDocument').run();
+                    });
+                  },
+                },
+                // 'x-decorator-props': {
+                //   style: {
+                //     zIndex: 9998,
+                //   },
+                // },
+                'x-reactions': {
+                  dependencies: ['.contextAsBody'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]===false}}',
+                    },
+                  },
+                },
+              },
+              defaultBody: {
+                'x-decorator': 'FormItem',
+                'x-component': 'Input.TextArea',
+                'x-component-props': {
+                  rows: 3,
+                  placeholder: '请求体中的数据来自于发送通知时指定的所有变量',
+                },
+                'x-disabled': true,
+                'x-reactions': {
+                  dependencies: ['.contextAsBody'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]===true}}',
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
       'template.message': {
@@ -1159,7 +1225,7 @@ const Detail = observer(() => {
           dependencies: ['provider'],
           fulfill: {
             state: {
-              hidden: '{{$deps[0]==="aliyun"}}',
+              hidden: '{{$deps[0]==="aliyun"||$deps[0]==="http"}}',
               disabled: '{{["aliyunSms","aliyun"].includes($deps[0])}}',
             },
           },
@@ -1254,11 +1320,11 @@ const Detail = observer(() => {
         'x-component-props': {
           rows: 4,
         },
-        'x-decorator-props': {
-          style: {
-            zIndex: 998,
-          },
-        },
+        // 'x-decorator-props': {
+        //   style: {
+        //     zIndex: 998,
+        //   },
+        // },
       },
     },
   };

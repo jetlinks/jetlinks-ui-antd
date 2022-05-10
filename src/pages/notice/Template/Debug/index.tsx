@@ -102,6 +102,7 @@ const Debug = observer(() => {
     // 从后端接口来获取变量参数
     service.getVariableDefinitions(state.current?.id || '').then((resp) => {
       const _template = resp.result;
+      console.log(resp, 'userEfffect', state.current);
       if (_template?.variableDefinitions?.length > 0) {
         variableRef.current = _template?.variableDefinitions;
         form.setFieldState('variableDefinitions', (state1) => {
@@ -149,6 +150,7 @@ const Debug = observer(() => {
         title: '通知配置',
         type: 'string',
         required: true,
+        default: state?.current?.configId,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': '{{useAsyncDataSource(getConfig)}}',

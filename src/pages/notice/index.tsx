@@ -64,7 +64,7 @@ export const typeList = {
   webhook: [
     {
       label: createImageLabel(webhook, 'Webhook'),
-      value: 'webhook',
+      value: 'http',
     },
   ],
 };

@@ -1,5 +1,5 @@
-import { TreeSelect } from 'antd';
 import type { TreeSelectProps } from 'antd';
+import { TreeSelect } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 interface OrgTreeSelect extends Omit<TreeSelectProps, 'onChange' | 'value'> {
