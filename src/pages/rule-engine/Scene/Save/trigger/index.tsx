@@ -3,7 +3,7 @@ import type { FormInstance } from 'antd';
 import { Col, Form, Row, Select } from 'antd';
 import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
-import { queryOrgTree, querySelector } from '@/pages/rule-engine/Scene/Save/trigger/service';
+import { queryOrgTree } from '@/pages/rule-engine/Scene/Save/trigger/service';
 import Device from '@/pages/rule-engine/Scene/Save/action/device/deviceModal';
 import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionCall';
 import Operation from './operation';
@@ -40,7 +40,6 @@ export default observer((props: TriggerProps) => {
   const [productId, setProductId] = useState('');
   const [selector, setSelector] = useState('fixed');
 
-  const [selectorOptions, setSelectorOptions] = useState<any[]>([]);
   const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
 
   const [properties, setProperties] = useState<any[]>([]); // 属性
@@ -49,14 +48,6 @@ export default observer((props: TriggerProps) => {
 
   const [functionItem, setFunctionItem] = useState<any[]>([]); // 单个功能-属性列表
   const [orgTree, setOrgTree] = useState<any>([]);
-
-  const getSelector = () => {
-    querySelector().then((resp) => {
-      if (resp && resp.status === 200) {
-        setSelectorOptions(resp.result);
-      }
-    });
-  };
 
   const getOrgTree = useCallback(() => {
     queryOrgTree(productId).then((resp) => {
@@ -125,7 +116,6 @@ export default observer((props: TriggerProps) => {
 
   useEffect(() => {
     getProducts();
-    getSelector();
   }, []);
 
   useEffect(() => {
@@ -190,7 +180,11 @@ export default observer((props: TriggerProps) => {
               <ItemGroup>
                 <Form.Item name={['trigger', 'device', 'selector']} initialValue={'fixed'}>
                   <Select
-                    options={selectorOptions}
+                    options={[
+                      { label: '全部设备', value: 'all' },
+                      { label: '固定设备', value: 'fixed' },
+                      { label: '按部门', value: 'org' },
+                    ]}
                     fieldNames={{ label: 'name', value: 'id' }}
                     style={{ width: 120 }}
                   />
