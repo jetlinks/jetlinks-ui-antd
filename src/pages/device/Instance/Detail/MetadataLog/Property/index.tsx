@@ -1,11 +1,14 @@
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
-import { DatePicker, Modal, Radio, Space, Table } from 'antd';
+import { DatePicker, Modal, Radio, Select, Space, Table, Tabs } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-
+import { Axis, Chart, Geom, Legend, Tooltip, Slider } from 'bizcharts';
+import FileComponent from '../../Running/Property/FileComponent';
+import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
+import Detail from './Detail';
 interface Props {
   visible: boolean;
   close: () => void;
@@ -15,11 +18,20 @@ interface Props {
 const PropertyLog = (props: Props) => {
   const params = useParams<{ id: string }>();
   const { visible, close, data } = props;
+  const list = ['int', 'float', 'double', 'long'];
   const [dataSource, setDataSource] = useState<any>({});
   const [start, setStart] = useState<number>(moment().startOf('day').valueOf());
   const [end, setEnd] = useState<number>(new Date().getTime());
   const [radioValue, setRadioValue] = useState<undefined | 'today' | 'week' | 'month'>('today');
   const [dateValue, setDateValue] = useState<any>(undefined);
+  const [chartsList, setChartsList] = useState<any>([]);
+  const [cycle, setCycle] = useState<string>(
+    list.includes(data.valueType?.type || '') ? '*' : '1m',
+  );
+  const [agg, setAgg] = useState<string>('AVG');
+  const [tab, setTab] = useState<string>('table');
+  const [detailVisible, setDetailVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<any>('');
 
   const columns = [
     {
@@ -29,9 +41,42 @@ const PropertyLog = (props: Props) => {
       render: (text: any) => <span>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</span>,
     },
     {
-      title: '自定义属性',
-      dataIndex: 'formatValue',
-      key: 'formatValue',
+      title: <span>{data.valueType?.type !== 'file' ? '自定义属性' : '文件内容'}</span>,
+      dataIndex: 'value',
+      key: 'value',
+      render: (text: any, record: any) => (
+        <FileComponent type="table" value={{ formatValue: record.value }} data={data} />
+      ),
+    },
+    {
+      title: '操作',
+      dataIndex: 'action',
+      key: 'action',
+      render: (text: any, record: any) => (
+        <a>
+          {data.valueType?.type !== 'file' ? (
+            <SearchOutlined
+              onClick={() => {
+                setDetailVisible(true);
+                setCurrent(record.value);
+              }}
+            />
+          ) : (
+            <DownloadOutlined />
+          )}
+        </a>
+      ),
+    },
+  ];
+
+  const tabList = [
+    {
+      tab: '列表',
+      key: 'table',
+    },
+    {
+      tab: '图表',
+      key: 'charts',
     },
   ];
 
@@ -55,7 +100,47 @@ const PropertyLog = (props: Props) => {
       });
   };
 
+  const queryChartsList = async (startTime?: number, endTime?: number) => {
+    const resp = await service.queryPropertieList(params.id, data.id || '', {
+      paging: false,
+      terms: [
+        {
+          column: 'timestamp$BTW',
+          value: startTime && endTime ? [startTime, endTime] : [],
+          type: 'and',
+        },
+      ],
+    });
+    if (resp.status === 200) {
+      const dataList: any[] = [];
+      resp.result.data.forEach((i: any) => {
+        dataList.push({
+          year: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+          value: i.value,
+          type: data?.name || '',
+        });
+      });
+      setChartsList(dataList);
+    }
+  };
+
+  const queryChartsAggList = async (datas: any) => {
+    const resp = await service.queryPropertieInfo(params.id, datas);
+    if (resp.status === 200) {
+      const dataList: any[] = [];
+      resp.result.forEach((i: any) => {
+        dataList.push({
+          year: moment(i.time).format('YYYY-MM-DD HH:mm:ss'),
+          value: Number(i[data.id || '']),
+          type: data?.name || '',
+        });
+      });
+      setChartsList(dataList);
+    }
+  };
+
   useEffect(() => {
+    console.log(data);
     if (visible) {
       handleSearch(
         {
@@ -67,6 +152,162 @@ const PropertyLog = (props: Props) => {
       );
     }
   }, [visible]);
+
+  const scale = {
+    value: { min: 0 },
+    year: {
+      range: [0, 0.96],
+      type: 'timeCat',
+    },
+  };
+
+  const renderComponent = (type: string) => {
+    switch (type) {
+      case 'table':
+        return (
+          <Table
+            size="small"
+            rowKey={'id'}
+            onChange={(page) => {
+              handleSearch(
+                {
+                  pageSize: page.pageSize,
+                  pageIndex: Number(page.current) - 1 || 0,
+                },
+                start,
+                end,
+              );
+            }}
+            dataSource={dataSource?.data || []}
+            columns={columns}
+            pagination={{
+              pageSize: dataSource?.pageSize || 10,
+              showSizeChanger: true,
+              total: dataSource?.total || 0,
+            }}
+          />
+        );
+      case 'charts':
+        return (
+          <div>
+            <div style={{ margin: '10 0', display: 'flex' }}>
+              <div style={{ marginRight: 20 }}>
+                统计周期：
+                <Select
+                  value={cycle}
+                  style={{ width: 120 }}
+                  onChange={(value: string) => {
+                    setCycle(value);
+                    if (cycle === '*') {
+                      queryChartsList(start, end);
+                    } else {
+                      queryChartsAggList({
+                        columns: [
+                          {
+                            property: data.id,
+                            alias: data.id,
+                            agg: agg,
+                          },
+                        ],
+                        query: {
+                          interval: value,
+                          format: 'yyyy-MM-dd HH:mm:ss',
+                          from: start,
+                          to: end,
+                        },
+                      });
+                    }
+                  }}
+                >
+                  {list.includes(data.valueType?.type || '') && (
+                    <Select.Option value="*">实际值</Select.Option>
+                  )}
+                  <Select.Option value="1m">按分钟统计</Select.Option>
+                  <Select.Option value="1h">按小时统计</Select.Option>
+                  <Select.Option value="1d">按天统计</Select.Option>
+                  <Select.Option value="1w">按周统计</Select.Option>
+                  <Select.Option value="1M">按月统计</Select.Option>
+                </Select>
+              </div>
+              {cycle !== '*' && list.includes(data.valueType?.type || '') && (
+                <div>
+                  统计规则：
+                  <Select
+                    defaultValue="AVG"
+                    style={{ width: 120 }}
+                    onChange={(value: string) => {
+                      setAgg(value);
+                      queryChartsAggList({
+                        columns: [
+                          {
+                            property: data.id,
+                            alias: data.id,
+                            agg: value,
+                          },
+                        ],
+                        query: {
+                          interval: cycle,
+                          format: 'yyyy-MM-dd HH:mm:ss',
+                          from: start,
+                          to: end,
+                        },
+                      });
+                    }}
+                  >
+                    <Select.Option value="AVG">平均值</Select.Option>
+                    <Select.Option value="MAX">最大值</Select.Option>
+                    <Select.Option value="MIN">最小值</Select.Option>
+                    <Select.Option value="COUNT">总数</Select.Option>
+                  </Select>
+                </div>
+              )}
+            </div>
+            <div style={{ paddingTop: 15 }}>
+              <Chart height={400} data={chartsList} scale={scale} autoFit>
+                <Legend />
+                <Axis name="year" />
+                <Axis
+                  name="value"
+                  label={{
+                    formatter: (val) => parseFloat(val).toLocaleString(),
+                  }}
+                />
+                <Tooltip showCrosshairs shared />
+                <Geom
+                  type="line"
+                  tooltip={[
+                    'value*type',
+                    (value, name) => {
+                      return {
+                        value: value,
+                        name,
+                      };
+                    },
+                  ]}
+                  position="year*value"
+                  size={2}
+                />
+                <Geom
+                  type="point"
+                  tooltip={false}
+                  position="year*value"
+                  size={4}
+                  shape={'circle'}
+                  style={{
+                    stroke: '#fff',
+                    lineWidth: 1,
+                  }}
+                />
+                <Geom type="area" position="year*value" shape={'circle'} tooltip={false} />
+                <Slider />
+              </Chart>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   // @ts-ignore
   return (
@@ -98,14 +339,36 @@ const PropertyLog = (props: Props) => {
               setDateValue(undefined);
               setStart(st);
               setEnd(et);
-              handleSearch(
-                {
-                  pageSize: 10,
-                  pageIndex: 0,
-                },
-                st,
-                et,
-              );
+              if (tab === 'charts') {
+                if (list.includes(data.valueType?.type || '')) {
+                  queryChartsList(st, et);
+                } else {
+                  queryChartsAggList({
+                    columns: [
+                      {
+                        property: data.id,
+                        alias: data.id,
+                        agg,
+                      },
+                    ],
+                    query: {
+                      interval: cycle,
+                      format: 'yyyy-MM-dd HH:mm:ss',
+                      from: st,
+                      to: et,
+                    },
+                  });
+                }
+              } else {
+                handleSearch(
+                  {
+                    pageSize: 10,
+                    pageIndex: 0,
+                  },
+                  st,
+                  et,
+                );
+              }
             }}
             style={{ minWidth: 220 }}
           >
@@ -140,28 +403,50 @@ const PropertyLog = (props: Props) => {
           }
         </Space>
       </div>
-
-      <Table
-        size="small"
-        rowKey={'id'}
-        onChange={(page) => {
-          handleSearch(
-            {
-              pageSize: page.pageSize,
-              pageIndex: Number(page.current) - 1 || 0,
-            },
-            start,
-            end,
-          );
+      <Tabs
+        activeKey={tab}
+        onChange={(key: string) => {
+          setTab(key);
+          if (key === 'charts' && !!data.valueType?.type) {
+            if (list.includes(data.valueType?.type)) {
+              queryChartsList(start, end);
+            } else {
+              setCycle('1m');
+              setAgg('COUNT');
+              queryChartsAggList({
+                columns: [
+                  {
+                    property: data.id,
+                    alias: data.id,
+                    agg: 'COUNT',
+                  },
+                ],
+                query: {
+                  interval: '1m',
+                  format: 'yyyy-MM-dd HH:mm:ss',
+                  from: start,
+                  to: end,
+                },
+              });
+            }
+          }
         }}
-        dataSource={dataSource?.data || []}
-        columns={columns}
-        pagination={{
-          pageSize: dataSource?.pageSize || 10,
-          showSizeChanger: true,
-          total: dataSource?.total || 0,
-        }}
-      />
+      >
+        {tabList.map((item) => (
+          <Tabs.TabPane tab={item.tab} key={item.key}>
+            {renderComponent(item.key)}
+          </Tabs.TabPane>
+        ))}
+      </Tabs>
+      {detailVisible && (
+        <Detail
+          close={() => {
+            setDetailVisible(false);
+          }}
+          value={current}
+          type={data.valueType?.type || ''}
+        />
+      )}
     </Modal>
   );
 };

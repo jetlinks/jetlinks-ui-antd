@@ -292,6 +292,17 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/metric/property/${propertyId}`, {
       method: 'GET',
     });
+  //聚合查询设备属性
+  public queryPropertieInfo = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/agg/_query`, {
+      method: 'POST',
+      data,
+    });
+  public queryPropertieList = (deviceId: string, property: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/property/${property}/_query`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;
