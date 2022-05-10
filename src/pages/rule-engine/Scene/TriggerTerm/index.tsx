@@ -196,7 +196,10 @@ const TriggerTerm = (props: Props, ref: any) => {
   );
 
   useImperativeHandle(ref, () => ({
-    getTriggerForm: () => form.submit(),
+    getTriggerForm: async () => {
+      await form.validate();
+      await form.submit();
+    },
   }));
   const SchemaField = createSchemaField({
     components: {
@@ -261,6 +264,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator-props': {
                           gridSpan: 6,
                         },
+                        required: true,
                         'x-component-props': {
                           placeholder: '请选择参数',
                           fieldNames: { value: 'column', label: 'name', options: 'children' },
@@ -279,6 +283,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-component-props': {
                           placeholder: '操作符',
                         },
+                        required: true,
                       },
                       value: {
                         type: 'object',
@@ -301,6 +306,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                             type: 'string',
                             'x-component': 'Select',
                             'x-decorator': 'FormItem',
+                            required: true,
                             'x-component-props': {
                               style: {
                                 minWidth: '110px',
@@ -316,6 +322,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                                 width: 'calc(100% - 110px)',
                               },
                             },
+                            required: true,
                             'x-reactions': {
                               dependencies: ['.source'],
                               fulfill: {
@@ -334,6 +341,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                                 width: '100%',
                               },
                             },
+                            required: true,
                             'x-decorator-props': {
                               style: {
                                 width: 'calc(100% - 110px)',

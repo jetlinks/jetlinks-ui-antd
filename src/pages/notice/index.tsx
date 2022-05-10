@@ -20,6 +20,7 @@ const dingTalkMessage = require('/public/images/notice/dingTalk-message.png');
 const dingTalkRebot = require('/public/images/notice/dingTalk-rebot.png');
 const sms = require('/public/images/notice/sms.png');
 const vocie = require('/public/images/notice/voice.png');
+const webhook = require('/public/images/notice/webhook.png');
 
 export const typeList = {
   weixin: [
@@ -60,6 +61,12 @@ export const typeList = {
       label: '默认',
     },
   ],
+  webhook: [
+    {
+      label: createImageLabel(webhook, 'Webhook'),
+      value: 'webhook',
+    },
+  ],
 };
 
 const Type = observer(() => {
@@ -89,6 +96,11 @@ const Type = observer(() => {
       name: '短信',
       describe: '支持阿里云短信消息类型',
     },
+    {
+      type: 'webhook',
+      name: 'webhook',
+      describe: '支持websocket消息通知',
+    },
   ];
 
   const iconMap = new Map();
@@ -97,6 +109,7 @@ const Type = observer(() => {
   iconMap.set('email', require('/public/images/notice/email.png'));
   iconMap.set('voice', require('/public/images/notice/voice.png'));
   iconMap.set('sms', require('/public/images/notice/sms.png'));
+  iconMap.set('webhook', require('/public/images/notice/webhook.png'));
 
   const bGroundMap = new Map();
   bGroundMap.set('dingTalk', require('/public/images/notice/dingtalk-background.png'));
@@ -104,6 +117,7 @@ const Type = observer(() => {
   bGroundMap.set('email', require('/public/images/notice/email-background.png'));
   bGroundMap.set('voice', require('/public/images/notice/voice-background.png'));
   bGroundMap.set('sms', require('/public/images/notice/sms-background.png'));
+  bGroundMap.set('webhook', require('/public/images/notice/webhook-backgroud.png'));
 
   return (
     <PageContainer
