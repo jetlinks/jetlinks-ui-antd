@@ -83,13 +83,11 @@ export default (props: UserProps) => {
   };
 
   useEffect(() => {
-    if (['dingTalk', 'weixin'].includes(props.notifyType)) {
-      if (source === 'fixed') {
-        // 钉钉，微信用户
-        getRelationUsers(props.notifyType, props.configId);
-      } else {
-        getPlatformUser();
-      }
+    if (source === 'fixed' && ['dingTalk', 'weixin'].includes(props.notifyType)) {
+      // 钉钉，微信用户
+      getRelationUsers(props.notifyType, props.configId);
+    } else {
+      getPlatformUser();
     }
   }, [source, props.notifyType]);
 

@@ -15,7 +15,7 @@ import { FormModel } from '../index';
 import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
 
 interface TriggerProps {
-  value?: string;
+  value?: any;
   onChange?: (type: string) => void;
   triggerData?: any;
   form?: FormInstance;
@@ -32,13 +32,16 @@ enum OperatorEnum {
   'invokeFunction' = 'invokeFunction',
 }
 
+const CronRegEx = new RegExp(
+  '(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7])|([1-7])|(\\?)|(\\*)|(([1-7]L)|([1-7]\\#[1-4]))))|(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7] )|([1-7] )|(\\? )|(\\* )|(([1-7]L )|([1-7]\\#[1-4]) ))((19[789][0-9]|20[0-9][0-9])\\-(19[789][0-9]|20[0-9][0-9])))',
+);
+
 export default observer((props: TriggerProps) => {
   const [productList, setProductList] = useState<any[]>([]);
   const [productId, setProductId] = useState('');
   const [selector, setSelector] = useState('fixed');
 
   const [selectorOptions, setSelectorOptions] = useState<any[]>([]);
-  const [operation, setOperation] = useState<string | undefined>(undefined);
   const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
 
   const [properties, setProperties] = useState<any[]>([]); // 属性
@@ -47,8 +50,6 @@ export default observer((props: TriggerProps) => {
 
   const [functionItem, setFunctionItem] = useState<any[]>([]); // 单个功能-属性列表
   const [orgTree, setOrgTree] = useState<any>([]);
-
-  // const nameValue = Form.useWatch('name', props.form);
 
   const getSelector = () => {
     querySelector().then((resp) => {
@@ -129,8 +130,8 @@ export default observer((props: TriggerProps) => {
   }, []);
 
   useEffect(() => {
-    const triggerData = props.triggerData;
-    console.log('trigger', triggerData);
+    const triggerData = props.value;
+    console.log('triggerData', triggerData);
     if (triggerData && triggerData.device) {
       const _device = triggerData.device;
 
@@ -140,14 +141,12 @@ export default observer((props: TriggerProps) => {
         }
         setSelector(_device.selector);
       }
-
-      if (_device.operation && 'operator' in _device.operation) {
-        setOperation(_device.operation.operator);
-      } else {
-        setOperation(undefined);
-      }
     }
-  }, [props.triggerData]);
+  }, [props.value]);
+
+  useEffect(() => {
+    console.log('FormModel-device', FormModel);
+  }, [FormModel]);
 
   return (
     <div className={classNames(props.className)}>
@@ -198,17 +197,26 @@ export default observer((props: TriggerProps) => {
                   />
                 </Form.Item>
                 {selector === 'all' && (
-                  <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                  <Form.Item
+                    name={['trigger', 'device', 'selectorValues']}
+                    rules={[{ required: true, message: '请选择设备' }]}
+                  >
                     <AllDevice productId={productId} />
                   </Form.Item>
                 )}
                 {selector === 'fixed' && (
-                  <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                  <Form.Item
+                    name={['trigger', 'device', 'selectorValues']}
+                    rules={[{ required: true, message: '请选择设备' }]}
+                  >
                     <Device productId={productId} />
                   </Form.Item>
                 )}
                 {selector === 'org' && (
-                  <Form.Item name={['trigger', 'device', 'selectorValues']}>
+                  <Form.Item
+                    name={['trigger', 'device', 'selectorValues']}
+                    rules={[{ required: true, message: '请选择部门' }]}
+                  >
                     <OrgTreeSelect
                       treeData={orgTree}
                       fieldNames={{ label: 'name', value: 'id' }}
@@ -237,12 +245,58 @@ export default observer((props: TriggerProps) => {
           ) : null}
         </Col>
       </Row>
-      {operation === OperatorEnum.invokeFunction || operation === OperatorEnum.writeProperty ? (
-        <Form.Item name={['trigger', 'device', 'operation', 'timer']}>
+      {FormModel.trigger?.device?.operation?.operator === OperatorEnum.invokeFunction ||
+      FormModel.trigger?.device?.operation?.operator === OperatorEnum.readProperty ||
+      FormModel.trigger?.device?.operation?.operator === OperatorEnum.writeProperty ? (
+        <Form.Item
+          name={['trigger', 'device', 'operation', 'timer']}
+          rules={[
+            {
+              validator: async (_: any, value: any) => {
+                if (value) {
+                  if (value.trigger === 'cron') {
+                    if (!value.cron) {
+                      return Promise.reject(new Error('请输入cron表达式'));
+                    } else if (value.cron.length > 64) {
+                      return Promise.reject(new Error('最多可输入64个字符'));
+                    } else if (!CronRegEx.test(value.cron)) {
+                      return Promise.reject(new Error('请输入正确的cron表达式'));
+                    }
+                  } else {
+                    if (!value.when.length) {
+                      return Promise.reject(new Error('请选择时间'));
+                    }
+                    if (value.period) {
+                      if (!value.period.from || !value.period.to) {
+                        return Promise.reject(new Error('请选择时间周期'));
+                      }
+                      if (!value.period.every) {
+                        return Promise.reject(new Error('请输入周期频率'));
+                      }
+                    } else if (value.once) {
+                      if (!value.once.time) {
+                        return Promise.reject(new Error('请选择时间周期'));
+                      }
+                    }
+                  }
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+          initialValue={{
+            trigger: 'week',
+            mod: 'period',
+            when: [],
+            period: {
+              unit: 'seconds',
+            },
+          }}
+        >
           <TimingTrigger />
         </Form.Item>
       ) : null}
-      {operation === OperatorEnum.invokeFunction && (
+      {FormModel.trigger?.device?.operation?.operator === OperatorEnum.invokeFunction && (
         <>
           <Row gutter={24}>
             <Col span={6}>
@@ -283,8 +337,6 @@ export default observer((props: TriggerProps) => {
             <Col span={18}>
               <span style={{ lineHeight: '32px' }}>定时调用所选功能，功能返回值用于条件配置</span>
             </Col>
-          </Row>
-          <Row>
             <Col span={24}>
               <Form.Item name={['trigger', 'device', 'operation', 'functionParameters']}>
                 <FunctionCall functionData={functionItem} />
@@ -293,7 +345,7 @@ export default observer((props: TriggerProps) => {
           </Row>
         </>
       )}
-      {operation === OperatorEnum.writeProperty && (
+      {FormModel.trigger?.device?.operation?.operator === OperatorEnum.writeProperty && (
         <Row>
           <Col span={24}>
             <Form.Item
@@ -312,7 +364,7 @@ export default observer((props: TriggerProps) => {
           </Col>
         </Row>
       )}
-      {operation === OperatorEnum.readProperty && (
+      {FormModel.trigger?.device?.operation?.operator === OperatorEnum.readProperty && (
         <Row gutter={24}>
           <Col span={6}>
             <Form.Item
@@ -347,7 +399,7 @@ export default observer((props: TriggerProps) => {
           </Col>
         </Row>
       )}
-      {operation === OperatorEnum.reportEvent && (
+      {FormModel.trigger?.device?.operation?.operator === OperatorEnum.reportEvent && (
         <Row gutter={24}>
           <Col span={6}>
             <Form.Item
