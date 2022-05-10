@@ -12,6 +12,7 @@ import { useParams } from 'umi';
 import PropertyLog from '../../MetadataLog/Property';
 import moment from 'moment';
 import styles from './index.less';
+import FileComponent from './FileComponent';
 
 interface Props {
   data: Partial<PropertyMetadata>[];
@@ -64,7 +65,7 @@ const Property = (props: Props) => {
       dataIndex: 'value',
       key: 'value',
       render: (text: any, record: any) => (
-        <span>{propertyValue[record.id]?.formatValue || '--'}</span>
+        <FileComponent type="table" value={propertyValue[record.id]} data={record} />
       ),
     },
     {

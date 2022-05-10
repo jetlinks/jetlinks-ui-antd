@@ -6,6 +6,8 @@ import Provider from './Provider';
 import Media from './Media';
 import { service } from '@/pages/link/AccessConfig';
 import { Spin } from 'antd';
+import Cloud from './Cloud';
+import Channel from './Channel';
 
 type LocationType = {
   id?: string;
@@ -17,7 +19,9 @@ const Detail = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>({});
   const [provider, setProvider] = useState<any>({});
-  const [type, setType] = useState<'media' | 'network' | undefined>(undefined);
+  const [type, setType] = useState<'media' | 'network' | 'cloud' | 'channel' | undefined>(
+    undefined,
+  );
 
   const [dataSource, setDataSource] = useState<any[]>([]);
 
@@ -41,6 +45,16 @@ const Detail = () => {
               response.result?.provider === 'gb28181-2016'
             ) {
               setType('media');
+            } else if (
+              response.result?.provider === 'Ctwing' ||
+              response.result?.provider === 'OneNet'
+            ) {
+              setType('cloud');
+            } else if (
+              response.result?.provider === 'modbus-tcp' ||
+              response.result?.provider === 'opc-ua'
+            ) {
+              setType('channel');
             } else {
               setType('network');
             }
@@ -80,6 +94,26 @@ const Detail = () => {
             }}
           />
         );
+      case 'cloud':
+        return (
+          <Cloud
+            data={data}
+            provider={provider}
+            change={() => {
+              setVisible(true);
+            }}
+          />
+        );
+      case 'channel':
+        return (
+          <Channel
+            data={data}
+            provider={provider}
+            change={() => {
+              setVisible(true);
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -91,7 +125,7 @@ const Detail = () => {
         {visible ? (
           <Provider
             data={dataSource}
-            change={(param: any, typings: 'media' | 'network') => {
+            change={(param: any, typings: 'media' | 'network' | 'cloud' | 'channel') => {
               setType(typings);
               setProvider(param);
               setData({});
