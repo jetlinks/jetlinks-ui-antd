@@ -54,7 +54,7 @@ export const docMap = {
     embedded: <Email />,
   },
   webhook: {
-    default: <div>webhook</div>,
+    http: <div>webhook</div>,
   },
 };
 
@@ -90,9 +90,9 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
-    // if (id === 'webhook') {
-    //   setProvider('default');
-    // }
+    if (id === 'webhook') {
+      setProvider('http');
+    }
     if (state.current) {
       form.setValues(state.current);
     }
@@ -158,7 +158,7 @@ const Detail = observer(() => {
         },
         required: true,
         'x-visible': typeList[id]?.length > 0,
-        'x-hidden': id === 'email',
+        'x-hidden': id === 'email' || id === 'webhook',
         'x-value': typeList[id][0]?.value,
         enum: typeList[id] || [],
       },
@@ -477,7 +477,7 @@ const Detail = observer(() => {
                 'x-component': 'ArrayTable',
                 'x-component-props': {
                   pagination: { pageSize: 9999 },
-                  scroll: { x: '100%' },
+                  // scroll: {x: '100%'},
                 },
                 items: {
                   type: 'object',
@@ -512,7 +512,7 @@ const Detail = observer(() => {
                       'x-component-props': {
                         title: '操作',
                         dataIndex: 'operations',
-                        width: 200,
+                        width: 50,
                         fixed: 'right',
                       },
                       properties: {
@@ -541,20 +541,20 @@ const Detail = observer(() => {
             },
           },
         },
-        description: {
-          title: '说明',
-          'x-decorator': 'FormItem',
-          'x-component': 'Input.TextArea',
-          'x-component-props': {
-            rows: 4,
-          },
-          'x-validator': [
-            {
-              max: 200,
-              message: '最多可输入200个字符',
-            },
-          ],
+      },
+      description: {
+        title: '说明',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input.TextArea',
+        'x-component-props': {
+          rows: 4,
         },
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
       },
     },
   };
