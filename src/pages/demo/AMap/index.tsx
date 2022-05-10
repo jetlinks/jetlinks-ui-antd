@@ -5,7 +5,7 @@ export default () => {
   const [speed] = useState(100000);
   return (
     <AMap
-      useAMapUI={true}
+      AMapUI
       style={{
         height: 500,
         width: '100%',

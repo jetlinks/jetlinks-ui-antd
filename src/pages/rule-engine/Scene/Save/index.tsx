@@ -97,14 +97,15 @@ export default () => {
 
   const saveData = async () => {
     const formData = await form.validateFields();
+    console.log('save1', formData);
     let triggerData = undefined;
     // 获取触发条件数据
-    if (triggerRef.current) {
+    if (triggerRef.current && formData.trigger) {
       triggerData = await triggerRef.current.getTriggerForm();
-      if (!triggerData) {
-        return;
+      console.log('save1', triggerData);
+      if (triggerData) {
+        formData.terms = triggerData.trigger;
       }
-      formData.terms = triggerData.trigger;
     }
     console.log('save', formData);
     if (formData) {
