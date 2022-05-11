@@ -1,5 +1,5 @@
 import { Modal, Input } from 'antd';
-// import ReactMarkdown from "react-markdown";
+import ReactJson from 'react-json-view';
 
 interface Props {
   close: () => void;
@@ -15,7 +15,18 @@ const Detail = (props: Props) => {
       return (
         <div>
           <div>自定义属性</div>
-          {JSON.stringify(value)}
+          <div>
+            {
+              // @ts-ignore
+              <ReactJson
+                displayObjectSize={false}
+                displayDataTypes={false}
+                style={{ marginTop: 10 }}
+                name={false}
+                src={value}
+              />
+            }
+          </div>
         </div>
       );
     } else {
@@ -32,6 +43,7 @@ const Detail = (props: Props) => {
     <Modal
       title="详情"
       visible
+      destroyOnClose={true}
       onOk={() => {
         props.close();
       }}
