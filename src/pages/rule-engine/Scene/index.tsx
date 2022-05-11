@@ -221,13 +221,13 @@ const Scene = () => {
           ''
         ),
       valueEnum: {
-        disable: {
-          text: '禁用',
-          status: 'offline',
-        },
         started: {
           text: '正常',
           status: 'started',
+        },
+        disable: {
+          text: '禁用',
+          status: 'disable',
         },
       },
     },
