@@ -110,6 +110,7 @@ export enum MENUS_CODE {
   'system/Department/Detail' = 'system/Department/Detail',
   'link/Type/Detail' = 'link/Type/Detail',
   'Northbound/DuerOS' = 'Northbound/DuerOS',
+  'Northbound/DuerOS/Detail' = 'Northbound/DuerOS/Detail',
   'Northbound/AliCloud' = 'Northbound/AliCloud',
 }
 

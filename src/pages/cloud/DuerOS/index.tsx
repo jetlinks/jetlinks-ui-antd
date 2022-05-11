@@ -1,12 +1,14 @@
 import BaseService from '@/utils/BaseService';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PageContainer } from '@ant-design/pro-layout';
-import BaseCrud from '@/components/BaseCrud';
-import { useRef } from 'react';
-import { Tooltip } from 'antd';
-import { EditOutlined, MinusOutlined } from '@ant-design/icons';
+import { useRef, useState } from 'react';
+import { Space, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import type { DuerOSItem } from '@/pages/cloud/DuerOS/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import SearchComponent from '@/components/SearchComponent';
+import { PermissionButton, ProTableCard } from '@/components';
+import DuerOSCard from '@/components/ProTableCard/CardItems/duerOs';
 
 export const service = new BaseService<DuerOSItem>('dueros/product');
 const DuerOS = () => {
@@ -82,19 +84,72 @@ const DuerOS = () => {
       ],
     },
   ];
-  const schema = {};
+  // const schema = {};
 
+  const [param, setParam] = useState({});
   return (
     <PageContainer>
-      <BaseCrud<DuerOSItem>
-        columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.cloud.duerOS',
-          defaultMessage: 'DuerOS',
-        })}
-        schema={schema}
+      <SearchComponent
+        field={columns}
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+      />
+      <ProTableCard<any>
         actionRef={actionRef}
+        rowKey="id"
+        search={false}
+        params={param}
+        columns={columns}
+        request={(params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
+        cardRender={(record) => (
+          <DuerOSCard
+            {...record}
+            action={[
+              <PermissionButton>
+                <EditOutlined />
+                编辑
+              </PermissionButton>,
+              <PermissionButton
+                type="link"
+                popConfirm={{
+                  disabled: record.state?.value !== 'disabled',
+                  title: '确认删除?',
+                  onConfirm: async () => {
+                    await service.remove(record.id);
+                    actionRef.current?.reset?.();
+                  },
+                }}
+                isPermission={true}
+                key="delete"
+              >
+                <DeleteOutlined />
+              </PermissionButton>,
+            ]}
+          />
+        )}
+        headerTitle={
+          <Space>
+            <PermissionButton
+              isPermission={true}
+              onClick={() => {
+                // setCurrent(undefined);
+                // setVisible(true);
+              }}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </PermissionButton>
+          </Space>
+        }
       />
     </PageContainer>
   );
