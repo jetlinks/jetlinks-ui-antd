@@ -13,7 +13,7 @@ import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
-import getRoutes, { getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
+import getRoutes, { extraRouteArr, getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
 import { AIcon } from '@/components';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -264,7 +264,7 @@ export function render(oldRender: any) {
             url: '/demo',
           });
         }
-        extraRoutes = handleRoutes(res.result);
+        extraRoutes = handleRoutes([...extraRouteArr, ...res.result]);
         saveMenusCache(extraRoutes);
       }
       oldRender();
