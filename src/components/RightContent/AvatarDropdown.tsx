@@ -8,6 +8,7 @@ import styles from './index.less';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/user/Login/service';
+import { getMenuPathByCode } from '@/utils/menu';
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -47,7 +48,8 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         await loginOut();
         return;
       }
-      history.push(`/account/${key}`);
+      // console.log(key)
+      history.push(getMenuPathByCode('account/Center'));
     },
     [initialState, setInitialState],
   );

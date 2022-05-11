@@ -37,7 +37,29 @@ const extraRouteObj = {
     ],
   },
 };
-
+//额外路由
+export const extraRouteArr = [
+  {
+    code: 'account',
+    id: 'accout',
+    name: '个人中心',
+    url: '/account',
+    hideInMenu: true,
+    children: [
+      {
+        code: 'account/Center',
+        name: '基本设置',
+        url: '/account/center',
+      },
+      {
+        code: 'account/Center/bind',
+        name: '第三方页面',
+        url: '/account/center/bind',
+        hideInMenu: true,
+      },
+    ],
+  },
+];
 /**
  * 根据url获取映射的组件
  * @param files
