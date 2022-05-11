@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Col, Row, Select, TreeSelect } from 'antd';
+import { Col, Form, Row, Select, TreeSelect } from 'antd';
 import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
 import { queryOrgTree } from '@/pages/rule-engine/Scene/Save/trigger/service';
@@ -153,29 +153,41 @@ export default (props: TriggerProps) => {
     <div className={classNames(props.className)}>
       <Row gutter={24}>
         <Col span={6}>
-          <Select
-            showSearch
-            value={props.value?.productId}
-            options={productList}
-            placeholder={'请选择产品'}
-            style={{ width: '100%' }}
-            listHeight={220}
-            onChange={(key: any, node: any) => {
-              productIdChange(key, node.metadata);
-              onChange({
-                productId: key,
-                selectorValues: undefined,
-                selector: 'fixed',
-                operation: {
-                  operator: undefined,
+          <Form.Item
+            noStyle
+            rules={[
+              {
+                validator: async (_: any, value: any) => {
+                  console.log('productId', value);
+                  return Promise.resolve();
                 },
-              });
-            }}
-            fieldNames={{ label: 'name', value: 'id' }}
-            filterOption={(input: string, option: any) =>
-              option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-          />
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              value={props.value?.productId}
+              options={productList}
+              placeholder={'请选择产品'}
+              style={{ width: '100%' }}
+              listHeight={220}
+              onChange={(key: any, node: any) => {
+                productIdChange(key, node.metadata);
+                onChange({
+                  productId: key,
+                  selectorValues: undefined,
+                  selector: 'fixed',
+                  operation: {
+                    operator: undefined,
+                  },
+                });
+              }}
+              fieldNames={{ label: 'name', value: 'id' }}
+              filterOption={(input: string, option: any) =>
+                option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            />
+          </Form.Item>
         </Col>
         {props.value?.productId ? (
           <Col span={12}>
@@ -219,14 +231,18 @@ export default (props: TriggerProps) => {
               )}
               {props.value?.selector === 'org' && (
                 <TreeSelect
-                  value={props.value?.selectorValues}
+                  value={
+                    props.value?.selectorValues && props.value?.selectorValues.length
+                      ? props.value?.selectorValues[0].id
+                      : undefined
+                  }
                   treeData={orgTree}
                   fieldNames={{ label: 'name', value: 'id' }}
                   placeholder={'请选择部门'}
                   style={{ width: '100%' }}
-                  onChange={(value) => {
+                  onChange={(value, label) => {
                     const _value = { ...props.value };
-                    _value.selectorValues = value;
+                    _value.selectorValues = [{ id: value, name: label[0] }];
                     onChange(_value);
                   }}
                 />
@@ -251,6 +267,7 @@ export default (props: TriggerProps) => {
         </Col>
       </Row>
       {props.value?.operation?.operator === OperatorEnum.invokeFunction ||
+      props.value?.operation?.operator === OperatorEnum.readProperty ||
       props.value?.operation?.operator === OperatorEnum.writeProperty ? (
         <TimingTrigger
           value={props.value?.operation?.timer}
@@ -295,7 +312,7 @@ export default (props: TriggerProps) => {
               />
             </Col>
             <Col span={18}>
-              <span style={{ lineHeight: '32px' }}>定时调用所选功能，功能返回值用于条件配置</span>
+              <span style={{ lineHeight: '32px' }}>定时调用所选功能</span>
             </Col>
           </Row>
           <Row>
@@ -366,7 +383,27 @@ export default (props: TriggerProps) => {
             />
           </Col>
           <Col span={18}>
-            <span style={{ lineHeight: '32px' }}>定时读取所选属性值，用于条件配置</span>
+            <span style={{ lineHeight: '32px' }}>定时读取所选属性值</span>
+          </Col>
+        </Row>
+      )}
+      {props.value?.operation?.operator === OperatorEnum.reportEvent && (
+        <Row gutter={24}>
+          <Col span={6}>
+            <Select
+              value={props.value?.operation?.eventId}
+              options={events}
+              placeholder={'请选择事件'}
+              style={{ width: '100%' }}
+              fieldNames={{ label: 'name', value: 'id' }}
+              onChange={(value) => {
+                if (props.value) {
+                  const _value = { ...props.value };
+                  _value!.operation!.eventId = value;
+                  onChange(_value);
+                }
+              }}
+            />
           </Col>
         </Row>
       )}

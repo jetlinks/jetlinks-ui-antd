@@ -7,6 +7,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import Service from '@/pages/user/Login/service';
+import { service as SystemConfigService } from '@/pages/system/Config';
 import Token from '@/utils/token';
 import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
@@ -248,8 +249,21 @@ export function patchRoutes(routes: any) {
 
 export function render(oldRender: any) {
   if (history.location.pathname !== loginPath) {
+    SystemConfigService.getAMapKey().then((res) => {
+      if (res && res.status === 200 && res.result) {
+        localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);
+      }
+    });
     MenuService.queryOwnThree({ paging: false }).then((res) => {
       if (res && res.status === 200) {
+        if (isDev) {
+          res.result.push({
+            code: 'demo',
+            id: 'demo',
+            name: '例子',
+            url: '/demo',
+          });
+        }
         extraRoutes = handleRoutes([...extraRouteArr, ...res.result]);
         saveMenusCache(extraRoutes);
       }

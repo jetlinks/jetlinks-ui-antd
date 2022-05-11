@@ -15,6 +15,7 @@ interface BuiltInProps {
   value?: ChangeType;
   data?: any;
   type?: string;
+  notifyType?: string;
   onChange?: (value: ChangeType) => void;
 }
 

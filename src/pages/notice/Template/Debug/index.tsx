@@ -1,5 +1,5 @@
 import { message, Modal } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import {
@@ -23,6 +23,8 @@ const Debug = observer(() => {
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id;
 
+  const variableRef = useRef<any>([]);
+
   const form = useMemo(
     () =>
       createForm({
@@ -38,9 +40,13 @@ const Debug = observer(() => {
             }
           });
 
-          onFieldReact('variableDefinitions.*.type', (field) => {
+          onFieldReact('variableDefinitions.*.type', async (field) => {
             const value = (field as Field).value;
             const format = field.query('.value').take() as Field;
+            const _id = field.query('.id').take() as Field;
+
+            const configId = field.query('configId');
+
             if (format && value) {
               switch (value) {
                 case 'date':
@@ -64,6 +70,27 @@ const Debug = observer(() => {
                   break;
               }
             }
+            if (variableRef.current) {
+              const a = variableRef.current?.find((i: any) => i.id === _id.value);
+              const _configId = configId.value();
+              const businessType = a?.expands?.businessType;
+              if (id === 'dingTalk' && _configId) {
+                switch (businessType) {
+                  case 'org':
+                    // 获取org
+                    const orgList = await service.dingTalk.getDepartments(_configId);
+                    format.setComponent(Select);
+                    format.setDataSource(orgList);
+                    break;
+                  case 'user':
+                    // 获取user
+                    const userList = await service.dingTalk.getUser(_configId);
+                    format.setComponent(Select);
+                    format.setDataSource(userList);
+                    break;
+                }
+              }
+            }
           });
         },
       }),
@@ -71,13 +98,19 @@ const Debug = observer(() => {
   );
 
   useEffect(() => {
-    const data = state.current;
-    if (data?.variableDefinitions?.length > 0) {
-      form.setFieldState('variableDefinitions', (state1) => {
-        state1.visible = true;
-        state1.value = data?.variableDefinitions;
-      });
-    }
+    // const data = state.current;
+    // 从后端接口来获取变量参数
+    service.getVariableDefinitions(state.current?.id || '').then((resp) => {
+      const _template = resp.result;
+      console.log(resp, 'userEfffect', state.current);
+      if (_template?.variableDefinitions?.length > 0) {
+        variableRef.current = _template?.variableDefinitions;
+        form.setFieldState('variableDefinitions', (state1) => {
+          state1.visible = true;
+          state1.value = _template?.variableDefinitions;
+        });
+      }
+    });
   }, [state.current, state.debug]);
 
   const SchemaField = createSchemaField({
@@ -117,6 +150,7 @@ const Debug = observer(() => {
         title: '通知配置',
         type: 'string',
         required: true,
+        default: state?.current?.configId,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-reactions': '{{useAsyncDataSource(getConfig)}}',

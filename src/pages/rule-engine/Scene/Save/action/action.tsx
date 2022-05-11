@@ -144,7 +144,11 @@ export default observer((props: ActionProps) => {
   const MessageNodes = (
     <>
       <Col span={7}>
-        <Form.Item {...props.restField} name={[name, 'notify', 'notifyType']}>
+        <Form.Item
+          {...props.restField}
+          name={[name, 'notify', 'notifyType']}
+          rules={[{ required: true, message: '请选择通知方式' }]}
+        >
           <Select
             options={messageType}
             fieldNames={{ value: 'id', label: 'name' }}
@@ -159,7 +163,11 @@ export default observer((props: ActionProps) => {
         </Form.Item>
       </Col>
       <Col span={7}>
-        <Form.Item {...props.restField} name={[name, 'notify', 'notifierId']}>
+        <Form.Item
+          {...props.restField}
+          name={[name, 'notify', 'notifierId']}
+          rules={[{ required: true, message: '请选择通知配置' }]}
+        >
           <Select
             options={messageConfig}
             loading={messageConfigLoading}
@@ -174,7 +182,11 @@ export default observer((props: ActionProps) => {
         </Form.Item>
       </Col>
       <Col span={6}>
-        <Form.Item {...props.restField} name={[name, 'notify', 'templateId']}>
+        <Form.Item
+          {...props.restField}
+          name={[name, 'notify', 'templateId']}
+          rules={[{ required: true, message: '请选择通知模板' }]}
+        >
           <Select
             options={messageTemplate}
             loading={messageTemplateLoading}
@@ -210,7 +222,11 @@ export default observer((props: ActionProps) => {
       </div>
       <Row gutter={24}>
         <Col span={4}>
-          <Form.Item {...props.restField} name={[name, 'executor']}>
+          <Form.Item
+            {...props.restField}
+            name={[name, 'executor']}
+            rules={[{ required: true, message: '请选择执行条件' }]}
+          >
             <Select
               options={[
                 { label: '消息通知', value: 'notify' },
@@ -257,7 +273,23 @@ export default observer((props: ActionProps) => {
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.WRITE_PROPERTY &&
       properties.length ? (
-        <Form.Item name={[name, 'device', 'message', 'properties']}>
+        <Form.Item
+          name={[name, 'device', 'message', 'properties']}
+          rules={[
+            {
+              validator: async (_: any, value: any) => {
+                if (value) {
+                  if (!Object.values(value)[0]) {
+                    return Promise.reject(new Error('请输入属性值'));
+                  }
+                } else {
+                  return Promise.reject(new Error('请选择属性'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
           <WriteProperty properties={properties} type={props.triggerType} form={props.form} />
         </Form.Item>
       ) : null}
@@ -266,7 +298,10 @@ export default observer((props: ActionProps) => {
       properties.length ? (
         <Row gutter={24}>
           <Col span={4}>
-            <Form.Item name={[name, 'device', 'message', 'properties']}>
+            <Form.Item
+              name={[name, 'device', 'message', 'properties']}
+              rules={[{ required: true, message: '请选择属性' }]}
+            >
               <ReadProperty properties={properties} />
             </Form.Item>
           </Col>
@@ -275,7 +310,10 @@ export default observer((props: ActionProps) => {
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.INVOKE_FUNCTION &&
       functionList.length ? (
-        <Form.Item name={[name, 'device', 'message', 'inputs']}>
+        <Form.Item
+          name={[name, 'device', 'message', 'inputs']}
+          rules={[{ required: true, message: '请输入功能值' }]}
+        >
           <FunctionCall functionData={functionList} />
         </Form.Item>
       ) : null}

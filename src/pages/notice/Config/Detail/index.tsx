@@ -53,6 +53,9 @@ export const docMap = {
   email: {
     embedded: <Email />,
   },
+  webhook: {
+    http: <div>webhook</div>,
+  },
 };
 
 const Detail = observer(() => {
@@ -87,6 +90,9 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
+    if (id === 'webhook') {
+      setProvider('http');
+    }
     if (state.current) {
       form.setValues(state.current);
     }
@@ -152,7 +158,7 @@ const Detail = observer(() => {
         },
         required: true,
         'x-visible': typeList[id]?.length > 0,
-        'x-hidden': id === 'email',
+        'x-hidden': id === 'email' || id === 'webhook',
         'x-value': typeList[id][0]?.value,
         enum: typeList[id] || [],
       },
@@ -449,6 +455,89 @@ const Detail = observer(() => {
                     message: '最多可输入64个字符',
                   },
                 ],
+              },
+            },
+          },
+          webhook: {
+            'x-visible': id === 'webhook',
+            type: 'void',
+            properties: {
+              url: {
+                title: 'Webhook',
+                required: true,
+                'x-component-props': {
+                  placeholder: '请输入Webhook',
+                },
+                'x-component': 'Input',
+                'x-decorator': 'FormItem',
+              },
+              headers: {
+                title: '请求头',
+                type: 'array',
+                'x-decorator': 'FormItem',
+                'x-component': 'ArrayTable',
+                'x-component-props': {
+                  pagination: { pageSize: 9999 },
+                  // scroll: {x: '100%'},
+                },
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 200, title: 'KEY' },
+                      properties: {
+                        key: {
+                          type: 'string',
+                          // 'x-decorator': 'Editable',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 200, title: 'VALUE' },
+                      properties: {
+                        value: {
+                          type: 'string',
+                          // 'x-decorator': 'Editable',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': {
+                        title: '操作',
+                        dataIndex: 'operations',
+                        width: 50,
+                        fixed: 'right',
+                      },
+                      properties: {
+                        item: {
+                          type: 'void',
+                          'x-component': 'FormItem',
+                          properties: {
+                            remove: {
+                              type: 'void',
+                              'x-component': 'ArrayTable.Remove',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: '添加条目',
+                  },
+                },
               },
             },
           },

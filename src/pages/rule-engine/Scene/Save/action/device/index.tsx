@@ -155,7 +155,10 @@ export default (props: DeviceProps) => {
   return (
     <>
       <Col span={5}>
-        <Form.Item name={[name, 'device', 'productId']}>
+        <Form.Item
+          name={[name, 'device', 'productId']}
+          rules={[{ required: true, message: '请选择产品' }]}
+        >
           <Select
             showSearch
             options={productList}
@@ -185,17 +188,29 @@ export default (props: DeviceProps) => {
             <Select options={sourceList} style={{ width: 120 }} />
           </Form.Item>
           {selector === SourceEnum.fixed && (
-            <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+            <Form.Item
+              name={[name, 'device', 'selectorValues']}
+              {...props.restField}
+              rules={[{ required: true, message: '请选择设备' }]}
+            >
               <Device productId={productId} />
             </Form.Item>
           )}
           {selector === SourceEnum.tag && (
-            <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+            <Form.Item
+              name={[name, 'device', 'selectorValues']}
+              {...props.restField}
+              rules={[{ required: true, message: '请选择标签' }]}
+            >
               <TagModal tagData={tagList} />
             </Form.Item>
           )}
           {selector === SourceEnum.relation && (
-            <Form.Item name={[name, 'device', 'selectorValues']} {...props.restField}>
+            <Form.Item
+              name={[name, 'device', 'selectorValues']}
+              {...props.restField}
+              rules={[{ required: true, message: '请选择关系人' }]}
+            >
               <Select style={{ width: 300 }} />
             </Form.Item>
           )}
@@ -223,7 +238,11 @@ export default (props: DeviceProps) => {
       </Col>
       <Col span={4}>
         {messageType === MessageTypeEnum.INVOKE_FUNCTION ? (
-          <Form.Item name={[name, 'device', 'message', 'functionId']} {...props.restField}>
+          <Form.Item
+            name={[name, 'device', 'message', 'functionId']}
+            {...props.restField}
+            rules={[{ required: true, message: '请选择功能' }]}
+          >
             <Select
               showSearch
               options={functionList}

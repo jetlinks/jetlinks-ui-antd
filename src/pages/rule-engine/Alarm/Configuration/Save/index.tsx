@@ -196,6 +196,13 @@ const Save = (props: Props) => {
             message: '请选择关联触发场景',
           },
         ],
+        'x-component-props': {
+          placeholder: '请选择关联触发场景',
+          showSearch: true,
+          showArrow: true,
+          filterOption: (input: string, option: any) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+        },
         'x-decorator-props': {
           gridSpan: 1,
           addonAfter: (
@@ -204,27 +211,26 @@ const Save = (props: Props) => {
               style={{ padding: 0 }}
               isPermission={true}
               onClick={() => {
-                // const tab: any = window.open(`${origin}/#/system/department?save=true`);
-                // tab!.onTabSaveSuccess = (value: any) => {
-                //   form.setFieldState('orgIdList', async (state) => {
-                // state.dataSource = await getOrg().then((resp) =>
-                //   resp.result?.map((item: Record<string, unknown>) => ({
-                //     ...item,
-                //     label: item.name,
-                //     value: item.id,
-                //   })),
-                // );
-                // state.value = [...(state.value || []), value.id];
-                // });
-                // };
+                const tab: any = window.open(`${origin}/#/iot/rule-engine/scene/Save`);
+                tab!.onTabSaveSuccess = (value: any) => {
+                  form.setFieldState('sceneId', async (state) => {
+                    state.dataSource = await getScene();
+                    // .then((resp) =>
+                    //   resp.result?.map((item: Record<string, unknown>) => ({
+                    //     ...item,
+                    //     label: item.name,
+                    //     value: item.id,
+                    //   })),
+                    // );
+                    console.log(value, 'value');
+                    state.value = value?.result?.id;
+                  });
+                };
               }}
             >
               <PlusOutlined />
             </PermissionButton>
           ),
-        },
-        'x-component-props': {
-          placeholder: '请选择关联触发场景',
         },
       },
       description: {

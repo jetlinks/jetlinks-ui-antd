@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Empty, Select } from 'antd';
+import { Card, Empty } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { ArrayField } from '@formily/core';
 import { observer, RecursionField, useField, useFieldSchema } from '@formily/react';
@@ -95,14 +95,35 @@ export const FTermArrayCards: ComposedArrayCards = observer((props) => {
         ArrayBase.Item && (
           <ArrayBase.Item key={index} index={index} record={item}>
             {index > 0 && (
-              <div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
-                <Select
-                  value="or"
-                  style={{ width: '200px' }}
-                  options={[
-                    { label: '或者', value: 'or' },
-                    { label: '并且', value: 'and' },
-                  ]}
+              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
+                <RecursionField
+                  schema={
+                    {
+                      type: 'object',
+                      properties: {
+                        termType: {
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Select',
+                          'x-component-props': {
+                            style: {
+                              width: 100,
+                            },
+                          },
+                          default: 'and',
+                          enum: [
+                            { label: '并且', value: 'and' },
+                            { label: '或者', value: 'or' },
+                          ],
+                        },
+                      },
+                    } as any
+                  }
+                  name={index}
+                  filterProperties={(schema2) => {
+                    if (isIndexComponent(schema2)) return false;
+                    if (isOperationComponent(schema2)) return false;
+                    return true;
+                  }}
                 />
               </div>
             )}

@@ -42,6 +42,11 @@ class Service extends BaseService<TemplateItem> {
       method: 'POST',
     });
 
+  public getVariableDefinitions = (templateId: string) =>
+    request(`${SystemConst.API_BASE}/notifier/template/${templateId}/detail`, {
+      method: 'GET',
+    });
+
   dingTalk = {
     getDepartments: (id: string) =>
       request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/departments`).then(

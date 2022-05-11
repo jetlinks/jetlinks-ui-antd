@@ -112,6 +112,8 @@ export enum MENUS_CODE {
   'link/Type/Detail' = 'link/Type/Detail',
   'account/Center' = 'account/Center',
   'account/Center/bind' = 'account/Center/bind',
+  'Northbound/DuerOS' = 'Northbound/DuerOS',
+  'Northbound/AliCloud' = 'Northbound/AliCloud',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;

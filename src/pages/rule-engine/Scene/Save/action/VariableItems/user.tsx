@@ -1,7 +1,7 @@
 // 收信人
 import { useEffect, useState } from 'react';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
-import { Select } from 'antd';
+import { Input, Select } from 'antd';
 import {
   queryDingTalkUsers,
   queryPlatformUsers,
@@ -33,7 +33,6 @@ export default (props: UserProps) => {
     setSource(props.value?.source);
     if (props.value?.source === 'relation') {
       const relation = props.value?.relation;
-      console.log(relation);
       if (relation) {
         if (relation.objectId) {
           // 平台用户
@@ -84,7 +83,7 @@ export default (props: UserProps) => {
   };
 
   useEffect(() => {
-    if (source === 'fixed') {
+    if (source === 'fixed' && ['dingTalk', 'weixin'].includes(props.notifyType)) {
       // 钉钉，微信用户
       getRelationUsers(props.notifyType, props.configId);
     } else {
@@ -95,6 +94,14 @@ export default (props: UserProps) => {
   const options = [
     { label: '平台用户', value: 'relation' },
     { label: props.notifyType === 'dingTalk' ? '钉钉用户' : '微信用户', value: 'fixed' },
+  ];
+
+  const otherOptions = [
+    { label: '平台用户', value: 'relation' },
+    {
+      label: props.notifyType && props.notifyType === 'email' ? '固定邮箱' : '固定号码',
+      value: 'fixed',
+    },
   ];
 
   /**
@@ -168,65 +175,158 @@ export default (props: UserProps) => {
     return option.children ? option.children.toLowerCase().includes(input.toLowerCase()) : false;
   };
 
+  const userSelect =
+    source === 'relation' ? (
+      <Select
+        showSearch
+        value={value}
+        onChange={(key, node) => {
+          setValue(key);
+          onchange(source, key, node.isRelation);
+        }}
+        placeholder={'请选择收信人'}
+        listHeight={200}
+        filterOption={filterOption}
+      >
+        {userList.platform.length ? (
+          <Select.OptGroup label={'平台用户'}>
+            {userList.platform.map((item: any) => (
+              <Select.Option value={item.value} isRelation={false}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ) : null}
+        {userList.relation.length ? (
+          <Select.OptGroup label={'关系用户'}>
+            {userList.relation.map((item: any) => (
+              <Select.Option value={item.value} isRelation={true}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ) : null}
+      </Select>
+    ) : (
+      <Select
+        showSearch
+        value={value}
+        options={relationList}
+        listHeight={200}
+        onChange={(key) => {
+          setValue(key);
+          onchange(source, key);
+        }}
+        fieldNames={{ label: 'name', value: 'id' }}
+        placeholder={'请选择收信人'}
+        filterOption={(input: string, option: any) => {
+          return option.name ? option.name.toLowerCase().includes(input.toLowerCase()) : false;
+        }}
+      ></Select>
+    );
+
+  const emailSelect =
+    source === 'relation' ? (
+      <Select
+        showSearch
+        value={value}
+        onChange={(key, node) => {
+          setValue(key);
+          onchange(source, key, node.isRelation);
+        }}
+        placeholder={'请选择收信人'}
+        listHeight={200}
+        filterOption={filterOption}
+      >
+        {userList.platform.length ? (
+          <Select.OptGroup label={'平台用户'}>
+            {userList.platform.map((item: any) => (
+              <Select.Option value={item.value} isRelation={false}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ) : null}
+        {userList.relation.length ? (
+          <Select.OptGroup label={'关系用户'}>
+            {userList.relation.map((item: any) => (
+              <Select.Option value={item.value} isRelation={true}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ) : null}
+      </Select>
+    ) : (
+      <Input
+        value={value}
+        placeholder={'请输入固定邮箱'}
+        onChange={(e) => {
+          onchange(source, e.target.value);
+        }}
+      />
+    );
+
+  const voiceSelect =
+    source === 'relation' ? (
+      <Select
+        showSearch
+        value={value}
+        onChange={(key, node) => {
+          setValue(key);
+          onchange(source, key, node.isRelation);
+        }}
+        placeholder={'请选择收信人'}
+        listHeight={200}
+        filterOption={filterOption}
+      >
+        {userList.platform.length ? (
+          <Select.OptGroup label={'平台用户'}>
+            {userList.platform.map((item: any) => (
+              <Select.Option value={item.value} isRelation={false}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ) : null}
+        {userList.relation.length ? (
+          <Select.OptGroup label={'关系用户'}>
+            {userList.relation.map((item: any) => (
+              <Select.Option value={item.value} isRelation={true}>
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select.OptGroup>
+        ) : null}
+      </Select>
+    ) : (
+      <Input
+        value={value}
+        placeholder={'请输入固定号码'}
+        onChange={(e) => {
+          onchange(source, e.target.value);
+        }}
+      />
+    );
+
   return (
     <ItemGroup compact>
       <Select
         value={source}
-        options={options}
+        options={
+          props.notifyType && ['dingTalk', 'weixin'].includes(props.notifyType)
+            ? options
+            : otherOptions
+        }
         style={{ width: 120 }}
         onChange={(key) => {
           setSource(key);
           onchange(key, undefined);
         }}
       />
-      {source === 'relation' ? (
-        <Select
-          showSearch
-          value={value}
-          onChange={(key, node) => {
-            setValue(key);
-            onchange(source, key, node.isRelation);
-          }}
-          placeholder={'请选择收信人'}
-          listHeight={200}
-          filterOption={filterOption}
-        >
-          {userList.platform.length ? (
-            <Select.OptGroup label={'平台用户'}>
-              {userList.platform.map((item: any) => (
-                <Select.Option value={item.value} isRelation={false}>
-                  {item.label}
-                </Select.Option>
-              ))}
-            </Select.OptGroup>
-          ) : null}
-          {userList.relation.length ? (
-            <Select.OptGroup label={'关系用户'}>
-              {userList.relation.map((item: any) => (
-                <Select.Option value={item.value} isRelation={true}>
-                  {item.label}
-                </Select.Option>
-              ))}
-            </Select.OptGroup>
-          ) : null}
-        </Select>
-      ) : (
-        <Select
-          showSearch
-          value={value}
-          options={relationList}
-          listHeight={200}
-          onChange={(key) => {
-            setValue(key);
-            onchange(source, key);
-          }}
-          fieldNames={{ label: 'name', value: 'id' }}
-          placeholder={'请选择收信人'}
-          filterOption={(input: string, option: any) => {
-            return option.name ? option.name.toLowerCase().includes(input.toLowerCase()) : false;
-          }}
-        ></Select>
-      )}
+      {props.notifyType && ['dingTalk', 'weixin'].includes(props.notifyType) ? userSelect : null}
+      {props.notifyType && ['email'].includes(props.notifyType) ? emailSelect : null}
+      {props.notifyType && ['sms', 'voice'].includes(props.notifyType) ? voiceSelect : null}
     </ItemGroup>
   );
 };

@@ -16,11 +16,7 @@ const Config = () => {
   const params = useParams<{ id: string }>();
   useEffect(() => {
     const id = InstanceModel.current?.id || params.id;
-    if (id) {
-      service.getConfigMetadata(id).then((response) => {
-        InstanceModel.config = response?.result;
-      });
-    } else {
+    if (!id) {
       history.goBack();
     }
   }, []);
@@ -29,7 +25,7 @@ const Config = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
 
-  const id = InstanceModel.detail?.id || params?.id;
+  const id = params?.id;
 
   const getDetail = () => {
     service.detail(id || '').then((resp) => {
@@ -42,7 +38,8 @@ const Config = () => {
   useEffect(() => {
     if (id) {
       service.getConfigMetadata(id).then((config) => {
-        setMetadata(config?.result);
+        InstanceModel.config = config?.result || [];
+        setMetadata(config?.result || []);
       });
     }
   }, [id]);
@@ -180,8 +177,8 @@ const Config = () => {
           metadata={metadata || []}
           close={() => {
             setVisible(false);
-            getDetail();
           }}
+          reload={getDetail}
         />
       )}
     </div>

@@ -8,6 +8,7 @@ type TemplateItem = {
   createTime: number;
   variableDefinitions: any;
   description: string;
+  configId?: string;
 };
 
 type LogItem = {

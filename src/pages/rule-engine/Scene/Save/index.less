@@ -8,8 +8,13 @@
   }
 
   .trigger-type-content {
-    > .ant-row:not(:last-child) {
+    > .ant-row {
       margin-bottom: 24px;
+
+      &:last-child,
+      &:first-child {
+        margin-bottom: 0;
+      }
     }
   }
 }

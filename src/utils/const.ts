@@ -26,6 +26,8 @@ class SystemConst {
   static GET_METADATA = 'get_metadata';
 
   static REFRESH_DEVICE = 'refresh_device';
+
+  static AMAP_KEY = 'amap_key';
 }
 
 export default SystemConst;

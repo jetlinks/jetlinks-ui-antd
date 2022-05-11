@@ -66,8 +66,8 @@ const Reation = () => {
           data={data || []}
           close={() => {
             setVisible(false);
-            getDetail();
           }}
+          reload={getDetail}
         />
       )}
     </div>

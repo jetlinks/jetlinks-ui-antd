@@ -259,8 +259,14 @@ class Service extends BaseService<DeviceInstance> {
       method: 'GET',
     });
 
-  //接入方式
-  public queryGatewayList = () => request(`/${SystemConst.API_BASE}/gateway/device/providers`);
+  //接入网关
+  public queryGatewayList = () =>
+    request(`/${SystemConst.API_BASE}/gateway/device/_query/no-paging`, {
+      method: 'POST',
+      data: {
+        paging: false,
+      },
+    });
   // 保存设备关系
   public saveRelations = (id: string, data: any) =>
     request(`/${SystemConst.API_BASE}/device/instance/${id}/relations`, {
@@ -285,6 +291,17 @@ class Service extends BaseService<DeviceInstance> {
   public queryMetric = (deviceId: string, propertyId: string) =>
     request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/metric/property/${propertyId}`, {
       method: 'GET',
+    });
+  //聚合查询设备属性
+  public queryPropertieInfo = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/agg/_query`, {
+      method: 'POST',
+      data,
+    });
+  public queryPropertieList = (deviceId: string, property: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/property/${property}/_query`, {
+      method: 'POST',
+      data,
     });
 }
 

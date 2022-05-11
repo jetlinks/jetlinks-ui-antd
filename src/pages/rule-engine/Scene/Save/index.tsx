@@ -12,14 +12,14 @@ import {
   Tooltip,
 } from 'antd';
 import { useIntl, useLocation } from 'umi';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { TimingTrigger, TriggerWay } from './components';
 import { TriggerWayType } from './components/TriggerWay';
 import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
-import TriggerDevice from './trigger/device';
+import TriggerDevice from './trigger';
 import { service } from '../index';
 import './index.less';
 import { model } from '@formily/reactive';
@@ -52,31 +52,40 @@ export default () => {
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
   const [triggerType, setTriggerType] = useState('');
-  // const [triggerValue, setTriggerValue] = useState<any>();
+
   const [loading, setLoading] = useState(false);
   const [parallel, setParallel] = useState(true); // 是否并行
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
+
   const [requestParams, setRequestParams] = useState<any>(undefined);
+  const [triggerValue, setTriggerValue] = useState<any>([]);
+
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
 
-  const getDetail = async (id: string) => {
-    const resp = await service.detail(id);
-    if (resp.status === 200 && resp.result) {
-      setIsEdit(true);
-      const _data: any = resp.result;
-      FormModel = _data;
-      form.setFieldsValue(_data);
-      setParallel(_data.parallel);
-      setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
-      if (_data.trigger?.device?.selectorValues) {
-        setRequestParams({ trigger: _data.trigger });
+  const getDetail = useCallback(
+    async (id: string) => {
+      const resp = await service.detail(id);
+      if (resp.status === 200 && resp.result) {
+        setIsEdit(true);
+        const _data: any = resp.result;
+        FormModel = _data;
+        form.setFieldsValue(_data);
+        setParallel(_data.parallel);
+        setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
+
+        setTriggerValue({ trigger: _data.terms || [] });
+
+        if (_data.trigger?.device) {
+          setRequestParams({ trigger: _data.trigger });
+        }
+        if (_data.actions) {
+          setActionsData(_data.actions);
+        }
       }
-      if (_data.actions) {
-        setActionsData(_data.actions);
-      }
-    }
-  };
+    },
+    [triggerRef],
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -90,18 +99,25 @@ export default () => {
     const formData = await form.validateFields();
     let triggerData = undefined;
     // 获取触发条件数据
-    if (triggerRef.current) {
+    if (triggerRef.current && formData.trigger) {
       triggerData = await triggerRef.current.getTriggerForm();
-      console.log(JSON.stringify(triggerData), 'trigger');
-      if (!triggerData) {
-        return;
+      if (triggerData) {
+        formData.terms = triggerData.trigger;
       }
-      formData.terms = triggerData.trigger;
     }
-    console.log(formData);
+    console.log('save', formData);
     if (formData) {
       setLoading(true);
       const resp = formData.id ? await service.updateScene(formData) : await service.save(formData);
+
+      // 处理跳转新增
+      if ((window as any).onTabSaveSuccess) {
+        if (resp.result) {
+          (window as any).onTabSaveSuccess(resp);
+          setTimeout(() => window.close(), 300);
+        }
+      }
+
       setLoading(false);
       if (resp.status === 200) {
         message.success('操作成功');
@@ -178,12 +194,20 @@ export default () => {
         <Form
           form={form}
           colon={false}
+          name="basicForm"
           layout={'vertical'}
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
-            if (changeValue.trigger) {
-              setRequestParams({ trigger: allValues.trigger });
+            if (changeValue.trigger && changeValue.trigger.device) {
+              if (
+                changeValue.trigger.device.selectorValues ||
+                (changeValue.trigger.device.operation &&
+                  changeValue.trigger.device.operation.operator)
+              ) {
+                setTriggerValue([]);
+                setRequestParams({ trigger: allValues.trigger });
+              }
             }
             if (allValues.actions) {
               setActionsData(allValues.actions);
@@ -265,20 +289,33 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              <Form.Item name={['trigger', 'device']}>
-                <TriggerDevice className={'trigger-type-content'} />
-              </Form.Item>
+              // <Form.Item
+              //   name={['trigger', 'device']}
+              //   rules={[
+              //     {
+              //       validator: async (_: any, value: any) => {
+              //         if (!value) {
+              //           return Promise.reject(new Error('请选择产品'));
+              //         }
+              //         return Promise.resolve();
+              //       },
+              //     },
+              //   ]}
+              // >
+              //   <TriggerDevice className={'trigger-type-content'} />
+              // </Form.Item>
+              <TriggerDevice
+                value={requestParams && requestParams.trigger}
+                className={'trigger-type-content'}
+                form={form}
+              />
             )}
           </Form.Item>
           {triggerType === TriggerWayType.device &&
           requestParams &&
           requestParams.trigger?.device?.productId ? (
             <Form.Item label={AntiShake}>
-              <TriggerTerm
-                ref={triggerRef}
-                params={requestParams}
-                // value={triggerValue}
-              />
+              <TriggerTerm ref={triggerRef} params={requestParams} value={triggerValue} />
             </Form.Item>
           ) : null}
           <Form.Item hidden name={'parallel'} initialValue={true}>
@@ -299,8 +336,8 @@ export default () => {
                 <Tooltip
                   title={
                     <div>
-                      <div>串行：满足所有执行条件才会触发执行动作</div>
-                      <div>并行：满足任意条件时会触发执行动作</div>
+                      <div>串行：按顺序依次执行动作</div>
+                      <div>并行：同时执行所有动作</div>
                     </div>
                   }
                 >
@@ -384,36 +421,6 @@ export default () => {
         >
           保存
         </PermissionButton>
-        {/*<Button*/}
-        {/*  onClick={() => {*/}
-        {/*    setTriggerValue({*/}
-        {/*      trigger: [*/}
-        {/*        {*/}
-        {/*          terms: [*/}
-        {/*            {*/}
-        {/*              column: '_now',*/}
-        {/*              termType: 'eq',*/}
-        {/*              source: 'manual',*/}
-        {/*              value: '2022-04-21 14:26:04',*/}
-        {/*            },*/}
-        {/*          ],*/}
-        {/*        },*/}
-        {/*        {*/}
-        {/*          terms: [*/}
-        {/*            {*/}
-        {/*              column: 'properties.test-zhibioa.recent',*/}
-        {/*              termType: 'lte',*/}
-        {/*              source: 'metrics',*/}
-        {/*              value: '123',*/}
-        {/*            },*/}
-        {/*          ],*/}
-        {/*        },*/}
-        {/*      ],*/}
-        {/*    });*/}
-        {/*  }}*/}
-        {/*>*/}
-        {/*  设置*/}
-        {/*</Button>*/}
       </Card>
     </PageContainer>
   );
