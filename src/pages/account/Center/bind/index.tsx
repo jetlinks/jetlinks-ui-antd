@@ -24,8 +24,8 @@ const Bind = () => {
 
   useEffect(() => {
     // window.open('http://z.jetlinks.cn')
-    const item = `http://pro.jetlinks.cn/#/user/login?sso=true&code=4decc08bcb87f3a4fbd74976fd86cd3d&redirect=http://pro.jetlinks.cn/jetlinks`;
-    const params = item.split('?')[1].split('&')[1].split('=')[1];
+    // const item = `http://pro.jetlinks.cn/#/user/login?sso=true&code=4decc08bcb87f3a4fbd74976fd86cd3d&redirect=http://pro.jetlinks.cn/jetlinks`;
+    const params = window.location.href.split('?')[1].split('&')[1].split('=')[1];
     setCode(params);
     bindUserInfo(params);
     getDetail();
