@@ -2,7 +2,13 @@ import { Button, Drawer, Dropdown, Menu, message } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
-import { createForm, onFieldInit, onFieldReact, registerValidateRules } from '@formily/core';
+import {
+  createForm,
+  onFieldInit,
+  onFieldReact,
+  onFieldValueChange,
+  registerValidateRules,
+} from '@formily/core';
 import {
   ArrayItems,
   Checkbox,
@@ -57,8 +63,15 @@ const Edit = observer((props: Props) => {
   const form = useMemo(
     () =>
       createForm({
-        initialValues: MetadataModel.item as Record<string, unknown>,
+        initialValues: _.cloneDeep(MetadataModel.item as Record<string, unknown>),
         effects: () => {
+          onFieldValueChange('valueType.type', (field, form1) => {
+            if (field.modified) {
+              form1.setFieldState('expands.metrics', (state) => {
+                state.value = [];
+              });
+            }
+          });
           onFieldInit('expands.metrics.*.id', (field) => {
             const id = field as Field;
             if (id.value && !id.modified) {
@@ -96,7 +109,7 @@ const Edit = observer((props: Props) => {
           });
         },
       }),
-    [],
+    [MetadataModel.edit],
   );
 
   const schemaTitleMapping = {
@@ -838,6 +851,7 @@ const Edit = observer((props: Props) => {
                   visible:
                     props.type === 'product' &&
                     "{{['int','float','double','long','date','string','boolean'].includes($deps[0])}}",
+                  // value: []
                 },
               },
             },
@@ -969,30 +983,23 @@ const Edit = observer((props: Props) => {
     );
   };
 
-  // const param = useParams<{ id: string }>();
   const typeMap = new Map<string, any>();
 
   typeMap.set('product', productModel.current);
   typeMap.set('device', InstanceModel.detail);
-  // const saveMap = new Map<string, Promise<any>>();
   const { type } = MetadataModel;
 
   const saveMetadata = async (deploy?: boolean) => {
     setLoading(true);
-    const params = (await form.submit()) as MetadataItem;
+    let params;
+    try {
+      params = (await form.submit()) as MetadataItem;
+    } catch (e) {
+      setLoading(false);
+      return;
+    }
 
     if (!typeMap.get(props.type)) return;
-
-    // const metadata = JSON.parse(typeMap.get(props.type).metadata || '{}') as DeviceMetadata;
-    // const config = (metadata[type] || []) as MetadataItem[];
-    // const index = config.findIndex((item) => item.id === params.id);
-    // if (index > -1) {
-    //   config[index] = params;
-    //   DB.getDB().table(`${type}`).update(params.id, params);
-    // } else {
-    //   config.push(params);
-    //   DB.getDB().table(`${type}`).add(params, params.id);
-    // }
 
     const updateDB = (t: 'add' | 'update', item: MetadataItem) => {
       switch (t) {
@@ -1006,18 +1013,7 @@ const Edit = observer((props: Props) => {
     };
 
     const _data = updateMetadata(type, [params], typeMap.get(props.type), updateDB);
-    // console.log(params, JSON.parse(_data.metadata));
-    // if (props.type === 'product') {
-    //   // const product = typeMap.get('product');
-    //   // @ts-ignore
-    //   // metadata[type] = config;
-    //   // product.metadata = JSON.stringify(metadata);
-    //   saveMap.set('product', service.saveProductMetadata(_data));
-    // } else {
-    //   saveMap.set('device', service.saveDeviceMetadata(param.id, { metadata: _data.metadata }));
-    // }
-    //
-    // const result = await saveMap.get(props.type);
+
     const result = await asyncUpdateMedata(props.type, _data);
     if (result.status === 200) {
       if ((window as any).onTabSaveSuccess) {

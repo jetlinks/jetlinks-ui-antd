@@ -1152,6 +1152,7 @@ const Detail = observer(() => {
           },
           webhook: {
             type: 'void',
+            'x-visible': id === 'webhook',
             properties: {
               contextAsBody: {
                 title: '请求体',

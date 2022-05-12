@@ -14,6 +14,7 @@ import EditProperty from '@/pages/device/Instance/Detail/Running/Property/EditPr
 import moment from 'moment';
 import Indicators from './Indicators';
 import './PropertyCard.less';
+import FileComponent from './FileComponent';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -88,9 +89,7 @@ const Property = (props: Props) => {
       <Spin spinning={loading}>
         <div>
           <div>{renderTitle(data?.name || '')}</div>
-          <div className="value" style={{ fontWeight: 700, fontSize: '24px', color: '#323130' }}>
-            {value?.formatValue || '--'}
-          </div>
+          <FileComponent type="card" value={value} data={data} />
           <div style={{ marginTop: 10 }}>
             <div style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 12 }}>更新时间</div>
             <div style={{ marginTop: 5, fontSize: 16, color: 'black' }} className="value">

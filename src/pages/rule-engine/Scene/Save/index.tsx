@@ -109,6 +109,15 @@ export default () => {
     if (formData) {
       setLoading(true);
       const resp = formData.id ? await service.updateScene(formData) : await service.save(formData);
+
+      // 处理跳转新增
+      if ((window as any).onTabSaveSuccess) {
+        if (resp.result) {
+          (window as any).onTabSaveSuccess(resp);
+          setTimeout(() => window.close(), 300);
+        }
+      }
+
       setLoading(false);
       if (resp.status === 200) {
         message.success('操作成功');

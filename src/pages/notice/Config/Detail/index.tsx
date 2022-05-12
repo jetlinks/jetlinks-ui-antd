@@ -459,6 +459,7 @@ const Detail = observer(() => {
             },
           },
           webhook: {
+            'x-visible': id === 'webhook',
             type: 'void',
             properties: {
               url: {

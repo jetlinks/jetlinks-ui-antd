@@ -185,7 +185,7 @@ export default observer((props: TriggerProps) => {
                       { label: '固定设备', value: 'fixed' },
                       { label: '按部门', value: 'org' },
                     ]}
-                    fieldNames={{ label: 'name', value: 'id' }}
+                    // fieldNames={{ label: 'name', value: 'id' }}
                     style={{ width: 120 }}
                   />
                 </Form.Item>
