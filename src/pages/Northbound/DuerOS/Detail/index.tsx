@@ -4,16 +4,18 @@ import { ISchema } from '@formily/json-schema';
 import { Card, Col, Row } from 'antd';
 import {
   ArrayCollapse,
+  ArrayTable,
   Form,
   FormButtonGroup,
   FormGrid,
   FormItem,
   Input,
+  PreviewText,
   Select,
 } from '@formily/antd';
 import { PermissionButton } from '@/components';
 import { useMemo } from 'react';
-import { createForm, Field, onFieldInit } from '@formily/core';
+import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
 import { Store } from 'jetlinks-store';
@@ -25,11 +27,17 @@ const Save = () => {
       FormItem,
       Input,
       Select,
+      ArrayTable,
       ArrayCollapse,
+      PreviewText,
     },
   });
 
-  const getProduct = () => service.getProduct().then((resp) => resp.result);
+  const getProduct = () =>
+    service.getProduct().then((resp) => {
+      Store.set('product-list', resp.result);
+      return resp.result;
+    });
 
   const getTypes = () =>
     service.getTypes().then((resp) => {
@@ -77,6 +85,10 @@ const Save = () => {
                 label: 'name',
                 value: 'id',
               },
+              showSearch: true,
+              showArrow: true,
+              filterOption: (input: string, option: any) =>
+                option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
             'x-reactions': '{{useAsyncDataSource(getProduct)}}',
             required: true,
@@ -193,22 +205,29 @@ const Save = () => {
                             layout: 'vertical',
                             labelAlign: 'left',
                           },
+                          'x-component-props': {
+                            fieldNames: {
+                              label: 'name',
+                              value: 'id',
+                            },
+                          },
                           'x-reactions': [
                             {
-                              dependencies: ['..messageType'],
+                              dependencies: ['..messageType', '...actionType'],
                               fulfill: {
                                 state: {
                                   visible:
-                                    '{{["READ_PROPERTY","WRITE_PROPERTY"].includes($deps[0])}}',
+                                    '{{["READ_PROPERTY","WRITE_PROPERTY"].includes($deps[0])||$deps[1]==="latestData"}}',
                                 },
                               },
                             },
                             {
-                              dependencies: ['..messageType'],
+                              dependencies: ['..messageType', '...actionType'],
                               fulfill: {
                                 state: {
                                   decoratorProps: {
-                                    gridSpan: '{{$deps[0]==="READ_PROPERTY"?2:1}}',
+                                    gridSpan:
+                                      '{{($deps[0]==="READ_PROPERTY"||$deps[1]==="latestData")?2:1}}',
                                   },
                                 },
                               },
@@ -232,13 +251,80 @@ const Save = () => {
                             },
                           },
                         },
-                        function: {
-                          title: '参数列表',
-                          'x-component': 'Input',
+                        functionId: {
+                          title: '功能',
+                          'x-component': 'Select',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
                             layout: 'vertical',
                             labelAlign: 'left',
+                            gridSpan: 2,
+                          },
+                          'x-component-props': {
+                            fieldNames: {
+                              label: 'name',
+                              value: 'id',
+                            },
+                          },
+                          'x-reactions': {
+                            dependencies: ['..messageType'],
+                            fulfill: {
+                              state: {
+                                visible: '{{["INVOKE_FUNCTION"].includes($deps[0])}}',
+                              },
+                            },
+                          },
+                        },
+                        function: {
+                          title: '参数列表',
+                          type: 'array',
+                          'x-component': 'ArrayTable',
+                          'x-decorator': 'FormItem',
+                          'x-decorator-props': {
+                            layout: 'vertical',
+                            labelAlign: 'left',
+                            gridSpan: 2,
+                          },
+                          'x-component-props': {
+                            pagination: { pageSize: 10 },
+                          },
+                          items: {
+                            type: 'object',
+                            properties: {
+                              column1: {
+                                type: 'void',
+                                'x-component': 'ArrayTable.Column',
+                                'x-component-props': { width: 50, title: '参数名称' },
+                                properties: {
+                                  name: {
+                                    type: 'string',
+                                    'x-component': 'PreviewText.Input',
+                                  },
+                                },
+                              },
+                              column2: {
+                                type: 'void',
+                                'x-component': 'ArrayTable.Column',
+                                'x-component-props': { width: 50, title: '类型' },
+                                properties: {
+                                  valueType: {
+                                    type: 'string',
+                                    'x-component': 'PreviewText.Input',
+                                  },
+                                },
+                              },
+                              column3: {
+                                type: 'void',
+                                'x-component': 'ArrayTable.Column',
+                                'x-component-props': { width: 50, title: '值' },
+                                properties: {
+                                  value: {
+                                    type: 'string',
+                                    'x-component': 'Input',
+                                  },
+                                },
+                              },
+                            },
                           },
                           'x-reactions': {
                             dependencies: ['..messageType'],
@@ -275,7 +361,7 @@ const Save = () => {
         'x-component': 'ArrayCollapse',
         'x-decorator': 'FormItem',
         items: {
-          type: 'void',
+          type: 'object',
           'x-component': 'ArrayCollapse.CollapsePanel',
           'x-component-props': {
             header: '动作',
@@ -285,15 +371,46 @@ const Save = () => {
               type: 'void',
               'x-component': 'ArrayCollapse.Index',
             },
-            source: {
-              title: 'DuerOS属性',
-              'x-component': 'Select',
-              'x-decorator': 'FormItem',
-            },
-            target: {
-              title: '平台属性',
-              'x-component': 'Select',
-              'x-decorator': 'FormItem',
+            layout: {
+              type: 'void',
+              'x-decorator': 'FormGrid',
+              'x-decorator-props': {
+                maxColumns: 2,
+                minColumns: 2,
+                columnGap: 24,
+              },
+              properties: {
+                source: {
+                  title: 'DuerOS属性',
+                  'x-component': 'Select',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  'x-component-props': {
+                    fieldNames: {
+                      label: 'name',
+                      value: 'id',
+                    },
+                  },
+                },
+                target: {
+                  title: '平台属性',
+                  'x-component': 'Select',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  'x-component-props': {
+                    fieldNames: {
+                      label: 'name',
+                      value: 'id',
+                    },
+                  },
+                },
+              },
             },
             remove: {
               type: 'void',
@@ -314,17 +431,59 @@ const Save = () => {
 
   const handleSave = () => {};
 
+  const findProductMetadata = (id: string) => {
+    if (!id) return;
+    const _productList = Store.get('product-list');
+    const _product = _productList.find((item: any) => item.id === id);
+    return _product.metadata && JSON.parse(_product.metadata || '{}');
+  };
+
+  const findDeviceType = (id: string) => {
+    if (!id) return;
+    const _productTypes = Store.get('product-types');
+    return _productTypes.find((item: any) => item.id === id);
+  };
   const form = useMemo(
     () =>
       createForm({
         validateFirst: true,
         effects() {
-          onFieldInit('actionMappings.*.layout.action', (field) => {
+          onFieldReact('actionMappings.*.layout.action', (field) => {
             const productType = field.query('deviceType').value();
-            if (!productType) return;
-            const _productTypes = Store.get('product-types');
-            const _type = _productTypes.find((item: any) => item.id === productType);
-            (field as Field).setDataSource(_type.actions);
+            (field as Field).setDataSource(findDeviceType(productType)?.actions);
+          });
+          onFieldReact('actionMappings.*.layout.command.message.properties', (field) => {
+            const product = field.query('product').value();
+            (field as Field).setDataSource(findProductMetadata(product)?.properties);
+          });
+          onFieldReact('actionMappings.*.layout.command.message.functionId', (field) => {
+            const product = field.query('product').value();
+            (field as Field).setDataSource(findProductMetadata(product)?.functions);
+          });
+          onFieldValueChange(
+            'actionMappings.*.layout.command.message.functionId',
+            (field, form1) => {
+              const functionId = field.value;
+              if (!functionId) return;
+              const product = field.query('product').value();
+              const _functionList = findProductMetadata(product)?.functions;
+              const _function =
+                _functionList && _functionList.find((item: any) => item.id === functionId);
+              form1.setFieldState(field.query('.function'), (state) => {
+                state.value = _function?.inputs.map((item: any) => ({
+                  ...item,
+                  valueType: item?.valueType?.type,
+                }));
+              });
+            },
+          );
+          onFieldReact('propertyMappings.*.layout.target', (field) => {
+            const productType = field.query('deviceType').value();
+            (field as Field).setDataSource(findDeviceType(productType)?.properties);
+          });
+          onFieldReact('propertyMappings.*.layout.source', (field) => {
+            const product = field.query('product').value();
+            (field as Field).setDataSource(findProductMetadata(product)?.properties);
           });
         },
       }),

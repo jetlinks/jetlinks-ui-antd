@@ -27,6 +27,9 @@ export const imgMap = {
   sms: {
     aliyunSms: require('/public/images/notice/sms.png'),
   },
+  webhook: {
+    http: require('/public/images/notice/webhook.png'),
+  },
 };
 
 export const typeList = {
@@ -46,6 +49,9 @@ export const typeList = {
   },
   email: {
     embedded: '默认',
+  },
+  webhook: {
+    http: 'webhook',
   },
 };
 
