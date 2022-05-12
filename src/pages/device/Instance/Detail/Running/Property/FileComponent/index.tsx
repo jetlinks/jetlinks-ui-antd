@@ -53,7 +53,7 @@ const FileComponent = (props: Props) => {
           <img src={imgMap.get(flag) || imgMap.get('other')} />
         </div>
       );
-    } else if (data?.valueType?.type === 'object') {
+    } else if (data?.valueType?.type === 'object' || data?.valueType?.type === 'geoPoint') {
       return (
         <div className={props.type === 'card' ? styles.other : {}}>
           {JSON.stringify(value?.formatValue)}
