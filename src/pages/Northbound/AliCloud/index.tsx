@@ -8,12 +8,15 @@ import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleFilled,
+  PlayCircleOutlined,
   PlusOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import AliyunCard from '@/components/ProTableCard/CardItems/aliyun';
 import Service from './service';
+import { Badge, message } from 'antd';
 
 export const service = new Service('device/aliyun/bridge');
 
@@ -51,6 +54,40 @@ const AliCloud = () => {
           })}
       </PermissionButton>,
       <PermissionButton
+        key={'action'}
+        type={'link'}
+        style={{ padding: 0 }}
+        isPermission={permission.action}
+        popConfirm={{
+          title: intl.formatMessage({
+            id: `pages.data.option.${
+              record?.state?.value !== 'disabled' ? 'disabled' : 'enabled'
+            }.tips`,
+            defaultMessage: '确认禁用？',
+          }),
+          onConfirm: async () => {
+            const resp =
+              record?.state?.value !== 'disabled'
+                ? await service._disable(record.id)
+                : await service._enable(record.id);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actionRef.current?.reload?.();
+            } else {
+              message.error('操作失败！');
+            }
+          },
+        }}
+        tooltip={{
+          title: intl.formatMessage({
+            id: `pages.data.option.${record?.state?.value !== 'disabled' ? 'disabled' : 'enabled'}`,
+            defaultMessage: '启用',
+          }),
+        }}
+      >
+        {record?.state?.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+      </PermissionButton>,
+      <PermissionButton
         key={'delete'}
         type={'link'}
         style={{ padding: 0 }}
@@ -78,11 +115,31 @@ const AliCloud = () => {
     },
     {
       title: '网桥产品',
-      dataIndex: 'name1',
+      dataIndex: 'bridgeProductName',
     },
     {
       title: '说明',
       dataIndex: 'description',
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      render: (text: any) => (
+        <span>
+          <Badge status={text.value === 'disabled' ? 'error' : 'success'} text={text.text} />
+        </span>
+      ),
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '停用',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -100,9 +157,9 @@ const AliCloud = () => {
     <PageContainer>
       <SearchComponent<AliCloudType>
         field={columns}
-        target="device-instance"
+        target="aliyun"
         onSearch={(data) => {
-          actionRef.current?.reset?.();
+          actionRef.current?.reload?.();
           setSearchParams(data);
         }}
       />
@@ -142,7 +199,6 @@ const AliCloud = () => {
           <PermissionButton
             onClick={() => {
               const url = `${getMenuPathByParams(MENUS_CODE['Northbound/AliCloud/Detail'])}`;
-              console.log(url);
               history.push(url);
             }}
             style={{ marginRight: 12 }}
@@ -163,7 +219,13 @@ const AliCloud = () => {
             actions={[
               <PermissionButton
                 type={'link'}
-                onClick={() => {}}
+                onClick={() => {
+                  const url = `${getMenuPathByParams(
+                    MENUS_CODE['Northbound/AliCloud/Detail'],
+                    record.id,
+                  )}`;
+                  history.push(url);
+                }}
                 key={'edit'}
                 isPermission={permission.update}
               >
@@ -174,36 +236,70 @@ const AliCloud = () => {
                 })}
               </PermissionButton>,
               <PermissionButton
+                key={'action'}
+                type={'link'}
+                style={{ padding: 0 }}
+                isPermission={permission.action}
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id: `pages.data.option.${
+                      record?.state?.value !== 'disabled' ? 'disabled' : 'enabled'
+                    }.tips`,
+                    defaultMessage: '确认禁用？',
+                  }),
+                  onConfirm: async () => {
+                    const resp =
+                      record?.state?.value !== 'disabled'
+                        ? await service._disable(record.id)
+                        : await service._enable(record.id);
+                    if (resp.status === 200) {
+                      message.success('操作成功！');
+                      actionRef.current?.reload?.();
+                    } else {
+                      message.error('操作失败！');
+                    }
+                  },
+                }}
+              >
+                {record?.state?.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+                {intl.formatMessage({
+                  id: `pages.data.option.${
+                    record?.state?.value !== 'disabled' ? 'disabled' : 'enabled'
+                  }`,
+                  defaultMessage: record?.state?.value !== 'disabled' ? '禁用' : '启用',
+                })}
+              </PermissionButton>,
+              <PermissionButton
                 key="delete"
                 isPermission={permission.delete}
                 type={'link'}
                 style={{ padding: 0 }}
-                // tooltip={
-                //   record.state.value !== 'notActive'
-                //     ? { title: intl.formatMessage({ id: 'pages.device.instance.deleteTip' }) }
-                //     : undefined
-                // }
-                // disabled={record.state.value !== 'notActive'}
-                // popConfirm={{
-                //   title: intl.formatMessage({
-                //     id: 'pages.data.option.remove.tips',
-                //   }),
-                //   disabled: record.state.value !== 'notActive',
-                //   onConfirm: async () => {
-                //     if (record.state.value === 'notActive') {
-                //       await service.remove(record.id);
-                //       message.success(
-                //         intl.formatMessage({
-                //           id: 'pages.data.option.success',
-                //           defaultMessage: '操作成功!',
-                //         }),
-                //       );
-                //       actionRef.current?.reload();
-                //     } else {
-                //       message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
-                //     }
-                //   },
-                // }}
+                tooltip={
+                  record?.state?.value !== 'disabled'
+                    ? { title: intl.formatMessage({ id: 'pages.device.instance.deleteTip' }) }
+                    : undefined
+                }
+                disabled={record?.state?.value !== 'disabled'}
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id: 'pages.data.option.remove.tips',
+                  }),
+                  disabled: record?.state?.value !== 'disabled',
+                  onConfirm: async () => {
+                    if (record?.state?.value === 'disabled') {
+                      await service.remove(record.id);
+                      message.success(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      actionRef.current?.reload();
+                    } else {
+                      message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+                    }
+                  },
+                }}
               >
                 <DeleteOutlined />
               </PermissionButton>,

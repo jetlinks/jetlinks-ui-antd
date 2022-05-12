@@ -1,4 +1,4 @@
-import { TitleComponent } from '@/components';
+import { PermissionButton, TitleComponent } from '@/components';
 import { PageContainer } from '@ant-design/pro-layout';
 import {
   ArrayItems,
@@ -8,26 +8,65 @@ import {
   FormItem,
   Input,
   Select,
-  Submit,
   ArrayCollapse,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
+import { onFieldValueChange } from '@formily/core';
 import { createForm } from '@formily/core';
-import { createSchemaField } from '@formily/react';
-import { Card, Col, Row, Image } from 'antd';
-import { useEffect } from 'react';
+import { createSchemaField, observer } from '@formily/react';
+import { Card, Col, Row, Image, message } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'umi';
+import { useAsyncDataSource } from '@/utils/util';
 import './index.less';
-import type { Response } from '@/utils/typings';
 import { service } from '@/pages/Northbound/AliCloud';
-import { action } from '@formily/reactive';
+import usePermissions from '@/hooks/permission';
 
-const Detail = () => {
+const Detail = observer(() => {
   const params = useParams<{ id: string }>();
+  const [dataList, setDataList] = useState<any[]>([]);
+  const [productList, setProductList] = useState<any[]>([]);
 
-  const form = createForm({
-    validateFirst: true,
-  });
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        effects() {
+          onFieldValueChange('accessConfig.*', async (field, f) => {
+            const regionId = field.query('accessConfig.regionId').value();
+            const accessKeyId = field.query('accessConfig.accessKeyId').value();
+            const accessSecret = field.query('accessConfig.accessSecret').value();
+            if (regionId && accessKeyId && accessSecret) {
+              const response = await service.getAliyunProductsList({
+                regionId,
+                accessKeyId,
+                accessSecret,
+              });
+              f.setFieldState(field.query('bridgeProductKey'), (state) => {
+                state.dataSource = response;
+                setDataList(response);
+              });
+            } else {
+              f.setFieldState(field.query('bridgeProductKey'), (state) => {
+                state.dataSource = [];
+                setDataList([]);
+              });
+            }
+          });
+        },
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    if (params.id) {
+      service.detail(params.id).then((resp) => {
+        if (resp.status === 200) {
+          form.setValues(resp.result);
+        }
+      });
+    }
+  }, [params.id]);
 
   const SchemaField = createSchemaField({
     components: {
@@ -42,23 +81,44 @@ const Detail = () => {
 
   const queryRegionsList = () => service.getRegionsList();
 
-  const queryAliyunProductList = () => service.getProductsList();
-
-  const useAsyncDataSource = (api: any) => (field: Field) => {
-    field.loading = true;
-    api(field).then(
-      action.bound!((resp: Response<any>) => {
-        field.dataSource = resp.result?.map((item: Record<string, unknown>) => ({
-          ...item,
-          label: item.name,
-          value: item.id,
-        }));
-        field.loading = false;
-      }),
-    );
+  const queryProductList = (f: Field) => {
+    const items = form.getValuesIn('mappings')?.map((i: any) => i?.productId) || [];
+    const checked = [...items];
+    const index = checked.findIndex((i) => i === f.value);
+    checked.splice(index, 1);
+    if (productList?.length > 0) {
+      return new Promise((resolve) => {
+        const list = productList.filter((j: any) => !checked.includes(j.value));
+        resolve(list);
+      });
+    } else {
+      return service.getProductsList({ paging: false }).then((resp) => {
+        setProductList(resp);
+        return resp.filter((j: any) => !checked.includes(j.value));
+      });
+    }
   };
 
-  const schema = {
+  const queryAliyunProductList = (f: Field) => {
+    const items = form.getValuesIn('mappings')?.map((i: any) => i?.productKey) || [];
+    const checked = [...items];
+    const index = checked.findIndex((i) => i === f.value);
+    checked.splice(index, 1);
+    if (dataList?.length > 0) {
+      return new Promise((resolve) => {
+        const list = dataList.filter((j: any) => !checked.includes(j.value));
+        resolve(list);
+      });
+    } else {
+      const accessConfig = form.getValuesIn('accessConfig') || {};
+      return service.getAliyunProductsList(accessConfig).then((resp) => {
+        setDataList(resp);
+        return resp.filter((j: any) => !checked.includes(j.value));
+      });
+    }
+  };
+
+  const schema: any = {
     type: 'object',
     properties: {
       name: {
@@ -77,62 +137,67 @@ const Detail = () => {
           },
         ],
       },
-      address: {
-        type: 'string',
-        title: '服务地址',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-component-props': {
-          placeholder: '请选择服务地址',
-          showSearch: true,
-          filterOption: (input: string, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
-        },
-        'x-decorator-props': {
-          tooltip: '阿里云内部给每台机器设置的唯一编号',
-        },
-        'x-reactions': ['{{useAsyncDataSource(queryRegionsList)}}'],
-      },
-      accessKey: {
-        type: 'string',
-        title: 'accessKey',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          placeholder: '请输入accessKey',
-        },
-        'x-validator': [
-          {
-            max: 64,
-            message: '最多可输入64个字符',
+      accessConfig: {
+        type: 'object',
+        properties: {
+          regionId: {
+            type: 'string',
+            title: '服务地址',
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Select',
+            'x-component-props': {
+              placeholder: '请选择服务地址',
+              showSearch: true,
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+            },
+            'x-decorator-props': {
+              tooltip: '阿里云内部给每台机器设置的唯一编号',
+            },
+            'x-reactions': ['{{useAsyncDataSource(queryRegionsList)}}'],
           },
-        ],
-        'x-decorator-props': {
-          tooltip: '用于程序通知方式调用云服务API的用户标识',
-        },
-      },
-      accessSecret: {
-        type: 'string',
-        title: 'accessSecret',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          placeholder: '请输入accessSecret',
-        },
-        'x-validator': [
-          {
-            max: 64,
-            message: '最多可输入64个字符',
+          accessKeyId: {
+            type: 'string',
+            title: 'accessKey',
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-component-props': {
+              placeholder: '请输入accessKey',
+            },
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
+            'x-decorator-props': {
+              tooltip: '用于程序通知方式调用云服务API的用户标识',
+            },
           },
-        ],
-        'x-decorator-props': {
-          tooltip: '用于程序通知方式调用云服务费API的秘钥标识',
+          accessSecret: {
+            type: 'string',
+            title: 'accessSecret',
+            required: true,
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-component-props': {
+              placeholder: '请输入accessSecret',
+            },
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
+            'x-decorator-props': {
+              tooltip: '用于程序通知方式调用云服务费API的秘钥标识',
+            },
+          },
         },
       },
-      network: {
+      bridgeProductKey: {
         type: 'string',
         title: '网桥产品',
         required: true,
@@ -144,14 +209,15 @@ const Detail = () => {
         'x-decorator-props': {
           tooltip: '物联网平台对应的阿里云产品',
         },
-        'x-reactions': ['{{useAsyncDataSource(queryAliyunProductList)}}'],
       },
-      array: {
+      mappings: {
         type: 'array',
+        required: true,
         'x-component': 'ArrayCollapse',
         title: '产品映射',
         items: {
           type: 'object',
+          required: true,
           'x-component': 'ArrayCollapse.CollapsePanel',
           'x-component-props': {
             header: '产品映射',
@@ -165,7 +231,8 @@ const Detail = () => {
                 maxColumns: [24],
               },
               properties: {
-                product1: {
+                type: 'object',
+                productKey: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   title: '阿里云产品',
@@ -178,8 +245,9 @@ const Detail = () => {
                     gridSpan: 12,
                     tooltip: '阿里云物联网平台产品标识',
                   },
+                  'x-reactions': ['{{useAsyncDataSource(queryAliyunProductList)}}'],
                 },
-                product2: {
+                productId: {
                   type: 'string',
                   title: '平台产品',
                   required: true,
@@ -191,6 +259,7 @@ const Detail = () => {
                   'x-component-props': {
                     placeholder: '请选择平台产品',
                   },
+                  'x-reactions': ['{{useAsyncDataSource(queryProductList)}}'],
                 },
               },
             },
@@ -222,7 +291,18 @@ const Detail = () => {
     },
   };
 
-  useEffect(() => {}, [params.id]);
+  const handleSave = async () => {
+    const data: any = await form.submit();
+    const product = dataList.find((item) => item?.value === data?.bridgeProductKey);
+    data.bridgeProductName = product?.label || '';
+    const response: any = data.id ? await service.update(data) : await service.save(data);
+    if (response.status === 200) {
+      message.success('保存成功');
+      history.back();
+    }
+  };
+
+  const { getOtherPermission } = usePermissions('Northbound/AliCloud');
 
   return (
     <PageContainer>
@@ -233,11 +313,24 @@ const Detail = () => {
             <Form form={form} layout="vertical" onAutoSubmit={console.log}>
               <SchemaField
                 schema={schema}
-                scope={{ useAsyncDataSource, queryRegionsList, queryAliyunProductList }}
+                scope={{
+                  useAsyncDataSource,
+                  queryRegionsList,
+                  queryProductList,
+                  queryAliyunProductList,
+                }}
               />
-              <FormButtonGroup.FormItem>
-                <Submit>保存</Submit>
-              </FormButtonGroup.FormItem>
+              <FormButtonGroup.Sticky>
+                <FormButtonGroup.FormItem>
+                  <PermissionButton
+                    type="primary"
+                    isPermission={getOtherPermission(['add', 'update'])}
+                    onClick={() => handleSave()}
+                  >
+                    保存
+                  </PermissionButton>
+                </FormButtonGroup.FormItem>
+              </FormButtonGroup.Sticky>
             </Form>
           </Col>
           <Col span={10}>
@@ -284,6 +377,6 @@ const Detail = () => {
       </Card>
     </PageContainer>
   );
-};
+});
 
 export default Detail;

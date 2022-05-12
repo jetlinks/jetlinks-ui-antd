@@ -1,6 +1,6 @@
 import { EnvironmentOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AMap from './AMap';
 
 interface Props {
@@ -10,10 +10,15 @@ interface Props {
 
 const GeoComponent = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
+  const [value, setValue] = useState<any>(props?.value);
+
+  useEffect(() => {
+    setValue(props?.value);
+  }, [props.value]);
+
   return (
     <div>
       <Input
-        readOnly
         addonAfter={
           <EnvironmentOutlined
             onClick={() => {
@@ -21,16 +26,22 @@ const GeoComponent = (props: Props) => {
             }}
           />
         }
-        value={props.value}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          props.onChange(e.target.value);
+        }}
       />
       {visible && (
         <AMap
-          value={props.value}
+          value={value}
           close={() => {
             setVisible(false);
           }}
           ok={(param) => {
-            console.log(param);
+            props.onChange(param);
+            setValue(param);
+            setVisible(false);
           }}
         />
       )}
