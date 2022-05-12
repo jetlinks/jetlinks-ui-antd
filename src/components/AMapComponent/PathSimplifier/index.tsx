@@ -10,7 +10,7 @@ interface PathSimplifierProps {
 }
 
 const PathSimplifier = (props: PathSimplifierProps) => {
-  const { pathData, __map__, onCreated, options } = props;
+  const { __map__, onCreated, options } = props;
 
   const pathSimplifierRef = useRef<PathSimplifier | null>(null);
   const [loading, setLoading] = useState(false);
@@ -28,15 +28,16 @@ const PathSimplifier = (props: PathSimplifierProps) => {
         map: __map__,
         ...options,
       });
-      if (pathData) {
-        pathSimplifierRef.current?.setData(
-          pathData.map((item) => ({ name: item.name || '路线', path: item.path })),
-        );
-        setLoading(true);
-      }
 
       if (onCreated) {
         onCreated(pathSimplifierRef.current!);
+      }
+
+      if (props.pathData) {
+        pathSimplifierRef.current?.setData(
+          props.pathData.map((item) => ({ name: item.name || '路线', path: item.path })),
+        );
+        setLoading(true);
       }
     },
     [props],
@@ -69,6 +70,15 @@ const PathSimplifier = (props: PathSimplifierProps) => {
       return child;
     });
   };
+
+  useEffect(() => {
+    if (pathSimplifierRef.current && props.pathData) {
+      pathSimplifierRef.current?.setData(
+        props.pathData.map((item) => ({ name: item.name || '路线', path: item.path })),
+      );
+      setLoading(true);
+    }
+  }, [props.pathData]);
 
   useEffect(() => {
     if (__map__) {
