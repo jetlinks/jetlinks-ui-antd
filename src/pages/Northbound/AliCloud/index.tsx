@@ -15,9 +15,9 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import AliyunCard from '@/components/ProTableCard/CardItems/aliyun';
 import Service from './service';
 
-export const service = new Service('device-instance');
+export const service = new Service('device/aliyun/bridge');
 
-export default () => {
+const AliCloud = () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParams, setSearchParams] = useState<any>({});
@@ -214,3 +214,5 @@ export default () => {
     </PageContainer>
   );
 };
+
+export default AliCloud;

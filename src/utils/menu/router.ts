@@ -115,6 +115,7 @@ export enum MENUS_CODE {
   'Northbound/DuerOS' = 'Northbound/DuerOS',
   'Northbound/AliCloud' = 'Northbound/AliCloud',
   'Northbound/AliCloud/Detail' = 'Northbound/AliCloud/Detail',
+  'system/Platforms' = 'system/Platforms',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;

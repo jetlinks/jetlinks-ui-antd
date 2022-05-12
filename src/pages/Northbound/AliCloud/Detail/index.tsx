@@ -11,12 +11,16 @@ import {
   Submit,
   ArrayCollapse,
 } from '@formily/antd';
+import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Card, Col, Row, Image } from 'antd';
 import { useEffect } from 'react';
 import { useParams } from 'umi';
 import './index.less';
+import type { Response } from '@/utils/typings';
+import { service } from '@/pages/Northbound/AliCloud';
+import { action } from '@formily/reactive';
 
 const Detail = () => {
   const params = useParams<{ id: string }>();
@@ -35,6 +39,24 @@ const Detail = () => {
       ArrayCollapse,
     },
   });
+
+  const queryRegionsList = () => service.getRegionsList();
+
+  const queryAliyunProductList = () => service.getProductsList();
+
+  const useAsyncDataSource = (api: any) => (field: Field) => {
+    field.loading = true;
+    api(field).then(
+      action.bound!((resp: Response<any>) => {
+        field.dataSource = resp.result?.map((item: Record<string, unknown>) => ({
+          ...item,
+          label: item.name,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
 
   const schema = {
     type: 'object',
@@ -63,10 +85,14 @@ const Detail = () => {
         'x-component': 'Select',
         'x-component-props': {
           placeholder: '请选择服务地址',
+          showSearch: true,
+          filterOption: (input: string, option: any) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
         },
         'x-decorator-props': {
           tooltip: '阿里云内部给每台机器设置的唯一编号',
         },
+        'x-reactions': ['{{useAsyncDataSource(queryRegionsList)}}'],
       },
       accessKey: {
         type: 'string',
@@ -118,6 +144,7 @@ const Detail = () => {
         'x-decorator-props': {
           tooltip: '物联网平台对应的阿里云产品',
         },
+        'x-reactions': ['{{useAsyncDataSource(queryAliyunProductList)}}'],
       },
       array: {
         type: 'array',
@@ -204,7 +231,10 @@ const Detail = () => {
           <Col span={14}>
             <TitleComponent data={'基本信息'} />
             <Form form={form} layout="vertical" onAutoSubmit={console.log}>
-              <SchemaField schema={schema} />
+              <SchemaField
+                schema={schema}
+                scope={{ useAsyncDataSource, queryRegionsList, queryAliyunProductList }}
+              />
               <FormButtonGroup.FormItem>
                 <Submit>保存</Submit>
               </FormButtonGroup.FormItem>
