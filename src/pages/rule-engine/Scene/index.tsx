@@ -175,6 +175,21 @@ const Scene = () => {
       }),
       width: 120,
       renderText: (record) => TriggerWayType[record],
+      valueType: 'select',
+      valueEnum: {
+        manual: {
+          text: '手动触发',
+          status: 'manual',
+        },
+        timer: {
+          text: '定时触发',
+          status: 'timer',
+        },
+        device: {
+          text: '设备触发',
+          status: 'device',
+        },
+      },
     },
     {
       dataIndex: 'description',
@@ -182,6 +197,7 @@ const Scene = () => {
         id: 'pages.system.description',
         defaultMessage: '说明',
       }),
+      hideInSearch: true,
     },
     {
       dataIndex: 'state',

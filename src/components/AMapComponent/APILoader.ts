@@ -9,6 +9,16 @@ const buildScriptTag = (src: string): HTMLScriptElement => {
   return script;
 };
 
+export const getAMapPlugins = (type: string, map: any, callback: Function) => {
+  if (map) {
+    map.plugin([type], (...arg: any) => {
+      if (callback) {
+        callback(arg);
+      }
+    });
+  }
+};
+
 export const getAMapUiPromise = (version: string = '1.1'): Promise<any> => {
   if ((window as any).AMapUI) {
     return Promise.resolve();
