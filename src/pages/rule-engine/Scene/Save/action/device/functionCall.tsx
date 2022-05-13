@@ -24,10 +24,6 @@ export default (props: FunctionCallProps) => {
 
   useEffect(() => {
     setEditableRowKeys(props.functionData.map((d) => d.id));
-    console.log('functionData', props.functionData);
-    formRef.current?.setFieldsValue({
-      table: props.functionData,
-    });
   }, [props.functionData]);
 
   useEffect(() => {
@@ -45,7 +41,7 @@ export default (props: FunctionCallProps) => {
         }),
       });
     }
-  }, []);
+  }, [props.value, props.functionData]);
 
   const getItemNode = (record: any) => {
     const type = record.type;

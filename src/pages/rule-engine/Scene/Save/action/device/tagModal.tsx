@@ -151,7 +151,7 @@ export default (props: TagModalProps) => {
     <>
       <Modal
         visible={visible}
-        title={'设备'}
+        title={'标签'}
         width={660}
         onOk={() => {
           const newValue = tagList

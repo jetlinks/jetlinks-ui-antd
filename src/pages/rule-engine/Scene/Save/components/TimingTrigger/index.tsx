@@ -193,7 +193,7 @@ export default (props: TimingTrigger) => {
                   value={
                     data.period?.from
                       ? [moment(data.period?.from, 'HH:mm:ss'), moment(data.period?.to, 'hh:mm:ss')]
-                      : undefined
+                      : [moment(new Date(), 'HH:mm:ss'), moment(new Date(), 'HH:mm:ss')]
                   }
                   onChange={(_, dateString) => {
                     onChange({
@@ -208,8 +208,8 @@ export default (props: TimingTrigger) => {
                 />
               ) : (
                 <TimePicker
-                  format={'hh:mm:ss'}
-                  value={data.once?.time ? moment(data.once?.time, 'hh:mm:ss') : undefined}
+                  format={'HH:mm:ss'}
+                  value={moment(data.once?.time || new Date(), 'HH:mm:ss')}
                   onChange={(_, dateString) => {
                     onChange({
                       ...data,
@@ -233,7 +233,7 @@ export default (props: TimingTrigger) => {
                     addonAfter={TimeTypeAfter}
                     style={{ flex: 1 }}
                     min={0}
-                    max={9999}
+                    max={59}
                     onChange={(e) => {
                       onChange({
                         ...data,

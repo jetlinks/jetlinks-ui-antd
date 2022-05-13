@@ -50,7 +50,10 @@ export const queryRelationUsers = () =>
 
 // 钉钉用户
 export const queryDingTalkUsers = (id: string) =>
-  request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/users`, { method: 'GET' });
+  request(
+    `${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/users?sorts[0].name='name'&sorts[0].order=asc`,
+    { method: 'GET' },
+  );
 
 // 钉钉部门
 export const queryDingTalkDepartments = (id: string) =>
@@ -60,7 +63,10 @@ export const queryDingTalkDepartments = (id: string) =>
 
 // 微信用户
 export const queryWechatUsers = (id: string) =>
-  request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users`, { method: 'GET' });
+  request(
+    `${SystemConst.API_BASE}/notifier/wechat/corp/${id}/users?sorts[0].name='name'&sorts[0].order=asc`,
+    { method: 'GET' },
+  );
 
 // 微信部门
 export const queryWechatDepartments = (id: string) =>

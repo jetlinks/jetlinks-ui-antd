@@ -16,6 +16,7 @@ interface MessageContentProps {
   notifyType: string;
   triggerType: string;
   configId: string;
+  trigger?: any;
 }
 
 const rowGutter = 12;
@@ -44,8 +45,10 @@ export default (props: MessageContentProps) => {
         } else {
           rules.push({
             validator: async (_: any, value: any) => {
-              if (type === 'file' && !value) {
-                return Promise.reject(new Error('请输入' + item.name));
+              if (type === 'file' || type === 'link') {
+                if (!value) {
+                  return Promise.reject(new Error('请输入' + item.name));
+                }
               } else {
                 if (!value || !value.value) {
                   if (['date', 'org'].includes(type)) {
@@ -146,7 +149,7 @@ export default (props: MessageContentProps) => {
                       ) : type === 'link' ? (
                         <Input placeholder={'请输入' + item.name} />
                       ) : (
-                        <BuiltIn type={props.triggerType} data={item} />
+                        <BuiltIn type={props.triggerType} trigger={props.trigger} data={item} />
                       )}
                     </Form.Item>
                   </Col>

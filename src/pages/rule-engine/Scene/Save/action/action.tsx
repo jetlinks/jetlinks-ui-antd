@@ -25,6 +25,7 @@ interface ActionProps {
   triggerType: string;
   onRemove: () => void;
   actionItemData?: any;
+  trigger?: any;
 }
 
 export default observer((props: ActionProps) => {
@@ -265,6 +266,7 @@ export default observer((props: ActionProps) => {
           form={props.form}
           template={templateData}
           name={props.name}
+          trigger={props.trigger}
           notifyType={notifyType}
           triggerType={props.triggerType}
           configId={configId}
