@@ -53,6 +53,9 @@ const extraRouteObj = {
   demo: {
     children: [{ code: 'AMap', name: '地图' }],
   },
+  'system/Platforms': {
+    children: [{ code: 'Api', name: '赋权' }],
+  },
 };
 //额外路由
 export const extraRouteArr = [

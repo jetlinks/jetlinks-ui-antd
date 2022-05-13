@@ -124,7 +124,12 @@ export default (props: WritePropertyProps) => {
       <Col span={4}>
         <Select
           value={propertiesKey}
-          options={props.properties}
+          options={props.properties.filter((item) => {
+            if (item.expands && item.expands.type) {
+              return item.expands.type.includes('write');
+            }
+            return false;
+          })}
           fieldNames={{ label: 'name', value: 'id' }}
           style={{ width: '100%' }}
           onSelect={(key: any) => {

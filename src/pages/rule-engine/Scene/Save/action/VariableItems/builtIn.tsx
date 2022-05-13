@@ -17,6 +17,7 @@ interface BuiltInProps {
   type?: string;
   notifyType?: string;
   onChange?: (value: ChangeType) => void;
+  trigger?: any;
 }
 
 export default (props: BuiltInProps) => {
@@ -35,12 +36,11 @@ export default (props: BuiltInProps) => {
   });
 
   useEffect(() => {
-    if (source === 'upper') {
-      getBuiltInList({
-        trigger: { type: props.type },
-      });
+    console.log(props.trigger);
+    if (source === 'upper' && props.trigger) {
+      getBuiltInList({ ...props.trigger });
     }
-  }, [source, props.type]);
+  }, [source, props.trigger]);
 
   useEffect(() => {
     setSource(props.value?.source);
