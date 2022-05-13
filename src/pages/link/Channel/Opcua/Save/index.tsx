@@ -244,7 +244,7 @@ const Save = (props: Props) => {
       onCancel={props.close}
       onOk={save}
       width="35vw"
-      permissionCode={'system/Relationship'}
+      permissionCode={'link/Channel/Opcua'}
       permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">

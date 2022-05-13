@@ -21,6 +21,27 @@ class Service extends BaseService<OpaUa> {
       method: 'GET',
       params,
     });
+  getDevice = (params?: any) =>
+    request(`${SystemConst.API_BASE}/device-instance/_query`, {
+      method: 'POST',
+      data: params,
+    });
+  //绑定设备
+  bind = (params: any) =>
+    request(`${SystemConst.API_BASE}/opc/device-bind/batch/_create`, {
+      method: 'POST',
+      data: params,
+    });
+  getBindList = (params: any) =>
+    request(`${SystemConst.API_BASE}/opc/device-bind/device-details/_query/no-paging`, {
+      method: 'GET',
+      params,
+    });
+  unbind = (params: any, opcUaId: string) =>
+    request(`${SystemConst.API_BASE}/opc/device-bind/batch/${opcUaId}/_delete`, {
+      method: 'POST',
+      data: params,
+    });
 }
 
 export default Service;
