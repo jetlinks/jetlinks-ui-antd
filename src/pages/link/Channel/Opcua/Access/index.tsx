@@ -9,7 +9,7 @@ import BindDevice from '@/pages/link/Channel/Opcua/Access/bindDevice';
 import { service } from '@/pages/link/Channel/Opcua';
 import encodeQuery from '@/utils/encodeQuery';
 import ProList from '@ant-design/pro-list';
-// import styles from './index.less'
+import styles from './index.less';
 
 const Access = () => {
   const intl = useIntl();
@@ -61,12 +61,13 @@ const Access = () => {
 
   useEffect(() => {
     const item = new URLSearchParams(location.search);
-    if (item.get('id')) {
-      setOpcUaId(opcUaId.get('id'));
+    const id = item.get('id');
+    if (id) {
+      setOpcUaId(id);
       getBindList(
         encodeQuery({
           terms: {
-            opcUaId: opcUaId.get('id'),
+            opcUaId: id,
           },
         }),
       );
@@ -75,7 +76,7 @@ const Access = () => {
 
   return (
     <PageContainer>
-      <Card>
+      <Card className={styles.list}>
         <Row>
           <Col span={4}>
             <PermissionButton
@@ -105,7 +106,7 @@ const Access = () => {
                       title="确认解绑该设备嘛？"
                       onConfirm={() => {
                         console.log(row);
-                        service.unbind([row.id], opcUaId).then((res) => {
+                        service.unbind([row.deviceId], opcUaId).then((res) => {
                           if (res.status === 200) {
                             message.success('解绑成功');
                             getBindList(
