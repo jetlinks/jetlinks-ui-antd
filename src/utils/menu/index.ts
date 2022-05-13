@@ -36,6 +36,20 @@ const extraRouteObj = {
       { code: 'Save2', name: '测试详情' },
     ],
   },
+  'link/Channel': {
+    children: [
+      {
+        code: 'Opcua',
+        name: 'OPC UA',
+        children: [
+          {
+            code: 'Access',
+            name: '数据点绑定',
+          },
+        ],
+      },
+    ],
+  },
   demo: {
     children: [{ code: 'AMap', name: '地图' }],
   },
@@ -57,12 +71,12 @@ export const extraRouteArr = [
         name: '基本设置',
         url: '/account/center',
       },
-      {
-        code: 'account/Center/bind',
-        name: '第三方页面',
-        url: '/account/center/bind',
-        hideInMenu: true,
-      },
+      // {
+      //   code: 'account/Center/bind',
+      //   name: '第三方页面',
+      //   url: '/account/center/bind',
+      //   hideInMenu: true,
+      // },
     ],
   },
 ];

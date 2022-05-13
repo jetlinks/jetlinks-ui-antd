@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Col, Row } from 'antd';
+import { Col, Form, Input, Modal, Row } from 'antd';
 
 interface Props {
   data: any;

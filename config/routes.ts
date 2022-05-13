@@ -15,6 +15,22 @@
       },
     ],
   },
+  {
+    path: '/account/center/bind',
+    layout: false,
+    routes: [
+      {
+        path: '/account/center/bind',
+        routes: [
+          {
+            name: 'bind',
+            path: '/account/center/bind',
+            component: './account/Center/bind',
+          },
+        ],
+      },
+    ],
+  },
   // {
   //   path: '/analysis',
   //   name: 'analysis',

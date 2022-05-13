@@ -7,22 +7,22 @@ import {
   FormItem,
   Input,
   NumberPicker,
+  Password,
+  Radio,
   Select,
   Switch,
   TreeSelect,
-  Password,
-  Radio,
 } from '@formily/antd';
 import { message, Modal } from 'antd';
 import React, { useMemo, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import type { ISchema } from '@formily/json-schema';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
 import { Response } from '@/utils/typings';
 import { service } from '@/pages/system/Platforms/index';
-import { PlusOutlined } from '@ant-design/icons';
 
 interface SaveProps {
   visible: boolean;

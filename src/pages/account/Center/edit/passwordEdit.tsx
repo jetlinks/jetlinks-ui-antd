@@ -1,6 +1,6 @@
 import { Modal } from 'antd';
 import { createSchemaField } from '@formily/react';
-import { Form, FormItem, Password, Input } from '@formily/antd';
+import { Form, FormItem, Input, Password } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
 import { useIntl } from 'umi';
 import { useMemo } from 'react';

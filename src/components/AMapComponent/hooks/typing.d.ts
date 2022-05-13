@@ -5,6 +5,7 @@ interface PlaceSearchOptions {
   type?: string;
   extensions?: string;
 }
+
 type resultCityType = {
   name: string;
   citycode: string;
@@ -28,6 +29,7 @@ type searchFn = (status: string, result: searchFnResult) => void;
 
 interface PlaceSearch {
   new (options: PlaceSearchOptions);
+
   search: (keyword: string, callback: searchFn) => void;
   searchInBounds: (keyword: string, bounds: number[], callback: searchFn) => void;
   searchNearBy: (keyword: string, center: any, radius: number) => void;

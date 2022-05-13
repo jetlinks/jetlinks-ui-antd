@@ -1,14 +1,26 @@
-import { service } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
-import { DatePicker, Modal, Radio, Select, Space, Table, Tabs } from 'antd';
+import {
+  DatePicker,
+  Modal,
+  Popconfirm,
+  Radio,
+  Select,
+  Space,
+  Table,
+  Tabs,
+  Tooltip as ATooltip,
+} from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Axis, Chart, Geom, Legend, Tooltip, Slider } from 'bizcharts';
+import { Axis, Chart, Geom, Legend, Slider, Tooltip } from 'bizcharts';
 import FileComponent from '../../Running/Property/FileComponent';
 import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
+import AMap from './AMap';
+
 interface Props {
   visible: boolean;
   close: () => void;
@@ -32,6 +44,8 @@ const PropertyLog = (props: Props) => {
   const [tab, setTab] = useState<string>('table');
   const [detailVisible, setDetailVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>('');
+
+  const [geoList, setGeoList] = useState<any[]>([]);
 
   const columns = [
     {
@@ -62,9 +76,45 @@ const PropertyLog = (props: Props) => {
               }}
             />
           ) : (
-            <DownloadOutlined />
+            <ATooltip title="下载">
+              <Popconfirm
+                title="确认修改"
+                onConfirm={() => {
+                  const type = (record?.value || '').split('.').pop();
+                  const downloadUrl = record.value;
+                  const downNode = document.createElement('a');
+                  downNode.href = downloadUrl;
+                  downNode.download = `${InstanceModel.detail.name}-${data.name}${moment(
+                    new Date().getTime(),
+                  ).format('YYYY-MM-DD-HH-mm-ss')}.${type}`;
+                  downNode.style.display = 'none';
+                  document.body.appendChild(downNode);
+                  downNode.click();
+                  document.body.removeChild(downNode);
+                }}
+              >
+                <DownloadOutlined />
+              </Popconfirm>
+            </ATooltip>
           )}
         </a>
+      ),
+    },
+  ];
+
+  const geoColumns = [
+    {
+      title: '时间',
+      dataIndex: 'timestamp',
+      key: 'timestamp',
+      render: (text: any) => <span>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</span>,
+    },
+    {
+      title: '位置',
+      dataIndex: 'value',
+      key: 'value',
+      render: (text: any, record: any) => (
+        <FileComponent type="table" value={{ formatValue: record.value }} data={data} />
       ),
     },
   ];
@@ -140,7 +190,6 @@ const PropertyLog = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(data);
     if (visible) {
       handleSearch(
         {
@@ -179,7 +228,7 @@ const PropertyLog = (props: Props) => {
               );
             }}
             dataSource={dataSource?.data || []}
-            columns={columns}
+            columns={data?.valueType?.type === 'geoPoint' ? geoColumns : columns}
             pagination={{
               pageSize: dataSource?.pageSize || 10,
               showSizeChanger: true,
@@ -317,7 +366,8 @@ const PropertyLog = (props: Props) => {
       visible={visible}
       onCancel={() => close()}
       onOk={() => close()}
-      width="45vw"
+      destroyOnClose={true}
+      width="50vw"
     >
       <div style={{ marginBottom: '20px' }}>
         <Space>
@@ -430,6 +480,22 @@ const PropertyLog = (props: Props) => {
               });
             }
           }
+          if (key === 'geo') {
+            service
+              .getPropertyData(
+                params.id,
+                encodeQuery({
+                  paging: false,
+                  terms: { property: data.id, timestamp$BTW: start && end ? [start, end] : [] },
+                  sorts: { timestamp: 'desc' },
+                }),
+              )
+              .then((resp) => {
+                if (resp.status === 200) {
+                  setGeoList(resp.result);
+                }
+              });
+          }
         }}
       >
         {tabList.map((item) => (
@@ -437,6 +503,11 @@ const PropertyLog = (props: Props) => {
             {renderComponent(item.key)}
           </Tabs.TabPane>
         ))}
+        {data?.valueType?.type === 'geoPoint' && (
+          <Tabs.TabPane tab="轨迹" key="geo">
+            <AMap value={geoList} name={data.name} />
+          </Tabs.TabPane>
+        )}
       </Tabs>
       {detailVisible && (
         <Detail
