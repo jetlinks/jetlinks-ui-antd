@@ -1,7 +1,6 @@
 import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
-
 class Service extends BaseService<AliCloudType> {
   // 获取服务地址的下拉列表
   public getRegionsList = (params?: any) =>
@@ -9,7 +8,7 @@ class Service extends BaseService<AliCloudType> {
       method: 'GET',
       params,
     }).then((resp: any) => {
-      return resp.result?.map((item: any) => ({
+      return (resp?.result || []).map((item: any) => ({
         label: item.name,
         value: item.id,
       }));
@@ -20,9 +19,9 @@ class Service extends BaseService<AliCloudType> {
       method: 'POST',
       data,
     }).then((resp: any) => {
-      return resp.result.data?.map((item: any) => ({
-        label: item.productName,
-        value: item.productKey,
+      return (resp?.result?.data || []).map((item: any) => ({
+        label: item?.productName,
+        value: item?.productKey,
       }));
     });
 
@@ -32,7 +31,7 @@ class Service extends BaseService<AliCloudType> {
       method: 'POST',
       data,
     }).then((resp: any) => {
-      return resp.result?.map((item: any) => ({
+      return (resp?.result || []).map((item: any) => ({
         label: item.name,
         value: item.id,
       }));
