@@ -209,7 +209,7 @@ export default () => {
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
             if (changeValue.trigger) {
-              if (changeValue.trigger.type === 'device' && changeValue.trigger.device) {
+              if (changeValue.trigger.device) {
                 if (
                   changeValue.trigger.device.selectorValues ||
                   (changeValue.trigger.device.operation &&
