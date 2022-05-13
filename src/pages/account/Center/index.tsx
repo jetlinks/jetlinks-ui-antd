@@ -1,5 +1,16 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Avatar, Button, Card, Col, Descriptions, Divider, message, Row, Upload } from 'antd';
+import {
+  Card,
+  Upload,
+  message,
+  Avatar,
+  Button,
+  Descriptions,
+  Divider,
+  Col,
+  Row,
+  Popconfirm,
+} from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
 import { UploadProps } from 'antd/lib/upload';
@@ -222,7 +233,7 @@ const Center = () => {
                             color: '#00000073',
                           }}
                         >
-                          绑定时间: 2022-01-02 09:00:00
+                          绑定时间: {moment(item.bindTime).format('YYYY-MM-DD HH:mm:ss')}
                         </div>
                       </div>
                     ) : (
@@ -233,27 +244,30 @@ const Center = () => {
                   </div>
                   <div>
                     {item.bound ? (
-                      <Button
-                        onClick={() => {
+                      <Popconfirm
+                        title="确认解除绑定嘛?"
+                        onConfirm={() => {
                           unBind(item.type, item.provider);
                         }}
                       >
-                        解除绑定
-                      </Button>
+                        <Button>解除绑定</Button>
+                      </Popconfirm>
                     ) : (
                       <Button
                         type="primary"
                         onClick={() => {
-                          const items: any = window.open(
+                          window.open(
                             `/${SystemConst.API_BASE}/sso/${item.provider}/login`,
+                            '',
+                            'width=700,height=500,left=500,top=300',
                           );
-                          //  const items:any= window.open(`/#/account/Center/bind`);
-                          items!.onBindSuccess = (value: any) => {
-                            if (value.status === 200) {
+                          // window.open(`/#/account/center/bind`,'','width=700,height=500,left=500,top=300');
+                          localStorage.setItem('onBind', 'false');
+                          window.onstorage = (e) => {
+                            if (e.newValue) {
                               getBindInfo();
                             }
                           };
-                          // history.push(getMenuPathByCode('account/Center/bind'));
                         }}
                       >
                         立即绑定
