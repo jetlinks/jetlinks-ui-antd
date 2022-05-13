@@ -3,14 +3,26 @@ import SearchComponent from '@/components/SearchComponent';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PermissionButton, ProTableCard } from '@/components';
-import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { Space } from 'antd';
+import { DuerOSItem } from '@/pages/Northbound/DuerOS/types';
+import DuerOSCard from '@/components/ProTableCard/CardItems/duerOs';
+import { history } from '@@/core/history';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import Service from './service';
 
+export const service = new Service('dueros/product');
 export default () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParams, setSearchParams] = useState<any>({});
-
   const { permission } = PermissionButton.usePermission('Northbound/DuerOS');
 
   const Tools = (record: any, type: 'card' | 'table') => {
@@ -94,9 +106,34 @@ export default () => {
     ];
   };
 
-  const columns: ProColumns<DuerOSType>[] = [
+  const columns: ProColumns<DuerOSItem>[] = [
     {
+      title: intl.formatMessage({
+        id: 'pages.table.name',
+        defaultMessage: '名称',
+      }),
       dataIndex: 'name',
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.cloud.duerOS.applianceType',
+        defaultMessage: '设备类型',
+      }),
+      dataIndex: 'applianceType',
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.cloud.duerOS.manufacturerName',
+        defaultMessage: '厂家名称',
+      }),
+      dataIndex: 'manufacturerName',
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.cloud.duerOS.version',
+        defaultMessage: '动作数量',
+      }),
+      dataIndex: 'version',
     },
     {
       title: intl.formatMessage({
@@ -112,22 +149,48 @@ export default () => {
 
   return (
     <PageContainer>
-      <SearchComponent<DuerOSType>
+      <SearchComponent<DuerOSItem>
         field={columns}
-        target="device-instance"
+        target="northbound-dueros"
         onSearch={(data) => {
           actionRef.current?.reset?.();
           setSearchParams(data);
         }}
       />
-      <ProTableCard<DuerOSType>
+      <ProTableCard<DuerOSItem>
         rowKey="id"
         search={false}
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
         options={{ fullScreen: true }}
+        request={(params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
+        cardRender={(record) => <DuerOSCard {...record} action={Tools(record, 'card')} />}
+        headerTitle={
+          <Space>
+            <PermissionButton
+              isPermission={true}
+              onClick={() => {
+                // setCurrent(undefined);
+                // setVisible(true);
+                // state.current = record;
+                history.push(getMenuPathByParams(MENUS_CODE['Northbound/DuerOS/Detail']));
+              }}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </PermissionButton>
+          </Space>
+        }
       />
+      {/*<Save/>*/}
     </PageContainer>
   );
 };

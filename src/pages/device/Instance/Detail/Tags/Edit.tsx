@@ -4,6 +4,7 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import { ArrayTable, FormItem, Input } from '@formily/antd';
 import { message, Modal } from 'antd';
 import { useIntl } from 'umi';
+import GeoComponent from './location/GeoComponent';
 
 interface Props {
   close: () => void;
@@ -25,6 +26,7 @@ const Edit = (props: Props) => {
       FormItem,
       Input,
       ArrayTable,
+      GeoComponent,
     },
   });
 
@@ -51,7 +53,6 @@ const Edit = (props: Props) => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
-                  // 'x-disabled': true
                 },
               },
             },
@@ -84,10 +85,25 @@ const Edit = (props: Props) => {
                 }),
               },
               properties: {
+                type: {
+                  type: 'string',
+                  name: '类型',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                  'x-hidden': true,
+                },
                 value: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-reactions': {
+                    dependencies: ['.type'],
+                    fulfill: {
+                      state: {
+                        componentType: '{{$deps[0]==="geoPoint"?"GeoComponent":"Input"}}',
+                      },
+                    },
+                  },
                 },
               },
             },

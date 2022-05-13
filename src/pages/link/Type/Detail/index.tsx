@@ -658,7 +658,7 @@ const Save = observer(() => {
                 'x-component': 'ArrayCollapse',
                 'x-decorator': 'FormItem',
                 items: {
-                  type: 'void',
+                  type: 'object',
                   'x-component': 'ArrayCollapse.CollapsePanel',
                   'x-component-props': {
                     header: '配置信息',

@@ -114,7 +114,10 @@ export enum MENUS_CODE {
   'account/Center' = 'account/Center',
   'account/Center/bind' = 'account/Center/bind',
   'Northbound/DuerOS' = 'Northbound/DuerOS',
+  'Northbound/DuerOS/Detail' = 'Northbound/DuerOS/Detail',
   'Northbound/AliCloud' = 'Northbound/AliCloud',
+  'Northbound/AliCloud/Detail' = 'Northbound/AliCloud/Detail',
+  'system/Platforms' = 'system/Platforms',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;
@@ -154,4 +157,5 @@ export const getDetailNameByCode = {
   'link/AccessConfig/Detail': '配置详情',
   'media/Stream/Detail': '流媒体详情',
   'rule-engine/Alarm/Log/Detail': '告警日志',
+  'Northbound/AliCloud/Detail': '阿里云详情',
 };

@@ -12,7 +12,7 @@ interface AMapProps extends Omit<MapProps, 'amapkey' | 'useAMapUI'> {
 }
 
 export default (props: AMapProps) => {
-  const { style, className, onInstanceCreated, ...extraProps } = props;
+  const { style, className, events, onInstanceCreated, ...extraProps } = props;
 
   const [uiLoading, setUiLoading] = useState(false);
 
@@ -27,6 +27,15 @@ export default (props: AMapProps) => {
     });
   };
 
+  const onCreated = (map: any) => {
+    if (onInstanceCreated) {
+      onInstanceCreated(map);
+    }
+    if (isOpenUi) {
+      getAMapUI();
+    }
+  };
+
   return (
     <div style={style || { width: '100%', height: '100%' }} className={className}>
       {amapKey ? (
@@ -35,14 +44,16 @@ export default (props: AMapProps) => {
           version={'2.0'}
           amapkey={amapKey}
           zooms={[3, 20]}
-          onInstanceCreated={(map: any) => {
-            if (onInstanceCreated) {
-              onInstanceCreated(map);
-            }
-            if (isOpenUi) {
-              getAMapUI();
-            }
-          }}
+          events={
+            events
+              ? {
+                  ...events!,
+                  created: onCreated,
+                }
+              : {
+                  created: onCreated,
+                }
+          }
           {...extraProps}
         >
           {isOpenUi ? (uiLoading ? props.children : null) : props.children}
