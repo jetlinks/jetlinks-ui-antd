@@ -19,6 +19,12 @@ class Service extends BaseService<platformsType> {
       method: 'POST',
       data: name,
     });
+
+  passwordReset = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/user/${id}/password/_reset`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

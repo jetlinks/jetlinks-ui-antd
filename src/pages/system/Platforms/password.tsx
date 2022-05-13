@@ -2,7 +2,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Password } from '@formily/antd';
 import { message, Modal } from 'antd';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/system/Platforms/index';
 
@@ -29,9 +29,8 @@ export default (props: SaveProps) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.data || { oath2: true },
       }),
-    [props.data],
+    [],
   );
 
   const schema: ISchema = {
@@ -45,6 +44,7 @@ export default (props: SaveProps) => {
         'x-component': 'Password',
         'x-component-props': {
           placeholder: '请输入密码',
+          checkStrength: true,
         },
         'x-decorator-props': {
           gridSpan: 1,
@@ -62,8 +62,26 @@ export default (props: SaveProps) => {
         ],
         'x-validator': [
           {
-            max: 64,
-            message: '最多可输入64个字符',
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                service
+                  .validateField('password', value)
+                  .then((resp) => {
+                    if (resp.status === 200) {
+                      if (resp.result.passed) {
+                        resolve('');
+                      } else {
+                        resolve(resp.result.reason);
+                      }
+                    }
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
           {
             required: true,
@@ -79,6 +97,7 @@ export default (props: SaveProps) => {
         'x-component': 'Password',
         'x-component-props': {
           placeholder: '请再次输入密码',
+          checkStrength: true,
         },
         'x-decorator-props': {
           gridSpan: 1,
@@ -123,23 +142,18 @@ export default (props: SaveProps) => {
     }
   };
 
-  const saveData = async () => {
-    // setLoading(true)
+  const saveData = useCallback(async () => {
     const data: any = await form.submit();
-    console.log(data);
     if (data) {
       setLoading(true);
-      const resp = await service.update(data);
+      const resp = await service.passwordReset(props.data.id, data.password);
       setLoading(false);
       if (resp.status === 200) {
-        if (props.onReload) {
-          props.onReload();
-        }
         modalClose();
         message.success('操作成功');
       }
     }
-  };
+  }, [props.data]);
 
   return (
     <Modal

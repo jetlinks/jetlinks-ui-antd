@@ -20,7 +20,7 @@ export default () => {
   const [param, setParam] = useState({});
   const [saveVisible, setSaveVisible] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [editData, setEditData] = useState<ActionType | undefined>(undefined);
+  const [editData, setEditData] = useState<any | undefined>(undefined);
 
   const { permission } = PermissionButton.usePermission('system/Platforms');
 
@@ -93,7 +93,7 @@ export default () => {
       valueType: 'option',
       align: 'center',
       width: 200,
-      render: (_, record) => [
+      render: (_, record: any) => [
         <PermissionButton
           key={'update'}
           type={'link'}
@@ -144,6 +144,7 @@ export default () => {
             title: '重置密码',
           }}
           onClick={() => {
+            setEditData({ id: record.userId });
             setPasswordVisible(true);
           }}
         >
@@ -224,9 +225,7 @@ export default () => {
         onCancel={() => {
           setPasswordVisible(false);
         }}
-        onReload={() => {
-          actionRef.current?.reload();
-        }}
+        data={editData}
       />
     </PageContainer>
   );
