@@ -59,6 +59,7 @@ export default () => {
 
   const [requestParams, setRequestParams] = useState<any>(undefined);
   const [triggerValue, setTriggerValue] = useState<any>([]);
+  const [actionParams, setActionParams] = useState<any>(undefined);
 
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -87,8 +88,6 @@ export default () => {
     },
     [triggerRef],
   );
-
-  console.log(shakeLimit);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -209,16 +208,21 @@ export default () => {
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
-            if (changeValue.trigger && changeValue.trigger.device) {
-              if (
-                changeValue.trigger.device.selectorValues ||
-                (changeValue.trigger.device.operation &&
-                  changeValue.trigger.device.operation.operator)
-              ) {
-                setTriggerValue([]);
-                setRequestParams({ trigger: allValues.trigger });
+            if (changeValue.trigger) {
+              if (changeValue.trigger.type === 'device' && changeValue.trigger.device) {
+                if (
+                  changeValue.trigger.device.selectorValues ||
+                  (changeValue.trigger.device.operation &&
+                    changeValue.trigger.device.operation.operator)
+                ) {
+                  setTriggerValue([]);
+                  setRequestParams({ trigger: allValues.trigger });
+                }
+              } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
+                setActionParams({ trigger: allValues.trigger });
               }
             }
+
             if (allValues.actions) {
               setActionsData(allValues.actions);
             }
@@ -390,7 +394,7 @@ export default () => {
                         form={form}
                         restField={restField}
                         name={name}
-                        trigger={requestParams}
+                        trigger={actionParams}
                         triggerType={triggerType}
                         onRemove={() => remove(name)}
                         actionItemData={actionsData.length && actionsData[name]}
