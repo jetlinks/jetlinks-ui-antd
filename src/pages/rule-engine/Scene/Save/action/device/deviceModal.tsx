@@ -1,4 +1,4 @@
-import { Badge, Input, message, Modal } from 'antd';
+import { Badge, Button, Input, message, Modal } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { DeviceItem } from '@/pages/system/Department/typings';
@@ -38,7 +38,6 @@ export default (props: DeviceModelProps) => {
   const [selectKeys, setSelectKeys] = useState<ChangeValueType[]>(props.value || []);
   const [searchParam, setSearchParam] = useState({});
   const [value, setValue] = useState<ChangeValueType[]>(props.value || []);
-  const oldAllSelect = useRef<any[]>([]);
 
   useEffect(() => {
     setValue(props.value || []);
@@ -159,21 +158,30 @@ export default (props: DeviceModelProps) => {
                 }
                 setSelectKeys(newSelectKeys);
               },
-              onSelectAll: (selected, selectedRows) => {
+              onSelectAll: (selected, _, changeRows) => {
                 let newSelectKeys = [...selectKeys];
                 if (selected) {
-                  oldAllSelect.current = selectedRows;
-                  selectedRows.forEach((item) => {
+                  changeRows.forEach((item) => {
                     newSelectKeys.push({ name: item.name, value: item.id });
                   });
                 } else {
                   newSelectKeys = newSelectKeys.filter((a) => {
-                    return !oldAllSelect.current.some((b) => b.id === a.value);
+                    return !changeRows.some((b) => b.id === a.value);
                   });
                 }
                 setSelectKeys(newSelectKeys);
               },
             }}
+            tableAlertOptionRender={() => (
+              <Button
+                type={'link'}
+                onClick={() => {
+                  setSelectKeys([]);
+                }}
+              >
+                取消选择
+              </Button>
+            )}
             request={(params) => queryDevice(params)}
             params={searchParam}
           ></ProTable>

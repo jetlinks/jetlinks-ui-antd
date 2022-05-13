@@ -1,15 +1,25 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Tree } from 'antd';
 import Table from './basePage';
+import Tree from './leftTree';
+import './index.less';
+import { useState } from 'react';
 
 export default () => {
+  const [jumpId, setJumpId] = useState('');
+  const [parentId, setParentId] = useState('');
+
   return (
     <PageContainer>
-      <div>
-        <div>
-          <Tree />
+      <div className={'platforms-api'}>
+        <div className={'platforms-api-tree'}>
+          <Tree
+            onSelect={(id) => {
+              setJumpId('');
+              setParentId(id);
+            }}
+          />
         </div>
-        <Table />
+        {!jumpId ? <Table parentId={parentId} onJump={setJumpId} /> : <></>}
       </div>
     </PageContainer>
   );

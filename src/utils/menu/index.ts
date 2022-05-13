@@ -36,8 +36,25 @@ const extraRouteObj = {
       { code: 'Save2', name: '测试详情' },
     ],
   },
+  'link/Channel': {
+    children: [
+      {
+        code: 'Opcua',
+        name: 'OPC UA',
+        children: [
+          {
+            code: 'Access',
+            name: '数据点绑定',
+          },
+        ],
+      },
+    ],
+  },
   demo: {
     children: [{ code: 'AMap', name: '地图' }],
+  },
+  'system/Platforms': {
+    children: [{ code: 'Api', name: '赋权' }],
   },
 };
 //额外路由
@@ -70,6 +87,12 @@ export const extraRouteArr = [
         name: '通知记录',
         url: '/account/NotificationRecord',
       },
+      // {
+      //   code: 'account/Center/bind',
+      //   name: '第三方页面',
+      //   url: '/account/center/bind',
+      //   hideInMenu: true,
+      // },
     ],
   },
 ];

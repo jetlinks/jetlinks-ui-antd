@@ -23,6 +23,7 @@ import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
 import { Response } from '@/utils/typings';
 import { service } from '@/pages/system/Platforms/index';
+import { randomString } from '@/utils/util';
 
 interface SaveProps {
   visible: boolean;
@@ -76,7 +77,7 @@ export default (props: SaveProps) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.data || { oath2: true },
+        initialValues: props.data || { oath2: true, id: randomString() },
       }),
     [props.data],
   );
@@ -116,7 +117,7 @@ export default (props: SaveProps) => {
               },
             ],
           },
-          clientId: {
+          id: {
             type: 'string',
             title: 'clientId',
             'x-decorator': 'FormItem',
@@ -152,7 +153,7 @@ export default (props: SaveProps) => {
               },
             ],
           },
-          accessName: {
+          username: {
             type: 'string',
             title: '用户名',
             'x-decorator': 'FormItem',
@@ -291,7 +292,7 @@ export default (props: SaveProps) => {
               },
             ],
           },
-          oath2: {
+          enableOAuth2: {
             type: 'boolean',
             title: '开启OAth2',
             required: true,
@@ -334,7 +335,7 @@ export default (props: SaveProps) => {
               },
             ],
           },
-          ipAddress: {
+          ipWhiteList: {
             type: 'string',
             title: 'IP白名单',
             'x-decorator': 'FormItem',
@@ -361,10 +362,6 @@ export default (props: SaveProps) => {
               showCount: true,
               maxLength: 200,
             },
-          },
-          id: {
-            type: 'string',
-            'x-hidden': true,
           },
         },
       },

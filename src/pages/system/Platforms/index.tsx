@@ -12,7 +12,7 @@ import PasswordModal from './password';
 import Service from './service';
 import { message } from 'antd';
 
-export const service = new Service('platforms');
+export const service = new Service('api-client');
 
 export default () => {
   const actionRef = useRef<ActionType>();
@@ -37,11 +37,11 @@ export default () => {
       title: '名称',
     },
     {
-      dataIndex: 'accessName',
+      dataIndex: 'username',
       title: '用户名',
     },
     {
-      dataIndex: 'role',
+      dataIndex: 'roleIdList',
       title: '角色',
     },
     {

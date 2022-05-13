@@ -17,14 +17,15 @@ export default (props: DuerOSProps) => {
   return (
     <TableCard
       actions={props.action}
-      detail={props.detail}
+      // detail={props.detail}
+      showStatus={false}
       // status={props.state?.value}
       // statusText={props.state?.text}
       // statusNames={{
       //   enabled: StatusColorEnum.success,
       //   disabled: StatusColorEnum.error,
       // }}
-      // showMask={false}
+      showMask={false}
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>

@@ -98,6 +98,29 @@ export default observer((props: TriggerProps) => {
     [selector],
   );
 
+  useEffect(() => {
+    if (FormModel.trigger?.device?.operation?.functionId && functions.length) {
+      const fcItem: any = functions.find(
+        (_fcItem: any) => _fcItem.id === FormModel.trigger?.device?.operation?.functionId,
+      );
+      if (fcItem) {
+        const _properties = fcItem.valueType ? fcItem.valueType.properties : fcItem.inputs;
+        const array = [];
+        for (const datum of _properties) {
+          array.push({
+            id: datum.id,
+            name: datum.name,
+            type: datum.valueType ? datum.valueType.type : '-',
+            format: datum.valueType ? datum.valueType.format : undefined,
+            options: datum.valueType ? datum.valueType.elements : undefined,
+            value: undefined,
+          });
+        }
+        setFunctionItem(array);
+      }
+    }
+  }, [functions, FormModel]);
+
   const getProducts = async () => {
     const resp = await getProductList({ paging: false });
     if (resp && resp.status === 200) {
@@ -108,7 +131,7 @@ export default observer((props: TriggerProps) => {
         );
 
         if (productItem) {
-          productIdChange(FormModel.trigger!.device.productId, productItem.metadata);
+          await productIdChange(FormModel.trigger!.device.productId, productItem.metadata);
         }
       }
     }
@@ -132,10 +155,6 @@ export default observer((props: TriggerProps) => {
       }
     }
   }, [props.value]);
-
-  useEffect(() => {
-    console.log('FormModel-device', FormModel);
-  }, [FormModel]);
 
   return (
     <div className={classNames(props.className)}>
@@ -186,6 +205,9 @@ export default observer((props: TriggerProps) => {
                       { label: '按部门', value: 'org' },
                     ]}
                     // fieldNames={{ label: 'name', value: 'id' }}
+                    onSelect={(key: string) => {
+                      setSelector(key);
+                    }}
                     style={{ width: 120 }}
                   />
                 </Form.Item>
@@ -306,21 +328,6 @@ export default observer((props: TriggerProps) => {
                   }}
                   style={{ width: '100%' }}
                   placeholder={'请选择功能'}
-                  onSelect={(_: any, data: any) => {
-                    const _properties = data.valueType ? data.valueType.properties : data.inputs;
-                    const array = [];
-                    for (const datum of _properties) {
-                      array.push({
-                        id: datum.id,
-                        name: datum.name,
-                        type: datum.valueType ? datum.valueType.type : '-',
-                        format: datum.valueType ? datum.valueType.format : undefined,
-                        options: datum.valueType ? datum.valueType.elements : undefined,
-                        value: undefined,
-                      });
-                    }
-                    setFunctionItem(array);
-                  }}
                   filterOption={(input: string, option: any) =>
                     option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
                   }
@@ -347,8 +354,8 @@ export default observer((props: TriggerProps) => {
             >
               <Operation
                 propertiesList={properties.filter((item) => {
-                  if (item.expands) {
-                    return item.expands.type ? item.expands.type.includes('write') : false;
+                  if (item.expands && item.expands.type) {
+                    return item.expands.type.includes('write');
                   }
                   return false;
                 })}
@@ -368,19 +375,12 @@ export default observer((props: TriggerProps) => {
               <Select
                 mode={'multiple'}
                 options={properties.filter((item) => {
-                  if (item.expands) {
-                    return item.expands.type ? item.expands.type.includes('read') : false;
+                  if (item.expands && item.expands.type) {
+                    return item.expands.type.includes('read');
                   }
                   return false;
                 })}
-                maxTagCount={0}
-                maxTagPlaceholder={(values) => {
-                  return (
-                    <div style={{ maxWidth: 'calc(100% - 8px)' }}>
-                      {values.map((item) => item.label).toString()}
-                    </div>
-                  );
-                }}
+                maxTagCount={'responsive'}
                 placeholder={'请选择属性'}
                 style={{ width: '100%' }}
                 fieldNames={{ label: 'name', value: 'id' }}
