@@ -12,6 +12,7 @@ import { observer } from '@formily/reactive-react';
 import OrgTreeSelect from './OrgTreeSelect';
 import { FormModel } from '../index';
 import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
+import moment from 'moment';
 
 interface TriggerProps {
   value?: any;
@@ -305,6 +306,8 @@ export default observer((props: TriggerProps) => {
             when: [],
             period: {
               unit: 'seconds',
+              from: moment(new Date()).format('HH:mm:ss'),
+              to: moment(new Date()).format('HH:mm:ss'),
             },
           }}
         >
@@ -331,6 +334,25 @@ export default observer((props: TriggerProps) => {
                   filterOption={(input: string, option: any) =>
                     option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
                   }
+                  onSelect={(_: any, fcItem: any) => {
+                    if (fcItem) {
+                      const _properties = fcItem.valueType
+                        ? fcItem.valueType.properties
+                        : fcItem.inputs;
+                      const array = [];
+                      for (const datum of _properties) {
+                        array.push({
+                          id: datum.id,
+                          name: datum.name,
+                          type: datum.valueType ? datum.valueType.type : '-',
+                          format: datum.valueType ? datum.valueType.format : undefined,
+                          options: datum.valueType ? datum.valueType.elements : undefined,
+                          value: undefined,
+                        });
+                      }
+                      setFunctionItem(array);
+                    }
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -339,7 +361,7 @@ export default observer((props: TriggerProps) => {
             </Col>
             <Col span={24}>
               <Form.Item name={['trigger', 'device', 'operation', 'functionParameters']}>
-                <FunctionCall functionData={functionItem} />
+                <FunctionCall functionData={functionItem} name={'functionForm'} />
               </Form.Item>
             </Col>
           </Row>

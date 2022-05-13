@@ -20,6 +20,7 @@ export default () => {
   const [param, setParam] = useState({});
   const [saveVisible, setSaveVisible] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [editData, setEditData] = useState<ActionType | undefined>(undefined);
 
   const { permission } = PermissionButton.usePermission('system/Platforms');
 
@@ -58,22 +59,21 @@ export default () => {
             status={record.value}
             text={record.text}
             statusNames={{
-              started: StatusColorEnum.processing,
+              enabled: StatusColorEnum.processing,
               disable: StatusColorEnum.error,
-              notActive: StatusColorEnum.warning,
             }}
           />
         ) : (
           ''
         ),
       valueEnum: {
-        disable: {
+        disabled: {
           text: '禁用',
-          status: 'offline',
+          status: 'disabled',
         },
-        started: {
+        enabled: {
           text: '正常',
-          status: 'started',
+          status: 'enabled',
         },
       },
     },
@@ -105,7 +105,10 @@ export default () => {
               defaultMessage: '编辑',
             }),
           }}
-          onClick={() => {}}
+          onClick={() => {
+            setSaveVisible(true);
+            setEditData(record);
+          }}
         >
           <EditOutlined />
         </PermissionButton>,
@@ -187,6 +190,7 @@ export default () => {
         params={param}
         columns={columns}
         actionRef={actionRef}
+        request={(params: any) => service.query(params)}
         headerTitle={
           <PermissionButton
             key="button"
@@ -206,8 +210,10 @@ export default () => {
       />
       <SaveModal
         visible={saveVisible}
+        data={editData}
         onCancel={() => {
           setSaveVisible(false);
+          setEditData(undefined);
         }}
         onReload={() => {
           actionRef.current?.reload();
