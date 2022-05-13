@@ -9,7 +9,7 @@ class Service extends BaseService<AliCloudType> {
       method: 'GET',
       params,
     }).then((resp: any) => {
-      return resp.result?.map((item: any) => ({
+      return (resp?.result || []).map((item: any) => ({
         label: item.name,
         value: item.id,
       }));
@@ -20,9 +20,9 @@ class Service extends BaseService<AliCloudType> {
       method: 'POST',
       data,
     }).then((resp: any) => {
-      return resp.result.data?.map((item: any) => ({
-        label: item.productName,
-        value: item.productKey,
+      return (resp?.result?.data || []).map((item: any) => ({
+        label: item?.productName,
+        value: item?.productKey,
       }));
     });
 
@@ -32,7 +32,7 @@ class Service extends BaseService<AliCloudType> {
       method: 'POST',
       data,
     }).then((resp: any) => {
-      return resp.result?.map((item: any) => ({
+      return (resp?.result || []).map((item: any) => ({
         label: item.name,
         value: item.id,
       }));

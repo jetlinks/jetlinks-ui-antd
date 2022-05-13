@@ -204,6 +204,9 @@ const Detail = observer(() => {
         'x-component': 'Select',
         'x-component-props': {
           placeholder: '请选择网桥产品',
+          showSearch: true,
+          filterOption: (input: string, option: any) =>
+            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
         },
         'x-decorator-props': {
           tooltip: '物联网平台对应的阿里云产品',
@@ -239,6 +242,9 @@ const Detail = observer(() => {
                   'x-component': 'Select',
                   'x-component-props': {
                     placeholder: '请选择阿里云产品',
+                    showSearch: true,
+                    filterOption: (input: string, option: any) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
                   'x-decorator-props': {
                     gridSpan: 12,
@@ -257,6 +263,9 @@ const Detail = observer(() => {
                   },
                   'x-component-props': {
                     placeholder: '请选择平台产品',
+                    showSearch: true,
+                    filterOption: (input: string, option: any) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
                   'x-reactions': ['{{useAsyncDataSource(queryProductList)}}'],
                 },
