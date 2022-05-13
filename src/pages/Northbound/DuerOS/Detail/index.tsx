@@ -501,7 +501,8 @@ const Save = () => {
 
   const handleSave = async () => {
     const data: any = await form.submit();
-    await service.savePatch(data);
+    const productName = Store.get('product-list')?.find((item: any) => item.id === data.id)?.name;
+    await service.savePatch({ ...data, productName });
     message.success('保存成功!');
     history.back();
   };

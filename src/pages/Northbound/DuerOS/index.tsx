@@ -79,6 +79,13 @@ export default () => {
     },
     {
       title: intl.formatMessage({
+        id: 'page.cloud.duerOS.productName',
+        defaultMessage: '产品',
+      }),
+      dataIndex: 'productName',
+    },
+    {
+      title: intl.formatMessage({
         id: 'pages.cloud.duerOS.applianceType',
         defaultMessage: '设备类型',
       }),
