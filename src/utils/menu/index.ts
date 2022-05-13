@@ -60,6 +60,16 @@ export const extraRouteArr = [
         url: '/account/center/bind',
         hideInMenu: true,
       },
+      {
+        code: 'account/NotificationSubscription',
+        name: '通知订阅',
+        url: '/account/NotificationSubscription',
+      },
+      {
+        code: 'account/NotificationRecord',
+        name: '通知记录',
+        url: '/account/NotificationRecord',
+      },
     ],
   },
 ];
