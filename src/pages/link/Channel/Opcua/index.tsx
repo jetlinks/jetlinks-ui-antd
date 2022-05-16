@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Card, Col, Row, Badge, message } from 'antd';
+import { Badge, Card, Col, message, Row } from 'antd';
 import styles from './index.less';
 import { PermissionButton } from '@/components';
-import { history } from 'umi';
+import { history, useIntl } from 'umi';
 import {
   ControlOutlined,
   DeleteOutlined,
@@ -12,7 +12,6 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useIntl } from 'umi';
 import { useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
 import Service from './service';

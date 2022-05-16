@@ -1,15 +1,15 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import {
-  Card,
-  Upload,
-  message,
   Avatar,
   Button,
+  Card,
+  Col,
   Descriptions,
   Divider,
-  Col,
-  Row,
+  message,
   Popconfirm,
+  Row,
+  Upload,
 } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';

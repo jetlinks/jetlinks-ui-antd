@@ -76,6 +76,7 @@ export default (props: OperatorProps) => {
             label: 'name',
             value: 'id',
           }}
+          maxTagCount={'responsive'}
           style={{ width: '100%' }}
           placeholder={'请选择属性'}
           onSelect={(id: any) => {

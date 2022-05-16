@@ -1,15 +1,15 @@
 import PermissionButton from '@/components/PermissionButton';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Col, Row, Popconfirm, message } from 'antd';
+import { Badge, Card, Popconfirm, message, Tabs, Empty } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import BindDevice from '@/pages/link/Channel/Opcua/Access/bindDevice';
 import { service } from '@/pages/link/Channel/Opcua';
 import encodeQuery from '@/utils/encodeQuery';
-import ProList from '@ant-design/pro-list';
 import styles from './index.less';
+import AddPoint from './addPoint';
 
 const Access = () => {
   const intl = useIntl();
@@ -19,7 +19,9 @@ const Access = () => {
   const [opcUaId, setOpcUaId] = useState<any>('');
   const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
   const [deviceVisiable, setDeviceVisiable] = useState<boolean>(false);
+  const [pointVisiable, setPointVisiable] = useState<boolean>(false);
   const [bindList, setBindList] = useState<any>([]);
+  const [deviceId, setDeviceId] = useState<string>('');
 
   const columns: ProColumns<OpaUa>[] = [
     {
@@ -54,6 +56,7 @@ const Access = () => {
   const getBindList = (params: any) => {
     service.getBindList(params).then((res) => {
       if (res.status === 200) {
+        setDeviceId(res.result[0]?.deviceId);
         setBindList(res.result);
       }
     });
@@ -77,36 +80,36 @@ const Access = () => {
   return (
     <PageContainer>
       <Card className={styles.list}>
-        <Row>
-          <Col span={4}>
-            <PermissionButton
-              onClick={() => {
-                setDeviceVisiable(true);
-              }}
-              isPermission={permission.add}
-              key="add"
-              icon={<PlusOutlined />}
-              type="dashed"
-              style={{ width: '100%', marginTop: 16 }}
-            >
-              绑定设备
-            </PermissionButton>
-            <ProList
-              rowKey="id"
-              dataSource={bindList}
-              showActions="hover"
-              showExtra="hover"
-              metas={{
-                title: {
-                  dataIndex: 'name',
-                },
-                actions: {
-                  render: (text, row) => [
+        <PermissionButton
+          onClick={() => {
+            setDeviceVisiable(true);
+          }}
+          isPermission={permission.add}
+          key="add"
+          icon={<PlusOutlined />}
+          type="dashed"
+          style={{ width: '200px', marginLeft: 20, marginBottom: 5 }}
+        >
+          绑定设备
+        </PermissionButton>
+        {bindList.length > 0 ? (
+          <Tabs
+            tabPosition={'left'}
+            defaultActiveKey={deviceId}
+            onChange={(e) => {
+              setDeviceId(e);
+            }}
+          >
+            {bindList.map((item: any) => (
+              <Tabs.TabPane
+                key={item.deviceId}
+                tab={
+                  <div className={styles.left}>
+                    <div style={{ width: '100px', textAlign: 'left' }}>{item.name}</div>
                     <Popconfirm
                       title="确认解绑该设备嘛？"
                       onConfirm={() => {
-                        console.log(row);
-                        service.unbind([row.deviceId], opcUaId).then((res) => {
+                        service.unbind([item.deviceId], opcUaId).then((res) => {
                           if (res.status === 200) {
                             message.success('解绑成功');
                             getBindList(
@@ -122,44 +125,46 @@ const Access = () => {
                       okText="Yes"
                       cancelText="No"
                     >
-                      <DisconnectOutlined />
-                    </Popconfirm>,
-                  ],
-                },
-              }}
-            />
-          </Col>
-          <Col span={20}>
-            <ProTable<OpaUa>
-              actionRef={actionRef}
-              // params={param}
-              columns={columns}
-              rowKey="id"
-              search={false}
-              headerTitle={
-                <PermissionButton
-                  onClick={() => {
-                    // setMode('add');
-                    // setVisible(true);
-                    // setCurrent({});
-                  }}
-                  isPermission={permission.add}
-                  key="add"
-                  icon={<PlusOutlined />}
-                  type="primary"
-                >
-                  {intl.formatMessage({
-                    id: 'pages.data.option.add',
-                    defaultMessage: '新增',
-                  })}
-                </PermissionButton>
-              }
-              // request={async (params) =>
-              //   service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-              // }
-            />
-          </Col>
-        </Row>
+                      <DisconnectOutlined className={styles.icon} />
+                    </Popconfirm>
+                  </div>
+                }
+              >
+                <ProTable<OpaUa>
+                  actionRef={actionRef}
+                  // params={param}
+                  columns={columns}
+                  rowKey="id"
+                  search={false}
+                  headerTitle={
+                    <PermissionButton
+                      onClick={() => {
+                        setPointVisiable(true);
+                        // setMode('add');
+                        // setVisible(true);
+                        // setCurrent({});
+                      }}
+                      isPermission={permission.add}
+                      key="add"
+                      icon={<PlusOutlined />}
+                      type="primary"
+                    >
+                      {intl.formatMessage({
+                        id: 'pages.data.option.add',
+                        defaultMessage: '新增',
+                      })}
+                    </PermissionButton>
+                  }
+                  // request={async (params) =>
+                  //   service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+                  // }
+                />
+              </Tabs.TabPane>
+            ))}
+          </Tabs>
+        ) : (
+          <Empty />
+        )}
       </Card>
       {deviceVisiable && (
         <BindDevice
@@ -173,6 +178,15 @@ const Access = () => {
                 },
               }),
             );
+          }}
+        />
+      )}
+      {pointVisiable && (
+        <AddPoint
+          deviceId={deviceId}
+          data={{}}
+          close={() => {
+            setPointVisiable(false);
           }}
         />
       )}

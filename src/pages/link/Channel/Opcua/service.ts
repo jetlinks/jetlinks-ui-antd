@@ -42,6 +42,10 @@ class Service extends BaseService<OpaUa> {
       method: 'POST',
       data: params,
     });
+  deviceDetail = (id: any) =>
+    request(`${SystemConst.API_BASE}/device-instance/${id}/detail`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

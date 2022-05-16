@@ -10,7 +10,6 @@ interface AllDeviceProps {
 
 export default (props: AllDeviceProps) => {
   useEffect(() => {
-    console.log(props.productId);
     queryAllDevice({
       terms: [{ column: 'productId', value: props.productId }],
       paging: false,

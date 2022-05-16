@@ -54,7 +54,11 @@ export default (props: UserProps) => {
     };
     const resp1 = await queryPlatformUsers();
     if (resp1.status === 200) {
-      _userList.platform = resp1.result.map((item: any) => ({ label: item.name, value: item.id }));
+      _userList.platform = resp1.result.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+        username: item.username,
+      }));
     }
 
     const resp2 = await queryRelationUsers();
@@ -62,6 +66,7 @@ export default (props: UserProps) => {
       _userList.relation = resp2.result.map((item: any) => ({
         label: item.name,
         value: item.relation,
+        username: '',
       }));
     }
 
@@ -172,7 +177,7 @@ export default (props: UserProps) => {
   };
 
   const filterOption = (input: string, option: any) => {
-    return option.children ? option.children.toLowerCase().includes(input.toLowerCase()) : false;
+    return option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false;
   };
 
   const userSelect =
@@ -187,12 +192,16 @@ export default (props: UserProps) => {
         placeholder={'请选择收信人'}
         listHeight={200}
         filterOption={filterOption}
+        optionLabelProp="label"
       >
         {userList.platform.length ? (
           <Select.OptGroup label={'平台用户'}>
             {userList.platform.map((item: any) => (
-              <Select.Option value={item.value} isRelation={false}>
-                {item.label}
+              <Select.Option value={item.value} isRelation={false} label={item.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
+                </div>
               </Select.Option>
             ))}
           </Select.OptGroup>
@@ -200,8 +209,11 @@ export default (props: UserProps) => {
         {userList.relation.length ? (
           <Select.OptGroup label={'关系用户'}>
             {userList.relation.map((item: any) => (
-              <Select.Option value={item.value} isRelation={true}>
-                {item.label}
+              <Select.Option value={item.value} isRelation={false} label={item.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
+                </div>
               </Select.Option>
             ))}
           </Select.OptGroup>
@@ -237,12 +249,16 @@ export default (props: UserProps) => {
         placeholder={'请选择收信人'}
         listHeight={200}
         filterOption={filterOption}
+        optionLabelProp="label"
       >
         {userList.platform.length ? (
           <Select.OptGroup label={'平台用户'}>
             {userList.platform.map((item: any) => (
-              <Select.Option value={item.value} isRelation={false}>
-                {item.label}
+              <Select.Option value={item.value} isRelation={false} label={item.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
+                </div>
               </Select.Option>
             ))}
           </Select.OptGroup>
@@ -250,8 +266,11 @@ export default (props: UserProps) => {
         {userList.relation.length ? (
           <Select.OptGroup label={'关系用户'}>
             {userList.relation.map((item: any) => (
-              <Select.Option value={item.value} isRelation={true}>
-                {item.label}
+              <Select.Option value={item.value} isRelation={true} label={item.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{item.label}</span>
+                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
+                </div>
               </Select.Option>
             ))}
           </Select.OptGroup>

@@ -1,6 +1,7 @@
 import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
+
 class Service extends BaseService<AliCloudType> {
   // 获取服务地址的下拉列表
   public getRegionsList = (params?: any) =>

@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { createSchemaField } from '@formily/react';
 import { ISchema } from '@formily/json-schema';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, message, Row } from 'antd';
 import {
   ArrayCollapse,
   ArrayTable,
@@ -15,10 +15,12 @@ import {
 } from '@formily/antd';
 import { PermissionButton } from '@/components';
 import { useMemo } from 'react';
-import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
+import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
 import { Store } from 'jetlinks-store';
+import { useParams } from 'umi';
+import Doc from '@/pages/Northbound/DuerOS/Detail/Doc';
 
 const Save = () => {
   const SchemaField = createSchemaField({
@@ -32,6 +34,8 @@ const Save = () => {
       PreviewText,
     },
   });
+
+  const { id } = useParams<{ id: string }>();
 
   const getProduct = () =>
     service.getProduct().then((resp) => {
@@ -71,7 +75,7 @@ const Save = () => {
           columnGap: 24,
         },
         properties: {
-          product: {
+          id: {
             title: '产品',
             'x-decorator-props': {
               gridSpan: 1,
@@ -93,7 +97,7 @@ const Save = () => {
             'x-reactions': '{{useAsyncDataSource(getProduct)}}',
             required: true,
           },
-          deviceType: {
+          applianceType: {
             title: '设备类型',
             'x-decorator-props': {
               gridSpan: 1,
@@ -275,7 +279,7 @@ const Save = () => {
                             },
                           },
                         },
-                        function: {
+                        inputs: {
                           title: '参数列表',
                           type: 'array',
                           'x-component': 'ArrayTable',
@@ -408,6 +412,7 @@ const Save = () => {
                       label: 'name',
                       value: 'id',
                     },
+                    mode: 'tags',
                   },
                 },
               },
@@ -429,35 +434,39 @@ const Save = () => {
     },
   };
 
-  const handleSave = () => {};
-
-  const findProductMetadata = (id: string) => {
-    if (!id) return;
+  const findProductMetadata = (_id: string) => {
+    if (!_id) return;
     const _productList = Store.get('product-list');
-    const _product = _productList.find((item: any) => item.id === id);
-    return _product.metadata && JSON.parse(_product.metadata || '{}');
+    const _product = _productList?.find((item: any) => item.id === _id);
+    return _product?.metadata && JSON.parse(_product.metadata || '{}');
   };
 
-  const findDeviceType = (id: string) => {
-    if (!id) return;
+  const findapplianceType = (_id: string) => {
+    if (!_id) return;
     const _productTypes = Store.get('product-types');
-    return _productTypes.find((item: any) => item.id === id);
+    return _productTypes?.find((item: any) => item.id === _id);
   };
   const form = useMemo(
     () =>
       createForm({
         validateFirst: true,
         effects() {
+          onFormInit(async (form1) => {
+            await getTypes();
+            await getProduct();
+            const resp = await service.detail(id);
+            form1.setInitialValues(resp.result);
+          });
           onFieldReact('actionMappings.*.layout.action', (field) => {
-            const productType = field.query('deviceType').value();
-            (field as Field).setDataSource(findDeviceType(productType)?.actions);
+            const productType = field.query('applianceType').value();
+            (field as Field).setDataSource(findapplianceType(productType)?.actions);
           });
           onFieldReact('actionMappings.*.layout.command.message.properties', (field) => {
-            const product = field.query('product').value();
+            const product = field.query('id').value();
             (field as Field).setDataSource(findProductMetadata(product)?.properties);
           });
           onFieldReact('actionMappings.*.layout.command.message.functionId', (field) => {
-            const product = field.query('product').value();
+            const product = field.query('id').value();
             (field as Field).setDataSource(findProductMetadata(product)?.functions);
           });
           onFieldValueChange(
@@ -465,7 +474,7 @@ const Save = () => {
             (field, form1) => {
               const functionId = field.value;
               if (!functionId) return;
-              const product = field.query('product').value();
+              const product = field.query('id').value();
               const _functionList = findProductMetadata(product)?.functions;
               const _function =
                 _functionList && _functionList.find((item: any) => item.id === functionId);
@@ -477,35 +486,44 @@ const Save = () => {
               });
             },
           );
-          onFieldReact('propertyMappings.*.layout.target', (field) => {
-            const productType = field.query('deviceType').value();
-            (field as Field).setDataSource(findDeviceType(productType)?.properties);
-          });
           onFieldReact('propertyMappings.*.layout.source', (field) => {
-            const product = field.query('product').value();
+            const productType = field.query('applianceType').value();
+            (field as Field).setDataSource(findapplianceType(productType)?.properties);
+          });
+          onFieldReact('propertyMappings.*.layout.target', (field) => {
+            const product = field.query('id').value();
             (field as Field).setDataSource(findProductMetadata(product)?.properties);
           });
         },
       }),
     [],
   );
+
+  const handleSave = async () => {
+    const data: any = await form.submit();
+    await service.savePatch(data);
+    message.success('保存成功!');
+    history.back();
+  };
   return (
-    <PageContainer>
+    <PageContainer className={'page-title-show'}>
       <Card>
         <Row>
-          <Col span={10}>
+          <Col span={12}>
             <Form layout="vertical" form={form}>
               <SchemaField schema={schema} scope={{ useAsyncDataSource, getTypes, getProduct }} />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <PermissionButton type="primary" onClick={handleSave}>
+                  <PermissionButton isPermission={true} type="primary" onClick={handleSave}>
                     保存
                   </PermissionButton>
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>
           </Col>
-          <Col span={12} push={2}></Col>
+          <Col span={10} push={2}>
+            <Doc />
+          </Col>
         </Row>
       </Card>
     </PageContainer>
