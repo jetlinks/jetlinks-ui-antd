@@ -1,5 +1,12 @@
-import type { BaseItem } from '@/utils/typings';
-
 type NotifitionRecord = {
-  type: string;
-} & BaseItem;
+  id: string;
+  topicProvider: string;
+  message: string;
+  notifyTime: string;
+  state?: any;
+  subscribeId: string;
+  subscriberType: string;
+  subscriberType: string;
+  topicName: string;
+  dataId: string;
+};

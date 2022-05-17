@@ -1,7 +1,6 @@
 import { useIntl } from '@/.umi/plugin-locale/localeExports';
 import PermissionButton from '@/components/PermissionButton';
 import SearchComponent from '@/components/SearchComponent';
-import BaseService from '@/utils/BaseService';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -10,20 +9,33 @@ import {
   StopOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
+import { observer } from '@formily/reactive-react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
-import type { NotifitionSubscriptionItem } from './typings';
+import { Badge, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import Save from './save';
+import Service from './service';
 
-export const service = new BaseService<NotifitionSubscriptionItem>('network/certificate');
+export const service = new Service('notifications/subscriptions');
 
-const NotificationSubscription = () => {
+const NotificationSubscription = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<NotifitionSubscriptionItem | undefined>(undefined);
+  const [current, setCurrent] = useState<Partial<NotifitionSubscriptionItem>>({});
+  const [typeList, setTypeList] = useState<any>({});
+
+  useEffect(() => {
+    service.getProvidersList().then((resp) => {
+      const obj: any = {};
+      resp.map((i: any) => {
+        obj[i?.value] = i?.label || '';
+      });
+      setTypeList(obj);
+    });
+  }, []);
 
   const Tools = (record: any) => {
     return [
@@ -58,16 +70,16 @@ const NotificationSubscription = () => {
             defaultMessage: '确认禁用？',
           }),
           onConfirm: async () => {
-            // const resp =
-            //   record?.state?.value !== 'disabled'
-            //     ? await service._disable(record.id)
-            //     : await service._enable(record.id);
-            // if (resp.status === 200) {
-            //   message.success('操作成功！');
-            //   actionRef.current?.reload?.();
-            // } else {
-            //   message.error('操作失败！');
-            // }
+            const resp =
+              record?.state?.value !== 'disabled'
+                ? await service._disabled(record.id)
+                : await service._enabled(record.id);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actionRef.current?.reload?.();
+            } else {
+              message.error('操作失败！');
+            }
           },
         }}
         tooltip={{
@@ -86,7 +98,15 @@ const NotificationSubscription = () => {
         style={{ padding: 0 }}
         popConfirm={{
           title: '确认删除？',
-          onConfirm: () => {},
+          onConfirm: async () => {
+            const resp: any = await service.remove(record.id);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actionRef.current?.reload?.();
+            } else {
+              message.error('操作失败！');
+            }
+          },
         }}
         tooltip={{
           title: '删除',
@@ -99,23 +119,35 @@ const NotificationSubscription = () => {
 
   const columns: ProColumns<NotifitionSubscriptionItem>[] = [
     {
-      dataIndex: 'instance',
+      dataIndex: 'subscribeName',
       title: '名称',
     },
     {
-      dataIndex: 'name',
+      dataIndex: 'topicProvider',
       title: '类型',
       hideInSearch: true,
+      render: (text: any, record: any) => {
+        return <span>{typeList[record?.topicProvider] || text}</span>;
+      },
     },
     {
-      dataIndex: 'description',
+      dataIndex: 'topicConfig',
       title: '告警规则',
       hideInSearch: true,
+      render: (text: any, record: any) => (
+        <span>{record?.topicConfig?.alarmConfigName || '-'}</span>
+      ),
     },
     {
       dataIndex: 'state',
       title: '状态',
       hideInSearch: true,
+      render: (text: any, record: any) => (
+        <Badge
+          status={record.state?.value === 'enabled' ? 'success' : 'error'}
+          text={record?.state?.text || '-'}
+        />
+      ),
     },
     {
       title: '操作',
@@ -125,6 +157,7 @@ const NotificationSubscription = () => {
       render: (text, record) => [Tools(record)],
     },
   ];
+
   return (
     <PageContainer>
       <SearchComponent<NotifitionSubscriptionItem>
@@ -141,6 +174,7 @@ const NotificationSubscription = () => {
         params={param}
         columns={columns}
         search={false}
+        rowKey="id"
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
@@ -148,7 +182,7 @@ const NotificationSubscription = () => {
           <PermissionButton
             onClick={() => {
               setVisible(true);
-              setCurrent(undefined);
+              setCurrent({});
             }}
             isPermission={true}
             style={{ marginRight: 12 }}
@@ -167,13 +201,16 @@ const NotificationSubscription = () => {
         <Save
           close={() => {
             setVisible(false);
-            actionRef.current?.reload();
           }}
           data={current}
+          reload={() => {
+            setVisible(false);
+            actionRef.current?.reload();
+          }}
         />
       )}
     </PageContainer>
   );
-};
+});
 
 export default NotificationSubscription;

@@ -40,11 +40,28 @@ const FileComponent = (props: Props) => {
       return <div className={props.type === 'card' ? styles.other : {}}>--</div>;
     } else if (data?.valueType?.type === 'file') {
       const flag: string = value?.formatValue.split('.').pop() || 'other';
+      if (['jpg', 'png'].includes(flag)) {
+        return (
+          <div
+            className={styles.img}
+            onClick={() => {
+              setType(flag);
+              setVisible(true);
+            }}
+          >
+            {value?.formatValue ? (
+              <img style={{ width: '100%' }} src={value?.formatValue} />
+            ) : (
+              <img src={imgMap.get(flag) || imgMap.get('other')} />
+            )}
+          </div>
+        );
+      }
       return (
         <div
           className={styles.img}
           onClick={() => {
-            if (['jpg', 'png', 'tiff', 'flv', 'm3u8', 'mp4', 'rmvb', 'mvb'].includes(flag)) {
+            if (['tiff', 'flv', 'm3u8', 'mp4', 'rmvb', 'mvb'].includes(flag)) {
               setType(flag);
               setVisible(true);
             }

@@ -1,5 +1,9 @@
-import type { BaseItem } from '@/utils/typings';
-
 type NotifitionSubscriptionItem = {
-  type: string;
-} & BaseItem;
+  id?: string;
+  subscribeName: string;
+  topicProvider: string;
+  topicConfig: {
+    alarmConfigId: string;
+    alarmConfigName: string;
+  };
+};

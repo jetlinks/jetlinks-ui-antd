@@ -78,7 +78,7 @@ const PropertyLog = (props: Props) => {
           ) : (
             <ATooltip title="下载">
               <Popconfirm
-                title="确认修改"
+                title="确认下载"
                 onConfirm={() => {
                   const type = (record?.value || '').split('.').pop();
                   const downloadUrl = record.value;

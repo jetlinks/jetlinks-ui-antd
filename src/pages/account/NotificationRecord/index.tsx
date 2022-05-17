@@ -1,40 +1,81 @@
 import { useIntl } from '@/.umi/plugin-locale/localeExports';
 import PermissionButton from '@/components/PermissionButton';
 import SearchComponent from '@/components/SearchComponent';
-import BaseService from '@/utils/BaseService';
 import { ReadOutlined, SearchOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { useRef, useState } from 'react';
-import type { NotifitionRecord } from './typings';
+import { useEffect, useRef, useState } from 'react';
 import Detail from './detail';
+import { Badge, message } from 'antd';
+import Service from './service';
+import encodeQuery from '@/utils/encodeQuery';
 
-export const service = new BaseService<NotifitionRecord>('network/certificate');
+export const service = new Service('notifications');
 
 const NotificationRecord = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<NotifitionRecord | undefined>(undefined);
+  const [current, setCurrent] = useState<Partial<NotifitionRecord>>({});
+  const [typeList, setTypeList] = useState<any>({});
+
+  useEffect(() => {
+    service.getProvidersList().then((resp) => {
+      const obj: any = {};
+      resp.map((i: any) => {
+        obj[i?.value] = { status: i?.value, text: i?.label };
+      });
+      setTypeList(obj);
+    });
+  }, []);
 
   const columns: ProColumns<NotifitionRecord>[] = [
     {
-      dataIndex: 'instance',
+      dataIndex: 'topicProvider',
       title: '类型',
+      render: (text: any, record: any) => {
+        return <span>{typeList[record?.topicProvider]?.text || text}</span>;
+      },
+      valueType: 'select',
+      request: () =>
+        service.getProvidersList().then((resp: any) =>
+          resp.map((item: any) => ({
+            label: item.label,
+            value: item.value,
+          })),
+        ),
     },
     {
-      dataIndex: 'name',
+      dataIndex: 'message',
       title: '消息',
     },
     {
-      dataIndex: 'description',
+      dataIndex: 'notifyTime',
       title: '通知时间',
+      valueType: 'dateTime',
     },
     {
       dataIndex: 'state',
       title: '状态',
+      render: (text: any, record: any) => (
+        <Badge
+          status={record.state?.value === 'read' ? 'success' : 'error'}
+          text={record?.state?.text || '-'}
+        />
+      ),
+      valueType: 'select',
+      valueEnum: {
+        unread: {
+          text: '未读',
+          status: 'unread',
+        },
+        read: {
+          text: '已读',
+          status: 'read',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -51,11 +92,18 @@ const NotificationRecord = () => {
           isPermission={true}
           style={{ padding: 0 }}
           tooltip={{
-            title: '标为已读',
+            title: record?.state?.value !== 'read' ? '标为已读' : '标为未读',
           }}
-          onClick={() => {
-            setCurrent(record);
-            setVisible(true);
+          popConfirm={{
+            title: `确认${record?.state?.value !== 'read' ? '标为已读' : '标为未读'}`,
+            onConfirm: async () => {
+              const state = record?.state?.value !== 'read' ? 'read' : 'unread';
+              const resp = await service.saveData(state, [record.id]);
+              if (resp.status === 200) {
+                message.success('操作成功');
+                actionRef.current?.reload();
+              }
+            },
           }}
         >
           <ReadOutlined />
@@ -67,6 +115,10 @@ const NotificationRecord = () => {
           style={{ padding: 0 }}
           tooltip={{
             title: '查看',
+          }}
+          onClick={() => {
+            setVisible(true);
+            setCurrent(record);
           }}
         >
           <SearchOutlined />
@@ -90,15 +142,17 @@ const NotificationRecord = () => {
         actionRef={actionRef}
         params={param}
         columns={columns}
+        rowKey="id"
         search={false}
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.queryList(encodeQuery({ ...params, sorts: { notifyTime: 'desc' } }))
         }
       />
       {visible && (
         <Detail
           close={() => {
-            actionRef.current?.reload();
+            setCurrent({});
+            setVisible(false);
           }}
           data={current}
         />

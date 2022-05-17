@@ -1,18 +1,21 @@
-import { Modal } from 'antd';
-import type { AccessLogItem } from '@/pages/Log/Access/typings';
+import { message, Modal } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Form, FormGrid, FormItem, Input, Select, Checkbox } from '@formily/antd';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
+import { useAsyncDataSource } from '@/utils/util';
+import { service } from '@/pages/account/NotificationSubscription';
 
 interface Props {
-  data: Partial<AccessLogItem>;
+  data: Partial<NotifitionSubscriptionItem>;
   close: () => void;
+  reload: () => void;
 }
 
 const Save = (props: Props) => {
-  const [data, setDada] = useState<Partial<AccessLogItem>>(props.data || {});
+  const [data, setDada] = useState<Partial<NotifitionSubscriptionItem>>(props.data || {});
+  const [dataList, setDataList] = useState<any[]>([]);
 
   useEffect(() => {
     setDada(props.data);
@@ -23,12 +26,18 @@ const Save = (props: Props) => {
       createForm({
         validateFirst: true,
         initialValues: data,
-        effects() {
-          //
-        },
       }),
     [],
   );
+
+  const queryProvidersList = () => service.getProvidersList();
+
+  const queryAlarmConfigList = () => {
+    return service.getAlarmConfigList().then((resp) => {
+      setDataList(resp);
+      return resp;
+    });
+  };
 
   const schema: ISchema = {
     type: 'object',
@@ -41,7 +50,7 @@ const Save = (props: Props) => {
           minColumns: 1,
         },
         properties: {
-          name: {
+          subscribeName: {
             title: '名称',
             'x-component': 'Input',
             'x-decorator': 'FormItem',
@@ -61,7 +70,7 @@ const Save = (props: Props) => {
               },
             ],
           },
-          type: {
+          topicProvider: {
             title: '类型',
             'x-component': 'Select',
             'x-decorator': 'FormItem',
@@ -71,17 +80,12 @@ const Save = (props: Props) => {
               labelAlign: 'left',
               layout: 'vertical',
             },
-            enum: [
-              {
-                label: '设备告警',
-                value: 'device',
-              },
-            ],
             'x-component-props': {
               placeholder: '请选择类型',
             },
+            'x-reactions': ['{{useAsyncDataSource(queryProvidersList)}}'],
           },
-          rule: {
+          'topicConfig.alarmConfigId': {
             title: '告警规则',
             'x-component': 'Select',
             'x-decorator': 'FormItem',
@@ -91,15 +95,17 @@ const Save = (props: Props) => {
               labelAlign: 'left',
               layout: 'vertical',
             },
-            enum: [],
             'x-component-props': {
               placeholder: '请选择告警规则',
             },
+            'x-reactions': ['{{useAsyncDataSource(queryAlarmConfigList)}}'],
           },
           notice: {
             title: '通知方式',
             type: 'array',
             required: true,
+            'x-disabled': true,
+            default: [1],
             enum: [
               {
                 label: '站内通知',
@@ -137,19 +143,35 @@ const Save = (props: Props) => {
     },
   });
 
+  const handleSave = async () => {
+    let param: any = await form.submit();
+    delete param.notice;
+    const config = dataList.find((item) => item?.value === param?.topicConfig?.alarmConfigId);
+    param = {
+      ...data,
+      ...param,
+      topicConfig: {
+        ...param?.topicConfig,
+        alarmConfigName: config.label || '',
+      },
+    };
+    const response: any = await service.saveData(param);
+    if (response.status === 200) {
+      message.success('操作成功！');
+      props.reload();
+    }
+  };
+
   return (
-    <Modal title={'详情'} visible onCancel={props.close} onOk={props.close} width={'45vw'}>
+    <Modal title={'详情'} visible onCancel={props.close} onOk={() => handleSave()} width={'45vw'}>
       <Form form={form} layout="vertical">
         <SchemaField
           schema={schema}
-          scope={
-            {
-              // useAsyncDataSource,
-              // queryRegionsList,
-              // queryProductList,
-              // queryAliyunProductList,
-            }
-          }
+          scope={{
+            useAsyncDataSource,
+            queryProvidersList,
+            queryAlarmConfigList,
+          }}
         />
       </Form>
     </Modal>
