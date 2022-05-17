@@ -55,15 +55,17 @@ export default (props: Props) => {
           width: '100%',
         }}
       >
-        <PathSimplifier pathData={[dataSource]}>
-          <PathSimplifier.PathNavigator
-            speed={speed}
-            isAuto={false}
-            onCreate={(nav) => {
-              PathNavigatorRef.current = nav;
-            }}
-          />
-        </PathSimplifier>
+        {(dataSource?.path || []).length > 0 ? (
+          <PathSimplifier pathData={[dataSource]}>
+            <PathSimplifier.PathNavigator
+              speed={speed}
+              isAuto={false}
+              onCreate={(nav) => {
+                PathNavigatorRef.current = nav;
+              }}
+            />
+          </PathSimplifier>
+        ) : null}
       </AMap>
     </div>
   );
