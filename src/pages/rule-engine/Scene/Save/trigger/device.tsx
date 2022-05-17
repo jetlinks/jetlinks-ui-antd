@@ -362,14 +362,14 @@ export default (props: TriggerProps) => {
                 }
                 return false;
               })}
-              maxTagCount={0}
-              maxTagPlaceholder={(values) => {
-                return (
-                  <div style={{ maxWidth: 'calc(100% - 8px)' }}>
-                    {values.map((item) => item.label).toString()}
-                  </div>
-                );
-              }}
+              maxTagCount={'responsive'}
+              // maxTagPlaceholder={(values) => {
+              //   return (
+              //     <div style={{ maxWidth: 'calc(100% - 8px)' }}>
+              //       {values.map((item) => item.label).toString()}
+              //     </div>
+              //   );
+              // }}
               placeholder={'请选择属性'}
               style={{ width: '100%' }}
               fieldNames={{ label: 'name', value: 'id' }}

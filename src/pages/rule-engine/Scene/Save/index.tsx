@@ -35,7 +35,7 @@ type ShakeLimitType = {
 
 const DefaultShakeLimit = {
   enabled: false,
-  alarmFirst: true,
+  alarmFirst: false,
 };
 
 export let FormModel = model<FormModelType>({});
@@ -59,6 +59,7 @@ export default () => {
 
   const [requestParams, setRequestParams] = useState<any>(undefined);
   const [triggerValue, setTriggerValue] = useState<any>([]);
+  const [actionParams, setActionParams] = useState<any>(undefined);
 
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -72,10 +73,11 @@ export default () => {
         FormModel = _data;
         form.setFieldsValue(_data);
         setParallel(_data.parallel);
-        setShakeLimit(_data.shakeLimit || DefaultShakeLimit);
 
         setTriggerValue({ trigger: _data.terms || [] });
-
+        if (_data.trigger?.shakeLimit) {
+          setShakeLimit(_data.trigger?.shakeLimit || DefaultShakeLimit);
+        }
         if (_data.trigger?.device) {
           setRequestParams({ trigger: _data.trigger });
         }
@@ -95,7 +97,7 @@ export default () => {
     }
   }, [location]);
 
-  const saveData = async () => {
+  const saveData = useCallback(async () => {
     const formData = await form.validateFields();
     let triggerData = undefined;
     // 获取触发条件数据
@@ -107,6 +109,12 @@ export default () => {
     }
     console.log('save', formData);
     if (formData) {
+      if (shakeLimit.enabled) {
+        formData.trigger = {
+          ...formData.trigger,
+          shakeLimit: shakeLimit,
+        };
+      }
       setLoading(true);
       const resp = formData.id ? await service.updateScene(formData) : await service.save(formData);
 
@@ -126,7 +134,7 @@ export default () => {
         message.error(resp.message);
       }
     }
-  };
+  }, [shakeLimit]);
 
   const AntiShake = (
     <Space>
@@ -136,34 +144,36 @@ export default () => {
         checkedChildren="开启防抖"
         unCheckedChildren="关闭防抖"
         onChange={(e) => {
-          setShakeLimit({
+          const newShake = {
             ...shakeLimit,
             enabled: e,
-          });
-          form.setFieldsValue({ shakeLimit });
+          };
+          setShakeLimit(newShake);
         }}
       />
       {shakeLimit.enabled && (
         <>
           <InputNumber
             value={shakeLimit.time}
+            min={0}
             onChange={(e: number) => {
-              setShakeLimit({
+              const newShake = {
                 ...shakeLimit,
                 time: e,
-              });
-              form.setFieldsValue({ shakeLimit });
+              };
+              setShakeLimit(newShake);
             }}
           />
           <span> 秒内发生 </span>
           <InputNumber
             value={shakeLimit.threshold}
+            min={0}
             onChange={(e: number) => {
-              setShakeLimit({
+              const newShake = {
                 ...shakeLimit,
                 threshold: e,
-              });
-              form.setFieldsValue({ shakeLimit });
+              };
+              setShakeLimit(newShake);
             }}
           />
           <span>次及以上时，处理</span>
@@ -175,12 +185,11 @@ export default () => {
             ]}
             optionType="button"
             onChange={(e) => {
-              console.log(e);
-              setShakeLimit({
+              const newShake = {
                 ...shakeLimit,
                 alarmFirst: e.target.value,
-              });
-              form.setFieldsValue({ shakeLimit });
+              };
+              setShakeLimit(newShake);
             }}
           ></Radio.Group>
         </>
@@ -199,16 +208,21 @@ export default () => {
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
-            if (changeValue.trigger && changeValue.trigger.device) {
-              if (
-                changeValue.trigger.device.selectorValues ||
-                (changeValue.trigger.device.operation &&
-                  changeValue.trigger.device.operation.operator)
-              ) {
-                setTriggerValue([]);
-                setRequestParams({ trigger: allValues.trigger });
+            if (changeValue.trigger) {
+              if (changeValue.trigger.device) {
+                if (
+                  changeValue.trigger.device.selectorValues ||
+                  (changeValue.trigger.device.operation &&
+                    changeValue.trigger.device.operation.operator)
+                ) {
+                  setTriggerValue([]);
+                  setRequestParams({ trigger: allValues.trigger });
+                }
+              } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
+                setActionParams({ trigger: allValues.trigger });
               }
             }
+
             if (allValues.actions) {
               setActionsData(allValues.actions);
             }
@@ -380,6 +394,7 @@ export default () => {
                         form={form}
                         restField={restField}
                         name={name}
+                        trigger={actionParams}
                         triggerType={triggerType}
                         onRemove={() => remove(name)}
                         actionItemData={actionsData.length && actionsData[name]}
@@ -402,13 +417,13 @@ export default () => {
           >
             <Input.TextArea showCount maxLength={200} placeholder={'请输入说明'} rows={4} />
           </Form.Item>
-          {triggerType === TriggerWayType.device &&
-          requestParams &&
-          requestParams.trigger?.device?.productId ? (
-            <Form.Item hidden name={'shakeLimit'} initialValue={DefaultShakeLimit}>
-              <Input />
-            </Form.Item>
-          ) : null}
+          {/*{triggerType === TriggerWayType.device &&*/}
+          {/*requestParams &&*/}
+          {/*requestParams.trigger?.device?.productId ? (*/}
+          {/*  <Form.Item hidden name={['trigger','shakeLimit']}>*/}
+          {/*    <Input />*/}
+          {/*  </Form.Item>*/}
+          {/*) : null}*/}
           <Form.Item hidden name={'id'}>
             <Input />
           </Form.Item>

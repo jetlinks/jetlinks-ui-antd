@@ -185,7 +185,11 @@ export default (props: DeviceProps) => {
             initialValue={props.value ? props.value.selector : SourceEnum.fixed}
             {...props.restField}
           >
-            <Select options={sourceList} style={{ width: 120 }} />
+            <Select
+              options={sourceList}
+              style={{ width: 120 }}
+              onSelect={(key: string) => setSelector(key)}
+            />
           </Form.Item>
           {selector === SourceEnum.fixed && (
             <Form.Item
@@ -211,7 +215,7 @@ export default (props: DeviceProps) => {
               {...props.restField}
               rules={[{ required: true, message: '请选择关系人' }]}
             >
-              <Select style={{ width: 300 }} />
+              <Select style={{ width: '100%' }} placeholder={'请选择关系'} />
             </Form.Item>
           )}
         </ItemGroup>

@@ -58,7 +58,7 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
-    if (params.id) {
+    if (params.id && params.id !== ':id') {
       service.detail(params.id).then((resp) => {
         if (resp.status === 200) {
           form.setValues(resp.result);

@@ -3,13 +3,18 @@ import SearchComponent from '@/components/SearchComponent';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PermissionButton, ProTableCard } from '@/components';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { message, Space } from 'antd';
 import { DuerOSItem } from '@/pages/Northbound/DuerOS/types';
 import DuerOSCard from '@/components/ProTableCard/CardItems/duerOs';
 import { history } from '@@/core/history';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 
 export const service = new Service('dueros/product');
@@ -90,6 +95,7 @@ export default () => {
         defaultMessage: '设备类型',
       }),
       dataIndex: 'applianceType',
+      renderText: (data) => data.text,
     },
     {
       title: intl.formatMessage({
@@ -127,6 +133,19 @@ export default () => {
           setSearchParams(data);
         }}
       />
+      <div style={{ backgroundColor: 'white', width: '100%', height: 60, padding: 20 }}>
+        <div
+          style={{
+            padding: 10,
+            width: '100%',
+            color: 'rgba(0, 0, 0, 0.55)',
+            backgroundColor: '#f6f6f6',
+          }}
+        >
+          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          将平台产品通过API的方式同步DuerOS平台
+        </div>
+      </div>
       <ProTableCard<DuerOSItem>
         rowKey="id"
         search={false}
@@ -143,7 +162,7 @@ export default () => {
             <PermissionButton
               isPermission={true}
               onClick={() => {
-                history.push(getMenuPathByParams(MENUS_CODE['Northbound/DuerOS/Detail']));
+                history.push(getMenuPathByCode(MENUS_CODE['Northbound/DuerOS/Detail']));
               }}
               key="button"
               icon={<PlusOutlined />}

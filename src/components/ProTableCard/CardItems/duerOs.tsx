@@ -45,7 +45,7 @@ export default (props: DuerOSProps) => {
             <div>
               <label>设备类型</label>
               <div className={'ellipsis'}>
-                <Tooltip title={props.applianceType}>{props.applianceType}</Tooltip>
+                <Tooltip title={props.applianceType?.text}>{props.applianceType?.text}</Tooltip>
               </div>
             </div>
           </div>
