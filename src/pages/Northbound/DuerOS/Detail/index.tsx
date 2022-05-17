@@ -21,6 +21,7 @@ import { service } from '..';
 import { Store } from 'jetlinks-store';
 import { useParams } from 'umi';
 import Doc from '@/pages/Northbound/DuerOS/Detail/Doc';
+import _ from 'lodash';
 
 const Save = () => {
   const SchemaField = createSchemaField({
@@ -37,6 +38,20 @@ const Save = () => {
 
   const { id } = useParams<{ id: string }>();
 
+  const findProductMetadata = (_id: string) => {
+    if (!_id) return;
+    const _productList = Store.get('product-list');
+    const _product = _productList?.find((item: any) => item.id === _id);
+    return _product?.metadata && JSON.parse(_product.metadata || '{}');
+  };
+
+  const findApplianceType = (_id: string) => {
+    if (!_id) return;
+    const _productTypes = Store.get('product-types');
+    console.log(_productTypes, 'tt');
+    return _productTypes?.find((item: any) => item.id === _id);
+  };
+
   const getProduct = () =>
     service.getProduct().then((resp) => {
       Store.set('product-list', resp.result);
@@ -48,6 +63,92 @@ const Save = () => {
       Store.set('product-types', resp.result);
       return resp.result;
     });
+
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        effects() {
+          onFormInit(async (form1) => {
+            await getTypes();
+            await getProduct();
+            if (id === ':id') return;
+            const resp = await service.detail(id);
+            /// 单独处理一下applianceType
+            const _data = resp.result;
+            if (_data) {
+              _data.applianceType = _data?.applianceType?.value;
+            }
+            form1.setInitialValues(_data);
+          });
+          onFieldReact('actionMappings.*.layout.action', (field) => {
+            const productType = field.query('applianceType').value();
+            (field as Field).setDataSource(findApplianceType(productType)?.actions);
+          });
+          onFieldReact('actionMappings.*.layout.command.message.properties', (field) => {
+            const product = field.query('id').value();
+            (field as Field).setDataSource(findProductMetadata(product)?.properties);
+          });
+          onFieldReact('actionMappings.*.layout.command.message.functionId', (field) => {
+            const product = field.query('id').value();
+            (field as Field).setDataSource(findProductMetadata(product)?.functions);
+          });
+          onFieldValueChange(
+            'actionMappings.*.layout.command.message.functionId',
+            (field, form1) => {
+              const functionId = field.value;
+              if (!functionId) return;
+              const product = field.query('id').value();
+              const _functionList = findProductMetadata(product)?.functions;
+              const _function =
+                _functionList && _functionList.find((item: any) => item.id === functionId);
+              form1.setFieldState(field.query('.function'), (state) => {
+                state.value = _function?.inputs.map((item: any) => ({
+                  ...item,
+                  valueType: item?.valueType?.type,
+                }));
+              });
+            },
+          );
+          onFieldReact('propertyMappings.*.layout.source', (field) => {
+            const productType = field.query('applianceType').value();
+            (field as Field).setDataSource(findApplianceType(productType)?.properties);
+          });
+          onFieldReact('propertyMappings.*.layout.target', (field) => {
+            const product = field.query('id').value();
+            (field as Field).setDataSource(findProductMetadata(product)?.properties);
+          });
+        },
+      }),
+    [],
+  );
+
+  const getProductProperties = (f: Field) => {
+    const items =
+      form
+        .getValuesIn('propertyMappings')
+        ?.map((i: { target: string[] }) => i.target?.map((j) => j)) || [];
+    const checked = _.flatMap(items);
+    const index = checked.findIndex((i) => i === f.value);
+    checked.splice(index, 1);
+    const _id = form.getValuesIn('id');
+    const sourceList = findProductMetadata(_id)?.properties;
+    const list = sourceList?.filter((i: { id: string }) => !checked.includes(i.id));
+    return new Promise((resolve) => resolve(list));
+  };
+
+  const getDuerOSProperties = (f: Field) => {
+    const items =
+      form.getValuesIn('propertyMappings')?.map((i: { source: string }) => i.source) || [];
+    const checked = [...items];
+    const index = checked.findIndex((i) => i === f.value);
+    checked.splice(index, 1);
+    const _productType = form.getValuesIn('applianceType');
+    const targetList = findApplianceType(_productType?.value)?.properties;
+    console.log(targetList, 'list', _productType);
+    const list = targetList?.filter((i: { id: string }) => !checked.includes(i.id));
+    return new Promise((resolve) => resolve(list));
+  };
 
   const schema: ISchema = {
     type: 'object',
@@ -398,6 +499,7 @@ const Save = () => {
                       value: 'id',
                     },
                   },
+                  'x-reactions': ['{{useAsyncDataSource(getDuerOSProperties)}}'],
                 },
                 target: {
                   title: '平台属性',
@@ -414,6 +516,7 @@ const Save = () => {
                     },
                     mode: 'tags',
                   },
+                  'x-reactions': ['{{useAsyncDataSource(getProductProperties)}}'],
                 },
               },
             },
@@ -434,74 +537,10 @@ const Save = () => {
     },
   };
 
-  const findProductMetadata = (_id: string) => {
-    if (!_id) return;
-    const _productList = Store.get('product-list');
-    const _product = _productList?.find((item: any) => item.id === _id);
-    return _product?.metadata && JSON.parse(_product.metadata || '{}');
-  };
-
-  const findapplianceType = (_id: string) => {
-    if (!_id) return;
-    const _productTypes = Store.get('product-types');
-    return _productTypes?.find((item: any) => item.id === _id);
-  };
-  const form = useMemo(
-    () =>
-      createForm({
-        validateFirst: true,
-        effects() {
-          onFormInit(async (form1) => {
-            await getTypes();
-            await getProduct();
-            const resp = await service.detail(id);
-            form1.setInitialValues(resp.result);
-          });
-          onFieldReact('actionMappings.*.layout.action', (field) => {
-            const productType = field.query('applianceType').value();
-            (field as Field).setDataSource(findapplianceType(productType)?.actions);
-          });
-          onFieldReact('actionMappings.*.layout.command.message.properties', (field) => {
-            const product = field.query('id').value();
-            (field as Field).setDataSource(findProductMetadata(product)?.properties);
-          });
-          onFieldReact('actionMappings.*.layout.command.message.functionId', (field) => {
-            const product = field.query('id').value();
-            (field as Field).setDataSource(findProductMetadata(product)?.functions);
-          });
-          onFieldValueChange(
-            'actionMappings.*.layout.command.message.functionId',
-            (field, form1) => {
-              const functionId = field.value;
-              if (!functionId) return;
-              const product = field.query('id').value();
-              const _functionList = findProductMetadata(product)?.functions;
-              const _function =
-                _functionList && _functionList.find((item: any) => item.id === functionId);
-              form1.setFieldState(field.query('.function'), (state) => {
-                state.value = _function?.inputs.map((item: any) => ({
-                  ...item,
-                  valueType: item?.valueType?.type,
-                }));
-              });
-            },
-          );
-          onFieldReact('propertyMappings.*.layout.source', (field) => {
-            const productType = field.query('applianceType').value();
-            (field as Field).setDataSource(findapplianceType(productType)?.properties);
-          });
-          onFieldReact('propertyMappings.*.layout.target', (field) => {
-            const product = field.query('id').value();
-            (field as Field).setDataSource(findProductMetadata(product)?.properties);
-          });
-        },
-      }),
-    [],
-  );
-
   const handleSave = async () => {
     const data: any = await form.submit();
-    await service.savePatch(data);
+    const productName = Store.get('product-list')?.find((item: any) => item.id === data.id)?.name;
+    await service.savePatch({ ...data, productName });
     message.success('保存成功!');
     history.back();
   };
@@ -511,7 +550,16 @@ const Save = () => {
         <Row>
           <Col span={12}>
             <Form layout="vertical" form={form}>
-              <SchemaField schema={schema} scope={{ useAsyncDataSource, getTypes, getProduct }} />
+              <SchemaField
+                schema={schema}
+                scope={{
+                  useAsyncDataSource,
+                  getTypes,
+                  getProduct,
+                  getProductProperties,
+                  getDuerOSProperties,
+                }}
+              />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
                   <PermissionButton isPermission={true} type="primary" onClick={handleSave}>
