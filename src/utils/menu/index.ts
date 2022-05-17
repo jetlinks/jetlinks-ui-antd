@@ -48,6 +48,16 @@ const extraRouteObj = {
           },
         ],
       },
+      {
+        code: 'Modbus',
+        name: 'OPC UA',
+        children: [
+          {
+            code: 'Access',
+            name: '数据点绑定',
+          },
+        ],
+      },
     ],
   },
   demo: {

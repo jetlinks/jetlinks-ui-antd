@@ -141,7 +141,7 @@ const Center = () => {
             </Upload>
           </div>
           <div className={styles.content}>
-            <Descriptions column={4} layout="vertical">
+            <Descriptions column={4} layout="vertical" labelStyle={{ fontWeight: 600 }}>
               <Descriptions.Item label="登录账号">{data?.username}</Descriptions.Item>
               <Descriptions.Item label="账号ID">{data?.id}</Descriptions.Item>
               <Descriptions.Item label="注册时间">

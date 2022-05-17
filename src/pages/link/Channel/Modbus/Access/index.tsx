@@ -12,8 +12,8 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import BindDevice from '@/pages/link/Channel/Opcua/Access/bindDevice';
-import { service } from '@/pages/link/Channel/Opcua';
+import BindDevice from '@/pages/link/Channel/Modbus/Access/bindDevice';
+import { service } from '@/pages/link/Channel/Modbus';
 import encodeQuery from '@/utils/encodeQuery';
 import styles from './index.less';
 import AddPoint from './addPoint';
@@ -40,19 +40,19 @@ const Access = () => {
   const columns: ProColumns<any>[] = [
     {
       title: '属性ID',
-      dataIndex: 'property',
+      dataIndex: 'metadataId',
     },
     {
-      title: '名称',
-      dataIndex: 'name',
+      title: '功能码',
+      render: (record: any) => <>{record.function?.text}</>,
     },
     {
-      title: 'OPC点位ID',
-      dataIndex: 'opcPointId',
+      title: '读取起始位置',
+      dataIndex: 'address',
     },
     {
-      title: '数据类型',
-      dataIndex: 'dataType',
+      title: '读取长度',
+      render: (record: any) => <>{record.codecConfig?.readLength}</>,
     },
     {
       title: '值',
@@ -63,7 +63,7 @@ const Access = () => {
       title: '状态',
       dataIndex: 'state',
       renderText: (state) => (
-        <Badge text={state?.text} status={state?.value === 'disable' ? 'error' : 'success'} />
+        <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
       ),
     },
     {
@@ -96,15 +96,17 @@ const Access = () => {
           style={{ padding: 0 }}
           popConfirm={{
             title: intl.formatMessage({
-              id: `pages.data.option.${record.state.value !== 'disable' ? 'disable' : 'good'}.tips`,
+              id: `pages.data.option.${
+                record.state.value !== 'disabled' ? 'disabled' : 'enabled'
+              }.tips`,
               defaultMessage: '确认禁用？',
             }),
             onConfirm: async () => {
-              if (record.state.value === 'disable') {
-                await service.enablePoint(record.deviceId, [record.id]);
-              } else {
-                await service.stopPoint(record.deviceId, [record.id]);
-              }
+              const item = {
+                ...record,
+                state: record.state.value === 'enabled' ? 'disabled' : 'enabled',
+              };
+              await service.saveMetadataConfig(opcUaId, deviceId, item);
               message.success(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
@@ -117,20 +119,20 @@ const Access = () => {
           isPermission={permission.action}
           tooltip={{
             title: intl.formatMessage({
-              id: `pages.data.option.${record.state.value !== 'disable' ? 'disable' : 'good'}`,
-              defaultMessage: record.state.value !== 'disable' ? '禁用' : '启用',
+              id: `pages.data.option.${record.state.value !== 'disabled' ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state.value !== 'disabled' ? '禁用' : '启用',
             }),
           }}
         >
-          {record.state.value !== 'disable' ? <StopOutlined /> : <PlayCircleOutlined />}
+          {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
           style={{ padding: 0 }}
-          disabled={record.state.value === 'good'}
+          disabled={record.state.value === 'enabled'}
           tooltip={{
             title:
-              record.state.value === 'disable'
+              record.state.value === 'disabled'
                 ? intl.formatMessage({
                     id: 'pages.data.option.remove',
                     defaultMessage: '删除',
@@ -140,8 +142,7 @@ const Access = () => {
           popConfirm={{
             title: '确认删除',
             onConfirm: async () => {
-              console.log(111);
-              const resp: any = await service.deletePoint(record.id);
+              const resp: any = await service.removeMetadataConfig(record.id);
               if (resp.status === 200) {
                 message.success(
                   intl.formatMessage({
@@ -181,18 +182,26 @@ const Access = () => {
     }
   };
 
-  const getBindList = (params: any) => {
-    service.getBindList(params).then((res) => {
-      console.log(res.result);
-      if (res.status === 200) {
-        setDeviceId(res.result[0]?.deviceId);
-        setProductId(res.result[0]?.productId);
-        setParam({
-          terms: [{ column: 'deviceId', value: res.result[0]?.deviceId }],
-        });
-        setBindList(res.result);
-      }
-    });
+  const getBindList = (masterId: any) => {
+    service
+      .bindDevice(
+        encodeQuery({
+          terms: {
+            'id$modbus-master': masterId,
+          },
+        }),
+      )
+      .then((res) => {
+        console.log(res.result);
+        if (res.status === 200) {
+          setDeviceId(res.result[0]?.id);
+          setProductId(res.result[0]?.productId);
+          setParam({
+            terms: [{ column: 'deviceId', value: res.result[0]?.deviceId }],
+          });
+          setBindList(res.result);
+        }
+      });
   };
 
   // useEffect(() => {
@@ -208,13 +217,7 @@ const Access = () => {
     const id = item.get('id');
     if (id) {
       setOpcUaId(id);
-      getBindList(
-        encodeQuery({
-          terms: {
-            opcUaId: id,
-          },
-        }),
-      );
+      getBindList(id);
     }
   }, []);
 
@@ -239,7 +242,7 @@ const Access = () => {
             defaultActiveKey={deviceId}
             onChange={(e) => {
               setDeviceId(e);
-              const items = bindList.find((item: any) => item.deviceId === e);
+              const items = bindList.find((item: any) => item.id === e);
               setProductId(items[0].productId);
               setParam({
                 terms: [{ column: 'deviceId', value: e }],
@@ -248,23 +251,17 @@ const Access = () => {
           >
             {bindList.map((item: any) => (
               <Tabs.TabPane
-                key={item.deviceId}
+                key={item.id}
                 tab={
                   <div className={styles.left}>
                     <div style={{ width: '100px', textAlign: 'left' }}>{item.name}</div>
                     <Popconfirm
                       title="确认解绑该设备嘛？"
                       onConfirm={() => {
-                        service.unbind([item.deviceId], opcUaId).then((res) => {
+                        service.unbind([item.id], opcUaId).then((res) => {
                           if (res.status === 200) {
                             message.success('解绑成功');
-                            getBindList(
-                              encodeQuery({
-                                terms: {
-                                  opcUaId: opcUaId,
-                                },
-                              }),
-                            );
+                            getBindList(opcUaId);
                           }
                         });
                       }}
@@ -323,7 +320,7 @@ const Access = () => {
                     </>
                   }
                   request={async (params) => {
-                    const res = await service.PointList({
+                    const res = await service.queryMetadataConfig(opcUaId, deviceId, {
                       ...params,
                       sorts: [{ name: 'createTime', order: 'desc' }],
                     });
@@ -352,13 +349,7 @@ const Access = () => {
           id={opcUaId}
           close={() => {
             setDeviceVisiable(false);
-            getBindList(
-              encodeQuery({
-                terms: {
-                  opcUaId: opcUaId,
-                },
-              }),
-            );
+            getBindList(opcUaId);
           }}
         />
       )}
