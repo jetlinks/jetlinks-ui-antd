@@ -1,8 +1,8 @@
-import {Button, message, Modal} from "antd";
-import React from "react";
+import { Button, message, Modal } from "antd";
+import React, { useState } from "react";
 import Service from "../service";
-import {createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit} from "@formily/antd";
-import {DatePicker, FormStep, Input, Select} from '@formily/antd-components'
+import { createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit } from "@formily/antd";
+import { DatePicker, FormStep, Input, Select, NumberPicker } from '@formily/antd-components'
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import AceEditor from 'react-ace';
@@ -50,6 +50,10 @@ const actions = createFormActions();
 
 const Save: React.FC<Props> = props => {
     const service = new Service('network/simulator');
+    const [list, setList] = useState<any[]>([
+        { "label": "自动重连", "value": "auto-reconnect" },
+        { "label": "脚本", "value": "jsr223" }
+    ])
 
     const { onFieldValueChange$ } = FormEffectHooks;
     const changeNetworkTypeEffects = () => {
@@ -65,8 +69,27 @@ const Save: React.FC<Props> = props => {
                     networkConfiguration.password,
                     networkConfiguration.keepAliveTimeSeconds)`,
                 state => {
-                    state.visible = value === 'mqtt_client';
+                    state.visible = value === 'mqtt_client'
                 });
+            setFieldState(
+                `*(networkConfiguration.privateKeyAlias,
+                    networkConfiguration.clientId,
+                    networkConfiguration.timeout,
+                    networkConfiguration.retryTimes)`,
+                state => {
+                    state.visible = value === 'coap_client'
+                });
+            if (value === 'coap_client') {
+                setList([{ "label": "脚本", "value": "jsr223" }])
+            } else {
+                setList([
+                    { "label": "自动重连", "value": "auto-reconnect" },
+                    { "label": "脚本", "value": "jsr223" }
+                ])
+            }
+            setFieldState(`*(listeners)`,state => {
+                state.value = []
+            });
         });
 
         onFieldValueChange$("listeners.*.type").subscribe(fieldState => {
@@ -109,10 +132,10 @@ const Save: React.FC<Props> = props => {
             "networkType": {
                 "title": "{{ text('接入方式',help('这是接入方式的提示'))}}",
                 "x-component": "select",
-                "x-component-props":{
-                    showSearch:true,
-                    optionFilterProp:'children'
-                },               
+                "x-component-props": {
+                    showSearch: true,
+                    optionFilterProp: 'children'
+                },
                 "required": true,
                 "type": "string",
                 "enum": [
@@ -120,10 +143,10 @@ const Save: React.FC<Props> = props => {
                         "value": "mqtt_client",
                         "label": "MQTT"
                     },
-                    // {
-                    //     "value": "tcp_client",
-                    //     "label": "TCP"
-                    // }
+                    {
+                        "value": "coap_client",
+                        "label": "CoAP"
+                    }
                 ],
                 "x-rules": [
                     {
@@ -177,6 +200,22 @@ const Save: React.FC<Props> = props => {
                 "x-mega-props": {
                     "span": 1,
                     "labelCol": 4
+                },
+            },
+            "networkConfiguration.privateKeyAlias": {
+                "title": "证书别名",
+                "visible": false,
+                "required": true,
+                "x-component": "input",
+                "x-rules": [
+                    {
+                        "required": true,
+                        "message": "此字段必填"
+                    }
+                ],
+                "x-mega-props": {
+                    "span": 1,
+                    "labelCol": 6
                 },
             },
             "networkConfiguration.clientId": {
@@ -244,6 +283,34 @@ const Save: React.FC<Props> = props => {
                     "addonAfter": "S"
                 }
             },
+            "networkConfiguration.timeout": {
+                "title": "超时时间",
+                "visible": false,
+                "x-component": "NumberPicker",
+                "required": true,
+                "x-mega-props": {
+                    "span": 2
+                },
+                "x-component-props": {
+                    "style": {
+                        "width": '100%'
+                    },
+                }
+            },
+            "networkConfiguration.retryTimes": {
+                "title": "最大重试次数",
+                "visible": false,
+                "required": true,
+                "x-component": "NumberPicker",
+                "x-mega-props": {
+                    "span": 2
+                },
+                "x-component-props": {
+                    "style": {
+                        "width": '100%'
+                    },
+                }
+            },
         }
     };
 
@@ -302,7 +369,7 @@ const Save: React.FC<Props> = props => {
             "listeners": {
                 "title": "{{ text('其他功能',help('这是其他功能的提示'))}}",
                 "x-component": "arraypanels",
-                "x-component-props":{
+                "x-component-props": {
                     renderMoveDown: () => null,
                     renderMoveUp: () => null,
                 },
@@ -325,10 +392,7 @@ const Save: React.FC<Props> = props => {
                         "type": {
                             "title": "{{ text('功能',help('这是功能的提示'))}}",
                             "x-component": "select",
-                            "enum": [
-                                { "label": "自动重连", "value": "auto-reconnect" },
-                                { "label": "脚本", "value": "jsr223" }
-                            ],
+                            "enum": [...list],
                             "x-rules": [
                                 {
                                     "required": true,
@@ -437,7 +501,7 @@ listener.onAfter(function (session) {
                 initialValues={props.data}
                 actions={actions}
                 onSubmit={v => save(v)}
-                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels }}
+                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels, NumberPicker }}
                 schema={{
                     "type": "object",
                     "properties": {
