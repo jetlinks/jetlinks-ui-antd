@@ -105,7 +105,7 @@ const Property = (props: Props) => {
         }}
         data={data}
       />
-      <PropertyLog data={data} visible={visible} close={() => setVisible(false)} />
+      {visible && <PropertyLog data={data} close={() => setVisible(false)} />}
       {indicatorVisible && (
         <Indicators
           data={data}

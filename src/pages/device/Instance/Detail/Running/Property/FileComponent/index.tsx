@@ -2,6 +2,7 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import styles from './index.less';
 import Detail from './Detail';
 import { useState } from 'react';
+import { message, Tooltip } from 'antd';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -17,69 +18,116 @@ imgMap.set('ppt', require('/public/images/running/ppt.png'));
 imgMap.set('docx', require('/public/images/running/docx.png'));
 imgMap.set('xlsx', require('/public/images/running/xlsx.png'));
 imgMap.set('pptx', require('/public/images/running/pptx.png'));
-imgMap.set('jpg', require('/public/images/running/jpg.png'));
-imgMap.set('png', require('/public/images/running/png.png'));
 imgMap.set('pdf', require('/public/images/running/pdf.png'));
-imgMap.set('tiff', require('/public/images/running/tiff.png'));
-imgMap.set('swf', require('/public/images/running/swf.png'));
-imgMap.set('flv', require('/public/images/running/flv.png'));
-imgMap.set('rmvb', require('/public/images/running/rmvb.png'));
-imgMap.set('mp4', require('/public/images/running/mp4.png'));
-imgMap.set('mvb', require('/public/images/running/mvb.png'));
-imgMap.set('wma', require('/public/images/running/wma.png'));
-imgMap.set('mp3', require('/public/images/running/mp3.png'));
+imgMap.set('img', require('/public/images/running/img.png'));
+imgMap.set('error', require('/public/images/running/error.png'));
+imgMap.set('video', require('/public/images/running/video.png'));
 imgMap.set('other', require('/public/images/running/other.png'));
 
 const FileComponent = (props: Props) => {
   const { data, value } = props;
   const [type, setType] = useState<string>('other');
   const [visible, setVisible] = useState<boolean>(false);
+  const isHttps = document.location.protocol === 'https:';
 
   const renderValue = () => {
     if (!value?.formatValue) {
       return <div className={props.type === 'card' ? styles.other : {}}>--</div>;
     } else if (data?.valueType?.type === 'file') {
-      const flag: string = value?.formatValue.split('.').pop() || 'other';
-      if (['jpg', 'png'].includes(flag)) {
+      if (
+        data?.valueType?.fileType === 'base64' ||
+        data?.valueType?.fileType === 'Binary(二进制)'
+      ) {
+        return (
+          <div className={props.type === 'card' ? styles.other : {}}>
+            <Tooltip placement="topLeft" title={String(value?.formatValue)}>
+              {String(value?.formatValue)}
+            </Tooltip>
+          </div>
+        );
+      }
+      if (['.jpg', '.png'].some((item) => value?.formatValue.includes(item))) {
+        // 图片
         return (
           <div
             className={styles.img}
             onClick={() => {
-              setType(flag);
-              setVisible(true);
+              if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
+                message.error('域名为https时，不支持访问http地址');
+              } else {
+                const flag =
+                  ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '';
+                setType(flag);
+                setVisible(true);
+              }
             }}
           >
-            {value?.formatValue ? (
-              <img style={{ width: '100%' }} src={value?.formatValue} />
-            ) : (
-              <img src={imgMap.get(flag) || imgMap.get('other')} />
-            )}
+            <img
+              src={value?.formatValue}
+              onError={(e: any) => {
+                e.target.src = imgMap.get('error');
+              }}
+            />
           </div>
         );
       }
-      return (
-        <div
-          className={styles.img}
-          onClick={() => {
-            if (['tiff', 'flv', 'm3u8', 'mp4', 'rmvb', 'mvb'].includes(flag)) {
-              setType(flag);
-              setVisible(true);
-            }
-          }}
-        >
-          <img src={imgMap.get(flag) || imgMap.get('other')} />
-        </div>
-      );
+      if (
+        ['.m3u8', '.flv', '.mp4', '.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))
+      ) {
+        return (
+          <div
+            className={styles.img}
+            onClick={() => {
+              if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
+                message.error('域名为https时，不支持访问http地址');
+              } else if (['.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))) {
+                message.error('当前仅支持播放.mp4,.flv,.m3u8格式的视频');
+              } else {
+                const flag =
+                  ['.m3u8', '.flv', '.mp4'].find((item) => value?.formatValue.includes(item)) || '';
+                setType(flag);
+                setVisible(true);
+              }
+            }}
+          >
+            <img src={imgMap.get('video')} />
+          </div>
+        );
+      } else if (
+        ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].some((item) =>
+          value?.formatValue.includes(item),
+        )
+      ) {
+        const flag =
+          ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].find((item) =>
+            value?.formatValue.includes(item),
+          ) || '';
+        return (
+          <div className={styles.img}>
+            <img src={imgMap.get(flag.slice(1))} />
+          </div>
+        );
+      } else {
+        return (
+          <div className={styles.img}>
+            <img src={imgMap.get('other')} />
+          </div>
+        );
+      }
     } else if (data?.valueType?.type === 'object' || data?.valueType?.type === 'geoPoint') {
       return (
         <div className={props.type === 'card' ? styles.other : {}}>
-          {JSON.stringify(value?.formatValue)}
+          <Tooltip placement="topLeft" title={JSON.stringify(value?.formatValue)}>
+            {JSON.stringify(value?.formatValue)}
+          </Tooltip>
         </div>
       );
     } else {
       return (
         <div className={props.type === 'card' ? styles.other : {}}>
-          {String(value?.formatValue)}
+          <Tooltip placement="topLeft" title={String(value?.formatValue)}>
+            {String(value?.formatValue)}
+          </Tooltip>
         </div>
       );
     }
