@@ -16,6 +16,7 @@ interface FunctionCallProps {
   functionData: any[];
   value?: any;
   onChange?: (data: any) => void;
+  name?: string;
 }
 
 export default (props: FunctionCallProps) => {
@@ -24,6 +25,9 @@ export default (props: FunctionCallProps) => {
 
   useEffect(() => {
     setEditableRowKeys(props.functionData.map((d) => d.id));
+    formRef.current?.setFieldsValue({
+      table: props.functionData,
+    });
   }, [props.functionData]);
 
   useEffect(() => {
@@ -126,7 +130,7 @@ export default (props: FunctionCallProps) => {
   return (
     <ProForm<{ table: FunctionTableDataType[] }>
       formRef={formRef}
-      name={'proForm'}
+      name={props.name || 'proForm'}
       submitter={false}
       onValuesChange={() => {
         const values = formRef.current?.getFieldsValue();

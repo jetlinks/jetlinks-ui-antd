@@ -8,6 +8,23 @@ class Service extends BaseService<platformsType> {
       method: 'GET',
       params,
     });
+
+  /**
+   * 密码校验
+   * @param type
+   * @param name
+   */
+  validateField = (type: 'username' | 'password', name: string) =>
+    request(`/${SystemConst.API_BASE}/user/${type}/_validate`, {
+      method: 'POST',
+      data: name,
+    });
+
+  passwordReset = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/user/${id}/password/_reset`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

@@ -24,6 +24,7 @@ import { service } from '../index';
 import './index.less';
 import { model } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
+import moment from 'moment';
 
 type ShakeLimitType = {
   enabled: boolean;
@@ -296,6 +297,8 @@ export default () => {
                   when: [],
                   period: {
                     unit: 'seconds',
+                    from: moment(new Date()).format('HH:mm:ss'),
+                    to: moment(new Date()).format('HH:mm:ss'),
                   },
                 }}
               >
