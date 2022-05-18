@@ -102,7 +102,7 @@ const QuickInsertComponent: React.FC<Props> = (props) => {
         }}>
             <div>{item.name}</div>
             {item.children.length === 0 && enterKey === item.id && (<div onClick={() => {
-                if(item.code === undefined){
+                if(item.code === undefined || item.code===''){
                     setPropertyVisible(true);
                     setProperty(item);
                 }else{

@@ -233,7 +233,7 @@ const Detail: React.FC<Props> = props => {
             // deploy(basicInfo)
             setSpinning(true);
             dispatch({
-              type: 'deviceProduct/unDeploy',
+              type: 'deviceProduct/deploy',
               payload: basicInfo.id,
               callback: res => {
                 if (res.status === 200) {

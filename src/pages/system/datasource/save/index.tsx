@@ -102,7 +102,8 @@ const Save = (props: Props) => {
             'x-component': 'Select',
             'x-component-props': {
               disabled: !!data.typeId,
-              showSearch:true
+              showSearch:true,
+              optionFilterProp:'children'
             },
             'x-mega-props': {
               span: 2,

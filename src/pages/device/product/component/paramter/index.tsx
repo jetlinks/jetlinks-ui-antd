@@ -782,10 +782,10 @@ const Paramter: React.FC<Props> = props => {
 
   function saveData() {
     // 递归保存数据
-    if (data.valueType.type === 'enum') {
+    if (data.valueType?.type === 'enum') {
       data.valueType.elements = enumData;
     }
-    if(data.valueType.type === 'array' && arrayProperties.length > 0){
+    if(data.valueType?.type === 'array' && arrayProperties.length > 0){
       data.valueType.elementType.properties = arrayProperties
     }
     props.save(data);

@@ -215,7 +215,8 @@ const Send = (props: Props) => {
                   })),
                   'x-component': 'select',
                   'x-component-props':{
-                    showSearch:true
+                    showSearch:true,
+                    optionFilterProp:'children'
                   },
                   'x-rules': [
                     {

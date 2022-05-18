@@ -87,6 +87,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
   statusMap.set('未激活', 'processing');
+  statusMap.set('未启用', 'default');
 
   const columns: ColumnProps<DeviceInstance>[] = [
     {
@@ -144,10 +145,29 @@ const DeviceGatewayBind: React.FC<Props> = props => {
             search={(params: any) => {
               setSearchParam(params);
               if (props.selectionType === 'checkbox') {
-                params['parentId$isnull'] = 1;
+                // params['parentId$isnull'] = 1;
+                handleSearch({
+                  sorter: searchParam.sorter, 
+                  pageSize: 10,
+                  terms:{
+                    ...params,
+                    parentId$isnull:1,
+                    'parentId$not@or':props.gatewayId
+                  },
+                })
+              }else{
+                handleSearch({
+                  sorter: searchParam.sorter, 
+                  pageSize: 10,
+                  terms:{
+                    ...params,
+                    // parentId$isnull:1,
+                    'parentId$not@or':props.gatewayId
+                  },
+                })
               }
-              params['parentId$not@or'] = props.gatewayId;
-              handleSearch({ terms: params, sorter: searchParam.sorter, pageSize: 10 });
+              // params['parentId$not@or'] = props.gatewayId;
+              // handleSearch({ terms: params, sorter: searchParam.sorter, pageSize: 10 });
             }}
           />
         </div>

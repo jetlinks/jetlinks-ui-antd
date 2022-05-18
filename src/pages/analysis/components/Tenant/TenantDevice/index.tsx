@@ -146,11 +146,11 @@ const TenantDevice: React.FC<Props> = (props) => {
     service.assets.instanceNopaging(encodeQueryParam({
       terms: {
         productId: product.id,
-        id$assets: JSON.stringify({
-          tenantId: tenantId,
-          assetType: 'device',
-          memberId: userId,
-        }),
+        // id$assets: JSON.stringify({
+        //   tenantId: tenantId,
+        //   assetType: 'device',
+        //   memberId: userId,
+        // }),
       }
     })).pipe(
       groupBy((instance: any) => instance.state.value),
@@ -168,11 +168,11 @@ const TenantDevice: React.FC<Props> = (props) => {
 
   const getAlarmCount = (productId: string, userId: string) => service.alarm.count(encodeQueryParam({
     terms: {
-      deviceId$assets: JSON.stringify({
-        tenantId: tenantId,
-        assetType: 'device',
-        memberId: userId,
-      }),
+      // deviceId$assets: JSON.stringify({
+      //   tenantId: tenantId,
+      //   assetType: 'device',
+      //   memberId: userId,
+      // }),
       productId: productId,
     }
   }));

@@ -66,9 +66,27 @@ const Save = (props: Props) => {
       return;
     }
     setLoading(true);
+    // const tempData = selectedRow.map(item=>{
+    //   if(item.status===1){
+    //     return {
+    //       name: item.name,
+    //       userId: item.id,
+    //       state:'enabled',
+    //       admin: tempMap.find((i: { id: string }) => i.id === item.id)?.tag || false,
+    //     }
+    //   }else{
+    //     return {
+    //       name: item.name,
+    //       userId: item.id,
+    //       state:'disabled',
+    //       admin: tempMap.find((i: { id: string }) => i.id === item.id)?.tag || false,
+    //     }
+    //   }
+    // })
     const tempData = selectedRow.map(item => ({
       name: item.name,
       userId: item.id,
+      state:item.status,
       admin: tempMap.find((i: { id: string }) => i.id === item.id)?.tag || false,
     }));
     const tempId = props.data?.id;

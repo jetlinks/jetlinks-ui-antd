@@ -36,7 +36,11 @@ const Alarm: React.FC<Props> = props => {
     saveAlarmData: {},
     searchParam: {
       pageSize: 10,
-      sorts:[{name:"alarmTime",order: 'desc' }]
+      // sorts:[{name:"alarmTime",order: 'desc' }]
+      sorts: {
+        order: "desc",
+        field: "alarmTime"
+      }
     },
     searchAlarmParam: {
       pageSize: 10
@@ -335,7 +339,7 @@ const Alarm: React.FC<Props> = props => {
       ...searchParam,
       pageIndex: Number(pagination.current) - 1,
       pageSize: pagination.pageSize,
-      sorts:[{name:"alarmTime",order: sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : searchParam.sorts[0].order}]
+      sorts:sorter
     });
   };
 
@@ -377,7 +381,16 @@ const Alarm: React.FC<Props> = props => {
                 pagination={{
                   current: data.pageIndex + 1,
                   total: data.total,
-                  pageSize: data.pageSize
+                  pageSize: data.pageSize,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
+                  pageSizeOptions: ['10', '20', '50', '100'],
+                  style: { marginTop: -20 },
+                  showTotal: (total: number) =>
+                    `共 ${total} 条记录 第  ${data.pageIndex + 1}/${Math.ceil(
+                      data.total / data.pageSize,
+                    )}页`,
                 }} />
             </Card>
           </Tabs.TabPane>

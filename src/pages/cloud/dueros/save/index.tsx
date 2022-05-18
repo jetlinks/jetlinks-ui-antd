@@ -257,7 +257,8 @@ const Save: React.FC<Props> = props => {
                                         "enum": productInfo.list,
                                         "x-component": "select",
                                         "x-component-props":{
-                                            showSearch:true
+                                            showSearch:true,
+                                            optionFilterProp:'children'
                                         }
                                     },
                                     "name": {
@@ -293,7 +294,8 @@ const Save: React.FC<Props> = props => {
                                         "title": "设备版本",
                                         "x-component": "input",
                                         "x-component-props":{
-                                            showSearch:true
+                                            showSearch:true,
+                                            optionFilterProp:'children'
                                         },
                                         "x-rules": [
                                             {
@@ -315,7 +317,8 @@ const Save: React.FC<Props> = props => {
                                         ],
                                         "x-component": "select",
                                         "x-component-props":{
-                                            showSearch:true
+                                            showSearch:true,
+                                            optionFilterProp:'children'
                                         },
                                         "visible": false,
                                         "enum": productInfo.type

@@ -115,7 +115,7 @@ const classifyBind: React.FC<Props> = (props) => {
     };
 
     useEffect(() => {
-        if (props.targetId != null || props.targetId != "") {
+        if (props.targetId) {
             handleSearch();
         }
     }, [props.targetId]);

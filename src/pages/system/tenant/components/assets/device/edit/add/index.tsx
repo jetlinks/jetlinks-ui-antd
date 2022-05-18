@@ -174,7 +174,7 @@ const Add = (props: Props) => {
         formItems={[
           {
             label: 'ID',
-            key: 'id',
+            key: 'id$LIKE',
             type: 'string',
           },
           {

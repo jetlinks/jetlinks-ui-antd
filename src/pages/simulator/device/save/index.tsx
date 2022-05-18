@@ -1,8 +1,8 @@
-import {Button, message, Modal} from "antd";
-import React from "react";
+import { Button, message, Modal } from "antd";
+import React, { useEffect, useState } from "react";
 import Service from "../service";
-import {createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit} from "@formily/antd";
-import {DatePicker, FormStep, Input, Select} from '@formily/antd-components'
+import { createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit } from "@formily/antd";
+import { DatePicker, FormStep, Input, Select, NumberPicker, Radio } from '@formily/antd-components'
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import AceEditor from 'react-ace';
@@ -33,13 +33,13 @@ const AceComponent = (props: any) => (
             // props.mutators.change(value)
         }}
         wrapEnabled
-        highlightActiveLine  //突出活动线
-        enableSnippets  //启用代码段
+        highlightActiveLine  // 突出活动线
+        enableSnippets  // 启用代码段
         style={{ width: '100%', height: 300 }}
         setOptions={{
-            enableBasicAutocompletion: true,   //启用基本自动完成功能
-            enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
-            enableSnippets: true,  //启用代码段
+            enableBasicAutocompletion: true,   // 启用基本自动完成功能
+            enableLiveAutocompletion: true,   // 启用实时自动完成功能 （比如：智能代码提示）
+            enableSnippets: true,  // 启用代码段
             showLineNumbers: true,
             tabSize: 2,
         }}
@@ -50,12 +50,22 @@ const actions = createFormActions();
 
 const Save: React.FC<Props> = props => {
     const service = new Service('network/simulator');
+    const [list, setList] = useState<any[]>([])
+    const [networkList, setNetworkList] = useState<any[]>([])
 
     const { onFieldValueChange$ } = FormEffectHooks;
     const changeNetworkTypeEffects = () => {
         const { setFieldState } = actions;
 
-        onFieldValueChange$('networkType').subscribe(({ value }) => {
+        onFieldValueChange$('networkType').subscribe(({ value, modified, pristine }) => {
+            if (value === 'coap_client') {
+                setList([{ "label": "脚本", "value": "jsr223" }])
+            } else {
+                setList([
+                    { "label": "自动重连", "value": "auto-reconnect" },
+                    { "label": "脚本", "value": "jsr223" }
+                ])
+            }
             setFieldState(
                 `*(networkConfiguration.certId,
                     networkConfiguration.host,
@@ -65,7 +75,30 @@ const Save: React.FC<Props> = props => {
                     networkConfiguration.password,
                     networkConfiguration.keepAliveTimeSeconds)`,
                 state => {
-                    state.visible = value === 'mqtt_client';
+                    state.visible = value === 'mqtt_client'
+                });
+            setFieldState(
+                `*(
+                    networkConfiguration.enableDtls,
+                    networkConfiguration.timeout,
+                    networkConfiguration.retryTimes)`,
+                state => {
+                    state.visible = value === 'coap_client'
+                });
+            if (modified && !pristine) {
+                setFieldState(`*(listeners)`,
+                    state => {
+                        state.value = []
+                    });
+            }
+        });
+
+        onFieldValueChange$('networkConfiguration.enableDtls').subscribe(({ value }) => {
+            setFieldState(
+                `*(networkConfiguration.certId1,
+                    networkConfiguration.privateKeyAlias)`,
+                state => {
+                    state.visible = !!value
                 });
         });
 
@@ -109,9 +142,10 @@ const Save: React.FC<Props> = props => {
             "networkType": {
                 "title": "{{ text('接入方式',help('这是接入方式的提示'))}}",
                 "x-component": "select",
-                "x-component-props":{
-                    showSearch:true
-                },               
+                "x-component-props": {
+                    showSearch: true,
+                    optionFilterProp: 'children'
+                },
                 "required": true,
                 "type": "string",
                 "enum": [
@@ -119,10 +153,10 @@ const Save: React.FC<Props> = props => {
                         "value": "mqtt_client",
                         "label": "MQTT"
                     },
-                    // {
-                    //     "value": "tcp_client",
-                    //     "label": "TCP"
-                    // }
+                    {
+                        "value": "coap_client",
+                        "label": "CoAP"
+                    }
                 ],
                 "x-rules": [
                     {
@@ -135,15 +169,52 @@ const Save: React.FC<Props> = props => {
                     "labelCol": 6
                 },
             },
+            "networkConfiguration.enableDtls": {
+                "title": "是否开启DTLS",
+                "visible": false,
+                "required": true,
+                "x-component": "RadioGroup",
+                "x-rules": [
+                    {
+                        "required": true,
+                        "message": "此字段必填"
+                    }
+                ],
+                "x-mega-props": {
+                    "span": 1,
+                    "labelCol": 6
+                },
+                enum: [
+                    { label: '是', value: true },
+                    { label: '否', value: false }
+                ]
+            },
             "networkConfiguration.certId": {
                 "title": "{{ text('证书',help('这是证书的提示'))}}",
                 "visible": false,
                 "x-component": "select",
-                "enum": [],
+                "enum": [...networkList],
 
                 "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 4
+                    "span": 2
+                },
+            },
+            "networkConfiguration.certId1": {
+                "title": "{{ text('证书',help('这是证书的提示'))}}",
+                "visible": false,
+                "x-component": "select",
+                "enum": [...networkList],
+
+                "x-mega-props": {
+                    "span": 2
+                },
+            },
+            "networkConfiguration.privateKeyAlias": {
+                "title": "证书别名",
+                "visible": false,
+                "x-component": "input",
+                "x-mega-props": {
+                    "span": 2
                 },
             },
             "networkConfiguration.host": {
@@ -158,8 +229,7 @@ const Save: React.FC<Props> = props => {
                     }
                 ],
                 "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 6
+                    "span": 2
                 },
             },
             "networkConfiguration.port": {
@@ -174,8 +244,7 @@ const Save: React.FC<Props> = props => {
                     }
                 ],
                 "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 4
+                    "span": 2
                 },
             },
             "networkConfiguration.clientId": {
@@ -243,6 +312,34 @@ const Save: React.FC<Props> = props => {
                     "addonAfter": "S"
                 }
             },
+            "networkConfiguration.timeout": {
+                "title": "超时时间",
+                "visible": false,
+                "x-component": "NumberPicker",
+                "required": true,
+                "x-mega-props": {
+                    "span": 2
+                },
+                "x-component-props": {
+                    "style": {
+                        "width": '100%'
+                    },
+                }
+            },
+            "networkConfiguration.retryTimes": {
+                "title": "最大重试次数",
+                "visible": false,
+                "required": true,
+                "x-component": "NumberPicker",
+                "x-mega-props": {
+                    "span": 2
+                },
+                "x-component-props": {
+                    "style": {
+                        "width": '100%'
+                    },
+                }
+            },
         }
     };
 
@@ -301,6 +398,10 @@ const Save: React.FC<Props> = props => {
             "listeners": {
                 "title": "{{ text('其他功能',help('这是其他功能的提示'))}}",
                 "x-component": "arraypanels",
+                "x-component-props": {
+                    renderMoveDown: () => null,
+                    renderMoveUp: () => null,
+                },
                 "type": "array",
                 "x-mega-props": { "span": 2, "labelCol": 3 },
                 "items": {
@@ -320,10 +421,7 @@ const Save: React.FC<Props> = props => {
                         "type": {
                             "title": "{{ text('功能',help('这是功能的提示'))}}",
                             "x-component": "select",
-                            "enum": [
-                                { "label": "自动重连", "value": "auto-reconnect" },
-                                { "label": "脚本", "value": "jsr223" }
-                            ],
+                            "enum": [...list],
                             "x-rules": [
                                 {
                                     "required": true,
@@ -409,11 +507,28 @@ listener.onAfter(function (session) {
         }
     };
     const save = (data: any) => {
-        service.saveOrUpdate({ id: props.data.id, ...data }).subscribe(() => {
+        const params = { ...data }
+        if (params.certId1) {
+            params.certId = params.certId1
+        }
+        delete params.certId1
+        service.saveOrUpdate({ id: props.data.id, ...params }).subscribe(() => {
             message.success('保存成功');
             props.close();
         })
     };
+
+    useEffect(() => {
+        service.listNoPaging({ paging: false }).subscribe(resp => {
+            const network = (resp?.result || []).map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.id
+                }
+            })
+            setNetworkList(network)
+        })
+    }, [])
 
     return (
         <Modal
@@ -429,10 +544,10 @@ listener.onAfter(function (session) {
                     changeNetworkTypeEffects()
                 }}
                 expressionScope={createRichTextUtils()}
-                initialValues={props.data}
+                initialValues={{...props.data, certId1: props.data?.certId }}
                 actions={actions}
                 onSubmit={v => save(v)}
-                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels }}
+                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels, NumberPicker, RadioGroup: Radio.Group }}
                 schema={{
                     "type": "object",
                     "properties": {

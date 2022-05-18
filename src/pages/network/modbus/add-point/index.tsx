@@ -109,13 +109,13 @@ const AddPoint = (props: Props) => {
                                 { required: true, message: '请输入' },
                                 {
                                     validator: async (rule, value, callback) => {
-                                        if (!(/(^[1-9]\d*$)/.test(value))) {
+                                        if (!(/(^[0-9]\d*$)/.test(value))) {
                                             callback('请输入正整数');
                                         }
                                     }
                                 }
                             ],
-                            initialValue: props.data?.codecConfig?.readIndex,
+                            initialValue: props.data?.codecConfig?.readIndex || 0,
                         })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
                     </Form.Item>
                     <Form.Item key="readLength" label="读取长度">
@@ -160,11 +160,11 @@ const AddPoint = (props: Props) => {
                             rules: [
                                 { required: true, message: '请选择' }
                             ],
-                            initialValue: props.data?.codecConfig?.revertBytes,
+                            initialValue: props.data?.codecConfig?.revertBytes || false,
                         })(
                             <Radio.Group>
-                                <Radio value={true}>是</Radio>
                                 <Radio value={false}>否</Radio>
+                                <Radio value={true}>是</Radio>
                             </Radio.Group>
                         )}
                     </Form.Item>
@@ -187,7 +187,7 @@ const AddPoint = (props: Props) => {
                                     }
                                 }
                             ],
-                            initialValue: props.data?.codecConfig?.scaleFactor,
+                            initialValue: props.data?.codecConfig?.scaleFactor || 1,
                         })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
                     </Form.Item>
                     <Form.Item key="unsigned" label="数据格式转换">
@@ -195,11 +195,11 @@ const AddPoint = (props: Props) => {
                             rules: [
                                 { required: true, message: '请选择' }
                             ],
-                            initialValue: props.data?.codecConfig?.unsigned,
+                            initialValue: props.data?.codecConfig?.unsigned || false,
                         })(
                             <Radio.Group>
-                                <Radio value={true}>有符号数字</Radio>
                                 <Radio value={false}>无符号数字</Radio>
+                                <Radio value={true}>有符号数字</Radio>
                             </Radio.Group>
                         )}
                     </Form.Item>
@@ -213,9 +213,10 @@ const AddPoint = (props: Props) => {
                     }>
                         {getFieldDecorator('interval', {
                             rules: [
+                                { required: false },
                                 {
                                     validator: async (rule, value, callback) => {
-                                        if (value === 0 || !(/(^[1-9]\d*$)/.test(value))) {
+                                        if (value && (value === 0 || !(/(^[1-9]\d*$)/.test(value)))) {
                                             callback('请输入非0正整数!');
                                         }
                                     }

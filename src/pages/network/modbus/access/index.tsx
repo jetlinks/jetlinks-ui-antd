@@ -33,49 +33,42 @@ const Access = (props: Props) => {
         data: []
     })
     const wsCallback = useRef();
+    const [propertiesMap, setPropertiesMap] = useState<any>({});
 
-    const propertiesWs = (deviceId: string, result: any) => {
+    const propertiesWs = (device: any, result: any) => {
         if (properties$) {
             properties$.unsubscribe();
         }
         const points: any[] = _.map(result.data, 'metadataId')
         const propertiesWs = getWebsocket(
-            `instance-info-property-${deviceId}-${device.productId}-${points.join("-")}`,
+            `instance-info-property-${device.id}-${device.productId}-${points.join("-")}`,
             `/dashboard/device/${device.productId}/properties/realTime`,
             {
-                deviceId,
+                deviceId: device.id,
                 properties: points,
                 history: 1,
             },
         ).subscribe((resp: any) => {
             const { payload } = resp;
-            const resultList = [...result.data];
-            resultList.map((item: any) => {
-                if (payload.value.property === item.metadataId) {
-                    return {
-                        ...item, 
-                        value: payload.value.formatValue
-                    }
-                }
-                return item
-            })
-            setDataSource({
-                data: [...resultList],
-                pageIndex: result.pageIndex,
-                pageSize: result.pageSize,
-                total: result.total
-            })
+            propertiesMap[payload.value.property] = payload.value.formatValue
+            setPropertiesMap({ ...propertiesMap })
         },
-                () => { setDataSource(result) },
-                () => { setDataSource(result) });
-            setProperties$(propertiesWs);
+            () => { // setDataSource(result) 
+            },
+            () => { // setDataSource(result) 
+            });
+        setProperties$(propertiesWs);
     };
 
     const queryMetadataList = (device: any, params: any) => {
         apis.modbus.queryMetadataConfig(id, device.id, params).then(resp => {
             if (resp.status === 200) {
-                setDataSource(resp.result)
-                propertiesWs(device.id, resp.result);
+                setDataSource(resp.result);
+                (resp?.result?.data || []).forEach((item: any) => {
+                    propertiesMap[item.metadataId] = '/'
+                })
+                setPropertiesMap({ ...propertiesMap })
+                propertiesWs(device, resp.result);
             }
         })
     }
@@ -137,13 +130,15 @@ const Access = (props: Props) => {
         },
         {
             title: '读取长度',
-            dataIndex: 'readLength',
-            key: 'readLength',
+            dataIndex: 'codecConfig.readLength',
+            key: 'codecConfig.readLength',
         },
         {
             title: '值',
             dataIndex: 'value',
             key: 'value',
+            render: (text: any, record: any) => <span>{
+                propertiesMap[record?.metadataId] || '/'}</span>
         },
         {
             title: '状态',
@@ -171,7 +166,7 @@ const Access = (props: Props) => {
                             apis.modbus.saveMetadataConfig(id, device.id, data).then(resp => {
                                 if (resp.status === 200) {
                                     message.success('操作成功！')
-                                    queryMetadataList(device.id, searchParams)
+                                    queryMetadataList(device, searchParams)
                                 }
                             })
                         }}
@@ -183,7 +178,7 @@ const Access = (props: Props) => {
                         apis.modbus.removeMetadataConfig(record.id).then(resp => {
                             if (resp.status === 200) {
                                 message.success('操作成功！')
-                                queryMetadataList(device.id, searchParams)
+                                queryMetadataList(device, searchParams)
                             }
                         })
                     }}>
@@ -197,7 +192,7 @@ const Access = (props: Props) => {
     const onTableChange = (
         pagination: PaginationConfig
     ) => {
-        queryMetadataList(device.id, {
+        queryMetadataList(device, {
             pageIndex: Number(pagination.current) - 1,
             pageSize: pagination.pageSize,
             terms: searchParams?.terms
@@ -224,7 +219,7 @@ const Access = (props: Props) => {
                         }}>
                             {
                                 deviceList.map(item => (
-                                    <Tabs.TabPane tab={
+                                    <Tabs.TabPane key={item.id} tab={
                                         <div className={styles.left}>
                                             <div style={{ width: '100px', textAlign: 'left' }}><AutoHide title={item.name} style={{ width: '95%' }} /></div>
                                             <Popconfirm title='确认解绑？' onConfirm={() => {
@@ -238,7 +233,7 @@ const Access = (props: Props) => {
                                                 <Icon className={styles.icon} type="disconnect" />
                                             </Popconfirm>
                                         </div>
-                                    } key={item.id}>
+                                    }>
                                         <SearchForm
                                             search={(params: any) => {
                                                 if (params) {
@@ -259,10 +254,10 @@ const Access = (props: Props) => {
                                                         }
                                                     })
                                                     setSearchParams({ pageSize: 10, pageIndex: 0, terms })
-                                                    queryMetadataList(device.id, { pageSize: 10, pageIndex: 0, terms })
+                                                    queryMetadataList(device, { pageSize: 10, pageIndex: 0, terms })
                                                 } else {
                                                     setSearchParams({ pageSize: 10, pageIndex: 0 })
-                                                    queryMetadataList(device.id, { pageSize: 10, pageIndex: 0 })
+                                                    queryMetadataList(device, { pageSize: 10, pageIndex: 0 })
                                                 }
                                             }}
                                             formItems={[{
@@ -298,7 +293,7 @@ const Access = (props: Props) => {
                 {
                     visible && <AddPoint masterId={id} deviceId={device.id} close={() => {
                         setVisible(false)
-                        queryMetadataList(device.id, searchParams)
+                        queryMetadataList(device, searchParams)
                     }} data={current} />
                 }
                 {

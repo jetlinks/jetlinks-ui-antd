@@ -26,7 +26,7 @@ const Screen = () => {
     <PageHeaderWrapper title="项目管理">
       <iframe
         style={{width: '100%', height: '800px'}}
-        src={`${url.replace('{token}', token)}`}
+        src={`${url?.replace('{token}', token)}`}
         frameBorder="0">
       </iframe>
     </PageHeaderWrapper>

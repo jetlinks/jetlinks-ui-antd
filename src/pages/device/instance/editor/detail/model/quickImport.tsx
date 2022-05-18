@@ -89,8 +89,9 @@ const QuickImport: React.FC<Props> = props => {
           }
         })
       }else {
-        data = metaData;
-        props.update(data);
+        message.error('物模型不能为空')
+        // data = metaData;
+        // props.update(data);
       }
     // }
   };
