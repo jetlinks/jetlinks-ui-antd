@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 interface Props {
   data: Partial<OpaUa>;
   close: () => void;
+  device?: any;
 }
 
 const Save = (props: Props) => {
@@ -219,19 +220,38 @@ const Save = (props: Props) => {
         }
       });
     } else {
-      service.save(item).then((res: any) => {
-        if (res.status === 200) {
-          message.success('保存成功');
-          props.close();
-        }
-      });
+      if (props.device) {
+        service.save(item).then((res: any) => {
+          if (res.status === 200) {
+            const params = {
+              opcUaId: res.result.id,
+              deviceId: props.device.id,
+              deviceName: props.device.name,
+              productId: props.device.productId,
+              productName: props.device.productName,
+            };
+            service.bind(params).then((resp) => {
+              if (resp.status === 200) {
+                message.success('保存成功');
+                props.close();
+              }
+            });
+          }
+        });
+      } else {
+        service.save(item).then((res: any) => {
+          if (res.status === 200) {
+            message.success('保存成功');
+            props.close();
+          }
+        });
+      }
     }
   };
 
   useEffect(() => {
     service.policies().then((res) => setPolicies(res.result));
     service.modes().then((res) => setModes(res.result));
-    console.log(props.data.clientConfigs?.[0]);
   }, []);
   return (
     <Modal

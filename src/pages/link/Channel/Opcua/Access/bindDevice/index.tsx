@@ -60,7 +60,6 @@ const BindDevice = (props: Props) => {
       productId: item.productId,
       productName: item.productName,
     }));
-    console.log(params);
     service.bind(params).then((res) => {
       if (res.status === 200) {
         message.success('绑定成功');

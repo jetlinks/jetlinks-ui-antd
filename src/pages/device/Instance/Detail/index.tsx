@@ -13,6 +13,8 @@ import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
+import Opcua from '@/pages/device/Instance/Detail/Opcua';
+import Modbus from '@/pages/device/Instance/Detail/Modbus';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -146,6 +148,16 @@ const InstanceDetail = observer(() => {
       key: 'metadata-map',
       tab: '物模型映射',
       component: <MetadataMap type="device" />,
+    },
+    {
+      key: 'opcua',
+      tab: 'OPC UA',
+      component: <Opcua />,
+    },
+    {
+      key: 'modbus',
+      tab: 'Modbus',
+      component: <Modbus />,
     },
   ];
   const [list, setList] =

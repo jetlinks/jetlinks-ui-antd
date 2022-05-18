@@ -75,6 +75,11 @@ class Service extends BaseService<OpaUa> {
       method: 'POST',
       data,
     });
+  noPagingOpcua = (data: any) =>
+    request(`/${SystemConst.API_BASE}/opc/client/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

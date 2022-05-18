@@ -17,7 +17,7 @@ const AddPoint = (props: Props) => {
 
   const handleSave = async () => {
     const formData = await form.validateFields();
-    const { name } = property.find((item: any) => item.id === formData.property);
+    const { name } = property?.find((item: any) => item.id === formData.property);
     if (props.data.id) {
       if (formData.enableCalculate) {
         service

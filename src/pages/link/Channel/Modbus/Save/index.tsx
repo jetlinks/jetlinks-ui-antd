@@ -10,6 +10,7 @@ import { message } from 'antd';
 interface Props {
   data: any;
   close: () => void;
+  device?: any;
 }
 
 const Save = (props: Props) => {
