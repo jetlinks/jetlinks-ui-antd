@@ -213,9 +213,10 @@ const AddPoint = (props: Props) => {
                     }>
                         {getFieldDecorator('interval', {
                             rules: [
+                                { required: false },
                                 {
                                     validator: async (rule, value, callback) => {
-                                        if (value === 0 || !(/(^[1-9]\d*$)/.test(value))) {
+                                        if (value && (value === 0 || !(/(^[1-9]\d*$)/.test(value)))) {
                                             callback('请输入非0正整数!');
                                         }
                                     }

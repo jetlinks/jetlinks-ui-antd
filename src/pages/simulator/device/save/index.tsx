@@ -1,8 +1,8 @@
 import { Button, message, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Service from "../service";
 import { createFormActions, FormButtonGroup, FormEffectHooks, FormPath, FormSpy, Reset, SchemaForm, Submit } from "@formily/antd";
-import { DatePicker, FormStep, Input, Select, NumberPicker } from '@formily/antd-components'
+import { DatePicker, FormStep, Input, Select, NumberPicker, Radio } from '@formily/antd-components'
 import 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import AceEditor from 'react-ace';
@@ -54,12 +54,21 @@ const Save: React.FC<Props> = props => {
         { "label": "自动重连", "value": "auto-reconnect" },
         { "label": "脚本", "value": "jsr223" }
     ])
+    const [networkList, setNetworkList] = useState<any[]>([])
 
     const { onFieldValueChange$ } = FormEffectHooks;
     const changeNetworkTypeEffects = () => {
         const { setFieldState } = actions;
 
         onFieldValueChange$('networkType').subscribe(({ value }) => {
+            if (value === 'coap_client') {
+                setList([{ "label": "脚本", "value": "jsr223" }])
+            } else {
+                setList([
+                    { "label": "自动重连", "value": "auto-reconnect" },
+                    { "label": "脚本", "value": "jsr223" }
+                ])
+            }
             setFieldState(
                 `*(networkConfiguration.certId,
                     networkConfiguration.host,
@@ -72,24 +81,22 @@ const Save: React.FC<Props> = props => {
                     state.visible = value === 'mqtt_client'
                 });
             setFieldState(
-                `*(networkConfiguration.privateKeyAlias,
-                    networkConfiguration.clientId,
+                `*(
+                    networkConfiguration.enableDtls,
                     networkConfiguration.timeout,
                     networkConfiguration.retryTimes)`,
                 state => {
                     state.visible = value === 'coap_client'
                 });
-            if (value === 'coap_client') {
-                setList([{ "label": "脚本", "value": "jsr223" }])
-            } else {
-                setList([
-                    { "label": "自动重连", "value": "auto-reconnect" },
-                    { "label": "脚本", "value": "jsr223" }
-                ])
-            }
-            setFieldState(`*(listeners)`,state => {
-                state.value = []
-            });
+        });
+
+        onFieldValueChange$('networkConfiguration.enableDtls').subscribe(({ value }) => {
+            setFieldState(
+                `*(networkConfiguration.certId1,
+                    networkConfiguration.privateKeyAlias)`,
+                state => {
+                    state.visible = !!value
+                });
         });
 
         onFieldValueChange$("listeners.*.type").subscribe(fieldState => {
@@ -159,15 +166,52 @@ const Save: React.FC<Props> = props => {
                     "labelCol": 6
                 },
             },
+            "networkConfiguration.enableDtls": {
+                "title": "是否开启DTLS",
+                "visible": false,
+                "required": true,
+                "x-component": "RadioGroup",
+                "x-rules": [
+                    {
+                        "required": true,
+                        "message": "此字段必填"
+                    }
+                ],
+                "x-mega-props": {
+                    "span": 1,
+                    "labelCol": 6
+                },
+                enum: [
+                    { label: '是', value: true },
+                    { label: '否', value: false }
+                ]
+            },
             "networkConfiguration.certId": {
                 "title": "{{ text('证书',help('这是证书的提示'))}}",
                 "visible": false,
                 "x-component": "select",
-                "enum": [],
+                "enum": [...networkList],
 
                 "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 4
+                    "span": 2
+                },
+            },
+            "networkConfiguration.certId1": {
+                "title": "{{ text('证书',help('这是证书的提示'))}}",
+                "visible": false,
+                "x-component": "select",
+                "enum": [...networkList],
+
+                "x-mega-props": {
+                    "span": 2
+                },
+            },
+            "networkConfiguration.privateKeyAlias": {
+                "title": "证书别名",
+                "visible": false,
+                "x-component": "input",
+                "x-mega-props": {
+                    "span": 2
                 },
             },
             "networkConfiguration.host": {
@@ -182,8 +226,7 @@ const Save: React.FC<Props> = props => {
                     }
                 ],
                 "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 6
+                    "span": 2
                 },
             },
             "networkConfiguration.port": {
@@ -198,24 +241,7 @@ const Save: React.FC<Props> = props => {
                     }
                 ],
                 "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 4
-                },
-            },
-            "networkConfiguration.privateKeyAlias": {
-                "title": "证书别名",
-                "visible": false,
-                "required": true,
-                "x-component": "input",
-                "x-rules": [
-                    {
-                        "required": true,
-                        "message": "此字段必填"
-                    }
-                ],
-                "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 6
+                    "span": 2
                 },
             },
             "networkConfiguration.clientId": {
@@ -478,11 +504,28 @@ listener.onAfter(function (session) {
         }
     };
     const save = (data: any) => {
-        service.saveOrUpdate({ id: props.data.id, ...data }).subscribe(() => {
+        const params = {...data}
+        if(params.certId1){
+            params.certId = params.certId1
+        }
+        delete params.certId1
+        service.saveOrUpdate({ id: props.data.id, ...params }).subscribe(() => {
             message.success('保存成功');
             props.close();
         })
     };
+
+    useEffect(() => {
+        service.listNoPaging({paging: false}).subscribe(resp => {
+            const network = (resp?.result || []).map((item: any) => {
+                return {
+                    label: item.name,
+                    value: item.id
+                }
+            })
+            setNetworkList(network)
+        })
+    }, [])
 
     return (
         <Modal
@@ -501,7 +544,7 @@ listener.onAfter(function (session) {
                 initialValues={props.data}
                 actions={actions}
                 onSubmit={v => save(v)}
-                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels, NumberPicker }}
+                components={{ DatePicker, Input, Select, AceComponent, ArrayPanels, NumberPicker, RadioGroup: Radio.Group }}
                 schema={{
                     "type": "object",
                     "properties": {

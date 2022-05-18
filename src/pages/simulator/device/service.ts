@@ -53,6 +53,15 @@ class Service extends BaseService<any>{
             filter(resp => resp.status === 200),
             map(resp => resp.result),
         ));
+
+    public listNoPaging = (params: any) => defer(
+        () => from(request(`/jetlinks/network/certificate/_query/no-paging`, {
+            method: 'GET',
+            params
+        })).pipe(
+            filter(resp => resp.status === 200),
+            map(resp => resp),
+        ));
 }
 
 export default Service;
