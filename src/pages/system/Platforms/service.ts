@@ -9,6 +9,10 @@ class Service extends BaseService<platformsType> {
       params,
     });
 
+  getDetail = (id: string) => request(`${this.uri}/${id}/detail`, { method: 'GET' });
+
+  edit = (data: any) => request(`${this.uri}/${data.id}`, { method: 'PUT', data });
+
   /**
    * 密码校验
    * @param type
@@ -25,6 +29,37 @@ class Service extends BaseService<platformsType> {
       method: 'POST',
       data,
     });
+
+  undeploy = (id: string) => request(`${this.uri}/${id}/disable`, { method: 'PUT' });
+
+  deploy = (id: string) => request(`${this.uri}/${id}/enable`, { method: 'PUT' });
+
+  getApiFirstLevel = () =>
+    request(`/${SystemConst.API_BASE}/v3/api-docs/swagger-config`, { method: 'GET' });
+
+  getApiNextLevel = (name: string) =>
+    request(`/${SystemConst.API_BASE}/v3/api-docs/${name}`, { method: 'GET' });
+
+  /**
+   * 对接口进行授权
+   * @param id 第三方平台的ID
+   * @param data
+   */
+  saveApiGrant = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/api-client/${id}/grant`, { method: 'POST', data });
+
+  /**
+   * 获取已授权的接口ID
+   * @param id 第三方平台的ID
+   */
+  getApiGranted = (id: string) =>
+    request(`/${SystemConst.API_BASE}/api-client/${id}/granted`, { method: 'GET' });
+
+  /**
+   * 获取可授权的接口ID
+   */
+  apiOperations = () =>
+    request(`/${SystemConst.API_BASE}//api-client/operations`, { method: 'GET' });
 }
 
 export default Service;

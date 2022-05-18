@@ -1,9 +1,10 @@
 import { Tree } from 'antd';
-import React, { useState } from 'react';
-import { queryChannel } from '@/pages/media/SplitScreen/service';
+import React, { useEffect, useState } from 'react';
+import { service } from '@/pages/system/Platforms';
+import { ApiModel } from '@/pages/system/Platforms/Api/base';
 
 type LeftTreeType = {
-  onSelect: (id: string) => void;
+  onSelect: (data: any) => void;
 };
 
 interface DataNode {
@@ -17,15 +18,11 @@ interface DataNode {
 export default (props: LeftTreeType) => {
   const [treeData, setTreeData] = useState<DataNode[]>([]);
 
-  /**
-   * 是否为子节点
-   * @param node
-   */
-  const isLeaf = (node: DataNode): boolean => {
-    if (node.children) {
-      return false;
+  const getLevelOne = async () => {
+    const resp = await service.getApiFirstLevel();
+    if (resp.urls && resp.urls.length) {
+      setTreeData(resp.urls.map((item: any) => ({ ...item, id: item.url })));
     }
-    return true;
   };
 
   const updateTreeData = (list: DataNode[], key: React.Key, children: DataNode[]): DataNode[] => {
@@ -47,29 +44,37 @@ export default (props: LeftTreeType) => {
     });
   };
 
-  const getChildren = (key: React.Key, params: any): Promise<any> => {
-    return new Promise(async (resolve) => {
-      const resp = await queryChannel(params);
-      if (resp.status === 200) {
-        const { total, pageIndex, pageSize } = resp.result;
-        setTreeData((origin) => {
-          const data = updateTreeData(
-            origin,
-            key,
-            resp.result.data.map((item: DataNode) => ({
-              ...item,
-              isLeaf: isLeaf(item),
-            })),
-          );
+  const handleTreeData = (data: any) => {
+    const newArr = data.tags.map((item: any) => ({ id: item.name, name: item.name, isLeaf: true }));
 
-          if (total > (pageIndex + 1) * pageSize) {
-            setTimeout(() => {
-              getChildren(key, {
-                ...params,
-                pageIndex: params.pageIndex + 1,
-              });
-            }, 50);
-          }
+    Object.keys(data.paths).forEach((a: any) => {
+      Object.keys(data.paths[a]).forEach((b) => {
+        const { tags, ...extraData } = data.paths[a][b];
+        const tag = tags[0];
+        const obj = {
+          url: a,
+          method: b,
+          ...extraData,
+        };
+        const item = newArr.find((c: any) => c.id === tag);
+        if (item) {
+          item.extraData = item.extraData ? [...item.extraData, obj] : [obj];
+        }
+      });
+    });
+    console.log(newArr);
+    return newArr;
+  };
+
+  const getChildren = (key: string, name: string): Promise<any> => {
+    return new Promise(async (resolve) => {
+      const resp = await service.getApiNextLevel(name);
+      if (resp) {
+        ApiModel.components = resp.components;
+        ApiModel.baseUrl = resp.servers[0].url;
+        const handleData = handleTreeData(resp);
+        setTreeData((origin) => {
+          const data = updateTreeData(origin, key, handleData);
 
           return data;
         });
@@ -78,38 +83,34 @@ export default (props: LeftTreeType) => {
     });
   };
 
-  const onLoadData = ({ key, children }: any): Promise<void> => {
+  const onLoadData = (node: any): Promise<void> => {
+    console.log(node);
     return new Promise(async (resolve) => {
-      if (children) {
+      if (node.children) {
         resolve();
         return;
       }
-      await getChildren(key, {
-        pageIndex: 0,
-        pageSize: 100,
-        terms: [
-          {
-            column: 'deviceId',
-            value: key,
-          },
-        ],
-      });
+      await getChildren(node.key, node.name);
       resolve();
     });
   };
+
+  useEffect(() => {
+    getLevelOne();
+  }, []);
 
   return (
     <Tree
       showIcon
       showLine={{ showLeafIcon: false }}
-      height={550}
+      height={700}
       fieldNames={{
         title: 'name',
         key: 'id',
       }}
       onSelect={(_, { node }: any) => {
-        if (props.onSelect && node.isLeaf) {
-          props.onSelect(node.id);
+        if (node.isLeaf && props.onSelect) {
+          props.onSelect(node.extraData);
         }
       }}
       loadData={onLoadData}

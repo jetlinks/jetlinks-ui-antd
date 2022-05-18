@@ -1,4 +1,5 @@
-import { createForm, Field } from '@formily/core';
+import { createForm } from '@formily/core';
+import type { Field } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
   Checkbox,
@@ -14,19 +15,20 @@ import {
   TreeSelect,
 } from '@formily/antd';
 import { message, Modal } from 'antd';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ISchema } from '@formily/json-schema';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
-import { Response } from '@/utils/typings';
+import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/Platforms/index';
 import { randomString } from '@/utils/util';
 
 interface SaveProps {
   visible: boolean;
+  type: 'save' | 'edit';
   data?: any;
   onReload?: () => void;
   onCancel?: () => void;
@@ -77,12 +79,32 @@ export default (props: SaveProps) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.data
-          ? { ...props.data, confirm_password: props.data.password }
-          : { enableOAuth2: true, id: randomString() },
       }),
     [props.data],
   );
+
+  const getDetail = async (id: string) => {
+    const resp = await service.getDetail(id);
+    if (resp.status === 200) {
+      form.setValues({
+        ...resp.result,
+        confirm_password: resp.result.password,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (props.visible) {
+      if (props.type === 'edit') {
+        getDetail(props.data.id);
+      } else {
+        form.setValues({
+          enableOAuth2: true,
+          id: randomString(),
+        });
+      }
+    }
+  }, [props.type, props.visible]);
 
   const schema: ISchema = {
     type: 'object',
@@ -292,7 +314,7 @@ export default (props: SaveProps) => {
                     const tab: any = window.open(`${origin}/#/system/role?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
                       form.setFieldState('roleIdList', async (state) => {
-                        state.dataSource = await getRole().then((resp) =>
+                        state.dataSource = await getRole().then((resp: any) =>
                           resp.result?.map((item: Record<string, unknown>) => ({
                             ...item,
                             label: item.name,
@@ -409,7 +431,7 @@ export default (props: SaveProps) => {
     console.log(data);
     if (data) {
       setLoading(true);
-      const resp: any = props.data ? await service.update(data) : await service.save(data);
+      const resp: any = props.type === 'edit' ? await service.edit(data) : await service.save(data);
       setLoading(false);
       if (resp.status === 200) {
         if (props.onReload) {
@@ -419,7 +441,7 @@ export default (props: SaveProps) => {
         message.success('操作成功');
       }
     }
-  }, [props.data]);
+  }, [props.type]);
 
   return (
     <Modal
