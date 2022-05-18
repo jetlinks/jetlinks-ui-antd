@@ -36,7 +36,7 @@ const Running = () => {
       <Tabs
         defaultActiveKey="1"
         tabPosition="left"
-        style={{ height: 600 }}
+        style={{ minHeight: 600 }}
         tabBarExtraContent={{ left: operations() }}
       >
         <Tabs.TabPane tab="属性" key="1">

@@ -11,7 +11,7 @@ const Detail = (props: Props) => {
   const { value, type } = props;
 
   const renderValue = () => {
-    if (type === 'object') {
+    if (type === 'object' || type === 'array') {
       return (
         <div>
           <div>自定义属性</div>
@@ -27,6 +27,13 @@ const Detail = (props: Props) => {
               />
             }
           </div>
+        </div>
+      );
+    } else if (type === 'file') {
+      return (
+        <div>
+          <div>自定义属性</div>
+          <Input.TextArea value={value} rows={3} />
         </div>
       );
     } else {

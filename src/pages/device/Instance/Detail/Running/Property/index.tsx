@@ -248,7 +248,7 @@ const Property = (props: Props) => {
           setVisible(false);
         }}
       />
-      <PropertyLog data={currentInfo} visible={infoVisible} close={() => setInfoVisible(false)} />
+      {infoVisible && <PropertyLog data={currentInfo} close={() => setInfoVisible(false)} />}
     </div>
   );
 };

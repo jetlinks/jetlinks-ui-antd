@@ -318,7 +318,7 @@ const Detail = observer(() => {
         <Row gutter={24}>
           <Col span={14}>
             <TitleComponent data={'基本信息'} />
-            <Form form={form} layout="vertical" onAutoSubmit={console.log}>
+            <Form form={form} layout="vertical">
               <SchemaField
                 schema={schema}
                 scope={{
