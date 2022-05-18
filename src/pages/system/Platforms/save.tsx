@@ -14,7 +14,7 @@ import {
   TreeSelect,
 } from '@formily/antd';
 import { message, Modal } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ISchema } from '@formily/json-schema';
@@ -77,7 +77,9 @@ export default (props: SaveProps) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.data || { oath2: true, id: randomString() },
+        initialValues: props.data
+          ? { ...props.data, confirm_password: props.data.password }
+          : { enableOAuth2: true, id: randomString() },
       }),
     [props.data],
   );
@@ -184,7 +186,9 @@ export default (props: SaveProps) => {
             'x-component': 'Password',
             'x-component-props': {
               placeholder: '请输入密码',
+              checkStrength: true,
             },
+            'x-visible': !props.data,
             'x-decorator-props': {
               gridSpan: 1,
             },
@@ -201,8 +205,26 @@ export default (props: SaveProps) => {
             ],
             'x-validator': [
               {
-                max: 64,
-                message: '最多可输入64个字符',
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    service
+                      .validateField('password', value)
+                      .then((resp) => {
+                        if (resp.status === 200) {
+                          if (resp.result.passed) {
+                            resolve('');
+                          } else {
+                            resolve(resp.result.reason);
+                          }
+                        }
+                        resolve('');
+                      })
+                      .catch(() => {
+                        return '验证失败!';
+                      });
+                  });
+                },
               },
               {
                 required: true,
@@ -218,7 +240,9 @@ export default (props: SaveProps) => {
             'x-component': 'Password',
             'x-component-props': {
               placeholder: '请再次输入密码',
+              checkStrength: true,
             },
+            'x-visible': !props.data,
             'x-decorator-props': {
               gridSpan: 1,
             },
@@ -379,13 +403,13 @@ export default (props: SaveProps) => {
     }
   };
 
-  const saveData = async () => {
+  const saveData = useCallback(async () => {
     // setLoading(true)
     const data: any = await form.submit();
     console.log(data);
     if (data) {
       setLoading(true);
-      const resp = data.id ? await service.update(data) : await service.save(data);
+      const resp: any = props.data ? await service.update(data) : await service.save(data);
       setLoading(false);
       if (resp.status === 200) {
         if (props.onReload) {
@@ -395,7 +419,7 @@ export default (props: SaveProps) => {
         message.success('操作成功');
       }
     }
-  };
+  }, [props.data]);
 
   return (
     <Modal
