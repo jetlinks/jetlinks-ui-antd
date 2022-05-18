@@ -178,6 +178,14 @@ const TriggerTerm = (props: Props, ref: any) => {
                     };
                   }
                 });
+                form1.setFieldState(field.query('.value2'), (state) => {
+                  state.componentType = valueTypeMap[valueType];
+                  if (valueType === 'date') {
+                    state.componentProps = {
+                      showTime: true,
+                    };
+                  }
+                });
               } else if (source === 'metrics') {
                 // 指标
                 form1.setFieldState(value, (state) => {
@@ -224,6 +232,9 @@ const TriggerTerm = (props: Props, ref: any) => {
         type: 'array',
         'x-component': 'FTermArrayCards',
         'x-decorator': 'FormItem',
+        'x-value': {
+          termType: 'and',
+        },
         'x-component-props': {
           title: '分组',
         },
@@ -323,11 +334,55 @@ const TriggerTerm = (props: Props, ref: any) => {
                               },
                             },
                             required: true,
+                            'x-reactions': [
+                              {
+                                dependencies: ['.source'],
+                                fulfill: {
+                                  state: {
+                                    visible: '{{$deps[0]==="manual"}}',
+                                  },
+                                },
+                              },
+                              {
+                                dependencies: ['..termType'],
+                                when: '{{["nbtw","btw"].includes($deps[0])}}',
+                                fulfill: {
+                                  state: {
+                                    decoratorProps: {
+                                      style: {
+                                        width: 'calc(50% - 55px)',
+                                      },
+                                    },
+                                  },
+                                },
+                                otherwise: {
+                                  state: {
+                                    decoratorProps: {
+                                      style: {
+                                        width: 'calc(100% - 110px)',
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            ],
+                          },
+                          value2: {
+                            type: 'string',
+                            'x-component': 'Input',
+                            'x-decorator': 'FormItem',
+                            'x-decorator-props': {
+                              style: {
+                                width: 'calc(50% - 55px)',
+                              },
+                            },
+                            required: true,
                             'x-reactions': {
-                              dependencies: ['.source'],
+                              dependencies: ['.source', '..termType'],
                               fulfill: {
                                 state: {
-                                  visible: '{{$deps[0]==="manual"}}',
+                                  visible:
+                                    '{{$deps[0]==="manual"&&["nbtw","btw"].includes($deps[1])}}',
                                 },
                               },
                             },

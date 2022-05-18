@@ -109,7 +109,7 @@ export const FTermArrayCards: ComposedArrayCards = observer((props) => {
                               width: 100,
                             },
                           },
-                          default: 'and',
+                          'x-value': 'and',
                           enum: [
                             { label: '并且', value: 'and' },
                             { label: '或者', value: 'or' },
