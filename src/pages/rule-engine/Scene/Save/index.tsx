@@ -211,11 +211,7 @@ export default () => {
           onValuesChange={(changeValue, allValues) => {
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
-                if (
-                  changeValue.trigger.device.selectorValues ||
-                  (changeValue.trigger.device.operation &&
-                    changeValue.trigger.device.operation.operator)
-                ) {
+                if (changeValue.trigger.device.productId) {
                   setTriggerValue([]);
                   setRequestParams({ trigger: allValues.trigger });
                 }
