@@ -2,22 +2,31 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { BadgeStatus, PermissionButton } from '@/components';
+import { useIntl, useHistory } from 'umi';
+import { BadgeStatus, PermissionButton, AIcon } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SaveModal from './save';
 import PasswordModal from './password';
 import Service from './service';
 import { message } from 'antd';
+import { getMenuPathByCode } from '@/utils/menu';
 
 export const service = new Service('api-client');
 
 export default () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
+  const history = useHistory();
   const [param, setParam] = useState({});
+  const [saveType, setSaveType] = useState<'save' | 'edit'>('save');
   const [saveVisible, setSaveVisible] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [editData, setEditData] = useState<any | undefined>(undefined);
@@ -41,10 +50,14 @@ export default () => {
       dataIndex: 'username',
       title: '用户名',
     },
-    {
-      dataIndex: 'roleIdList',
-      title: '角色',
-    },
+    // {
+    //   dataIndex: 'roleIdList',
+    //   title: '角色',
+    //   renderText: (record => {
+    //     console.log(record);
+    //     return ''
+    //   })
+    // },
     {
       dataIndex: 'state',
       title: intl.formatMessage({
@@ -60,7 +73,7 @@ export default () => {
             text={record.text}
             statusNames={{
               enabled: StatusColorEnum.processing,
-              disable: StatusColorEnum.error,
+              disabled: StatusColorEnum.error,
             }}
           />
         ) : (
@@ -106,6 +119,7 @@ export default () => {
             }),
           }}
           onClick={() => {
+            setSaveType('edit');
             setSaveVisible(true);
             setEditData(record);
           }}
@@ -116,30 +130,37 @@ export default () => {
           key={'empowerment'}
           type={'link'}
           style={{ padding: 0 }}
-          isPermission={permission.update}
+          isPermission={permission.empowerment}
           tooltip={{
             title: '赋权',
           }}
-          onClick={() => {}}
+          onClick={() => {
+            const url = getMenuPathByCode('system/Platforms/Api');
+            history.push(`${url}?code=${record.id}`);
+          }}
         >
-          <EditOutlined />
+          <AIcon type={'icon-fuquan'} />
         </PermissionButton>,
         <PermissionButton
           key={'api'}
           type={'link'}
           style={{ padding: 0 }}
+          isPermission={true}
           tooltip={{
             title: '查看API',
           }}
-          onClick={() => {}}
+          onClick={() => {
+            const url = getMenuPathByCode('system/Platforms/View');
+            history.push(`${url}?code=${record.id}`);
+          }}
         >
-          <EditOutlined />
+          <AIcon type={'icon-chakanAPI'} />
         </PermissionButton>,
         <PermissionButton
           key={'password'}
           type={'link'}
           style={{ padding: 0 }}
-          isPermission={permission.action}
+          isPermission={permission.update}
           tooltip={{
             title: '重置密码',
           }}
@@ -148,7 +169,56 @@ export default () => {
             setPasswordVisible(true);
           }}
         >
-          <EditOutlined />
+          <AIcon type={'icon-zhongzhimima'} />
+        </PermissionButton>,
+        <PermissionButton
+          key={'state'}
+          type={'link'}
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${
+                record.state.value !== 'disabled' ? 'disabled' : 'enabled'
+              }.tips`,
+              defaultMessage: '确认禁用？',
+            }),
+            onConfirm: () => {
+              if (record.state.value !== 'disabled') {
+                service.undeploy(record.id).then((resp: any) => {
+                  if (resp.status === 200) {
+                    message.success(
+                      intl.formatMessage({
+                        id: 'pages.data.option.success',
+                        defaultMessage: '操作成功!',
+                      }),
+                    );
+                    actionRef.current?.reload();
+                  }
+                });
+              } else {
+                service.deploy(record.id).then((resp: any) => {
+                  if (resp.status === 200) {
+                    message.success(
+                      intl.formatMessage({
+                        id: 'pages.data.option.success',
+                        defaultMessage: '操作成功!',
+                      }),
+                    );
+                    actionRef.current?.reload();
+                  }
+                });
+              }
+            },
+          }}
+          isPermission={permission.action}
+          tooltip={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.state.value !== 'disabled' ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state.value !== 'disabled' ? '禁用' : '启用',
+            }),
+          }}
+        >
+          {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           key={'delete'}
@@ -198,6 +268,7 @@ export default () => {
             type="primary"
             isPermission={permission.add}
             onClick={() => {
+              setSaveType('save');
               setSaveVisible(true);
             }}
             icon={<PlusOutlined />}
@@ -212,6 +283,7 @@ export default () => {
       <SaveModal
         visible={saveVisible}
         data={editData}
+        type={saveType}
         onCancel={() => {
           setSaveVisible(false);
           setEditData(undefined);
