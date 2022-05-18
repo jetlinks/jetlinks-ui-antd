@@ -60,6 +60,7 @@ export default () => {
 
   const [requestParams, setRequestParams] = useState<any>(undefined);
   const [triggerValue, setTriggerValue] = useState<any>([]);
+  const [triggerDatas, setTriggerDatas] = useState<any>({});
   const [actionParams, setActionParams] = useState<any>(undefined);
 
   const [actionsData, setActionsData] = useState<any[]>([]);
@@ -76,6 +77,7 @@ export default () => {
         setParallel(_data.parallel);
 
         setTriggerValue({ trigger: _data.terms || [] });
+        setTriggerDatas(_data.terms);
         if (_data.trigger?.shakeLimit) {
           setShakeLimit(_data.trigger?.shakeLimit || DefaultShakeLimit);
         }
@@ -214,6 +216,12 @@ export default () => {
                 if (changeValue.trigger.device.productId) {
                   setTriggerValue([]);
                   setRequestParams({ trigger: allValues.trigger });
+                } else if (
+                  changeValue.trigger.device.selectorValues ||
+                  (changeValue.trigger.device.operation &&
+                    changeValue.trigger.device.operation.operator)
+                ) {
+                  setTriggerDatas(allValues.trigger);
                 }
               } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
                 setActionParams({ trigger: allValues.trigger });
@@ -317,11 +325,7 @@ export default () => {
               // >
               //   <TriggerDevice className={'trigger-type-content'} />
               // </Form.Item>
-              <TriggerDevice
-                value={requestParams && requestParams.trigger}
-                className={'trigger-type-content'}
-                form={form}
-              />
+              <TriggerDevice value={triggerDatas} className={'trigger-type-content'} form={form} />
             )}
           </Form.Item>
           {triggerType === TriggerWayType.device &&

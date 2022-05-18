@@ -25,12 +25,22 @@ export default (props: OperatorProps) => {
       if (props.propertiesList) {
         return _key.map((item) => {
           const proItem = props.propertiesList!.find((a: any) => a.id === item);
+          if (proItem) {
+            return {
+              id: proItem.id,
+              name: proItem.name,
+              type: proItem.valueType ? proItem.valueType.type : '-',
+              format: proItem.valueType ? proItem.valueType.format : undefined,
+              options: proItem.valueType ? proItem.valueType.elements : undefined,
+              value: value[item],
+            };
+          }
           return {
-            id: proItem.id,
-            name: proItem.name,
-            type: proItem.valueType ? proItem.valueType.type : '-',
-            format: proItem.valueType ? proItem.valueType.format : undefined,
-            options: proItem.valueType ? proItem.valueType.elements : undefined,
+            id: item,
+            name: item,
+            type: '',
+            format: undefined,
+            options: undefined,
             value: value[item],
           };
         });
