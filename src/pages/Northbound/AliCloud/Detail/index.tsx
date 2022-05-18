@@ -58,7 +58,7 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
-    if (params.id) {
+    if (params.id && params.id !== ':id') {
       service.detail(params.id).then((resp) => {
         if (resp.status === 200) {
           form.setValues(resp.result);
@@ -318,7 +318,7 @@ const Detail = observer(() => {
         <Row gutter={24}>
           <Col span={14}>
             <TitleComponent data={'基本信息'} />
-            <Form form={form} layout="vertical" onAutoSubmit={console.log}>
+            <Form form={form} layout="vertical">
               <SchemaField
                 schema={schema}
                 scope={{

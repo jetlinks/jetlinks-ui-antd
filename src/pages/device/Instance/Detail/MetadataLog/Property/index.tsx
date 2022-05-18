@@ -1,16 +1,6 @@
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
-import {
-  DatePicker,
-  Modal,
-  Popconfirm,
-  Radio,
-  Select,
-  Space,
-  Table,
-  Tabs,
-  Tooltip as ATooltip,
-} from 'antd';
+import { DatePicker, Modal, Radio, Select, Space, Table, Tabs, Tooltip as ATooltip } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
@@ -22,14 +12,13 @@ import Detail from './Detail';
 import AMap from './AMap';
 
 interface Props {
-  visible: boolean;
   close: () => void;
   data: Partial<PropertyMetadata>;
 }
 
 const PropertyLog = (props: Props) => {
   const params = useParams<{ id: string }>();
-  const { visible, close, data } = props;
+  const { close, data } = props;
   const list = ['int', 'float', 'double', 'long'];
   const [dataSource, setDataSource] = useState<any>({});
   const [start, setStart] = useState<number>(moment().startOf('day').valueOf());
@@ -45,19 +34,21 @@ const PropertyLog = (props: Props) => {
   const [detailVisible, setDetailVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>('');
 
-  const [geoList, setGeoList] = useState<any[]>([]);
+  const [geoList, setGeoList] = useState<any>({});
 
   const columns = [
     {
       title: '时间',
       dataIndex: 'timestamp',
       key: 'timestamp',
+      ellipsis: true,
       render: (text: any) => <span>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</span>,
     },
     {
       title: <span>{data.valueType?.type !== 'file' ? '自定义属性' : '文件内容'}</span>,
       dataIndex: 'value',
       key: 'value',
+      ellipsis: true,
       render: (text: any, record: any) => (
         <FileComponent type="table" value={{ formatValue: record.value }} data={data} />
       ),
@@ -68,22 +59,15 @@ const PropertyLog = (props: Props) => {
       key: 'action',
       render: (text: any, record: any) => (
         <a>
-          {data.valueType?.type !== 'file' ? (
-            <SearchOutlined
-              onClick={() => {
-                setDetailVisible(true);
-                setCurrent(record.value);
-              }}
-            />
-          ) : (
+          {data.valueType?.type === 'file' && data?.valueType?.fileType == 'url' ? (
             <ATooltip title="下载">
-              <Popconfirm
-                title="确认修改"
-                onConfirm={() => {
+              <DownloadOutlined
+                onClick={() => {
                   const type = (record?.value || '').split('.').pop();
                   const downloadUrl = record.value;
                   const downNode = document.createElement('a');
                   downNode.href = downloadUrl;
+                  downNode.target = '_blank';
                   downNode.download = `${InstanceModel.detail.name}-${data.name}${moment(
                     new Date().getTime(),
                   ).format('YYYY-MM-DD-HH-mm-ss')}.${type}`;
@@ -92,10 +76,15 @@ const PropertyLog = (props: Props) => {
                   downNode.click();
                   document.body.removeChild(downNode);
                 }}
-              >
-                <DownloadOutlined />
-              </Popconfirm>
+              />
             </ATooltip>
+          ) : (
+            <SearchOutlined
+              onClick={() => {
+                setDetailVisible(true);
+                setCurrent(record.value);
+              }}
+            />
           )}
         </a>
       ),
@@ -190,23 +179,18 @@ const PropertyLog = (props: Props) => {
   };
 
   useEffect(() => {
-    if (visible) {
-      handleSearch(
-        {
-          pageSize: 10,
-          pageIndex: 0,
-        },
-        start,
-        new Date().getTime(),
-      );
-    }
-  }, [visible]);
+    setRadioValue('today');
+    setTab('table');
+    setStart(moment().startOf('day').valueOf());
+    setEnd(new Date().getTime());
+  }, []);
 
   const scale = {
     value: { min: 0 },
     year: {
-      range: [0, 0.96],
+      range: [0, 1],
       type: 'timeCat',
+      mask: 'YYYY-MM-DD HH:mm:ss',
     },
   };
 
@@ -358,15 +342,62 @@ const PropertyLog = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (tab === 'table') {
+      handleSearch(
+        {
+          pageSize: 10,
+          pageIndex: 0,
+        },
+        start,
+        end,
+      );
+    } else if (tab === 'charts') {
+      if (list.includes(data.valueType?.type || '')) {
+        queryChartsList(start, end);
+      } else {
+        queryChartsAggList({
+          columns: [
+            {
+              property: data.id,
+              alias: data.id,
+              agg,
+            },
+          ],
+          query: {
+            interval: cycle,
+            format: 'yyyy-MM-dd HH:mm:ss',
+            from: start,
+            to: end,
+          },
+        });
+      }
+    } else if (tab === 'geo') {
+      service
+        .getPropertyData(
+          params.id,
+          encodeQuery({
+            paging: false,
+            terms: { property: data?.id, timestamp$BTW: start && start ? [start, end] : [] },
+            sorts: { timestamp: 'asc' },
+          }),
+        )
+        .then((resp) => {
+          if (resp.status === 200) {
+            setGeoList(resp.result);
+          }
+        });
+    }
+  }, [start, end]);
+
   // @ts-ignore
   return (
     <Modal
       maskClosable={false}
       title="详情"
-      visible={visible}
+      visible
       onCancel={() => close()}
       onOk={() => close()}
-      destroyOnClose={true}
       width="50vw"
     >
       <div style={{ marginBottom: '20px' }}>
@@ -389,36 +420,6 @@ const PropertyLog = (props: Props) => {
               setDateValue(undefined);
               setStart(st);
               setEnd(et);
-              if (tab === 'charts') {
-                if (list.includes(data.valueType?.type || '')) {
-                  queryChartsList(st, et);
-                } else {
-                  queryChartsAggList({
-                    columns: [
-                      {
-                        property: data.id,
-                        alias: data.id,
-                        agg,
-                      },
-                    ],
-                    query: {
-                      interval: cycle,
-                      format: 'yyyy-MM-dd HH:mm:ss',
-                      from: st,
-                      to: et,
-                    },
-                  });
-                }
-              } else {
-                handleSearch(
-                  {
-                    pageSize: 10,
-                    pageIndex: 0,
-                  },
-                  st,
-                  et,
-                );
-              }
             }}
             style={{ minWidth: 220 }}
           >
@@ -439,14 +440,6 @@ const PropertyLog = (props: Props) => {
                   const et = dates[1]?.valueOf();
                   setStart(st);
                   setEnd(et);
-                  handleSearch(
-                    {
-                      pageSize: 10,
-                      pageIndex: 0,
-                    },
-                    st,
-                    et,
-                  );
                 }
               }}
             />
@@ -487,7 +480,7 @@ const PropertyLog = (props: Props) => {
                 encodeQuery({
                   paging: false,
                   terms: { property: data.id, timestamp$BTW: start && end ? [start, end] : [] },
-                  sorts: { timestamp: 'desc' },
+                  sorts: { timestamp: 'asc' },
                 }),
               )
               .then((resp) => {
@@ -495,6 +488,16 @@ const PropertyLog = (props: Props) => {
                   setGeoList(resp.result);
                 }
               });
+          }
+          if (key === 'table') {
+            handleSearch(
+              {
+                pageSize: 10,
+                pageIndex: 0,
+              },
+              start,
+              end,
+            );
           }
         }}
       >
@@ -505,7 +508,7 @@ const PropertyLog = (props: Props) => {
         ))}
         {data?.valueType?.type === 'geoPoint' && (
           <Tabs.TabPane tab="轨迹" key="geo">
-            <AMap value={geoList} name={data.name} />
+            <AMap value={geoList} name={data?.name || ''} />
           </Tabs.TabPane>
         )}
       </Tabs>

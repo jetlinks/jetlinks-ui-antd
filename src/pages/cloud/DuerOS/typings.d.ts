@@ -31,7 +31,10 @@ type DuerOSItem = {
   version: number;
   manufacturerName: string;
   autoReportProperty: boolean;
-  applianceType: string;
+  applianceType: {
+    text: string;
+    value: string;
+  };
   actionMappings: ActionMapping[];
   propertyMappings: PropertyMapping[];
 } & BaseItem;

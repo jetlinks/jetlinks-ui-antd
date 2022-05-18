@@ -15,7 +15,7 @@ const createImageLabel = (image: string, text: string) => {
   );
 };
 const weixinCorp = require('/public/images/notice/weixin-corp.png');
-const weixinOfficial = require('/public/images/notice/weixin-official.png');
+// const weixinOfficial = require('/public/images/notice/weixin-official.png');
 const dingTalkMessage = require('/public/images/notice/dingTalk-message.png');
 const dingTalkRebot = require('/public/images/notice/dingTalk-rebot.png');
 const sms = require('/public/images/notice/sms.png');
@@ -28,10 +28,10 @@ export const typeList = {
       label: createImageLabel(weixinCorp, '企业消息'),
       value: 'corpMessage',
     },
-    {
-      label: createImageLabel(weixinOfficial, '服务号消息'),
-      value: 'officialMessage',
-    },
+    // {
+    //   label: createImageLabel(weixinOfficial, '服务号消息'),
+    //   value: 'officialMessage',
+    // },
   ],
   dingTalk: [
     {

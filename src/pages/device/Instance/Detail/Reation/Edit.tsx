@@ -112,6 +112,7 @@ const Edit = (props: Props) => {
       obj[item.relation] = [...(item?.related || []).map((i: any) => JSON.stringify(i))];
     });
     setInitData(obj);
+    form.setValues(obj);
   }, [props.data]);
 
   return (
