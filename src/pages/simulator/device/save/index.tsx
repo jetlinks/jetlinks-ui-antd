@@ -33,13 +33,13 @@ const AceComponent = (props: any) => (
             // props.mutators.change(value)
         }}
         wrapEnabled
-        highlightActiveLine  //突出活动线
-        enableSnippets  //启用代码段
+        highlightActiveLine  // 突出活动线
+        enableSnippets  // 启用代码段
         style={{ width: '100%', height: 300 }}
         setOptions={{
-            enableBasicAutocompletion: true,   //启用基本自动完成功能
-            enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
-            enableSnippets: true,  //启用代码段
+            enableBasicAutocompletion: true,   // 启用基本自动完成功能
+            enableLiveAutocompletion: true,   // 启用实时自动完成功能 （比如：智能代码提示）
+            enableSnippets: true,  // 启用代码段
             showLineNumbers: true,
             tabSize: 2,
         }}
@@ -50,17 +50,14 @@ const actions = createFormActions();
 
 const Save: React.FC<Props> = props => {
     const service = new Service('network/simulator');
-    const [list, setList] = useState<any[]>([
-        { "label": "自动重连", "value": "auto-reconnect" },
-        { "label": "脚本", "value": "jsr223" }
-    ])
+    const [list, setList] = useState<any[]>([])
     const [networkList, setNetworkList] = useState<any[]>([])
 
     const { onFieldValueChange$ } = FormEffectHooks;
     const changeNetworkTypeEffects = () => {
         const { setFieldState } = actions;
 
-        onFieldValueChange$('networkType').subscribe(({ value }) => {
+        onFieldValueChange$('networkType').subscribe(({ value, modified, pristine }) => {
             if (value === 'coap_client') {
                 setList([{ "label": "脚本", "value": "jsr223" }])
             } else {
@@ -88,6 +85,12 @@ const Save: React.FC<Props> = props => {
                 state => {
                     state.visible = value === 'coap_client'
                 });
+            if (modified && !pristine) {
+                setFieldState(`*(listeners)`,
+                    state => {
+                        state.value = []
+                    });
+            }
         });
 
         onFieldValueChange$('networkConfiguration.enableDtls').subscribe(({ value }) => {
@@ -504,8 +507,8 @@ listener.onAfter(function (session) {
         }
     };
     const save = (data: any) => {
-        const params = {...data}
-        if(params.certId1){
+        const params = { ...data }
+        if (params.certId1) {
             params.certId = params.certId1
         }
         delete params.certId1
@@ -516,7 +519,7 @@ listener.onAfter(function (session) {
     };
 
     useEffect(() => {
-        service.listNoPaging({paging: false}).subscribe(resp => {
+        service.listNoPaging({ paging: false }).subscribe(resp => {
             const network = (resp?.result || []).map((item: any) => {
                 return {
                     label: item.name,
