@@ -65,12 +65,12 @@ const InfoEdit = (props: Props) => {
         <Row gutter={[24, 24]}>
           <Col span={12}>
             <Form.Item label="角色" name="role">
-              <Input placeholder="请输入姓名" disabled />
+              <Input placeholder="请输入角色" disabled />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="部门" name="org">
-              <Input placeholder="请输入用户名" disabled />
+              <Input placeholder="请输入部门" disabled />
             </Form.Item>
           </Col>
         </Row>

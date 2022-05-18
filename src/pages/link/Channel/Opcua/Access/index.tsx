@@ -240,7 +240,7 @@ const Access = () => {
             onChange={(e) => {
               setDeviceId(e);
               const items = bindList.find((item: any) => item.deviceId === e);
-              setProductId(items[0].productId);
+              setProductId(items[0]?.productId);
               setParam({
                 terms: [{ column: 'deviceId', value: e }],
               });

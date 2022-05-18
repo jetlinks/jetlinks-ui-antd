@@ -48,7 +48,7 @@ const Access = () => {
     },
     {
       title: '读取起始位置',
-      dataIndex: 'address',
+      render: (record: any) => <>{record.codecConfig?.readIndex}</>,
     },
     {
       title: '读取长度',
@@ -243,7 +243,7 @@ const Access = () => {
             onChange={(e) => {
               setDeviceId(e);
               const items = bindList.find((item: any) => item.id === e);
-              setProductId(items[0].productId);
+              setProductId(items[0]?.productId);
               setParam({
                 terms: [{ column: 'deviceId', value: e }],
               });
@@ -298,15 +298,14 @@ const Access = () => {
                       </PermissionButton>
                       <div style={{ marginLeft: 10 }}>
                         <Input.Search
-                          placeholder="请输入属性"
+                          placeholder="请输入属性ID"
                           allowClear
                           onSearch={(value) => {
                             console.log(value);
                             if (value) {
                               setParam({
                                 terms: [
-                                  { column: 'deviceId', value: deviceId },
-                                  { column: 'property', value: `%${value}%`, termType: 'like' },
+                                  { column: 'metadataId', value: `%${value}%`, termType: 'like' },
                                 ],
                               });
                             } else {
