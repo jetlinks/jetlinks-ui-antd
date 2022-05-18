@@ -193,8 +193,8 @@ export default (props: TimingTrigger) => {
                 <TimePicker.RangePicker
                   format={'HH:mm:ss'}
                   value={[
-                    moment(data.period?.from, 'HH:mm:ss'),
-                    moment(data.period?.to, 'hh:mm:ss'),
+                    moment(data.period?.from || new Date(), 'HH:mm:ss'),
+                    moment(data.period?.to || new Date(), 'hh:mm:ss'),
                   ]}
                   onChange={(_, dateString) => {
                     onChange({
@@ -210,7 +210,7 @@ export default (props: TimingTrigger) => {
               ) : (
                 <TimePicker
                   format={'HH:mm:ss'}
-                  value={moment(data.once?.time, 'HH:mm:ss')}
+                  value={moment(data.once?.time || new Date(), 'HH:mm:ss')}
                   onChange={(_, dateString) => {
                     onChange({
                       ...data,

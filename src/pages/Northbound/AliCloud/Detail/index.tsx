@@ -240,21 +240,25 @@ const Detail = observer(() => {
         type: 'array',
         required: true,
         'x-component': 'ArrayCollapse',
-        title: '产品映射',
+        'x-decorator': 'FormItem',
         items: {
           type: 'object',
-          required: true,
           'x-component': 'ArrayCollapse.CollapsePanel',
           'x-component-props': {
             header: '产品映射',
           },
           properties: {
-            grid: {
+            index: {
               type: 'void',
-              'x-component': 'FormGrid',
-              'x-component-props': {
-                minColumns: [24],
-                maxColumns: [24],
+              'x-component': 'ArrayCollapse.Index',
+            },
+            layout: {
+              type: 'void',
+              'x-decorator': 'FormGrid',
+              'x-decorator-props': {
+                maxColumns: 2,
+                minColumns: 2,
+                columnGap: 24,
               },
               properties: {
                 type: 'object',
@@ -271,7 +275,8 @@ const Detail = observer(() => {
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
                   'x-decorator-props': {
-                    gridSpan: 12,
+                    layout: 'vertical',
+                    labelAlign: 'left',
                     tooltip: '阿里云物联网平台产品标识',
                   },
                   'x-reactions': ['{{useAsyncDataSource(queryAliyunProductList)}}'],
@@ -289,7 +294,8 @@ const Detail = observer(() => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   'x-decorator-props': {
-                    gridSpan: 12,
+                    layout: 'vertical',
+                    labelAlign: 'left',
                   },
                   'x-component-props': {
                     placeholder: '请选择平台产品',
