@@ -104,14 +104,20 @@ const SyncUser = observer(() => {
   /**
    * 获取部门列表
    */
-  const getDepartment = async () => {
+  const getDepartment = async (name?: string) => {
     if (state.current?.id) {
       if (id === 'dingTalk') {
         service.syncUser
           .dingTalkDept(state.current?.id)
           .then((resp) => {
             if (resp.status === 200) {
-              setTreeData(resp.result);
+              let _data = resp.result;
+              if (name) {
+                _data = resp.result?.filter(
+                  (item: { id: string; name: string }) => item.name.indexOf(name) > -1,
+                );
+              }
+              setTreeData(_data);
               setDept(resp.result[0].id);
             }
           })
@@ -121,7 +127,13 @@ const SyncUser = observer(() => {
           .wechatDept(state.current?.id)
           .then((resp) => {
             if (resp.status === 200) {
-              setTreeData(resp.result);
+              let __data = resp.result;
+              if (name) {
+                __data = resp.result?.filter(
+                  (item: { id: string; name: string }) => item.name.indexOf(name) > -1,
+                );
+              }
+              setTreeData(__data);
               setDept(resp.result[0].id);
             }
           })
@@ -149,7 +161,11 @@ const SyncUser = observer(() => {
         <Row>
           <Col span={4}>
             <div style={{ borderRight: 'lightgray 1px solid', padding: '2px', height: '600px' }}>
-              <Input.Search style={{ marginBottom: 8 }} placeholder="请输入部门名称" />
+              <Input.Search
+                onSearch={(value) => getDepartment(value)}
+                style={{ marginBottom: 8 }}
+                placeholder="请输入部门名称"
+              />
               <Tree
                 fieldNames={{
                   title: 'name',

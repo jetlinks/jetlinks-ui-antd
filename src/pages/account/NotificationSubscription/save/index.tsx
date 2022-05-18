@@ -1,6 +1,6 @@
 import { message, Modal } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { Form, FormGrid, FormItem, Input, Select, Checkbox } from '@formily/antd';
+import { Checkbox, Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';

@@ -140,29 +140,34 @@ export const request: RequestConfig = {
       return;
     }
     if (response.status === 400 || response.status === 500) {
-      response.text().then((resp: string) => {
-        if (resp) {
-          notification.error({
-            key: 'error',
-            message: JSON.parse(resp).message || '服务器内部错误！',
-          });
-        } else {
-          response
-            .json()
-            .then((res: any) => {
-              notification.error({
-                key: 'error',
-                message: `请求错误：${res.message}`,
-              });
-            })
-            .catch(() => {
-              notification.error({
-                key: 'error',
-                message: '系统错误',
-              });
+      // 添加clone() 避免后续其它地方用response.text()时报错
+      response
+        .clone()
+        .text()
+        .then((resp: string) => {
+          if (resp) {
+            notification.error({
+              key: 'error',
+              message: JSON.parse(resp).message || '服务器内部错误！',
             });
-        }
-      });
+          } else {
+            response
+              .clone()
+              .json()
+              .then((res: any) => {
+                notification.error({
+                  key: 'error',
+                  message: `请求错误：${res.message}`,
+                });
+              })
+              .catch(() => {
+                notification.error({
+                  key: 'error',
+                  message: '系统错误',
+                });
+              });
+          }
+        });
       return response;
     }
     if (!response) {

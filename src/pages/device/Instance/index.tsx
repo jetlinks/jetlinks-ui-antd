@@ -124,19 +124,32 @@ const Instance = () => {
           }.tips`,
           defaultMessage: '确认禁用？',
         }),
-        onConfirm: async () => {
+        onConfirm: () => {
           if (record.state.value !== 'notActive') {
-            await service.undeployDevice(record.id);
+            service.undeployDevice(record.id).then((resp: any) => {
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            });
           } else {
-            await service.deployDevice(record.id);
+            service.deployDevice(record.id).then((resp: any) => {
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            });
           }
-          message.success(
-            intl.formatMessage({
-              id: 'pages.data.option.success',
-              defaultMessage: '操作成功!',
-            }),
-          );
-          actionRef.current?.reload();
         },
       }}
       isPermission={permission.action}

@@ -121,6 +121,8 @@ export enum MENUS_CODE {
   'Northbound/AliCloud' = 'Northbound/AliCloud',
   'Northbound/AliCloud/Detail' = 'Northbound/AliCloud/Detail',
   'system/Platforms' = 'system/Platforms',
+  'system/Platforms/Api' = 'system/Platforms/Api',
+  'system/Platforms/View' = 'system/Platforms/View',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;
@@ -142,6 +144,7 @@ export enum BUTTON_PERMISSION_ENUM {
   'debug' = 'debug',
   'log' = 'log',
   'tigger' = 'tigger',
+  'empowerment' = 'empowerment',
 }
 
 // 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥

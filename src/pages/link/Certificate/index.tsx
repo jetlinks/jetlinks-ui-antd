@@ -1,11 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { message } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
-import ProTable from '@jetlinks/pro-table';
 import PermissionButton from '@/components/PermissionButton';
 import usePermissions from '@/hooks/permission';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
