@@ -1,5 +1,5 @@
 import LivePlayer from '@/components/Player';
-import { Image, Modal } from 'antd';
+import { Modal, Image } from 'antd';
 
 interface Props {
   close: () => void;
