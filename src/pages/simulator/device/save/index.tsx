@@ -544,7 +544,7 @@ listener.onAfter(function (session) {
                     changeNetworkTypeEffects()
                 }}
                 expressionScope={createRichTextUtils()}
-                initialValues={props.data}
+                initialValues={{...props.data, certId1: props.data?.certId }}
                 actions={actions}
                 onSubmit={v => save(v)}
                 components={{ DatePicker, Input, Select, AceComponent, ArrayPanels, NumberPicker, RadioGroup: Radio.Group }}
