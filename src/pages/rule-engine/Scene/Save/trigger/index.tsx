@@ -176,7 +176,7 @@ export default observer((props: TriggerProps) => {
               onChange={(key: any, node: any) => {
                 props.form?.resetFields([['trigger', 'device', 'selector']]);
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
-                props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
+                props.form?.resetFields([['trigger', 'device', 'operation']]);
                 productIdChange(key, node.metadata);
                 props.form?.setFieldsValue({
                   trigger: {
