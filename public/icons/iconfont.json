@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "29728797",
+      "name": "查看API",
+      "font_class": "chakanAPI",
+      "unicode": "e6af",
+      "unicode_decimal": 59055
+    },
+    {
+      "icon_id": "29728564",
+      "name": "赋权",
+      "font_class": "fuquan",
+      "unicode": "e689",
+      "unicode_decimal": 59017
+    },
+    {
+      "icon_id": "29728565",
+      "name": "重置密码",
+      "font_class": "zhongzhimima",
+      "unicode": "e69b",
+      "unicode_decimal": 59035
+    },
+    {
       "icon_id": "28953788",
       "name": "等高",
       "font_class": "denggao",

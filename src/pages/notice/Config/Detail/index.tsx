@@ -385,7 +385,7 @@ const Detail = observer(() => {
                     'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
                     'x-reactions': {
-                      dependencies: ['.enableSSL'],
+                      dependencies: ['.ssl'],
                       when: '{{$deps[0]}}',
                       fulfill: {
                         state: {
@@ -399,7 +399,7 @@ const Detail = observer(() => {
                       },
                     },
                   },
-                  enableSSL: {
+                  ssl: {
                     // title: '开启SSL',
                     type: 'boolean',
                     'x-component': 'Checkbox',

@@ -715,6 +715,20 @@ const Edit = observer((props: Props) => {
                         labelAlign: 'left',
                         layout: 'vertical',
                       },
+                      'x-validator': [
+                        {
+                          max: 64,
+                          message: '最多可输入64个字符',
+                        },
+                        {
+                          required: true,
+                          message: '请输入标识',
+                        },
+                        {
+                          validateId: true,
+                          message: 'ID只能由数字、26个英文字母或者下划线组成',
+                        },
+                      ],
                     },
                     name: {
                       // 名称

@@ -1,6 +1,6 @@
 import { message, Modal } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { Form, FormGrid, FormItem, Input, Select, Checkbox } from '@formily/antd';
+import { Checkbox, Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
@@ -65,6 +65,10 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               {
+                required: true,
+                message: '请输入名称',
+              },
+              {
                 max: 64,
                 message: '最多可输入64个字符',
               },
@@ -84,6 +88,12 @@ const Save = (props: Props) => {
               placeholder: '请选择类型',
             },
             'x-reactions': ['{{useAsyncDataSource(queryProvidersList)}}'],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择类型',
+              },
+            ],
           },
           'topicConfig.alarmConfigId': {
             title: '告警规则',
@@ -99,6 +109,12 @@ const Save = (props: Props) => {
               placeholder: '请选择告警规则',
             },
             'x-reactions': ['{{useAsyncDataSource(queryAlarmConfigList)}}'],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择告警规则',
+              },
+            ],
           },
           notice: {
             title: '通知方式',
@@ -127,6 +143,12 @@ const Save = (props: Props) => {
               labelAlign: 'left',
               layout: 'vertical',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择通知方式',
+              },
+            ],
           },
         },
       },

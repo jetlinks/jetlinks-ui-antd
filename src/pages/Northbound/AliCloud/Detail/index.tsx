@@ -134,6 +134,10 @@ const Detail = observer(() => {
             max: 64,
             message: '最多可输入64个字符',
           },
+          {
+            required: true,
+            message: '请输入名称',
+          },
         ],
       },
       accessConfig: {
@@ -155,6 +159,12 @@ const Detail = observer(() => {
               tooltip: '阿里云内部给每台机器设置的唯一编号',
             },
             'x-reactions': ['{{useAsyncDataSource(queryRegionsList)}}'],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择服务地址',
+              },
+            ],
           },
           accessKeyId: {
             type: 'string',
@@ -169,6 +179,10 @@ const Detail = observer(() => {
               {
                 max: 64,
                 message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                message: '请输入accessKey',
               },
             ],
             'x-decorator-props': {
@@ -185,6 +199,10 @@ const Detail = observer(() => {
               placeholder: '请输入accessSecret',
             },
             'x-validator': [
+              {
+                required: true,
+                message: '请输入accessSecret',
+              },
               {
                 max: 64,
                 message: '最多可输入64个字符',
@@ -211,26 +229,36 @@ const Detail = observer(() => {
         'x-decorator-props': {
           tooltip: '物联网平台对应的阿里云产品',
         },
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择网桥产品',
+          },
+        ],
       },
       mappings: {
         type: 'array',
         required: true,
         'x-component': 'ArrayCollapse',
-        title: '产品映射',
+        'x-decorator': 'FormItem',
         items: {
           type: 'object',
-          required: true,
           'x-component': 'ArrayCollapse.CollapsePanel',
           'x-component-props': {
             header: '产品映射',
           },
           properties: {
-            grid: {
+            index: {
               type: 'void',
-              'x-component': 'FormGrid',
-              'x-component-props': {
-                minColumns: [24],
-                maxColumns: [24],
+              'x-component': 'ArrayCollapse.Index',
+            },
+            layout: {
+              type: 'void',
+              'x-decorator': 'FormGrid',
+              'x-decorator-props': {
+                maxColumns: 2,
+                minColumns: 2,
+                columnGap: 24,
               },
               properties: {
                 type: 'object',
@@ -247,10 +275,17 @@ const Detail = observer(() => {
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
                   'x-decorator-props': {
-                    gridSpan: 12,
+                    layout: 'vertical',
+                    labelAlign: 'left',
                     tooltip: '阿里云物联网平台产品标识',
                   },
                   'x-reactions': ['{{useAsyncDataSource(queryAliyunProductList)}}'],
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请选择阿里云产品',
+                    },
+                  ],
                 },
                 productId: {
                   type: 'string',
@@ -259,7 +294,8 @@ const Detail = observer(() => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   'x-decorator-props': {
-                    gridSpan: 12,
+                    layout: 'vertical',
+                    labelAlign: 'left',
                   },
                   'x-component-props': {
                     placeholder: '请选择平台产品',
@@ -268,6 +304,12 @@ const Detail = observer(() => {
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
                   'x-reactions': ['{{useAsyncDataSource(queryProductList)}}'],
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请选择平台产品',
+                    },
+                  ],
                 },
               },
             },

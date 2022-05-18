@@ -64,7 +64,10 @@ const extraRouteObj = {
     children: [{ code: 'AMap', name: '地图' }],
   },
   'system/Platforms': {
-    children: [{ code: 'Api', name: '赋权' }],
+    children: [
+      { code: 'Api', name: '赋权' },
+      { code: 'View', name: 'Api详情' },
+    ],
   },
 };
 //额外路由

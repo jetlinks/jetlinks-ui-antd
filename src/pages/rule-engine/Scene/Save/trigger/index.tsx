@@ -142,6 +142,8 @@ export default observer((props: TriggerProps) => {
     getProducts();
   }, []);
 
+  console.log('triggerModel', FormModel);
+
   useEffect(() => {
     const triggerData = props.value;
     console.log('triggerData', triggerData);
@@ -174,7 +176,7 @@ export default observer((props: TriggerProps) => {
               onChange={(key: any, node: any) => {
                 props.form?.resetFields([['trigger', 'device', 'selector']]);
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
-                props.form?.resetFields([['trigger', 'device', 'operation', 'operator']]);
+                props.form?.resetFields([['trigger', 'device', 'operation']]);
                 productIdChange(key, node.metadata);
                 props.form?.setFieldsValue({
                   trigger: {
@@ -207,6 +209,7 @@ export default observer((props: TriggerProps) => {
                     ]}
                     // fieldNames={{ label: 'name', value: 'id' }}
                     onSelect={(key: string) => {
+                      props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                       setSelector(key);
                     }}
                     style={{ width: 120 }}
