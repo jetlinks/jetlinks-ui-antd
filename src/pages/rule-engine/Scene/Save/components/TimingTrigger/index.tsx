@@ -64,6 +64,8 @@ export default (props: TimingTrigger) => {
         when: [],
         period: {
           unit: 'seconds',
+          from: moment(new Date()).format('HH:mm:ss'),
+          to: moment(new Date()).format('HH:mm:ss'),
         },
       });
     } else {
@@ -81,8 +83,8 @@ export default (props: TimingTrigger) => {
           ...omit(data, 'once'),
           mod: key,
           period: {
-            from: undefined,
-            to: undefined,
+            from: moment(new Date()).format('HH:mm:ss'),
+            to: moment(new Date()).format('HH:mm:ss'),
             unit: 'seconds',
           },
         });
@@ -91,7 +93,7 @@ export default (props: TimingTrigger) => {
           ...omit(data, 'period'),
           mod: key,
           once: {
-            time: undefined,
+            time: moment(new Date()).format('HH:mm:ss'),
           },
         });
       }
@@ -190,11 +192,10 @@ export default (props: TimingTrigger) => {
               {data.mod === PeriodModEnum.period ? (
                 <TimePicker.RangePicker
                   format={'HH:mm:ss'}
-                  value={
-                    data.period?.from
-                      ? [moment(data.period?.from, 'HH:mm:ss'), moment(data.period?.to, 'hh:mm:ss')]
-                      : [moment(new Date(), 'HH:mm:ss'), moment(new Date(), 'HH:mm:ss')]
-                  }
+                  value={[
+                    moment(data.period?.from, 'HH:mm:ss'),
+                    moment(data.period?.to, 'hh:mm:ss'),
+                  ]}
                   onChange={(_, dateString) => {
                     onChange({
                       ...data,
@@ -209,7 +210,7 @@ export default (props: TimingTrigger) => {
               ) : (
                 <TimePicker
                   format={'HH:mm:ss'}
-                  value={moment(data.once?.time || new Date(), 'HH:mm:ss')}
+                  value={moment(data.once?.time, 'HH:mm:ss')}
                   onChange={(_, dateString) => {
                     onChange({
                       ...data,

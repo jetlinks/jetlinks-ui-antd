@@ -44,7 +44,10 @@ const AliCloud = () => {
               }
             : undefined
         }
-        onClick={() => {}}
+        onClick={() => {
+          const url = `${getMenuPathByParams(MENUS_CODE['Northbound/AliCloud/Detail'], record.id)}`;
+          history.push(url);
+        }}
       >
         <EditOutlined />
         {type !== 'table' &&
@@ -96,7 +99,20 @@ const AliCloud = () => {
         popConfirm={{
           title: '确认删除？',
           disabled: record.state.value === 'started',
-          onConfirm: () => {},
+          onConfirm: async () => {
+            if (record?.state?.value === 'disabled') {
+              await service.remove(record.id);
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            } else {
+              message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+            }
+          },
         }}
         tooltip={{
           title:
@@ -124,9 +140,12 @@ const AliCloud = () => {
     {
       title: '状态',
       dataIndex: 'state',
-      render: (text: any) => (
+      render: (text: any, record: any) => (
         <span>
-          <Badge status={text.value === 'disabled' ? 'error' : 'success'} text={text.text} />
+          <Badge
+            status={record?.state?.value === 'disabled' ? 'error' : 'success'}
+            text={record?.state?.text}
+          />
         </span>
       ),
       valueType: 'select',

@@ -20,6 +20,7 @@ export default () => {
   const [param, setParam] = useState({});
   const [saveVisible, setSaveVisible] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [editData, setEditData] = useState<any | undefined>(undefined);
 
   const { permission } = PermissionButton.usePermission('system/Platforms');
 
@@ -58,22 +59,21 @@ export default () => {
             status={record.value}
             text={record.text}
             statusNames={{
-              started: StatusColorEnum.processing,
+              enabled: StatusColorEnum.processing,
               disable: StatusColorEnum.error,
-              notActive: StatusColorEnum.warning,
             }}
           />
         ) : (
           ''
         ),
       valueEnum: {
-        disable: {
+        disabled: {
           text: '禁用',
-          status: 'offline',
+          status: 'disabled',
         },
-        started: {
+        enabled: {
           text: '正常',
-          status: 'started',
+          status: 'enabled',
         },
       },
     },
@@ -93,7 +93,7 @@ export default () => {
       valueType: 'option',
       align: 'center',
       width: 200,
-      render: (_, record) => [
+      render: (_, record: any) => [
         <PermissionButton
           key={'update'}
           type={'link'}
@@ -105,7 +105,10 @@ export default () => {
               defaultMessage: '编辑',
             }),
           }}
-          onClick={() => {}}
+          onClick={() => {
+            setSaveVisible(true);
+            setEditData(record);
+          }}
         >
           <EditOutlined />
         </PermissionButton>,
@@ -141,6 +144,7 @@ export default () => {
             title: '重置密码',
           }}
           onClick={() => {
+            setEditData({ id: record.userId });
             setPasswordVisible(true);
           }}
         >
@@ -187,6 +191,7 @@ export default () => {
         params={param}
         columns={columns}
         actionRef={actionRef}
+        request={(params: any) => service.query(params)}
         headerTitle={
           <PermissionButton
             key="button"
@@ -206,8 +211,10 @@ export default () => {
       />
       <SaveModal
         visible={saveVisible}
+        data={editData}
         onCancel={() => {
           setSaveVisible(false);
+          setEditData(undefined);
         }}
         onReload={() => {
           actionRef.current?.reload();
@@ -218,9 +225,7 @@ export default () => {
         onCancel={() => {
           setPasswordVisible(false);
         }}
-        onReload={() => {
-          actionRef.current?.reload();
-        }}
+        data={editData}
       />
     </PageContainer>
   );

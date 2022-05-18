@@ -33,6 +33,7 @@ export enum MENUS_CODE {
   'edge/Device' = 'edge/Device',
   'edge/Product' = 'edge/Product',
   'link/Certificate' = 'link/Certificate',
+  'link/Certificate/Detail' = 'link/Certificate/Detail',
   'link/Gateway' = 'link/Gateway',
   'link/Opcua' = 'link/Opcua',
   'link/Channel/Opcua' = 'link/Channel/Opcua',
@@ -114,6 +115,8 @@ export enum MENUS_CODE {
   'system/Department/Detail' = 'system/Department/Detail',
   'link/Type/Detail' = 'link/Type/Detail',
   'account/Center' = 'account/Center',
+  'account/NotificationSubscription' = 'account/NotificationSubscription',
+  'account/NotificationRecord' = 'account/NotificationRecord',
   'account/Center/bind' = 'account/Center/bind',
   'Northbound/DuerOS' = 'Northbound/DuerOS',
   'Northbound/DuerOS/Detail' = 'Northbound/DuerOS/Detail',
@@ -160,4 +163,5 @@ export const getDetailNameByCode = {
   'media/Stream/Detail': '流媒体详情',
   'rule-engine/Alarm/Log/Detail': '告警日志',
   'Northbound/AliCloud/Detail': '阿里云详情',
+  'link/Certificate/Detail': '证书详情',
 };
