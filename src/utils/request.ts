@@ -50,8 +50,9 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
         key: 'error',
         message: '未登录或登录已过期，请重新登录。',
       });
+      localStorage.removeItem('x-access-token');
       // const { redirect } = getPageQuery();
-      router.push('/user/login');
+      setTimeout(() => router.push('/user/login'), 300);
       // if (window.location.pathname !== '/user/login' && !redirect) {
       //   router.replace({
       //     pathname: '/user/login',
@@ -112,7 +113,7 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
       // router.push('/exception/403');
       // return;
     } else if (response.status === 404) {
-      if(window.location.hash.search("/user/login") != -1){
+      if (window.location.hash.search('/user/login') != -1) {
         notification.error({
           key: 'error',
           message: '404 错误',
@@ -120,7 +121,7 @@ const errorHandler = (error: { response: Response }): Response | undefined => {
         return response;
       }
       // console.log(status, '状态');
-        router.push('/exception/404');
+      router.push('/exception/404');
     } else {
       notification.error({
         key: 'error',
