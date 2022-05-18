@@ -11,7 +11,7 @@ const Detail = (props: Props) => {
   const { value, type } = props;
 
   const renderValue = () => {
-    if (['.jpg', '.png'].includes(type)) {
+    if (['.jpg', '.png', '.tiff', '.swf'].includes(type)) {
       return <Image src={value?.formatValue} />;
     } else if (['.flv', '.m3u8', '.mp4'].includes(type)) {
       return <LivePlayer live={false} url={value?.formatValue} />;

@@ -46,7 +46,7 @@ const FileComponent = (props: Props) => {
           </div>
         );
       }
-      if (['.jpg', '.png'].some((item) => value?.formatValue.includes(item))) {
+      if (['.jpg', '.png', '.tiff', '.swf'].some((item) => value?.formatValue.includes(item))) {
         // 图片
         return (
           <div
@@ -56,7 +56,9 @@ const FileComponent = (props: Props) => {
                 message.error('域名为https时，不支持访问http地址');
               } else {
                 const flag =
-                  ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '';
+                  ['.jpg', '.png', '.tiff', '.swf'].find((item) =>
+                    value?.formatValue.includes(item),
+                  ) || '';
                 setType(flag);
                 setVisible(true);
               }
