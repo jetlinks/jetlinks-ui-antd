@@ -33,11 +33,11 @@ type Permission = {
 };
 
 type UserInfo = {
-  userId: string;
+  userId?: string;
   user: Partial<UserBase>;
-  token: string;
-  roles: Role[];
-  permissions: Partial<Permission>[];
-  expires: number;
-  currentAuthority: string[];
+  token?: string;
+  roles?: Role[];
+  permissions?: Partial<Permission>[];
+  expires?: number;
+  currentAuthority?: string[];
 };

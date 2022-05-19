@@ -269,7 +269,7 @@ export function render(oldRender: any) {
             url: '/demo',
           });
         }
-        extraRoutes = handleRoutes([...extraRouteArr, ...res.result]);
+        extraRoutes = handleRoutes([...res.result, ...extraRouteArr]);
         saveMenusCache(extraRoutes);
       }
       oldRender();

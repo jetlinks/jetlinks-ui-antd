@@ -21,10 +21,12 @@ import InfoEdit from './edit/infoEdit';
 import PasswordEdit from './edit/passwordEdit';
 import Service from '@/pages/account/Center/service';
 import moment from 'moment';
+import { useModel } from 'umi';
 
 export const service = new Service();
 
 const Center = () => {
+  const { initialState, setInitialState } = useModel('@@initialState');
   const [data, setData] = useState<any>();
   const [imageUrl, setImageUrl] = useState<string>('');
   // const [loading, setLoading] = useState<boolean>(false)
@@ -42,6 +44,7 @@ const Center = () => {
 
   const uploadProps: UploadProps = {
     showUploadList: false,
+    accept: 'image/jpeg,image/png',
     action: `/${SystemConst.API_BASE}/file/static`,
     headers: {
       'X-Access-Token': Token.get(),
@@ -79,6 +82,12 @@ const Center = () => {
     service.getUserDetail().subscribe((res) => {
       setData(res.result);
       setImageUrl(res.result.avatar);
+      // setInitialState({
+      //   ...initialState,
+      //   currentUser:{
+
+      //   }
+      // })
     });
   };
   const saveInfo = (parms: UserDetail) => {
@@ -102,7 +111,6 @@ const Center = () => {
   const getBindInfo = () => {
     service.bindInfo().then((res) => {
       if (res.status === 200) {
-        console.log(res);
         setBindList(res.result);
       }
     });
@@ -120,6 +128,22 @@ const Center = () => {
     getDetail();
     getBindInfo();
   }, []);
+
+  useEffect(() => {
+    if (data?.name) {
+      const item = {
+        ...initialState?.currentUser?.user,
+        name: data.name,
+      };
+      setInitialState({
+        ...initialState,
+        currentUser: {
+          ...initialState?.currentUser,
+          user: item,
+        },
+      });
+    }
+  }, [data]);
 
   return (
     <PageContainer>
@@ -141,7 +165,7 @@ const Center = () => {
             </Upload>
           </div>
           <div className={styles.content}>
-            <Descriptions column={4} layout="vertical">
+            <Descriptions column={4} layout="vertical" labelStyle={{ fontWeight: 600 }}>
               <Descriptions.Item label="登录账号">{data?.username}</Descriptions.Item>
               <Descriptions.Item label="账号ID">{data?.id}</Descriptions.Item>
               <Descriptions.Item label="注册时间">
