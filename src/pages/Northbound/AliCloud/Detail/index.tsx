@@ -11,20 +11,19 @@ import {
   Select,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, FormPath, onFieldChange, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Card, Col, Image, message, Row } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'umi';
 import { useAsyncDataSource } from '@/utils/util';
 import './index.less';
 import { service } from '@/pages/Northbound/AliCloud';
 import usePermissions from '@/hooks/permission';
+import { Store } from 'jetlinks-store';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
-  const [dataList, setDataList] = useState<any[]>([]);
-  const [productList, setProductList] = useState<any[]>([]);
 
   const form = useMemo(
     () =>
@@ -35,20 +34,47 @@ const Detail = observer(() => {
             const regionId = field.query('accessConfig.regionId').value();
             const accessKeyId = field.query('accessConfig.accessKeyId').value();
             const accessSecret = field.query('accessConfig.accessSecret').value();
+            let response: any[] = [];
             if (regionId && accessKeyId && accessSecret) {
-              const response = await service.getAliyunProductsList({
+              response = await service.getAliyunProductsList({
                 regionId,
                 accessKeyId,
                 accessSecret,
               });
-              f.setFieldState(field.query('bridgeProductKey'), (state) => {
-                state.dataSource = response;
-                setDataList(response);
+            }
+            f.setFieldState(field.query('bridgeProductKey'), (state) => {
+              state.dataSource = response;
+              Store.set('datalist', response);
+            });
+          });
+
+          onFieldChange('mappings.*.productKey', async (field, f) => {
+            const propertyPath = FormPath.transform(
+              field.path,
+              /\d+/,
+              (index) => `mappings.${index}`,
+            );
+            const value = field.query('.productKey').value();
+            if ((Store.get('datalist') || [])?.length > 0) {
+              f.setFieldState(propertyPath, (state) => {
+                state.componentProps = {
+                  header:
+                    (Store.get('datalist') || []).find((item: any) => item.value === value || '')
+                      ?.label || `产品映射`,
+                };
               });
             } else {
-              f.setFieldState(field.query('bridgeProductKey'), (state) => {
-                state.dataSource = [];
-                setDataList([]);
+              const accessConfig = field.query('accessConfig').value();
+              let response: any[] = [];
+              if (Object.keys(accessConfig).length >= 3) {
+                response = await service.getAliyunProductsList(accessConfig);
+              }
+              f.setFieldState(propertyPath, (state) => {
+                Store.set('datalist', response);
+                state.componentProps = {
+                  header:
+                    response.find((item: any) => item.value === value || '')?.label || `产品映射`,
+                };
               });
             }
           });
@@ -85,34 +111,38 @@ const Detail = observer(() => {
     const checked = [...items];
     const index = checked.findIndex((i) => i === f.value);
     checked.splice(index, 1);
-    if (productList?.length > 0) {
+    if (Store.get('productList')?.length > 0) {
       return new Promise((resolve) => {
-        const list = productList.filter((j: any) => !checked.includes(j.value));
+        const list = Store.get('productList').filter((j: any) => !checked.includes(j.value));
         resolve(list);
       });
     } else {
       return service.getProductsList({ paging: false }).then((resp) => {
-        setProductList(resp);
+        Store.set('productList', resp);
         return resp.filter((j: any) => !checked.includes(j.value));
       });
     }
   };
 
   const queryAliyunProductList = (f: Field) => {
+    const accessConfig = form.getValuesIn('accessConfig') || {};
     const items = form.getValuesIn('mappings')?.map((i: any) => i?.productKey) || [];
     const checked = [...items];
     const index = checked.findIndex((i) => i === f.value);
     checked.splice(index, 1);
-    if (dataList?.length > 0) {
+    if ((Store.get('datalist') || [])?.length > 0) {
       return new Promise((resolve) => {
-        const list = dataList.filter((j: any) => !checked.includes(j.value));
+        const list = (Store.get('datalist') || []).filter((j: any) => !checked.includes(j.value));
         resolve(list);
       });
-    } else {
-      const accessConfig = form.getValuesIn('accessConfig') || {};
+    } else if (Object.keys(accessConfig).length >= 3) {
       return service.getAliyunProductsList(accessConfig).then((resp) => {
-        setDataList(resp);
+        Store.set('datalist', resp);
         return resp.filter((j: any) => !checked.includes(j.value));
+      });
+    } else {
+      return new Promise((resolve) => {
+        resolve([]);
       });
     }
   };
@@ -343,7 +373,9 @@ const Detail = observer(() => {
 
   const handleSave = async () => {
     const data: any = await form.submit();
-    const product = dataList.find((item) => item?.value === data?.bridgeProductKey);
+    const product = (Store.get('datalist') || []).find(
+      (item: any) => item?.value === data?.bridgeProductKey,
+    );
     data.bridgeProductName = product?.label || '';
     const response: any = data.id ? await service.update(data) : await service.save(data);
     if (response.status === 200) {

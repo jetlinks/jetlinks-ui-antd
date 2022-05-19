@@ -15,8 +15,8 @@ ProcotoleMapping.set('mqtt-client-gateway', 'MQTT');
 ProcotoleMapping.set('mqtt-server-gateway', 'MQTT');
 ProcotoleMapping.set('tcp-server-gateway', 'TCP');
 ProcotoleMapping.set('child-device', '');
-ProcotoleMapping.set('OneNet', 'OneNet');
-ProcotoleMapping.set('Ctwing', 'Ctwing');
+ProcotoleMapping.set('OneNet', 'HTTP');
+ProcotoleMapping.set('Ctwing', 'HTTP');
 ProcotoleMapping.set('modbus-tcp', 'MODBUS_TCP');
 ProcotoleMapping.set('opc-ua', 'OPC_UA');
 
