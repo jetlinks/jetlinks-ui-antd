@@ -4,13 +4,15 @@ import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PermissionButton, ProTableCard } from '@/components';
 import {
+  CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleFilled,
+  PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { message, Space } from 'antd';
+import { Badge, message, Space } from 'antd';
 import { DuerOSItem } from '@/pages/Northbound/DuerOS/types';
 import DuerOSCard from '@/components/ProTableCard/CardItems/duerOs';
 import { history } from '@@/core/history';
@@ -53,10 +55,64 @@ export default () => {
           })}
       </PermissionButton>,
       <PermissionButton
+        style={{ padding: 0 }}
+        isPermission={permission.action}
+        type="link"
+        key="changeState"
+        popConfirm={{
+          title: intl.formatMessage({
+            id: `pages.data.option.${
+              record.state?.value === 'enabled' ? 'disabled' : 'enabled'
+            }.tips`,
+            defaultMessage: `确认${record.state?.value === 'enabled' ? '禁用' : '启用'}?`,
+          }),
+          onConfirm: async () => {
+            const map = {
+              disabled: 'enable',
+              enabled: 'disable',
+            };
+            const resp = await service.changeState(record.id, map[record.state?.value]);
+            if (resp.status === 200) {
+              message.success(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+            } else {
+              message.error('操作失败！');
+            }
+
+            actionRef.current?.reload();
+          },
+        }}
+        tooltip={{
+          title: intl.formatMessage({
+            id: `pages.data.option.${record.state?.value === 'enabled' ? 'disabled' : 'enabled'}`,
+            defaultMessage: record.state?.value === 'enabled' ? '禁用' : '启用',
+          }),
+        }}
+      >
+        {record.state?.value === 'enabled' ? (
+          <>
+            {' '}
+            <CloseCircleOutlined /> {type === 'card' && '禁用'}
+          </>
+        ) : (
+          <>
+            <PlayCircleOutlined /> {type === 'card' && '启用'}
+          </>
+        )}
+      </PermissionButton>,
+      <PermissionButton
         key={'delete'}
         type={'link'}
         style={{ padding: 0 }}
         isPermission={permission.delete}
+        disabled={record.state?.value === 'enabled'}
+        tooltip={{
+          title: record.state?.value === 'disabled' ? '删除' : '请先禁用该数据，再删除。',
+        }}
         popConfirm={{
           title: '确认删除？',
           onConfirm: async () => {
@@ -64,9 +120,6 @@ export default () => {
             message.success('删除成功!');
             actionRef.current?.reload();
           },
-        }}
-        tooltip={{
-          title: '删除',
         }}
       >
         <DeleteOutlined />
@@ -98,18 +151,19 @@ export default () => {
       renderText: (data) => data.text,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.cloud.duerOS.manufacturerName',
-        defaultMessage: '厂家名称',
-      }),
-      dataIndex: 'manufacturerName',
+      title: '说明',
+      dataIndex: 'description',
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.cloud.duerOS.version',
-        defaultMessage: '动作数量',
-      }),
-      dataIndex: 'version',
+      title: '状态',
+      dataIndex: 'state',
+      renderText: (data) => {
+        const map = {
+          disabled: <Badge status="error" text="禁用" />,
+          enabled: <Badge status="success" text="正常" />,
+        };
+        return map[data.value];
+      },
     },
     {
       title: intl.formatMessage({
@@ -160,7 +214,7 @@ export default () => {
         headerTitle={
           <Space>
             <PermissionButton
-              isPermission={true}
+              isPermission={permission.add}
               onClick={() => {
                 history.push(getMenuPathByCode(MENUS_CODE['Northbound/DuerOS/Detail']));
               }}

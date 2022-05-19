@@ -149,6 +149,7 @@ const PropertyLog = (props: Props) => {
           type: 'and',
         },
       ],
+      sorts: [{ name: 'timestamp', order: 'asc' }],
     });
     if (resp.status === 200) {
       const dataList: any[] = [];
@@ -174,7 +175,7 @@ const PropertyLog = (props: Props) => {
           type: data?.name || '',
         });
       });
-      setChartsList(dataList);
+      setChartsList(dataList.reverse());
     }
   };
 
@@ -214,6 +215,7 @@ const PropertyLog = (props: Props) => {
             dataSource={dataSource?.data || []}
             columns={data?.valueType?.type === 'geoPoint' ? geoColumns : columns}
             pagination={{
+              current: dataSource?.pageIndex + 1,
               pageSize: dataSource?.pageSize || 10,
               showSizeChanger: true,
               total: dataSource?.total || 0,
@@ -231,7 +233,7 @@ const PropertyLog = (props: Props) => {
                   style={{ width: 120 }}
                   onChange={(value: string) => {
                     setCycle(value);
-                    if (cycle === '*') {
+                    if (value === '*') {
                       queryChartsList(start, end);
                     } else {
                       queryChartsAggList({

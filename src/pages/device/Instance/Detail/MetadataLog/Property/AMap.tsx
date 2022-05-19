@@ -1,4 +1,5 @@
 import { AMap, PathSimplifier } from '@/components';
+import useDistance from '@/components/AMapComponent/hooks/Distance';
 import { Button, Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,20 +9,28 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const [speed] = useState(1000000);
+  const { distance, onDistance } = useDistance();
+  const [speed, setSpeed] = useState<number>(1000000);
   const PathNavigatorRef = useRef<PathNavigator | null>(null);
-  const [dataSource, setDataSource] = useState<any>({});
+  const [dataSource, setDataSource] = useState<any[]>([]);
 
   useEffect(() => {
     const list: any[] = [];
     (props?.value?.data || []).forEach((item: any) => {
       list.push([item.value.lon, item.value.lat]);
     });
-    setDataSource({
-      name: props?.name || '',
-      path: [...list],
-    });
+    setDataSource([
+      {
+        name: props?.name || '',
+        path: [...list],
+      },
+    ]);
   }, [props.value]);
+
+  useEffect(() => {
+    setSpeed((distance / 5) * 3.6);
+  }, [distance]);
+
   return (
     <div style={{ position: 'relative' }}>
       <div style={{ position: 'absolute', right: 0, top: 5, zIndex: 999 }}>
@@ -55,17 +64,16 @@ export default (props: Props) => {
           width: '100%',
         }}
       >
-        {(dataSource?.path || []).length > 0 ? (
-          <PathSimplifier pathData={[dataSource]}>
-            <PathSimplifier.PathNavigator
-              speed={speed}
-              isAuto={false}
-              onCreate={(nav) => {
-                PathNavigatorRef.current = nav;
-              }}
-            />
-          </PathSimplifier>
-        ) : null}
+        <PathSimplifier pathData={dataSource}>
+          <PathSimplifier.PathNavigator
+            speed={speed}
+            isAuto={false}
+            onCreate={(nav) => {
+              onDistance(dataSource[0]?.path);
+              PathNavigatorRef.current = nav;
+            }}
+          />
+        </PathSimplifier>
       </AMap>
     </div>
   );

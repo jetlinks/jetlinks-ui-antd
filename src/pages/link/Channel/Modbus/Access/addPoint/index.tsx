@@ -1,4 +1,4 @@
-import { Col, Form, Input, Modal, Row, Select, InputNumber, message } from 'antd';
+import { Col, Form, Input, InputNumber, message, Modal, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/link/Channel/Modbus';
 

@@ -15,7 +15,14 @@ import {
 } from '@formily/antd';
 import { PermissionButton } from '@/components';
 import { useMemo } from 'react';
-import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
+import {
+  createForm,
+  Field,
+  FormPath,
+  onFieldReact,
+  onFieldValueChange,
+  onFormInit,
+} from '@formily/core';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
 import { Store } from 'jetlinks-store';
@@ -48,7 +55,6 @@ const Save = () => {
   const findApplianceType = (_id: string) => {
     if (!_id) return;
     const _productTypes = Store.get('product-types');
-    console.log(_productTypes, 'tt');
     return _productTypes?.find((item: any) => item.id === _id);
   };
 
@@ -81,9 +87,24 @@ const Save = () => {
             }
             form1.setInitialValues(_data);
           });
-          onFieldReact('actionMappings.*.layout.action', (field) => {
+          onFieldReact('actionMappings.*.layout.action', (field, f) => {
             const productType = field.query('applianceType').value();
-            (field as Field).setDataSource(findApplianceType(productType)?.actions);
+            const actions = findApplianceType(productType)?.actions;
+            (field as Field).setDataSource(actions);
+
+            const actionPath = FormPath.transform(
+              field.path,
+              /\d+/,
+              (index) => `actionMappings.${index}`,
+            );
+            const value = (field as Field).value;
+
+            const title = actions.find((item: any) => item.id === value)?.name;
+            f.setFieldState(actionPath, (state) => {
+              state.componentProps = {
+                header: title || '动作映射',
+              };
+            });
           });
           onFieldReact('actionMappings.*.layout.command.message.properties', (field) => {
             const product = field.query('id').value();
@@ -102,7 +123,7 @@ const Save = () => {
               const _functionList = findProductMetadata(product)?.functions;
               const _function =
                 _functionList && _functionList.find((item: any) => item.id === functionId);
-              form1.setFieldState(field.query('.function'), (state) => {
+              form1.setFieldState(field.query('.inputs'), (state) => {
                 state.value = _function?.inputs.map((item: any) => ({
                   ...item,
                   valueType: item?.valueType?.type,
@@ -110,9 +131,22 @@ const Save = () => {
               });
             },
           );
-          onFieldReact('propertyMappings.*.layout.source', (field) => {
+          onFieldReact('propertyMappings.*.layout.source', (field, f) => {
             const productType = field.query('applianceType').value();
-            (field as Field).setDataSource(findApplianceType(productType)?.properties);
+            const propertiesList = findApplianceType(productType)?.properties;
+            (field as Field).setDataSource();
+            const propertyMappingPath = FormPath.transform(
+              field.path,
+              /\d+/,
+              (index) => `propertyMappings.${index}`,
+            );
+            const value = (field as Field).value;
+            const title = propertiesList.find((item: any) => item.id === value)?.name;
+            f.setFieldState(propertyMappingPath, (state) => {
+              state.componentProps = {
+                header: title || '属性映射',
+              };
+            });
           });
           onFieldReact('propertyMappings.*.layout.target', (field) => {
             const product = field.query('id').value();
@@ -144,8 +178,7 @@ const Save = () => {
     const index = checked.findIndex((i) => i === f.value);
     checked.splice(index, 1);
     const _productType = form.getValuesIn('applianceType');
-    const targetList = findApplianceType(_productType?.value)?.properties;
-    console.log(targetList, 'list', _productType);
+    const targetList = findApplianceType(_productType)?.properties;
     const list = targetList?.filter((i: { id: string }) => !checked.includes(i.id));
     return new Promise((resolve) => resolve(list));
   };
@@ -202,12 +235,13 @@ const Save = () => {
             title: '设备类型',
             'x-decorator-props': {
               gridSpan: 1,
+              tooltip: 'DuerOS平台拟定的规范',
             },
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              placeholder: '请选择产品',
+              placeholder: '请选择设备类型',
               fieldNames: {
                 label: 'name',
                 value: 'id',
@@ -250,6 +284,7 @@ const Save = () => {
                   'x-decorator-props': {
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: 'DuerOS平台拟定的设备类型具有的相关动作',
                   },
                   required: true,
                   'x-component-props': {
@@ -266,7 +301,9 @@ const Save = () => {
                   'x-decorator-props': {
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '映射物联网平台中所选产品具备的动作',
                   },
+                  required: true,
                   enum: [
                     { label: '下发指令', value: 'command' },
                     { label: '获取历史数据', value: 'latestData' },
@@ -283,6 +320,7 @@ const Save = () => {
                         labelAlign: 'left',
                         gridSpan: 2,
                       },
+                      required: true,
                       'x-component': 'Select',
                       'x-decorator': 'FormItem',
                       enum: [
@@ -304,6 +342,7 @@ const Save = () => {
                       properties: {
                         properties: {
                           title: '属性',
+                          required: true,
                           'x-component': 'Select',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -341,6 +380,7 @@ const Save = () => {
                         },
                         value: {
                           title: '值',
+                          required: true,
                           'x-component': 'Input',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -358,6 +398,7 @@ const Save = () => {
                         },
                         functionId: {
                           title: '功能',
+                          required: true,
                           'x-component': 'Select',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -383,6 +424,7 @@ const Save = () => {
                         inputs: {
                           title: '参数列表',
                           type: 'array',
+                          required: true,
                           'x-component': 'ArrayTable',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -403,6 +445,7 @@ const Save = () => {
                                 properties: {
                                   name: {
                                     type: 'string',
+                                    required: true,
                                     'x-component': 'PreviewText.Input',
                                   },
                                 },
@@ -414,6 +457,7 @@ const Save = () => {
                                 properties: {
                                   valueType: {
                                     type: 'string',
+                                    required: true,
                                     'x-component': 'PreviewText.Input',
                                   },
                                 },
@@ -425,6 +469,7 @@ const Save = () => {
                                 properties: {
                                   value: {
                                     type: 'string',
+                                    required: true,
                                     'x-component': 'Input',
                                   },
                                 },
@@ -469,7 +514,7 @@ const Save = () => {
           type: 'object',
           'x-component': 'ArrayCollapse.CollapsePanel',
           'x-component-props': {
-            header: '动作',
+            header: '属性映射',
           },
           properties: {
             index: {
@@ -493,6 +538,7 @@ const Save = () => {
                     layout: 'vertical',
                     labelAlign: 'left',
                   },
+                  required: true,
                   'x-component-props': {
                     fieldNames: {
                       label: 'name',
@@ -509,6 +555,7 @@ const Save = () => {
                     layout: 'vertical',
                     labelAlign: 'left',
                   },
+                  required: true,
                   'x-component-props': {
                     fieldNames: {
                       label: 'name',
@@ -534,14 +581,29 @@ const Save = () => {
           },
         },
       },
+      description: {
+        title: '说明',
+        'x-component': 'Input.TextArea',
+        'x-decorator': 'FormItem',
+        'x-component-props': {
+          rows: 3,
+          showCount: true,
+          maxLength: 200,
+          placeholder: '请输入说明',
+        },
+      },
     },
   };
 
   const handleSave = async () => {
     const data: any = await form.submit();
     const productName = Store.get('product-list')?.find((item: any) => item.id === data.id)?.name;
-    await service.savePatch({ ...data, productName });
-    message.success('保存成功!');
+    const resp: any = await service.savePatch({ ...data, productName });
+    if (resp.status === 200) {
+      message.success('保存成功!');
+    } else {
+      message.error('保存失败!');
+    }
     history.back();
   };
   return (

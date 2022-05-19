@@ -28,6 +28,7 @@ type ActionMapping = {
   };
 };
 type DuerOSItem = {
+  productName?: string;
   version: number;
   manufacturerName: string;
   autoReportProperty: boolean;
