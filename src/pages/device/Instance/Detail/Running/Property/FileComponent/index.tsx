@@ -1,7 +1,7 @@
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import styles from './index.less';
 import Detail from './Detail';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { message, Tooltip } from 'antd';
 
 interface Props {
@@ -31,12 +31,8 @@ const FileComponent = (props: Props) => {
   const isHttps = document.location.protocol === 'https:';
   const [temp, setTemp] = useState<boolean>(false);
 
-  useEffect(() => {
-    setTemp(false);
-  }, [props.value]);
-
   const renderValue = () => {
-    if (!value?.formatValue) {
+    if (value?.formatValue !== 0 && !value?.formatValue) {
       return <div className={props.type === 'card' ? styles.other : {}}>--</div>;
     } else if (data?.valueType?.type === 'file') {
       if (
