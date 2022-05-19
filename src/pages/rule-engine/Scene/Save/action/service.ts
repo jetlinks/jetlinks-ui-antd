@@ -75,3 +75,13 @@ export const queryWechatDepartments = (id: string) =>
 // 根据配置ID获取标签推送
 export const queryTag = (id: string) =>
   request(`${SystemConst.API_BASE}/notifier/wechat/corp/${id}/tags`, { method: 'GET' });
+
+export const getRelations = () =>
+  request(`${SystemConst.API_BASE}/relation/_query/no-paging`, {
+    method: 'POST',
+    data: {
+      paging: false,
+      sorts: [{ name: 'createTime', order: 'desc' }],
+      terms: [{ termType: 'eq', column: 'objectTypeName', value: '设备' }],
+    },
+  });
