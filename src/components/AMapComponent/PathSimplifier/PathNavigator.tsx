@@ -86,6 +86,7 @@ export default (props: PathNavigatorProps) => {
     return () => {
       if (PathNavigatorRef.current) {
         removeEvent();
+        PathNavigatorRef.current.destroy();
       }
     };
   }, []);

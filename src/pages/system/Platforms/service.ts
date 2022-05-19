@@ -65,7 +65,7 @@ class Service extends BaseService<platformsType> {
    * 获取可授权的接口ID
    */
   apiOperations = () =>
-    request(`/${SystemConst.API_BASE}//api-client/operations`, { method: 'GET' });
+    request(`/${SystemConst.API_BASE}/api-client/operations`, { method: 'GET' });
 }
 
 export default Service;

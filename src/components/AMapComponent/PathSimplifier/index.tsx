@@ -71,12 +71,29 @@ const PathSimplifier = (props: PathSimplifierProps) => {
     });
   };
 
+  const clear = () => {
+    if (pathSimplifierRef.current) {
+      setLoading(false);
+      pathSimplifierRef.current!.clearPathNavigators();
+      pathSimplifierRef.current?.setData([]);
+      props.__map__.remove(pathSimplifierRef.current);
+    }
+  };
+
   useEffect(() => {
-    if (pathSimplifierRef.current && props.pathData) {
-      pathSimplifierRef.current?.setData(
-        props.pathData.map((item) => ({ name: item.name || '路线', path: item.path })),
-      );
-      setLoading(true);
+    if (pathSimplifierRef.current) {
+      if (props.pathData && props.pathData.length) {
+        setLoading(false);
+        setTimeout(() => {
+          pathSimplifierRef.current?.setData(
+            props.pathData!.map((item) => ({ name: item.name || '路线', path: item.path })),
+          );
+          setLoading(true);
+        }, 10);
+      } else {
+        setLoading(false);
+        pathSimplifierRef.current.setData([]);
+      }
     }
   }, [props.pathData]);
 
@@ -85,6 +102,14 @@ const PathSimplifier = (props: PathSimplifierProps) => {
       loadUI();
     }
   }, [__map__]);
+
+  useEffect(() => {
+    return () => {
+      if (props.__map__) {
+        clear();
+      }
+    };
+  }, []);
 
   return <>{loading && renderChildren()}</>;
 };
