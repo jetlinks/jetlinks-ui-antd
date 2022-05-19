@@ -392,7 +392,6 @@ const TriggerTerm = (props: Props, ref: any) => {
                               },
                             },
                           },
-
                           metric: {
                             type: 'string',
                             'x-component': 'Select',
