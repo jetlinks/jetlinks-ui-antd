@@ -144,7 +144,7 @@ const Save = () => {
             const title = propertiesList.find((item: any) => item.id === value)?.name;
             f.setFieldState(propertyMappingPath, (state) => {
               state.componentProps = {
-                header: title || '动作映射',
+                header: title || '属性映射',
               };
             });
           });
