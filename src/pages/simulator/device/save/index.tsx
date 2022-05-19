@@ -81,7 +81,7 @@ const Save: React.FC<Props> = props => {
                 `*(
                     networkConfiguration.enableDtls,
                     networkConfiguration.timeout,
-                    networkConfiguration.retryTimes)`,
+                    networkConfiguration.retryTimes, networkConfiguration.clientId)`,
                 state => {
                     state.visible = value === 'coap_client'
                 });
