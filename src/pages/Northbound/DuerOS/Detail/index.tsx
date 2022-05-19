@@ -48,7 +48,6 @@ const Save = () => {
   const findApplianceType = (_id: string) => {
     if (!_id) return;
     const _productTypes = Store.get('product-types');
-    console.log(_productTypes, 'tt');
     return _productTypes?.find((item: any) => item.id === _id);
   };
 
@@ -102,7 +101,7 @@ const Save = () => {
               const _functionList = findProductMetadata(product)?.functions;
               const _function =
                 _functionList && _functionList.find((item: any) => item.id === functionId);
-              form1.setFieldState(field.query('.function'), (state) => {
+              form1.setFieldState(field.query('.inputs'), (state) => {
                 state.value = _function?.inputs.map((item: any) => ({
                   ...item,
                   valueType: item?.valueType?.type,
@@ -145,7 +144,6 @@ const Save = () => {
     checked.splice(index, 1);
     const _productType = form.getValuesIn('applianceType');
     const targetList = findApplianceType(_productType?.value)?.properties;
-    console.log(targetList, 'list', _productType);
     const list = targetList?.filter((i: { id: string }) => !checked.includes(i.id));
     return new Promise((resolve) => resolve(list));
   };
@@ -202,12 +200,13 @@ const Save = () => {
             title: '设备类型',
             'x-decorator-props': {
               gridSpan: 1,
+              tooltip: 'DuerOS平台拟定的规范',
             },
             type: 'string',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              placeholder: '请选择产品',
+              placeholder: '请选择设备类型',
               fieldNames: {
                 label: 'name',
                 value: 'id',
@@ -250,6 +249,7 @@ const Save = () => {
                   'x-decorator-props': {
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: 'DuerOS平台拟定的设备类型具有的相关动作',
                   },
                   required: true,
                   'x-component-props': {
@@ -266,7 +266,9 @@ const Save = () => {
                   'x-decorator-props': {
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '映射物联网平台中所选产品具备的动作',
                   },
+                  required: true,
                   enum: [
                     { label: '下发指令', value: 'command' },
                     { label: '获取历史数据', value: 'latestData' },
@@ -283,6 +285,7 @@ const Save = () => {
                         labelAlign: 'left',
                         gridSpan: 2,
                       },
+                      required: true,
                       'x-component': 'Select',
                       'x-decorator': 'FormItem',
                       enum: [
@@ -304,6 +307,7 @@ const Save = () => {
                       properties: {
                         properties: {
                           title: '属性',
+                          required: true,
                           'x-component': 'Select',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -341,6 +345,7 @@ const Save = () => {
                         },
                         value: {
                           title: '值',
+                          required: true,
                           'x-component': 'Input',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -358,6 +363,7 @@ const Save = () => {
                         },
                         functionId: {
                           title: '功能',
+                          required: true,
                           'x-component': 'Select',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -383,6 +389,7 @@ const Save = () => {
                         inputs: {
                           title: '参数列表',
                           type: 'array',
+                          required: true,
                           'x-component': 'ArrayTable',
                           'x-decorator': 'FormItem',
                           'x-decorator-props': {
@@ -403,6 +410,7 @@ const Save = () => {
                                 properties: {
                                   name: {
                                     type: 'string',
+                                    required: true,
                                     'x-component': 'PreviewText.Input',
                                   },
                                 },
@@ -414,6 +422,7 @@ const Save = () => {
                                 properties: {
                                   valueType: {
                                     type: 'string',
+                                    required: true,
                                     'x-component': 'PreviewText.Input',
                                   },
                                 },
@@ -425,6 +434,7 @@ const Save = () => {
                                 properties: {
                                   value: {
                                     type: 'string',
+                                    required: true,
                                     'x-component': 'Input',
                                   },
                                 },
@@ -469,7 +479,7 @@ const Save = () => {
           type: 'object',
           'x-component': 'ArrayCollapse.CollapsePanel',
           'x-component-props': {
-            header: '动作',
+            header: '属性映射',
           },
           properties: {
             index: {
@@ -493,6 +503,7 @@ const Save = () => {
                     layout: 'vertical',
                     labelAlign: 'left',
                   },
+                  required: true,
                   'x-component-props': {
                     fieldNames: {
                       label: 'name',
@@ -509,6 +520,7 @@ const Save = () => {
                     layout: 'vertical',
                     labelAlign: 'left',
                   },
+                  required: true,
                   'x-component-props': {
                     fieldNames: {
                       label: 'name',

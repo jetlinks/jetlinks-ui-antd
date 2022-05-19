@@ -111,7 +111,7 @@ export default () => {
         isPermission={permission.delete}
         disabled={record.state?.value === 'enabled'}
         tooltip={{
-          title: record.state?.value === 'disabled' ? '删除' : '请先禁用该用户，再删除。',
+          title: record.state?.value === 'disabled' ? '删除' : '请先禁用该数据，再删除。',
         }}
         popConfirm={{
           title: '确认删除？',
