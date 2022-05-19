@@ -534,14 +534,29 @@ const Save = () => {
           },
         },
       },
+      description: {
+        title: '说明',
+        'x-component': 'Input.TextArea',
+        'x-decorator': 'FormItem',
+        'x-component-props': {
+          rows: 3,
+          showCount: true,
+          maxLength: 200,
+          placeholder: '请输入说明',
+        },
+      },
     },
   };
 
   const handleSave = async () => {
     const data: any = await form.submit();
     const productName = Store.get('product-list')?.find((item: any) => item.id === data.id)?.name;
-    await service.savePatch({ ...data, productName });
-    message.success('保存成功!');
+    const resp: any = await service.savePatch({ ...data, productName });
+    if (resp.status === 200) {
+      message.success('保存成功!');
+    } else {
+      message.error('保存失败!');
+    }
     history.back();
   };
   return (

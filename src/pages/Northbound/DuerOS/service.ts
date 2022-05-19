@@ -16,6 +16,9 @@ class Service extends BaseService<DuerOSItem> {
         paging: false,
       },
     });
+
+  public changeState = (id: string, state: 'enable' | 'disable') =>
+    request(`/${SystemConst.API_BASE}/dueros/product/${id}/_${state}`, { method: 'POST' });
 }
 
 export default Service;
