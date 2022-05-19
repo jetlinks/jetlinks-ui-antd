@@ -15,7 +15,14 @@ import {
 } from '@formily/antd';
 import { PermissionButton } from '@/components';
 import { useMemo } from 'react';
-import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
+import {
+  createForm,
+  Field,
+  FormPath,
+  onFieldReact,
+  onFieldValueChange,
+  onFormInit,
+} from '@formily/core';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
 import { Store } from 'jetlinks-store';
@@ -80,9 +87,24 @@ const Save = () => {
             }
             form1.setInitialValues(_data);
           });
-          onFieldReact('actionMappings.*.layout.action', (field) => {
+          onFieldReact('actionMappings.*.layout.action', (field, f) => {
             const productType = field.query('applianceType').value();
-            (field as Field).setDataSource(findApplianceType(productType)?.actions);
+            const actions = findApplianceType(productType)?.actions;
+            (field as Field).setDataSource(actions);
+
+            const actionPath = FormPath.transform(
+              field.path,
+              /\d+/,
+              (index) => `actionMappings.${index}`,
+            );
+            const value = (field as Field).value;
+
+            const title = actions.find((item: any) => item.id === value)?.name;
+            f.setFieldState(actionPath, (state) => {
+              state.componentProps = {
+                header: title || '动作映射',
+              };
+            });
           });
           onFieldReact('actionMappings.*.layout.command.message.properties', (field) => {
             const product = field.query('id').value();
@@ -109,9 +131,22 @@ const Save = () => {
               });
             },
           );
-          onFieldReact('propertyMappings.*.layout.source', (field) => {
+          onFieldReact('propertyMappings.*.layout.source', (field, f) => {
             const productType = field.query('applianceType').value();
-            (field as Field).setDataSource(findApplianceType(productType)?.properties);
+            const propertiesList = findApplianceType(productType)?.properties;
+            (field as Field).setDataSource();
+            const propertyMappingPath = FormPath.transform(
+              field.path,
+              /\d+/,
+              (index) => `propertyMappings.${index}`,
+            );
+            const value = (field as Field).value;
+            const title = propertiesList.find((item: any) => item.id === value)?.name;
+            f.setFieldState(propertyMappingPath, (state) => {
+              state.componentProps = {
+                header: title || '动作映射',
+              };
+            });
           });
           onFieldReact('propertyMappings.*.layout.target', (field) => {
             const product = field.query('id').value();
@@ -143,7 +178,7 @@ const Save = () => {
     const index = checked.findIndex((i) => i === f.value);
     checked.splice(index, 1);
     const _productType = form.getValuesIn('applianceType');
-    const targetList = findApplianceType(_productType?.value)?.properties;
+    const targetList = findApplianceType(_productType)?.properties;
     const list = targetList?.filter((i: { id: string }) => !checked.includes(i.id));
     return new Promise((resolve) => resolve(list));
   };
