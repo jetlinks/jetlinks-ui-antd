@@ -18,13 +18,13 @@ import Service from './service';
 import Save from './Save';
 import { getMenuPathByCode } from '@/utils/menu';
 
-export const service = new Service('opc/client');
+export const service = new Service('modbus/master');
 
-const Opcua = () => {
+const Modbus = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
-  const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
+  const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<OpaUa>>({});
 
@@ -41,13 +41,12 @@ const Opcua = () => {
       dataIndex: 'name',
     },
     {
-      title: '服务地址',
-      // dataIndex: 'clientConfigs',
-      render: (_, record) => <>{record.clientConfigs?.[0].endpoint}</>,
+      title: 'IP',
+      dataIndex: 'host',
     },
     {
-      title: '安全策略',
-      render: (_, record) => <>{record.clientConfigs?.[0].securityPolicy}</>,
+      title: '端口',
+      dataIndex: 'port',
     },
     {
       title: '状态',
@@ -93,9 +92,15 @@ const Opcua = () => {
             }),
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
-                await service.enable(record.id);
+                await service.edit({
+                  id: record.id,
+                  state: 'enabled',
+                });
               } else {
-                await service.disable(record.id);
+                await service.edit({
+                  id: record.id,
+                  state: 'disabled',
+                });
               }
               message.success(
                 intl.formatMessage({
@@ -125,7 +130,7 @@ const Opcua = () => {
             title: '设备接入',
           }}
           onClick={() => {
-            history.push(`${getMenuPathByCode('link/Channel/Opcua/Access')}?id=${record.id}`);
+            history.push(`${getMenuPathByCode('link/Channel/Modbus/Access')}?id=${record.id}`);
           }}
         >
           <ControlOutlined />
@@ -161,18 +166,18 @@ const Opcua = () => {
   const topCard = [
     {
       numeber: '1',
-      title: 'OPC UA通道',
-      text: '配置OPC UA通道',
+      title: 'Modbus通道',
+      text: '配置Modbus通道',
     },
     {
       numeber: '2',
       title: '设备接入网关',
-      text: '创建OPC UA设备接入网关',
+      text: '创建Modbus设备接入网关',
     },
     {
       numeber: '3',
       title: '创建产品',
-      text: '创建产品,并选择接入方式为OPC UA',
+      text: '创建产品,并选择接入方式为Modbus',
     },
     {
       numeber: '4',
@@ -258,4 +263,4 @@ const Opcua = () => {
     </PageContainer>
   );
 };
-export default Opcua;
+export default Modbus;

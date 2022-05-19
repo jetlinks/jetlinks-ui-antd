@@ -24,6 +24,7 @@ const Certificate = () => {
     {
       dataIndex: 'type',
       title: '证书标准',
+      render: (text: any) => <span>{text?.text || '-'}</span>,
     },
     {
       dataIndex: 'name',
@@ -101,6 +102,7 @@ const Certificate = () => {
         params={param}
         columns={columns}
         search={false}
+        rowKey="id"
         headerTitle={
           <PermissionButton
             onClick={() => {

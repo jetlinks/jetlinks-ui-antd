@@ -279,6 +279,7 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data: {
         paging: false,
+        sorts: [{ name: 'name', order: 'asc' }],
       },
     });
   // 保存设备的物模型指标

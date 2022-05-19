@@ -1,5 +1,5 @@
 import { Button, message, Table } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'umi';
 import { service } from '../index';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
@@ -15,6 +15,9 @@ export default (props: TableProps) => {
   const [selectKeys, setSelectKeys] = useState<string[]>([]);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const grantCache = useRef<string[]>([]);
+
   const location = useLocation();
 
   const getApiGrant = useCallback(() => {
@@ -23,6 +26,7 @@ export default (props: TableProps) => {
 
     service.getApiGranted(code!).then((resp: any) => {
       if (resp.status === 200) {
+        grantCache.current = resp.result;
         setSelectKeys(resp.result);
       }
     });
@@ -30,9 +34,6 @@ export default (props: TableProps) => {
 
   const getOperations = async (apiData: any[], operations: string[]) => {
     // 过滤只能授权的接口，当isShowGranted为true时，过滤为已赋权的接口
-    console.log(
-      apiData.filter((item) => item && item.operationId && operations.includes(item.operationId)),
-    );
     setDataSource(
       apiData.filter((item) => item && item.operationId && operations.includes(item.operationId)),
     );
@@ -65,7 +66,23 @@ export default (props: TableProps) => {
   const save = useCallback(async () => {
     const param = new URLSearchParams(location.search);
     const code = param.get('code');
-    const operations = selectKeys.map((a: string) => {
+    // 和原有已授权数据进行对比
+    const addGrant = selectKeys.filter((key) => {
+      if (grantCache.current.includes(key)) {
+        return false;
+      }
+      return true;
+    });
+
+    // 获取删除的数据
+    const removeGrant = grantCache.current.filter((key) => {
+      if (selectKeys.includes(key)) {
+        return false;
+      }
+      return true;
+    });
+
+    const addOperations = addGrant.map((a: string) => {
       const item = dataSource.find((b) => b.operationId === a);
       return {
         id: a,
@@ -73,15 +90,24 @@ export default (props: TableProps) => {
       };
     });
 
+    const removeOperations = removeGrant.map((a: string) => {
+      const item = dataSource.find((b) => b.operationId === a);
+      return {
+        id: a,
+        permissions: item.security,
+      };
+    });
+
+    grantCache.current = addGrant;
+
     setLoading(true);
-    const resp = await service.saveApiGrant(code!, { operations });
+    const resp = await service.addApiGrant(code!, { operations: addOperations });
+    const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
     setLoading(false);
-    if (resp.status === 200) {
+    if (resp.status === 200 || resp2.status === 200) {
       message.success('操作成功');
     }
   }, [selectKeys, location, dataSource]);
-
-  console.log(dataSource);
 
   return (
     <div className={'platforms-api-table'}>

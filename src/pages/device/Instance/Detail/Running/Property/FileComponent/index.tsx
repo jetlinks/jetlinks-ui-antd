@@ -1,7 +1,7 @@
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import styles from './index.less';
 import Detail from './Detail';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { message, Tooltip } from 'antd';
 
 interface Props {
@@ -29,6 +29,11 @@ const FileComponent = (props: Props) => {
   const [type, setType] = useState<string>('other');
   const [visible, setVisible] = useState<boolean>(false);
   const isHttps = document.location.protocol === 'https:';
+  const [temp, setTemp] = useState<boolean>(false);
+
+  useEffect(() => {
+    setTemp(false);
+  }, [props.value]);
 
   const renderValue = () => {
     if (!value?.formatValue) {
@@ -46,7 +51,7 @@ const FileComponent = (props: Props) => {
           </div>
         );
       }
-      if (['.jpg', '.png'].some((item) => value?.formatValue.includes(item))) {
+      if (['.jpg', '.png', '.swf', '.tiff'].some((item) => value?.formatValue.includes(item))) {
         // 图片
         return (
           <div
@@ -54,6 +59,8 @@ const FileComponent = (props: Props) => {
             onClick={() => {
               if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
                 message.error('域名为https时，不支持访问http地址');
+              } else if (temp) {
+                message.error('该图片无法访问');
               } else {
                 const flag =
                   ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '';
@@ -66,6 +73,7 @@ const FileComponent = (props: Props) => {
               src={value?.formatValue}
               onError={(e: any) => {
                 e.target.src = imgMap.get('error');
+                setTemp(true);
               }}
             />
           </div>

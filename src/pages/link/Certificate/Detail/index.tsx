@@ -50,6 +50,12 @@ const Detail = observer(() => {
         default: 'common',
         'x-decorator': 'FormItem',
         'x-component': 'Standard',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择证书标准',
+          },
+        ],
       },
       name: {
         type: 'string',
@@ -61,6 +67,10 @@ const Detail = observer(() => {
           placeholder: '请输入证书名称',
         },
         'x-validator': [
+          {
+            required: true,
+            message: '请输入证书名称',
+          },
           {
             max: 64,
             message: '最多可输入64个字符',
@@ -77,6 +87,12 @@ const Detail = observer(() => {
           placeholder:
             '证书私钥格式以"-----BEGIN (RSA|EC) PRIVATE KEY-----"开头，以"-----END(RSA|EC) PRIVATE KEY-----"结尾。',
         },
+        'x-validator': [
+          {
+            required: true,
+            message: '请上传证书文件',
+          },
+        ],
       },
       'configs.key': {
         title: '证书私钥',
@@ -88,6 +104,12 @@ const Detail = observer(() => {
           placeholder:
             '证书私钥格式以"-----BEGIN (RSA|EC) PRIVATE KEY-----"开头，以"-----END(RSA|EC) PRIVATE KEY-----"结尾。',
         },
+        'x-validator': [
+          {
+            required: true,
+            message: '请输入证书私钥',
+          },
+        ],
       },
       description: {
         title: '说明',

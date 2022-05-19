@@ -91,7 +91,7 @@ const TabComponent = observer((props: Props) => {
             type: 'and',
           },
         ],
-        sorts: [{ name: 'alarmDate', order: 'desc' }],
+        sorts: [{ name: 'alarmTime', order: 'desc' }],
       })
       .then((resp) => {
         if (resp.status === 200) {

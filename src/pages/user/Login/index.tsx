@@ -127,7 +127,7 @@ const Login: React.FC = () => {
     setLoading(true);
     Service.login({ expires: loginRef.current.expires, verifyKey: captcha.key, ...data }).subscribe(
       {
-        next: async (userInfo: UserInfo) => {
+        next: async (userInfo) => {
           Token.set(userInfo.token);
           await fetchUserInfo();
           goto();

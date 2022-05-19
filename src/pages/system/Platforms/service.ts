@@ -48,6 +48,12 @@ class Service extends BaseService<platformsType> {
   saveApiGrant = (id: string, data: any) =>
     request(`/${SystemConst.API_BASE}/api-client/${id}/grant`, { method: 'POST', data });
 
+  addApiGrant = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/api-client/${id}/grant/_add`, { method: 'POST', data });
+
+  removeApiGrant = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/api-client/${id}/grant/_delete`, { method: 'POST', data });
+
   /**
    * 获取已授权的接口ID
    * @param id 第三方平台的ID
@@ -59,7 +65,7 @@ class Service extends BaseService<platformsType> {
    * 获取可授权的接口ID
    */
   apiOperations = () =>
-    request(`/${SystemConst.API_BASE}//api-client/operations`, { method: 'GET' });
+    request(`/${SystemConst.API_BASE}/api-client/operations`, { method: 'GET' });
 }
 
 export default Service;
