@@ -163,25 +163,6 @@ const Access = () => {
     },
   ];
 
-  const pointWs = () => {
-    if (productId && deviceId) {
-      const id = `instance-info-property-${deviceId}-${productId}-opc-point`;
-      const topic = `/dashboard/device/${productId}/properties/realTime`;
-      subscribeTopic!(id, topic, {
-        deviceId: deviceId,
-        properties: data.map((item: any) => item.property),
-        history: 0,
-      })
-        ?.pipe(map((res) => res.patload))
-        .subscribe((payload: any) => {
-          const { value } = payload;
-          console.log(value);
-          propertyValue[value.property] = { ...payload, ...value };
-          setPropertyValue({ ...propertyValue });
-        });
-    }
-  };
-
   const getBindList = (masterId: any) => {
     service
       .bindDevice(
@@ -191,7 +172,7 @@ const Access = () => {
           },
         }),
       )
-      .then((res) => {
+      .then((res: any) => {
         console.log(res.result);
         if (res.status === 200) {
           setDeviceId(res.result[0]?.id);
@@ -203,10 +184,24 @@ const Access = () => {
         }
       });
   };
-
-  // useEffect(() => {
-  //   pointWs();
-  // }, [deviceId, productId])
+  const pointWs = () => {
+    if (productId && deviceId) {
+      const id = `instance-info-property-${deviceId}-${productId}-opc-point`;
+      const topic = `/dashboard/device/${productId}/properties/realTime`;
+      subscribeTopic!(id, topic, {
+        deviceId: deviceId,
+        properties: data.map((item: any) => item.metadataId),
+        history: 0,
+      })
+        ?.pipe(map((res) => res.patload))
+        .subscribe((payload: any) => {
+          const { value } = payload;
+          console.log(value);
+          propertyValue[value.property] = { ...payload, ...value };
+          setPropertyValue({ ...propertyValue });
+        });
+    }
+  };
 
   useEffect(() => {
     pointWs();
@@ -258,7 +253,7 @@ const Access = () => {
                     <Popconfirm
                       title="确认解绑该设备嘛？"
                       onConfirm={() => {
-                        service.unbind([item.id], opcUaId).then((res) => {
+                        service.unbind([item.id], opcUaId).then((res: any) => {
                           if (res.status === 200) {
                             message.success('解绑成功');
                             getBindList(opcUaId);

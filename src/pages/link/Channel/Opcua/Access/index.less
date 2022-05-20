@@ -1,7 +1,12 @@
 .list {
   :global {
-    .ant-tabs-tab .ant-tabs-tab-active .ant-tabs-tab-btn {
-      text-shadow: 0 0 0 currentColor;
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: #1d39c4;
+      text-shadow: none;
+    }
+
+    .ant-tabs-content-holder {
+      width: 1px;
     }
   }
 }
@@ -11,7 +16,17 @@
   align-items: center;
   justify-content: space-between;
   width: 200px;
-
+  .text {
+    width: 130px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+    text-overflow: ellipsis;
+    word-break: break-all;
+  }
+  .text:hover {
+    width: auto;
+  }
   .icon {
     display: none;
   }
