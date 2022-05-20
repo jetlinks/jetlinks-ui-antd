@@ -5,12 +5,11 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Axis, Chart, Geom, Legend, Slider, Tooltip } from 'bizcharts';
+import { Axis, Chart, LineAdvance, Legend, Slider, Tooltip, Point } from 'bizcharts';
 import FileComponent from '../../Running/Property/FileComponent';
 import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
 import AMap from './AMap';
-
 interface Props {
   close: () => void;
   data: Partial<PropertyMetadata>;
@@ -170,6 +169,7 @@ const PropertyLog = (props: Props) => {
       const dataList: any[] = [];
       resp.result.forEach((i: any) => {
         dataList.push({
+          ...i,
           year: moment(i.time).format('YYYY-MM-DD HH:mm:ss'),
           value: Number(i[data.id || '']),
           type: data?.name || '',
@@ -189,9 +189,10 @@ const PropertyLog = (props: Props) => {
   const scale = {
     value: { min: 0 },
     year: {
-      range: [0, 1],
-      type: 'timeCat',
+      type: 'time',
       mask: 'YYYY-MM-DD HH:mm:ss',
+      max: end,
+      min: start,
     },
   };
 
@@ -215,7 +216,7 @@ const PropertyLog = (props: Props) => {
             dataSource={dataSource?.data || []}
             columns={data?.valueType?.type === 'geoPoint' ? geoColumns : columns}
             pagination={{
-              current: dataSource?.pageIndex + 1,
+              current: (dataSource?.pageIndex || 0) + 1,
               pageSize: dataSource?.pageSize || 10,
               showSizeChanger: true,
               total: dataSource?.total || 0,
@@ -297,8 +298,8 @@ const PropertyLog = (props: Props) => {
                 </div>
               )}
             </div>
-            <div style={{ paddingTop: 15 }}>
-              <Chart height={400} data={chartsList} scale={scale} autoFit>
+            <div style={{ marginTop: 10 }}>
+              <Chart height={400} data={chartsList} scale={scale} padding="auto" autoFit>
                 <Legend />
                 <Axis name="year" />
                 <Axis
@@ -307,33 +308,9 @@ const PropertyLog = (props: Props) => {
                     formatter: (val) => parseFloat(val).toLocaleString(),
                   }}
                 />
-                <Tooltip showCrosshairs shared />
-                <Geom
-                  type="line"
-                  tooltip={[
-                    'value*type',
-                    (value, name) => {
-                      return {
-                        value: value,
-                        name,
-                      };
-                    },
-                  ]}
-                  position="year*value"
-                  size={2}
-                />
-                <Geom
-                  type="point"
-                  tooltip={false}
-                  position="year*value"
-                  size={4}
-                  shape={'circle'}
-                  style={{
-                    stroke: '#fff',
-                    lineWidth: 1,
-                  }}
-                />
-                <Geom type="area" position="year*value" shape={'circle'} tooltip={false} />
+                <Tooltip shared />
+                <Point position="year*value" />
+                <LineAdvance position="year*value" shape="smooth" area />
                 <Slider />
               </Chart>
             </div>
@@ -390,6 +367,7 @@ const PropertyLog = (props: Props) => {
           }
         });
     }
+    setDateValue([moment(start), moment(end)]);
   }, [start, end]);
 
   // @ts-ignore

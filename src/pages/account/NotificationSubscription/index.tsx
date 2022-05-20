@@ -96,6 +96,7 @@ const NotificationSubscription = observer(() => {
         type={'link'}
         isPermission={true}
         style={{ padding: 0 }}
+        disabled={record?.state?.value !== 'disabled'}
         popConfirm={{
           title: '确认删除？',
           onConfirm: async () => {
@@ -109,7 +110,7 @@ const NotificationSubscription = observer(() => {
           },
         }}
         tooltip={{
-          title: '删除',
+          title: record?.state?.value !== 'disabled' ? '请先禁用，再删除' : '删除',
         }}
       >
         <DeleteOutlined />
