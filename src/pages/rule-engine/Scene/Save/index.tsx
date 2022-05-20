@@ -77,13 +77,14 @@ export default () => {
         setParallel(_data.parallel);
 
         setTriggerValue({ trigger: _data.terms || [] });
-        setTriggerDatas(_data.terms);
+        setTriggerDatas(_data.trigger);
         if (_data.trigger?.shakeLimit) {
           setShakeLimit(_data.trigger?.shakeLimit || DefaultShakeLimit);
         }
         if (_data.trigger?.device) {
           setRequestParams({ trigger: _data.trigger });
         }
+
         if (_data.actions) {
           setActionsData(_data.actions);
         }
@@ -213,14 +214,13 @@ export default () => {
           onValuesChange={(changeValue, allValues) => {
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
-                if (changeValue.trigger.device.productId) {
-                  setTriggerValue([]);
-                  setRequestParams({ trigger: allValues.trigger });
-                } else if (
+                if (
                   changeValue.trigger.device.selectorValues ||
                   (changeValue.trigger.device.operation &&
                     changeValue.trigger.device.operation.operator)
                 ) {
+                  setTriggerValue([]);
+                  setRequestParams({ trigger: allValues.trigger });
                   setTriggerDatas(allValues.trigger);
                 }
               } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {

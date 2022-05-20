@@ -27,7 +27,9 @@ export default (props: InputUploadProps) => {
     if (info.file.status === 'done') {
       info.file.url = info.file.response?.result;
       setLoading(false);
-      setUrl(info.file.response?.result);
+      if (onChange) {
+        onChange(info.file.response?.result);
+      }
     }
   };
 
