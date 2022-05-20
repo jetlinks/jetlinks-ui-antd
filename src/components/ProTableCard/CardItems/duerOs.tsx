@@ -39,7 +39,7 @@ export default (props: DuerOSProps) => {
             <div>
               <label>产品</label>
               <div className={'ellipsis'}>
-                <Tooltip title={props?.name || ''}>{props?.name || ''}</Tooltip>
+                <Tooltip title={props?.productName || ''}>{props?.productName || ''}</Tooltip>
               </div>
             </div>
             <div>

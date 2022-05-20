@@ -78,7 +78,7 @@ export default (props: SaveProps) => {
   const form = useMemo(
     () =>
       createForm({
-        validateFirst: true,
+        validateFirst: false,
       }),
     [props.data],
   );
@@ -102,6 +102,10 @@ export default (props: SaveProps) => {
           enableOAuth2: true,
           id: randomString(),
         });
+      }
+    } else {
+      if (form) {
+        form.reset();
       }
     }
   }, [props.type, props.visible]);
@@ -428,7 +432,6 @@ export default (props: SaveProps) => {
   const saveData = useCallback(async () => {
     // setLoading(true)
     const data: any = await form.submit();
-    console.log(data);
     if (data) {
       setLoading(true);
       const resp: any = props.type === 'edit' ? await service.edit(data) : await service.save(data);

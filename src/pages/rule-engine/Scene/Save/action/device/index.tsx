@@ -5,6 +5,7 @@ import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/ser
 import Device from './deviceModal';
 import TagModal from './tagModal';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
+import RelationSelect from './relationSelect';
 
 interface DeviceProps {
   name: number;
@@ -21,7 +22,7 @@ enum SourceEnum {
   'all' = 'all',
   'fixed' = 'fixed',
   'tag' = 'tag',
-  'relation' = '',
+  'relation' = 'relation',
 }
 
 const DefaultSourceOptions = [
@@ -188,7 +189,9 @@ export default (props: DeviceProps) => {
             <Select
               options={sourceList}
               style={{ width: 120 }}
-              onSelect={(key: string) => setSelector(key)}
+              onSelect={(key: string) => {
+                setSelector(key);
+              }}
             />
           </Form.Item>
           {selector === SourceEnum.fixed && (
@@ -215,7 +218,7 @@ export default (props: DeviceProps) => {
               {...props.restField}
               rules={[{ required: true, message: '请选择关系人' }]}
             >
-              <Select style={{ width: '100%' }} placeholder={'请选择关系'} />
+              <RelationSelect />
             </Form.Item>
           )}
         </ItemGroup>
@@ -260,9 +263,20 @@ export default (props: DeviceProps) => {
           </Form.Item>
         ) : null}
       </Col>
-      <Form.Item name={[name, 'device', 'source']} hidden>
-        <Input />
-      </Form.Item>
+      {selector === SourceEnum.fixed || selector === SourceEnum.tag ? (
+        <Form.Item name={[name, 'device', 'source']} initialValue={'fixed'} hidden>
+          <Input />
+        </Form.Item>
+      ) : (
+        <>
+          <Form.Item name={[name, 'device', 'source']} initialValue={'upper'} hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name={[name, 'device', 'upperKey']} initialValue={'deviceId'} hidden>
+            <Input />
+          </Form.Item>
+        </>
+      )}
     </>
   );
 };

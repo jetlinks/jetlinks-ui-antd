@@ -1,7 +1,7 @@
 import { useIntl } from 'umi';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, FormGrid, FormItem, Input, Select, NumberPicker } from '@formily/antd';
+import { Form, FormGrid, FormItem, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Modbus';
 import { Modal } from '@/components';

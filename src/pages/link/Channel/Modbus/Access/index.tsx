@@ -1,7 +1,7 @@
 import PermissionButton from '@/components/PermissionButton';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Popconfirm, message, Tabs, Empty, Input } from 'antd';
+import { Badge, Card, Empty, Input, message, Popconfirm, Tabs } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import {

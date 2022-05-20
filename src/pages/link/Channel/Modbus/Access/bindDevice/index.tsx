@@ -2,7 +2,7 @@ import { Modal } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Badge, message } from 'antd';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { service } from '@/pages/link/Channel/Modbus';
 import moment from 'moment';
 

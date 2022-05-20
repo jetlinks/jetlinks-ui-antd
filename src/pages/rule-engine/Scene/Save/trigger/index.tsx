@@ -3,7 +3,6 @@ import type { FormInstance } from 'antd';
 import { Col, Form, Row, Select } from 'antd';
 import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
 import { getProductList } from '@/pages/rule-engine/Scene/Save/action/device/service';
-import { queryOrgTree } from '@/pages/rule-engine/Scene/Save/trigger/service';
 import Device from '@/pages/rule-engine/Scene/Save/action/device/deviceModal';
 import FunctionCall from '@/pages/rule-engine/Scene/Save/action/device/functionCall';
 import Operation from './operation';
@@ -48,15 +47,6 @@ export default observer((props: TriggerProps) => {
   const [functions, setFunctions] = useState([]); // 功能列表
 
   const [functionItem, setFunctionItem] = useState<any[]>([]); // 单个功能-属性列表
-  const [orgTree, setOrgTree] = useState<any>([]);
-
-  const getOrgTree = useCallback(() => {
-    queryOrgTree(productId).then((resp) => {
-      if (resp && resp.status === 200) {
-        setOrgTree(resp.result);
-      }
-    });
-  }, [queryOrgTree, productId]);
 
   const handleMetadata = (metadata?: string) => {
     try {
@@ -92,9 +82,6 @@ export default observer((props: TriggerProps) => {
     (id: string, metadata: any) => {
       setProductId(id);
       handleMetadata(metadata);
-      if (selector === 'org') {
-        getOrgTree();
-      }
     },
     [selector],
   );
@@ -142,7 +129,7 @@ export default observer((props: TriggerProps) => {
     getProducts();
   }, []);
 
-  console.log('triggerModel', FormModel);
+  console.log('triggerModel', selector);
 
   useEffect(() => {
     const triggerData = props.value;
@@ -151,9 +138,6 @@ export default observer((props: TriggerProps) => {
       const _device = triggerData.device;
 
       if (_device.selector) {
-        if (_device.selector === 'org') {
-          getOrgTree();
-        }
         setSelector(_device.selector);
       }
     }
@@ -178,6 +162,7 @@ export default observer((props: TriggerProps) => {
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                 props.form?.resetFields([['trigger', 'device', 'operation']]);
                 productIdChange(key, node.metadata);
+                setSelector('fixed');
                 props.form?.setFieldsValue({
                   trigger: {
                     device: {
@@ -216,11 +201,8 @@ export default observer((props: TriggerProps) => {
                   />
                 </Form.Item>
                 {selector === 'all' && (
-                  <Form.Item
-                    name={['trigger', 'device', 'selectorValues']}
-                    rules={[{ required: true, message: '请选择设备' }]}
-                  >
-                    <AllDevice productId={productId} />
+                  <Form.Item>
+                    <AllDevice />
                   </Form.Item>
                 )}
                 {selector === 'fixed' && (
@@ -237,7 +219,7 @@ export default observer((props: TriggerProps) => {
                     rules={[{ required: true, message: '请选择部门' }]}
                   >
                     <OrgTreeSelect
-                      treeData={orgTree}
+                      productId={productId}
                       fieldNames={{ label: 'name', value: 'id' }}
                       placeholder={'请选择部门'}
                       style={{ width: '100%' }}
