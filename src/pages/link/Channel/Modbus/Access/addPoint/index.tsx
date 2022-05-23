@@ -23,7 +23,7 @@ const AddPoint = (props: Props) => {
         metadataType: 'property',
         codec: 'number',
       })
-      .then((res) => {
+      .then((res: any) => {
         if (res.status === 200) {
           message.success('操作成功！');
           props.close();
@@ -33,7 +33,7 @@ const AddPoint = (props: Props) => {
   };
 
   useEffect(() => {
-    service.deviceDetail(props.deviceId).then((res) => {
+    service.deviceDetail(props.deviceId).then((res: any) => {
       if (res.result.metadata) {
         const item = JSON.parse(res.result?.metadata);
         setProperty(item.properties);
@@ -124,7 +124,7 @@ const AddPoint = (props: Props) => {
                 { required: true, message: '请输入读取起始位置' },
                 ({}) => ({
                   validator(_, value) {
-                    if (/(^[1-9]\d*$)/.test(value)) {
+                    if (/(^[0-9]\d*$)/.test(value)) {
                       return Promise.resolve();
                     }
                     return Promise.reject(new Error('请输入正整数'));

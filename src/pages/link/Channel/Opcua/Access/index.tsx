@@ -36,6 +36,7 @@ const Access = () => {
   const [data, setData] = useState<any>([]);
   const [subscribeTopic] = useSendWebsocketMessage();
   const [propertyValue, setPropertyValue] = useState<any>({});
+  const wsRef = useRef<any>();
 
   const columns: ProColumns<any>[] = [
     {
@@ -56,8 +57,7 @@ const Access = () => {
     },
     {
       title: '值',
-      // dataIndex: '4',
-      render: (record: any) => <>{propertyValue[record.property]}</>,
+      render: (record: any) => <>{propertyValue[record?.property] || '-'}</>,
     },
     {
       title: '状态',
@@ -96,7 +96,9 @@ const Access = () => {
           style={{ padding: 0 }}
           popConfirm={{
             title: intl.formatMessage({
-              id: `pages.data.option.${record.state.value !== 'disable' ? 'disable' : 'good'}.tips`,
+              id: `pages.data.option.${
+                record.state.value !== 'disable' ? 'disable' : 'enable'
+              }.tips`,
               defaultMessage: '确认禁用？',
             }),
             onConfirm: async () => {
@@ -117,7 +119,7 @@ const Access = () => {
           isPermission={permission.action}
           tooltip={{
             title: intl.formatMessage({
-              id: `pages.data.option.${record.state.value !== 'disable' ? 'disable' : 'good'}`,
+              id: `pages.data.option.${record.state.value !== 'disable' ? 'disable' : 'enable'}`,
               defaultMessage: record.state.value !== 'disable' ? '禁用' : '启用',
             }),
           }}
@@ -127,7 +129,7 @@ const Access = () => {
         <PermissionButton
           isPermission={permission.delete}
           style={{ padding: 0 }}
-          disabled={record.state.value === 'good'}
+          disabled={record.state.value === 'enable'}
           tooltip={{
             title:
               record.state.value === 'disable'
@@ -135,7 +137,7 @@ const Access = () => {
                     id: 'pages.data.option.remove',
                     defaultMessage: '删除',
                   })
-                : '请先禁用该组件，再删除。',
+                : '请先禁用该点位，再删除。',
           }}
           popConfirm={{
             title: '确认删除',
@@ -162,28 +164,8 @@ const Access = () => {
     },
   ];
 
-  const pointWs = () => {
-    if (productId && deviceId) {
-      const id = `instance-info-property-${deviceId}-${productId}-opc-point`;
-      const topic = `/dashboard/device/${productId}/properties/realTime`;
-      subscribeTopic!(id, topic, {
-        deviceId: deviceId,
-        properties: data.map((item: any) => item.property),
-        history: 0,
-      })
-        ?.pipe(map((res) => res.patload))
-        .subscribe((payload: any) => {
-          const { value } = payload;
-          console.log(value);
-          propertyValue[value.property] = { ...payload, ...value };
-          setPropertyValue({ ...propertyValue });
-        });
-    }
-  };
-
   const getBindList = (params: any) => {
-    service.getBindList(params).then((res) => {
-      console.log(res.result);
+    service.getBindList(params).then((res: any) => {
       if (res.status === 200) {
         setDeviceId(res.result[0]?.deviceId);
         setProductId(res.result[0]?.productId);
@@ -195,12 +177,25 @@ const Access = () => {
     });
   };
 
-  // useEffect(() => {
-  //   pointWs();
-  // }, [deviceId, productId])
-
   useEffect(() => {
-    pointWs();
+    if (productId && deviceId) {
+      const point = data.map((item: any) => item.property);
+      const id = `instance-info-property-${deviceId}-${productId}-${point.join('-')}`;
+      const topic = `/dashboard/device/${productId}/properties/realTime`;
+      wsRef.current = subscribeTopic?.(id, topic, {
+        deviceId: deviceId,
+        properties: data.map((item: any) => item.property),
+        history: 1,
+      })
+        ?.pipe(map((res) => res.payload))
+        .subscribe((payload: any) => {
+          const { value } = payload;
+          propertyValue[value.property] = value.formatValue;
+          setPropertyValue({ ...propertyValue });
+          // console.log(propertyValue)
+        });
+    }
+    return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [data]);
 
   useEffect(() => {
@@ -221,128 +216,134 @@ const Access = () => {
   return (
     <PageContainer>
       <Card className={styles.list}>
-        <PermissionButton
-          onClick={() => {
-            setDeviceVisiable(true);
-          }}
-          isPermission={permission.add}
-          key="add"
-          icon={<PlusOutlined />}
-          type="dashed"
-          style={{ width: '200px', marginLeft: 20, marginBottom: 5 }}
-        >
-          绑定设备
-        </PermissionButton>
         {bindList.length > 0 ? (
-          <Tabs
-            tabPosition={'left'}
-            defaultActiveKey={deviceId}
-            onChange={(e) => {
-              setDeviceId(e);
-              const items = bindList.find((item: any) => item.deviceId === e);
-              setProductId(items[0]?.productId);
-              setParam({
-                terms: [{ column: 'deviceId', value: e }],
-              });
-            }}
-          >
-            {bindList.map((item: any) => (
-              <Tabs.TabPane
-                key={item.deviceId}
-                tab={
-                  <div className={styles.left}>
-                    <div style={{ width: '100px', textAlign: 'left' }}>{item.name}</div>
-                    <Popconfirm
-                      title="确认解绑该设备嘛？"
-                      onConfirm={() => {
-                        service.unbind([item.deviceId], opcUaId).then((res) => {
-                          if (res.status === 200) {
-                            message.success('解绑成功');
-                            getBindList(
-                              encodeQuery({
-                                terms: {
-                                  opcUaId: opcUaId,
-                                },
-                              }),
-                            );
-                          }
-                        });
-                      }}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <DisconnectOutlined className={styles.icon} />
-                    </Popconfirm>
-                  </div>
-                }
+          <div style={{ display: 'flex' }}>
+            <div>
+              <PermissionButton
+                onClick={() => {
+                  setDeviceVisiable(true);
+                }}
+                isPermission={permission.add}
+                key="add"
+                icon={<PlusOutlined />}
+                type="dashed"
+                style={{ width: '200px', margin: '16px 0 18px 20px' }}
               >
-                <ProTable
-                  actionRef={actionRef}
-                  params={param}
-                  columns={columns}
-                  rowKey="id"
-                  search={false}
-                  headerTitle={
-                    <>
-                      <PermissionButton
-                        onClick={() => {
-                          setPointVisiable(true);
-                          setCurrent({});
-                        }}
-                        isPermission={permission.add}
-                        key="add"
-                        icon={<PlusOutlined />}
-                        type="primary"
-                      >
-                        {intl.formatMessage({
-                          id: 'pages.data.option.add',
-                          defaultMessage: '新增',
-                        })}
-                      </PermissionButton>
-                      <div style={{ marginLeft: 10 }}>
-                        <Input.Search
-                          placeholder="请输入属性"
-                          allowClear
-                          onSearch={(value) => {
-                            console.log(value);
-                            if (value) {
-                              setParam({
-                                terms: [
-                                  { column: 'deviceId', value: deviceId },
-                                  { column: 'property', value: `%${value}%`, termType: 'like' },
-                                ],
-                              });
-                            } else {
-                              setParam({
-                                terms: [{ column: 'deviceId', value: deviceId }],
-                              });
-                            }
+                绑定设备
+              </PermissionButton>
+              <Tabs
+                tabPosition={'left'}
+                defaultActiveKey={deviceId}
+                onChange={(e) => {
+                  console.log(e);
+                  setDeviceId(e);
+                  const items = bindList.find((item: any) => item.deviceId === e);
+                  setProductId(items?.productId);
+                  setParam({
+                    terms: [{ column: 'deviceId', value: e }],
+                  });
+                }}
+              >
+                {bindList.map((item: any) => (
+                  <Tabs.TabPane
+                    key={item.deviceId}
+                    tab={
+                      <div className={styles.left}>
+                        <div className={styles.text}>{item.name}</div>
+                        <Popconfirm
+                          title="确认解绑该设备嘛？"
+                          onConfirm={() => {
+                            service.unbind([item.deviceId], opcUaId).then((res: any) => {
+                              if (res.status === 200) {
+                                message.success('解绑成功');
+                                getBindList(
+                                  encodeQuery({
+                                    terms: {
+                                      opcUaId: opcUaId,
+                                    },
+                                  }),
+                                );
+                              }
+                            });
                           }}
-                        />
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <DisconnectOutlined className={styles.icon} />
+                        </Popconfirm>
                       </div>
-                    </>
-                  }
-                  request={async (params) => {
-                    const res = await service.PointList({
-                      ...params,
-                      sorts: [{ name: 'createTime', order: 'desc' }],
-                    });
-                    setData(res.result.data);
-                    return {
-                      code: res.message,
-                      result: {
-                        data: res.result.data,
-                        pageIndex: 0,
-                        pageSize: 0,
-                        total: 0,
-                      },
-                      status: res.status,
-                    };
-                  }}
-                />
-              </Tabs.TabPane>
-            ))}
-          </Tabs>
+                    }
+                  ></Tabs.TabPane>
+                ))}
+              </Tabs>
+            </div>
+            <div style={{ width: '100%' }}>
+              <ProTable
+                actionRef={actionRef}
+                params={param}
+                columns={columns}
+                rowKey="id"
+                search={false}
+                headerTitle={
+                  <>
+                    <PermissionButton
+                      onClick={() => {
+                        setPointVisiable(true);
+                        setCurrent({});
+                      }}
+                      isPermission={permission.add}
+                      key="add"
+                      icon={<PlusOutlined />}
+                      type="primary"
+                    >
+                      {intl.formatMessage({
+                        id: 'pages.data.option.add',
+                        defaultMessage: '新增',
+                      })}
+                    </PermissionButton>
+                    <div style={{ marginLeft: 10 }}>
+                      <Input.Search
+                        placeholder="请输入属性"
+                        allowClear
+                        onSearch={(value) => {
+                          console.log(value);
+                          if (value) {
+                            setParam({
+                              terms: [
+                                { column: 'deviceId', value: deviceId },
+                                { column: 'property', value: `%${value}%`, termType: 'like' },
+                              ],
+                            });
+                          } else {
+                            setParam({
+                              terms: [{ column: 'deviceId', value: deviceId }],
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                  </>
+                }
+                request={async (params) => {
+                  const res = await service.PointList({
+                    ...params,
+                    sorts: [{ name: 'createTime', order: 'desc' }],
+                  });
+                  setData(res.result.data);
+                  return {
+                    code: res.message,
+                    result: {
+                      data: res.result.data,
+                      pageIndex: 0,
+                      pageSize: 0,
+                      total: 0,
+                    },
+                    status: res.status,
+                  };
+                }}
+              />
+            </div>
+          </div>
         ) : (
           <Empty />
         )}

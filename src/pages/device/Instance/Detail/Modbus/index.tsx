@@ -14,7 +14,7 @@ import {
 import { service } from '@/pages/link/Channel/Modbus';
 import Save from '@/pages/link/Channel/Modbus/Save';
 import { InstanceModel } from '@/pages/device/Instance';
-import AddPoint from '@/pages/link/Channel/Opcua/Access/addPoint';
+import AddPoint from '@/pages/link/Channel/Modbus/Access/addPoint';
 
 const Modbus = () => {
   const intl = useIntl();
@@ -162,10 +162,7 @@ const Modbus = () => {
       })
       .then((res) => {
         setBindList(res.result.data);
-        setOpcId(res.result?.[0]?.id);
-        // setParam({
-        //     sorts: [{ name: 'createTime', order: 'desc' }],
-        // })
+        setOpcId(res.result?.data?.[0].id);
       });
   };
 
@@ -176,12 +173,6 @@ const Modbus = () => {
       getModbus();
     }
   }, [visible]);
-
-  // useEffect(() => {
-  //     if(opcId){
-  //         setLoading(false)
-  //     }
-  //  }, [opcId])
 
   return (
     <Card>
@@ -204,9 +195,7 @@ const Modbus = () => {
           defaultActiveKey={opcId}
           onChange={(e) => {
             setOpcId(e);
-            setParam({
-              terms: [{ column: 'opcUaId', value: e }],
-            });
+            setParam({});
           }}
         >
           {bindList.map((item: any) => (
@@ -261,7 +250,6 @@ const Modbus = () => {
             >
               <ProTable
                 actionRef={actionRef}
-                // loading={loading}
                 params={param}
                 columns={columns}
                 rowKey="id"
@@ -286,10 +274,6 @@ const Modbus = () => {
                   </>
                 }
                 request={async (params) => {
-                  console.log(opcId);
-                  // setTimeout(() => {
-                  //     const master =
-                  // }, 10);
                   const res = await service.queryMetadataConfig(opcId, deviceId, {
                     ...params,
                     sorts: [{ name: 'createTime', order: 'desc' }],
