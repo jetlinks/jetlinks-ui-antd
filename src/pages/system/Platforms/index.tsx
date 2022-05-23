@@ -8,6 +8,7 @@ import SearchComponent from '@/components/SearchComponent';
 import {
   DeleteOutlined,
   EditOutlined,
+  ExclamationCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
@@ -225,17 +226,17 @@ export default () => {
           type={'link'}
           style={{ padding: 0 }}
           isPermission={permission.delete}
-          disabled={record.state.value === 'started'}
+          disabled={record.state.value === 'enabled'}
           popConfirm={{
             title: '确认删除？',
-            disabled: record.state.value === 'started',
+            disabled: record.state.value === 'enabled',
             onConfirm: () => {
               deleteById(record.id);
             },
           }}
           tooltip={{
             title:
-              record.state.value === 'started' ? <span>请先禁用,再删除</span> : <span>删除</span>,
+              record.state.value === 'enabled' ? <span>请先禁用,再删除</span> : <span>删除</span>,
           }}
           onClick={() => {}}
         >
@@ -261,8 +262,18 @@ export default () => {
         params={param}
         columns={columns}
         actionRef={actionRef}
-        request={(params: any) => service.query(params)}
-        headerTitle={
+        request={(params: any) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
+        }
+        headerTitle={[
           <PermissionButton
             key="button"
             type="primary"
@@ -277,8 +288,20 @@ export default () => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </PermissionButton>
-        }
+          </PermissionButton>,
+          <div
+            style={{
+              paddingLeft: 24,
+              background: '#fff',
+              fontSize: 14,
+            }}
+          >
+            <span style={{ marginRight: 8, fontSize: 16 }}>
+              <ExclamationCircleOutlined />
+            </span>
+            第三方平台用户是一个身份实体，代表您的组织中需要访问物联网平台资源的用户或应用程序。
+          </div>,
+        ]}
       />
       <SaveModal
         visible={saveVisible}
