@@ -1,5 +1,5 @@
 import PermissionButton from '@/components/PermissionButton';
-import { Badge, Card, Empty, message, Tabs } from 'antd';
+import { Badge, Card, Empty, message, Tabs, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import styles from '@/pages/link/Channel/Opcua/Access/index.less';
@@ -14,7 +14,9 @@ import {
 import { service } from '@/pages/link/Channel/Modbus';
 import Save from '@/pages/link/Channel/Modbus/Save';
 import { InstanceModel } from '@/pages/device/Instance';
-import AddPoint from '@/pages/link/Channel/Opcua/Access/addPoint';
+import AddPoint from '@/pages/link/Channel/Modbus/Access/addPoint';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { map } from 'rxjs/operators';
 
 const Modbus = () => {
   const intl = useIntl();
@@ -28,6 +30,10 @@ const Modbus = () => {
   const [pointVisiable, setPointVisiable] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
   const [deviceId, setDeviceId] = useState<any>('');
+  const [data, setData] = useState<any>([]);
+  const [subscribeTopic] = useSendWebsocketMessage();
+  const [propertyValue, setPropertyValue] = useState<any>({});
+  const wsRef = useRef<any>();
 
   const columns: ProColumns<any>[] = [
     {
@@ -48,8 +54,7 @@ const Modbus = () => {
     },
     {
       title: '值',
-      // dataIndex: '4',
-      //   render: (record: any) => <>{propertyValue[record.property]}</>,
+      render: (record: any) => <>{propertyValue[record?.property] || '-'}</>,
     },
     {
       title: '状态',
@@ -133,6 +138,7 @@ const Modbus = () => {
           }}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state.value === 'enabled',
             onConfirm: async () => {
               const resp: any = await service.removeMetadataConfig(record.id);
               if (resp.status === 200) {
@@ -162,10 +168,7 @@ const Modbus = () => {
       })
       .then((res) => {
         setBindList(res.result.data);
-        setOpcId(res.result?.[0]?.id);
-        // setParam({
-        //     sorts: [{ name: 'createTime', order: 'desc' }],
-        // })
+        setOpcId(res.result?.data?.[0].id);
       });
   };
 
@@ -177,14 +180,27 @@ const Modbus = () => {
     }
   }, [visible]);
 
-  // useEffect(() => {
-  //     if(opcId){
-  //         setLoading(false)
-  //     }
-  //  }, [opcId])
+  useEffect(() => {
+    const { id, productId } = InstanceModel.detail;
+    const point = data.map((item: any) => item.metadataId);
+    const wsId = `instance-info-property-${id}-${productId}-${point.join('-')}`;
+    const topic = `/dashboard/device/${productId}/properties/realTime`;
+    wsRef.current = subscribeTopic?.(wsId, topic, {
+      deviceId: deviceId,
+      properties: data.map((item: any) => item.metadataId),
+      history: 1,
+    })
+      ?.pipe(map((res: any) => res.payload))
+      .subscribe((payload: any) => {
+        const { value } = payload;
+        propertyValue[value.property] = value.formatValue;
+        setPropertyValue({ ...propertyValue });
+        // console.log(propertyValue)
+      });
+  }, [data]);
 
   return (
-    <Card>
+    <Card className={styles.list}>
       <PermissionButton
         onClick={() => {
           setVisible(true);
@@ -199,117 +215,119 @@ const Modbus = () => {
         新增通道
       </PermissionButton>
       {bindList.length > 0 ? (
-        <Tabs
-          tabPosition={'left'}
-          defaultActiveKey={opcId}
-          onChange={(e) => {
-            setOpcId(e);
-            setParam({
-              terms: [{ column: 'opcUaId', value: e }],
-            });
-          }}
-        >
-          {bindList.map((item: any) => (
-            <Tabs.TabPane
-              key={item.id}
-              tab={
-                <div className={styles.left}>
-                  <div style={{ width: '100px', textAlign: 'left' }}>{item.name}</div>
-                  <PermissionButton
-                    isPermission={permission.update}
-                    key="edit"
-                    onClick={() => {
-                      setVisible(true);
-                      setChannel(item);
-                    }}
-                    type={'link'}
-                    style={{ padding: 0 }}
-                    tooltip={{
-                      title: intl.formatMessage({
-                        id: 'pages.data.option.edit',
-                        defaultMessage: '编辑',
-                      }),
-                    }}
-                  >
-                    <EditOutlined />
-                  </PermissionButton>
-                  <PermissionButton
-                    isPermission={permission.delete}
-                    style={{ padding: 0 }}
-                    popConfirm={{
-                      title: '确认删除',
-                      onConfirm: async () => {
-                        const resp: any = await service.remove(item.id);
-                        if (resp.status === 200) {
-                          getModbus();
-                          message.success(
-                            intl.formatMessage({
-                              id: 'pages.data.option.success',
-                              defaultMessage: '操作成功!',
-                            }),
-                          );
-                        }
-                      },
-                    }}
-                    key="delete"
-                    type="link"
-                  >
-                    <DeleteOutlined />
-                  </PermissionButton>
-                </div>
-              }
+        <div style={{ display: 'flex' }}>
+          <div>
+            <Tabs
+              tabPosition={'left'}
+              defaultActiveKey={opcId}
+              onChange={(e) => {
+                setOpcId(e);
+                console.log(e);
+                actionRef.current?.reload();
+                setParam({});
+              }}
             >
-              <ProTable
-                actionRef={actionRef}
-                // loading={loading}
-                params={param}
-                columns={columns}
-                rowKey="id"
-                search={false}
-                headerTitle={
-                  <>
-                    <PermissionButton
-                      onClick={() => {
-                        setPointVisiable(true);
-                        setCurrent({});
-                      }}
-                      isPermission={permission.add}
-                      key="add"
-                      icon={<PlusOutlined />}
-                      type="primary"
-                    >
-                      {intl.formatMessage({
-                        id: 'pages.data.option.add',
-                        defaultMessage: '新增',
-                      })}
-                    </PermissionButton>
-                  </>
-                }
-                request={async (params) => {
-                  console.log(opcId);
-                  // setTimeout(() => {
-                  //     const master =
-                  // }, 10);
-                  const res = await service.queryMetadataConfig(opcId, deviceId, {
-                    ...params,
-                    sorts: [{ name: 'createTime', order: 'desc' }],
-                  });
-                  // setData(res.result.data);
-                  return {
-                    code: res.message,
-                    result: {
-                      data: res.result.data,
-                      pageIndex: 0,
-                      pageSize: 0,
-                      total: 0,
-                    },
-                    status: res.status,
-                  };
-                }}
-              />
-            </Tabs.TabPane>
-          ))}
-        </Tabs>
+              {bindList.map((item: any) => (
+                <Tabs.TabPane
+                  key={item.id}
+                  tab={
+                    <div className={styles.left}>
+                      <Tooltip title={item.name}>
+                        <div className={styles.text}>{item.name}</div>
+                      </Tooltip>
+                      <PermissionButton
+                        isPermission={permission.update}
+                        key="edit"
+                        onClick={() => {
+                          setVisible(true);
+                          setChannel(item);
+                        }}
+                        type={'link'}
+                        style={{ padding: 0 }}
+                        tooltip={{
+                          title: intl.formatMessage({
+                            id: 'pages.data.option.edit',
+                            defaultMessage: '编辑',
+                          }),
+                        }}
+                      >
+                        <EditOutlined />
+                      </PermissionButton>
+                      <PermissionButton
+                        isPermission={permission.delete}
+                        style={{ padding: 0 }}
+                        popConfirm={{
+                          title: '确认删除',
+                          onConfirm: async () => {
+                            const resp: any = await service.remove(item.id);
+                            if (resp.status === 200) {
+                              getModbus();
+                              message.success(
+                                intl.formatMessage({
+                                  id: 'pages.data.option.success',
+                                  defaultMessage: '操作成功!',
+                                }),
+                              );
+                            }
+                          },
+                        }}
+                        key="delete"
+                        type="link"
+                      >
+                        <DeleteOutlined />
+                      </PermissionButton>
+                    </div>
+                  }
+                ></Tabs.TabPane>
+              ))}
+            </Tabs>
+          </div>
+          <div style={{ width: '100%' }}>
+            <ProTable
+              actionRef={actionRef}
+              params={param}
+              columns={columns}
+              rowKey="id"
+              search={false}
+              headerTitle={
+                <>
+                  <PermissionButton
+                    onClick={() => {
+                      setPointVisiable(true);
+                      setCurrent({});
+                    }}
+                    isPermission={permission.add}
+                    key="add"
+                    icon={<PlusOutlined />}
+                    type="primary"
+                  >
+                    {intl.formatMessage({
+                      id: 'pages.data.option.add',
+                      defaultMessage: '新增',
+                    })}
+                  </PermissionButton>
+                </>
+              }
+              request={async (params) => {
+                const res = await service.queryMetadataConfig(opcId, deviceId, {
+                  ...params,
+                  sorts: [{ name: 'createTime', order: 'desc' }],
+                });
+                setData(res.result.data);
+                return {
+                  code: res.message,
+                  result: {
+                    data: res.result.data,
+                    pageIndex: 0,
+                    pageSize: 0,
+                    total: 0,
+                  },
+                  status: res.status,
+                };
+              }}
+            />
+          </div>
+        </div>
       ) : (
         <Empty />
       )}

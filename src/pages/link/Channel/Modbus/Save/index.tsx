@@ -6,6 +6,7 @@ import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Modbus';
 import { Modal } from '@/components';
 import { message } from 'antd';
+import { useEffect } from 'react';
 
 interface Props {
   data: any;
@@ -141,15 +142,31 @@ const Save = (props: Props) => {
           }
         });
     } else {
-      service.save(value).then((res: any) => {
-        if (res.status === 200) {
-          message.success('保存成功');
-          props.close();
-        }
-      });
+      if (props.device) {
+        service.save(value).then((res: any) => {
+          if (res.status === 200) {
+            service.bind([props.device.id], res.result.id).then((resp: any) => {
+              if (resp.status === 200) {
+                message.success('保存成功');
+                props.close();
+              }
+            });
+          }
+        });
+      } else {
+        service.save(value).then((res: any) => {
+          if (res.status === 200) {
+            message.success('保存成功');
+            props.close();
+          }
+        });
+      }
     }
   };
 
+  useEffect(() => {
+    console.log(props.data.id);
+  }, []);
   return (
     <Modal
       title={intl.formatMessage({

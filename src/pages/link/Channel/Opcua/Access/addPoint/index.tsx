@@ -123,6 +123,7 @@ const AddPoint = (props: Props) => {
         layout="vertical"
         initialValues={{
           ...props.data,
+          enableCalculate: props.data.enableCalculate || false,
           initialValue: props.data?.configuration?.initialValue,
           multiple: props.data?.configuration?.multiple,
         }}
@@ -145,7 +146,7 @@ const AddPoint = (props: Props) => {
         <Row gutter={[24, 24]}>
           <Col span={12}>
             <Form.Item
-              label="属性"
+              label="属性ID"
               name="property"
               required
               rules={[{ required: true, message: '属性必选' }]}
@@ -235,7 +236,7 @@ const AddPoint = (props: Props) => {
             </Col>
             <Col span={12}>
               <Form.Item label="倍数" name="multiple" required>
-                <InputNumber style={{ width: '100%' }} min={1} />
+                <InputNumber style={{ width: '100%' }} min={1} placeholder="请输入倍数" />
               </Form.Item>
             </Col>
           </Row>
