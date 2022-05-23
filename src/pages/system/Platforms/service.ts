@@ -4,7 +4,7 @@ import SystemConst from '@/utils/const';
 
 class Service extends BaseService<platformsType> {
   queryRoleList = (params?: any) =>
-    request(`${SystemConst.API_BASE}/role/_query/no-paging?paging=false`, {
+    request(`/${SystemConst.API_BASE}/role/_query/no-paging?paging=false`, {
       method: 'GET',
       params,
     });
@@ -66,6 +66,11 @@ class Service extends BaseService<platformsType> {
    */
   apiOperations = () =>
     request(`/${SystemConst.API_BASE}/api-client/operations`, { method: 'GET' });
+
+  /**
+   * 获取可授权的接口ID
+   */
+  getSdk = () => request(`${this.uri}/sdk`, { method: 'GET' });
 }
 
 export default Service;

@@ -1,4 +1,4 @@
-import { createForm } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import type { Field } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
@@ -79,6 +79,13 @@ export default (props: SaveProps) => {
     () =>
       createForm({
         validateFirst: false,
+        effects() {
+          onFieldValueChange('enableOAuth2', (field) => {
+            form.setFieldState('redirectUrl', (state) => {
+              state.display = field.value ? 'visible' : 'none';
+            });
+          });
+        },
       }),
     [props.data],
   );
@@ -100,7 +107,8 @@ export default (props: SaveProps) => {
       } else {
         form.setValues({
           enableOAuth2: true,
-          id: randomString(),
+          id: randomString(16),
+          secureKey: randomString(),
         });
       }
     } else {
@@ -362,7 +370,7 @@ export default (props: SaveProps) => {
             ],
           },
           redirectUrl: {
-            type: 'boolean',
+            type: 'string',
             title: 'redirectUrl',
             required: true,
             'x-decorator': 'FormItem',

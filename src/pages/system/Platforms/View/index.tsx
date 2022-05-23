@@ -1,9 +1,10 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Popover, Row } from 'antd';
+import { Button, Card, Col, Input, Popover, Row } from 'antd';
 import ApiPage from '../Api/base';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'umi';
 import { service } from '@/pages/system/Platforms';
+import * as moment from 'moment';
 
 const defaultHeight = 50;
 
@@ -12,12 +13,33 @@ export default () => {
 
   const [clientId, setClientId] = useState('');
   const [secureKey, setSecureKey] = useState('');
+  const [sdkDetail, setSdkDetail] = useState<any>({});
 
   const getDetail = async (id: string) => {
     const resp = await service.getDetail(id);
     if (resp.status === 200) {
       setClientId(resp.result.id);
       setSecureKey(resp.result.secureKey);
+    }
+  };
+
+  const getSDKDetail = async () => {
+    const resp = await service.getSdk();
+    if (resp.status === 200) {
+      setSdkDetail(resp.result[0]);
+    }
+  };
+
+  const downLoad = (url: string) => {
+    if (url) {
+      const downNode = document.createElement('a');
+      downNode.href = url;
+      downNode.download = `${moment(new Date()).format('YYYY-MM-DD-HH-mm-ss')}.sdk`;
+      downNode.style.display = 'none';
+      downNode.setAttribute('target', '_blank');
+      document.body.appendChild(downNode);
+      downNode.click();
+      document.body.removeChild(downNode);
     }
   };
 
@@ -31,25 +53,29 @@ export default () => {
 
   useEffect(() => {
     //  请求SDK下载地址
+    getSDKDetail();
   }, []);
 
   const downLoadJDK = (
     <div>
       <div
         style={{
-          width: 300,
-          height: 120,
-          padding: 12,
-          border: '1px solid #e9e9e9',
+          width: 500,
           borderRadius: 2,
           marginBottom: 12,
         }}
       >
-        暂时没有接口
+        <Input.TextArea value={sdkDetail?.dependency} rows={6} readOnly />
       </div>
-      <div>
-        <Button type={'primary'}>jar下载</Button>
-      </div>
+      <Button
+        type={'primary'}
+        style={{ width: '100%' }}
+        onClick={() => {
+          downLoad(sdkDetail.sdk);
+        }}
+      >
+        jar下载
+      </Button>
     </div>
   );
 
