@@ -106,7 +106,7 @@ export default (props: SaveProps) => {
         getDetail(props.data.id);
       } else {
         form.setValues({
-          enableOAuth2: true,
+          enableOAuth2: false,
           id: randomString(16),
           secureKey: randomString(),
         });
@@ -378,6 +378,7 @@ export default (props: SaveProps) => {
             'x-component-props': {
               placeholder: '请输入redirectUrl',
             },
+            'x-hidden': true,
             'x-decorator-props': {
               gridSpan: 2,
               tooltip: '授权后自动跳转的页面地址',
