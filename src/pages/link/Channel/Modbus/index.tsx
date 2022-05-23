@@ -141,6 +141,7 @@ const Modbus = () => {
           disabled={record.state.value === 'enabled'}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state.value === 'enabled',
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {

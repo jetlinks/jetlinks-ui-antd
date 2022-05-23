@@ -1,5 +1,5 @@
 import PermissionButton from '@/components/PermissionButton';
-import { Badge, Card, Empty, message, Tabs } from 'antd';
+import { Badge, Card, Empty, message, Tabs, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import styles from '@/pages/link/Channel/Opcua/Access/index.less';
@@ -138,6 +138,7 @@ const Opcua = () => {
           }}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state.value === 'enable',
             onConfirm: async () => {
               const resp: any = await service.deletePoint(record.id);
               if (resp.status === 200) {
@@ -209,22 +210,22 @@ const Opcua = () => {
 
   return (
     <Card className={styles.list}>
+      <PermissionButton
+        onClick={() => {
+          setVisible(true);
+          setChannel({});
+        }}
+        isPermission={permission.add}
+        key="add"
+        icon={<PlusOutlined />}
+        type="dashed"
+        style={{ width: '200px', margin: '16px 0 18px 20px' }}
+      >
+        新增通道
+      </PermissionButton>
       {bindList.length > 0 ? (
         <div style={{ display: 'flex' }}>
           <div>
-            <PermissionButton
-              onClick={() => {
-                setVisible(true);
-                setChannel({});
-              }}
-              isPermission={permission.add}
-              key="add"
-              icon={<PlusOutlined />}
-              type="dashed"
-              style={{ width: '200px', margin: '16px 0 18px 20px' }}
-            >
-              新增通道
-            </PermissionButton>
             <Tabs
               tabPosition={'left'}
               defaultActiveKey={opcId}
@@ -240,7 +241,9 @@ const Opcua = () => {
                   key={item.id}
                   tab={
                     <div className={styles.left}>
-                      <div className={styles.text}>{item.name}</div>
+                      <Tooltip title={item.name}>
+                        <div className={styles.text}>{item.name}</div>
+                      </Tooltip>
                       <div>
                         <PermissionButton
                           isPermission={permission.update}

@@ -1,7 +1,7 @@
 import PermissionButton from '@/components/PermissionButton';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Empty, Input, message, Popconfirm, Tabs } from 'antd';
+import { Badge, Card, Empty, Input, message, Popconfirm, Tabs, Tooltip } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -141,8 +141,8 @@ const Access = () => {
           }}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state.value === 'enable',
             onConfirm: async () => {
-              console.log(111);
               const resp: any = await service.deletePoint(record.id);
               if (resp.status === 200) {
                 message.success(
@@ -216,26 +216,25 @@ const Access = () => {
   return (
     <PageContainer>
       <Card className={styles.list}>
+        <PermissionButton
+          onClick={() => {
+            setDeviceVisiable(true);
+          }}
+          isPermission={permission.add}
+          key="add"
+          icon={<PlusOutlined />}
+          type="dashed"
+          style={{ width: '200px', margin: '16px 0 18px 20px' }}
+        >
+          绑定设备
+        </PermissionButton>
         {bindList.length > 0 ? (
           <div style={{ display: 'flex' }}>
             <div>
-              <PermissionButton
-                onClick={() => {
-                  setDeviceVisiable(true);
-                }}
-                isPermission={permission.add}
-                key="add"
-                icon={<PlusOutlined />}
-                type="dashed"
-                style={{ width: '200px', margin: '16px 0 18px 20px' }}
-              >
-                绑定设备
-              </PermissionButton>
               <Tabs
                 tabPosition={'left'}
                 defaultActiveKey={deviceId}
                 onChange={(e) => {
-                  console.log(e);
                   setDeviceId(e);
                   const items = bindList.find((item: any) => item.deviceId === e);
                   setProductId(items?.productId);
@@ -249,7 +248,9 @@ const Access = () => {
                     key={item.deviceId}
                     tab={
                       <div className={styles.left}>
-                        <div className={styles.text}>{item.name}</div>
+                        <Tooltip title={item.name}>
+                          <div className={styles.text}>{item.name}</div>
+                        </Tooltip>
                         <Popconfirm
                           title="确认解绑该设备嘛？"
                           onConfirm={() => {
