@@ -56,8 +56,7 @@ const AddPoint = (props: Props) => {
         layout="vertical"
         initialValues={{
           ...props.data,
-          initialValue: props.data?.configuration?.initialValue,
-          multiple: props.data?.configuration?.multiple,
+          // readIndex:props.data?.readIndex || 0,
         }}
       >
         <Row gutter={[24, 24]}>

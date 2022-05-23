@@ -1,7 +1,7 @@
 import PermissionButton from '@/components/PermissionButton';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Empty, Input, message, Popconfirm, Tabs } from 'antd';
+import { Badge, Card, Empty, Input, message, Popconfirm, Tabs, Tooltip } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -26,7 +26,7 @@ const Access = () => {
   const location = useLocation<string>();
   const [param, setParam] = useState({});
   const [opcUaId, setOpcUaId] = useState<any>('');
-  const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
+  const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
   const [deviceVisiable, setDeviceVisiable] = useState<boolean>(false);
   const [pointVisiable, setPointVisiable] = useState<boolean>(false);
   const [bindList, setBindList] = useState<any>([]);
@@ -36,6 +36,7 @@ const Access = () => {
   const [data, setData] = useState<any>([]);
   const [subscribeTopic] = useSendWebsocketMessage();
   const [propertyValue, setPropertyValue] = useState<any>({});
+  const wsRef = useRef<any>();
 
   const columns: ProColumns<any>[] = [
     {
@@ -56,8 +57,7 @@ const Access = () => {
     },
     {
       title: '值',
-      // dataIndex: '4',
-      render: (record: any) => <>{propertyValue[record.property]}</>,
+      render: (record: any) => <>{propertyValue[record?.property] || '-'}</>,
     },
     {
       title: '状态',
@@ -141,6 +141,7 @@ const Access = () => {
           }}
           popConfirm={{
             title: '确认删除',
+            disabled: record.state.value === 'enabled',
             onConfirm: async () => {
               const resp: any = await service.removeMetadataConfig(record.id);
               if (resp.status === 200) {
@@ -184,28 +185,6 @@ const Access = () => {
         }
       });
   };
-  const pointWs = () => {
-    if (productId && deviceId) {
-      const id = `instance-info-property-${deviceId}-${productId}-opc-point`;
-      const topic = `/dashboard/device/${productId}/properties/realTime`;
-      subscribeTopic!(id, topic, {
-        deviceId: deviceId,
-        properties: data.map((item: any) => item.metadataId),
-        history: 0,
-      })
-        ?.pipe(map((res) => res.patload))
-        .subscribe((payload: any) => {
-          const { value } = payload;
-          console.log(value);
-          propertyValue[value.property] = { ...payload, ...value };
-          setPropertyValue({ ...propertyValue });
-        });
-    }
-  };
-
-  useEffect(() => {
-    pointWs();
-  }, [data]);
 
   useEffect(() => {
     const item = new URLSearchParams(location.search);
@@ -215,6 +194,27 @@ const Access = () => {
       getBindList(id);
     }
   }, []);
+
+  useEffect(() => {
+    if (productId && deviceId) {
+      const point = data.map((item: any) => item.metadataId);
+      const id = `instance-info-property-${deviceId}-${productId}-${point.join('-')}`;
+      const topic = `/dashboard/device/${productId}/properties/realTime`;
+      wsRef.current = subscribeTopic?.(id, topic, {
+        deviceId: deviceId,
+        properties: data.map((item: any) => item.metadataId),
+        history: 1,
+      })
+        ?.pipe(map((res) => res.payload))
+        .subscribe((payload: any) => {
+          const { value } = payload;
+          propertyValue[value.property] = value.formatValue;
+          setPropertyValue({ ...propertyValue });
+          // console.log(propertyValue)
+        });
+    }
+    return () => wsRef.current && wsRef.current?.unsubscribe();
+  }, [data]);
 
   return (
     <PageContainer>
@@ -227,113 +227,120 @@ const Access = () => {
           key="add"
           icon={<PlusOutlined />}
           type="dashed"
-          style={{ width: '200px', marginLeft: 20, marginBottom: 5 }}
+          style={{ width: '200px', margin: '16px 0 18px 20px' }}
         >
           绑定设备
         </PermissionButton>
         {bindList.length > 0 ? (
-          <Tabs
-            tabPosition={'left'}
-            defaultActiveKey={deviceId}
-            onChange={(e) => {
-              setDeviceId(e);
-              const items = bindList.find((item: any) => item.id === e);
-              setProductId(items[0]?.productId);
-              setParam({
-                terms: [{ column: 'deviceId', value: e }],
-              });
-            }}
-          >
-            {bindList.map((item: any) => (
-              <Tabs.TabPane
-                key={item.id}
-                tab={
-                  <div className={styles.left}>
-                    <div style={{ width: '100px', textAlign: 'left' }}>{item.name}</div>
-                    <Popconfirm
-                      title="确认解绑该设备嘛？"
-                      onConfirm={() => {
-                        service.unbind([item.id], opcUaId).then((res: any) => {
-                          if (res.status === 200) {
-                            message.success('解绑成功');
-                            getBindList(opcUaId);
-                          }
-                        });
-                      }}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <DisconnectOutlined className={styles.icon} />
-                    </Popconfirm>
-                  </div>
-                }
+          <div style={{ display: 'flex' }}>
+            <div>
+              <Tabs
+                tabPosition={'left'}
+                defaultActiveKey={deviceId}
+                onChange={(e) => {
+                  setDeviceId(e);
+                  const items = bindList.find((item: any) => item.id === e);
+                  setProductId(items?.productId);
+                  setParam({
+                    terms: [{ column: 'deviceId', value: e }],
+                  });
+                }}
               >
-                <ProTable
-                  actionRef={actionRef}
-                  params={param}
-                  columns={columns}
-                  rowKey="id"
-                  search={false}
-                  headerTitle={
-                    <>
-                      <PermissionButton
-                        onClick={() => {
-                          setPointVisiable(true);
-                          setCurrent({});
-                        }}
-                        isPermission={permission.add}
-                        key="add"
-                        icon={<PlusOutlined />}
-                        type="primary"
-                      >
-                        {intl.formatMessage({
-                          id: 'pages.data.option.add',
-                          defaultMessage: '新增',
-                        })}
-                      </PermissionButton>
-                      <div style={{ marginLeft: 10 }}>
-                        <Input.Search
-                          placeholder="请输入属性ID"
-                          allowClear
-                          onSearch={(value) => {
-                            console.log(value);
-                            if (value) {
-                              setParam({
-                                terms: [
-                                  { column: 'metadataId', value: `%${value}%`, termType: 'like' },
-                                ],
-                              });
-                            } else {
-                              setParam({
-                                terms: [{ column: 'deviceId', value: deviceId }],
-                              });
-                            }
+                {bindList.map((item: any) => (
+                  <Tabs.TabPane
+                    key={item.id}
+                    tab={
+                      <div className={styles.left}>
+                        <Tooltip title={item.name}>
+                          <div className={styles.text}>{item.name}</div>
+                        </Tooltip>
+                        <Popconfirm
+                          title="确认解绑该设备嘛？"
+                          onConfirm={() => {
+                            service.unbind([item.id], opcUaId).then((res: any) => {
+                              if (res.status === 200) {
+                                message.success('解绑成功');
+                                getBindList(opcUaId);
+                              }
+                            });
                           }}
-                        />
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <DisconnectOutlined className={styles.icon} />
+                        </Popconfirm>
                       </div>
-                    </>
-                  }
-                  request={async (params) => {
-                    const res = await service.queryMetadataConfig(opcUaId, deviceId, {
-                      ...params,
-                      sorts: [{ name: 'createTime', order: 'desc' }],
-                    });
-                    setData(res.result.data);
-                    return {
-                      code: res.message,
-                      result: {
-                        data: res.result.data,
-                        pageIndex: 0,
-                        pageSize: 0,
-                        total: 0,
-                      },
-                      status: res.status,
-                    };
-                  }}
-                />
-              </Tabs.TabPane>
-            ))}
-          </Tabs>
+                    }
+                  ></Tabs.TabPane>
+                ))}
+              </Tabs>
+            </div>
+            <div style={{ width: '100%' }}>
+              <ProTable
+                actionRef={actionRef}
+                params={param}
+                columns={columns}
+                rowKey="id"
+                search={false}
+                headerTitle={
+                  <>
+                    <PermissionButton
+                      onClick={() => {
+                        setPointVisiable(true);
+                        setCurrent({});
+                      }}
+                      isPermission={permission.add}
+                      key="add"
+                      icon={<PlusOutlined />}
+                      type="primary"
+                    >
+                      {intl.formatMessage({
+                        id: 'pages.data.option.add',
+                        defaultMessage: '新增',
+                      })}
+                    </PermissionButton>
+                    <div style={{ marginLeft: 10 }}>
+                      <Input.Search
+                        placeholder="请输入属性ID"
+                        allowClear
+                        onSearch={(value) => {
+                          console.log(value);
+                          if (value) {
+                            setParam({
+                              terms: [
+                                { column: 'metadataId', value: `%${value}%`, termType: 'like' },
+                              ],
+                            });
+                          } else {
+                            setParam({
+                              terms: [{ column: 'deviceId', value: deviceId }],
+                            });
+                          }
+                        }}
+                      />
+                    </div>
+                  </>
+                }
+                request={async (params) => {
+                  const res = await service.queryMetadataConfig(opcUaId, deviceId, {
+                    ...params,
+                    sorts: [{ name: 'createTime', order: 'desc' }],
+                  });
+                  setData(res.result.data);
+                  return {
+                    code: res.message,
+                    result: {
+                      data: res.result.data,
+                      pageIndex: 0,
+                      pageSize: 0,
+                      total: 0,
+                    },
+                    status: res.status,
+                  };
+                }}
+              />
+            </div>
+          </div>
         ) : (
           <Empty />
         )}
