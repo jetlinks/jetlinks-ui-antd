@@ -5,11 +5,11 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
+import { Axis, Chart, LineAdvance, Legend, Slider, Tooltip, Point } from 'bizcharts';
 import FileComponent from '../../Running/Property/FileComponent';
 import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
 import AMap from './AMap';
-import Charts from './Charts';
 interface Props {
   close: () => void;
   data: Partial<PropertyMetadata>;
@@ -151,54 +151,31 @@ const PropertyLog = (props: Props) => {
       sorts: [{ name: 'timestamp', order: 'asc' }],
     });
     if (resp.status === 200) {
-      const dataList: any[] = [
-        {
-          year: start,
-          value: undefined,
-          type: data?.name || '',
-        },
-      ];
+      const dataList: any[] = [];
       resp.result.data.forEach((i: any) => {
         dataList.push({
-          ...i,
-          year: i.timestamp, //moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+          year: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
           value: i.value,
           type: data?.name || '',
         });
       });
-      dataList.push({
-        year: end,
-        value: undefined,
-        type: data?.name || '',
-      });
-      setChartsList(dataList || []);
+      setChartsList(dataList);
     }
   };
 
   const queryChartsAggList = async (datas: any) => {
     const resp = await service.queryPropertieInfo(params.id, datas);
     if (resp.status === 200) {
-      const dataList: any[] = [
-        {
-          year: start,
-          value: undefined,
-          type: data?.name || '',
-        },
-      ];
+      const dataList: any[] = [];
       resp.result.forEach((i: any) => {
         dataList.push({
           ...i,
-          year: i.time, // moment(i.time).format('YYYY-MM-DD HH:mm:ss'),
+          year: moment(i.time).format('YYYY-MM-DD HH:mm:ss'),
           value: Number(i[data.id || '']),
           type: data?.name || '',
         });
       });
-      dataList.push({
-        year: end,
-        value: undefined,
-        type: data?.name || '',
-      });
-      setChartsList((dataList || []).reverse());
+      setChartsList(dataList.reverse());
     }
   };
 
@@ -208,6 +185,16 @@ const PropertyLog = (props: Props) => {
     setStart(moment().startOf('day').valueOf());
     setEnd(new Date().getTime());
   }, []);
+
+  const scale = {
+    value: { min: 0 },
+    year: {
+      type: 'time',
+      mask: 'YYYY-MM-DD HH:mm:ss',
+      // max: end,
+      // min: start,
+    },
+  };
 
   const renderComponent = (type: string) => {
     switch (type) {
@@ -311,8 +298,21 @@ const PropertyLog = (props: Props) => {
                 </div>
               )}
             </div>
-            <div>
-              <Charts data={chartsList} min={start} max={end} />
+            <div style={{ marginTop: 10 }}>
+              <Chart height={400} data={chartsList} scale={scale} padding="auto" autoFit>
+                <Legend />
+                <Axis name="year" />
+                <Axis
+                  name="value"
+                  label={{
+                    formatter: (val) => parseFloat(val).toLocaleString(),
+                  }}
+                />
+                <Tooltip shared />
+                <Point position="year*value" />
+                <LineAdvance position="year*value" shape="smooth" area />
+                <Slider />
+              </Chart>
             </div>
           </div>
         );
