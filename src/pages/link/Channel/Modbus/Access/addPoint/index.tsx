@@ -29,10 +29,10 @@ const AddPoint = (props: Props) => {
           props.close();
         }
       });
-    console.log(formData);
   };
 
   useEffect(() => {
+    console.log(props.data);
     service.deviceDetail(props.deviceId).then((res: any) => {
       if (res.result.metadata) {
         const item = JSON.parse(res.result?.metadata);
@@ -56,7 +56,10 @@ const AddPoint = (props: Props) => {
         layout="vertical"
         initialValues={{
           ...props.data,
-          // readIndex:props.data?.readIndex || 0,
+          codecConfig: {
+            readIndex: props.data?.codecConfig?.readIndex || 0,
+            scaleFactor: props.data?.codecConfig?.scaleFactor || 1,
+          },
         }}
       >
         <Row gutter={[24, 24]}>

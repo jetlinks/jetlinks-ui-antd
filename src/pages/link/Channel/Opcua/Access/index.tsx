@@ -267,8 +267,8 @@ const Access = () => {
                               }
                             });
                           }}
-                          okText="Yes"
-                          cancelText="No"
+                          okText="是"
+                          cancelText="否"
                         >
                           <DisconnectOutlined className={styles.icon} />
                         </Popconfirm>

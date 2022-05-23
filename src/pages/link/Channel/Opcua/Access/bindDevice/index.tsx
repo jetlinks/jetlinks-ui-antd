@@ -53,19 +53,23 @@ const BindDevice = (props: Props) => {
   ];
 
   const save = () => {
-    const params = bindDevice.map((item: any) => ({
-      opcUaId: props.id,
-      deviceId: item.id,
-      deviceName: item.name,
-      productId: item.productId,
-      productName: item.productName,
-    }));
-    service.bind(params).then((res) => {
-      if (res.status === 200) {
-        message.success('绑定成功');
-        props.close();
-      }
-    });
+    if (bindDevice && bindDevice.length !== 0) {
+      const params = bindDevice.map((item: any) => ({
+        opcUaId: props.id,
+        deviceId: item.id,
+        deviceName: item.name,
+        productId: item.productId,
+        productName: item.productName,
+      }));
+      service.bind(params).then((res) => {
+        if (res.status === 200) {
+          message.success('绑定成功');
+          props.close();
+        }
+      });
+    } else {
+      message.error('请勾选数据');
+    }
   };
 
   useEffect(() => {

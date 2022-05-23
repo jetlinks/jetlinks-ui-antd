@@ -52,12 +52,16 @@ const BindDevice = (props: Props) => {
   ];
 
   const save = () => {
-    service.bind(keys, props.id).then((res) => {
-      if (res.status === 200) {
-        message.success('绑定成功');
-        props.close();
-      }
-    });
+    if (keys && keys.length !== 0) {
+      service.bind(keys, props.id).then((res) => {
+        if (res.status === 200) {
+          message.success('绑定成功');
+          props.close();
+        }
+      });
+    } else {
+      message.error('请勾选数据');
+    }
   };
 
   return (

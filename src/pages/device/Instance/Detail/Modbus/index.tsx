@@ -134,7 +134,7 @@ const Modbus = () => {
                     id: 'pages.data.option.remove',
                     defaultMessage: '删除',
                   })
-                : '请先禁用该组件，再删除。',
+                : '请先禁用该点位，再删除。',
           }}
           popConfirm={{
             title: '确认删除',
@@ -161,14 +161,20 @@ const Modbus = () => {
     },
   ];
 
-  const getModbus = () => {
+  const getModbus = (id: string) => {
     service
-      .query({
+      .queryMetadatabyId({
         paging: false,
+        terms: [
+          {
+            column: 'id$bind-modbus',
+            value: id,
+          },
+        ],
       })
       .then((res) => {
-        setBindList(res.result.data);
-        setOpcId(res.result?.data?.[0].id);
+        setBindList(res.result);
+        setOpcId(res.result?.[0]?.id);
       });
   };
 
@@ -176,7 +182,7 @@ const Modbus = () => {
     const { id } = InstanceModel.detail;
     setDeviceId(id);
     if (id) {
-      getModbus();
+      getModbus(id);
     }
   }, [visible]);
 
@@ -261,7 +267,7 @@ const Modbus = () => {
                           onConfirm: async () => {
                             const resp: any = await service.remove(item.id);
                             if (resp.status === 200) {
-                              getModbus();
+                              getModbus(deviceId);
                               message.success(
                                 intl.formatMessage({
                                   id: 'pages.data.option.success',

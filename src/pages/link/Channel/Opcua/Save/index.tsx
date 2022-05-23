@@ -94,7 +94,7 @@ const Save = (props: Props) => {
               {
                 pattern:
                   '(opc.tcp|http|https|opc.http|opc.https|opc.ws|opc.wss)://([^:/]+|\\[.*])(:\\d+)?(/.*)?',
-                message: '格式错误(opc.tcp://127.0.0.1:49320)',
+                message: '以固定协议(http,https,opc.tcp等)字段开头，并用://与IP地址连接',
               },
             ],
             name: 'endpoint',
