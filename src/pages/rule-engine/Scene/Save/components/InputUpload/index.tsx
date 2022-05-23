@@ -13,7 +13,7 @@ interface InputUploadProps {
 export default (props: InputUploadProps) => {
   const { onChange } = props;
 
-  const [url, setUrl] = useState(props.value);
+  const [url, setUrl] = useState(props.value || undefined);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,7 +28,9 @@ export default (props: InputUploadProps) => {
       info.file.url = info.file.response?.result;
       setLoading(false);
       if (onChange) {
-        onChange(info.file.response?.result);
+        const result = info.file.response?.result;
+        setUrl(result);
+        onChange(result);
       }
     }
   };

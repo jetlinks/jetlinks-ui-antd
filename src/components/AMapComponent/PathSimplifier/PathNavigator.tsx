@@ -47,21 +47,26 @@ export default (props: PathNavigatorProps) => {
   const createPathNavigator = useCallback(
     (path?: PathSimplifier) => {
       if (path) {
-        PathNavigatorRef.current = path.createPathNavigator(navKey!, {
-          speed: props.speed || 10000,
-          ...omit(extraProps, Object.values(EventMap)),
-        });
+        const pathData = path.getPathData(navKey!);
+        if (pathData?.path && pathData?.path.length) {
+          // 避免path为空数组时，导致创建巡航器异常
 
-        if (PathNavigatorRef.current) {
-          createEvent();
-        }
+          PathNavigatorRef.current = path.createPathNavigator(navKey!, {
+            speed: props.speed || 10000,
+            ...omit(extraProps, Object.values(EventMap)),
+          });
 
-        if (onCreate && PathNavigatorRef.current) {
-          onCreate(PathNavigatorRef.current);
-        }
+          if (PathNavigatorRef.current) {
+            createEvent();
+          }
 
-        if (props.isAuto !== false) {
-          PathNavigatorRef.current?.start();
+          if (onCreate && PathNavigatorRef.current) {
+            onCreate(PathNavigatorRef.current);
+          }
+
+          if (props.isAuto !== false) {
+            PathNavigatorRef.current?.start();
+          }
         }
       }
     },
