@@ -1,25 +1,15 @@
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
-import {
-  DatePicker,
-  Modal,
-  Radio,
-  Select,
-  Space,
-  Spin,
-  Table,
-  Tabs,
-  Tooltip as ATooltip,
-} from 'antd';
+import { DatePicker, Modal, Radio, Select, Space, Table, Tabs, Tooltip as ATooltip } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
+import { Axis, Chart, LineAdvance, Legend, Slider, Tooltip, Point } from 'bizcharts';
 import FileComponent from '../../Running/Property/FileComponent';
 import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
 import AMap from './AMap';
-import Charts from './Charts';
 interface Props {
   close: () => void;
   data: Partial<PropertyMetadata>;
@@ -44,7 +34,6 @@ const PropertyLog = (props: Props) => {
   const [current, setCurrent] = useState<any>('');
 
   const [geoList, setGeoList] = useState<any>({});
-  const [loading, setLoading] = useState<boolean>(true);
 
   const columns = [
     {
@@ -130,7 +119,6 @@ const PropertyLog = (props: Props) => {
   ];
 
   const handleSearch = (param: any, startTime?: number, endTime?: number) => {
-    setLoading(true);
     service
       .getPropertyData(
         params.id,
@@ -144,7 +132,6 @@ const PropertyLog = (props: Props) => {
         }),
       )
       .then((resp) => {
-        setLoading(false);
         if (resp.status === 200) {
           setDataSource(resp.result);
         }
@@ -152,7 +139,6 @@ const PropertyLog = (props: Props) => {
   };
 
   const queryChartsList = async (startTime?: number, endTime?: number) => {
-    setLoading(true);
     const resp = await service.queryPropertieList(params.id, data.id || '', {
       paging: false,
       terms: [
@@ -164,59 +150,32 @@ const PropertyLog = (props: Props) => {
       ],
       sorts: [{ name: 'timestamp', order: 'asc' }],
     });
-    setLoading(false);
     if (resp.status === 200) {
-      const dataList: any[] = [
-        {
-          year: start,
-          value: undefined,
-          type: data?.name || '',
-        },
-      ];
+      const dataList: any[] = [];
       resp.result.data.forEach((i: any) => {
         dataList.push({
-          ...i,
-          year: i.timestamp, //moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
+          year: moment(i.timestamp).format('YYYY-MM-DD HH:mm:ss'),
           value: i.value,
           type: data?.name || '',
         });
       });
-      dataList.push({
-        year: end,
-        value: undefined,
-        type: data?.name || '',
-      });
-      console.log(dataList.length);
-      setChartsList(dataList || []);
+      setChartsList(dataList);
     }
   };
 
   const queryChartsAggList = async (datas: any) => {
-    setLoading(true);
     const resp = await service.queryPropertieInfo(params.id, datas);
-    setLoading(false);
     if (resp.status === 200) {
-      const dataList: any[] = [
-        {
-          year: start,
-          value: undefined,
-          type: data?.name || '',
-        },
-      ];
+      const dataList: any[] = [];
       resp.result.forEach((i: any) => {
         dataList.push({
           ...i,
-          year: i.time, // moment(i.time).format('YYYY-MM-DD HH:mm:ss'),
+          year: moment(i.time).format('YYYY-MM-DD HH:mm:ss'),
           value: Number(i[data.id || '']),
           type: data?.name || '',
         });
       });
-      dataList.push({
-        year: end,
-        value: undefined,
-        type: data?.name || '',
-      });
-      setChartsList((dataList || []).reverse());
+      setChartsList(dataList.reverse());
     }
   };
 
@@ -226,6 +185,16 @@ const PropertyLog = (props: Props) => {
     setStart(moment().startOf('day').valueOf());
     setEnd(new Date().getTime());
   }, []);
+
+  const scale = {
+    value: { min: 0 },
+    year: {
+      type: 'time',
+      mask: 'YYYY-MM-DD HH:mm:ss',
+      // max: end,
+      // min: start,
+    },
+  };
 
   const renderComponent = (type: string) => {
     switch (type) {
@@ -329,8 +298,21 @@ const PropertyLog = (props: Props) => {
                 </div>
               )}
             </div>
-            <div>
-              <Charts data={chartsList} min={start} max={end} />
+            <div style={{ marginTop: 10 }}>
+              <Chart height={400} data={chartsList} scale={scale} padding="auto" autoFit>
+                <Legend />
+                <Axis name="year" />
+                <Axis
+                  name="value"
+                  label={{
+                    formatter: (val) => parseFloat(val).toLocaleString(),
+                  }}
+                />
+                <Tooltip shared />
+                <Point position="year*value" />
+                <LineAdvance position="year*value" shape="smooth" area />
+                <Slider />
+              </Chart>
             </div>
           </div>
         );
@@ -370,7 +352,6 @@ const PropertyLog = (props: Props) => {
         });
       }
     } else if (tab === 'geo') {
-      setLoading(true);
       service
         .getPropertyData(
           params.id,
@@ -381,7 +362,6 @@ const PropertyLog = (props: Props) => {
           }),
         )
         .then((resp) => {
-          setLoading(false);
           if (resp.status === 200) {
             setGeoList(resp.result);
           }
@@ -400,122 +380,118 @@ const PropertyLog = (props: Props) => {
       onOk={() => close()}
       width="50vw"
     >
-      <Spin spinning={loading}>
-        <div style={{ marginBottom: '20px' }}>
-          <Space>
-            <Radio.Group
-              value={radioValue}
-              buttonStyle="solid"
-              onChange={(e) => {
-                const value = e.target.value;
-                setRadioValue(value);
-                let st: number = 0;
-                const et = new Date().getTime();
-                if (value === 'today') {
-                  st = moment().startOf('day').valueOf();
-                } else if (value === 'week') {
-                  st = moment().subtract(6, 'days').valueOf();
-                } else if (value === 'month') {
-                  st = moment().subtract(29, 'days').valueOf();
-                }
-                setDateValue(undefined);
-                setStart(st);
-                setEnd(et);
-              }}
-              style={{ minWidth: 220 }}
-            >
-              <Radio.Button value="today">今日</Radio.Button>
-              <Radio.Button value="week">近一周</Radio.Button>
-              <Radio.Button value="month">近一月</Radio.Button>
-            </Radio.Group>
-            {
-              // @ts-ignore
-              <DatePicker.RangePicker
-                value={dateValue}
-                showTime
-                onChange={(dates: any) => {
-                  if (dates) {
-                    setRadioValue(undefined);
-                    setDateValue(dates);
-                    const st = dates[0]?.valueOf();
-                    const et = dates[1]?.valueOf();
-                    setStart(st);
-                    setEnd(et);
-                  }
-                }}
-              />
-            }
-          </Space>
-        </div>
-        <Tabs
-          activeKey={tab}
-          onChange={(key: string) => {
-            setTab(key);
-            if (key === 'charts' && !!data.valueType?.type) {
-              if (list.includes(data.valueType?.type)) {
-                queryChartsList(start, end);
-              } else {
-                setCycle('1m');
-                setAgg('COUNT');
-                queryChartsAggList({
-                  columns: [
-                    {
-                      property: data.id,
-                      alias: data.id,
-                      agg: 'COUNT',
-                    },
-                  ],
-                  query: {
-                    interval: '1m',
-                    format: 'yyyy-MM-dd HH:mm:ss',
-                    from: start,
-                    to: end,
-                  },
-                });
+      <div style={{ marginBottom: '20px' }}>
+        <Space>
+          <Radio.Group
+            value={radioValue}
+            buttonStyle="solid"
+            onChange={(e) => {
+              const value = e.target.value;
+              setRadioValue(value);
+              let st: number = 0;
+              const et = new Date().getTime();
+              if (value === 'today') {
+                st = moment().startOf('day').valueOf();
+              } else if (value === 'week') {
+                st = moment().subtract(6, 'days').valueOf();
+              } else if (value === 'month') {
+                st = moment().subtract(29, 'days').valueOf();
               }
-            }
-            if (key === 'geo') {
-              setLoading(true);
-              service
-                .getPropertyData(
-                  params.id,
-                  encodeQuery({
-                    paging: false,
-                    terms: { property: data.id, timestamp$BTW: start && end ? [start, end] : [] },
-                    sorts: { timestamp: 'asc' },
-                  }),
-                )
-                .then((resp) => {
-                  setLoading(false);
-                  if (resp.status === 200) {
-                    setGeoList(resp.result);
-                  }
-                });
-            }
-            if (key === 'table') {
-              handleSearch(
-                {
-                  pageSize: 10,
-                  pageIndex: 0,
+              setDateValue(undefined);
+              setStart(st);
+              setEnd(et);
+            }}
+            style={{ minWidth: 220 }}
+          >
+            <Radio.Button value="today">今日</Radio.Button>
+            <Radio.Button value="week">近一周</Radio.Button>
+            <Radio.Button value="month">近一月</Radio.Button>
+          </Radio.Group>
+          {
+            // @ts-ignore
+            <DatePicker.RangePicker
+              value={dateValue}
+              showTime
+              onChange={(dates: any) => {
+                if (dates) {
+                  setRadioValue(undefined);
+                  setDateValue(dates);
+                  const st = dates[0]?.valueOf();
+                  const et = dates[1]?.valueOf();
+                  setStart(st);
+                  setEnd(et);
+                }
+              }}
+            />
+          }
+        </Space>
+      </div>
+      <Tabs
+        activeKey={tab}
+        onChange={(key: string) => {
+          setTab(key);
+          if (key === 'charts' && !!data.valueType?.type) {
+            if (list.includes(data.valueType?.type)) {
+              queryChartsList(start, end);
+            } else {
+              setCycle('1m');
+              setAgg('COUNT');
+              queryChartsAggList({
+                columns: [
+                  {
+                    property: data.id,
+                    alias: data.id,
+                    agg: 'COUNT',
+                  },
+                ],
+                query: {
+                  interval: '1m',
+                  format: 'yyyy-MM-dd HH:mm:ss',
+                  from: start,
+                  to: end,
                 },
-                start,
-                end,
-              );
+              });
             }
-          }}
-        >
-          {tabList.map((item) => (
-            <Tabs.TabPane tab={item.tab} key={item.key}>
-              {renderComponent(item.key)}
-            </Tabs.TabPane>
-          ))}
-          {data?.valueType?.type === 'geoPoint' && (
-            <Tabs.TabPane tab="轨迹" key="geo">
-              <AMap value={geoList} name={data?.name || ''} />
-            </Tabs.TabPane>
-          )}
-        </Tabs>
-      </Spin>
+          }
+          if (key === 'geo') {
+            service
+              .getPropertyData(
+                params.id,
+                encodeQuery({
+                  paging: false,
+                  terms: { property: data.id, timestamp$BTW: start && end ? [start, end] : [] },
+                  sorts: { timestamp: 'asc' },
+                }),
+              )
+              .then((resp) => {
+                if (resp.status === 200) {
+                  setGeoList(resp.result);
+                }
+              });
+          }
+          if (key === 'table') {
+            handleSearch(
+              {
+                pageSize: 10,
+                pageIndex: 0,
+              },
+              start,
+              end,
+            );
+          }
+        }}
+      >
+        {tabList.map((item) => (
+          <Tabs.TabPane tab={item.tab} key={item.key}>
+            {renderComponent(item.key)}
+          </Tabs.TabPane>
+        ))}
+        {data?.valueType?.type === 'geoPoint' && (
+          <Tabs.TabPane tab="轨迹" key="geo">
+            <AMap value={geoList} name={data?.name || ''} />
+          </Tabs.TabPane>
+        )}
+      </Tabs>
       {detailVisible && (
         <Detail
           close={() => {
