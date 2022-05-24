@@ -46,6 +46,12 @@ class Service extends BaseService<OpaUa> {
     request(`/${SystemConst.API_BASE}/modbus/master/metadata/${metadataId}`, {
       method: 'DELETE',
     });
+  //设备id查modbus通道
+  queryMetadatabyId = (data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/master/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;
