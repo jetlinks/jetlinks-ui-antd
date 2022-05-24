@@ -25,7 +25,7 @@
           {
             name: 'bind',
             path: '/account/center/bind',
-            component: './account/Center/bind',
+            component: './account/Center/Bind',
           },
         ],
       },

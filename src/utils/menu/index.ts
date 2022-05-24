@@ -85,12 +85,6 @@ export const extraRouteArr = [
         url: '/account/center',
       },
       {
-        code: 'account/Center/bind',
-        name: '第三方页面',
-        url: '/account/center/bind',
-        hideInMenu: true,
-      },
-      {
         code: 'account/NotificationSubscription',
         name: '通知订阅',
         url: '/account/NotificationSubscription',
@@ -100,12 +94,6 @@ export const extraRouteArr = [
         name: '通知记录',
         url: '/account/NotificationRecord',
       },
-      // {
-      //   code: 'account/Center/bind',
-      //   name: '第三方页面',
-      //   url: '/account/center/bind',
-      //   hideInMenu: true,
-      // },
     ],
   },
 ];
