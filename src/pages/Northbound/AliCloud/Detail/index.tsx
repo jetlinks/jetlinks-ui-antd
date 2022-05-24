@@ -422,6 +422,8 @@ const Detail = observer(() => {
                 <a
                   style={{ wordBreak: 'break-all' }}
                   href="https://help.aliyun.com/document_detail/87368.html"
+                  target={'_blank'}
+                  rel="noreferrer"
                 >
                   https://help.aliyun.com/document_detail/87368.html
                 </a>

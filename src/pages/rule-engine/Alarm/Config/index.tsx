@@ -314,7 +314,7 @@ const Config = () => {
           username: {
             title: '用户名',
             type: 'string',
-            required: true,
+            // required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-component-props': {
@@ -327,7 +327,7 @@ const Config = () => {
           password: {
             title: '密码',
             type: 'string',
-            required: true,
+            // required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-decorator-props': {
