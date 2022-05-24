@@ -271,6 +271,7 @@ const Detail = observer(() => {
         required: true,
         'x-component': 'ArrayCollapse',
         'x-decorator': 'FormItem',
+        title: '产品映射',
         items: {
           type: 'object',
           'x-component': 'ArrayCollapse.CollapsePanel',
