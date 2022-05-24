@@ -10,7 +10,6 @@ import {
   NumberPicker,
   Select,
   Space,
-  Switch,
   TreeSelect,
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
@@ -30,6 +29,7 @@ import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
 import FInputGroup from '@/components/FInputGroup';
+import { Button } from 'antd';
 
 const service = new Service('scene');
 
@@ -89,7 +89,34 @@ const TriggerTerm = (props: Props, ref: any) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.value,
+        initialValues:
+          {
+            trigger: [
+              {
+                type: 'and',
+                termType: 'eq',
+                options: [],
+                terms: [
+                  {
+                    column: 'timestamp',
+                    value: { source: 'manual', value: ['3123', '312321'] },
+                    type: 'and',
+                    termType: 'btw',
+                    options: [],
+                    terms: [],
+                  },
+                  {
+                    column: '_now',
+                    value: { source: 'manual', value: '2022-05-24 00:00:06' },
+                    type: 'and',
+                    termType: 'eq',
+                    options: [],
+                    terms: [],
+                  },
+                ],
+              },
+            ],
+          } || props.value,
 
         effects() {
           onFormValuesChange(async (f) => {
@@ -154,7 +181,21 @@ const TriggerTerm = (props: Props, ref: any) => {
                 : treeValue[0];
 
             const source = (field as Field).value;
-            const value = field.query(source === 'manual' ? '.value.0' : '.metric');
+            const termType = field.query('..termType').value();
+            const tag = ['nbtw', 'btw'].includes(termType);
+            // 如果是范围..那么就应该取.value.0;  如果不是就是.value
+            const pathMap = {
+              range: field.query('.value.0'),
+              value: field.query('.value'),
+              metric: field.query('.metric'),
+            };
+            let value;
+            if (source === 'manual') {
+              value = tag ? pathMap['range'] : pathMap['value'];
+            } else {
+              value = pathMap['metric'];
+            }
+            // const value = field.query(source === 'manual' ? '.value.0' : '.metric');
             if (target) {
               if (source === 'manual') {
                 // 手动输入
@@ -167,15 +208,25 @@ const TriggerTerm = (props: Props, ref: any) => {
                   long: NumberPicker,
                   string: Input,
                   date: DatePicker,
-                  boolean: Switch,
+                  boolean: Select,
                 };
 
                 form1.setFieldState(value, (state) => {
                   state.componentType = valueTypeMap[valueType];
+                  state.componentProps = {
+                    style: {
+                      width: '100%',
+                    },
+                  };
                   if (valueType === 'date') {
                     state.componentProps = {
                       showTime: true,
                     };
+                  } else if (valueType === 'boolean') {
+                    state.dataSource = [
+                      { label: '是', value: 'true' },
+                      { label: '否', value: 'false' },
+                    ];
                   }
                 });
                 form1.setFieldState(field.query('.value.1'), (state) => {
@@ -187,8 +238,6 @@ const TriggerTerm = (props: Props, ref: any) => {
                   }
                 });
               } else if (source === 'metrics') {
-                const termType = field.query('..termType').value();
-                const tag = ['nbtw', 'btw'].includes(termType);
                 // 指标
                 form1.setFieldState(value, (state) => {
                   state.componentType = Select;
@@ -329,7 +378,43 @@ const TriggerTerm = (props: Props, ref: any) => {
                               },
                             },
                           },
-                          'value[0]': {
+                          range: {
+                            type: 'void',
+                            'x-reactions': {
+                              dependencies: ['.source', '..termType'],
+                              fulfill: {
+                                state: {
+                                  visible:
+                                    '{{$deps[0]==="manual"&&(["nbtw","btw"].includes($deps[1]))}}',
+                                },
+                              },
+                            },
+                            properties: {
+                              'value[0]': {
+                                type: 'string',
+                                'x-component': 'Input',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  style: {
+                                    width: 'calc(50% - 55px)',
+                                  },
+                                },
+                                required: true,
+                              },
+                              'value[1]': {
+                                type: 'string',
+                                'x-component': 'Input',
+                                'x-decorator': 'FormItem',
+                                'x-decorator-props': {
+                                  style: {
+                                    width: 'calc(50% - 55px)',
+                                  },
+                                },
+                                required: true,
+                              },
+                            },
+                          },
+                          value: {
                             type: 'string',
                             'x-component': 'Input',
                             'x-decorator': 'FormItem',
@@ -339,55 +424,12 @@ const TriggerTerm = (props: Props, ref: any) => {
                               },
                             },
                             required: true,
-                            'x-reactions': [
-                              {
-                                dependencies: ['..source'],
-                                fulfill: {
-                                  state: {
-                                    visible: '{{$deps[0]==="manual"}}',
-                                  },
-                                },
-                              },
-                              {
-                                dependencies: ['...termType'],
-                                when: '{{["nbtw","btw"].includes($deps[0])}}',
-                                fulfill: {
-                                  state: {
-                                    decoratorProps: {
-                                      style: {
-                                        width: 'calc(50% - 55px)',
-                                      },
-                                    },
-                                  },
-                                },
-                                otherwise: {
-                                  state: {
-                                    decoratorProps: {
-                                      style: {
-                                        width: 'calc(100% - 110px)',
-                                      },
-                                    },
-                                  },
-                                },
-                              },
-                            ],
-                          },
-                          'value[1]': {
-                            type: 'string',
-                            'x-component': 'Input',
-                            'x-decorator': 'FormItem',
-                            'x-decorator-props': {
-                              style: {
-                                width: 'calc(50% - 55px)',
-                              },
-                            },
-                            required: true,
                             'x-reactions': {
-                              dependencies: ['..source', '...termType'],
+                              dependencies: ['.source', '..termType'],
                               fulfill: {
                                 state: {
                                   visible:
-                                    '{{$deps[0]==="manual"&&["nbtw","btw"].includes($deps[1])}}',
+                                    '{{$deps[0]==="manual"&&!(["nbtw","btw"].includes($deps[1]))}}',
                                 },
                               },
                             },
@@ -457,6 +499,13 @@ const TriggerTerm = (props: Props, ref: any) => {
   return (
     <Form form={form} layout="vertical" className={styles.form}>
       <SchemaField schema={schema} scope={{ useAsyncDataSource, getParseTerm }} />
+      <Button
+        onClick={async () => {
+          console.log(await form.submit());
+        }}
+      >
+        保存
+      </Button>
     </Form>
   );
 };
