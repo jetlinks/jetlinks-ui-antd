@@ -29,8 +29,6 @@ import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
 import FInputGroup from '@/components/FInputGroup';
-import { Button } from 'antd';
-import _ from 'lodash';
 
 const service = new Service('scene');
 
@@ -490,25 +488,6 @@ const TriggerTerm = (props: Props, ref: any) => {
   return (
     <Form form={form} layout="vertical" className={styles.form}>
       <SchemaField schema={schema} scope={{ useAsyncDataSource, getParseTerm }} />
-      <Button
-        onClick={async () => {
-          const data: any = await form.submit();
-          data.trigger?.map((item: { terms: any[] }) =>
-            item.terms.map((j) => {
-              if (j.value.value.length === 1) {
-                j.value.value = j.value.value[0];
-              }
-              return j;
-            }),
-          );
-          const value = _.get(data, 'trigger[*].terms[*].value.value');
-          console.log(value, 'vvvv');
-          _.set(value, 'x[*].xxx', 'test');
-          console.log(data);
-        }}
-      >
-        保存数据
-      </Button>
     </Form>
   );
 };

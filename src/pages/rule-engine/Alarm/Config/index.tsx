@@ -203,10 +203,10 @@ const Config = () => {
       createForm({
         validateFirst: true,
         effects() {
-          onFormInit(async () => {
+          onFormInit(async (f) => {
             const resp = await service.getDataExchange('consume');
             if (resp.status === 200) {
-              console.log(resp, 'resp');
+              f.setInitialValues(resp.result?.config.config);
             }
           });
         },
@@ -218,10 +218,10 @@ const Config = () => {
       createForm({
         validateFirst: true,
         effects() {
-          onFormInit(async () => {
+          onFormInit(async (f) => {
             const resp = await service.getDataExchange('producer');
             if (resp.status === 200) {
-              console.log(resp, 'producer');
+              f.setInitialValues(resp.result?.config.config);
             }
           });
         },
