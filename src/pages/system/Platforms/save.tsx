@@ -1,5 +1,5 @@
-import { createForm, onFieldValueChange } from '@formily/core';
 import type { Field } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
   Checkbox,
@@ -78,11 +78,10 @@ export default (props: SaveProps) => {
   const form = useMemo(
     () =>
       createForm({
-        validateFirst: false,
         effects() {
           onFieldValueChange('enableOAuth2', (field) => {
             form.setFieldState('redirectUrl', (state) => {
-              state.display = field.value ? 'visible' : 'none';
+              state.visible = field.value;
             });
           });
         },
@@ -93,7 +92,7 @@ export default (props: SaveProps) => {
   const getDetail = async (id: string) => {
     const resp = await service.getDetail(id);
     if (resp.status === 200) {
-      form.setValues({
+      form.setInitialValues({
         ...resp.result,
         confirm_password: resp.result.password,
       });
@@ -105,7 +104,7 @@ export default (props: SaveProps) => {
       if (props.type === 'edit') {
         getDetail(props.data.id);
       } else {
-        form.setValues({
+        form.setInitialValues({
           enableOAuth2: false,
           id: randomString(16),
           secureKey: randomString(),
@@ -378,7 +377,8 @@ export default (props: SaveProps) => {
             'x-component-props': {
               placeholder: '请输入redirectUrl',
             },
-            'x-hidden': true,
+            // 'x-hidden': true,
+            'x-visible': false,
             'x-decorator-props': {
               gridSpan: 2,
               tooltip: '授权后自动跳转的页面地址',
@@ -439,9 +439,9 @@ export default (props: SaveProps) => {
   };
 
   const saveData = useCallback(async () => {
-    // setLoading(true)
     const data: any = await form.submit();
     if (data) {
+      console.log(data);
       setLoading(true);
       const resp: any = props.type === 'edit' ? await service.edit(data) : await service.save(data);
       setLoading(false);

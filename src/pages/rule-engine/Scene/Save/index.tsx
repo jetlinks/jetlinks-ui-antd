@@ -78,6 +78,7 @@ export default () => {
 
         setTriggerValue({ trigger: _data.terms || [] });
         setTriggerDatas(_data.trigger);
+        setActionParams({ trigger: _data.trigger });
         if (_data.trigger?.shakeLimit) {
           setShakeLimit(_data.trigger?.shakeLimit || DefaultShakeLimit);
         }
@@ -224,7 +225,7 @@ export default () => {
                   setTriggerDatas(allValues.trigger);
                 }
               } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
-                setActionParams({ trigger: allValues.trigger });
+                setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
               }
             }
 
