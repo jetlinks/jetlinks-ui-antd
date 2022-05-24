@@ -33,7 +33,6 @@ export default observer((props: ApiPageProps) => {
 
   const initModel = () => {
     ApiModel.data = [];
-    ApiModel.baseUrl = '';
     ApiModel.showTable = true;
     ApiModel.components = {};
     ApiModel.swagger = {};
