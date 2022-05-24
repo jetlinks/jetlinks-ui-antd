@@ -10,7 +10,6 @@ import {
   NumberPicker,
   Select,
   Space,
-  Switch,
   TreeSelect,
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
@@ -21,7 +20,7 @@ import {
   onFieldValueChange,
   onFormValuesChange,
 } from '@formily/core';
-import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import FTermArrayCards from '@/components/FTermArrayCards';
 import FTermTypeSelect from '@/components/FTermTypeSelect';
 import styles from './index.less';
@@ -30,6 +29,8 @@ import { useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { treeFilter } from '@/utils/tree';
 import FInputGroup from '@/components/FInputGroup';
+import { Button } from 'antd';
+import _ from 'lodash';
 
 const service = new Service('scene');
 
@@ -89,8 +90,6 @@ const TriggerTerm = (props: Props, ref: any) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: props.value,
-
         effects() {
           onFormValuesChange(async (f) => {
             if (props.onChange) {
@@ -167,15 +166,25 @@ const TriggerTerm = (props: Props, ref: any) => {
                   long: NumberPicker,
                   string: Input,
                   date: DatePicker,
-                  boolean: Switch,
+                  boolean: Select,
                 };
 
                 form1.setFieldState(value, (state) => {
                   state.componentType = valueTypeMap[valueType];
+                  state.componentProps = {
+                    style: {
+                      width: '100%',
+                    },
+                  };
                   if (valueType === 'date') {
                     state.componentProps = {
                       showTime: true,
                     };
+                  } else if (valueType === 'boolean') {
+                    state.dataSource = [
+                      { label: '是', value: 'true' },
+                      { label: '否', value: 'false' },
+                    ];
                   }
                 });
                 form1.setFieldState(field.query('.value.1'), (state) => {
@@ -208,10 +217,34 @@ const TriggerTerm = (props: Props, ref: any) => {
     [props.value, props.params],
   );
 
+  useEffect(() => {
+    const data = props.value;
+    data?.trigger?.map((item: { terms: any[] }) =>
+      item.terms?.map((j) => {
+        if (typeof j.value.value === 'string') {
+          j.value.value = [j.value.value];
+        }
+        return j;
+      }),
+    );
+    form.setInitialValues(data);
+  }, [props.value]);
+
   useImperativeHandle(ref, () => ({
     getTriggerForm: async () => {
       await form.validate();
-      return form.submit();
+      const data: any = await form.submit().then((_data: any) => {
+        _data.trigger?.map((item: { terms: any[] }) =>
+          item.terms.map((j) => {
+            if (j.value.value.length === 1) {
+              j.value.value = j.value.value[0];
+            }
+            return j;
+          }),
+        );
+        return _data;
+      });
+      return data;
     },
   }));
   const SchemaField = createSchemaField({
@@ -457,6 +490,25 @@ const TriggerTerm = (props: Props, ref: any) => {
   return (
     <Form form={form} layout="vertical" className={styles.form}>
       <SchemaField schema={schema} scope={{ useAsyncDataSource, getParseTerm }} />
+      <Button
+        onClick={async () => {
+          const data: any = await form.submit();
+          data.trigger?.map((item: { terms: any[] }) =>
+            item.terms.map((j) => {
+              if (j.value.value.length === 1) {
+                j.value.value = j.value.value[0];
+              }
+              return j;
+            }),
+          );
+          const value = _.get(data, 'trigger[*].terms[*].value.value');
+          console.log(value, 'vvvv');
+          _.set(value, 'x[*].xxx', 'test');
+          console.log(data);
+        }}
+      >
+        保存数据
+      </Button>
     </Form>
   );
 };

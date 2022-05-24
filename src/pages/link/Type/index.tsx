@@ -5,7 +5,6 @@ import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
-  EyeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -266,17 +265,17 @@ const Network = () => {
         cardRender={(record) => (
           <NetworkCard
             {...record}
-            detail={
-              <div
-                style={{ fontSize: 18, padding: 8 }}
-                onClick={() => {
-                  Store.set('current-network-data', record);
-                  pageJump(record.id);
-                }}
-              >
-                <EyeOutlined />
-              </div>
-            }
+            // detail={
+            //   <div
+            //     style={{ fontSize: 18, padding: 8 }}
+            //     onClick={() => {
+            //       Store.set('current-network-data', record);
+            //       pageJump(record.id);
+            //     }}
+            //   >
+            //     <EyeOutlined />
+            //   </div>
+            // }
             actions={[
               <PermissionButton
                 isPermission={networkPermission.update}

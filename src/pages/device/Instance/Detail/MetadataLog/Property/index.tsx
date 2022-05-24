@@ -20,6 +20,7 @@ import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
 import AMap from './AMap';
 import Charts from './Charts';
+
 interface Props {
   close: () => void;
   data: Partial<PropertyMetadata>;

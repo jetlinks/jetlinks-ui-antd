@@ -5,11 +5,12 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Axis, Chart, LineAdvance, Legend, Slider, Tooltip, Point } from 'bizcharts';
+import { Axis, Chart, Legend, LineAdvance, Point, Slider, Tooltip } from 'bizcharts';
 import FileComponent from '../../Running/Property/FileComponent';
 import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
 import AMap from './AMap';
+
 interface Props {
   close: () => void;
   data: Partial<PropertyMetadata>;
