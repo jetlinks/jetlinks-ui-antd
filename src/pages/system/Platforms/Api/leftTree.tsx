@@ -71,7 +71,6 @@ export default (props: LeftTreeType) => {
       const resp = await service.getApiNextLevel(name);
       if (resp) {
         ApiModel.components = resp.components;
-        ApiModel.baseUrl = resp.servers[0].url;
         const handleData = handleTreeData(resp);
         setTreeData((origin) => {
           const data = updateTreeData(origin, key, handleData);

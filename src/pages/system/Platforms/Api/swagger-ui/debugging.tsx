@@ -10,6 +10,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import { FormItem, Input as FormilyInput, ArrayTable, Editable } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import SystemConst from '@/utils/const';
 import classNames from 'classnames';
 
 export default observer(() => {
@@ -76,7 +77,7 @@ export default observer(() => {
       };
     }
 
-    request(`${ApiModel.baseUrl}${newUrl}`, options).then((resp) => {
+    request(`/${SystemConst.API_BASE}${newUrl}`, options).then((resp) => {
       if (resp.status === 200) {
         setResult(resp);
       } else {
