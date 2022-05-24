@@ -1,6 +1,6 @@
 import { Col, Input, message, Pagination, Row, Space, Table } from 'antd';
 import CheckButton from '@/components/CheckButton';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import PropertyCard from './PropertyCard';
 import { EditOutlined, SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
@@ -13,6 +13,7 @@ import PropertyLog from '../../MetadataLog/Property';
 import moment from 'moment';
 import styles from './index.less';
 import FileComponent from './FileComponent';
+import { throttle } from 'lodash';
 
 interface Props {
   data: Partial<PropertyMetadata>[];
@@ -110,6 +111,22 @@ const Property = (props: Props) => {
     },
   ];
 
+  const list = useRef<any[]>([]);
+
+  const subRef = useRef<any>(null);
+
+  const valueChange = (payload: any) => {
+    payload.forEach((item: any) => {
+      const { value } = item;
+      propertyValue[value?.property] = { ...item, ...value };
+    });
+    setPropertyValue({ ...propertyValue });
+    list.current = [];
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const throttleFn = useCallback(throttle(valueChange, 500), []);
+
   /**
    * 订阅属性数据
    */
@@ -118,16 +135,15 @@ const Property = (props: Props) => {
       .map((i: PropertyMetadata) => i.id)
       .join('-')}`;
     const topic = `/dashboard/device/${device.productId}/properties/realTime`;
-    subscribeTopic!(id, topic, {
+    subRef.current = subscribeTopic!(id, topic, {
       deviceId: device.id,
       properties: dataSource.data.map((i: PropertyMetadata) => i.id),
       history: 1,
     })
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
-        const { value } = payload;
-        propertyValue[value.property] = { ...payload, ...value };
-        setPropertyValue({ ...propertyValue });
+        list.current = [...list.current, payload];
+        throttleFn(list.current);
       });
   };
 
@@ -161,6 +177,13 @@ const Property = (props: Props) => {
     }
   }, [dataSource]);
 
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      subRef.current && subRef.current?.unsubscribe();
+    };
+  }, []);
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -170,15 +193,15 @@ const Property = (props: Props) => {
             placeholder="请输入名称"
             onSearch={(value: string) => {
               if (!!value) {
-                const list = data.filter((item) => {
+                const li = data.filter((item) => {
                   return (
                     item.name && item.name.toLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
                   );
                 });
-                setPropertyList(list);
+                setPropertyList(li);
                 setDataSource({
-                  total: list.length,
-                  data: (list || []).slice(0, 8),
+                  total: li.length,
+                  data: (li || []).slice(0, 8),
                   pageSize: 8,
                   currentPage: 0,
                 });

@@ -202,6 +202,10 @@ export default () => {
     </Space>
   );
 
+  const hasKeyInObject = (keys: string[], obj: any) => {
+    return keys.some((key) => key in obj);
+  };
+
   return (
     <PageContainer>
       <Card>
@@ -213,12 +217,16 @@ export default () => {
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
+            console.log(changeValue, allValues);
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
                 if (
                   changeValue.trigger.device.selectorValues ||
                   (changeValue.trigger.device.operation &&
-                    changeValue.trigger.device.operation.operator)
+                    hasKeyInObject(
+                      ['operator', 'eventId', 'functionId'],
+                      changeValue.trigger.device.operation,
+                    ))
                 ) {
                   setTriggerValue([]);
                   setRequestParams({ trigger: allValues.trigger });
