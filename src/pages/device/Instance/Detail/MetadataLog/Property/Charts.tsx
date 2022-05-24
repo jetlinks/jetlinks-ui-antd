@@ -1,7 +1,6 @@
-import { Spin } from 'antd';
 import * as echarts from 'echarts';
 import _ from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Props {
   data: any[];
@@ -11,10 +10,8 @@ interface Props {
 
 const Charts = (props: Props) => {
   const myChart: any = useRef(null);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setLoading(true);
     if ((props?.data || []).length > 2) {
       const dom = document.getElementById('charts');
       if (dom) {
@@ -57,20 +54,11 @@ const Charts = (props: Props) => {
         };
         myChart.current = myChart.current || echarts.init(dom);
         myChart.current.setOption(option);
-        setLoading(false);
       }
-    } else {
-      setTimeout(() => {
-        setLoading(false);
-      }, 5000);
     }
   }, [props.data]);
 
-  return (
-    <Spin spinning={loading}>
-      <div id="charts" style={{ width: '100%', height: 500 }}></div>
-    </Spin>
-  );
+  return <div id="charts" style={{ width: '100%', height: 500 }}></div>;
 };
 
 export default Charts;

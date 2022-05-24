@@ -97,14 +97,14 @@ const Access = () => {
           popConfirm={{
             title: intl.formatMessage({
               id: `pages.data.option.${
-                record.state.value !== 'disabled' ? 'disabled' : 'enabled'
+                record.state?.value !== 'disabled' ? 'disabled' : 'enabled'
               }.tips`,
               defaultMessage: '确认禁用？',
             }),
             onConfirm: async () => {
               const item = {
                 ...record,
-                state: record.state.value === 'enabled' ? 'disabled' : 'enabled',
+                state: record.state?.value === 'enabled' ? 'disabled' : 'enabled',
               };
               await service.saveMetadataConfig(opcUaId, deviceId, item);
               message.success(
@@ -120,24 +120,24 @@ const Access = () => {
           tooltip={{
             title: intl.formatMessage({
               id: `pages.data.option.${record.state.value !== 'disabled' ? 'disabled' : 'enabled'}`,
-              defaultMessage: record.state.value !== 'disabled' ? '禁用' : '启用',
+              defaultMessage: record.state?.value !== 'disabled' ? '禁用' : '启用',
             }),
           }}
         >
-          {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+          {record.state?.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
           style={{ padding: 0 }}
-          disabled={record.state.value === 'enabled'}
+          disabled={record.state?.value === 'enabled'}
           tooltip={{
             title:
-              record.state.value === 'disabled'
+              record.state?.value === 'disabled'
                 ? intl.formatMessage({
                     id: 'pages.data.option.remove',
                     defaultMessage: '删除',
                   })
-                : '请先禁用该组件，再删除。',
+                : '请先禁用该点位，再删除。',
           }}
           popConfirm={{
             title: '确认删除',
@@ -264,8 +264,8 @@ const Access = () => {
                               }
                             });
                           }}
-                          okText="Yes"
-                          cancelText="No"
+                          okText="是"
+                          cancelText="否"
                         >
                           <DisconnectOutlined className={styles.icon} />
                         </Popconfirm>

@@ -244,7 +244,7 @@ const Opcua = () => {
           </PermissionButton>
         }
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.query({ ...params, sorts: [{ name: 'id', order: 'desc' }] })
         }
       />
       {visible && (
