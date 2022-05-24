@@ -137,6 +137,7 @@ const Import = (props: Props) => {
               formatOnPaste: true,
               type: 'file',
               beforeUpload: (file: any) => {
+                console.log(file, 'fff');
                 const reader = new FileReader();
                 reader.readAsText(file);
                 reader.onload = (json) => {
@@ -182,6 +183,7 @@ const Import = (props: Props) => {
     if (data.metadata === 'alink') {
       service.convertMetadata('to', 'alink', data.import).subscribe({
         next: async (meta) => {
+          message.success('导入成功');
           await service.modify(param.id, { metadata: JSON.stringify(meta) });
         },
         error: () => {
@@ -189,10 +191,12 @@ const Import = (props: Props) => {
         },
       });
     } else {
-      await service.modify(param.id, { metadata: data[data.type] });
+      const resp = await service.modify(param.id, { metadata: data[data.type] });
+      if (resp.status === '200') {
+        message.success('导入成功');
+      }
     }
     Store.set(SystemConst.GET_METADATA, true);
-    message.success('导入成功');
     props.close();
   };
   return (

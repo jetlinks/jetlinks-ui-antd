@@ -36,6 +36,15 @@ const Configuration = () => {
     {
       title: '类型',
       dataIndex: 'targetType',
+      renderText: (text: string) => {
+        const map = {
+          product: '产品',
+          device: '设备',
+          org: '部门',
+          other: '其他',
+        };
+        return map[text];
+      },
     },
     {
       title: '告警级别',
