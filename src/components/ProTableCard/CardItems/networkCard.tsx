@@ -52,7 +52,7 @@ export default (props: NoticeCardProps) => {
         disabled: StatusColorEnum.error,
         enabled: StatusColorEnum.processing,
       }}
-      // showMask={false}
+      showMask={false}
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
@@ -60,12 +60,16 @@ export default (props: NoticeCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <span className={'card-item-header-name ellipsis'}>
+              <Tooltip title={props.name}>{props.name}</Tooltip>
+            </span>
           </div>
           <div className={'card-item-content'}>
             <div>
               <label>类型</label>
-              <div className={'ellipsis'}>{props.type}</div>
+              <div className={'ellipsis'}>
+                <Tooltip title={props?.type}>{props.type}</Tooltip>
+              </div>
             </div>
             <div>
               <label>详情</label>
