@@ -271,6 +271,7 @@ const Detail = observer(() => {
         required: true,
         'x-component': 'ArrayCollapse',
         'x-decorator': 'FormItem',
+        title: '产品映射',
         items: {
           type: 'object',
           'x-component': 'ArrayCollapse.CollapsePanel',
@@ -422,6 +423,8 @@ const Detail = observer(() => {
                 <a
                   style={{ wordBreak: 'break-all' }}
                   href="https://help.aliyun.com/document_detail/87368.html"
+                  target={'_blank'}
+                  rel="noreferrer"
                 >
                   https://help.aliyun.com/document_detail/87368.html
                 </a>

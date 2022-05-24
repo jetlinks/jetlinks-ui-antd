@@ -3,13 +3,13 @@ import ReactJson from 'react-json-view';
 import { request } from 'umi';
 import MonacoEditor from 'react-monaco-editor';
 import { Button, Input } from 'antd';
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
-import { observer } from '@formily/react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createSchemaField, FormProvider, observer } from '@formily/react';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
 import { createForm } from '@formily/core';
-import { createSchemaField, FormProvider } from '@formily/react';
-import { FormItem, Input as FormilyInput, ArrayTable, Editable } from '@formily/antd';
+import { ArrayTable, Editable, FormItem, Input as FormilyInput } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import SystemConst from '@/utils/const';
 import classNames from 'classnames';
 
 export default observer(() => {
@@ -76,7 +76,7 @@ export default observer(() => {
       };
     }
 
-    request(`${ApiModel.baseUrl}${newUrl}`, options).then((resp) => {
+    request(`/${SystemConst.API_BASE}${newUrl}`, options).then((resp) => {
       if (resp.status === 200) {
         setResult(resp);
       } else {

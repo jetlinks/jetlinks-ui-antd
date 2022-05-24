@@ -78,6 +78,7 @@ export default () => {
 
         setTriggerValue({ trigger: _data.terms || [] });
         setTriggerDatas(_data.trigger);
+        setActionParams({ trigger: _data.trigger });
         if (_data.trigger?.shakeLimit) {
           setShakeLimit(_data.trigger?.shakeLimit || DefaultShakeLimit);
         }
@@ -201,6 +202,10 @@ export default () => {
     </Space>
   );
 
+  const hasKeyInObject = (keys: string[], obj: any) => {
+    return keys.some((key) => key in obj);
+  };
+
   return (
     <PageContainer>
       <Card>
@@ -212,19 +217,23 @@ export default () => {
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
+            console.log(changeValue, allValues);
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
                 if (
                   changeValue.trigger.device.selectorValues ||
                   (changeValue.trigger.device.operation &&
-                    changeValue.trigger.device.operation.operator)
+                    hasKeyInObject(
+                      ['operator', 'eventId', 'functionId'],
+                      changeValue.trigger.device.operation,
+                    ))
                 ) {
                   setTriggerValue([]);
                   setRequestParams({ trigger: allValues.trigger });
                   setTriggerDatas(allValues.trigger);
                 }
               } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
-                setActionParams({ trigger: allValues.trigger });
+                setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
               }
             }
 
