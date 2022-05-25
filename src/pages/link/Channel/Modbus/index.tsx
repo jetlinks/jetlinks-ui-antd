@@ -93,12 +93,12 @@ const Modbus = () => {
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
                 await service.edit({
-                  id: record.id,
+                  ...record,
                   state: 'enabled',
                 });
               } else {
                 await service.edit({
-                  id: record.id,
+                  ...record,
                   state: 'disabled',
                 });
               }
