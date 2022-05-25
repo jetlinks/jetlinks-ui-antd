@@ -10,10 +10,9 @@ import { map } from 'rxjs/operators';
 import EditProperty from './EditProperty';
 import { useParams } from 'umi';
 import PropertyLog from '../../MetadataLog/Property';
-import moment from 'moment';
 import styles from './index.less';
-import FileComponent from './FileComponent';
 import { throttle } from 'lodash';
+import PropertyTable from './PropertyTable';
 
 interface Props {
   data: Partial<PropertyMetadata>[];
@@ -65,17 +64,17 @@ const Property = (props: Props) => {
       title: '值',
       dataIndex: 'value',
       key: 'value',
-      render: (text: any, record: any) => (
-        <FileComponent type="table" value={propertyValue[record.id]} data={record} />
-      ),
+      render: (text: any, record: any) => {
+        return <PropertyTable type="value" value={propertyValue[record.id]} data={record} />;
+      },
     },
     {
       title: '更新时间',
       dataIndex: 'time',
       key: 'time',
-      render: (text: any, record: any) => (
-        <span>{moment(propertyValue[record.id]?.timestamp).format('YYYY-MM-DD HH:mm:ss')}</span>
-      ),
+      render: (text: any, record: any) => {
+        return <PropertyTable type="time" value={propertyValue[record.id]} data={record} />;
+      },
     },
     {
       title: '操作',
@@ -116,10 +115,12 @@ const Property = (props: Props) => {
   const subRef = useRef<any>(null);
 
   const valueChange = (payload: any) => {
-    payload.forEach((item: any) => {
-      const { value } = item;
-      propertyValue[value?.property] = { ...item, ...value };
-    });
+    (payload || [])
+      .sort((a: any, b: any) => a.timestamp - b.timestamp)
+      .forEach((item: any) => {
+        const { value } = item;
+        propertyValue[value?.property] = { ...item, ...value };
+      });
     setPropertyValue({ ...propertyValue });
     list.current = [];
   };
@@ -252,6 +253,7 @@ const Property = (props: Props) => {
               total={dataSource.total}
               showSizeChanger
               pageSize={dataSource.pageSize}
+              pageSizeOptions={[8, 16, 32, 48]}
               onChange={(page: number, size: number) => {
                 setDataSource({
                   total: propertyList.length,
