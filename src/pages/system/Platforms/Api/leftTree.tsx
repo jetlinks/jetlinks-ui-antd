@@ -1,10 +1,15 @@
 import { Tree } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { service } from '@/pages/system/Platforms';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
 
 type LeftTreeType = {
   onSelect: (data: any) => void;
+  /**
+   * 是否只展示已授权的接口
+   */
+  isShowGranted?: boolean;
+  grantKeys?: string[];
 };
 
 interface DataNode {
@@ -25,24 +30,38 @@ export default (props: LeftTreeType) => {
     }
   };
 
-  const updateTreeData = (list: DataNode[], key: React.Key, children: DataNode[]): DataNode[] => {
-    return list.map((node) => {
-      if (node.id === key) {
-        return {
-          ...node,
-          children: node.children ? [...node.children, ...children] : children,
-        };
-      }
+  const updateTreeData = useCallback(
+    (list: DataNode[], key: React.Key, children: DataNode[]): DataNode[] => {
+      return list.map((node) => {
+        if (node.id === key) {
+          const newChildren = node.children ? [...node.children, ...children] : children;
+          // api详情时，过滤掉没有授权的接口
+          const filterChildren = props.isShowGranted
+            ? newChildren.filter(
+                (item: any) =>
+                  item.extraData &&
+                  item.extraData.some((extraItem: any) =>
+                    props.grantKeys?.includes(extraItem.operationId),
+                  ),
+              )
+            : newChildren;
+          return {
+            ...node,
+            children: filterChildren,
+          };
+        }
 
-      if (node.children) {
-        return {
-          ...node,
-          children: updateTreeData(node.children, key, children),
-        };
-      }
-      return node;
-    });
-  };
+        if (node.children) {
+          return {
+            ...node,
+            children: updateTreeData(node.children, key, children),
+          };
+        }
+        return node;
+      });
+    },
+    [props.isShowGranted, props.grantKeys],
+  );
 
   const handleTreeData = (data: any) => {
     const newArr = data.tags.map((item: any) => ({ id: item.name, name: item.name, isLeaf: true }));
@@ -62,7 +81,6 @@ export default (props: LeftTreeType) => {
         }
       });
     });
-    console.log(newArr);
     return newArr;
   };
 
@@ -83,7 +101,6 @@ export default (props: LeftTreeType) => {
   };
 
   const onLoadData = (node: any): Promise<void> => {
-    console.log(node);
     return new Promise(async (resolve) => {
       if (node.children) {
         resolve();

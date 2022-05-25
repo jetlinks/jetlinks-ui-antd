@@ -102,8 +102,9 @@ const LiveFC = (props: LiveProps) => {
           buttonStyle={'solid'}
           value={mediaType}
           onChange={(e) => {
-            setMediaType(e.target.value);
-            mediaStart(e.target.value);
+            const _type = e.target.value;
+            setMediaType(_type);
+            mediaStart(_type === 'hls' ? 'm3u8' : _type);
           }}
           options={[
             { label: 'MP4', value: 'mp4' },
