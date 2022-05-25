@@ -1,12 +1,59 @@
-.col {
-  display: flex;
-  justify-content: center;
+.cards {
+  position: absolute;
+  top: 150px;
+  left: 17%;
+  box-sizing: border-box;
+  width: 66%;
+  background: #fff;
+  border: 1px solid #e0e4e8;
+  border-radius: 2px;
 
-  .item {
+  .title {
+    margin: 50px 0;
+    color: #0f1222;
+    font-weight: 400;
+    font-size: 24px;
+    font-family: 'PingFang SC';
+    font-style: normal;
+    line-height: 25px;
+    text-align: center;
+  }
+
+  .info {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    width: 300px;
+    justify-content: center;
+
+    .infotitle {
+      width: 64px;
+      height: 24px;
+      margin-left: 10px;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 400;
+      font-size: 16px;
+      font-family: 'PingFang SC';
+      font-style: normal;
+      line-height: 24px;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 300px;
+
+      .fonts {
+        font-weight: 400;
+        font-size: 16px;
+        font-family: 'PingFang SC';
+        font-style: normal;
+        line-height: 16px;
+        opacity: 0.75;
+        mix-blend-mode: normal;
+      }
+    }
+  }
+  .btn {
+    display: flex;
+    justify-content: center;
   }
 }

@@ -57,6 +57,7 @@ const AddPoint = (props: Props) => {
         initialValues={{
           ...props.data,
           codecConfig: {
+            ...props.data?.codecConfig,
             readIndex: props.data?.codecConfig?.readIndex || 0,
             scaleFactor: props.data?.codecConfig?.scaleFactor || 1,
           },
