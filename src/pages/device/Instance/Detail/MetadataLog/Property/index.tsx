@@ -56,7 +56,7 @@ const PropertyLog = (props: Props) => {
       render: (text: any) => <span>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</span>,
     },
     {
-      title: <span>{data.valueType?.type !== 'file' ? '自定义属性' : '文件内容'}</span>,
+      title: <span>{data.name}</span>,
       dataIndex: 'value',
       key: 'value',
       ellipsis: true,
@@ -110,7 +110,7 @@ const PropertyLog = (props: Props) => {
       render: (text: any) => <span>{text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''}</span>,
     },
     {
-      title: '位置',
+      title: <span>{data.name}</span>,
       dataIndex: 'value',
       key: 'value',
       render: (text: any, record: any) => (
@@ -252,6 +252,7 @@ const PropertyLog = (props: Props) => {
               pageSize: dataSource?.pageSize || 10,
               showSizeChanger: true,
               total: dataSource?.total || 0,
+              pageSizeOptions: [5, 10, 20, 50],
             }}
           />
         );
@@ -344,7 +345,7 @@ const PropertyLog = (props: Props) => {
     if (tab === 'table') {
       handleSearch(
         {
-          pageSize: 10,
+          pageSize: data.valueType?.type === 'file' ? 5 : 10,
           pageIndex: 0,
         },
         start,
@@ -496,7 +497,7 @@ const PropertyLog = (props: Props) => {
             if (key === 'table') {
               handleSearch(
                 {
-                  pageSize: 10,
+                  pageSize: data.valueType?.type === 'file' ? 5 : 10,
                   pageIndex: 0,
                 },
                 start,
