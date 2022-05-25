@@ -1,6 +1,6 @@
 import PermissionButton from '@/components/PermissionButton';
 import { Badge, Card, Empty, message, Tabs, Tooltip } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import styles from '@/pages/link/Channel/Opcua/Access/index.less';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -181,6 +181,19 @@ const Opcua = () => {
       });
   };
 
+  const edit = useMemo(
+    () => (
+      <Save
+        data={channel}
+        close={() => {
+          setVisible(false);
+        }}
+        device={InstanceModel.detail}
+      />
+    ),
+    [channel.id],
+  );
+
   useEffect(() => {
     const { id } = InstanceModel.detail;
     setDeviceId(id);
@@ -342,15 +355,7 @@ const Opcua = () => {
       ) : (
         <Empty />
       )}
-      {visible && (
-        <Save
-          data={channel}
-          close={() => {
-            setVisible(false);
-          }}
-          device={InstanceModel.detail}
-        />
-      )}
+      {visible && edit}
       {pointVisiable && (
         <AddPoint
           deviceId={deviceId}
