@@ -7,12 +7,11 @@ import { useParams } from 'umi';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 
 interface Props {
-  visible: boolean;
   data: Partial<PropertyMetadata>;
   onCancel: () => void;
 }
 const EditProperty = (props: Props) => {
-  const { visible, data } = props;
+  const { data } = props;
   const params = useParams<{ id: string }>();
 
   const SchemaField = createSchemaField({
@@ -47,7 +46,7 @@ const EditProperty = (props: Props) => {
     <Modal
       maskClosable={false}
       title="编辑"
-      visible={visible}
+      visible
       onOk={async () => {
         const values: any = await form.submit();
         if (!!values) {

@@ -1,4 +1,4 @@
-import { Col, Input, message, Pagination, Row, Space, Table } from 'antd';
+import { Col, Input, message, Pagination, Row, Space, Spin, Table } from 'antd';
 import CheckButton from '@/components/CheckButton';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
@@ -43,6 +43,7 @@ const Property = (props: Props) => {
     pageSize: 8,
     currentPage: 0,
   });
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [check, setCheck] = useState<boolean>(true);
 
@@ -162,9 +163,10 @@ const Property = (props: Props) => {
         },
       },
     ];
-
+    setLoading(true);
     service.propertyRealTime(param).subscribe({
       next: (resp) => {
+        setLoading(false);
         propertyValue[resp.property] = resp.list[0];
         setPropertyValue({ ...propertyValue });
       },
@@ -187,92 +189,95 @@ const Property = (props: Props) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Space>
-          <Input.Search
-            allowClear
-            placeholder="请输入名称"
-            onSearch={(value: string) => {
-              if (!!value) {
-                const li = data.filter((item) => {
-                  return (
-                    item.name && item.name.toLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
-                  );
-                });
-                setPropertyList(li);
-                setDataSource({
-                  total: li.length,
-                  data: (li || []).slice(0, 8),
-                  pageSize: 8,
-                  currentPage: 0,
-                });
-              } else {
-                setPropertyList(data);
-                setDataSource({
-                  total: data.length,
-                  data: (data || []).slice(0, 8),
-                  pageSize: 8,
-                  currentPage: 0,
-                });
-              }
+      <Spin spinning={loading}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Space>
+            <Input.Search
+              allowClear
+              placeholder="请输入名称"
+              onSearch={(value: string) => {
+                if (!!value) {
+                  const li = data.filter((item) => {
+                    return (
+                      item.name && item.name.toLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
+                    );
+                  });
+                  setPropertyList(li);
+                  setDataSource({
+                    total: li.length,
+                    data: (li || []).slice(0, 8),
+                    pageSize: 8,
+                    currentPage: 0,
+                  });
+                } else {
+                  setPropertyList(data);
+                  setDataSource({
+                    total: data.length,
+                    data: (data || []).slice(0, 8),
+                    pageSize: 8,
+                    currentPage: 0,
+                  });
+                }
+              }}
+              style={{ width: 317 }}
+            />
+          </Space>
+          <CheckButton
+            value={check}
+            change={(value: boolean) => {
+              setCheck(value);
             }}
-            style={{ width: 317 }}
           />
-        </Space>
-        <CheckButton
-          value={check}
-          change={(value: boolean) => {
-            setCheck(value);
+        </div>
+        <div style={{ marginTop: '20px' }}>
+          {check ? (
+            <Row gutter={[16, 16]}>
+              {dataSource.data.map((item: any) => (
+                <Col {...ColResponsiveProps} key={item.id}>
+                  <PropertyCard data={item} value={item?.id ? propertyValue[item?.id] : '--'} />
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <Table pagination={false} columns={columns} dataSource={dataSource.data} rowKey="id" />
+          )}
+          {dataSource.data.length > 0 && (
+            <div
+              style={{
+                marginTop: '20px',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Pagination
+                className={styles.page}
+                defaultCurrent={1}
+                total={dataSource.total}
+                showSizeChanger
+                pageSize={dataSource.pageSize}
+                pageSizeOptions={[8, 16, 32, 48]}
+                onChange={(page: number, size: number) => {
+                  setDataSource({
+                    total: propertyList.length,
+                    data: (propertyList || []).slice((page - 1) * size, page * size),
+                    pageSize: size,
+                    currentPage: page - 1,
+                  });
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </Spin>
+      {visible && (
+        <EditProperty
+          data={currentInfo}
+          onCancel={() => {
+            setVisible(false);
           }}
         />
-      </div>
-      <div style={{ marginTop: '20px' }}>
-        {check ? (
-          <Row gutter={[16, 16]}>
-            {dataSource.data.map((item: any) => (
-              <Col {...ColResponsiveProps} key={item.id}>
-                <PropertyCard data={item} value={item?.id ? propertyValue[item?.id] : '--'} />
-              </Col>
-            ))}
-          </Row>
-        ) : (
-          <Table pagination={false} columns={columns} dataSource={dataSource.data} rowKey="id" />
-        )}
-        {dataSource.data.length > 0 && (
-          <div
-            style={{
-              marginTop: '20px',
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Pagination
-              className={styles.page}
-              defaultCurrent={1}
-              total={dataSource.total}
-              showSizeChanger
-              pageSize={dataSource.pageSize}
-              pageSizeOptions={[8, 16, 32, 48]}
-              onChange={(page: number, size: number) => {
-                setDataSource({
-                  total: propertyList.length,
-                  data: (propertyList || []).slice((page - 1) * size, page * size),
-                  pageSize: size,
-                  currentPage: page - 1,
-                });
-              }}
-            />
-          </div>
-        )}
-      </div>
-      <EditProperty
-        data={currentInfo}
-        visible={visible}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
+      )}
       {infoVisible && <PropertyLog data={currentInfo} close={() => setInfoVisible(false)} />}
     </div>
   );
