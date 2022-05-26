@@ -77,9 +77,8 @@ const Save: React.FC<Props> = props => {
                 state => {
                     state.visible = value === 'mqtt_client'
                 });
-            setFieldState(
+            setFieldState( // networkConfiguration.enableDtls,
                 `*(
-                    networkConfiguration.enableDtls,
                     networkConfiguration.timeout,
                     networkConfiguration.retryTimes)`,
                 state => {
@@ -93,14 +92,14 @@ const Save: React.FC<Props> = props => {
             }
         });
 
-        onFieldValueChange$('networkConfiguration.enableDtls').subscribe(({ value }) => {
-            setFieldState(
-                `*(networkConfiguration.certId1,
-                    networkConfiguration.privateKeyAlias)`,
-                state => {
-                    state.visible = !!value
-                });
-        });
+        // onFieldValueChange$('networkConfiguration.enableDtls').subscribe(({ value }) => {
+        //     setFieldState(
+        //         `*(networkConfiguration.certId1,
+        //             networkConfiguration.privateKeyAlias)`,
+        //         state => {
+        //             state.visible = !!value
+        //         });
+        // });
 
         onFieldValueChange$("listeners.*.type").subscribe(fieldState => {
             setFieldState(
@@ -169,26 +168,26 @@ const Save: React.FC<Props> = props => {
                     "labelCol": 6
                 },
             },
-            "networkConfiguration.enableDtls": {
-                "title": "是否开启DTLS",
-                "visible": false,
-                "required": true,
-                "x-component": "RadioGroup",
-                "x-rules": [
-                    {
-                        "required": true,
-                        "message": "此字段必填"
-                    }
-                ],
-                "x-mega-props": {
-                    "span": 1,
-                    "labelCol": 6
-                },
-                enum: [
-                    { label: '是', value: true },
-                    { label: '否', value: false }
-                ]
-            },
+            // "networkConfiguration.enableDtls": {
+            //     "title": "是否开启DTLS",
+            //     "visible": false,
+            //     "required": true,
+            //     "x-component": "RadioGroup",
+            //     "x-rules": [
+            //         {
+            //             "required": true,
+            //             "message": "此字段必填"
+            //         }
+            //     ],
+            //     "x-mega-props": {
+            //         "span": 1,
+            //         "labelCol": 6
+            //     },
+            //     enum: [
+            //         { label: '是', value: true },
+            //         { label: '否', value: false }
+            //     ]
+            // },
             "networkConfiguration.certId": {
                 "title": "{{ text('证书',help('这是证书的提示'))}}",
                 "visible": false,
