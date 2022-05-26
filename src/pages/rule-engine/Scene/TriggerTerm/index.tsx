@@ -231,7 +231,9 @@ const TriggerTerm = (props: Props, ref: any) => {
   useImperativeHandle(ref, () => ({
     getTriggerForm: async () => {
       await form.validate();
+
       const data: any = await form.submit().then((_data: any) => {
+        if (!Array.isArray(_data.trigger)) return;
         _data.trigger?.map((item: { terms: any[] }) =>
           item.terms.map((j) => {
             if (j.value.value.length === 1) {
@@ -242,7 +244,8 @@ const TriggerTerm = (props: Props, ref: any) => {
         );
         return _data;
       });
-      return data;
+      console.log(Array.isArray(data?.trigger) ? data : undefined, 'fff');
+      return Array.isArray(data?.trigger) ? data : undefined;
     },
   }));
   const SchemaField = createSchemaField({

@@ -705,6 +705,8 @@ const Edit = observer((props: Props) => {
                   type: 'void',
                   'x-component': 'Editable.Popover',
                   title: '指标数据',
+                  'x-reactions':
+                    '{{(field)=>field.title=field.value&& field.value.name||field.title}}',
                   properties: {
                     id: {
                       // 标识
