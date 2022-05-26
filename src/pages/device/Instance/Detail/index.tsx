@@ -149,24 +149,29 @@ const InstanceDetail = observer(() => {
       tab: '物模型映射',
       component: <MetadataMap type="device" />,
     },
-    {
-      key: 'opcua',
-      tab: 'OPC UA',
-      component: <Opcua />,
-    },
-    {
-      key: 'modbus',
-      tab: 'Modbus',
-      component: <Modbus />,
-    },
   ];
   const [list, setList] =
     useState<{ key: string; tab: string | ReactNode; component: ReactNode }[]>(baseList);
 
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
+      console.log(response.result);
       InstanceModel.detail = response?.result;
       const datalist = [...baseList];
+      if (response.result.protocol === 'modbus-tcp') {
+        datalist.push({
+          key: 'modbus',
+          tab: 'Modbus',
+          component: <Modbus />,
+        });
+      }
+      if (response.result.protocol === 'opc-ua') {
+        datalist.push({
+          key: 'opcua',
+          tab: 'OPC UA',
+          component: <Opcua />,
+        });
+      }
       if (response.result.deviceType?.value === 'gateway') {
         // 产品类型为网关的情况下才显示此模块
         datalist.push({

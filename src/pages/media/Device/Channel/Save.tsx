@@ -1,7 +1,7 @@
 // Modal 弹窗，用于新增、修改数据
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, FormItem, FormTab, Input, Select, FormGrid } from '@formily/antd';
+import { Form, FormGrid, FormItem, FormTab, Input, Select } from '@formily/antd';
 import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
@@ -99,12 +99,25 @@ const Save = (props: SaveModalProps) => {
             max: 64,
             message: '最多可输入64个字符',
           },
+          {
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              const reg = /(http|https|rtsp|rtmp):\/\/([\w.]+\/?)\S*/;
+              return new Promise((resolve) => {
+                if (reg.test(value)) {
+                  resolve('');
+                } else {
+                  resolve('请输入正确的视频地址');
+                }
+              });
+            },
+          },
         ],
         'x-decorator-props': {
           gridSpan: 24,
         },
       },
-      media_url: {
+      'others.media_url': {
         type: 'string',
         title: '视频地址',
         'x-visible': props.type === ProviderValue.FIXED,
@@ -112,8 +125,8 @@ const Save = (props: SaveModalProps) => {
         'x-component': 'Input',
         'x-validator': [
           {
-            max: 64,
-            message: '最多可输入64个字符',
+            max: 128,
+            message: '最多可输入128个字符',
           },
         ],
       },

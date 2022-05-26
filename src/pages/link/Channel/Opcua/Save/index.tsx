@@ -6,7 +6,7 @@ import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Opcua';
 import { Modal } from '@/components';
 import { message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
   data: Partial<OpaUa>;
@@ -19,13 +19,17 @@ const Save = (props: Props) => {
   const [policies, setPolicies] = useState<any>([]);
   const [modes, setModes] = useState<any>([]);
 
-  const form = createForm({
-    validateFirst: true,
-    initialValues: {
-      ...props.data,
-      clientConfigs: props.data?.clientConfigs?.[0],
-    },
-  });
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: {
+          ...props.data,
+          clientConfigs: props.data?.clientConfigs?.[0],
+        },
+      }),
+    [props.data.id],
+  );
 
   const SchemaField = createSchemaField({
     components: {

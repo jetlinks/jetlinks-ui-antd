@@ -9,6 +9,8 @@ interface TableProps {
   operations: string[];
   // 是否只暂时已授权的接口
   isShowGranted?: boolean;
+  //
+  grantKeys: string[];
 }
 
 export default (props: TableProps) => {
@@ -20,24 +22,20 @@ export default (props: TableProps) => {
 
   const location = useLocation();
 
-  const getApiGrant = useCallback(() => {
-    const param = new URLSearchParams(location.search);
-    const code = param.get('code');
-
-    service.getApiGranted(code!).then((resp: any) => {
-      if (resp.status === 200) {
-        grantCache.current = resp.result;
-        setSelectKeys(resp.result);
-      }
-    });
-  }, [location]);
-
   const getOperations = async (apiData: any[], operations: string[]) => {
     // 过滤只能授权的接口，当isShowGranted为true时，过滤为已赋权的接口
     setDataSource(
       apiData.filter((item) => item && item.operationId && operations.includes(item.operationId)),
     );
   };
+
+  /**
+   * 获取已授权的接口ID
+   */
+  useEffect(() => {
+    grantCache.current = props.grantKeys;
+    setSelectKeys(props.grantKeys);
+  }, [props.grantKeys]);
 
   useEffect(() => {
     if (props.isShowGranted) {
@@ -58,10 +56,6 @@ export default (props: TableProps) => {
       }
     }
   }, [props.data, props.operations, props.isShowGranted]);
-
-  useEffect(() => {
-    getApiGrant();
-  }, []);
 
   const save = useCallback(async () => {
     const param = new URLSearchParams(location.search);
@@ -86,7 +80,7 @@ export default (props: TableProps) => {
       const item = dataSource.find((b) => b.operationId === a);
       return {
         id: a,
-        permissions: item.security,
+        permissions: item?.security,
       };
     });
 
@@ -94,7 +88,7 @@ export default (props: TableProps) => {
       const item = dataSource.find((b) => b.operationId === a);
       return {
         id: a,
-        permissions: item.security,
+        permissions: item?.security,
       };
     });
 

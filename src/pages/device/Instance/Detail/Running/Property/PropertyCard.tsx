@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import { Card, message, Space, Spin, Tooltip } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import PropertyLog from '@/pages/device/Instance/Detail/MetadataLog/Property';
@@ -40,6 +40,7 @@ const Property = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
+  const [dataValue, setDataValue] = useState<any>(null);
 
   const renderTitle = (title: string) => {
     return (
@@ -84,12 +85,20 @@ const Property = (props: Props) => {
     );
   };
 
+  useEffect(() => {
+    if (!dataValue?.timestamp) {
+      setDataValue(value);
+    } else if (dataValue?.timestamp && dataValue?.timestamp <= value?.timestamp) {
+      setDataValue(value);
+    }
+  }, [value]);
+
   return (
     <Card bordered hoverable style={{ backgroundColor: 'rgba(0, 0, 0, .02)' }}>
       <Spin spinning={loading}>
         <div>
           <div>{renderTitle(data?.name || '')}</div>
-          <FileComponent type="card" value={value} data={data} />
+          <FileComponent type="card" value={dataValue} data={data} />
           <div style={{ marginTop: 10 }}>
             <div style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 12 }}>更新时间</div>
             <div style={{ marginTop: 5, fontSize: 16, color: 'black' }} className="value">
@@ -98,13 +107,14 @@ const Property = (props: Props) => {
           </div>
         </div>
       </Spin>
-      <EditProperty
-        visible={editVisible}
-        onCancel={() => {
-          setEditVisible(false);
-        }}
-        data={data}
-      />
+      {editVisible && (
+        <EditProperty
+          onCancel={() => {
+            setEditVisible(false);
+          }}
+          data={data}
+        />
+      )}
       {visible && <PropertyLog data={data} close={() => setVisible(false)} />}
       {indicatorVisible && (
         <Indicators

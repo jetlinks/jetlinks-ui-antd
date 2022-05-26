@@ -57,8 +57,10 @@ const AddPoint = (props: Props) => {
         initialValues={{
           ...props.data,
           codecConfig: {
+            ...props.data?.codecConfig,
             readIndex: props.data?.codecConfig?.readIndex || 0,
             scaleFactor: props.data?.codecConfig?.scaleFactor || 1,
+            revertBytes: props.data?.codecConfig?.revertBytes || false,
           },
         }}
       >
@@ -138,23 +140,14 @@ const AddPoint = (props: Props) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item
-              label="读取长度"
-              name={['codecConfig', 'readLength']}
-              required
-              rules={[
-                { required: true, message: '请输入读取长度' },
-                ({}) => ({
-                  validator(_, value) {
-                    if (value !== 0 || /(^[1-9]\d*$)/.test(value)) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('请输入正整数'));
-                  },
-                }),
-              ]}
-            >
-              <InputNumber style={{ width: '100%' }} placeholder="请输入" min={1} />
+            <Form.Item label="读取长度" name={['codecConfig', 'readLength']} required>
+              <Select placeholder="请选择">
+                <Select.Option value={1}>1</Select.Option>
+                <Select.Option value={2}>2</Select.Option>
+                <Select.Option value={3}>3</Select.Option>
+                <Select.Option value={4}>4</Select.Option>
+                <Select.Option value={8}>8</Select.Option>
+              </Select>
             </Form.Item>
           </Col>
         </Row>

@@ -18,11 +18,14 @@ import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import AlarmConfig from '@/components/ProTableCard/CardItems/AlarmConfig';
 import { Store } from 'jetlinks-store';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 const service = new Service('alarm/config');
 
 const Configuration = () => {
   const intl = useIntl();
+  const history = useHistory();
   const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Configuration');
@@ -59,6 +62,19 @@ const Configuration = () => {
     {
       title: '关联场景联动',
       dataIndex: 'sceneName',
+      render: (text: any, record: any) => (
+        <PermissionButton
+          type={'link'}
+          isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
+          style={{ padding: 0, height: 'auto' }}
+          onClick={() => {
+            const url = getMenuPathByCode('rule-engine/Scene/Save');
+            history.push(`${url}?id=${record.sceneId}`);
+          }}
+        >
+          {text}
+        </PermissionButton>
+      ),
     },
     {
       title: '状态',

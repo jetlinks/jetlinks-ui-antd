@@ -53,7 +53,7 @@ export default () => {
           height: 500,
           width: '100%',
         }}
-        onInstanceCreated={(_map) => {
+        onInstanceCreated={(_map: any) => {
           setMap(_map);
         }}
         events={{

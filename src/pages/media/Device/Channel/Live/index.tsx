@@ -1,6 +1,6 @@
 // 通道直播
 import { useCallback, useEffect, useState } from 'react';
-import { Radio, Modal } from 'antd';
+import { Modal, Radio } from 'antd';
 import LivePlayer from '@/components/Player';
 import MediaTool from '@/components/Player/mediaTool';
 import { service } from '../index';
@@ -102,8 +102,9 @@ const LiveFC = (props: LiveProps) => {
           buttonStyle={'solid'}
           value={mediaType}
           onChange={(e) => {
-            setMediaType(e.target.value);
-            mediaStart(e.target.value);
+            const _type = e.target.value;
+            setMediaType(_type);
+            mediaStart(_type === 'hls' ? 'm3u8' : _type);
           }}
           options={[
             { label: 'MP4', value: 'mp4' },
