@@ -1,11 +1,12 @@
 import Tree from '@/pages/system/Platforms/Api/leftTree';
 import Table from '@/pages/system/Platforms/Api/basePage';
 import SwaggerUI from '@/pages/system/Platforms/Api/swagger-ui';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { service } from '@/pages/system/Platforms';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import './index.less';
+import { useLocation } from 'umi';
 
 export const ApiModel = model<{
   data: any[];
@@ -29,7 +30,9 @@ interface ApiPageProps {
 }
 
 export default observer((props: ApiPageProps) => {
+  const location = useLocation();
   const [operations, setOperations] = useState<string[]>([]);
+  const [GrantKeys, setGrantKeys] = useState<string[]>([]);
 
   const initModel = () => {
     ApiModel.data = [];
@@ -39,6 +42,9 @@ export default observer((props: ApiPageProps) => {
     ApiModel.debugger = {};
   };
 
+  /**
+   *  获取能授权的接口ID
+   */
   const getOperations = () => {
     service.apiOperations().then((resp: any) => {
       if (resp.status === 200) {
@@ -47,15 +53,32 @@ export default observer((props: ApiPageProps) => {
     });
   };
 
+  /**
+   * 获取已授权的接口ID
+   */
+  const getApiGrant = useCallback(() => {
+    const param = new URLSearchParams(location.search);
+    const code = param.get('code');
+
+    service.getApiGranted(code!).then((resp: any) => {
+      if (resp.status === 200) {
+        setGrantKeys(resp.result);
+      }
+    });
+  }, [location]);
+
   useEffect(() => {
     initModel();
     getOperations();
+    getApiGrant();
   }, []);
 
   return (
     <div className={'platforms-api'}>
       <div className={'platforms-api-tree'}>
         <Tree
+          isShowGranted={props.isShowGranted}
+          grantKeys={GrantKeys}
           onSelect={(data) => {
             ApiModel.data = data;
             ApiModel.showTable = true;
@@ -63,7 +86,12 @@ export default observer((props: ApiPageProps) => {
         />
       </div>
       {ApiModel.showTable ? (
-        <Table data={ApiModel.data} operations={operations} isShowGranted={props.isShowGranted} />
+        <Table
+          data={ApiModel.data}
+          operations={operations}
+          isShowGranted={props.isShowGranted}
+          grantKeys={GrantKeys}
+        />
       ) : (
         <SwaggerUI showDebugger={props.showDebugger} />
       )}

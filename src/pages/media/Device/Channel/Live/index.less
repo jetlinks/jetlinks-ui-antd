@@ -24,6 +24,12 @@
       right: 0;
       z-index: 2;
       display: flex;
+      opacity: 0;
+      transition: opacity 0.3s;
+
+      &:hover {
+        opacity: 1;
+      }
 
       .tool-item {
         margin-right: 6px;

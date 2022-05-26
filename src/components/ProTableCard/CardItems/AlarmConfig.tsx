@@ -1,10 +1,12 @@
 import React from 'react';
-import { TableCard } from '@/components';
+import { PermissionButton, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { Tooltip } from 'antd';
 import { Store } from 'jetlinks-store';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 export interface AlarmConfigProps extends ConfigurationItem {
   detail?: React.ReactNode;
@@ -15,6 +17,7 @@ export interface AlarmConfigProps extends ConfigurationItem {
 export const aliyunSms = require('/public/images/alarm/alarm-config.png');
 
 export default (props: AlarmConfigProps) => {
+  const history = useHistory();
   return (
     <TableCard
       actions={props.actions}
@@ -38,8 +41,20 @@ export default (props: AlarmConfigProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>关联场景联动</label>
-              <div className={'ellipsis'}>
-                <Tooltip title={props?.sceneName || ''}>{props?.sceneName || ''}</Tooltip>
+              <div>
+                <PermissionButton
+                  type={'link'}
+                  isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
+                  style={{ padding: 0, height: 'auto' }}
+                  onClick={() => {
+                    const url = getMenuPathByCode('rule-engine/Scene/Save');
+                    history.push(`${url}?id=${props.sceneId}`);
+                  }}
+                >
+                  <div className={'ellipsis'}>
+                    <Tooltip title={props?.sceneName || ''}>{props?.sceneName || ''}</Tooltip>
+                  </div>
+                </PermissionButton>
               </div>
             </div>
             <div>
