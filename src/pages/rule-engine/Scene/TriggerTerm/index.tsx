@@ -244,7 +244,6 @@ const TriggerTerm = (props: Props, ref: any) => {
         );
         return _data;
       });
-      console.log(Array.isArray(data?.trigger) ? data : undefined, 'fff');
       return Array.isArray(data?.trigger) ? data : undefined;
     },
   }));
@@ -272,7 +271,7 @@ const TriggerTerm = (props: Props, ref: any) => {
         'x-component': 'FTermArrayCards',
         'x-decorator': 'FormItem',
         'x-value': {
-          termType: 'and',
+          type: 'and',
         },
         'x-component-props': {
           title: '分组',
@@ -296,6 +295,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                     type: 'string',
                     // "x-decorator": 'FormItem',
                     'x-component': 'FTermTypeSelect',
+                    'x-value': 'and',
                   },
                   layout: {
                     type: 'void',
