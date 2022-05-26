@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message } from 'antd';
+import { message, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
@@ -29,10 +29,20 @@ const Certificate = () => {
     {
       dataIndex: 'name',
       title: '证书名称',
+      width: '30%',
+      ellipsis: true,
     },
     {
       dataIndex: 'description',
       title: '说明',
+      width: '30%',
+      render: (text: any) => (
+        <div style={{ width: '100%' }} className="ellipsis">
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        </div>
+      ),
     },
     {
       title: intl.formatMessage({

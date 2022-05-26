@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Col, message, Modal, Pagination, Row } from 'antd';
+import { Col, message, Modal, Pagination, Row } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel } from '@/pages/device/Product';
 import SearchComponent from '@/components/SearchComponent';
@@ -8,6 +8,8 @@ import styles from './index.less';
 import Service from '@/pages/device/Product/service';
 
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
+import { getMenuPathByCode } from '@/utils/menu';
+import PermissionButton from '@/components/PermissionButton';
 
 interface Props {
   close: () => void;
@@ -17,6 +19,7 @@ interface Props {
 const AccessConfig = (props: Props) => {
   const { close } = props;
   const service1 = new Service('device-product');
+  const { permission } = PermissionButton.usePermission('link/AccessConfig');
 
   const [dataSource, setDataSource] = useState<any>({
     data: [],
@@ -127,19 +130,22 @@ const AccessConfig = (props: Props) => {
           }}
         />
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            type="primary"
+          <PermissionButton
+            isPermission={permission.add}
             onClick={() => {
-              const tab: any = window.open(`${origin}/#/link/AccessConfig/Detail`);
+              const url = getMenuPathByCode('link/AccessConfig/Detail');
+              const tab: any = window.open(`${origin}/#${url}`);
               tab!.onTabSaveSuccess = (value: any) => {
                 if (value.status === 200) {
                   handleSearch(param);
                 }
               };
             }}
+            key="button"
+            type="primary"
           >
             新增
-          </Button>
+          </PermissionButton>
         </div>
       </div>
       <Row gutter={[16, 16]}>

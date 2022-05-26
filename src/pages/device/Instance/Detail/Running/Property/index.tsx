@@ -11,7 +11,7 @@ import EditProperty from './EditProperty';
 import { useParams } from 'umi';
 import PropertyLog from '../../MetadataLog/Property';
 import styles from './index.less';
-import { throttle } from 'lodash';
+import { groupBy, throttle, toArray } from 'lodash';
 import PropertyTable from './PropertyTable';
 
 interface Props {
@@ -166,9 +166,28 @@ const Property = (props: Props) => {
     setLoading(true);
     service.propertyRealTime(param).subscribe({
       next: (resp) => {
+        if (resp.status === 200) {
+          const t1 = (resp?.result || []).map((item: any) => {
+            return {
+              timeString: item.data?.timeString,
+              timestamp: item.data?.timestamp,
+              ...item?.data?.value,
+            };
+          });
+          const obj: any = {};
+          toArray(groupBy(t1, 'property'))
+            .map((item) => {
+              return {
+                list: item.sort((a, b) => b.timestamp - a.timestamp),
+                property: item[0].property,
+              };
+            })
+            .forEach((i) => {
+              obj[i.property] = i.list[0];
+            });
+          setPropertyValue({ ...propertyValue, ...obj });
+        }
         setLoading(false);
-        propertyValue[resp.property] = resp.list[0];
-        setPropertyValue({ ...propertyValue });
       },
     });
   };

@@ -33,14 +33,14 @@ const FileComponent = (props: Props) => {
 
   const renderValue = () => {
     if (value?.formatValue !== 0 && !value?.formatValue) {
-      return <div className={props.type === 'card' ? styles.other : {}}>--</div>;
+      return <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>--</div>;
     } else if (data?.valueType?.type === 'file') {
       if (
         data?.valueType?.fileType === 'base64' ||
         data?.valueType?.fileType === 'Binary(二进制)'
       ) {
         return (
-          <div className={props.type === 'card' ? styles.other : {}}>
+          <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
             <Tooltip placement="topLeft" title={String(value?.formatValue)}>
               {String(value?.formatValue)}
             </Tooltip>
@@ -51,7 +51,7 @@ const FileComponent = (props: Props) => {
         // 图片
         return (
           <div
-            className={styles.img}
+            className={props.type === 'card' ? styles.cardValue : styles.otherValue}
             onClick={() => {
               if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
                 message.error('域名为https时，不支持访问http地址');
@@ -80,7 +80,7 @@ const FileComponent = (props: Props) => {
       ) {
         return (
           <div
-            className={styles.img}
+            className={props.type === 'card' ? styles.cardValue : styles.otherValue}
             onClick={() => {
               if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
                 message.error('域名为https时，不支持访问http地址');
@@ -107,20 +107,20 @@ const FileComponent = (props: Props) => {
             value?.formatValue.includes(item),
           ) || '';
         return (
-          <div className={styles.img}>
+          <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
             <img src={imgMap.get(flag.slice(1))} />
           </div>
         );
       } else {
         return (
-          <div className={styles.img}>
+          <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
             <img src={imgMap.get('other')} />
           </div>
         );
       }
     } else if (data?.valueType?.type === 'object' || data?.valueType?.type === 'geoPoint') {
       return (
-        <div className={props.type === 'card' ? styles.other : {}}>
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
           <Tooltip placement="topLeft" title={JSON.stringify(value?.formatValue)}>
             {JSON.stringify(value?.formatValue)}
           </Tooltip>
@@ -128,7 +128,7 @@ const FileComponent = (props: Props) => {
       );
     } else {
       return (
-        <div className={props.type === 'card' ? styles.other : {}}>
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
           <Tooltip placement="topLeft" title={String(value?.formatValue)}>
             {String(value?.formatValue)}
           </Tooltip>
