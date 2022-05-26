@@ -14,7 +14,7 @@ const PropertyTable = (props: Props) => {
   useEffect(() => {
     if (!dataValue?.timestamp) {
       setDataValue(value);
-    } else if (dataValue?.timestamp && dataValue?.timestamp < value?.timestamp) {
+    } else if (dataValue?.timestamp && dataValue?.timestamp <= value?.timestamp) {
       setDataValue(value);
     }
   }, [value]);
