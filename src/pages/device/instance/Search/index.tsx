@@ -8,7 +8,8 @@ import { getPageQuery } from '@/utils/utils';
 
 interface Props extends FormComponentProps {
   search: Function;
-  location: Location
+  location: Location;
+  type?: string;
 }
 
 interface State {
@@ -51,10 +52,10 @@ const Search: React.FC<Props> = props => {
     if (query && query !== {}) {
       mapType.forEach((value, key) => {
         let k = Object.keys(query)[0]
-        if(value === k){
+        if (value === k) {
           form.setFieldsValue({ parameter: key });
           if (key === 'orgId$in') {
-            form.setFieldsValue({value: query[k].split(",")})
+            form.setFieldsValue({ value: query[k].split(",") })
           } else if (key === 'id$dev-tag') {
             let v = JSON.parse(query[k])
             let displayData: any[] = [];
@@ -62,14 +63,14 @@ const Search: React.FC<Props> = props => {
               displayData.push(`${item.key}=${item.value}`);
             });
             setFieldsValue({ 'value': displayData.join('；') });
-          }else if (key === 'id$dev-bind$any') {
-            form.setFieldsValue({value: query[k].split(",")})
-          }else{
+          } else if (key === 'id$dev-bind$any') {
+            form.setFieldsValue({ value: query[k].split(",") })
+          } else {
             form.setFieldsValue({ value: query[k] });
           }
         }
       });
-    }else{
+    } else {
       form.setFieldsValue({ parameter: 'id$like' });
     }
 
@@ -122,11 +123,13 @@ const Search: React.FC<Props> = props => {
     let params = {}
     params[mapType.get(data.parameter)] = data.value
     params['productId'] = getPageQuery().productId
-    if(getPageQuery().productId){
+    if (getPageQuery().productId) {
       params['productId'] = getPageQuery().productId
       map['productId'] = getPageQuery().productId
     }
-    router.push({ pathname: `/device/instance`, query: params })
+    if (props.type === 'device-instance') {
+      router.push({ pathname: `/device/instance`, query: params })
+    }
     map[data.parameter] = data.value;
     props.search(map);
   };

@@ -84,10 +84,9 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   };
 
   const statusMap = new Map();
-  statusMap.set('在线', 'success');
-  statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
-  statusMap.set('未启用', 'default');
+  statusMap.set('online', 'success');
+  statusMap.set('offline', 'error');
+  statusMap.set('notActive', 'processing');
 
   const columns: ColumnProps<DeviceInstance>[] = [
     {
@@ -119,7 +118,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
       dataIndex: 'state',
       width: '120px',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text} /> : '',
+        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
     },
   ];
 

@@ -34,10 +34,9 @@ import { DeviceInstance } from './data.d';
 import Process from './Process';
 import Import from './operation/import';
 import Export from './operation/export';
-import numeral, { value } from 'numeral';
+import numeral from 'numeral';
 import { DeviceProduct } from '@/pages/device/product/data';
 import { getPageQuery } from '@/utils/utils';
-import { Item } from 'gg-editor';
 
 interface Props extends FormComponentProps {
   loading: boolean;
@@ -713,6 +712,7 @@ const DeviceInstancePage: React.FC<Props> = props => {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>
               <Search
+                type={'device-instance'}
                 search={(params: any) => {
                   if (Object.keys(params).length === 0) {
                     deviceIdList.splice(0, deviceIdList.length);

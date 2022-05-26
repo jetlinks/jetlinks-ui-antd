@@ -75,6 +75,8 @@ const Gateway: React.FC<Props> = (props) => {
         if (response.status === 200) {
           message.success('操作成功');
           handleSearch(searchParam);
+        } else {
+          setSpinning(false);
         }
       })
       .catch(() => {
@@ -89,6 +91,8 @@ const Gateway: React.FC<Props> = (props) => {
         if (response.status === 200) {
           message.success('操作成功');
           handleSearch(searchParam);
+        } else {
+          setSpinning(false);
         }
       })
       .catch(() => {
@@ -102,15 +106,17 @@ const Gateway: React.FC<Props> = (props) => {
         if (response.status === 200) {
           message.success('解绑成功');
           handleSearch(searchParam);
+        } else {
+          setSpinning(false);
         }
       }).catch(() => {
     });
   };
 
   const statusMap = new Map();
-  statusMap.set('在线', 'success');
-  statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
+  statusMap.set('online', 'success');
+  statusMap.set('offline', 'error');
+  statusMap.set('notActive', 'processing');
 
   const columns: ColumnProps<DeviceInstance>[] = [
     {
@@ -137,7 +143,7 @@ const Gateway: React.FC<Props> = (props) => {
       title: '状态',
       dataIndex: 'state',
       render: record =>
-        record ? <Badge status={statusMap.get(record.text)} text={record.text}/> : '',
+        record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
     },
     {
       title: '操作',
@@ -216,6 +222,8 @@ const Gateway: React.FC<Props> = (props) => {
         if (response.status === 200) {
           message.success('保存成功');
           handleSearch(searchParam);
+        } else {
+          setSpinning(false);
         }
       }).catch(() => {
     });
@@ -227,6 +235,8 @@ const Gateway: React.FC<Props> = (props) => {
       if (response.status === 200) {
         message.success('保存成功');
         handleSearch(searchParam);
+      } else {
+        setSpinning(false);
       }
     }).catch(() => {
     });
