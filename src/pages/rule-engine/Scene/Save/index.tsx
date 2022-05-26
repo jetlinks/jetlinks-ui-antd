@@ -232,6 +232,17 @@ export default () => {
                   setRequestParams({ trigger: allValues.trigger });
                   setTriggerDatas(allValues.trigger);
                 }
+
+                if (
+                  hasKeyInObject(['productId'], changeValue.trigger.device) ||
+                  (changeValue.trigger.device.operation &&
+                    hasKeyInObject(
+                      ['operator', 'eventId', 'functionId'],
+                      changeValue.trigger.device.operation,
+                    ))
+                ) {
+                  setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
+                }
               } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
                 setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
               }

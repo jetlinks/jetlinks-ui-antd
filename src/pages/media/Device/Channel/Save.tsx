@@ -99,19 +99,6 @@ const Save = (props: SaveModalProps) => {
             max: 64,
             message: '最多可输入64个字符',
           },
-          {
-            triggerType: 'onBlur',
-            validator: (value: string) => {
-              const reg = /(http|https|rtsp|rtmp):\/\/([\w.]+\/?)\S*/;
-              return new Promise((resolve) => {
-                if (reg.test(value)) {
-                  resolve('');
-                } else {
-                  resolve('请输入正确的视频地址');
-                }
-              });
-            },
-          },
         ],
         'x-decorator-props': {
           gridSpan: 24,
@@ -127,6 +114,22 @@ const Save = (props: SaveModalProps) => {
           {
             max: 128,
             message: '最多可输入128个字符',
+          },
+          {
+            validator: (value: string) => {
+              const reg = /(http|https|rtsp|rtmp):\/\/([\w.]+\/?)\S*/;
+              return new Promise((resolve) => {
+                if (!value) {
+                  resolve('');
+                  return;
+                }
+                if (reg.test(value)) {
+                  resolve('');
+                } else {
+                  resolve('请输入正确的视频地址');
+                }
+              });
+            },
           },
         ],
       },

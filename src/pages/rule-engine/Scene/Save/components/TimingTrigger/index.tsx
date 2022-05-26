@@ -1,6 +1,6 @@
 import { Col, Input, InputNumber, Row, Select, TimePicker } from 'antd';
 import { ItemGroup, TimeSelect } from '@/pages/rule-engine/Scene/Save/components';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { omit } from 'lodash';
 import moment from 'moment';
 
@@ -45,6 +45,7 @@ const DefaultValue = {
 
 export default (props: TimingTrigger) => {
   const [data, setData] = useState<TimerType>(DefaultValue);
+  const timePickerRef = useRef(null);
 
   useEffect(() => {
     setData(props.value || DefaultValue);
@@ -190,23 +191,27 @@ export default (props: TimingTrigger) => {
                 onSelect={type2Select}
               />
               {data.mod === PeriodModEnum.period ? (
-                <TimePicker.RangePicker
-                  format={'HH:mm:ss'}
-                  value={[
-                    moment(data.period?.from || new Date(), 'HH:mm:ss'),
-                    moment(data.period?.to || new Date(), 'hh:mm:ss'),
-                  ]}
-                  onChange={(_, dateString) => {
-                    onChange({
-                      ...data,
-                      period: {
-                        ...data.period,
-                        from: dateString[0],
-                        to: dateString[1],
-                      },
-                    });
-                  }}
-                />
+                <div ref={timePickerRef}>
+                  <TimePicker.RangePicker
+                    format={'HH:mm:ss'}
+                    value={[
+                      moment(data.period?.from || new Date(), 'HH:mm:ss'),
+                      moment(data.period?.to || new Date(), 'hh:mm:ss'),
+                    ]}
+                    getPopupContainer={() => timePickerRef.current!}
+                    onChange={(_, dateString) => {
+                      onChange({
+                        ...data,
+                        period: {
+                          ...data.period,
+                          from: dateString[0],
+                          to: dateString[1],
+                        },
+                      });
+                    }}
+                    style={{ width: '100%' }}
+                  />
+                </div>
               ) : (
                 <TimePicker
                   format={'HH:mm:ss'}

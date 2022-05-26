@@ -40,7 +40,7 @@ export default observer((props: TriggerProps) => {
   const [productId, setProductId] = useState('');
   const [selector, setSelector] = useState('fixed');
 
-  const [operatorOptions, setOperatorOptions] = useState<any[]>([]);
+  const [operatorOptions, setOperatorOptions] = useState<any[] | undefined>(undefined);
 
   const [properties, setProperties] = useState<any[]>([]); // 属性
   const [events, setEvents] = useState([]); // 事件
@@ -129,11 +129,8 @@ export default observer((props: TriggerProps) => {
     getProducts();
   }, []);
 
-  console.log('triggerModel', selector);
-
   useEffect(() => {
     const triggerData = props.value;
-    console.log('triggerData', triggerData);
     if (triggerData && triggerData.device) {
       const _device = triggerData.device;
 
@@ -231,7 +228,7 @@ export default observer((props: TriggerProps) => {
           </Col>
         )}
         <Col span={6}>
-          {functions.length || events.length || properties.length ? (
+          {operatorOptions && (
             <Form.Item
               name={['trigger', 'device', 'operation', 'operator']}
               initialValue={undefined}
@@ -243,7 +240,7 @@ export default observer((props: TriggerProps) => {
                 style={{ width: '100%' }}
               />
             </Form.Item>
-          ) : null}
+          )}
         </Col>
       </Row>
       {FormModel.trigger?.device?.operation?.operator === OperatorEnum.invokeFunction ||

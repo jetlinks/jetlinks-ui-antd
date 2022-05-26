@@ -22,6 +22,10 @@ class Service extends BaseService<recordsItemType> {
       data,
     });
 
+  // 下载到云端
+  downloadRecord = (deviceId: string, channelId: string, data: any) =>
+    request(`${this.uri}/device/${deviceId}/${channelId}/_record`, { method: 'POST', data });
+
   // 播放本地回放
   playbackLocal = (
     deviceId: string,

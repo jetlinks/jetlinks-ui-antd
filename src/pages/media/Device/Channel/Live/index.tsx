@@ -16,7 +16,7 @@ interface LiveProps {
 const LiveFC = (props: LiveProps) => {
   const [mediaType, setMediaType] = useState('mp4');
   const [url, setUrl] = useState('');
-  const [isRecord, setIsRecord] = useState(false);
+  const [isRecord, setIsRecord] = useState(0); // 0：停止录像； 1：请求录像中； 2：开始录像
 
   const mediaStart = useCallback(
     async (type) => {
@@ -56,24 +56,27 @@ const LiveFC = (props: LiveProps) => {
             <div
               className={'tool-item'}
               onClick={async () => {
-                if (isRecord) {
+                if (isRecord === 0) {
+                  setIsRecord(1);
                   const resp = await service.recordStop(props.deviceId, props.channelId, {
                     local: false,
                   });
                   if (resp.status === 200) {
-                    setIsRecord(!isRecord);
+                    setIsRecord(2);
+                  } else {
+                    setIsRecord(0);
                   }
-                } else {
+                } else if (isRecord === 2) {
                   const resp = await service.recordStart(props.deviceId, props.channelId, {
                     local: false,
                   });
                   if (resp.status === 200) {
-                    setIsRecord(!isRecord);
+                    setIsRecord(0);
                   }
                 }
               }}
             >
-              {isRecord ? '停止录像' : '开始录像'}
+              {isRecord === 0 ? '开始录像' : isRecord === 1 ? '请求录像中' : '停止录像'}
             </div>
             <div className={'tool-item'}>刷新</div>
             <div
