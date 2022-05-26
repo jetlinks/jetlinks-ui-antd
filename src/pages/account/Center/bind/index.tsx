@@ -44,9 +44,12 @@ const Bind = () => {
       <div
         style={{
           width: '100%',
-          height: '100%',
+          height: '100vh',
           background: `url(${bindPage}) no-repeat`,
           backgroundSize: '100% 100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <div className={styles.cards}>
@@ -64,14 +67,14 @@ const Bind = () => {
             >
               <div className={styles.item}>
                 <div style={{ height: 100, marginTop: 10, marginBottom: 10 }}>
-                  <img src={logo} style={{ width: 90, height: 90 }} />
+                  <img src={logo} style={{ height: 70 }} />
                 </div>
                 <p className={styles.fonts}>账号：{user?.username}</p>
                 <p className={styles.fonts}>用户名：{user?.name}</p>
               </div>
             </Card>
             <div style={{ position: 'relative', top: '135px', margin: '0 20px' }}>
-              <img src={Vector} />
+              <img src={Vector} style={{ height: '15px' }} />
             </div>
             <Card
               title={
@@ -85,13 +88,14 @@ const Bind = () => {
             >
               <div className={styles.item}>
                 <div style={{ height: 100, marginTop: 10, marginBottom: 10 }}>
-                  <img style={{ height: 80 }} src={iconMap.get(bindUser?.type)} />
+                  <img style={{ height: 70 }} src={iconMap.get(bindUser?.type)} />
                 </div>
                 <p className={styles.fonts}>账户：{bindUser?.providerName}</p>
                 <p className={styles.fonts}>用户名：{bindUser?.result.others.name}</p>
               </div>
             </Card>
           </div>
+          {}
           <div className={styles.btn}>
             <Button
               style={{ marginTop: 30, marginBottom: 30 }}
