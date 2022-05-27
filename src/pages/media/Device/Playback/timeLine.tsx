@@ -185,7 +185,11 @@ const Progress = forwardRef((props: Props, ref) => {
     <div className={'time-line-warp'}>
       <div className={'time-line-clock'}>
         {Array.from(Array(25), (v, k) => k).map((item) => {
-          return <div key={item}>{item}</div>;
+          return (
+            <div key={item} style={{ width: 12 }}>
+              {item}
+            </div>
+          );
         })}
       </div>
       <div className={'time-line-content'} ref={LineContent}>

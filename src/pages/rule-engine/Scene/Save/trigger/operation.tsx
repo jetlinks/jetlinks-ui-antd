@@ -65,6 +65,7 @@ export default (props: OperatorProps) => {
 
   useEffect(() => {
     if (props.value && props.propertiesList?.length) {
+      console.log(Object.keys(props.value));
       const _key = Object.keys(props.value);
       setKey(_key);
       setData(objToArray(props.value));
@@ -90,20 +91,19 @@ export default (props: OperatorProps) => {
           style={{ width: '100%' }}
           placeholder={'请选择属性'}
           onSelect={(id: any) => {
-            if (props.value) {
-              const _value: any = { ...props.value };
-              if (id in props.value) {
-                delete _value[id];
-              } else {
-                _value[id] = undefined;
-              }
-              if (props.onChange) {
-                props.onChange(_value!);
-              }
+            if (props.onChange) {
+              props.onChange({ [id]: undefined });
+            }
+          }}
+          onDeselect={(id: any) => {
+            const _value: any = { ...props.value };
+            if (id in props.value) {
+              delete _value[id];
             } else {
-              if (props.onChange) {
-                props.onChange({ [id]: undefined });
-              }
+              _value[id] = undefined;
+            }
+            if (props.onChange) {
+              props.onChange(_value!);
             }
           }}
         />

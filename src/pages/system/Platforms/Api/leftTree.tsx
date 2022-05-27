@@ -88,7 +88,7 @@ export default (props: LeftTreeType) => {
     return new Promise(async (resolve) => {
       const resp = await service.getApiNextLevel(name);
       if (resp) {
-        ApiModel.components = resp.components;
+        ApiModel.components = { ...ApiModel.components, ...resp.components.schemas };
         const handleData = handleTreeData(resp);
         setTreeData((origin) => {
           const data = updateTreeData(origin, key, handleData);

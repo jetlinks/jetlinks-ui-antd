@@ -29,7 +29,6 @@ export default (props: MessageContentProps) => {
         if (type === 'user') {
           rules.push({
             validator: async (_: any, value: any) => {
-              console.log('user', value);
               if (!value) {
                 return Promise.reject(new Error('请选择' + item.name));
               } else {

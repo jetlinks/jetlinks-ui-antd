@@ -156,6 +156,9 @@ export default (props: WritePropertyProps) => {
               options={builtInList}
               fieldNames={{ label: 'name', value: 'id' }}
               placeholder={'请选择参数'}
+              onSelect={(value: any) => {
+                onChange(propertiesKey, value);
+              }}
             />
           ) : (
             <div>{inputNodeByType(propertiesType)}</div>

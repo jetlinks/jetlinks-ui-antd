@@ -77,7 +77,8 @@ export default observer(() => {
         const entityName = refUrl.split('/').pop();
         const entityType = ObjectFindValue('type', ApiModel.swagger.requestBody.content);
         const entityRequired = ApiModel.swagger.requestBody.required;
-        const entity: any = ApiModel.components.schemas[entityName];
+        console.log(entityName);
+        const entity: any = ApiModel.components[entityName];
         const file = ObjectFindValue('file', ApiModel.swagger.requestBody.content);
         // 是否为文件上传
         if (file && isObject(file)) {
@@ -104,13 +105,11 @@ export default observer(() => {
 
   const handleEntity = (entityData: any): any => {
     let newEntity = {};
-    console.log(entityData);
     if (isArray(entityData)) {
       newEntity = [handleEntity(entityData[0])];
     } else if (isObject(entityData)) {
       Object.keys(entityData).forEach((key) => {
         const type = entityData[key].type;
-        console.log(entityData[key]);
         if (type) {
           if (type.includes('integer')) {
             newEntity[key] = 0;
@@ -132,12 +131,11 @@ export default observer(() => {
   };
 
   const getResult = (name: string, oldName: string = '') => {
-    const entity = cloneDeep(ApiModel.components.schemas[name].properties);
-    console.log(entity);
     if (name === oldName) {
       // 禁止套娃
       return [];
     }
+    const entity = cloneDeep(ApiModel.components[name].properties);
     Object.keys(entity).forEach((key) => {
       const type = entity[key].type;
       if ((entity[key].items && entity[key].items.$ref) || entity[key].$ref) {
@@ -162,12 +160,11 @@ export default observer(() => {
   };
 
   const handleResponseParam = (name: any, oldName: string = ''): any[] => {
-    if (!ApiModel.components.schemas[name]) {
+    if (!ApiModel.components[name]) {
       return [];
     }
 
-    const entity = cloneDeep(ApiModel.components.schemas[name].properties);
-    console.log(entity);
+    const entity = cloneDeep(ApiModel.components[name].properties);
 
     const newArr: any[] = [];
     if (name === oldName) {
@@ -323,7 +320,6 @@ export default observer(() => {
           {responseData
             .filter((item) => item.code !== '400')
             .map((item) => {
-              console.log(item);
               return (
                 <Tabs.TabPane key={item.code} tab={item.code}>
                   <div>
