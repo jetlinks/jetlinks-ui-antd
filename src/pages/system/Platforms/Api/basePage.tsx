@@ -117,6 +117,7 @@ export default (props: TableProps) => {
                   type={'link'}
                   style={{ padding: 0 }}
                   onClick={() => {
+                    console.log(record);
                     ApiModel.swagger = record;
                     ApiModel.showTable = false;
                   }}

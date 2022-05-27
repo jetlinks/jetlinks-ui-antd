@@ -14,12 +14,69 @@ import {
   CloudDownloadOutlined,
   DownloadOutlined,
   EyeOutlined,
+  LoadingOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
 import TimeLine from './timeLine';
 
 const service = new Service('media');
+
+interface IconNodeType {
+  type: string;
+  item: recordsItemType;
+  onCloudView: (startTime: number, endTime: number) => void;
+  onDownLoad: () => void;
+}
+
+const IconNode = (props: IconNodeType) => {
+  const [status, setStatus] = useState(props.item?.isServer ? 2 : 0); // type 为local时有效，0：未下载； 1：下载中：2：已下载
+
+  const getLocalIcon = (s: number) => {
+    if (s === 0) {
+      return <CloudDownloadOutlined />;
+    } else if (s === 2) {
+      return <EyeOutlined />;
+    } else {
+      return <LoadingOutlined />;
+    }
+  };
+
+  const Icon = props.type === 'local' ? getLocalIcon(status) : <DownloadOutlined />;
+
+  const downLoadCloud = (item: recordsItemType) => {
+    setStatus(1);
+    service
+      .downloadRecord(item.deviceId, item.channelId, {
+        local: false,
+        downloadSpeed: 4,
+        startTime: item.startTime,
+        endTime: item.endTime,
+      })
+      .then((res) => {
+        setStatus(res.status === 200 ? 2 : 0);
+      });
+  };
+  return (
+    <a
+      onClick={() => {
+        if (props.type === 'local') {
+          if (status === 2) {
+            // 已下载，进行跳转
+            props.onCloudView(props.item.startTime, props.item.endTime);
+          } else if (status === 0) {
+            // 未下载 进行下载
+            downLoadCloud(props.item);
+          }
+        } else {
+          props.onDownLoad();
+        }
+      }}
+    >
+      {Icon}
+    </a>
+  );
+};
 
 export default () => {
   const [url, setUrl] = useState('');
@@ -48,26 +105,29 @@ export default () => {
         startTime: date.format('YYYY-MM-DD 00:00:00'),
         endTime: date.format('YYYY-MM-DD 23:59:59'),
       };
-      const list: recordsItemType[] = [];
       const localResp = await service.queryRecordLocal(deviceId, channelId, params);
-
       if (localResp.status === 200 && localResp.result.length) {
         const serviceResp = await service.recordsInServer(deviceId, channelId, {
           ...params,
           includeFiles: false,
         });
+        let newList: recordsItemType[] = serviceResp.result;
+
         if (serviceResp.status === 200 && serviceResp.result) {
-          const newList = list.map((item) => {
+          // 判断是否已下载云端视频
+          newList = localResp.result.map((item: recordsItemType) => {
             return {
               ...item,
               isServer: serviceResp.result.some(
-                (serverFile: any) => serverFile.streamStartTime === item.startTime,
+                (serverFile: any) =>
+                  item.startTime >= serverFile.streamStartTime &&
+                  serverFile.streamEndTime <= item.endTime,
               ),
             };
           });
           setHistoryList(newList);
         } else {
-          setHistoryList(list);
+          setHistoryList(newList);
         }
       } else {
         setHistoryList([]);
@@ -93,23 +153,6 @@ export default () => {
     }
   };
 
-  const downLoadCloud = useCallback(
-    (item: recordsItemType) => {
-      setHistoryList(
-        historyList.map((historyItem) => {
-          if (historyItem.startTime === item.startTime) {
-            return {
-              ...item,
-              isServer: true,
-            };
-          }
-          return item;
-        }),
-      );
-    },
-    [historyList],
-  );
-
   const cloudView = useCallback((startTime: number, endTime: number) => {
     setType('cloud');
     setCloudTime({
@@ -129,53 +172,6 @@ export default () => {
     downNode.click();
     document.body.removeChild(downNode);
   };
-
-  const DownloadIcon = useCallback(
-    (item: recordsItemType) => {
-      let title = '下载到云端';
-      let IconNode = (
-        <a
-          onClick={() => {
-            downLoadCloud(item);
-          }}
-        >
-          <CloudDownloadOutlined />
-        </a>
-      );
-      if (type === 'local') {
-        if (item.isServer) {
-          title = '查看';
-          IconNode = (
-            <a
-              onClick={() => {
-                cloudView(item.startTime, item.endTime);
-              }}
-            >
-              <EyeOutlined />
-            </a>
-          );
-        }
-      } else {
-        title = '下载录像文件';
-        IconNode = (
-          <a
-            onClick={() => {
-              downloadClick(item);
-            }}
-            download
-          >
-            <DownloadOutlined />
-          </a>
-        );
-      }
-
-      return {
-        title,
-        IconNode,
-      };
-    },
-    [type],
-  );
 
   useEffect(() => {
     setTime(moment(new Date()));
@@ -285,7 +281,15 @@ export default () => {
                     'HH:mm:ss',
                   );
                   const endTime = moment(item.endTime || item.mediaEndTime).format('HH:mm:ss');
-                  const downloadObj = DownloadIcon(item);
+                  let title = '下载到云端';
+
+                  if (type === 'local') {
+                    if (item.isServer) {
+                      title = '查看';
+                    }
+                  } else {
+                    title = '下载录像文件';
+                  }
                   return (
                     <List.Item
                       actions={[
@@ -319,8 +323,16 @@ export default () => {
                             )}
                           </a>
                         </Tooltip>,
-                        <Tooltip key={'download'} title={downloadObj.title}>
-                          {downloadObj.IconNode}
+
+                        <Tooltip key={'download'} title={title}>
+                          <IconNode
+                            type={type}
+                            item={item}
+                            onCloudView={cloudView}
+                            onDownLoad={() => {
+                              downloadClick(item);
+                            }}
+                          />
                         </Tooltip>,
                       ]}
                     >

@@ -1,3 +1,4 @@
+import { Empty } from 'antd';
 import * as echarts from 'echarts';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
@@ -58,7 +59,15 @@ const Charts = (props: Props) => {
     }
   }, [props.data]);
 
-  return <div id="charts" style={{ width: '100%', height: 500 }}></div>;
+  return (
+    <div>
+      {Array.isArray(props?.data) && props?.data.length > 2 ? (
+        <div id="charts" style={{ width: '100%', height: 500 }}></div>
+      ) : (
+        <Empty />
+      )}
+    </div>
+  );
 };
 
 export default Charts;

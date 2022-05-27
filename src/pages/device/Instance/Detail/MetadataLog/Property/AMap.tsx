@@ -49,6 +49,7 @@ export default (props: Props) => {
             type="primary"
             onClick={() => {
               if (PathNavigatorRef.current) {
+                PathNavigatorRef.current.moveToPoint(0, 0);
                 PathNavigatorRef.current.stop();
               }
             }}

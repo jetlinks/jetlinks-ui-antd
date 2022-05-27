@@ -24,8 +24,8 @@ export default (props: Props) => {
   };
 
   useEffect(() => {
-    setValue(props.value);
-    const list = props?.value.split(',') || [];
+    setValue(props?.value || '');
+    const list = (props?.value || '').split(',') || [];
     if (!!props.value && list.length === 2) {
       setMarkerCenter({
         longitude: list[0],
