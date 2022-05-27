@@ -86,7 +86,11 @@ const Detail = observer(() => {
             } else {
               const accessConfig = field.query('accessConfig').value();
               let response: any[] = [];
-              if (Object.keys(accessConfig).length >= 3) {
+              if (
+                accessConfig?.regionId &&
+                accessConfig?.accessKeyId &&
+                accessConfig?.accessSecret
+              ) {
                 response = await service.getAliyunProductsList(accessConfig);
               }
               f.setFieldState(propertyPath, (state) => {
@@ -145,7 +149,7 @@ const Detail = observer(() => {
         const list = (Store.get('datalist') || []).filter((j: any) => !checked.includes(j.value));
         resolve(list);
       });
-    } else if (Object.keys(accessConfig).length >= 3) {
+    } else if (accessConfig?.regionId && accessConfig?.accessKeyId && accessConfig?.accessSecret) {
       return service.getAliyunProductsList(accessConfig).then((resp) => {
         Store.set('datalist', resp);
         return resp.filter((j: any) => !checked.includes(j.value));
