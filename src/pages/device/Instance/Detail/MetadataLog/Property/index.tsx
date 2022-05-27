@@ -187,7 +187,6 @@ const PropertyLog = (props: Props) => {
         value: undefined,
         type: data?.name || '',
       });
-      console.log(dataList.length);
       setChartsList(dataList || []);
     }
   };
@@ -199,7 +198,7 @@ const PropertyLog = (props: Props) => {
     if (resp.status === 200) {
       const dataList: any[] = [
         {
-          year: start,
+          year: end,
           value: undefined,
           type: data?.name || '',
         },
@@ -213,7 +212,7 @@ const PropertyLog = (props: Props) => {
         });
       });
       dataList.push({
-        year: end,
+        year: start,
         value: undefined,
         type: data?.name || '',
       });

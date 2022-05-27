@@ -88,7 +88,7 @@ const Property = (props: Props) => {
   useEffect(() => {
     if (!dataValue?.timestamp) {
       setDataValue(value);
-    } else if (dataValue?.timestamp && dataValue?.timestamp < value?.timestamp) {
+    } else if (dataValue?.timestamp && dataValue?.timestamp <= value?.timestamp) {
       setDataValue(value);
     }
   }, [value]);
@@ -107,13 +107,14 @@ const Property = (props: Props) => {
           </div>
         </div>
       </Spin>
-      <EditProperty
-        visible={editVisible}
-        onCancel={() => {
-          setEditVisible(false);
-        }}
-        data={data}
-      />
+      {editVisible && (
+        <EditProperty
+          onCancel={() => {
+            setEditVisible(false);
+          }}
+          data={data}
+        />
+      )}
       {visible && <PropertyLog data={data} close={() => setVisible(false)} />}
       {indicatorVisible && (
         <Indicators

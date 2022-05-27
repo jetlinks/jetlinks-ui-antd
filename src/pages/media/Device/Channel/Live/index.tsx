@@ -1,6 +1,6 @@
 // 通道直播
 import { useCallback, useEffect, useState } from 'react';
-import { Radio, Modal } from 'antd';
+import { Modal, Radio } from 'antd';
 import LivePlayer from '@/components/Player';
 import MediaTool from '@/components/Player/mediaTool';
 import { service } from '../index';

@@ -1,7 +1,7 @@
 // Modal 弹窗，用于新增、修改数据
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, FormItem, FormTab, Input, Select, FormGrid } from '@formily/antd';
+import { Form, FormGrid, FormItem, FormTab, Input, Select } from '@formily/antd';
 import { message, Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';

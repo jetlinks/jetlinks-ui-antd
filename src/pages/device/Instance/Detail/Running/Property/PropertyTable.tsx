@@ -7,6 +7,7 @@ interface Props {
   data: any;
   value: any;
 }
+
 const PropertyTable = (props: Props) => {
   const { type, data, value } = props;
   const [dataValue, setDataValue] = useState<any>(null);
@@ -14,7 +15,7 @@ const PropertyTable = (props: Props) => {
   useEffect(() => {
     if (!dataValue?.timestamp) {
       setDataValue(value);
-    } else if (dataValue?.timestamp && dataValue?.timestamp < value?.timestamp) {
+    } else if (dataValue?.timestamp && dataValue?.timestamp <= value?.timestamp) {
       setDataValue(value);
     }
   }, [value]);

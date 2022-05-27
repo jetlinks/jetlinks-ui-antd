@@ -62,17 +62,23 @@ const Configuration = () => {
     {
       title: '关联场景联动',
       dataIndex: 'sceneName',
+      width: 160,
       render: (text: any, record: any) => (
         <PermissionButton
           type={'link'}
           isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
-          style={{ padding: 0, height: 'auto' }}
+          style={{ padding: 0, height: 'auto', width: '100%' }}
+          tooltip={{
+            title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
+              ? text
+              : '没有权限，请联系管理员',
+          }}
           onClick={() => {
             const url = getMenuPathByCode('rule-engine/Scene/Save');
             history.push(`${url}?id=${record.sceneId}`);
           }}
         >
-          {text}
+          <span className="ellipsis">{text}</span>
         </PermissionButton>
       ),
     },
@@ -86,6 +92,7 @@ const Configuration = () => {
     {
       title: '说明',
       dataIndex: 'description',
+      ellipsis: true,
     },
     {
       title: '操作',
@@ -143,12 +150,11 @@ const Configuration = () => {
           key="action"
           style={{ padding: 0 }}
           popConfirm={{
-            title: intl.formatMessage({
-              id: `pages.data.option.${
-                record.state?.value !== 'disabled' ? 'disabled' : 'disabled'
-              }.tips`,
-              defaultMessage: `确认${record.state?.value !== 'disabled' ? '禁用' : '启用'}?`,
-            }),
+            title: `${
+              record.state?.value !== 'disabled'
+                ? '禁用告警不会影响关联的场景状态，确定要禁用吗'
+                : '确认启用'
+            }?`,
             onConfirm: async () => {
               if (record.state?.value === 'disabled') {
                 await service._enable(record.id);
@@ -174,7 +180,7 @@ const Configuration = () => {
           }}
           type="link"
         >
-          {record.state?.value === 'disabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+          {record.state?.value === 'disabled' ? <PlayCircleOutlined /> : <CloseCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           type="link"
@@ -274,12 +280,11 @@ const Configuration = () => {
                 isPermission={permission.action}
                 style={{ padding: 0 }}
                 popConfirm={{
-                  title: intl.formatMessage({
-                    id: `pages.data.option.${
-                      record.state?.value !== 'disabled' ? 'disabled' : 'enabled'
-                    }.tips`,
-                    defaultMessage: `确认${record.state?.value !== 'disabled' ? '禁用' : '启用'}?`,
-                  }),
+                  title: `${
+                    record.state?.value !== 'disabled'
+                      ? '禁用告警不会影响关联的场景状态，确定要禁用吗'
+                      : '确认启用'
+                  }?`,
                   onConfirm: async () => {
                     if (record.state?.value === 'disabled') {
                       await service._enable(record.id);

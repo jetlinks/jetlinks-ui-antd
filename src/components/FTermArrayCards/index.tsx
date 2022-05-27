@@ -101,7 +101,7 @@ export const FTermArrayCards: ComposedArrayCards = observer((props) => {
                     {
                       type: 'object',
                       properties: {
-                        termType: {
+                        type: {
                           'x-decorator': 'FormItem',
                           'x-component': 'Select',
                           'x-component-props': {

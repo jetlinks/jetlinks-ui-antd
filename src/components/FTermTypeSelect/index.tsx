@@ -21,7 +21,6 @@ const FTermTypeSelect = (props: Props) => {
         onChange={(value) => props.onChange(value)}
         value={props.value}
         style={{ width: '200px' }}
-        defaultValue={'and'}
         options={[
           { label: '并且', value: 'and' },
           { label: '或者', value: 'or' },

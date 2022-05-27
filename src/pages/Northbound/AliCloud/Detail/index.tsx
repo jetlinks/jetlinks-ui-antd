@@ -196,6 +196,18 @@ const Detail = observer(() => {
               },
             ],
           },
+          instanceId: {
+            type: 'string',
+            title: '实例ID',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-component-props': {
+              placeholder: '请输入实例ID',
+            },
+            'x-decorator-props': {
+              tooltip: '阿里云物联网平台中的实例ID,没有则不填',
+            },
+          },
           accessKeyId: {
             type: 'string',
             title: 'accessKey',

@@ -231,7 +231,9 @@ const TriggerTerm = (props: Props, ref: any) => {
   useImperativeHandle(ref, () => ({
     getTriggerForm: async () => {
       await form.validate();
+
       const data: any = await form.submit().then((_data: any) => {
+        if (!Array.isArray(_data.trigger)) return;
         _data.trigger?.map((item: { terms: any[] }) =>
           item.terms.map((j) => {
             if (j.value.value.length === 1) {
@@ -242,7 +244,7 @@ const TriggerTerm = (props: Props, ref: any) => {
         );
         return _data;
       });
-      return data;
+      return Array.isArray(data?.trigger) ? data : undefined;
     },
   }));
   const SchemaField = createSchemaField({
@@ -269,7 +271,7 @@ const TriggerTerm = (props: Props, ref: any) => {
         'x-component': 'FTermArrayCards',
         'x-decorator': 'FormItem',
         'x-value': {
-          termType: 'and',
+          type: 'and',
         },
         'x-component-props': {
           title: '分组',
@@ -293,6 +295,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                     type: 'string',
                     // "x-decorator": 'FormItem',
                     'x-component': 'FTermTypeSelect',
+                    'x-value': 'and',
                   },
                   layout: {
                     type: 'void',

@@ -41,19 +41,22 @@ export default (props: AlarmConfigProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>关联场景联动</label>
-              <div>
+              <div className={'ellipsis'}>
                 <PermissionButton
                   type={'link'}
                   isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
                   style={{ padding: 0, height: 'auto' }}
+                  tooltip={{
+                    title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
+                      ? props?.sceneName
+                      : '没有权限，请联系管理员',
+                  }}
                   onClick={() => {
                     const url = getMenuPathByCode('rule-engine/Scene/Save');
                     history.push(`${url}?id=${props.sceneId}`);
                   }}
                 >
-                  <div className={'ellipsis'}>
-                    <Tooltip title={props?.sceneName || ''}>{props?.sceneName || ''}</Tooltip>
-                  </div>
+                  {props?.sceneName || ''}
                 </PermissionButton>
               </div>
             </div>
