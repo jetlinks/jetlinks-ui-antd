@@ -57,7 +57,7 @@ const Access = () => {
     },
     {
       title: '值',
-      render: (record: any) => <>{propertyValue[record?.property] || '-'}</>,
+      render: (record: any) => <>{propertyValue[record?.metadataId] || '-'}</>,
     },
     {
       title: '状态',

@@ -54,7 +54,7 @@ const Modbus = () => {
     },
     {
       title: '值',
-      render: (record: any) => <>{propertyValue[record?.property] || '-'}</>,
+      render: (record: any) => <>{propertyValue[record?.metadataId] || '-'}</>,
     },
     {
       title: '状态',
@@ -201,7 +201,7 @@ const Modbus = () => {
         const { value } = payload;
         propertyValue[value.property] = value.formatValue;
         setPropertyValue({ ...propertyValue });
-        // console.log(propertyValue)
+        console.log(propertyValue);
       });
   }, [data]);
 

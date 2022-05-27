@@ -19,7 +19,6 @@ const Login: React.FC = () => {
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
 
   const { initialState, setInitialState } = useModel('@@initialState');
-
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
@@ -188,6 +187,17 @@ const Login: React.FC = () => {
                       defaultMessage: '登录',
                     })}
                   </Submit>
+                  {/* <Button
+                      onClick={()=>{
+                        localStorage.setItem('onLogin', 'no');
+                        window.open(`/${SystemConst.API_BASE}/sso/dingd2rgqrqnbvgbvi9x/login`);
+                        window.onstorage = (e) => {
+                          if (e.newValue) {
+                            window.location.href = '/';
+                          }
+                        };
+                      }}
+                  >三方登录</Button> */}
                 </Form>
               </div>
             </div>
