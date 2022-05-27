@@ -35,6 +35,7 @@ const Configuration = () => {
     {
       dataIndex: 'name',
       title: '名称',
+      ellipsis: true,
     },
     {
       title: '类型',

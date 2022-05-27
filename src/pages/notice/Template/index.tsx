@@ -50,6 +50,7 @@ const Template = observer(() => {
     {
       dataIndex: 'name',
       title: '模版名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'provider',
@@ -59,7 +60,7 @@ const Template = observer(() => {
     {
       dataIndex: 'description',
       title: '说明',
-      // valueType: 'dateTime',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({

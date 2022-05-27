@@ -54,6 +54,7 @@ const Config = observer(() => {
     {
       dataIndex: 'name',
       title: '配置名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'provider',
@@ -62,6 +63,7 @@ const Config = observer(() => {
     },
     {
       dataIndex: 'description',
+      ellipsis: true,
       title: '说明',
     },
     {
