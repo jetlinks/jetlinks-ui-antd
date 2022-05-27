@@ -3,6 +3,7 @@ import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { imgMap, typeList } from './noticeTemplate';
+import { Tooltip } from 'antd';
 
 export interface NoticeCardProps extends ConfigItem {
   detail?: React.ReactNode;
@@ -19,7 +20,11 @@ export default (props: NoticeCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <span className={'card-item-header-name ellipsis'}>
+              <Tooltip placement="topLeft" title={props.name}>
+                {props.name}
+              </Tooltip>
+            </span>
           </div>
           <div className={'card-item-content'}>
             <div>
@@ -28,7 +33,11 @@ export default (props: NoticeCardProps) => {
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>{props.description}</div>
+              <div className={'ellipsis'}>
+                <Tooltip placement="topLeft" title={props.description}>
+                  {props.description}
+                </Tooltip>
+              </div>
             </div>
           </div>
         </div>
