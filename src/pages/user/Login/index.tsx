@@ -1,4 +1,4 @@
-import { Checkbox, message, Spin } from 'antd';
+import { Button, Checkbox, message, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'umi';
 import styles from './index.less';
@@ -10,14 +10,15 @@ import { Form, FormItem, Input, Password, Submit } from '@formily/antd';
 import { catchError, filter, mergeMap } from 'rxjs/operators';
 import * as ICONS from '@ant-design/icons';
 import { useModel } from '@@/plugin-model/useModel';
-// import SystemConst from '@/utils/const';
+import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
 import Footer from '@/components/Footer';
+import { DingdingOutlined, WechatOutlined } from '@ant-design/icons';
 
 const Login: React.FC = () => {
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
-
+  const [bindings, setBindings] = useState<any>([]);
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
 
@@ -62,6 +63,13 @@ const Login: React.FC = () => {
   };
 
   useEffect(getCode, []);
+  useEffect(() => {
+    Service.bindInfo().then((res) => {
+      if (res.status === 200) {
+        setBindings(res.result);
+      }
+    });
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -187,17 +195,31 @@ const Login: React.FC = () => {
                       defaultMessage: '登录',
                     })}
                   </Submit>
-                  {/* <Button
-                      onClick={()=>{
-                        localStorage.setItem('onLogin', 'no');
-                        window.open(`/${SystemConst.API_BASE}/sso/dingd2rgqrqnbvgbvi9x/login`);
-                        window.onstorage = (e) => {
-                          if (e.newValue) {
-                            window.location.href = '/';
-                          }
-                        };
-                      }}
-                  >三方登录</Button> */}
+                  <div style={{ marginTop: 10 }}>
+                    <div>其他方式登录</div>
+                    <div>
+                      {bindings.map((item: any) => (
+                        <Button
+                          type="link"
+                          onClick={() => {
+                            localStorage.setItem('onLogin', 'no');
+                            window.open(`/${SystemConst.API_BASE}/sso/${item.provider}/login`);
+                            window.onstorage = (e) => {
+                              if (e.newValue) {
+                                window.location.href = '/';
+                              }
+                            };
+                          }}
+                        >
+                          {item.type === 'dingtalk' ? (
+                            <DingdingOutlined style={{ color: '#009BF5', fontSize: '20px' }} />
+                          ) : (
+                            <WechatOutlined style={{ color: '#2AAE67', fontSize: '20px' }} />
+                          )}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 </Form>
               </div>
             </div>
