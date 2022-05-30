@@ -122,6 +122,7 @@ export default () => {
           />
         </Card>
         <DashBoard
+          className={'media-dash-board-body'}
           title={'播放数量(人次)'}
           options={options}
           height={500}

@@ -7,13 +7,13 @@ import classNames from 'classnames';
 
 interface BaseCardProps extends HeaderProps, EchartsProps {
   height: number;
-  classNames?: string;
+  className?: string;
 }
 
 export default (props: BaseCardProps) => {
   return (
     <div
-      className={classNames(Style['dash-board-echarts'], props.classNames)}
+      className={classNames(Style['dash-board-echarts'], props.className)}
       style={{
         height: props.height || 200,
       }}
