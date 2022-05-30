@@ -280,13 +280,10 @@ const Center = () => {
                       <Button
                         type="primary"
                         onClick={() => {
-                          window.open(
-                            `/${SystemConst.API_BASE}/sso/${item.provider}/login`,
-                            '',
-                            'width=700,height=500,left=500,top=300',
-                          );
-                          // window.open(`/#/account/center/bind`,'','width=700,height=500,left=500,top=300');
+                          window.open(`/${SystemConst.API_BASE}/sso/${item.provider}/login`);
+                          // window.open(`/#/account/center/bind`);
                           localStorage.setItem('onBind', 'false');
+                          localStorage.setItem('onLogin', 'yes');
                           window.onstorage = (e) => {
                             if (e.newValue) {
                               getBindInfo();

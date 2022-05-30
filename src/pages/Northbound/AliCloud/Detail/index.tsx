@@ -11,10 +11,11 @@ import {
   Select,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
+import { onFormInit } from '@formily/core';
 import { createForm, FormPath, onFieldChange, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Card, Col, Image, message, Row } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'umi';
 import { useAsyncDataSource } from '@/utils/util';
 import './index.less';
@@ -30,22 +31,41 @@ const Detail = observer(() => {
       createForm({
         validateFirst: true,
         effects() {
+          onFormInit(async (form1) => {
+            if (params.id === ':id') return;
+            const resp = await service.detail(params.id);
+            form1.setInitialValues(resp.result);
+          });
           onFieldValueChange('accessConfig.*', async (field, f) => {
             const regionId = field.query('accessConfig.regionId').value();
             const accessKeyId = field.query('accessConfig.accessKeyId').value();
             const accessSecret = field.query('accessConfig.accessSecret').value();
+            const instanceId = field.query('accessConfig.instanceId').value();
             let response: any[] = [];
             if (regionId && accessKeyId && accessSecret) {
               response = await service.getAliyunProductsList({
                 regionId,
                 accessKeyId,
                 accessSecret,
+                instanceId,
               });
             }
             f.setFieldState(field.query('bridgeProductKey'), (state) => {
               state.dataSource = response;
               Store.set('datalist', response);
+              if (field.modified) {
+                state.value = undefined;
+              }
             });
+            if (field.modified) {
+              f.setFieldState(field.query('mappings.*.productKey'), (state) => {
+                state.value = undefined;
+                state.componentProps = {
+                  header: '产品映射',
+                };
+                state.dataSource = response;
+              });
+            }
           });
 
           onFieldChange('mappings.*.productKey', async (field, f) => {
@@ -66,7 +86,11 @@ const Detail = observer(() => {
             } else {
               const accessConfig = field.query('accessConfig').value();
               let response: any[] = [];
-              if (Object.keys(accessConfig).length >= 3) {
+              if (
+                accessConfig?.regionId &&
+                accessConfig?.accessKeyId &&
+                accessConfig?.accessSecret
+              ) {
                 response = await service.getAliyunProductsList(accessConfig);
               }
               f.setFieldState(propertyPath, (state) => {
@@ -82,16 +106,6 @@ const Detail = observer(() => {
       }),
     [],
   );
-
-  useEffect(() => {
-    if (params.id && params.id !== ':id') {
-      service.detail(params.id).then((resp) => {
-        if (resp.status === 200) {
-          form.setValues(resp.result);
-        }
-      });
-    }
-  }, [params.id]);
 
   const SchemaField = createSchemaField({
     components: {
@@ -135,7 +149,7 @@ const Detail = observer(() => {
         const list = (Store.get('datalist') || []).filter((j: any) => !checked.includes(j.value));
         resolve(list);
       });
-    } else if (Object.keys(accessConfig).length >= 3) {
+    } else if (accessConfig?.regionId && accessConfig?.accessKeyId && accessConfig?.accessSecret) {
       return service.getAliyunProductsList(accessConfig).then((resp) => {
         Store.set('datalist', resp);
         return resp.filter((j: any) => !checked.includes(j.value));

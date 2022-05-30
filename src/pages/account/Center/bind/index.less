@@ -1,18 +1,16 @@
 .cards {
-  position: absolute;
-  top: 150px;
-  left: 17%;
   box-sizing: border-box;
-  width: 66%;
+  width: 850px;
+  min-height: 510px;
   background: #fff;
   border: 1px solid #e0e4e8;
   border-radius: 2px;
 
   .title {
-    margin: 50px 0;
+    margin: 30px 0;
     color: #0f1222;
     font-weight: 400;
-    font-size: 24px;
+    font-size: 20px;
     font-family: 'PingFang SC';
     font-style: normal;
     line-height: 25px;
@@ -23,13 +21,14 @@
     display: flex;
     justify-content: center;
 
+    //登录
     .infotitle {
       width: 64px;
       height: 24px;
       margin-left: 10px;
       color: rgba(0, 0, 0, 0.85);
       font-weight: 400;
-      font-size: 16px;
+      font-size: 14px;
       font-family: 'PingFang SC';
       font-style: normal;
       line-height: 24px;
@@ -39,16 +38,49 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 300px;
+      width: 280px;
 
       .fonts {
         font-weight: 400;
-        font-size: 16px;
+        font-size: 14px;
         font-family: 'PingFang SC';
         font-style: normal;
-        line-height: 16px;
+        line-height: 14px;
         opacity: 0.75;
         mix-blend-mode: normal;
+      }
+    }
+
+    //未登录
+    .topimg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .topfont {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      font-size: 14px;
+      font-family: 'PingFang SC';
+      font-style: normal;
+      line-height: 14px;
+      opacity: 0.75;
+      mix-blend-mode: normal;
+    }
+    .form {
+      width: 250px;
+      :global {
+        // .ant-form-item{
+        //   margin-bottom: 24px;
+        // }
+        .ant-form-item-label > label {
+          font-weight: 600;
+        }
+        .ant-form-item-label
+          > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+          content: none;
+        }
       }
     }
   }
