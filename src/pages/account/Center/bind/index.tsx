@@ -85,6 +85,7 @@ const Bind = () => {
         Token.set(userInfo.token);
         await fetchUserInfo();
         localStorage.setItem('onLogin', 'yes');
+        message.success('登录成功');
         setTimeout(() => window.close(), 1000);
       },
       error: () => {

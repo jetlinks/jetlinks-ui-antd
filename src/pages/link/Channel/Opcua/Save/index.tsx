@@ -6,7 +6,10 @@ import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Opcua';
 import { Modal } from '@/components';
 import { message } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { action } from '@formily/reactive';
+import type { Response } from '@/utils/typings';
+import type { Field } from '@formily/core';
 
 interface Props {
   data: Partial<OpaUa>;
@@ -16,8 +19,8 @@ interface Props {
 
 const Save = (props: Props) => {
   const intl = useIntl();
-  const [policies, setPolicies] = useState<any>([]);
-  const [modes, setModes] = useState<any>([]);
+  // const [policies, setPolicies] = useState<any>([]);
+  // const [modes, setModes] = useState<any>([]);
 
   const form = useMemo(
     () =>
@@ -31,6 +34,21 @@ const Save = (props: Props) => {
     [props.data.id],
   );
 
+  const useAsyncDataSource = (api: any) => (field: Field) => {
+    field.loading = true;
+    api(field).then(
+      action.bound!((resp: Response<any>) => {
+        field.dataSource = resp.result?.map((item: Record<string, unknown>) => ({
+          label: item,
+          value: item,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
+
+  const getPolicies = () => service.policies();
+  const getModes = () => service.modes();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -125,7 +143,7 @@ const Save = (props: Props) => {
                 message: '请选择安全策略',
               },
             ],
-            enum: policies,
+            'x-reactions': ['{{useAsyncDataSource(getPolicies)}}'],
           },
           'clientConfigs.securityMode': {
             title: '安全模式',
@@ -145,7 +163,7 @@ const Save = (props: Props) => {
               },
             ],
             required: true,
-            enum: modes,
+            'x-reactions': ['{{useAsyncDataSource(getModes)}}'],
           },
           'clientConfigs.username': {
             title: '用户名',
@@ -253,10 +271,10 @@ const Save = (props: Props) => {
     }
   };
 
-  useEffect(() => {
-    service.policies().then((res) => setPolicies(res.result));
-    service.modes().then((res) => setModes(res.result));
-  }, []);
+  // useEffect(() => {
+  //   service.policies().then((res) => setPolicies(res.result));
+  //   service.modes().then((res) => setModes(res.result));
+  // }, []);
   return (
     <Modal
       title={intl.formatMessage({
@@ -272,7 +290,7 @@ const Save = (props: Props) => {
       permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} />
+        <SchemaField schema={schema} scope={{ useAsyncDataSource, getPolicies, getModes }} />
       </Form>
     </Modal>
   );
