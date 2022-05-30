@@ -55,6 +55,7 @@ export enum MENUS_CODE {
   'media/Reveal' = 'media/Reveal',
   'media/Stream' = 'media/Stream',
   'media/Stream/Detail' = 'media/Stream/Detail',
+  'media/DashBoard' = 'media/DashBoard',
   'notice/Type' = 'notice/Type',
   'notice/Config' = 'notice/Config',
   'media/SplitScreen' = 'media/SplitScreen',

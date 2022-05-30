@@ -58,7 +58,7 @@ const LiveFC = (props: LiveProps) => {
               onClick={async () => {
                 if (isRecord === 0) {
                   setIsRecord(1);
-                  const resp = await service.recordStop(props.deviceId, props.channelId, {
+                  const resp = await service.recordStart(props.deviceId, props.channelId, {
                     local: false,
                   });
                   if (resp.status === 200) {
@@ -67,7 +67,7 @@ const LiveFC = (props: LiveProps) => {
                     setIsRecord(0);
                   }
                 } else if (isRecord === 2) {
-                  const resp = await service.recordStart(props.deviceId, props.channelId, {
+                  const resp = await service.recordStop(props.deviceId, props.channelId, {
                     local: false,
                   });
                   if (resp.status === 200) {
