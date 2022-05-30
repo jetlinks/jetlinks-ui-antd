@@ -368,7 +368,6 @@ export default observer(() => {
       />
       <Save<DepartmentItem>
         parentChange={(pId) => {
-          console.log(getSortIndex(treeData, pId));
           return getSortIndex(treeData, pId);
         }}
         title={
