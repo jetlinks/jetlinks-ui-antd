@@ -8,6 +8,7 @@ import Token from '@/utils/token';
 import SystemConst from '@/utils/const';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import styles from './index.less';
+import { PageContainer } from '@ant-design/pro-layout';
 
 const Basis = () => {
   const [form] = Form.useForm();
@@ -53,84 +54,90 @@ const Basis = () => {
   }, []);
 
   return (
-    <Card>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'flex-start',
-        }}
-      >
-        <div style={{ width: 400 }}>
-          <Form layout="vertical" form={form}>
-            <Form.Item
-              label="系统名称"
-              name="title"
-              rules={[{ required: true, message: '请输入系统名称' }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="主题色"
-              name="navTheme"
-              rules={[{ required: true, message: '请选择主题色' }]}
-            >
-              <Select
-                onChange={() => {
-                  // setInitialState({
-                  //     ...initialState,
-                  //     settings:{
-                  //         navTheme:e,
-                  //         headerTheme:e,
-                  //         title:'hahahah'
-                  //     }
-                  // })
-                }}
-              >
-                <Select.Option value="light">light</Select.Option>
-                <Select.Option value="dark">dark</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="高德API Key" name="apikey" tooltip="配置后平台可调用高德地图GIS服务">
-              <Input />
-            </Form.Item>
-          </Form>
-        </div>
-        <div className={styles.content}>
-          <div style={{ marginBottom: 8 }}>系统logo</div>
-          <Upload {...uploadProps}>
-            {imageUrl ? (
-              <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
-        </div>
-      </div>
-      <div>
-        <PermissionButton
-          type="primary"
-          key="basis"
-          onClick={async () => {
-            // setPassword(true);
-            const data = await form.validateFields();
-            if (data) {
-              if (imageUrl !== '') {
-                console.log({
-                  ...data,
-                  imageUrl,
-                });
-              } else {
-                message.error('请上传图片');
-              }
-            }
+    <PageContainer>
+      <Card>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
           }}
-          isPermission={userPermission.update}
         >
-          保存
-        </PermissionButton>
-      </div>
-    </Card>
+          <div style={{ width: 400 }}>
+            <Form layout="vertical" form={form}>
+              <Form.Item
+                label="系统名称"
+                name="title"
+                rules={[{ required: true, message: '请输入系统名称' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="主题色"
+                name="navTheme"
+                rules={[{ required: true, message: '请选择主题色' }]}
+              >
+                <Select
+                  onChange={() => {
+                    // setInitialState({
+                    //     ...initialState,
+                    //     settings:{
+                    //         navTheme:e,
+                    //         headerTheme:e,
+                    //         title:'hahahah'
+                    //     }
+                    // })
+                  }}
+                >
+                  <Select.Option value="light">light</Select.Option>
+                  <Select.Option value="dark">dark</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="高德API Key"
+                name="apikey"
+                tooltip="配置后平台可调用高德地图GIS服务"
+              >
+                <Input />
+              </Form.Item>
+            </Form>
+          </div>
+          <div className={styles.content}>
+            <div style={{ marginBottom: 8 }}>系统logo</div>
+            <Upload {...uploadProps}>
+              {imageUrl ? (
+                <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+              ) : (
+                uploadButton
+              )}
+            </Upload>
+          </div>
+        </div>
+        <div>
+          <PermissionButton
+            type="primary"
+            key="basis"
+            onClick={async () => {
+              // setPassword(true);
+              const data = await form.validateFields();
+              if (data) {
+                if (imageUrl !== '') {
+                  console.log({
+                    ...data,
+                    imageUrl,
+                  });
+                } else {
+                  message.error('请上传图片');
+                }
+              }
+            }}
+            isPermission={userPermission.update}
+          >
+            保存
+          </PermissionButton>
+        </div>
+      </Card>
+    </PageContainer>
   );
 };
 

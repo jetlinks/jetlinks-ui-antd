@@ -21,6 +21,7 @@ export enum MENUS_CODE {
   'device/Location' = 'device/Location',
   'device/Product/Save' = 'device/Product/Save',
   'device/Product' = 'device/Product',
+  'device/DashBoard' = 'device/DashBoard',
   'device/components/Alarm/Edit' = 'device/components/Alarm/Edit',
   'device/components/Alarm/Record' = 'device/components/Alarm/Record',
   'device/components/Alarm/Setting' = 'device/components/Alarm/Setting',
