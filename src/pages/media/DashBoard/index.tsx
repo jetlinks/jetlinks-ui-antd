@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import Service from './service';
 import './index.less';
 import encodeQuery from '@/utils/encodeQuery';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 
 interface TopCardProps {
   url: string;
@@ -122,6 +122,7 @@ export default () => {
           />
         </Card>
         <DashBoard
+          className={'media-dash-board-body'}
           title={'播放数量(人次)'}
           options={options}
           height={500}
