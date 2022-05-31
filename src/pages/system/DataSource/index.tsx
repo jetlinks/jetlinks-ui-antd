@@ -29,7 +29,7 @@ const DataSource = observer(() => {
   const actionRef = useRef<ActionType>();
   const history = useHistory<Record<string, string>>();
 
-  const { permission: userPermission } = usePermissions('system/User');
+  const { permission: userPermission } = usePermissions('system/DataSource');
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<DataSourceItem>>({});
 

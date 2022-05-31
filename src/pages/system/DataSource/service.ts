@@ -13,10 +13,22 @@ class Service extends BaseService<DataSourceItem> {
       method: 'GET',
     });
 
-  rdbTables = (datasourceId: string, table: string, data: any) =>
-    request(`/jetlinks/datasource/rdb/${datasourceId}/table/${table}`, {
+  rdbTables = (datasourceId: string, table: string, data?: any) =>
+    request(`${SystemConst.API_BASE}/datasource/rdb/${datasourceId}/table/${table}`, {
       method: 'GET',
       params: data,
+    });
+
+  saveRdbTables = (datasourceId: string, data: any) =>
+    request(`${SystemConst.API_BASE}/datasource/rdb/${datasourceId}/table`, {
+      method: 'PATCH',
+      data,
+    });
+
+  delRdbTablesColumn = (datasourceId: string, table: string, data: any) =>
+    request(`${SystemConst.API_BASE}/datasource/rdb/${datasourceId}/table/${table}/drop-column`, {
+      method: 'POST',
+      data,
     });
 }
 
