@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { EChartsOption } from 'echarts';
 import { useRequest } from 'umi';
 import Service from './service';
-import moment from 'moment';
 
 type RefType = {
   getValues: Function;
@@ -14,7 +13,9 @@ type RefType = {
 const service = new Service('dashboard');
 
 export default () => {
-  const [options, setOptions] = useState<EChartsOption>({});
+  const [networkOptions] = useState<EChartsOption | undefined>(undefined);
+  const [cpuOptions] = useState<EChartsOption | undefined>(undefined);
+  const [jvmOptions] = useState<EChartsOption | undefined>(undefined);
   const [serverId, setServerId] = useState(undefined);
 
   const NETWORKRef = useRef<RefType>(); // 网络流量
@@ -34,11 +35,11 @@ export default () => {
           object: 'network',
           measurement: 'traffic',
           dimension: 'agg',
+          group: 'network',
           params: {
             type: data.type,
-            interval: '1h',
-            from: moment(data.time[0]).format('YYYY-MM-DD HH:mm:ss'),
-            to: moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+            from: data.time.start,
+            to: data.time.end,
           },
         },
       ]);
@@ -51,36 +52,36 @@ export default () => {
       service.queryMulti([
         {
           dashboard: 'systemMonitor',
-          object: 'cpu',
+          object: 'stats',
           measurement: 'traffic',
           dimension: 'agg',
+          group: 'cpu',
           params: {
-            type: data.type,
-            interval: '1h',
-            from: moment(data.time[0]).format('YYYY-MM-DD HH:mm:ss'),
-            to: moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+            from: data.time.start,
+            to: data.time.end,
           },
         },
       ]);
     }
   };
 
-  const getEcharts = async () => {
-    setOptions({
-      xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
+  const getJVMEcharts = () => {
+    const data = CPURef.current!.getValues();
+    if (data) {
+      service.queryMulti([
         {
-          data: [150, 230, 224, 218, 135, 147, 260],
-          type: 'line',
+          dashboard: 'systemMonitor',
+          object: 'stats',
+          measurement: 'traffic',
+          dimension: 'agg',
+          group: 'jvm',
+          params: {
+            from: data.time.start,
+            to: data.time.end,
+          },
         },
-      ],
-    });
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -125,7 +126,7 @@ export default () => {
               ),
             }}
             defaultTime={'week'}
-            options={options}
+            options={networkOptions}
             onParamsChange={getNetworkEcharts}
           />
         </div>
@@ -136,7 +137,7 @@ export default () => {
             ref={CPURef}
             height={400}
             defaultTime={'week'}
-            options={options}
+            options={cpuOptions}
             onParamsChange={getCPUEcharts}
           />
           <DashBoard
@@ -145,8 +146,8 @@ export default () => {
             ref={JVMRef}
             height={400}
             defaultTime={'week'}
-            options={options}
-            onParamsChange={getEcharts}
+            options={jvmOptions}
+            onParamsChange={getJVMEcharts}
           />
         </div>
       </div>
