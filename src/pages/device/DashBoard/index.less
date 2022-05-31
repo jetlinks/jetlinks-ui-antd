@@ -1,8 +1,11 @@
-.media-dash-board {
+.device-dash-board {
   .top-card-items {
     margin-bottom: 12px;
 
     .top-card-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       width: 25%;
       padding: 6px 24px;
       border: 1px solid #e3e3e3;
@@ -19,6 +22,15 @@
           .top-card-total {
             font-weight: bold;
             font-size: 20px;
+            line-height: 50px;
+          }
+        }
+        .top-card-top-charts {
+          display: flex;
+          flex-direction: column;
+          .top-card-top-charts-total {
+            font-weight: bold;
+            font-size: 18px;
           }
         }
       }
