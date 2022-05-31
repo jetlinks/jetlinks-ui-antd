@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import Style from './index.less';
 import { Col, Form, Row } from 'antd';
 import RangePicker from './timePicker';
@@ -16,17 +16,26 @@ export interface HeaderProps {
     Children: React.ReactNode;
   };
   initialValues?: any;
+  /**
+   * true 关闭初始化时触发onParamsChange
+   */
+  closeInitialParams?: boolean;
   defaultTime?: TimeType;
 }
 
-export default (props: HeaderProps) => {
+export default forwardRef((props: HeaderProps, ref) => {
   const [form] = Form.useForm();
+  const isCloseInitial = useRef<boolean>(false);
 
   const change = async (data: any) => {
     if (props.onParamsChange) {
       props.onParamsChange(data);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    getValues: form.getFieldsValue,
+  }));
 
   return (
     <div className={Style.header}>
@@ -39,7 +48,11 @@ export default (props: HeaderProps) => {
           preserve={false}
           initialValues={props.initialValues}
           onValuesChange={(_, allValue) => {
-            change(allValue);
+            if (props.closeInitialParams && !isCloseInitial.current) {
+              isCloseInitial.current = true;
+            } else {
+              change(allValue);
+            }
           }}
         >
           <Row style={{ width: '100%' }}>
@@ -60,4 +73,4 @@ export default (props: HeaderProps) => {
       </div>
     </div>
   );
-};
+});
