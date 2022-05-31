@@ -207,6 +207,7 @@ const Config = () => {
             const resp = await service.getDataExchange('consume');
             if (resp.status === 200) {
               f.setInitialValues(resp.result?.config.config);
+              f.setValuesIn('id', resp.result?.id);
             }
           });
         },
@@ -222,6 +223,7 @@ const Config = () => {
             const resp = await service.getDataExchange('producer');
             if (resp.status === 200) {
               f.setInitialValues(resp.result?.config.config);
+              f.setValuesIn('id', resp.result?.id);
             }
           });
         },
@@ -282,6 +284,10 @@ const Config = () => {
   const ioSchema: ISchema = {
     type: 'object',
     properties: {
+      id: {
+        'x-component': 'Input',
+        'x-hidden': true,
+      },
       kafka: {
         title: 'kafka地址',
         type: 'string',
@@ -351,6 +357,7 @@ const Config = () => {
       config: {
         config: inputConfig,
       },
+      id: inputConfig.id,
       sourceType: 'kafka',
       exchangeType: 'producer',
     });
@@ -359,6 +366,7 @@ const Config = () => {
         sourceType: 'kafka',
         config: outputConfig,
       },
+      id: outputConfig.id,
       sourceType: 'kafka',
       exchangeType: 'consume',
     });

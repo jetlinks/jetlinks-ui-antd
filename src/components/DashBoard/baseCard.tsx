@@ -1,30 +1,26 @@
-import Header from './header';
 import type { HeaderProps } from './header';
-import Echarts from './echarts';
+import Header from './header';
 import type { EchartsProps } from './echarts';
+import Echarts from './echarts';
 import Style from './index.less';
 import classNames from 'classnames';
 
 interface BaseCardProps extends HeaderProps, EchartsProps {
   height: number;
-  classNames?: string;
+  className?: string;
 }
 
 export default (props: BaseCardProps) => {
+  const { height, className, options, ...formProps } = props;
   return (
     <div
-      className={classNames(Style['dash-board-echarts'], props.classNames)}
+      className={classNames(Style['dash-board-echarts'], className)}
       style={{
-        height: props.height || 200,
+        height: height || 200,
       }}
     >
-      <Header
-        title={props.title}
-        onParamsChange={props.onParamsChange}
-        extraParams={props.extraParams}
-        initialValues={props.initialValues}
-      />
-      <Echarts options={props.options} />
+      <Header {...formProps} />
+      <Echarts options={options} />
     </div>
   );
 };

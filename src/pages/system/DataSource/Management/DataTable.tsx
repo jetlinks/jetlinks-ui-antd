@@ -2,12 +2,11 @@ import { Form, FormGrid, FormItem, Input, Password, Select } from '@formily/antd
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
-import { message, Modal } from 'antd';
-import { service } from '@/pages/system/DataSource';
+import { Modal } from 'antd';
 
 interface Props {
   close: () => void;
-  reload: () => void;
+  save: (data: any) => void;
   data: any;
 }
 
@@ -59,11 +58,7 @@ const DataTable = (props: Props) => {
 
   const handleSave = async () => {
     const data: any = await form.submit();
-    const response: any = props.data?.id ? await service.update(data) : await service.save(data);
-    if (response.status === 200) {
-      message.success('保存成功');
-      props.reload();
-    }
+    props.save(data);
   };
 
   return (

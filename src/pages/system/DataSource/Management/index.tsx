@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, Input, Popconfirm, Row, Tree } from 'antd';
+import { Card, Col, Input, message, Popconfirm, Row, Space, Tree } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/system/DataSource';
 import { useIntl, useLocation } from 'umi';
@@ -10,6 +10,7 @@ import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
 import ProTable from '@jetlinks/pro-table';
 import DataTable from './DataTable';
+import styles from './index.less';
 
 const Management = () => {
   const location = useLocation<{ id: string }>();
@@ -139,59 +140,63 @@ const Management = () => {
               onSearch={() => {}}
               style={{ width: '100%', marginBottom: 10 }}
             />
-            <Tree
-              showLine
-              defaultExpandAll
-              height={500}
-              selectedKeys={[...defaultSelectedKeys]}
-              onSelect={(selectedKeys) => {
-                if (!selectedKeys.includes('tables')) {
-                  setDefaultSelectedKeys([...selectedKeys]);
-                }
-              }}
-            >
-              <Tree.TreeNode
-                title={() => {
-                  return (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: 230 }}>
-                      <div>数据源名称</div>
-                      <div>
-                        <PlusOutlined
-                          onClick={() => {
-                            setCurrent({});
-                            setVisible(true);
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
+            <div className={styles.tables}>
+              <Tree
+                showLine
+                showIcon
+                defaultExpandAll
+                height={500}
+                selectedKeys={[...defaultSelectedKeys]}
+                onSelect={(selectedKeys) => {
+                  if (!selectedKeys.includes('tables')) {
+                    setDefaultSelectedKeys([...selectedKeys]);
+                  }
                 }}
-                key={'tables'}
               >
-                {rdbList.map((item) => (
-                  <Tree.TreeNode
-                    key={item.name}
-                    title={() => {
-                      return (
-                        <div
-                          style={{ display: 'flex', justifyContent: 'space-between', width: 200 }}
-                        >
-                          <div>{item.name}</div>
-                          <div>
-                            <PlusOutlined
-                              onClick={() => {
-                                setCurrent(item);
-                                setVisible(true);
-                              }}
-                            />
-                          </div>
+                <Tree.TreeNode
+                  title={() => {
+                    return (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: 230 }}>
+                        <div>数据源名称</div>
+                        <div>
+                          <PlusOutlined
+                            onClick={() => {
+                              setCurrent({});
+                              setVisible(true);
+                            }}
+                          />
                         </div>
-                      );
-                    }}
-                  />
-                ))}
-              </Tree.TreeNode>
-            </Tree>
+                      </div>
+                    );
+                  }}
+                  key={'tables'}
+                >
+                  {rdbList.map((item) => (
+                    <Tree.TreeNode
+                      key={item.name}
+                      title={() => {
+                        return (
+                          <div className={styles.treeTitle}>
+                            <div className={styles.title}>{item.name}</div>
+                            <div className={styles.options}>
+                              <Space>
+                                <EditOutlined
+                                  onClick={() => {
+                                    setCurrent(item);
+                                    setVisible(true);
+                                  }}
+                                />
+                                <DeleteOutlined />
+                              </Space>
+                            </div>
+                          </div>
+                        );
+                      }}
+                    />
+                  ))}
+                </Tree.TreeNode>
+              </Tree>
+            </div>
           </Col>
           <Col span={18}>
             <div>
@@ -248,7 +253,10 @@ const Management = () => {
       {visible && (
         <DataTable
           data={current}
-          reload={() => {
+          save={(data) => {
+            rdbList.push(data);
+            setRdbList([...rdbList]);
+            message.success('操作成功！');
             setVisible(false);
           }}
           close={() => {
