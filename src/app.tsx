@@ -114,7 +114,12 @@ export async function getInitialState(): Promise<{
  * @param url
  * @param options
  */
-const filterUrl = ['/authorize/captcha/config', '/authorize/login', '/sso/bind-code/'];
+const filterUrl = [
+  '/authorize/captcha/config',
+  '/authorize/login',
+  '/sso/bind-code/',
+  '/sso/providers',
+];
 const requestInterceptor = (url: string, options: RequestOptionsInit) => {
   // const {params} = options;
   let authHeader = {};
@@ -196,7 +201,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      console.log(location.pathname);
       if (
         !initialState?.currentUser &&
         location.pathname !== loginPath &&

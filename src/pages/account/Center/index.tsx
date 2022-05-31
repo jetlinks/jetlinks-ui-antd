@@ -22,14 +22,16 @@ import PasswordEdit from './edit/passwordEdit';
 import Service from '@/pages/account/Center/service';
 import moment from 'moment';
 import { useModel } from 'umi';
+import usePermissions from '@/hooks/permission';
+import { PermissionButton } from '@/components';
 
 export const service = new Service();
 
 const Center = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
+  const { permission: userPermission } = usePermissions('system/User');
   const [data, setData] = useState<any>();
   const [imageUrl, setImageUrl] = useState<string>('');
-  // const [loading, setLoading] = useState<boolean>(false)
   const [infos, setInfos] = useState<boolean>(false);
   const [password, setPassword] = useState<boolean>(false);
   const [bindList, setBindList] = useState<any>([]);
@@ -82,12 +84,6 @@ const Center = () => {
     service.getUserDetail().subscribe((res) => {
       setData(res.result);
       setImageUrl(res.result.avatar);
-      // setInitialState({
-      //   ...initialState,
-      //   currentUser:{
-
-      //   }
-      // })
     });
   };
   const saveInfo = (parms: UserDetail) => {
@@ -198,14 +194,22 @@ const Center = () => {
           </div>
         }
         extra={
-          <a>
-            {' '}
-            <EditOutlined
+          <>
+            <PermissionButton
+              type="link"
+              key="password"
+              style={{ padding: 0 }}
+              tooltip={{
+                title: '重置密码',
+              }}
               onClick={() => {
                 setPassword(true);
               }}
-            />
-          </a>
+              isPermission={userPermission.update}
+            >
+              <EditOutlined />
+            </PermissionButton>
+          </>
         }
       >
         <div style={{ display: 'flex', alignItems: 'flex-end' }}>

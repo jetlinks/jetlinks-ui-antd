@@ -91,6 +91,7 @@ export enum MENUS_CODE {
   'system/Tenant' = 'system/Tenant',
   'system/User' = 'system/User',
   'system/Relationship' = 'system/Relationship',
+  'system/Basis' = 'system/Basis',
   'user/Login' = 'user/Login',
   'visualization/Category' = 'visualization/Category',
   'visualization/Configuration' = 'visualization/Configuration',

@@ -47,6 +47,11 @@ const Service = {
     request(`${SystemConst.API_BASE}/user-token/reset`, {
       method: 'GET',
     }),
+  bindInfo: (params?: any) =>
+    request(`/${SystemConst.API_BASE}/sso/providers`, {
+      method: 'GET',
+      params,
+    }),
 };
 
 export default Service;
