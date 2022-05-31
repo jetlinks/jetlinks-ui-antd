@@ -11,20 +11,16 @@ interface BaseCardProps extends HeaderProps, EchartsProps {
 }
 
 export default (props: BaseCardProps) => {
+  const { height, className, options, ...formProps } = props;
   return (
     <div
-      className={classNames(Style['dash-board-echarts'], props.className)}
+      className={classNames(Style['dash-board-echarts'], className)}
       style={{
-        height: props.height || 200,
+        height: height || 200,
       }}
     >
-      <Header
-        title={props.title}
-        onParamsChange={props.onParamsChange}
-        extraParams={props.extraParams}
-        initialValues={props.initialValues}
-      />
-      <Echarts options={props.options} />
+      <Header {...formProps} />
+      <Echarts options={options} />
     </div>
   );
 };

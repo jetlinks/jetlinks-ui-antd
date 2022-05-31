@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import Service from './service';
 import './index.less';
 import encodeQuery from '@/utils/encodeQuery';
-import { EChartsOption } from 'echarts';
+import type { EChartsOption } from 'echarts';
 
 interface TopCardProps {
   url: string;

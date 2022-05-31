@@ -44,6 +44,7 @@ export enum MENUS_CODE {
   'link/Protocol' = 'link/Protocol',
   'link/Type' = 'link/Type',
   'link/AccessConfig' = 'link/AccessConfig',
+  'link/DashBoard' = 'link/DashBoard',
   'Log' = 'Log',
   'media/Cascade' = 'media/Cascade',
   'media/Cascade/Save' = 'media/Cascade/Save',
