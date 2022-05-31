@@ -46,10 +46,12 @@ export default () => {
     {
       dataIndex: 'name',
       title: '名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'username',
       title: '用户名',
+      ellipsis: true,
     },
     // {
     //   dataIndex: 'roleIdList',
@@ -98,6 +100,7 @@ export default () => {
         defaultMessage: '说明',
       }),
       hideInSearch: true,
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({

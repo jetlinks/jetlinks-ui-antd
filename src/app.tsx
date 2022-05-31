@@ -18,6 +18,7 @@ import { AIcon } from '@/components';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+const bindPath = '/account/center/bind';
 let extraRoutes: any[] = [];
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
@@ -43,7 +44,7 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
   // 如果是登录页面，不执行
-  if (history.location.pathname !== loginPath) {
+  if (history.location.pathname !== loginPath && history.location.pathname !== bindPath) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
@@ -113,7 +114,12 @@ export async function getInitialState(): Promise<{
  * @param url
  * @param options
  */
-const filterUrl = ['/authorize/captcha/config', '/authorize/login'];
+const filterUrl = [
+  '/authorize/captcha/config',
+  '/authorize/login',
+  '/sso/bind-code/',
+  '/sso/providers',
+];
 const requestInterceptor = (url: string, options: RequestOptionsInit) => {
   // const {params} = options;
   let authHeader = {};
@@ -195,7 +201,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (
+        !initialState?.currentUser &&
+        location.pathname !== loginPath &&
+        location.pathname !== bindPath
+      ) {
         history.push(loginPath);
       }
     },
@@ -253,7 +263,7 @@ export function patchRoutes(routes: any) {
 }
 
 export function render(oldRender: any) {
-  if (history.location.pathname !== loginPath) {
+  if (history.location.pathname !== loginPath && history.location.pathname !== bindPath) {
     SystemConfigService.getAMapKey().then((res) => {
       if (res && res.status === 200 && res.result) {
         localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);

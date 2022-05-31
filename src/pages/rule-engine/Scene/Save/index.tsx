@@ -217,7 +217,6 @@ export default () => {
           preserve={false}
           className={'scene-save'}
           onValuesChange={(changeValue, allValues) => {
-            console.log(changeValue, allValues);
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
                 if (

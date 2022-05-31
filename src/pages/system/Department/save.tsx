@@ -73,7 +73,8 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
     initialValues: data || {},
     effects: () => {
       onFieldReact('sortIndex', (field) => {
-        if (props.parentChange) {
+        const value = (field as Field).value;
+        if (props.parentChange && !value) {
           const sortIndex = props.parentChange(field.query('parentId').value());
           (field as Field).value = !!sortIndex ? sortIndex : sortIndex + 1;
         }
