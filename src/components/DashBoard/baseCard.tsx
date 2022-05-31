@@ -1,7 +1,7 @@
-import Header from './header';
 import type { HeaderProps } from './header';
-import Echarts from './echarts';
+import Header from './header';
 import type { EchartsProps } from './echarts';
+import Echarts from './echarts';
 import Style from './index.less';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
@@ -16,13 +16,13 @@ export default forwardRef((props: BaseCardProps, ref) => {
 
   return (
     <div
-      className={classNames(Style['dash-board-echarts'], className)}
+      className={classNames(Style['dash-board'], className)}
       style={{
         height: height || 200,
       }}
     >
       <Header ref={ref} {...formProps} />
-      <Echarts options={options} />
+      <Echarts options={options} className={Style['echarts']} />
     </div>
   );
 });

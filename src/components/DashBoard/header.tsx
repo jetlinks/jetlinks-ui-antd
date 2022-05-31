@@ -1,8 +1,8 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import Style from './index.less';
 import { Col, Form, Row } from 'antd';
-import RangePicker from './timePicker';
 import type { TimeType } from './timePicker';
+import RangePicker from './timePicker';
 
 export interface HeaderProps {
   title: string;

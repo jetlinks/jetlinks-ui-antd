@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { EChartsOption } from 'echarts';
 import { useRequest } from 'umi';
 import Service from './service';
+import moment from 'moment';
 
 type RefType = {
   getValues: Function;
@@ -24,13 +25,47 @@ export default () => {
     formatResult: (res) => res.result.map((item: any) => ({ label: item.name, value: item.id })),
   });
 
-  const getFormValues = () => {
+  const getNetworkEcharts = () => {
     const data = NETWORKRef.current!.getValues();
-    console.log(data);
+    if (data) {
+      service.queryMulti([
+        {
+          dashboard: 'systemMonitor',
+          object: 'network',
+          measurement: 'traffic',
+          dimension: 'agg',
+          params: {
+            type: data.type,
+            interval: '1h',
+            from: moment(data.time[0]).format('YYYY-MM-DD HH:mm:ss'),
+            to: moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+          },
+        },
+      ]);
+    }
   };
 
-  const getEcharts = async (data: any) => {
-    console.log(data);
+  const getCPUEcharts = () => {
+    const data = CPURef.current!.getValues();
+    if (data) {
+      service.queryMulti([
+        {
+          dashboard: 'systemMonitor',
+          object: 'cpu',
+          measurement: 'traffic',
+          dimension: 'agg',
+          params: {
+            type: data.type,
+            interval: '1h',
+            from: moment(data.time[0]).format('YYYY-MM-DD HH:mm:ss'),
+            to: moment(data.time[1]).format('YYYY-MM-DD HH:mm:ss'),
+          },
+        },
+      ]);
+    }
+  };
+
+  const getEcharts = async () => {
     setOptions({
       xAxis: {
         type: 'category',
@@ -50,7 +85,7 @@ export default () => {
 
   useEffect(() => {
     if (serverId) {
-      getFormValues();
+      getNetworkEcharts();
     }
   }, [serverId]);
 
@@ -91,7 +126,7 @@ export default () => {
             }}
             defaultTime={'week'}
             options={options}
-            onParamsChange={getEcharts}
+            onParamsChange={getNetworkEcharts}
           />
         </div>
         <div style={{ display: 'flex' }}>
@@ -102,7 +137,7 @@ export default () => {
             height={400}
             defaultTime={'week'}
             options={options}
-            onParamsChange={getEcharts}
+            onParamsChange={getCPUEcharts}
           />
           <DashBoard
             title={'JVM内存使用率趋势'}

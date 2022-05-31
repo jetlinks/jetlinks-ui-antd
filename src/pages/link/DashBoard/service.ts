@@ -7,10 +7,10 @@ class Service extends BaseService<any> {
     request(`/${SystemConst.API_BASE}/network/resources/clusters`, { method: 'GET' });
 
   /**
-   * 网络流量
+   * echarts数据
    */
-  networkMulti = (data: any) =>
-    request(`/${SystemConst.API_BASE}/dashboard_multi`, { method: 'POST', data });
+  queryMulti = (data: any) =>
+    request(`/${SystemConst.API_BASE}/dashboard/_multi`, { method: 'POST', data });
 }
 
 export default Service;
