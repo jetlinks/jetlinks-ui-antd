@@ -34,6 +34,7 @@ import Email from '@/pages/notice/Config/Detail/doc/Email';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import FAutoComplete from '@/components/FAutoComplete';
+import Webhook from './doc/Webhook';
 
 export const docMap = {
   weixin: {
@@ -54,7 +55,7 @@ export const docMap = {
     embedded: <Email />,
   },
   webhook: {
-    http: <div>webhook</div>,
+    http: <Webhook />,
   },
 };
 
