@@ -6,6 +6,7 @@ type LevelItem = {
 };
 
 type IOConfigItem = {
+  id?: string;
   address: string;
   topic: string;
   username: string;

@@ -47,6 +47,7 @@ import FAutoComplete from '@/components/FAutoComplete';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import FMonacoEditor from '@/components/FMonacoEditor';
+import Webhook from './doc/Webhook';
 
 export const docMap = {
   weixin: {
@@ -67,7 +68,7 @@ export const docMap = {
     embedded: <Email />,
   },
   webhook: {
-    http: <div>webhook</div>,
+    http: <Webhook />,
   },
 };
 

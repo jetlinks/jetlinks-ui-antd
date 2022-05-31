@@ -65,6 +65,7 @@ export enum MENUS_CODE {
   'notice/Config/Detail' = 'notice/Config/Detail',
   'notice/Template' = 'notice/Template',
   'notice/Template/Detail' = 'notice/Template/Detail',
+  'rule-engine/DashBoard' = 'rule-engine/DashBoard',
   'rule-engine/Instance' = 'rule-engine/Instance',
   'rule-engine/SQLRule' = 'rule-engine/SQLRule',
   'rule-engine/Scene' = 'rule-engine/Scene',

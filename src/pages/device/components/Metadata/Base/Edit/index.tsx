@@ -704,6 +704,7 @@ const Edit = observer((props: Props) => {
                 edit: {
                   type: 'void',
                   'x-component': 'Editable.Popover',
+                  // 'x-reactions': '{{(field)=>field.title=field.query(".edit.name").get("value")||field.title}}',
                   title: '指标数据',
                   'x-reactions': {
                     dependencies: ['.edit.name'],

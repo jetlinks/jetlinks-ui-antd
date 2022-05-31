@@ -19,9 +19,11 @@ import { CanvasRenderer } from 'echarts/renderers';
 
 import Style from './index.less';
 import type { EChartsOption } from 'echarts';
+import classNames from 'classnames';
 
 export interface EchartsProps {
   options?: EChartsOption;
+  className?: string;
 }
 
 echarts.use([
@@ -93,7 +95,7 @@ export default (props: EchartsProps) => {
 
   return (
     <div
-      className={Style.content}
+      className={classNames(Style['content'], props.className)}
       ref={(ref) => {
         if (ref) {
           setTimeout(() => {
