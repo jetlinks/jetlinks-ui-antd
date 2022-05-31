@@ -3,7 +3,12 @@
 }
 .device_tree{
     width: 20%;
-    padding-right: 10px;
+    .device_tree_tab {
+        height: 650px;
+        width: 100%;
+        overflow-y: auto;
+        margin-right: 20px;
+    }
 }
 .player{
     width: 80%;
@@ -30,7 +35,7 @@
         width: 100%;
         display: flex;
         .player_left{
-            width: 80%;
+            width: calc(100% - 200px);
             .video{
                 border: 1px solid lightgray;
                 box-sizing: border-box;
@@ -60,7 +65,7 @@
             }
         }
         .player_right{
-            width: 20%;
+            width: 200px;
             .ptz_block{
                 width: 150px;
                 height: 180px;

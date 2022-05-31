@@ -1,11 +1,11 @@
 import encodeQueryParam from "@/utils/encodeParam";
-import {ApartmentOutlined, DownOutlined, VideoCameraOutlined, VideoCameraTwoTone} from "@ant-design/icons/lib/icons";
-import {PageHeaderWrapper} from "@ant-design/pro-layout";
-import {Card, Tabs, Tree} from "antd";
-import React, {useEffect, useState} from "react";
+import { ApartmentOutlined, DownOutlined, VideoCameraOutlined, VideoCameraTwoTone } from "@ant-design/icons/lib/icons";
+import { PageHeaderWrapper } from "@ant-design/pro-layout";
+import { Card, Tabs, Tree } from "antd";
+import React, { useEffect, useState } from "react";
 import styles from './index.less';
 import Service from "./service";
-import {DataNode} from './data';
+import { DataNode } from './data';
 
 interface Props {
 
@@ -242,14 +242,16 @@ const Reveal: React.FC<Props> = props => {
           <div className={styles.device_tree}>
             <Tabs defaultActiveKey="1">
               <Tabs.TabPane tab="设备树" key="1">
-                <Tree
-                  showIcon
-                  defaultExpandAll
-                  switcherIcon={<DownOutlined />}
-                  treeData={treeData}
-                  loadData={loadChannel}
-                  onSelect={(key, e) => { playVideo(e) }}
-                />
+                <div className={styles.device_tree_tab}>
+                  <Tree
+                    showIcon
+                    defaultExpandAll
+                    switcherIcon={<DownOutlined />}
+                    treeData={treeData}
+                    loadData={loadChannel}
+                    onSelect={(key, e) => { playVideo(e) }}
+                  />
+                </div>
               </Tabs.TabPane>
             </Tabs>
           </div>
@@ -275,25 +277,25 @@ const Reveal: React.FC<Props> = props => {
               </div>
               <div className={styles.player_right}>
                 <div className={styles.ptz_block}>
-                  <div className={styles.ptz_up} title="上" onMouseDown={() => { controlStart(deviceId, channelId,'UP'); setPlayUp(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayUp(true); }}>
+                  <div className={styles.ptz_up} title="上" onMouseDown={() => { controlStart(deviceId, channelId, 'UP'); setPlayUp(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayUp(true); }}>
                     {playing && playUp ? <img src="/img/up.svg" width="30px" /> : <img src="/img/up_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart(deviceId, channelId,'LEFT'); setPlayLeft(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayLeft(true); }}>
+                  <div className={styles.ptz_left} title="左" onMouseDown={() => { controlStart(deviceId, channelId, 'LEFT'); setPlayLeft(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayLeft(true); }}>
                     {playing && playLeft ? <img src="/img/left.svg" width="30px" /> : <img src="/img/left_1.svg" width="30px" />}
                   </div>
                   <div className={styles.ptz_center} title="云控制台">
                     {playing && playCenter ? <img src="/img/audio.svg" width="30px" /> : <img src="/img/audio_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart(deviceId, channelId,'RIGHT'); setPlayRight(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayRight(true); }}>
+                  <div className={styles.ptz_right} title="右" onMouseDown={() => { controlStart(deviceId, channelId, 'RIGHT'); setPlayRight(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayRight(true); }}>
                     {playing && playRight ? <img src="/img/right.svg" width="30px" /> : <img src="/img/right_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart(deviceId, channelId,'DOWN'); setPlayDown(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayDown(true); }}>
+                  <div className={styles.ptz_down} title="下" onMouseDown={() => { controlStart(deviceId, channelId, 'DOWN'); setPlayDown(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayDown(true); }}>
                     {playing && playDown ? <img src="/img/down.svg" width="30px" /> : <img src="/img/down_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart(deviceId, channelId,'ZOOM_IN'); setPlayIn(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayIn(true); }}>
+                  <div className={styles.ptz_zoomin} title="放大" onMouseDown={() => { controlStart(deviceId, channelId, 'ZOOM_IN'); setPlayIn(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayIn(true); }}>
                     {playing && playIn ? <img src="/img/add.svg" width="30px" /> : <img src="/img/add_1.svg" width="30px" />}
                   </div>
-                  <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart(deviceId, channelId,'ZOOM_OUT'); setPlayOut(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayOut(true); }}>
+                  <div className={styles.ptz_zoomout} title="缩小" onMouseDown={() => { controlStart(deviceId, channelId, 'ZOOM_OUT'); setPlayOut(false); }} onMouseUp={() => { controlStop(deviceId, channelId); setPlayOut(true); }}>
                     {playing && playOut ? <img src="/img/sub.svg" width="30px" /> : <img src="/img/sub_1.svg" width="30px" />}
                   </div>
                 </div>
