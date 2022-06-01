@@ -64,7 +64,11 @@ interface Props<T> {
    *         ]}
    * */
   defaultParam?: SearchTermsServer | Term[];
-  // pattern?: 'simple' | 'advance';
+  /**
+   * @name "搜索组件模式"
+   * simple 限制只支持一组搜索条件，用于小弹窗搜索时使用
+   */
+  model?: 'simple' | 'advance';
   enableSave?: boolean;
   initParam?: SearchTermsServer;
 }
@@ -138,7 +142,7 @@ const sortField = (field: ProColumns[]) => {
 // 默认六组搜索条件。根据字段index排序
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
-  const { field, target, onSearch, defaultParam, enableSave = true, initParam } = props;
+  const { field, target, onSearch, defaultParam, enableSave = true, initParam, model } = props;
 
   /**
    * 过滤不参与搜索的数据 ?
@@ -633,12 +637,14 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 重置
               </Button>
             </Space>
-            <div className={classnames(styles.more, !expand ? styles.simple : styles.advance)}>
-              <Button type="link" onClick={handleExpand}>
-                更多筛选
-                <DoubleRightOutlined style={{ marginLeft: 32 }} rotate={expand ? 90 : -90} />
-              </Button>
-            </div>
+            {model !== 'simple' && (
+              <div className={classnames(styles.more, !expand ? styles.simple : styles.advance)}>
+                <Button type="link" onClick={handleExpand}>
+                  更多筛选
+                  <DoubleRightOutlined style={{ marginLeft: 32 }} rotate={expand ? 90 : -90} />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </Form>

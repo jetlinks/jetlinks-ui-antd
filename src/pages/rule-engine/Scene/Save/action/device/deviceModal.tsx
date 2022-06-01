@@ -134,7 +134,7 @@ export default (props: DeviceModelProps) => {
           <SearchComponent<DeviceItem>
             field={columns}
             enableSave={false}
-            // pattern={'simple'}
+            model={'simple'}
             onSearch={async (data) => {
               actionRef.current?.reset?.();
               setSearchParam(data);
