@@ -355,18 +355,18 @@ const Config = () => {
     const outputConfig: IOConfigItem = await outputForm.submit();
     const inputResp = await service.saveOutputData({
       config: {
-        config: inputConfig,
+        config: outputConfig,
       },
-      id: inputConfig.id,
+      id: outputConfig.id,
       sourceType: 'kafka',
       exchangeType: 'producer',
     });
     const outputResp = await service.saveOutputData({
       config: {
         sourceType: 'kafka',
-        config: outputConfig,
+        config: inputConfig,
       },
-      id: outputConfig.id,
+      id: inputConfig.id,
       sourceType: 'kafka',
       exchangeType: 'consume',
     });
