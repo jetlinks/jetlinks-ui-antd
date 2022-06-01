@@ -1,5 +1,6 @@
 /** 路由Code */
 export enum MENUS_CODE {
+  'home' = 'home',
   'Analysis/CPU' = 'Analysis/CPU',
   'Analysis/DeviceChart' = 'Analysis/DeviceChart',
   'Analysis/DeviceMessage' = 'Analysis/DeviceMessage',
