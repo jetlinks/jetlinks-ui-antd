@@ -1,27 +1,26 @@
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
-import type { ECharts } from 'echarts';
+import type { ECharts, EChartsOption } from 'echarts';
 import {
-  TitleComponent,
-  ToolboxComponent,
-  TooltipComponent,
   GridComponent,
   LegendComponent,
   MarkLineComponent,
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent,
 } from 'echarts/components';
 
-import { LineChart } from 'echarts/charts';
-import { PieChart } from 'echarts/charts';
-import { BarChart } from 'echarts/charts';
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
 
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 
 import Style from './index.less';
-import type { EChartsOption } from 'echarts';
+import classNames from 'classnames';
 
 export interface EchartsProps {
   options?: EChartsOption;
+  className?: string;
 }
 
 echarts.use([
@@ -93,7 +92,7 @@ export default (props: EchartsProps) => {
 
   return (
     <div
-      className={Style.content}
+      className={classNames(Style['content'], props.className)}
       ref={(ref) => {
         if (ref) {
           setTimeout(() => {

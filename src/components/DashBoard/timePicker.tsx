@@ -12,9 +12,11 @@ export enum TimeKey {
 
 export type TimeType = keyof typeof TimeKey;
 
+type ValueType = { start: number; end: number; type: TimeType };
+
 interface ExtraTimePickerProps extends Omit<DatePickerProps, 'onChange' | 'value'> {
-  onChange?: (value: number[]) => void;
-  value?: number[];
+  onChange?: (data: ValueType) => void;
+  value?: ValueType;
   defaultTime?: TimeType;
 }
 
@@ -23,7 +25,7 @@ export const getTimeByType = (type: TimeType) => {
     case TimeKey.week:
       return moment().subtract(6, 'days').valueOf();
     case TimeKey.month:
-      return moment().startOf('month').valueOf();
+      return moment().subtract(29, 'days').valueOf();
     case TimeKey.year:
       return moment().subtract(365, 'days').valueOf();
     default:
@@ -36,9 +38,13 @@ export default (props: ExtraTimePickerProps) => {
 
   const { value, onChange, ...extraProps } = props;
 
-  const change = (startTime: number, endTime: number) => {
+  const change = (startTime: number, endTime: number, type: TimeType) => {
     if (onChange) {
-      onChange([startTime, endTime]);
+      onChange({
+        start: startTime,
+        end: endTime,
+        type,
+      });
     }
   };
 
@@ -46,7 +52,7 @@ export default (props: ExtraTimePickerProps) => {
     const endTime = moment(new Date()).valueOf();
     const startTime: number = getTimeByType(type);
     setRadioValue(type);
-    change(startTime, endTime);
+    change(startTime, endTime, type);
   };
 
   useEffect(() => {
@@ -61,14 +67,14 @@ export default (props: ExtraTimePickerProps) => {
           {...extraProps}
           value={
             value && [
-              moment(value && value[0] ? value[0] : new Date()),
-              moment(value && value[1] ? value[1] : new Date()),
+              moment(value && value.start ? value.start : new Date()),
+              moment(value && value.end ? value.end : new Date()),
             ]
           }
           onChange={(rangeValue) => {
             setRadioValue(undefined);
             if (rangeValue && rangeValue.length === 2) {
-              change(rangeValue[0]!.valueOf(), rangeValue[1]!.valueOf());
+              change(rangeValue[0]!.valueOf(), rangeValue[1]!.valueOf(), radioValue!);
             }
           }}
           renderExtraFooter={() => (

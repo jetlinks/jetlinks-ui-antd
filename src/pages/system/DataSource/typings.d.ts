@@ -3,7 +3,7 @@ type DataSourceItem = {
   name: string;
   shareCluster: true;
   shareConfig: Record<string, any>;
-  state: {
+  state?: {
     text: string;
     value: string;
   };
@@ -15,8 +15,12 @@ type DataSourceItem = {
 };
 
 type DataSourceType = {
-  label: string;
-  value: string;
-  id: string;
   name: string;
+  comment: string;
+  length: number;
+  notnull: boolean;
+  precision: number;
+  primaryKey: boolean;
+  scale: number;
+  type: string;
 };
