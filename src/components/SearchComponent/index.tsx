@@ -191,7 +191,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         effects() {
           onFieldReact('*.*.column', async (typeFiled, f) => {
             const _column = (typeFiled as Field).value;
-
             const _field = field.find((item) => item.dataIndex === _column);
             if (_column === 'id') {
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
@@ -214,9 +213,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   });
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
                     state.componentType = 'Select';
-                    // state.loading = true;
                     state.dataSource = __option;
-                    // state.loading = false;
                   });
                   break;
                 case 'treeSelect':
@@ -273,7 +270,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           });
         },
       }),
-    [target],
+    [target, expand],
   );
 
   const historyForm = createForm();
