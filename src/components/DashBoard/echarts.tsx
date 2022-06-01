@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
 import type { ECharts } from 'echarts';
 import {
@@ -75,11 +75,12 @@ export default (props: EchartsProps) => {
     }
   };
 
-  const updateOptions = () => {
+  const updateOptions = useCallback(() => {
+    console.log(chartsRef.current, props.options);
     if (chartsRef.current && props.options) {
       chartsRef.current.setOption(props.options);
     }
-  };
+  }, [props.options]);
 
   useEffect(() => {
     (window as Window).addEventListener('resize', updateSize);
