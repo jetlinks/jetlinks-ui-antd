@@ -1,4 +1,4 @@
-import { FormItem, Input, ArrayTable, Editable, Form, NumberPicker, Radio } from '@formily/antd';
+import { ArrayTable, Editable, Form, FormItem, Input, NumberPicker, Radio } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Button } from 'antd';
