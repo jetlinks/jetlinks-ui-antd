@@ -327,7 +327,6 @@ export default () => {
     })
       ?.pipe(map((res) => res.payload))
       .subscribe((plyload: any) => {
-        console.log(plyload);
         const value = plyload.value;
         const cpu = value.cpu;
         const memory = value.memory;

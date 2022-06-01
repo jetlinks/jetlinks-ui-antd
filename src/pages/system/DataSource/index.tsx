@@ -1,75 +1,75 @@
-import { PageContainer } from '@ant-design/pro-layout';
-import BaseCrud from '@/components/BaseCrud';
-import type { ProColumns } from '@jetlinks/pro-table';
-import { CurdModel } from '@/components/BaseCrud/model';
-import { message, Popconfirm, Tooltip } from 'antd';
-import { CloseCircleOutlined, EditOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import type { ActionType } from '@jetlinks/pro-table';
-import { useEffect, useRef, useState } from 'react';
-import type { ISchema } from '@formily/json-schema';
 import Service from '@/pages/system/DataSource/service';
-import { from, mergeMap, toArray } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { PageContainer } from '@ant-design/pro-layout';
+import SearchComponent from '@/components/SearchComponent';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
+import { Badge, message, Popconfirm } from 'antd';
+import {
+  CloseCircleOutlined,
+  DatabaseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { useEffect, useRef, useState } from 'react';
+import { observer } from '@formily/react';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
+import Save from './Save';
+import { Store } from 'jetlinks-store';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 export const service = new Service('datasource/config');
 
-const stateIconMap = {
-  enabled: <CloseCircleOutlined />,
-  disabled: <PlayCircleOutlined />,
-};
-
-const DataSource = () => {
+const DataSource = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const history = useHistory<Record<string, string>>();
 
-  const [type, setType] = useState<DataSourceType[]>([]);
+  const { permission: userPermission } = usePermissions('system/DataSource');
+  const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<Partial<DataSourceItem>>({});
+
   useEffect(() => {
-    service
-      .getType()
-      .pipe(
-        mergeMap((data: DataSourceType[]) => from(data)),
-        map((i: DataSourceType) => ({ label: i.name, value: i.id })),
-        toArray(),
-      )
-      .subscribe((data: Partial<DataSourceType>[]) => {
-        setType(data as DataSourceType[]);
-      });
+    service.getType().then((res) => {
+      if (res.status === 200) {
+        const list = res?.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        Store.set('datasource-type', list);
+      }
+    });
   }, []);
 
   const columns: ProColumns<DataSourceItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      width: 240,
-      sorter: true,
-      defaultSortOrder: 'ascend',
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.table.name',
-        defaultMessage: '名称',
-      }),
+      title: '名称',
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.table.type',
-        defaultMessage: '类型',
-      }),
+      title: '类型',
       dataIndex: 'typeId',
+      ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getType();
+        if (res.status === 200) {
+          const list = res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+          return list;
+        }
+        return [];
+      },
+      render: (_, row) =>
+        (Store.get('datasource-type') || []).find((item: any) => row.typeId === item.value)
+          ?.label || row.typeId,
+      filterMultiple: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.table.description',
-        defaultMessage: '说明',
-      }),
       dataIndex: 'description',
+      title: '说明',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -77,7 +77,29 @@ const DataSource = () => {
         defaultMessage: '状态',
       }),
       dataIndex: 'state',
-      render: (value: any) => value.text,
+      valueType: 'select',
+      valueEnum: {
+        enabled: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.normal',
+            defaultMessage: '正常',
+          }),
+          status: 'enabled',
+        },
+        disabled: {
+          text: intl.formatMessage({
+            id: 'pages.searchTable.titleStatus.disable',
+            defaultMessage: '已禁用',
+          }),
+          status: 'disabled',
+        },
+      },
+      render: (_, record) => (
+        <Badge
+          status={record.state?.value === 'enabled' ? 'success' : 'error'}
+          text={record.state?.text}
+        />
+      ),
     },
     {
       title: intl.formatMessage({
@@ -85,247 +107,153 @@ const DataSource = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
-      render: (text, record) => [
-        <a key="editable" onClick={() => CurdModel.update(record)}>
-          <Tooltip
-            title={intl.formatMessage({
+      render: (_, record) => [
+        <PermissionButton
+          style={{ padding: 0 }}
+          type="link"
+          isPermission={userPermission.update}
+          key="editable"
+          onClick={() => {
+            setCurrent(record);
+            setVisible(true);
+          }}
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a key="status">
-          <Popconfirm
-            title={intl.formatMessage({
+            }),
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          style={{ padding: 0 }}
+          type="link"
+          isPermission={userPermission.update}
+          key="manage"
+          onClick={() => {
+            const url = getMenuPathByCode(MENUS_CODE[`system/DataSource/Management`]);
+            history.push(`${url}?id=${record.id}`);
+          }}
+          tooltip={{
+            title: '管理',
+          }}
+        >
+          <DatabaseOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          style={{ padding: 0 }}
+          isPermission={userPermission.action}
+          type="link"
+          key="changeState"
+          popConfirm={{
+            title: intl.formatMessage({
               id: `pages.data.option.${
-                record.state.value === 'disabled' ? 'enabled' : 'disabled'
+                record.state?.value === 'enabled' ? 'disabled' : 'enabled'
               }.tips`,
-              defaultMessage: `确认${record.state.value === 'disabled' ? '启' : '禁'}用？`,
-            })}
-            onConfirm={async () => {
-              const state = record.state.value === 'disabled' ? 'enable' : 'disable';
-              await service.changeStatus(record.id, state);
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
+              defaultMessage: `确认${record.state?.value === 'enabled' ? '禁用' : '启用'}?`,
+            }),
+            onConfirm: async () => {
+              const resp = await service.changeStatus(
+                record.id,
+                record.state?.value === 'enabled' ? 'disable' : 'enable',
               );
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            },
+          }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.state?.value === 'enabled' ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state?.value === 'enabled' ? '禁用' : '启用',
+            }),
+          }}
+        >
+          {record.state?.value === 'enabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          key="delete"
+          style={{ padding: 0 }}
+          isPermission={userPermission.delete}
+          disabled={record.state?.value === 'enabled'}
+          tooltip={{ title: record.state?.value === 'disabled' ? '删除' : '请先禁用，再删除。' }}
+        >
+          <Popconfirm
+            onConfirm={async () => {
+              await service.remove(record.id);
               actionRef.current?.reload();
             }}
+            title="确认删除?"
           >
-            <Tooltip
-              title={intl.formatMessage({
-                id: `pages.data.option.${
-                  record.state.value === 'enabled' ? 'disabled' : 'enabled'
-                }`,
-                defaultMessage: record.state.text,
-              })}
-            >
-              {stateIconMap[record.state.value]}
-            </Tooltip>
+            <DeleteOutlined />
           </Popconfirm>
-        </a>,
+        </PermissionButton>,
       ],
     },
   ];
 
-  const schema: ISchema = {
-    type: 'object',
-    properties: {
-      grid: {
-        type: 'void',
-        'x-component': 'FormGrid',
-        'x-component-props': {
-          minColumns: [1],
-          maxColumns: [2],
-        },
-        properties: {
-          name: {
-            title: intl.formatMessage({
-              id: 'pages.table.name',
-              defaultMessage: '名称',
-            }),
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-          },
-          typeId: {
-            title: intl.formatMessage({
-              id: 'pages.table.type',
-              defaultMessage: '类型',
-            }),
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-            enum: type,
-          },
-          'shareConfig.adminUrl': {
-            title: '管理地址',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-            required: true,
-            default: 'http://localhost:15672',
-            'x-visible': false,
-            'x-component': 'Input',
-            'x-display': 'none',
-            'x-reactions': {
-              dependencies: ['typeId'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
-                },
-              },
-            },
-          },
-          'shareConfig.addresses': {
-            title: '链接地址',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-            required: true,
-            default: 'localhost:5672',
-            'x-component': 'Input',
-            'x-display': 'none',
-            'x-reactions': {
-              dependencies: ['typeId'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
-                },
-              },
-            },
-          },
-          'shareConfig.virtualHost': {
-            title: '虚拟域',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-            required: true,
-            default: '/',
-            'x-component': 'Input',
-            'x-display': 'none',
-            'x-reactions': {
-              dependencies: ['typeId'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
-                },
-              },
-            },
-          },
-          'shareConfig.username': {
-            title: '用户名',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-            'x-component': 'Input',
-            'x-display': 'none',
-            'x-reactions': {
-              dependencies: ['typeId'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
-                },
-              },
-            },
-          },
-          'shareConfig.password': {
-            title: '密码',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 1,
-              labelCol: 6,
-            },
-            'x-display': 'none',
-            'x-reactions': {
-              dependencies: ['typeId'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="rabbitmq"?"visible":"none"}}',
-                },
-              },
-            },
-            'x-component': 'Input',
-          },
-          'shareConfig.bootstrapServers': {
-            title: '地址',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 2,
-              labelCol: 3,
-              wrapperCol: 20,
-            },
-            'x-component': 'Select',
-            'x-component-props': {
-              mode: 'tags',
-            },
-            'x-display': 'none',
-            'x-reactions': {
-              dependencies: ['typeId'],
-              fulfill: {
-                state: {
-                  display: '{{$deps[0]==="kafka"?"visible":"none"}}',
-                },
-              },
-            },
-          },
-          description: {
-            title: intl.formatMessage({
-              id: 'pages.table.description',
-              defaultMessage: '说明',
-            }),
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 2,
-              labelCol: 3,
-              wrapperCol: 20,
-            },
-            'x-component': 'Input.TextArea',
-            'x-component-props': {
-              rows: 4,
-            },
-          },
-        },
-      },
-    },
-  };
+  const [param, setParam] = useState({});
 
   return (
     <PageContainer>
-      <BaseCrud<DataSourceItem>
-        modelConfig={{
-          width: 1000,
+      <SearchComponent<DataSourceItem>
+        field={columns}
+        target="datasource"
+        onSearch={(data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
         }}
-        columns={columns}
-        service={service}
-        title={intl.formatMessage({
-          id: 'pages.system.datasource.',
-          defaultMessage: '数据源管理',
-        })}
-        schema={schema}
-        actionRef={actionRef}
       />
+      <ProTable<DataSourceItem>
+        actionRef={actionRef}
+        params={param}
+        columns={columns}
+        search={false}
+        rowKey="id"
+        headerTitle={
+          <PermissionButton
+            onClick={() => {
+              setCurrent({});
+              setVisible(true);
+            }}
+            isPermission={userPermission.add}
+            key="add"
+            icon={<PlusOutlined />}
+            type="primary"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.add',
+              defaultMessage: '新增',
+            })}
+          </PermissionButton>
+        }
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
+      />
+      {visible && (
+        <Save
+          close={() => {
+            setVisible(false);
+          }}
+          data={current}
+          reload={() => {
+            setVisible(false);
+            actionRef.current?.reload();
+          }}
+        />
+      )}
     </PageContainer>
   );
-};
+});
 export default DataSource;

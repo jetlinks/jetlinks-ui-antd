@@ -76,6 +76,7 @@ export enum MENUS_CODE {
   'rule-engine/Alarm/Configuration' = 'rule-engine/Alarm/Configuration',
   'simulator/Device' = 'simulator/Device',
   'system/DataSource' = 'system/DataSource',
+  'system/DataSource/Management' = 'system/DataSource/Management',
   'system/Department/Assets' = 'system/Department/Assets',
   'system/Department/Member' = 'system/Department/Member',
   'system/Department' = 'system/Department',

@@ -1,0 +1,51 @@
+.datasourceBox {
+  display: flex;
+  width: 100%;
+  min-height: 500px;
+  overflow: hidden;
+
+  .left {
+    width: 280px;
+    .tables {
+      :global {
+        .ant-tree-treenode .ant-tree-node-selected {
+          background-color: white;
+        }
+      }
+
+      .treeTitle {
+        display: flex;
+        justify-content: space-between;
+        width: 200px;
+
+        .title {
+          width: 150px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .options {
+          display: none;
+        }
+      }
+
+      .treeTitle:hover {
+        .options {
+          display: block;
+        }
+      }
+
+      .active {
+        background-color: #c3d3f7;
+      }
+    }
+  }
+
+  .right {
+    width: calc(100% - 310px);
+    margin-left: 15px;
+    padding-left: 15px;
+    border-left: 1px solid #f0f0f0;
+  }
+}

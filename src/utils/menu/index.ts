@@ -69,6 +69,9 @@ const extraRouteObj = {
       { code: 'View', name: 'Api详情' },
     ],
   },
+  'system/DataSource': {
+    children: [{ code: 'Management', name: '管理' }],
+  },
 };
 //额外路由
 export const extraRouteArr = [
