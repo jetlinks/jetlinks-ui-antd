@@ -11,8 +11,10 @@ const ViewMap = {
   ops: <Ops />,
 };
 
+type ViewType = keyof typeof ViewMap;
+
 const Home = () => {
-  const [current, setCurrent] = useState<'init' | 'device' | 'ops'>('init');
+  const [current, setCurrent] = useState<ViewType>('init');
 
   return (
     <PageContainer>
