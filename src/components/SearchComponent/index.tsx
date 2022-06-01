@@ -307,7 +307,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           'x-decorator': 'FormItem',
           'x-component': 'GroupNameControl',
           'x-decorator-props': {
-            gridSpan: 2,
+            gridSpan: 3,
           },
           default: 'or',
           'x-component-props': {
