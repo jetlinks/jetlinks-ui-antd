@@ -66,7 +66,9 @@ export default (props: NoticeCardProps) => {
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
             <span className={'card-item-header-name ellipsis'}>
-              <Tooltip title={props.name}>{props.name}</Tooltip>
+              <Tooltip placement="topLeft" title={props.name}>
+                {props.name}
+              </Tooltip>
             </span>
           </div>
           <div className={'card-item-content'}>
@@ -77,7 +79,9 @@ export default (props: NoticeCardProps) => {
             <div>
               <label>说明</label>
               <div className={'ellipsis'}>
-                <Tooltip title={props.description}>{props.description}</Tooltip>
+                <Tooltip placement="topLeft" title={props.description}>
+                  {props.description}
+                </Tooltip>
               </div>
             </div>
           </div>
