@@ -24,7 +24,7 @@ const Certificate = () => {
     {
       dataIndex: 'type',
       title: '证书标准',
-      render: (text: any) => <span>{text?.text || '-'}</span>,
+      render: (_, record: any) => <span>{record.type?.text || '-'}</span>,
       valueType: 'select',
       valueEnum: {
         common: {
