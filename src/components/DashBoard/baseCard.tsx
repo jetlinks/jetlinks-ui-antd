@@ -4,11 +4,12 @@ import type { EchartsProps } from './echarts';
 import Echarts from './echarts';
 import Style from './index.less';
 import classNames from 'classnames';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 
 interface BaseCardProps extends HeaderProps, EchartsProps {
   height: number;
   className?: string;
+  echartsAfter?: React.ReactNode;
 }
 
 export default forwardRef((props: BaseCardProps, ref) => {
@@ -22,7 +23,10 @@ export default forwardRef((props: BaseCardProps, ref) => {
       }}
     >
       <Header ref={ref} {...formProps} />
-      <Echarts options={options} className={Style['echarts']} />
+      <div className={Style['echarts-content']}>
+        <Echarts options={options} className={Style['echarts']} />
+        {props.echartsAfter}
+      </div>
     </div>
   );
 });
