@@ -1,4 +1,4 @@
-import { Form, FormGrid, FormItem, Input, Password, NumberPicker, Radio } from '@formily/antd';
+import { Form, FormGrid, FormItem, Input, NumberPicker, Password, Radio } from '@formily/antd';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
