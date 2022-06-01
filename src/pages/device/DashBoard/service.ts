@@ -15,6 +15,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+  getGeo = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/geo/object/device/_search/geo.json`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Badge } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './index.less';
 import Service from './service';
 import encodeQuery from '@/utils/encodeQuery';
@@ -8,6 +8,10 @@ import { useRequest } from 'umi';
 import DashBoard from '@/components/DashBoard';
 import type { EChartsOption } from 'echarts';
 import Echarts from '@/components/DashBoard/echarts';
+import moment from 'moment';
+import { AMap } from '@/components';
+import { Marker } from 'react-amap';
+import { EnvironmentOutlined } from '@ant-design/icons';
 
 interface TopCardProps {
   isEcharts: boolean;
@@ -16,6 +20,11 @@ interface TopCardProps {
   topRender?: any;
   bottomRender: () => React.ReactNode;
 }
+
+type RefType = {
+  getValues: Function;
+};
+
 const service = new Service('device/instance');
 const TopCard = (props: TopCardProps) => {
   return (
@@ -53,6 +62,9 @@ const DeviceBoard = () => {
   const [yesterdayCount, setYesterdayCount] = useState(0);
   const [deviceOptions, setDeviceOptions] = useState<EChartsOption>({});
   const [month, setMonth] = useState(0);
+  const [point, setPoint] = useState([]);
+
+  const ref = useRef<RefType>();
 
   const { data: deviceTotal } = useRequest(service.deviceCount, {
     formatResult: (res) => res.result,
@@ -198,27 +210,56 @@ const DeviceBoard = () => {
     }
   };
 
-  const getEcharts = async (params: any) => {
-    // 请求数据
-    console.log(params);
-
-    setOptions({
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
+  const getEcharts = async () => {
+    const data = ref.current!.getValues();
+    if (data) {
+      console.log(Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1));
+      const res = await service.dashboard([
         {
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
-          type: 'line',
-          areaStyle: {},
+          dashboard: 'device',
+          object: 'message',
+          measurement: 'quantity',
+          dimension: 'agg',
+          group: 'device_msg',
+          params: {
+            time: '1d',
+            format: 'yyyy.MM.dd',
+            limit: Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1),
+            from: moment(data.time.start).format('yyyy-MM-DD'),
+            to: moment(data.time.end).format('yyyy-MM-DD'),
+          },
         },
-      ],
-    });
+      ]);
+      if (res.status === 200) {
+        const x = res.result.map((item: any) => item.data.timeString);
+        const y = res.result.map((item: any) => item.data.value);
+        setOptions({
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: x,
+          },
+          yAxis: {
+            type: 'value',
+          },
+          series: [
+            {
+              data: y,
+              type: 'line',
+              areaStyle: {},
+            },
+          ],
+        });
+      }
+    }
+  };
+  //地图数据
+  const geo = async (data?: any) => {
+    const res = await service.getGeo(data);
+    if (res.status === 200) {
+      console.log(res.result.features);
+      setPoint(res.result.features);
+    }
   };
 
   useEffect(() => {
@@ -226,6 +267,7 @@ const DeviceBoard = () => {
     productStatus();
     getOnline();
     getDevice();
+    geo({});
   }, []);
 
   return (
@@ -284,12 +326,50 @@ const DeviceBoard = () => {
         <DashBoard
           title={'设备消息'}
           options={options}
+          // closeInitialParams={true}
+          ref={ref}
           height={500}
-          initialValues={{
-            test: '2',
-          }}
+          defaultTime={'week'}
           onParamsChange={getEcharts}
         />
+        <Card style={{ marginTop: 10 }}>
+          <div>设备分布</div>
+          <div>
+            <AMap
+              AMapUI
+              style={{
+                height: 500,
+                width: '100%',
+              }}
+            >
+              {point.map((item: any) => (
+                //@ts-ignore
+                <Marker
+                  position={{
+                    longitude: item.geometry.coordinates?.[0],
+                    latitude: item.geometry.coordinates?.[1],
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        backgroundColor: '#666666',
+                        color: 'white',
+                        textAlign: 'center',
+                        marginBottom: 5,
+                      }}
+                    >
+                      {item.properties.deviceName}
+                    </div>
+                    <div>
+                      <EnvironmentOutlined style={{ color: 'blue', fontSize: 22 }} />
+                    </div>
+                  </div>
+                </Marker>
+              ))}
+            </AMap>
+          </div>
+        </Card>
       </div>
     </PageContainer>
   );
