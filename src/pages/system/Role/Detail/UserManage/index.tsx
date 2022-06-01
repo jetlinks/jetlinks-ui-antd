@@ -42,6 +42,7 @@ const UserManage = () => {
       }),
       align: 'center',
       dataIndex: 'username',
+      ellipsis: true,
     },
     {
       title: '创建时间',
