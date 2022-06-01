@@ -87,6 +87,10 @@ const Save = (props: Props) => {
         }
         props.close();
         form.resetFields();
+        if ((window as any).onTabSaveSuccess) {
+          (window as any).onTabSaveSuccess(res);
+          setTimeout(() => window.close(), 300);
+        }
       }
     }
   };

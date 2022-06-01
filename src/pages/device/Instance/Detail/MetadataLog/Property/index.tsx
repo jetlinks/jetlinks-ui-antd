@@ -223,8 +223,6 @@ const PropertyLog = (props: Props) => {
   useEffect(() => {
     setRadioValue('today');
     setTab('table');
-    setStart(moment().startOf('day').valueOf());
-    setEnd(new Date().getTime());
   }, []);
 
   const renderComponent = (type: string) => {

@@ -49,7 +49,7 @@ const Property = (props: Props) => {
           <Tooltip title={title}>{title}</Tooltip>
         </div>
         <Space style={{ fontSize: 12 }}>
-          {(data.expands?.readOnly === false || data.expands?.readOnly === 'false') && (
+          {data.expands?.type.includes('write') && (
             <Tooltip placement="top" title="设置属性至设备">
               <EditOutlined
                 onClick={() => {
