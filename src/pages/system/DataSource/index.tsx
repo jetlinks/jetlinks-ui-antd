@@ -130,7 +130,7 @@ const DataSource = observer(() => {
         <PermissionButton
           style={{ padding: 0 }}
           type="link"
-          isPermission={userPermission.update}
+          isPermission={userPermission.action}
           key="manage"
           onClick={() => {
             const url = getMenuPathByCode(MENUS_CODE[`system/DataSource/Management`]);

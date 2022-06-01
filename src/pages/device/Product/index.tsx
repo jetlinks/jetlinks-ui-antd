@@ -12,7 +12,7 @@ import {
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { useHistory } from 'umi';
+import { useHistory, useLocation } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
@@ -77,6 +77,15 @@ const Product = observer(() => {
       />
     ),
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      setCurrent(undefined);
+      setVisible(true);
+    }
+  }, []);
 
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);

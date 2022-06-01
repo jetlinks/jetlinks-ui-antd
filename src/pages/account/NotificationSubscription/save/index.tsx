@@ -185,7 +185,13 @@ const Save = (props: Props) => {
   };
 
   return (
-    <Modal title={'详情'} visible onCancel={props.close} onOk={() => handleSave()} width={'45vw'}>
+    <Modal
+      title={props.data.id ? '编辑' : '新增'}
+      visible
+      onCancel={props.close}
+      onOk={() => handleSave()}
+      width={'45vw'}
+    >
       <Form form={form} layout="vertical">
         <SchemaField
           schema={schema}
