@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useEffect, useState } from 'react';
-import Comprehensive from './comprehensive  ';
+import Comprehensive from './comprehensive';
 import Device from './device';
 import Init from './init';
 import Ops from './ops';
