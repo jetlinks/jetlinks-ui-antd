@@ -36,6 +36,7 @@ const Access = () => {
   const [data, setData] = useState<any>([]);
   const [subscribeTopic] = useSendWebsocketMessage();
   const [propertyValue, setPropertyValue] = useState<any>({});
+  const [bindDeviceId, setBindDeviceId] = useState<any>('');
   const wsRef = useRef<any>();
 
   const columns: ProColumns<any>[] = [
@@ -102,10 +103,11 @@ const Access = () => {
               defaultMessage: '确认禁用？',
             }),
             onConfirm: async () => {
+              console.log(record);
               if (record.state.value === 'disable') {
-                await service.enablePoint(record.deviceId, [record.id]);
+                await service.enablePoint(bindDeviceId, [record.id]);
               } else {
-                await service.stopPoint(record.deviceId, [record.id]);
+                await service.stopPoint(bindDeviceId, [record.id]);
               }
               message.success(
                 intl.formatMessage({
@@ -169,6 +171,7 @@ const Access = () => {
       if (res.status === 200) {
         setDeviceId(res.result[0]?.deviceId);
         setProductId(res.result[0]?.productId);
+        setBindDeviceId(res.result[0]?.id);
         setParam({
           terms: [{ column: 'deviceId', value: res.result[0]?.deviceId }],
         });
@@ -234,10 +237,13 @@ const Access = () => {
               <Tabs
                 tabPosition={'left'}
                 defaultActiveKey={deviceId}
+                style={{ height: 600 }}
                 onChange={(e) => {
                   setDeviceId(e);
                   const items = bindList.find((item: any) => item.deviceId === e);
+                  console.log(items);
                   setProductId(items?.productId);
+                  setBindDeviceId(items?.id);
                   setParam({
                     terms: [{ column: 'deviceId', value: e }],
                   });

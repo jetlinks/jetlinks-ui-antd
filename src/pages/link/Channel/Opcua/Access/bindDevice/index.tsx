@@ -33,6 +33,8 @@ const BindDevice = (props: Props) => {
     {
       title: '设备名称',
       dataIndex: 'name',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '产品名称',

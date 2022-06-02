@@ -320,6 +320,7 @@ const Center = () => {
         <PasswordEdit
           save={(item: any) => {
             savePassword(item);
+            setPassword(false);
           }}
           visible={password}
           close={() => {
