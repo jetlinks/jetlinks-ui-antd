@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Card, Select } from 'antd';
+import { Badge, Card } from 'antd';
 import DashBoard from '@/components/DashBoard';
 import { useRequest } from 'umi';
 import React, { useEffect, useState } from 'react';
@@ -7,6 +7,7 @@ import Service from './service';
 import './index.less';
 import encodeQuery from '@/utils/encodeQuery';
 import type { EChartsOption } from 'echarts';
+import moment from 'moment';
 
 interface TopCardProps {
   url: string;
@@ -15,7 +16,7 @@ interface TopCardProps {
   bottomRender: () => React.ReactNode;
 }
 
-const service = new Service('media/device');
+const service = new Service('media');
 
 const TopCard = (props: TopCardProps) => {
   return (
@@ -35,11 +36,44 @@ const TopCard = (props: TopCardProps) => {
 export default () => {
   const [deviceOnline, setDeviceOnline] = useState(0);
   const [deviceOffline, setDeviceOffline] = useState(0);
+  const [channelOnline, setChannelOnline] = useState(0);
+  const [channelOffline, setChannelOffline] = useState(0);
   const [options, setOptions] = useState<EChartsOption>({});
 
   const { data: deviceTotal } = useRequest(service.deviceCount, {
     formatResult: (res) => res.result,
   });
+
+  const { data: playObject } = useRequest(service.playingAgg, {
+    formatResult: (res) => res.result,
+  });
+
+  const { data: fileObject } = useRequest(service.fileAgg, {
+    formatResult: (res) => res.result,
+  });
+
+  const { data: channelTotal } = useRequest<any, any>(service.channelCount, {
+    formatResult: (res) => res.result,
+    defaultParams: {},
+  });
+
+  /**
+   * 通道数量
+   */
+  const channelStatus = async () => {
+    const onlineRes = await service.channelCount({
+      terms: [{ column: 'status', value: 'online' }],
+    });
+    if (onlineRes.status === 200) {
+      setChannelOnline(onlineRes.result);
+    }
+    const offlineRes = await service.channelCount({
+      terms: [{ column: 'status$not', value: 'online' }],
+    });
+    if (offlineRes.status === 200) {
+      setChannelOffline(offlineRes.result);
+    }
+  };
 
   /**
    * 设备数量
@@ -56,28 +90,75 @@ export default () => {
   };
 
   const getEcharts = async (params: any) => {
-    // 请求数据
-    console.log(params);
-
-    setOptions({
-      xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
-        {
-          data: [150, 230, 224, 218, 135, 147, 260],
-          type: 'line',
+    const resp = await service.getMulti([
+      {
+        dashboard: 'media_stream',
+        object: 'play_count',
+        measurement: 'quantity',
+        dimension: 'agg',
+        group: 'playCount',
+        params: {
+          time: params.time.type === 'today' ? '1h' : '1d',
+          from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
+          to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
+          limit: 30,
         },
-      ],
-    });
+      },
+    ]);
+
+    if (resp.status === 200) {
+      const xData: string[] = [];
+      const sData: number[] = [];
+      resp.result.forEach((item: any) => {
+        xData.push(item.data.timeString);
+        sData.push(item.data.value);
+      });
+
+      setOptions({
+        xAxis: {
+          type: 'category',
+          data: xData,
+        },
+        yAxis: {
+          type: 'value',
+        },
+        series: [
+          {
+            data: sData,
+            type: 'bar',
+          },
+        ],
+      });
+    }
+  };
+
+  const handleTimeFormat = (time: number) => {
+    let hour = 0;
+    let min = 0;
+    let sec = 0;
+    const timeStr = 'hh小时mm分钟ss秒';
+
+    if (time) {
+      if (time >= 6000) {
+        hour = Math.trunc(time / (60 * 60));
+      }
+
+      if (time >= 60) {
+        min = Math.trunc((time - hour * 60 * 60) / 60);
+      }
+
+      sec = time - hour * (60 * 60) - min * 60;
+    }
+
+    return timeStr
+      .replace('hh', hour.toString())
+      .replace('mm', min.toString())
+      .replace('ss', sec.toString());
   };
 
   useEffect(() => {
     deviceStatus();
+    channelStatus();
   }, []);
 
   return (
@@ -90,35 +171,42 @@ export default () => {
             url={''}
             bottomRender={() => (
               <>
-                <Badge status="error" text="在线" />{' '}
+                <Badge status="success" text="在线" />{' '}
                 <span style={{ padding: '0 4px' }}>{deviceOnline}</span>
-                <Badge status="success" text="离线" />{' '}
+                <Badge status="error" text="离线" />{' '}
                 <span style={{ padding: '0 4px' }}>{deviceOffline}</span>
               </>
             )}
           />
           <TopCard
             title={'通道数量'}
-            total={12}
+            total={channelTotal}
             url={''}
             bottomRender={() => (
               <>
-                <Badge status="error" text="在线" /> <span style={{ padding: '0 4px' }}>12</span>
-                <Badge status="success" text="离线" /> <span style={{ padding: '0 4px' }}>12</span>
+                <Badge status="success" text="已连接" />{' '}
+                <span style={{ padding: '0 4px' }}>{channelOnline}</span>
+                <Badge status="error" text="未连接" />{' '}
+                <span style={{ padding: '0 4px' }}>{channelOffline}</span>
               </>
             )}
           />
           <TopCard
             title={'录像数量'}
-            total={12}
+            total={fileObject ? fileObject.total : 0}
             url={''}
-            bottomRender={() => <div>总时长: </div>}
+            bottomRender={() => (
+              <div>
+                总时长:
+                {handleTimeFormat(fileObject ? fileObject.duration : 0)}
+              </div>
+            )}
           />
           <TopCard
             title={'播放中数量'}
-            total={12}
+            total={playObject ? playObject.playerTotal : 0}
             url={''}
-            bottomRender={() => <div>播放人数: </div>}
+            bottomRender={() => <div>播放人数: {playObject ? playObject.playingTotal : 0}</div>}
           />
         </Card>
         <DashBoard
@@ -126,20 +214,6 @@ export default () => {
           title={'播放数量(人次)'}
           options={options}
           height={500}
-          initialValues={{
-            test: '2',
-          }}
-          extraParams={{
-            key: 'test',
-            Children: (
-              <Select
-                options={[
-                  { label: '1', value: '1' },
-                  { label: '2', value: '2' },
-                ]}
-              ></Select>
-            ),
-          }}
           onParamsChange={getEcharts}
         />
       </div>

@@ -73,7 +73,6 @@ export default (props: EchartsProps) => {
   };
 
   const updateOptions = useCallback(() => {
-    console.log(chartsRef.current, props.options);
     if (chartsRef.current && props.options) {
       chartsRef.current.setOption(props.options);
     }
