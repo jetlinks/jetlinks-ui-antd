@@ -141,6 +141,15 @@ export default () => {
         defaultMessage: '产品',
       }),
       dataIndex: 'productName',
+      hideInSearch: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getProduct();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
     },
     {
       title: intl.formatMessage({
@@ -149,10 +158,19 @@ export default () => {
       }),
       dataIndex: 'applianceType',
       renderText: (data) => data.text,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getTypes();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
     },
     {
       title: '说明',
       dataIndex: 'description',
+      hideInSearch: true,
     },
     {
       title: '状态',
@@ -163,6 +181,17 @@ export default () => {
           enabled: <Badge status="success" text="正常" />,
         };
         return map[data.value];
+      },
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '禁用',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
       },
     },
     {

@@ -1,5 +1,6 @@
 /** 路由Code */
 export enum MENUS_CODE {
+  'home' = 'home',
   'Analysis/CPU' = 'Analysis/CPU',
   'Analysis/DeviceChart' = 'Analysis/DeviceChart',
   'Analysis/DeviceMessage' = 'Analysis/DeviceMessage',
@@ -131,6 +132,7 @@ export enum MENUS_CODE {
   'system/Platforms' = 'system/Platforms',
   'system/Platforms/Api' = 'system/Platforms/Api',
   'system/Platforms/View' = 'system/Platforms/View',
+  'system/Platforms/Setting' = 'system/Platforms/Setting',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;

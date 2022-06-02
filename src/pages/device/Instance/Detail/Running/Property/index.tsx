@@ -196,6 +196,8 @@ const Property = (props: Props) => {
     if (dataSource.data.length > 0) {
       getDashboard();
       subscribeProperty();
+    } else {
+      setLoading(false);
     }
   }, [dataSource]);
 

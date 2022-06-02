@@ -52,7 +52,7 @@ const Channel = () => {
           style={{ marginTop: 10, width: '100%' }}
           onClick={async () => {
             if (!!data) {
-              const resp: any = await service.editBindInfo(record.gbChannelId, {
+              const resp: any = await service.editBindInfo(record.id, {
                 gbChannelId: data,
               });
               if (resp.status === 200) {
@@ -88,7 +88,7 @@ const Channel = () => {
         <span>
           {text}
           <Popover
-            visible={popVisible === record.gbChannelId}
+            visible={popVisible === record.id}
             trigger="click"
             content={content(record)}
             title={
@@ -114,7 +114,7 @@ const Channel = () => {
               style={{ marginLeft: 10 }}
               onClick={() => {
                 setData('');
-                setPopvisible(record.gbChannelId);
+                setPopvisible(record.id);
               }}
             >
               <EditOutlined />

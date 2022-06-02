@@ -33,7 +33,6 @@ const UserManage = () => {
       title: '姓名',
       dataIndex: 'name',
       ellipsis: true,
-      align: 'center',
     },
     {
       title: intl.formatMessage({
@@ -42,20 +41,19 @@ const UserManage = () => {
       }),
       align: 'center',
       dataIndex: 'username',
+      ellipsis: true,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       ellipsis: true,
       width: '200px',
-      align: 'center',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '状态',
       dataIndex: 'status',
       ellipsis: true,
-      align: 'center',
       render: (text, record) => (
         <Badge
           status={record?.status === 1 ? 'success' : 'error'}
@@ -69,7 +67,6 @@ const UserManage = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       render: (text, record) => [
         <a key="delete">

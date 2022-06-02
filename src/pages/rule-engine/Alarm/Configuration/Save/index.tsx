@@ -1,6 +1,6 @@
 import { message, Modal, Typography } from 'antd';
 import { useMemo } from 'react';
-import { createForm, onFieldInit } from '@formily/core';
+import { createForm, Field, onFieldInit, onFieldValueChange } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Radio, Select } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
@@ -11,6 +11,7 @@ import { useAsyncDataSource } from '@/utils/util';
 import styles from './index.less';
 import { service as ConfigService } from '../../Config';
 import { Store } from 'jetlinks-store';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
   visible: boolean;
@@ -58,15 +59,6 @@ const Save = (props: Props) => {
     });
   };
 
-  const getScene = () => {
-    return service.getScene().then((resp) => {
-      Store.set('scene-data', resp.result);
-      return resp.result.map((item: { id: string; name: string }) => ({
-        label: item.name,
-        value: item.id,
-      }));
-    });
-  };
   const form = useMemo(
     () =>
       createForm({
@@ -80,10 +72,35 @@ const Save = (props: Props) => {
               disabled: resp.result > 0,
             });
           });
+          onFieldValueChange('targetType', async (field: Field, f) => {
+            if (field.modified) {
+              f.setFieldState(field.query('.sceneId'), (state) => {
+                state.value = undefined;
+              });
+            }
+          });
         },
       }),
     [props.data, props.visible],
   );
+
+  const getScene = () => {
+    return service
+      .getScene(
+        encodeQuery({
+          terms: {
+            triggerType: form.getValuesIn('targetType'),
+          },
+        }),
+      )
+      .then((resp) => {
+        Store.set('scene-data', resp.result);
+        return resp.result.map((item: { id: string; name: string }) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      });
+  };
 
   const getSupports = () => service.getTargetTypes();
 

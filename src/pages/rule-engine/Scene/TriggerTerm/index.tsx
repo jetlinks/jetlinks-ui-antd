@@ -219,7 +219,7 @@ const TriggerTerm = (props: Props, ref: any) => {
     const data = props.value;
     data?.trigger?.map((item: { terms: any[] }) =>
       item.terms?.map((j) => {
-        if (typeof j.value.value === 'string') {
+        if (typeof j.value.value !== 'object') {
           j.value.value = [j.value.value];
         }
         return j;

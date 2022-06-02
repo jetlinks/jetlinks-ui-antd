@@ -13,9 +13,10 @@ class Service extends BaseService<ConfigItem> {
       }));
     });
 
-  public getScene = () =>
+  public getScene = (params: Record<string, any>) =>
     request(`/${SystemConst.API_BASE}/scene/_query/no-paging?paging=false`, {
       method: 'GET',
+      params,
     });
 
   public _enable = (id: string) =>
