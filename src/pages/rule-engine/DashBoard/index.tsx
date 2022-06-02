@@ -1,20 +1,15 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { EChartsOption } from 'echarts';
-import { useEffect, useState } from 'react';
-import { Statistic, StatisticCard } from '@ant-design/pro-card';
-import { Card, Select } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Card, Col } from 'antd';
 import './index.less';
-import Header from '@/components/DashBoard/header';
-import Echarts from '@/components/DashBoard/echarts';
 import Service from './service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-
-const imgStyle = {
-  display: 'block',
-  width: 42,
-  height: 42,
-};
+import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
+import { FireOutlined } from '@ant-design/icons';
+import styles from './index.less';
+import moment from 'moment';
 
 const service = new Service();
 export const state = model<{
@@ -37,6 +32,10 @@ type DashboardItem = {
   group: string;
   data: Record<string, any>;
 };
+
+type RefType = {
+  getValues: Function;
+};
 const Dashboard = observer(() => {
   const [options, setOptions] = useState<EChartsOption>({});
 
@@ -48,12 +47,12 @@ const Dashboard = observer(() => {
     dimension: 'agg',
     group: 'today',
     params: {
-      time: '1h',
+      time: '1d',
       targetType: 'device',
       format: 'HH:mm:ss',
-      from: 'now-1d',
+      from: moment(new Date(new Date().setHours(0, 0, 0, 0))).format('YYYY-MM-DD HH:mm:ss'),
       to: 'now',
-      limit: 24,
+      // limit: 24,
     },
   };
   // 当月告警
@@ -87,7 +86,6 @@ const Dashboard = observer(() => {
       limit: 12,
     },
   };
-
   // 告警排名
   const order = {
     dashboard: 'alarm',
@@ -105,7 +103,7 @@ const Dashboard = observer(() => {
   };
 
   const getDashboard = async () => {
-    const resp = await service.dashboard([today, thisMonth, chartData, order]);
+    const resp = await service.dashboard([today, thisMonth, order]);
     if (resp.status === 200) {
       const _data = resp.result as DashboardItem[];
       state.today = _data.find((item) => item.group === 'today')?.data.value;
@@ -147,144 +145,178 @@ const Dashboard = observer(() => {
     getAlarmConfig();
   }, []);
 
-  const getEcharts = async (params: any) => {
+  const getEcharts = async () => {
     // 请求数据
-    console.log(params);
+    const resp = await service.dashboard([chartData]);
 
-    setOptions({
-      xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      },
-      yAxis: {
-        type: 'value',
-      },
-      series: [
-        {
-          data: [150, 230, 224, 218, 135, 147, 260],
-          type: 'line',
+    if (resp.status === 200) {
+      const xData: string[] = [];
+      const sData: number[] = [];
+      resp.result.forEach((item: any) => {
+        xData.push(item.data.timeString);
+        sData.push(item.data.value);
+      });
+      setOptions({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
         },
-      ],
-    });
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true,
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: xData.reverse(),
+            axisTick: {
+              alignWithLabel: true,
+            },
+          },
+        ],
+        yAxis: [
+          {
+            type: 'value',
+          },
+        ],
+        series: [
+          {
+            name: 'Direct',
+            type: 'bar',
+            barWidth: '60%',
+            data: sData.reverse(),
+          },
+        ],
+      });
+    }
   };
 
+  const alarmCountRef = useRef<RefType>();
   return (
     <PageContainer>
-      <div style={{ display: 'flex' }}>
-        <StatisticCard
-          title="今日告警"
-          statistic={{
-            value: 75,
-            suffix: '次',
-          }}
-          chart={
-            <img
-              src="https://gw.alipayobjects.com/zos/alicdn/PmKfn4qvD/mubiaowancheng-lan.svg"
-              width="100%"
-              alt="进度条"
-            />
-          }
-          footer={
-            <>
-              <Statistic value={15.1} title="当月告警" suffix="次" layout="horizontal" />
-            </>
-          }
-          style={{ width: '24%', marginRight: '5px' }}
-        />
-        <StatisticCard
-          statistic={{
-            title: '告警配置',
-            value: 2176,
-            icon: (
-              <img
-                style={imgStyle}
-                src="https://gw.alipayobjects.com/mdn/rms_7bc6d8/afts/img/A*dr_0RKvVzVwAAAAAAAAAAABkARQnAQ"
-                alt="icon"
-              />
-            ),
-          }}
-          style={{ width: '25%', marginRight: '5px' }}
-          footer={
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Statistic value={76} title="正常" suffix="次" layout="horizontal" />
-              <Statistic value={76} title="禁用" suffix="次" layout="horizontal" />
+      <div className={'alarm-dash-board'}>
+        <DashBoardTopCard>
+          <DashBoardTopCard.Item
+            title="今日告警"
+            value={state.today}
+            footer={[{ title: '当月告警', value: state.thisMonth, status: 'success' }]}
+            span={6}
+          >
+            <img src={require('/public/images/media/dashboard-1.png')} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
+            title="告警配置"
+            value={state.config}
+            footer={[
+              { title: '正常', value: state.enabledConfig, status: 'success' },
+              { title: '禁用', value: state.disabledConfig, status: 'error' },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/media/dashboard-1.png')} />
+          </DashBoardTopCard.Item>
+
+          <Col span={12}>
+            <div className={'dash-board-top-item'}>
+              <div className={'content-left'}>
+                <div className={'content-left-title'}>最新告警</div>
+                <div>
+                  <ul>
+                    {[
+                      {
+                        dateTime: '2022-01-01 00:00:00',
+                        name: '一楼烟感告警',
+                        product: '产品',
+                        level: '1极告警',
+                      },
+                      {
+                        dateTime: '2022-01-01 00:00:00',
+                        name: '一楼烟感告警',
+                        product: '产品',
+                        level: '1极告警',
+                      },
+                      {
+                        dateTime: '2022-01-01 00:00:00',
+                        name: '一楼烟感告警',
+                        product: '产品',
+                        level: '1极告警',
+                      },
+                    ].map((item) => (
+                      <li>
+                        <div
+                          style={{ display: 'flex', justifyContent: 'space-between', margin: 10 }}
+                        >
+                          <div>
+                            <FireOutlined style={{ marginRight: 5 }} /> {item.dateTime}
+                          </div>
+                          <div>{item.name}</div>
+                          <div>{item.product}</div>
+                          <div>{item.level}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
-          }
-        />
-        <div style={{ width: '50%' }}>
-          <StatisticCard
-            title="最新告警"
-            statistic={{
-              // title: '最新告警'
-              value: undefined,
-            }}
-            chart={
-              <ul>
+          </Col>
+        </DashBoardTopCard>
+      </div>
+      <Card style={{ marginTop: 10 }}>
+        <DashBoard
+          title="告警统计"
+          height={400}
+          options={options}
+          onParamsChange={getEcharts}
+          ref={alarmCountRef}
+          echartsAfter={
+            <div className={styles.alarmRank}>
+              <h4>告警排名</h4>
+              <ul className={styles.rankingList}>
                 {[
                   {
                     dateTime: '2022-01-01 00:00:00',
                     name: '一楼烟感告警',
                     product: '产品',
-                    level: '1极告警',
+                    level: '543',
                   },
                   {
                     dateTime: '2022-01-01 00:00:00',
                     name: '一楼烟感告警',
                     product: '产品',
-                    level: '1极告警',
+                    level: '3445',
                   },
                   {
                     dateTime: '2022-01-01 00:00:00',
                     name: '一楼烟感告警',
                     product: '产品',
-                    level: '1极告警',
+                    level: '123123',
                   },
                   {
                     dateTime: '2022-01-01 00:00:00',
                     name: '一楼烟感告警',
                     product: '产品',
-                    level: '1极告警',
+                    level: '3123',
                   },
-                ].map((item) => (
-                  <li>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div>{item.dateTime}</div>
-                      <div>{item.name}</div>
-                      <div>{item.product}</div>
-                      <div>{item.level}</div>
-                      {JSON.stringify(state)}
-                    </div>
+                ].map((item, i) => (
+                  <li key={item.dateTime}>
+                    <span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>
+                      {i + 1}
+                    </span>
+                    <span className={styles.rankingItemTitle} title={item.name}>
+                      {item.name}
+                    </span>
+                    <span className={styles.rankingItemValue}>{item.level}</span>
                   </li>
                 ))}
               </ul>
-            }
-          />
-        </div>
-      </div>
-      <Card style={{ marginTop: 10 }}>
-        <div
-          // className={classNames(Style['dash-board-echarts'], className)}
-          style={{
-            height: 200,
-          }}
-        >
-          <Header
-            title={'告警统计'}
-            extraParams={{
-              key: 'test',
-              Children: (
-                <Select
-                  options={[
-                    { label: '设备', value: 'device' },
-                    { label: '产品', value: 'product' },
-                  ]}
-                ></Select>
-              ),
-            }}
-            onParamsChange={getEcharts}
-          />
-          <Echarts options={options} />
-        </div>
+            </div>
+          }
+        />
       </Card>
     </PageContainer>
   );

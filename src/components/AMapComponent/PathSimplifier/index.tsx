@@ -34,7 +34,6 @@ const PathSimplifier = (props: PathSimplifierProps) => {
       }
 
       if (props.pathData) {
-        console.log(props.pathData.map((item) => ({ name: item.name || '路线', path: item.path })));
         pathSimplifierRef.current?.setData(
           props.pathData.map((item) => ({ name: item.name || '路线', path: item.path })),
         );

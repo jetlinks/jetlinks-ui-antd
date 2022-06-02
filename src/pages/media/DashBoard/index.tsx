@@ -100,10 +100,10 @@ export default () => {
           type: 'value',
         },
         grid: {
-          left: '2%',
+          left: '4%',
           right: '2%',
           top: '2%',
-          bottom: '2%',
+          bottom: '4%',
         },
         series: [
           {
