@@ -1,28 +1,36 @@
-import { Card, Col, Row } from 'antd';
+import Title from '@/pages/home/components/Title';
+import React from 'react';
+import './index.less';
 
-const Statistics = () => {
+type StatisticsItem = {
+  name: string;
+  value: number;
+  img: string;
+};
+
+interface StatisticsProps {
+  extra?: React.ReactNode | string;
+  data: StatisticsItem[];
+}
+
+const defaultImage = require('/public/images/home/top-1.png');
+
+const Statistics = (props: StatisticsProps) => {
   return (
-    <Card
-      title={'设备统计'}
-      extra={
-        <a
-          onClick={() => {
-            // pageJump(!!getMenuPathByCode('device/DashBoard'), 'device/DashBoard');
-          }}
-        >
-          详情
-        </a>
-      }
-    >
-      <Row gutter={24}>
-        <Col span={12}>
-          <Card bordered>产品数量</Card>
-        </Col>
-        <Col span={12}>
-          <Card bordered>设备数量</Card>
-        </Col>
-      </Row>
-    </Card>
+    <div className={'home-statistics'}>
+      <Title title={'设备统计'} extra={props.extra} />
+      <div className={'home-statistics-body'}>
+        {props.data.map((item) => (
+          <div className={'home-guide-item'}>
+            <div className={'item-english'}>{item.name}</div>
+            <div className={'item-title'}>{item.value}</div>
+            <div className={`item-index`}>
+              <img src={item.img || defaultImage} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

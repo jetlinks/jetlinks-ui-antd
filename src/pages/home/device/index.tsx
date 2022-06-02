@@ -1,7 +1,6 @@
-import { Card, Col, message, Row } from 'antd';
+import { Col, Row } from 'antd';
 import { PermissionButton } from '@/components';
-import { getMenuPathByCode } from '@/utils/menu';
-import Guide from '../components/Guide';
+import { Guide, Body } from '../components';
 import Statistics from '../components/Statistics';
 import Steps from '../components/Steps';
 
@@ -10,40 +9,28 @@ const Device = () => {
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
   const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
   // // 跳转
-  const pageJump = (auth: boolean, url: string, param: string) => {
-    if (auth) {
-      // 判断是否有权限
-      const path = getMenuPathByCode(url);
-      if (path) {
-        const tab: any = window.open(`${origin}/#${path}${param}`);
-        tab!.onTabSaveSuccess = () => {
-          // if (value.status === 200) {
-          // }
-        };
-      }
-    } else {
-      message.error('暂无权限，请联系管理员');
-    }
-  };
 
   const guideList = [
     {
       key: 'product',
-      name: '1、创建产品',
+      name: '创建产品',
+      english: 'CREATE PRODUCT',
       auth: !!productPermission.add,
       url: 'device/Product',
       param: '?save=true',
     },
     {
       key: 'device',
-      name: '2、创建设备',
+      name: '创建设备',
+      english: 'CREATE DEVICE',
       auth: !!devicePermission.add,
       url: 'device/Instance',
       param: '?save=true',
     },
     {
       key: 'rule-engine',
-      name: '3、规则引擎',
+      name: '规则引擎',
+      english: 'RULE ENGINE',
       auth: !!rulePermission.add,
       url: 'rule-engine/Instance',
       param: '?save=true',
@@ -74,22 +61,33 @@ const Device = () => {
 
   return (
     <Row gutter={24}>
-      <Col span={12}>
+      <Col span={14}>
         <Guide
           title="物联网引导"
           data={guideList}
-          jump={(auth: boolean, url: string, param: string) => {
-            pageJump(auth, url, param);
-          }}
+          // jump={(auth: boolean, url: string, param: string) => {
+          //   pageJump(auth, url, param);
+          // }}
         />
       </Col>
-      <Col span={12}>
-        <Statistics />
+      <Col span={10}>
+        <Statistics
+          data={[
+            {
+              name: '产品数量',
+              value: 111,
+              img: '',
+            },
+            {
+              name: '设备数量',
+              value: 12,
+              img: '',
+            },
+          ]}
+        />
       </Col>
       <Col span={24}>
-        <Card style={{ margin: '20px 0' }} title="平台架构图">
-          <img style={{ height: 500 }} src={require('/public/images/login.png')} />
-        </Card>
+        <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
       </Col>
       <Col span={24}>
         <Steps />
