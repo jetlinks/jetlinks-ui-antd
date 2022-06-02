@@ -52,6 +52,11 @@ const Service = {
       method: 'GET',
       params,
     }),
+  settingDetail: (data?: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/scopes`, {
+      method: 'POST',
+      data,
+    }),
 };
 
 export default Service;

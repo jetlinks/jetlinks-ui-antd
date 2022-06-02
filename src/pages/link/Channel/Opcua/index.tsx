@@ -52,9 +52,27 @@ const Opcua = () => {
     {
       title: '状态',
       dataIndex: 'state',
+      valueType: 'select',
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
       ),
+      valueEnum: {
+        disabled: {
+          text: intl.formatMessage({
+            id: 'pages.data.option.disabled',
+            defaultMessage: '禁用',
+          }),
+          status: 'disabled',
+        },
+        enabled: {
+          text: intl.formatMessage({
+            id: 'pages.data.option.enabled',
+            defaultMessage: '启用',
+          }),
+          status: 'enabled',
+        },
+      },
+      filterMultiple: false,
     },
     {
       title: '操作',
@@ -93,17 +111,28 @@ const Opcua = () => {
             }),
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
-                await service.enable(record.id);
+                const res = await service.enable(record.id);
+                if (res.status === 200) {
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                }
               } else {
-                await service.disable(record.id);
+                const res = await service.disable(record.id);
+                if (res.status === 200) {
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                }
               }
-              message.success(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
             },
           }}
           isPermission={permission.action}

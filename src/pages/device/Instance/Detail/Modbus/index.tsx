@@ -224,6 +224,7 @@ const Modbus = () => {
         <div style={{ display: 'flex' }}>
           <div>
             <Tabs
+              style={{ height: 600 }}
               tabPosition={'left'}
               defaultActiveKey={opcId}
               onChange={(e) => {

@@ -235,6 +235,7 @@ const Access = () => {
           <div style={{ display: 'flex' }}>
             <div>
               <Tabs
+                style={{ height: 600 }}
                 tabPosition={'left'}
                 defaultActiveKey={deviceId}
                 onChange={(e) => {

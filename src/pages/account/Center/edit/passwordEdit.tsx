@@ -210,19 +210,10 @@ const PasswordEdit = (props: Props) => {
       onOk={async () => {
         const value: { oldPassword: string; newPassword: string; confirmPassword: string } =
           await form.submit();
-        console.log(value);
         props.save({
           oldPassword: value.oldPassword,
           newPassword: value.newPassword,
         });
-        // if (props.data.id) {
-        //   const resp = await service.resetPassword(props.data.id, value.confirmPassword);
-        //   if (resp.status === 200) {
-        //     message.success('操作成功');
-        //     props.close();
-        //   }
-        // }
-        // props.close();
       }}
     >
       <Form form={form} layout="vertical">

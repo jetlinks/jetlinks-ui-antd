@@ -1,4 +1,4 @@
-import { Button, Checkbox, message, Spin } from 'antd';
+import { Button, Checkbox, Divider, message, Spin } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'umi';
 import styles from './index.less';
@@ -14,13 +14,16 @@ import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
 import Footer from '@/components/Footer';
-import { DingdingOutlined, WechatOutlined } from '@ant-design/icons';
 
 const Login: React.FC = () => {
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
   const [bindings, setBindings] = useState<any>([]);
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
+
+  const iconMap = new Map();
+  iconMap.set('dingtalk', require('/public/images/bind/dingtalk.png'));
+  iconMap.set('wechat-webapp', require('/public/images/bind/wechat-webapp.png'));
 
   const fetchUserInfo = async () => {
     const userInfo = (await initialState?.fetchUserInfo?.()) as UserInfo;
@@ -195,9 +198,11 @@ const Login: React.FC = () => {
                       defaultMessage: '登录',
                     })}
                   </Submit>
-                  <div style={{ marginTop: 10 }}>
-                    <div>其他方式登录</div>
-                    <div>
+                  <div style={{ marginTop: 20 }}>
+                    <Divider plain style={{ height: 12 }}>
+                      <div style={{ color: '#807676d9', fontSize: 12 }}>其他方式登录</div>
+                    </Divider>
+                    <div style={{ position: 'relative', bottom: '10px' }}>
                       {bindings.map((item: any) => (
                         <Button
                           type="link"
@@ -211,11 +216,7 @@ const Login: React.FC = () => {
                             };
                           }}
                         >
-                          {item.type === 'dingtalk' ? (
-                            <DingdingOutlined style={{ color: '#009BF5', fontSize: '20px' }} />
-                          ) : (
-                            <WechatOutlined style={{ color: '#2AAE67', fontSize: '20px' }} />
-                          )}
+                          <img src={iconMap.get(item.type)} />
                         </Button>
                       ))}
                     </div>

@@ -43,13 +43,24 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
+  const getSettings = async () => {
+    try {
+      const res = await Service.settingDetail(['basis']);
+      return res.result;
+    } catch (error) {
+      history.push(loginPath);
+    }
+    return undefined;
+  };
+
   // 如果是登录页面，不执行
   if (history.location.pathname !== loginPath && history.location.pathname !== bindPath) {
     const currentUser = await fetchUserInfo();
+    const settings = await getSettings();
     return {
       fetchUserInfo,
       currentUser,
-      settings: {},
+      settings: settings?.[0].properties,
     };
   }
   // 链接websocket
@@ -189,6 +200,7 @@ export const request: RequestConfig = {
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
+  console.log({ ...initialState });
   return {
     navTheme: 'light',
     headerTheme: 'light',
@@ -238,7 +250,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
-    title: '',
+    // title: '',
+    // logo:''
   };
 };
 
