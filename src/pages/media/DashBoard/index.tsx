@@ -1,37 +1,14 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Card } from 'antd';
-import DashBoard from '@/components/DashBoard';
+import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import { useRequest } from 'umi';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Service from './service';
 import './index.less';
 import encodeQuery from '@/utils/encodeQuery';
 import type { EChartsOption } from 'echarts';
 import moment from 'moment';
 
-interface TopCardProps {
-  url: string;
-  title: string;
-  total: number | string;
-  bottomRender: () => React.ReactNode;
-}
-
 const service = new Service('media');
-
-const TopCard = (props: TopCardProps) => {
-  return (
-    <div className={'top-card-item'}>
-      <div className={'top-card-top'}>
-        <div className={'top-card-top-left'}></div>
-        <div className={'top-card-top-right'}>
-          <div className={'top-card-title'}>{props.title}</div>
-          <div className={'top-card-total'}>{props.total}</div>
-        </div>
-      </div>
-      <div className={'top-card-bottom'}>{props.bottomRender()}</div>
-    </div>
-  );
-};
 
 export default () => {
   const [deviceOnline, setDeviceOnline] = useState(0);
@@ -122,6 +99,12 @@ export default () => {
         yAxis: {
           type: 'value',
         },
+        grid: {
+          left: '2%',
+          right: '2%',
+          top: '2%',
+          bottom: '2%',
+        },
         series: [
           {
             data: sData,
@@ -164,51 +147,72 @@ export default () => {
   return (
     <PageContainer>
       <div className={'media-dash-board'}>
-        <Card className={'top-card-items'} bodyStyle={{ display: 'flex', gap: 12 }}>
-          <TopCard
+        <DashBoardTopCard>
+          <DashBoardTopCard.Item
             title={'设备数量'}
-            total={deviceTotal}
-            url={''}
-            bottomRender={() => (
-              <>
-                <Badge status="success" text="在线" />{' '}
-                <span style={{ padding: '0 4px' }}>{deviceOnline}</span>
-                <Badge status="error" text="离线" />{' '}
-                <span style={{ padding: '0 4px' }}>{deviceOffline}</span>
-              </>
-            )}
-          />
-          <TopCard
+            value={deviceTotal}
+            footer={[
+              {
+                title: '在线',
+                value: deviceOnline,
+                status: 'success',
+              },
+              {
+                title: '离线',
+                value: deviceOffline,
+                status: 'error',
+              },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/media/dashboard-1.png')} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
             title={'通道数量'}
-            total={channelTotal}
-            url={''}
-            bottomRender={() => (
-              <>
-                <Badge status="success" text="已连接" />{' '}
-                <span style={{ padding: '0 4px' }}>{channelOnline}</span>
-                <Badge status="error" text="未连接" />{' '}
-                <span style={{ padding: '0 4px' }}>{channelOffline}</span>
-              </>
-            )}
-          />
-          <TopCard
+            value={channelTotal}
+            footer={[
+              {
+                title: '已连接',
+                value: channelOnline,
+                status: 'success',
+              },
+              {
+                title: '未连接',
+                value: channelOffline,
+                status: 'error',
+              },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/media/dashboard-2.png')} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
             title={'录像数量'}
-            total={fileObject ? fileObject.total : 0}
-            url={''}
-            bottomRender={() => (
-              <div>
-                总时长:
-                {handleTimeFormat(fileObject ? fileObject.duration : 0)}
-              </div>
-            )}
-          />
-          <TopCard
+            value={fileObject ? fileObject.total : 0}
+            footer={[
+              {
+                title: '总时长',
+                value: handleTimeFormat(fileObject ? fileObject.duration : 0),
+              },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/media/dashboard-3.png')} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
             title={'播放中数量'}
-            total={playObject ? playObject.playerTotal : 0}
-            url={''}
-            bottomRender={() => <div>播放人数: {playObject ? playObject.playingTotal : 0}</div>}
-          />
-        </Card>
+            value={playObject ? playObject.playerTotal : 0}
+            footer={[
+              {
+                title: '播放人数',
+                value: playObject ? playObject.playingTotal : 0,
+              },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/media/dashboard-4.png')} />
+          </DashBoardTopCard.Item>
+        </DashBoardTopCard>
         <DashBoard
           className={'media-dash-board-body'}
           title={'播放数量(人次)'}
