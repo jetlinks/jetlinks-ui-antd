@@ -10,6 +10,8 @@ interface TableProps {
   // 是否只暂时已授权的接口
   isShowGranted?: boolean;
   //
+  isOpenGranted?: boolean;
+  //
   grantKeys: string[];
 }
 
@@ -48,14 +50,16 @@ export default (props: TableProps) => {
   }, [props.isShowGranted, selectKeys, props.data]);
 
   useEffect(() => {
-    if (!props.isShowGranted) {
+    if (props.isOpenGranted === false) {
+      setDataSource(props.data);
+    } else if (!props.isShowGranted) {
       if (props.data && props.data.length && props.operations) {
         getOperations(props.data, props.operations);
       } else {
         setDataSource([]);
       }
     }
-  }, [props.data, props.operations, props.isShowGranted]);
+  }, [props.data, props.operations, props.isShowGranted, props.isOpenGranted]);
 
   const save = useCallback(async () => {
     const param = new URLSearchParams(location.search);
