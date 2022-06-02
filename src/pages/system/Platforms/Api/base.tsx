@@ -26,7 +26,14 @@ export const ApiModel = model<{
 
 interface ApiPageProps {
   showDebugger?: boolean;
+  /**
+   * true 只展示已赋权的接口
+   */
   isShowGranted?: boolean;
+  /**
+   * false：table暂时所有接口
+   */
+  isOpenGranted?: boolean;
 }
 
 export default observer((props: ApiPageProps) => {
@@ -60,12 +67,15 @@ export default observer((props: ApiPageProps) => {
     const param = new URLSearchParams(location.search);
     const code = param.get('code');
 
-    service.getApiGranted(code!).then((resp: any) => {
-      if (resp.status === 200) {
-        setGrantKeys(resp.result);
-      }
-    });
-  }, [location]);
+    if (props.isOpenGranted === false) {
+    } else {
+      service.getApiGranted(code!).then((resp: any) => {
+        if (resp.status === 200) {
+          setGrantKeys(resp.result);
+        }
+      });
+    }
+  }, [location, props.isOpenGranted]);
 
   useEffect(() => {
     initModel();
@@ -89,6 +99,7 @@ export default observer((props: ApiPageProps) => {
         <Table
           data={ApiModel.data}
           operations={operations}
+          isOpenGranted={props.isOpenGranted}
           isShowGranted={props.isShowGranted}
           grantKeys={GrantKeys}
         />

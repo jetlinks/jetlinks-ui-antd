@@ -1,6 +1,6 @@
 // 视频设备列表
 import { PageContainer } from '@ant-design/pro-layout';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Button, message, Tooltip } from 'antd';
 import {
@@ -14,6 +14,7 @@ import {
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useHistory, useIntl } from 'umi';
 import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
+import useLocation from '@/hooks/route/useLocation';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
@@ -41,6 +42,14 @@ const Device = () => {
   const [queryParam, setQueryParam] = useState({});
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('media/Device');
+  const location = useLocation();
+
+  useEffect(() => {
+    const { state } = location;
+    if (state && state.save) {
+      setVisible(true);
+    }
+  }, [location]);
 
   /**
    * table 查询参数

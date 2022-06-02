@@ -23,11 +23,11 @@ interface ExtraTimePickerProps extends Omit<DatePickerProps, 'onChange' | 'value
 export const getTimeByType = (type: TimeType) => {
   switch (type) {
     case TimeKey.week:
-      return moment().subtract(6, 'days').valueOf();
+      return moment().subtract(6, 'days').startOf('day').valueOf();
     case TimeKey.month:
-      return moment().subtract(29, 'days').valueOf();
+      return moment().subtract(29, 'days').startOf('day').valueOf();
     case TimeKey.year:
-      return moment().subtract(365, 'days').valueOf();
+      return moment().subtract(365, 'days').startOf('day').valueOf();
     default:
       return moment().startOf('day').valueOf();
   }
@@ -49,7 +49,7 @@ export default (props: ExtraTimePickerProps) => {
   };
 
   const timeChange = (type: TimeType) => {
-    const endTime = moment(new Date()).valueOf();
+    const endTime = moment(new Date()).endOf('day').valueOf();
     const startTime: number = getTimeByType(type);
     setRadioValue(type);
     change(startTime, endTime, type);
