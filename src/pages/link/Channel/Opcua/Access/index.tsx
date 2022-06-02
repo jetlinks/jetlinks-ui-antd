@@ -234,6 +234,7 @@ const Access = () => {
               <Tabs
                 tabPosition={'left'}
                 defaultActiveKey={deviceId}
+                style={{ height: 600 }}
                 onChange={(e) => {
                   setDeviceId(e);
                   const items = bindList.find((item: any) => item.deviceId === e);

@@ -47,6 +47,8 @@ const Modbus = () => {
     {
       title: '端口',
       dataIndex: 'port',
+      search: false,
+      valueType: 'digit',
     },
     {
       title: '状态',
@@ -54,6 +56,21 @@ const Modbus = () => {
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
       ),
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: intl.formatMessage({
+            id: 'pages.data.option.disabled',
+            defaultMessage: '禁用',
+          }),
+          status: 'disabled',
+        },
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
+      },
+      filterMultiple: false,
     },
     {
       title: '操作',

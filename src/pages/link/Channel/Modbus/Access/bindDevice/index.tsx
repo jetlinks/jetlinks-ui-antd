@@ -28,14 +28,20 @@ const BindDevice = (props: Props) => {
     {
       title: '设备ID',
       dataIndex: 'id',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '设备名称',
       dataIndex: 'name',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '产品名称',
       dataIndex: 'productName',
+      width: 200,
+      ellipsis: true,
     },
     {
       title: '注册时间',
@@ -80,7 +86,10 @@ const BindDevice = (props: Props) => {
       <SearchComponent
         field={columns}
         target="bindDevice"
-        defaultParam={[{ column: 'id$modbus-master$not', value: props.id }]}
+        defaultParam={[
+          { column: 'id$modbus-master$not', value: props.id },
+          { column: 'productId$dev-protocol', value: 'modbus-tcp' },
+        ]}
         onSearch={(data) => {
           // 重置分页数据
           actionRef.current?.reset?.();
