@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 
 interface TitleProps {
-  title: string;
+  title: string | React.ReactNode;
   english?: string;
   className?: string;
   extra?: React.ReactNode | string;
