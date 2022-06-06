@@ -24,7 +24,7 @@ const Home = () => {
         if (resp.result.length == 0) {
           setCurrent('ops');
         } else {
-          setCurrent(resp.result[0]?.content);
+          // setCurrent(resp.result[0]?.content);
         }
         setCurrent('ops');
       }

@@ -7,7 +7,7 @@ import { ApiModel } from '@/pages/system/Platforms/Api/base';
 interface TableProps {
   data: any;
   operations: string[];
-  // 是否只暂时已授权的接口
+  // 是否只展示已授权的接口
   isShowGranted?: boolean;
   //
   isOpenGranted?: boolean;
@@ -99,13 +99,21 @@ export default (props: TableProps) => {
     grantCache.current = addGrant;
 
     setLoading(true);
-    const resp = await service.addApiGrant(code!, { operations: addOperations });
-    const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
-    setLoading(false);
-    if (resp.status === 200 || resp2.status === 200) {
-      message.success('操作成功');
+    if (props.isOpenGranted === false) {
+      const resp = await service.apiOperationsAdd(addGrant);
+      const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
+      if (resp.status === 200 || resp2.status === 200) {
+        message.success('操作成功');
+      }
+    } else {
+      const resp = await service.addApiGrant(code!, { operations: addOperations });
+      const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
+      if (resp.status === 200 || resp2.status === 200) {
+        message.success('操作成功');
+      }
     }
-  }, [selectKeys, location, dataSource]);
+    setLoading(false);
+  }, [selectKeys, location, dataSource, props.isOpenGranted]);
 
   return (
     <div className={'platforms-api-table'}>
