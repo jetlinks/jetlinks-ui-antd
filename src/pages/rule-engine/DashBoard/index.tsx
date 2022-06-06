@@ -187,7 +187,7 @@ const Dashboard = observer(() => {
         targetType: 'device',
         from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
         to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
-        limit: 10,
+        limit: 9,
       },
     };
     // 请求数据
@@ -312,9 +312,13 @@ const Dashboard = observer(() => {
               <ul className={styles.rankingList}>
                 {state.ranking?.map((item, i) => (
                   <li key={item.targetId}>
-                    <span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>
-                      {i + 1}
-                    </span>
+                    <img
+                      src={require(`/public/images/rule-engine/dashboard/ranking/${i + 1}.png`)}
+                      alt=""
+                    />
+                    {/*<span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>*/}
+                    {/*  {i + 1}*/}
+                    {/*</span>*/}
                     <span className={styles.rankingItemTitle} title={item.targetName}>
                       {item.targetName}
                     </span>
