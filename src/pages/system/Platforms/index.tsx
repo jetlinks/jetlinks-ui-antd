@@ -306,18 +306,20 @@ export default () => {
           </div>,
         ]}
       />
-      <SaveModal
-        visible={saveVisible}
-        data={editData}
-        type={saveType}
-        onCancel={() => {
-          setSaveVisible(false);
-          setEditData(undefined);
-        }}
-        onReload={() => {
-          actionRef.current?.reload();
-        }}
-      />
+      {saveVisible && (
+        <SaveModal
+          visible={saveVisible}
+          data={editData}
+          type={saveType}
+          onCancel={() => {
+            setSaveVisible(false);
+            setEditData(undefined);
+          }}
+          onReload={() => {
+            actionRef.current?.reload();
+          }}
+        />
+      )}
       <PasswordModal
         visible={passwordVisible}
         onCancel={() => {

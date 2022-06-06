@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import Service from '@/pages/rule-engine/Instance/serivce';
 import type { InstanceItem } from '@/pages/rule-engine/Instance/typings';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import {
   DeleteOutlined,
@@ -19,6 +19,7 @@ import RuleInstanceCard from '@/components/ProTableCard/CardItems/ruleInstance';
 import Save from '@/pages/rule-engine/Instance/Save';
 import SystemConst from '@/utils/const';
 import { StatusColorEnum } from '@/components/BadgeStatus';
+import useLocation from '@/hooks/route/useLocation';
 
 export const service = new Service('rule-engine/instance');
 
@@ -29,6 +30,16 @@ const Instance = () => {
   const [current, setCurrent] = useState<Partial<InstanceItem>>({});
   const [searchParams, setSearchParams] = useState<any>({});
   const { permission } = PermissionButton.usePermission('rule-engine/Instance');
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const { state } = location;
+    if (state && state.save) {
+      setCurrent({});
+      setVisible(true);
+    }
+  }, [location]);
 
   const tools = (record: InstanceItem) => [
     <PermissionButton

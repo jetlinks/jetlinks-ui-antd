@@ -1,11 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useIntl, useLocation, useParams } from 'umi';
+import { useIntl, useParams } from 'umi';
 import { Badge, Card, Descriptions, message, Popconfirm, Space, Spin, Switch, Tooltip } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
-import { useHistory } from '@/hooks';
+import { useHistory, useLocation } from '@/hooks';
 import Metadata from '@/pages/device/components/Metadata';
 import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -216,6 +216,13 @@ const ProductDetail = observer(() => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const { state } = location;
+    if (state && state?.tab) {
+      setMode(state?.tab);
+    }
+  }, [location]);
 
   return (
     <PageContainer
