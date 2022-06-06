@@ -93,6 +93,8 @@ const Instance = () => {
       if (location.state && location.state?.save) {
         setVisible(true);
         setCurrent({});
+      } else if (location.state && location.state?.import) {
+        setImportVisible(true);
       }
     }
   }, [location]);

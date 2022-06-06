@@ -17,7 +17,7 @@ interface StepsProps {
 const ItemDefaultImg = require('/public/images/home/bottom-1.png');
 const StepsItem = (props: StepItemProps) => {
   return (
-    <div className={'step-item step-bar arrow-1'}>
+    <div className={'step-item step-bar arrow-1'} onClick={props.onClick}>
       <div className={'step-item-title'}>
         <div className={'step-item-img'}>
           <img src={props.url || ItemDefaultImg} />
