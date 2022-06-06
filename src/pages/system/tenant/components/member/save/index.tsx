@@ -12,6 +12,9 @@ interface Props {
 
 const Save = (props: Props) => {
   const service = new Service('tenant');
+  const status = new Map()
+  status.set(1,'enabled')
+  status.set(0,'disabled')
 
   const [tempMap, setTempMap] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -86,7 +89,7 @@ const Save = (props: Props) => {
     const tempData = selectedRow.map(item => ({
       name: item.name,
       userId: item.id,
-      state:item.status,
+      state:status.get(item.status),
       admin: tempMap.find((i: { id: string }) => i.id === item.id)?.tag || false,
     }));
     const tempId = props.data?.id;
