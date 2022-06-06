@@ -25,13 +25,13 @@ const Statistics = (props: StatisticsProps) => {
           <div className={'home-guide-item'} key={item.name}>
             <div className={'item-english'}>{item.name}</div>
             <div className={'item-title'}>{item.value}</div>
-            <div className={`item-index`}>
-              {typeof item.children === 'string' ? (
+            {typeof item.children === 'string' ? (
+              <div className={`item-index`}>
                 <img src={item.children || defaultImage} />
-              ) : (
-                item.children
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className={'item-index-echarts'}>{item.children}</div>
+            )}
           </div>
         ))}
       </div>
