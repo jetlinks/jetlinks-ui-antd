@@ -27,6 +27,7 @@ const AddPoint = (props: Props) => {
               name: name,
               deviceId: props.deviceId,
               opcUaId: props.opcUaId,
+              calculateType: 'number',
               configuration: {
                 initialValue: formData.initialValue,
                 multiple: formData.multiple,
@@ -66,6 +67,7 @@ const AddPoint = (props: Props) => {
             name: name,
             deviceId: props.deviceId,
             opcUaId: props.opcUaId,
+            calculateType: 'number',
             configuration: {
               initialValue: formData.initialValue,
               multiple: formData.multiple,
