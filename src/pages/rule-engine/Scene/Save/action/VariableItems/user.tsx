@@ -25,7 +25,7 @@ interface UserProps {
 
 export default (props: UserProps) => {
   const [source, setSource] = useState(props.value?.source);
-  const [value, setValue] = useState<string | undefined>('');
+  const [value, setValue] = useState<string | undefined>();
   const [userList, setUserList] = useState({ platform: [], relation: [] });
   const [relationList, setRelationList] = useState([]);
 

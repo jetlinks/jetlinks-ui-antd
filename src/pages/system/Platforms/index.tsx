@@ -109,7 +109,7 @@ export default () => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 200,
+      width: 250,
       render: (_, record: any) => [
         <PermissionButton
           key={'update'}

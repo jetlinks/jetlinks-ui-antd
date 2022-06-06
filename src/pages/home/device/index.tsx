@@ -1,14 +1,42 @@
-import { Col, Row, Tooltip } from 'antd';
+import { Col, Row, Tooltip, message } from 'antd';
 import { PermissionButton } from '@/components';
 import { Body, Guide } from '../components';
 import Statistics from '../components/Statistics';
 import Steps from '../components/Steps';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from '@/hooks';
+import { service } from '..';
+import { useEffect, useState } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const Device = () => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
   const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
+
+  const [productCount, setProductCount] = useState<number>(0);
+  const [deviceCount, setDeviceCount] = useState<number>(0);
+
+  const getProductCount = async () => {
+    const resp = await service.productCount({});
+    if (resp.status === 200) {
+      setProductCount(resp.result);
+    }
+  };
+
+  const getDeviceCount = async () => {
+    const resp = await service.deviceCount();
+    if (resp.status === 200) {
+      setDeviceCount(resp.result);
+    }
+  };
+
+  useEffect(() => {
+    getProductCount();
+    getDeviceCount();
+  }, []);
+
+  const history = useHistory();
   // // 跳转
 
   const guideList = [
@@ -76,15 +104,32 @@ const Device = () => {
           data={[
             {
               name: '产品数量',
-              value: 111,
-              img: '',
+              value: productCount,
+              children: '',
             },
             {
               name: '设备数量',
-              value: 12,
-              img: '',
+              value: deviceCount,
+              children: '',
             },
           ]}
+          title="设备统计"
+          extra={
+            <div style={{ fontSize: 14, fontWeight: 400 }}>
+              <a
+                onClick={() => {
+                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
+                  if (!!url) {
+                    history.push(`${url}`);
+                  } else {
+                    message.warning('暂无权限，请联系管理员');
+                  }
+                }}
+              >
+                详情
+              </a>
+            </div>
+          }
         />
       </Col>
       <Col span={24}>
