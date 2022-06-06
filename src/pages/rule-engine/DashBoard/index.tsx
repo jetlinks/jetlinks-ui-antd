@@ -10,6 +10,7 @@ import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import { FireOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import moment from 'moment';
+import Echarts from '@/components/DashBoard/echarts';
 
 const service = new Service();
 export const state = model<{
@@ -20,7 +21,7 @@ export const state = model<{
   disabledConfig: number;
   alarmList: any[];
   ranking: { targetId: string; targetName: string; count: number }[];
-  fifteenData: any[];
+  fifteenOptions: any;
 }>({
   today: 0,
   thisMonth: 0,
@@ -29,7 +30,7 @@ export const state = model<{
   disabledConfig: 0,
   alarmList: [],
   ranking: [],
-  fifteenData: [],
+  fifteenOptions: {},
 });
 
 type DashboardItem = {
@@ -97,7 +98,40 @@ const Dashboard = observer(() => {
       const _data = resp.result as DashboardItem[];
       state.today = _data.find((item) => item.group === 'today')?.data.value;
       state.thisMonth = _data.find((item) => item.group === 'thisMonth')?.data.value;
-      state.fifteenData = _data.filter((item) => item.group === '15d');
+
+      const fifteenData = _data.filter((item) => item.group === '15day').map((item) => item.data);
+      state.fifteenOptions = {
+        xAxis: {
+          type: 'category',
+          data: fifteenData.map((item) => item.timeString),
+          show: false,
+        },
+        yAxis: {
+          type: 'value',
+          show: false,
+        },
+        grid: {
+          top: '2%',
+          bottom: 0,
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+        },
+        series: [
+          {
+            name: '告警数',
+            data: fifteenData.map((item, index) => index * 6),
+
+            type: 'bar',
+            itemStyle: {
+              color: '#2F54EB',
+            },
+          },
+        ],
+      };
     }
   };
 
@@ -257,7 +291,7 @@ const Dashboard = observer(() => {
             footer={[{ title: '当月告警', value: state.thisMonth, status: 'success' }]}
             span={6}
           >
-            <img src={require('/public/images/media/dashboard-1.png')} />
+            <Echarts options={state.fifteenOptions} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title="告警配置"
@@ -278,7 +312,7 @@ const Dashboard = observer(() => {
                 <div>
                   <ul>
                     {state.alarmList.slice(0, 3).map((item) => (
-                      <li>
+                      <li key={item.id}>
                         <div
                           style={{ display: 'flex', justifyContent: 'space-between', margin: 10 }}
                         >
