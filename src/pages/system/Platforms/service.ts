@@ -68,6 +68,24 @@ class Service extends BaseService<platformsType> {
     request(`/${SystemConst.API_BASE}/api-client/operations`, { method: 'GET' });
 
   /**
+   * 新增可授权的接口ID
+   */
+  apiOperationsAdd = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/api-client/operations/_batch`, {
+      method: 'PATCH',
+      data: data || [],
+    });
+
+  /**
+   * 删除可授权的接口ID
+   */
+  apiOperationsRemove = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/api-client/operations/_batch`, {
+      method: 'DELETE',
+      data: data || [],
+    });
+
+  /**
    * 获取可授权的接口ID
    */
   getSdk = () => request(`${this.uri}/sdk`, { method: 'GET' });

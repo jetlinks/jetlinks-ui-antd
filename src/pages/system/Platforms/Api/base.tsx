@@ -68,6 +68,11 @@ export default observer((props: ApiPageProps) => {
     const code = param.get('code');
 
     if (props.isOpenGranted === false) {
+      service.apiOperations().then((resp: any) => {
+        if (resp.status === 200) {
+          setGrantKeys(resp.result);
+        }
+      });
     } else {
       service.getApiGranted(code!).then((resp: any) => {
         if (resp.status === 200) {

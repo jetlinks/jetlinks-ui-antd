@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts/core';
 import type { ECharts, EChartsOption } from 'echarts';
 import {
@@ -57,11 +57,13 @@ export default (props: EchartsProps) => {
   const chartsRef = useRef<any>(null);
 
   const initEcharts = (dom: HTMLDivElement) => {
-    chartsRef.current = echarts.init(dom);
-    if (props.options) {
-      chartsRef.current.setOption(props.options);
-    } else {
-      chartsRef.current.setOption(DefaultOptions);
+    if (!chartsRef.current) {
+      chartsRef.current = echarts.init(dom);
+      if (props.options) {
+        chartsRef.current.setOption(props.options);
+      } else {
+        chartsRef.current.setOption(DefaultOptions);
+      }
     }
   };
 
@@ -72,12 +74,6 @@ export default (props: EchartsProps) => {
     }
   };
 
-  const updateOptions = useCallback(() => {
-    if (chartsRef.current && props.options) {
-      chartsRef.current.setOption(props.options);
-    }
-  }, [props.options]);
-
   useEffect(() => {
     (window as Window).addEventListener('resize', updateSize);
 
@@ -87,8 +83,10 @@ export default (props: EchartsProps) => {
   }, []);
 
   useEffect(() => {
-    updateOptions();
-  }, [props.options, chartsRef.current]);
+    if (chartsRef.current && props.options) {
+      chartsRef.current.setOption(props.options);
+    }
+  }, [props.options]);
 
   return (
     <div
