@@ -38,7 +38,7 @@ const GuideItem = (props: GuideItemProps) => {
   };
 
   return (
-    <div className={'home-guide-item arrow'} onClick={jumpPage}>
+    <div className={'home-guide-item step-bar arrow-2'} onClick={jumpPage}>
       <div className={'item-english'}>{props.english}</div>
       <div className={'item-title'}>{props.name}</div>
       <div className={`item-index`}>
@@ -52,7 +52,10 @@ const Guide = (props: GuideProps) => {
   return (
     <div className={'home-guide'}>
       <Title title={props.title} />
-      <div className={'home-guide-items'}>
+      <div
+        className={'home-guide-items'}
+        style={{ gridTemplateColumns: `repeat(${props.data ? props.data.length : 1}, 1fr)` }}
+      >
         {props.data.map((item, index) => (
           <GuideItem {...item} index={index + 1} />
         ))}

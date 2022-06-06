@@ -9,7 +9,7 @@ import Service from './service';
 export const service = new Service();
 const Home = () => {
   type ViewType = keyof typeof ViewMap;
-  const [current, setCurrent] = useState<ViewType>('init');
+  const [current, setCurrent] = useState<ViewType>('device');
 
   const ViewMap = {
     init: <Init changeView={(value: ViewType) => setCurrent(value)} />,
@@ -24,7 +24,7 @@ const Home = () => {
         if (resp.result.length == 0) {
           setCurrent('init');
         } else {
-          setCurrent(resp.result[0]?.content);
+          // setCurrent(resp.result[0]?.content);
         }
       }
     });

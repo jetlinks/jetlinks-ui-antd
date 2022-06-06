@@ -2,39 +2,29 @@
 @bodyPadding: 24px 16px;
 @margin: 24px;
 
+.home-base {
+  position: relative;
+  padding: @bodyPadding;
+  background-color: #fff;
+}
+
 .home-guide {
   margin-bottom: @margin;
   padding: @bodyPadding;
   background-color: #fff;
 
   .home-guide-items {
-    display: flex;
-    gap: 56px;
+    display: grid;
+    grid-column-gap: 56px;
   }
 }
 
 .home-guide-item {
   position: relative;
-  flex-grow: 1;
   padding: 16px;
   background: linear-gradient(135.62deg, #f6f7fd 22.27%, rgba(255, 255, 255, 0.86) 91.82%);
   border-radius: 2px;
   box-shadow: 0 4px 18px #efefef;
-
-  &.arrow {
-    &:not(:last-child) {
-      &::after {
-        position: absolute;
-        top: 50%;
-        right: -60px;
-        width: 60px;
-        height: 40px;
-        background: url('/images/home/arrow-2.png') no-repeat center;
-        transform: translateY(-50%);
-        content: ' ';
-      }
-    }
-  }
 
   .item-english {
     color: #4f4f4f;
@@ -85,12 +75,11 @@
 }
 
 .home-body {
-  position: relative;
+  .home-base;
+
   height: 500px;
   margin-bottom: @margin;
-  padding: @bodyPadding;
   overflow: hidden;
-  background-color: #fff;
 
   .home-body-img {
     position: absolute;
@@ -102,12 +91,89 @@
 }
 
 .home-statistics {
-  position: relative;
-  padding: @bodyPadding;
-  background-color: #fff;
+  .home-base;
 
   .home-statistics-body {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
+  }
+}
+
+.step-item-after {
+  position: absolute;
+  top: 50%;
+  right: -60px;
+  width: 60px;
+  height: 40px;
+  transform: translateY(-50%);
+  content: ' ';
+}
+
+.home-step {
+  .home-base;
+
+  .home-step-items {
+    display: grid;
+    grid-column-gap: 66px;
+
+    .step-item {
+      display: flex;
+      flex-direction: column;
+
+      .step-item-title {
+        position: relative;
+        padding: 16px 24px;
+        color: #333;
+        font-weight: bold;
+        font-size: 20px;
+        background-color: #f8f9fd;
+
+        .step-item-img {
+          position: absolute;
+          top: 0;
+          right: 0;
+          z-index: 1;
+        }
+
+        > span {
+          position: relative;
+          z-index: 2;
+        }
+      }
+
+      .step-item-content {
+        flex-grow: 1;
+        height: auto;
+        padding: 24px;
+        border-right: 1px solid #e5edf4;
+        border-bottom: 1px solid #e5edf4;
+        border-left: 1px solid #e5edf4;
+      }
+    }
+  }
+}
+
+.step-bar {
+  position: relative;
+
+  &.arrow-1 {
+    &:not(:last-child) {
+      &::after {
+        .step-item-after;
+
+        background: url('/images/home/arrow-1.png') no-repeat center;
+      }
+    }
+  }
+
+  &.arrow-2 {
+    &:not(:last-child) {
+      &::after {
+        .step-item-after;
+
+        background: url('/images/home/arrow-2.png') no-repeat center;
+      }
+    }
   }
 }
