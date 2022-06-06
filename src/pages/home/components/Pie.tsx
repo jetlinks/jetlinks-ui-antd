@@ -15,11 +15,11 @@ const Pie = (props: Props) => {
         series: [
           {
             type: 'pie',
-            radius: [30, 50],
+            radius: [20, 40],
             top: 0,
-            height: 80,
+            height: 70,
             left: 'center',
-            width: 80,
+            width: 70,
             itemStyle: {
               borderColor: '#fff',
               borderWidth: 1,

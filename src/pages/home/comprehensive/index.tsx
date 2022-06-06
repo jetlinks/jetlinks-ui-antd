@@ -1,7 +1,7 @@
 import { PermissionButton } from '@/components';
 import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { Col, message, Progress, Row } from 'antd';
+import { Col, message, Row } from 'antd';
 import Body from '../components/Body';
 import Guide from '../components/Guide';
 import Statistics from '../components/Statistics';
@@ -187,17 +187,7 @@ const Comprehensive = () => {
             {
               name: 'JVM内存',
               value: String(jvmValue) + '%',
-              children: (
-                <Progress
-                  type="circle"
-                  width={80}
-                  strokeColor={'#2F54EB'}
-                  trailColor={'#979AFF'}
-                  style={{ marginBottom: 10 }}
-                  format={() => ''}
-                  percent={jvmValue}
-                />
-              ),
+              children: <Pie value={jvmValue} />,
             },
           ]}
           title="基础统计"
