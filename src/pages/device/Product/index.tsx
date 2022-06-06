@@ -12,7 +12,7 @@ import {
 import Service from '@/pages/device/Product/service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { useHistory, useLocation } from 'umi';
+import { useHistory } from 'umi';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
@@ -25,6 +25,7 @@ import { downloadObject } from '@/utils/util';
 import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
 import { omit } from 'lodash';
+import useLocation from '@/hooks/route/useLocation';
 
 export const service = new Service('device-product');
 export const statusMap = {
@@ -81,11 +82,12 @@ const Product = observer(() => {
   const location = useLocation();
 
   useEffect(() => {
-    if ((location as any).query?.save === 'true') {
+    const { state } = location;
+    if (state && state.save) {
       setCurrent(undefined);
       setVisible(true);
     }
-  }, []);
+  }, [location]);
 
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);

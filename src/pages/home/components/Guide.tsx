@@ -20,7 +20,7 @@ interface GuideItemProps {
   name: string;
   english: string;
   url: string;
-  param: string;
+  param?: Record<string, any>;
   index?: number;
   auth: boolean;
 }
@@ -31,7 +31,7 @@ const GuideItem = (props: GuideItemProps) => {
 
   const jumpPage = () => {
     if (path && props.auth) {
-      history.push(`${path}${props.param}`);
+      history.push(`${path}`, props.param);
     } else {
       message.warning('暂无权限，请联系管理员');
     }
@@ -57,7 +57,7 @@ const Guide = (props: GuideProps) => {
         style={{ gridTemplateColumns: `repeat(${props.data ? props.data.length : 1}, 1fr)` }}
       >
         {props.data.map((item, index) => (
-          <GuideItem {...item} index={index + 1} />
+          <GuideItem {...item} index={index + 1} key={item.key} />
         ))}
       </div>
     </div>
