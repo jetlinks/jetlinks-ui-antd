@@ -1,0 +1,114 @@
+@import '~antd/es/style/themes/default.less';
+
+@bodyPadding: 24px 16px;
+@margin: 24px;
+
+.home-guide {
+  margin-bottom: @margin;
+  padding: @bodyPadding;
+  background-color: #fff;
+
+  .home-guide-items {
+    display: flex;
+    gap: 56px;
+  }
+}
+
+.home-guide-item {
+  position: relative;
+  flex-grow: 1;
+  padding: 16px;
+  background: linear-gradient(135.62deg, #f6f7fd 22.27%, rgba(255, 255, 255, 0.86) 91.82%);
+  border-radius: 2px;
+  box-shadow: 0 4px 18px #efefef;
+
+  &.arrow {
+    &:not(:last-child) {
+      &::after {
+        position: absolute;
+        top: 50%;
+        right: -60px;
+        width: 60px;
+        height: 40px;
+        background: url('/images/home/arrow-2.png') no-repeat center;
+        transform: translateY(-50%);
+        content: ' ';
+      }
+    }
+  }
+
+  .item-english {
+    color: #4f4f4f;
+  }
+
+  .item-title {
+    margin: 20px 0;
+    color: @text-color;
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .item-index {
+    position: absolute;
+    right: 10%;
+    bottom: 0;
+  }
+}
+
+.home-title {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-left: 18px;
+  font-weight: bold;
+  font-size: 18px;
+
+  &::after {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    background-color: @primary-color;
+    border: 1px solid #b4c0da;
+    transform: translateY(-50%);
+    content: ' ';
+  }
+
+  .home-title-english {
+    position: absolute;
+    top: 30px;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 12px;
+  }
+}
+
+.home-body {
+  position: relative;
+  height: 500px;
+  margin-bottom: @margin;
+  padding: @bodyPadding;
+  overflow: hidden;
+  background-color: #fff;
+
+  .home-body-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 100%;
+  }
+}
+
+.home-statistics {
+  position: relative;
+  padding: @bodyPadding;
+  background-color: #fff;
+
+  .home-statistics-body {
+    display: flex;
+    gap: 24px;
+  }
+}

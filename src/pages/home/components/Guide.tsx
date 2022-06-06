@@ -1,36 +1,66 @@
-import { Card, Col, Row } from 'antd';
+import './index.less';
+import { getMenuPathByCode } from '@/utils/menu';
+import { message } from 'antd';
+import useHistory from '@/hooks/route/useHistory';
+import Title from './Title';
 
-interface Props {
+const Image = {
+  1: require('/public/images/home/1.png'),
+  2: require('/public/images/home/2.png'),
+  3: require('/public/images/home/3.png'),
+};
+
+interface GuideProps {
   title: string;
-  data: any[];
-  jump?: (auth: boolean, url: string, param: string) => void;
+  data: GuideItemProps[];
 }
 
-const Guide = (props: Props) => {
-  const { title, data, jump } = props;
+interface GuideItemProps {
+  key: string;
+  name: string;
+  english: string;
+  url: string;
+  param: string;
+  index?: number;
+  auth: boolean;
+}
+
+const GuideItem = (props: GuideItemProps) => {
+  const path = getMenuPathByCode(props.url);
+  const history = useHistory();
+
+  const jumpPage = () => {
+    if (path && props.auth) {
+      history.push(`${path}${props.param}`);
+    } else {
+      message.warning('暂无权限，请联系管理员');
+    }
+  };
+
   return (
-    <Card>
-      <div style={{ marginBottom: 15 }}>
-        <h3>{title}</h3>
+    <div className={'home-guide-item arrow'} onClick={jumpPage}>
+      <div className={'item-english'}>{props.english}</div>
+      <div className={'item-title'}>{props.name}</div>
+      <div className={`item-index`}>
+        <img src={Image[props.index!]} />
       </div>
-      <Row gutter={24}>
-        {data.map((item) => (
-          <Col key={item.key} span={8}>
-            <Card
-              bordered
-              onClick={() => {
-                if (jump) {
-                  jump(item.auth, item.url, item.param);
-                }
-              }}
-            >
-              {item.name}
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    </Card>
+    </div>
   );
 };
+
+const Guide = (props: GuideProps) => {
+  return (
+    <div className={'home-guide'}>
+      <Title title={props.title} />
+      <div className={'home-guide-items'}>
+        {props.data.map((item, index) => (
+          <GuideItem {...item} index={index + 1} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+Guide.Item = GuideItem;
 
 export default Guide;
