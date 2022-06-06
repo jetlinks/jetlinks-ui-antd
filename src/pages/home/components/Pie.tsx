@@ -1,6 +1,7 @@
 import Echarts from '@/components/DashBoard/echarts';
 import { useEffect, useState } from 'react';
 import type { EChartsOption } from 'echarts';
+
 interface Props {
   value: number;
 }

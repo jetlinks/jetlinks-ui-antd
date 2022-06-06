@@ -1,4 +1,4 @@
-import { Col, Row, Tooltip, message } from 'antd';
+import { Col, message, Row, Tooltip } from 'antd';
 import { PermissionButton } from '@/components';
 import { Body, Guide } from '../components';
 import Statistics from '../components/Statistics';
