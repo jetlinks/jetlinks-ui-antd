@@ -1,4 +1,4 @@
-import { Col, Row, Tooltip, message } from 'antd';
+import { Col, message, Row, Tooltip } from 'antd';
 import { PermissionButton } from '@/components';
 import { Body, Guide } from '../components';
 import Statistics from '../components/Statistics';
@@ -46,7 +46,9 @@ const Device = () => {
       english: 'CREATE PRODUCT',
       auth: !!productPermission.add,
       url: 'device/Product',
-      param: '?save=true',
+      param: {
+        save: true,
+      },
     },
     {
       key: 'device',
@@ -54,7 +56,9 @@ const Device = () => {
       english: 'CREATE DEVICE',
       auth: !!devicePermission.add,
       url: 'device/Instance',
-      param: '?save=true',
+      param: {
+        save: true,
+      },
     },
     {
       key: 'rule-engine',
@@ -62,31 +66,11 @@ const Device = () => {
       english: 'RULE ENGINE',
       auth: !!rulePermission.add,
       url: 'rule-engine/Instance',
-      param: '?save=true',
+      param: {
+        save: true,
+      },
     },
   ];
-
-  // const statisticsList = [{
-  //   key: 'product',
-  //   name: '1、创建产品',
-  //   auth: !!productPermission.add,
-  //   url: 'device/Product',
-  //   param: "?save=true"
-  // }, {
-  //   key: 'device',
-  //   name: '2、创建设备',
-  //   auth: !!devicePermission.add,
-  //   url: 'device/Instance',
-  //   param: "?save=true"
-  // },
-  // {
-  //   key: 'rule-engine',
-  //   name: '3、规则引擎',
-  //   auth: !!rulePermission.add,
-  //   url: 'rule-engine/Instance',
-  //   param: "?save=true"
-  // }
-  // ];
 
   return (
     <Row gutter={24}>

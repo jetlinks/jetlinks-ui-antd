@@ -90,6 +90,10 @@ const Instance = () => {
           type: 'or',
         },
       ]);
+      if (location.state && location.state?.save) {
+        setVisible(true);
+        setCurrent({});
+      }
     }
   }, [location]);
 

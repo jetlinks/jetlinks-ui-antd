@@ -1,44 +1,37 @@
-import * as echarts from 'echarts';
-import { useEffect, useRef } from 'react';
+import Echarts from '@/components/DashBoard/echarts';
+import { useEffect, useState } from 'react';
+import type { EChartsOption } from 'echarts';
 
 interface Props {
   value: number;
 }
 
 const Pie = (props: Props) => {
-  const myChart: any = useRef(null);
+  const [options, setOptions] = useState<EChartsOption>({});
 
   useEffect(() => {
-    const dom = document.getElementById('charts');
-    if (dom) {
-      const option = {
-        series: [
-          {
-            type: 'pie',
-            radius: [20, 40],
-            top: 0,
-            height: 70,
-            left: 'center',
-            width: 70,
-            itemStyle: {
-              borderColor: '#fff',
-              borderWidth: 1,
-            },
-            label: {
-              show: false,
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [props.value, 100 - props.value],
+    setOptions({
+      color: ['#2F54EB', '#979AFF'],
+      series: [
+        {
+          type: 'pie',
+          radius: ['100%', '50%'],
+          center: ['50%', '50%'],
+          width: 80,
+          label: {
+            show: false,
           },
-        ],
-      };
-      myChart.current = myChart.current || echarts.init(dom);
-      myChart.current.setOption(option);
-    }
+          data: [props.value, 100 - props.value],
+        },
+      ],
+    });
   }, [props.value]);
-  return <div id="charts" style={{ width: '100%', height: 80 }}></div>;
+
+  return (
+    <div style={{ width: '100%', height: 80 }}>
+      <Echarts options={options} />
+    </div>
+  );
 };
 
 export default Pie;
