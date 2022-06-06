@@ -70,9 +70,11 @@ const Property = (props: Props) => {
                 />
               </Tooltip>
             )}
-          <Tooltip placement="top" title="获取最新属性值">
-            <SyncOutlined onClick={refreshProperty} />
-          </Tooltip>
+          {data.expands?.type.includes('read') && (
+            <Tooltip placement="top" title="获取最新属性值">
+              <SyncOutlined onClick={refreshProperty} />
+            </Tooltip>
+          )}
           <Tooltip placement="top" title="详情">
             <UnorderedListOutlined
               onClick={() => {

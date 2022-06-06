@@ -17,7 +17,7 @@ interface FooterItem {
 
 interface CardItemProps {
   span: number;
-  title: string;
+  title: string | React.ReactNode;
   value: any;
   footer: false | FooterItem[];
   showValue?: boolean;

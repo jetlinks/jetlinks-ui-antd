@@ -26,6 +26,7 @@ import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
+import useLocation from '@/hooks/route/useLocation';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -38,6 +39,7 @@ const InstanceDetail = observer(() => {
   const params = useParams<{ id: string }>();
   const service = new Service('device-instance');
   const { permission } = PermissionButton.usePermission('device/Instance');
+  const location = useLocation();
 
   // const resetMetadata = async () => {
   //   const resp = await service.deleteMetadata(params.id);
@@ -155,7 +157,6 @@ const InstanceDetail = observer(() => {
 
   const getDetail = (id: string) => {
     service.detail(id).then((response) => {
-      console.log(response.result);
       InstanceModel.detail = response?.result;
       const datalist = [...baseList];
       if (response.result.protocol === 'modbus-tcp') {
@@ -243,6 +244,13 @@ const InstanceDetail = observer(() => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const { state } = location;
+    if (state && state?.tab) {
+      setTab(state?.tab);
+    }
+  }, [location]);
 
   return (
     <PageContainer

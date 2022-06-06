@@ -43,6 +43,14 @@
     right: 10%;
     bottom: 0;
   }
+
+  .item-index-echarts {
+    .item-index;
+
+    right: 12px;
+    bottom: 5%;
+    width: 50%;
+  }
 }
 
 .home-title {
@@ -78,8 +86,8 @@
 .home-body {
   .home-base;
 
-  height: 500px;
   margin-bottom: @margin;
+  padding-bottom: 26.5%;
   overflow: hidden;
 
   .home-body-img {
@@ -87,7 +95,13 @@
     top: 0;
     left: 0;
     z-index: 1;
+    width: 100%;
     height: 100%;
+
+    > img {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 

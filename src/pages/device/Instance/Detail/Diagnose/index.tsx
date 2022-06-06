@@ -131,9 +131,9 @@ const Diagnose = () => {
     };
   }, []);
   return (
-    <Card>
+    <Card className="diagnose">
       <div className={current === 'message' ? 'header-message' : 'header'}>
-        <Row gutter={24} style={{ padding: 10 }}>
+        <Row gutter={24} style={{ padding: 10, width: '100%' }}>
           {list.map((item: ListProps) => (
             <Col
               span={8}

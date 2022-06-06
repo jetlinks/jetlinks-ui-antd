@@ -17,7 +17,6 @@ const Pie = (props: Props) => {
           type: 'pie',
           radius: ['100%', '50%'],
           center: ['50%', '50%'],
-          width: 80,
           label: {
             show: false,
           },
