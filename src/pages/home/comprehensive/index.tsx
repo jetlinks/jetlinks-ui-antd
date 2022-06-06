@@ -299,43 +299,81 @@ const Comprehensive = () => {
           ]}
         />
       </Col>
-      <Col span={24}>
+      <Col span={24} style={{ marginTop: 24 }}>
         <Steps
           title={
             <span>
-              设备接入推荐步骤
-              <Tooltip title={'不同的设备因为通信协议的不用，存在接入步骤的差异'}>
+              运维管理推荐步骤
+              <Tooltip title="请根据业务需要对下述步骤进行选择性操作。">
                 <QuestionCircleOutlined style={{ paddingLeft: 12 }} />
               </Tooltip>
             </span>
           }
           data={[
             {
-              title: '创建产品',
-              content:
-                '产品是设备的集合，通常指一组具有相同功能的设备。物联设备必须通过产品进行接入方式配置。',
-              onClick: () => {},
+              title: '协议管理',
+              content: '根据业务需求自定义开发对应的产品（设备模型）接入协议，并上传到平台。',
+              url: require('/public/images/home/bottom-1.png'),
+              onClick: () => {
+                const url = getMenuPathByCode(MENUS_CODE['link/Protocol']);
+                if (!!url) {
+                  history.push(url);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
+              },
             },
             {
-              title: '配置产品接入方式',
-              content:
-                '通过产品对同一类型的所有设备进行统一的接入方式配置。请参照设备铭牌说明选择匹配的接入方式。',
-              onClick: () => {},
+              title: '证书管理',
+              content: '统一维护平台内的证书，用于数据通信加密。',
+              url: require('/public/images/home/bottom-6.png'),
+              onClick: () => {
+                const url = getMenuPathByCode(MENUS_CODE['link/Certificate']);
+                if (!!url) {
+                  history.push(url);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
+              },
             },
             {
-              title: '添加测试设备',
-              content: '添加单个设备，用于验证产品模型是否配置正确。',
-              onClick: () => {},
+              title: '网络组件',
+              content: '根据不同的传输类型配置平台底层网络组件相关参数。',
+              url: require('/public/images/home/bottom-3.png'),
+              onClick: () => {
+                const url = getMenuPathByCode(MENUS_CODE['link/Type']);
+                if (!!url) {
+                  history.push(url);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
+              },
             },
             {
-              title: '功能调试',
-              content: '对添加的测试设备进行功能调试，验证能否连接到平台，设备功能是否配置正确。',
-              onClick: () => {},
+              title: '设备接入网关',
+              content: '根据不同的传输类型，关联消息协议，配置设备接入网关相关参数。',
+              url: require('/public/images/home/bottom-4.png'),
+              onClick: () => {
+                const url = getMenuPathByCode(MENUS_CODE['link/Gateway']);
+                if (!!url) {
+                  history.push(url);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
+              },
             },
             {
-              title: '批量添加设备',
-              content: '批量添加同一产品下的设备',
-              onClick: () => {},
+              title: '日志管理',
+              content: '监控系统日志，及时处理系统异常。',
+              url: require('/public/images/home/bottom-5.png'),
+              onClick: () => {
+                const url = getMenuPathByCode(MENUS_CODE['Log']);
+                if (!!url) {
+                  history.push(url);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
+              },
             },
           ]}
         />
