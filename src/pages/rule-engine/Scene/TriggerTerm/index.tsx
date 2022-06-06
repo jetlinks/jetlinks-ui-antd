@@ -366,6 +366,9 @@ const TriggerTerm = (props: Props, ref: any) => {
                           'value[0]': {
                             type: 'string',
                             'x-component': 'Input',
+                            'x-component-props': {
+                              placeholder: '请输入过滤条件值',
+                            },
                             'x-decorator': 'FormItem',
                             'x-decorator-props': {
                               style: {

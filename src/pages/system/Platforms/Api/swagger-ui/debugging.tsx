@@ -141,7 +141,7 @@ export default observer(() => {
             column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '参数名称' },
+              'x-component-props': { title: '参数值' },
               properties: {
                 values: {
                   type: 'string',
