@@ -5,7 +5,7 @@ import { Col, message, Row } from 'antd';
 import Body from '../components/Body';
 import Guide from '../components/Guide';
 import Statistics from '../components/Statistics';
-import Steps from '../components/Steps';
+// import Steps from '../components/Steps';
 import { service } from '..';
 import { useEffect, useState } from 'react';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
@@ -17,6 +17,9 @@ const Comprehensive = () => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
   const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
+  const accessPermission = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
+  const logPermission = getMenuPathByCode(MENUS_CODE['Log']);
+  const linkPermission = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
 
   const [productCount, setProductCount] = useState<number>(0);
   const [deviceCount, setDeviceCount] = useState<number>(0);
@@ -37,7 +40,6 @@ const Comprehensive = () => {
     }
   };
 
-  // websocket
   useEffect(() => {
     getProductCount();
     getDeviceCount();
@@ -80,7 +82,6 @@ const Comprehensive = () => {
 
   const history = useHistory();
   // // 跳转
-
   const guideList = [
     {
       key: 'product',
@@ -88,7 +89,9 @@ const Comprehensive = () => {
       english: 'CREATE PRODUCT',
       auth: !!productPermission.add,
       url: 'device/Product',
-      param: '?save=true',
+      param: {
+        save: true,
+      },
     },
     {
       key: 'device',
@@ -96,7 +99,9 @@ const Comprehensive = () => {
       english: 'CREATE DEVICE',
       auth: !!devicePermission.add,
       url: 'device/Instance',
-      param: '?save=true',
+      param: {
+        save: true,
+      },
     },
     {
       key: 'rule-engine',
@@ -104,34 +109,39 @@ const Comprehensive = () => {
       english: 'RULE ENGINE',
       auth: !!rulePermission.add,
       url: 'rule-engine/Instance',
-      param: '?save=true',
+      param: {
+        save: true,
+      },
     },
   ];
 
   const guideOpsList = [
     {
-      key: 'product',
+      key: 'access',
       name: '设备接入配置',
-      english: 'CREATE PRODUCT',
-      auth: !!productPermission.add,
-      url: 'device/Product',
-      param: '?save=true',
+      english: 'DEVICE ACCESS CONFIGURATION',
+      auth: !!accessPermission,
+      url: 'link/AccessConfig',
     },
     {
-      key: 'device',
+      key: 'logger',
       name: '日志排查',
-      english: 'CREATE DEVICE',
-      auth: !!devicePermission.add,
-      url: 'device/Instance',
-      param: '?save=true',
+      english: 'LOG SCREEN',
+      auth: !!logPermission,
+      url: 'Log',
+      param: {
+        key: 'system',
+      },
     },
     {
-      key: 'rule-engine',
+      key: 'realtime',
       name: '实时监控',
-      english: 'RULE ENGINE',
-      auth: !!rulePermission.add,
-      url: 'rule-engine/Instance',
-      param: '?save=true',
+      english: 'REAL-TIME MONITORING',
+      auth: !!linkPermission,
+      url: 'link/DashBoard',
+      param: {
+        save: true,
+      },
     },
   ];
 
@@ -195,7 +205,7 @@ const Comprehensive = () => {
             <div style={{ fontSize: 14, fontWeight: 400 }}>
               <a
                 onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
+                  const url = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
                   if (!!url) {
                     history.push(`${url}`);
                   } else {
@@ -212,12 +222,12 @@ const Comprehensive = () => {
       <Col span={24}>
         <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
       </Col>
-      <Col span={24}>
+      {/* <Col span={24}>
         <Steps />
       </Col>
       <Col span={24}>
         <Steps />
-      </Col>
+      </Col> */}
     </Row>
   );
 };
