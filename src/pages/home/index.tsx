@@ -26,7 +26,7 @@ const Home = () => {
         } else {
           setCurrent(resp.result[0]?.content);
         }
-        setCurrent('device');
+        setCurrent('ops');
       }
     });
   }, []);
