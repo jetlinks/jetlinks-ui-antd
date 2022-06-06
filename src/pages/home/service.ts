@@ -12,6 +12,15 @@ class Service {
       method: 'POST',
       data,
     });
+  // 设备数量
+  deviceCount = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/device/instance/_count`, { methods: 'GET', params: data });
+  // 产品数量
+  productCount = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/device-product/_count`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;
