@@ -19,6 +19,11 @@ class Service {
       method: 'POST',
       data,
     });
+
+  getAlarmLevel = () =>
+    request(`/${SystemConst.API_BASE}/alarm/config/default/level`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

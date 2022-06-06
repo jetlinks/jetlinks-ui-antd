@@ -1,6 +1,6 @@
 import { Col, Row, Tooltip } from 'antd';
 import { PermissionButton } from '@/components';
-import { Guide, Body } from '../components';
+import { Body, Guide } from '../components';
 import Statistics from '../components/Statistics';
 import Steps from '../components/Steps';
 import { QuestionCircleOutlined } from '@ant-design/icons';

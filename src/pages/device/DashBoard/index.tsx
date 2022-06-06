@@ -1,11 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Badge } from 'antd';
+import { Card } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import './index.less';
 import Service from './service';
 import encodeQuery from '@/utils/encodeQuery';
 import { useRequest } from 'umi';
-import DashBoard from '@/components/DashBoard';
+import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import type { EChartsOption } from 'echarts';
 import Echarts from '@/components/DashBoard/echarts';
 import moment from 'moment';
@@ -13,44 +13,11 @@ import { AMap } from '@/components';
 import { Marker } from 'react-amap';
 import { EnvironmentOutlined } from '@ant-design/icons';
 
-interface TopCardProps {
-  isEcharts: boolean;
-  title: string;
-  total?: number | string;
-  topRender?: any;
-  bottomRender: () => React.ReactNode;
-}
-
 type RefType = {
   getValues: Function;
 };
 
 const service = new Service('device/instance');
-const TopCard = (props: TopCardProps) => {
-  return (
-    <div className={'top-card-item'}>
-      {props.isEcharts ? (
-        <div className={'top-card-top'}>
-          <div className={'top-card-top-charts'}>
-            <div>{props.title}</div>
-            <div className={'top-card-top-charts-total'}>{props.total}</div>
-            <div style={{ height: 45, width: '100%' }}>{props.topRender}</div>
-          </div>
-        </div>
-      ) : (
-        <div className={'top-card-top'}>
-          <div className={'top-card-top-left'}></div>
-          <div className={'top-card-top-right'}>
-            <div className={'top-card-title'}>{props.title}</div>
-            <div className={'top-card-total'}>{props.total}</div>
-          </div>
-        </div>
-      )}
-
-      <div className={'top-card-bottom'}>{props.bottomRender()}</div>
-    </div>
-  );
-};
 
 const DeviceBoard = () => {
   const [deviceOnline, setDeviceOnline] = useState(0);
@@ -62,6 +29,7 @@ const DeviceBoard = () => {
   const [yesterdayCount, setYesterdayCount] = useState(0);
   const [deviceOptions, setDeviceOptions] = useState<EChartsOption>({});
   const [month, setMonth] = useState(0);
+  const [day, setDay] = useState(0);
   const [point, setPoint] = useState([]);
 
   const ref = useRef<RefType>();
@@ -143,10 +111,24 @@ const DeviceBoard = () => {
           type: 'value',
           show: false,
         },
+        grid: {
+          top: '2%',
+          bottom: 0,
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+        },
         series: [
           {
+            name: '在线数',
             data: y,
             type: 'bar',
+            itemStyle: {
+              color: '#2F54EB',
+            },
           },
         ],
       });
@@ -173,6 +155,18 @@ const DeviceBoard = () => {
         object: 'message',
         measurement: 'quantity',
         dimension: 'agg',
+        group: 'oneday',
+        params: {
+          time: '1d',
+          format: 'yyyy-MM-dd',
+          from: 'now-1d',
+        },
+      },
+      {
+        dashboard: 'device',
+        object: 'message',
+        measurement: 'quantity',
+        dimension: 'agg',
         group: 'thisMonth',
         params: {
           time: '1M',
@@ -184,11 +178,19 @@ const DeviceBoard = () => {
     ]);
     if (res.status === 200) {
       const thisMonth = res.result.find((item: any) => item.group === 'thisMonth').data.value;
+      const oneDay = res.result.find((item: any) => item.group === 'oneday').data.value;
+      setDay(oneDay);
       setMonth(thisMonth);
-      const today = res.result.filter((item: any) => item.group !== 'thisMonth');
+      const today = res.result.filter((item: any) => item.group === 'today');
       const x = today.map((item: any) => item.data.timeString);
       const y = today.map((item: any) => item.data.value);
       setDeviceOptions({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+        },
         xAxis: {
           type: 'category',
           boundaryGap: false,
@@ -199,11 +201,37 @@ const DeviceBoard = () => {
           type: 'value',
           show: false,
         },
+        grid: {
+          top: '2%',
+          bottom: 0,
+        },
         series: [
           {
+            name: '消息量',
             data: y,
             type: 'line',
-            areaStyle: {},
+            smooth: true,
+            color: '#685DEB',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: '#685DEB', // 100% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: '#FFFFFF', //   0% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
           },
         ],
       });
@@ -236,7 +264,6 @@ const DeviceBoard = () => {
         setOptions({
           xAxis: {
             type: 'category',
-            boundaryGap: false,
             data: x,
           },
           yAxis: {
@@ -245,8 +272,11 @@ const DeviceBoard = () => {
           series: [
             {
               data: y,
-              type: 'line',
-              areaStyle: {},
+              type: 'bar',
+              barMaxWidth: 20,
+              itemStyle: {
+                color: '#2F54EB',
+              },
             },
           ],
         });
@@ -273,67 +303,90 @@ const DeviceBoard = () => {
   return (
     <PageContainer>
       <div className={'device-dash-board'}>
-        <Card className={'top-card-items'} bodyStyle={{ display: 'flex', gap: 12 }}>
-          <TopCard
+        <DashBoardTopCard>
+          <DashBoardTopCard.Item
             title={'产品数量'}
-            total={productTotal}
-            isEcharts={false}
-            bottomRender={() => (
-              <>
-                <Badge status="success" text="已发布" />
-                <span style={{ padding: '0 4px' }}>{productPublish}</span>
-                <Badge status="error" text="未发布" />{' '}
-                <span style={{ padding: '0 4px' }}>{productUnPublish}</span>
-              </>
-            )}
-          />
-          <TopCard
+            value={productTotal}
+            footer={[
+              {
+                title: '已发布',
+                value: productPublish,
+                status: 'success',
+              },
+              {
+                title: '未发布',
+                value: productUnPublish,
+                status: 'error',
+              },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/device/device-product.png')} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
             title={'设备数量'}
-            total={deviceTotal}
-            isEcharts={false}
-            bottomRender={() => (
-              <>
-                <Badge status="success" text="在线" />{' '}
-                <span style={{ padding: '0 4px' }}>{deviceOnline}</span>
-                <Badge status="error" text="离线" />{' '}
-                <span style={{ padding: '0 4px' }}>{deviceOffline}</span>
-              </>
-            )}
-          />
-          <TopCard
+            value={deviceTotal}
+            footer={[
+              {
+                title: '在线',
+                value: deviceOnline,
+                status: 'success',
+              },
+              {
+                title: '离线',
+                value: deviceOffline,
+                status: 'error',
+              },
+            ]}
+            span={6}
+          >
+            <img src={require('/public/images/device/device-number.png')} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
             title={'当前在线'}
-            total={22}
-            isEcharts={true}
-            topRender={
-              <div style={{ height: 56 }}>
-                <Echarts options={onlineOptions} />
-              </div>
-            }
-            bottomRender={() => <>昨日在线：{yesterdayCount} </>}
-          />
-          <TopCard
+            value={deviceOnline}
+            footer={[
+              {
+                title: '昨日在线',
+                value: yesterdayCount,
+              },
+            ]}
+            span={6}
+          >
+            <Echarts options={onlineOptions} />
+          </DashBoardTopCard.Item>
+          <DashBoardTopCard.Item
             title={'今日设备消息量'}
-            total={2221}
-            isEcharts={true}
-            topRender={
-              <div style={{ height: 56 }}>
-                <Echarts options={deviceOptions} />
-              </div>
-            }
-            bottomRender={() => <>当月设备消息量：{month} </>}
-          />
-        </Card>
+            value={day}
+            footer={[
+              {
+                title: '当月设备消息量',
+                value: month,
+              },
+            ]}
+            span={6}
+          >
+            <Echarts options={deviceOptions} />
+          </DashBoardTopCard.Item>
+        </DashBoardTopCard>
         <DashBoard
           title={'设备消息'}
           options={options}
-          // closeInitialParams={true}
           ref={ref}
           height={500}
           defaultTime={'week'}
           onParamsChange={getEcharts}
         />
         <Card style={{ marginTop: 10 }}>
-          <div>设备分布</div>
+          <div
+            style={{
+              fontSize: '16px',
+              fontWeight: 'bold',
+              marginBottom: 10,
+            }}
+          >
+            设备分布
+          </div>
           <div>
             <AMap
               AMapUI
