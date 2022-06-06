@@ -8,6 +8,7 @@ interface BodyProps {
   className?: string;
   url?: string;
 }
+
 const defaultUrl = require('/public/images/home/content.png');
 export default (props: BodyProps) => {
   return (

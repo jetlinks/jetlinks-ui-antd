@@ -10,6 +10,7 @@ import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import { FireOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import moment from 'moment';
+import Echarts from '@/components/DashBoard/echarts';
 
 const service = new Service();
 export const state = model<{
@@ -19,6 +20,8 @@ export const state = model<{
   enabledConfig: number;
   disabledConfig: number;
   alarmList: any[];
+  ranking: { targetId: string; targetName: string; count: number }[];
+  fifteenOptions: any;
 }>({
   today: 0,
   thisMonth: 0,
@@ -26,6 +29,8 @@ export const state = model<{
   enabledConfig: 0,
   disabledConfig: 0,
   alarmList: [],
+  ranking: [],
+  fifteenOptions: {},
 });
 
 type DashboardItem = {
@@ -70,44 +75,63 @@ const Dashboard = observer(() => {
       from: 'now-1M',
     },
   };
-  // 告警趋势
-  const chartData = {
+
+  const fifteen = {
     dashboard: 'alarm',
     object: 'record',
     measurement: 'trend',
     dimension: 'agg',
-    group: 'alarmTrend',
+    group: '15day',
     params: {
-      time: '1M',
-      targetType: 'device', // product、device、org、other
-      from: 'now-1y', // now-1d、now-1w、now-1M、now-1y
-      format: 'M月',
+      time: '1d',
+      format: 'yyyy-MM-dd',
+      targetType: 'product',
+      from: 'now-15d',
       to: 'now',
-      limit: 12,
-    },
-  };
-  // 告警排名
-  const order = {
-    dashboard: 'alarm',
-    object: 'record',
-    measurement: 'rank',
-    dimension: 'agg',
-    group: 'alarmRank',
-    params: {
-      time: '1h',
-      targetType: 'device',
-      from: 'now-1w',
-      to: 'now',
-      limit: 10,
+      limit: 15,
     },
   };
 
   const getDashboard = async () => {
-    const resp = await service.dashboard([today, thisMonth, order]);
+    const resp = await service.dashboard([today, thisMonth, fifteen]);
     if (resp.status === 200) {
       const _data = resp.result as DashboardItem[];
       state.today = _data.find((item) => item.group === 'today')?.data.value;
       state.thisMonth = _data.find((item) => item.group === 'thisMonth')?.data.value;
+
+      const fifteenData = _data.filter((item) => item.group === '15day').map((item) => item.data);
+      state.fifteenOptions = {
+        xAxis: {
+          type: 'category',
+          data: fifteenData.map((item) => item.timeString),
+          show: false,
+        },
+        yAxis: {
+          type: 'value',
+          show: false,
+        },
+        grid: {
+          top: '2%',
+          bottom: 0,
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow',
+          },
+        },
+        series: [
+          {
+            name: '告警数',
+            data: fifteenData.map((item, index) => index * 6),
+
+            type: 'bar',
+            itemStyle: {
+              color: '#2F54EB',
+            },
+          },
+        ],
+      };
     }
   };
 
@@ -140,22 +164,78 @@ const Dashboard = observer(() => {
     }
   };
 
+  const getCurrentAlarm = async () => {
+    const alarmLevel = await service.getAlarmLevel();
+
+    const currentAlarm = await service.getAlarm({});
+    if (currentAlarm.status === 200) {
+      if (alarmLevel.status === 200) {
+        const levels = alarmLevel.result.levels;
+        state.alarmList = currentAlarm.result?.data.map((item: { level: any }) => ({
+          ...item,
+          level: levels.find((l: any) => l.level === item.level)?.title,
+        }));
+      } else {
+        state.alarmList = currentAlarm.result?.data;
+      }
+    }
+  };
   useEffect(() => {
     getDashboard();
     getAlarmConfig();
+    getCurrentAlarm();
   }, []);
 
-  const getEcharts = async () => {
-    // 请求数据
-    const resp = await service.dashboard([chartData]);
+  const getEcharts = async (params: any) => {
+    // 告警趋势
+    const chartData = {
+      dashboard: 'alarm',
+      object: 'record',
+      measurement: 'trend',
+      dimension: 'agg',
+      group: 'alarmTrend',
+      params: {
+        targetType: 'device', // product、device、org、other
+        format: 'yyyy年-M月',
+        time: '1M',
+        // from: 'now-1y', // now-1d、now-1w、now-1M、now-1y
+        // to: 'now',
+        limit: 12,
+        // time: params.time.type === 'today' ? '1h' : '1d',
+        from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
+        to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
+        // limit: 30,
+      },
+    };
 
-    if (resp.status === 200) {
+    // 告警排名
+    const order = {
+      dashboard: 'alarm',
+      object: 'record',
+      measurement: 'rank',
+      dimension: 'agg',
+      group: 'alarmRank',
+      params: {
+        // time: '1h',
+        time: params.time.type === 'today' ? '1h' : '1d',
+        targetType: 'device',
+        from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
+        to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
+        limit: 9,
+      },
+    };
+    // 请求数据
+    const resp = await service.dashboard([chartData, order]);
+
+    if (resp?.status === 200) {
       const xData: string[] = [];
       const sData: number[] = [];
-      resp.result.forEach((item: any) => {
-        xData.push(item.data.timeString);
-        sData.push(item.data.value);
-      });
+      resp.result
+        .filter((item: any) => item.group === 'alarmTrend')
+        .forEach((item: any) => {
+          xData.push(item.data.timeString);
+          sData.push(item.data.value);
+        });
       setOptions({
         tooltip: {
           trigger: 'axis',
@@ -192,6 +272,11 @@ const Dashboard = observer(() => {
           },
         ],
       });
+
+      state.ranking = resp.result
+        ?.filter((item: any) => item.group === 'alarmRank')
+        .map((d: { data: { value: any } }) => d.data?.value)
+        .sort((a: { count: number }, b: { count: number }) => b.count - a.count);
     }
   };
 
@@ -206,7 +291,7 @@ const Dashboard = observer(() => {
             footer={[{ title: '当月告警', value: state.thisMonth, status: 'success' }]}
             span={6}
           >
-            <img src={require('/public/images/media/dashboard-1.png')} />
+            <Echarts options={state.fifteenOptions} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title="告警配置"
@@ -226,35 +311,17 @@ const Dashboard = observer(() => {
                 <div className={'content-left-title'}>最新告警</div>
                 <div>
                   <ul>
-                    {[
-                      {
-                        dateTime: '2022-01-01 00:00:00',
-                        name: '一楼烟感告警',
-                        product: '产品',
-                        level: '1极告警',
-                      },
-                      {
-                        dateTime: '2022-01-01 00:00:00',
-                        name: '一楼烟感告警',
-                        product: '产品',
-                        level: '1极告警',
-                      },
-                      {
-                        dateTime: '2022-01-01 00:00:00',
-                        name: '一楼烟感告警',
-                        product: '产品',
-                        level: '1极告警',
-                      },
-                    ].map((item) => (
-                      <li>
+                    {state.alarmList.slice(0, 3).map((item) => (
+                      <li key={item.id}>
                         <div
                           style={{ display: 'flex', justifyContent: 'space-between', margin: 10 }}
                         >
                           <div>
-                            <FireOutlined style={{ marginRight: 5 }} /> {item.dateTime}
+                            <FireOutlined style={{ marginRight: 5 }} />{' '}
+                            {moment(item.alarmTime).format('YYYY-MM-DD hh:mm:ss')}
                           </div>
-                          <div>{item.name}</div>
-                          <div>{item.product}</div>
+                          <div>{item.alarmName}</div>
+                          <div>{item.state?.text}</div>
                           <div>{item.level}</div>
                         </div>
                       </li>
@@ -269,7 +336,7 @@ const Dashboard = observer(() => {
       <Card style={{ marginTop: 10 }}>
         <DashBoard
           title="告警统计"
-          height={400}
+          height={600}
           options={options}
           onParamsChange={getEcharts}
           ref={alarmCountRef}
@@ -277,40 +344,19 @@ const Dashboard = observer(() => {
             <div className={styles.alarmRank}>
               <h4>告警排名</h4>
               <ul className={styles.rankingList}>
-                {[
-                  {
-                    dateTime: '2022-01-01 00:00:00',
-                    name: '一楼烟感告警',
-                    product: '产品',
-                    level: '543',
-                  },
-                  {
-                    dateTime: '2022-01-01 00:00:00',
-                    name: '一楼烟感告警',
-                    product: '产品',
-                    level: '3445',
-                  },
-                  {
-                    dateTime: '2022-01-01 00:00:00',
-                    name: '一楼烟感告警',
-                    product: '产品',
-                    level: '123123',
-                  },
-                  {
-                    dateTime: '2022-01-01 00:00:00',
-                    name: '一楼烟感告警',
-                    product: '产品',
-                    level: '3123',
-                  },
-                ].map((item, i) => (
-                  <li key={item.dateTime}>
-                    <span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>
-                      {i + 1}
+                {state.ranking?.map((item, i) => (
+                  <li key={item.targetId}>
+                    <img
+                      src={require(`/public/images/rule-engine/dashboard/ranking/${i + 1}.png`)}
+                      alt=""
+                    />
+                    {/*<span className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}>*/}
+                    {/*  {i + 1}*/}
+                    {/*</span>*/}
+                    <span className={styles.rankingItemTitle} title={item.targetName}>
+                      {item.targetName}
                     </span>
-                    <span className={styles.rankingItemTitle} title={item.name}>
-                      {item.name}
-                    </span>
-                    <span className={styles.rankingItemValue}>{item.level}</span>
+                    <span className={styles.rankingItemValue}>{item.count}</span>
                   </li>
                 ))}
               </ul>
