@@ -39,7 +39,7 @@ const UserManage = () => {
         id: 'pages.system.username',
         defaultMessage: '用户名',
       }),
-      align: 'center',
+      // align: 'center',
       dataIndex: 'username',
       ellipsis: true,
     },

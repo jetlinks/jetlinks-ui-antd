@@ -139,10 +139,12 @@ export default (props: SaveProps) => {
   const modalClose = () => {
     if (props.onCancel) {
       props.onCancel();
+      form.reset();
     }
   };
 
   const saveData = useCallback(async () => {
+    console.log(props.data.id);
     const data: any = await form.submit();
     if (data) {
       setLoading(true);
@@ -151,6 +153,7 @@ export default (props: SaveProps) => {
       if (resp.status === 200) {
         modalClose();
         message.success('操作成功');
+        await form.reset();
       }
     }
   }, [props.data]);
