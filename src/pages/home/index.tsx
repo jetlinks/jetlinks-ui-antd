@@ -24,9 +24,8 @@ const Home = () => {
         if (resp.result.length == 0) {
           setCurrent('init');
         } else {
-          // setCurrent(resp.result[0]?.content);
+          setCurrent(resp.result[0]?.content);
         }
-        // setCurrent('ops');
       }
     });
   }, []);
