@@ -1,9 +1,18 @@
 .content {
   margin-left: 30px;
+  .text::before {
+    display: inline-block;
+    margin-right: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
+  }
   :global {
     .ant-upload.ant-upload-select-picture-card {
-      width: 150px;
-      height: 150px;
+      width: 205px;
+      height: 205px;
     }
   }
 }
