@@ -123,8 +123,7 @@ const Dashboard = observer(() => {
         series: [
           {
             name: '告警数',
-            data: fifteenData.map((item, index) => index * 6),
-
+            data: fifteenData.map((item) => item.value),
             type: 'bar',
             itemStyle: {
               color: '#2F54EB',
