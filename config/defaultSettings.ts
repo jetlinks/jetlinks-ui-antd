@@ -15,7 +15,7 @@ const Settings: LayoutSettings & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Jetlinks',
+  title: '',
   pwa: false,
   logo: '/logo.svg',
   iconfontUrl: '/icons/iconfont.js',

@@ -54,12 +54,19 @@ const Basis = () => {
   const detail = async (data: any) => {
     const res = await service.detail(data);
     if (res.status === 200) {
-      setImageUrl(res.result?.[0].properties.logo);
-      form.setFieldsValue(res.result?.[0].properties);
+      const basis = res.result?.filter((item: any) => item.scope === 'basis');
+      const api = res?.result.filter((item: any) => item.scope === 'api');
+      // console.log(basis?.[0])
+      setImageUrl(basis[0].properties?.logo);
+      form.setFieldsValue({
+        title: basis[0].properties.title,
+        headerTheme: basis[0].properties.headerTheme,
+        apikey: api[0].properties.api,
+      });
       setInitialState({
         ...initialState,
         settings: {
-          ...res.result?.[0].properties,
+          ...basis[0].properties,
         },
       });
     }
@@ -71,16 +78,23 @@ const Basis = () => {
         {
           scope: 'basis',
           properties: {
-            ...formData,
-            headerTheme: formData.navTheme,
+            title: formData.title,
+            headerTheme: formData.headerTheme,
+            navTheme: formData.headerTheme,
             logo: imageUrl,
+          },
+        },
+        {
+          scope: 'api',
+          properties: {
+            api: formData.apikey,
           },
         },
       ];
       const res = await service.save(item);
       if (res.status === 200) {
         message.success('保存成功');
-        detail(['basis']);
+        detail(['basis', 'api']);
       }
     } else {
       message.error('请上传图片');
@@ -89,7 +103,7 @@ const Basis = () => {
 
   useEffect(() => {
     console.log(initialState);
-    detail(['basis']);
+    detail(['basis', 'api']);
   }, []);
 
   return (
@@ -113,7 +127,7 @@ const Basis = () => {
               </Form.Item>
               <Form.Item
                 label="主题色"
-                name="navTheme"
+                name="headerTheme"
                 rules={[{ required: true, message: '请选择主题色' }]}
               >
                 <Select>
@@ -131,7 +145,10 @@ const Basis = () => {
             </Form>
           </div>
           <div className={styles.content}>
-            <div style={{ marginBottom: 8 }}>系统logo</div>
+            <div style={{ marginBottom: 8, display: 'flex' }}>
+              系统logo
+              <div className={styles.text}></div>
+            </div>
             <Upload {...uploadProps}>
               {imageUrl ? (
                 <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%' }} />

@@ -7,6 +7,8 @@ import './index.less';
 import encodeQuery from '@/utils/encodeQuery';
 import type { EChartsOption } from 'echarts';
 import moment from 'moment';
+import { Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const service = new Service('media');
 
@@ -200,7 +202,14 @@ export default () => {
             <img src={require('/public/images/media/dashboard-3.png')} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
-            title={'播放中数量'}
+            title={
+              <span>
+                播放中数量
+                <Tooltip title={'当前正在播放的通道数量之和'}>
+                  <QuestionCircleOutlined style={{ marginLeft: 12 }} />
+                </Tooltip>
+              </span>
+            }
             value={playObject ? playObject.playerTotal : 0}
             footer={[
               {
@@ -218,6 +227,7 @@ export default () => {
           title={'播放数量(人次)'}
           options={options}
           height={500}
+          defaultTime={'week'}
           onParamsChange={getEcharts}
         />
       </div>

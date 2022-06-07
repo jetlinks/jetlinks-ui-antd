@@ -2,8 +2,8 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
-import { useIntl, useHistory } from 'umi';
-import { BadgeStatus, PermissionButton, AIcon } from '@/components';
+import { useHistory, useIntl } from 'umi';
+import { AIcon, BadgeStatus, PermissionButton } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import {
   DeleteOutlined,
@@ -306,18 +306,20 @@ export default () => {
           </div>,
         ]}
       />
-      <SaveModal
-        visible={saveVisible}
-        data={editData}
-        type={saveType}
-        onCancel={() => {
-          setSaveVisible(false);
-          setEditData(undefined);
-        }}
-        onReload={() => {
-          actionRef.current?.reload();
-        }}
-      />
+      {saveVisible && (
+        <SaveModal
+          visible={saveVisible}
+          data={editData}
+          type={saveType}
+          onCancel={() => {
+            setSaveVisible(false);
+            setEditData(undefined);
+          }}
+          onReload={() => {
+            actionRef.current?.reload();
+          }}
+        />
+      )}
       <PasswordModal
         visible={passwordVisible}
         onCancel={() => {
