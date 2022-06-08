@@ -1049,7 +1049,10 @@ const Edit = observer((props: Props) => {
         if (deploy) {
           Store.set('product-deploy', deploy);
         } else {
-          message.success('操作成功！');
+          message.success({
+            key: 'metadata',
+            content: '操作成功！',
+          });
         }
         MetadataModel.edit = false;
         MetadataModel.item = {};

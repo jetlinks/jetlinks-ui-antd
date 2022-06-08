@@ -120,7 +120,10 @@ const ProductDetail = observer(() => {
             }
           }
           productModel.current = item;
-          message.success('操作成功');
+          message.success({
+            key: 'metadata',
+            content: '操作成功！',
+          });
         },
         error: async () => {
           message.success('操作失败');
