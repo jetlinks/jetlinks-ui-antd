@@ -189,8 +189,16 @@ const DataSource = observer(() => {
         >
           <Popconfirm
             onConfirm={async () => {
-              await service.remove(record.id);
-              actionRef.current?.reload();
+              const resp: any = await service.remove(record.id);
+              if (resp.status === 200) {
+                message.success(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
             }}
             title="确认删除?"
           >

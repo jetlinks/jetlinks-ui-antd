@@ -15,6 +15,7 @@ import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
 import getRoutes, { extraRouteArr, getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
 import { AIcon } from '@/components';
+import React from 'react';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -198,6 +199,23 @@ export const request: RequestConfig = {
   requestInterceptors: [requestInterceptor],
 };
 
+const MenuItemIcon = (
+  menuItemProps: any,
+  defaultDom: React.ReactNode,
+  props: any,
+): React.ReactNode => {
+  if (defaultDom) {
+    // @ts-ignore
+    const menuItem = React.cloneElement(defaultDom, {
+      // @ts-ignore
+      children: [<AIcon type={menuItemProps.icon as string} />, defaultDom.props.children[1]],
+      ...props,
+    });
+    return menuItem;
+  }
+  return defaultDom;
+};
+
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   // console.log({ ...initialState });
@@ -224,15 +242,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     menuDataRender: () => {
       return getMenus(extraRoutes);
     },
-    menuItemRender: (menuItemProps) => {
-      return (
-        <Link to={menuItemProps.path}>
-          <span className={`antd-pro-menu-item`}>
-            {menuItemProps.icon && <AIcon type={menuItemProps.icon as string} />}
-            <span className={`antd-pro-menu-item-title`}>{menuItemProps.name}</span>
-          </span>
-        </Link>
-      );
+    subMenuItemRender: MenuItemIcon,
+    menuItemRender: (menuItemProps, defaultDom) => {
+      return MenuItemIcon(menuItemProps, defaultDom, {
+        onClick: () => {
+          history.push(menuItemProps.path!);
+        },
+      });
     },
     links: isDev
       ? [
