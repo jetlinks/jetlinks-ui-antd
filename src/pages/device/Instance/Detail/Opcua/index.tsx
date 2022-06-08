@@ -1,5 +1,5 @@
 import PermissionButton from '@/components/PermissionButton';
-import { Badge, Card, Empty, message, Tabs, Tooltip } from 'antd';
+import { Badge, Card, Empty, Input, message, Tabs, Tooltip } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import styles from '@/pages/link/Channel/Opcua/Access/index.less';
@@ -24,7 +24,9 @@ const Opcua = () => {
   const [bindList, setBindList] = useState<any>([]);
   const [opcId, setOpcId] = useState<string>('');
   const actionRef = useRef<ActionType>();
-  const [param, setParam] = useState({});
+  const [param, setParam] = useState<any>({
+    terms: [{ column: 'opcUaId', value: '' }],
+  });
   const [visible, setVisible] = useState<boolean>(false);
   const [channel, setChannel] = useState<any>({});
   const [pointVisiable, setPointVisiable] = useState<boolean>(false);
@@ -34,6 +36,7 @@ const Opcua = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const [propertyValue, setPropertyValue] = useState<any>({});
   const wsRef = useRef<any>();
+  const [filterList, setFilterList] = useState([]);
 
   const columns: ProColumns<any>[] = [
     {
@@ -174,6 +177,7 @@ const Opcua = () => {
       })
       .then((res: any) => {
         setBindList(res.result);
+        setFilterList(res.result);
         setOpcId(res.result?.[0]?.id);
         setParam({
           terms: [{ column: 'opcUaId', value: res.result?.[0]?.id }],
@@ -223,26 +227,59 @@ const Opcua = () => {
 
   return (
     <Card className={styles.list}>
-      <PermissionButton
-        onClick={() => {
-          setVisible(true);
-          setChannel({});
-        }}
-        isPermission={permission.add}
-        key="add"
-        icon={<PlusOutlined />}
-        type="dashed"
-        style={{ width: '200px', margin: '16px 0 18px 20px' }}
-      >
-        新增通道
-      </PermissionButton>
-      {bindList.length > 0 ? (
-        <div style={{ display: 'flex' }}>
-          <div>
+      <div style={{ display: 'flex' }}>
+        <div>
+          <div style={{ width: '250px', marginTop: 15 }}>
+            <Input.Search
+              placeholder="请输入通道名称"
+              allowClear
+              onSearch={(value) => {
+                if (value) {
+                  const items = bindList.filter((item: any) => item.name.match(value));
+                  setFilterList(items);
+                  if (items.length === 0) {
+                    setParam({
+                      terms: [{ column: 'opcUaId', value: '' }],
+                    });
+                  } else {
+                    setParam({
+                      terms: [{ column: 'opcUaId', value: items[0]?.id }],
+                    });
+                    setOpcId(items[0]?.id);
+                  }
+                } else {
+                  setFilterList(bindList);
+                  if (opcId) {
+                    setParam({
+                      terms: [{ column: 'opcUaId', value: opcId }],
+                    });
+                  } else {
+                    setParam({
+                      terms: [{ column: 'opcUaId', value: '' }],
+                    });
+                  }
+                }
+              }}
+            />
+            <PermissionButton
+              onClick={() => {
+                setVisible(true);
+                setChannel({});
+              }}
+              isPermission={permission.add}
+              key="add"
+              icon={<PlusOutlined />}
+              type="dashed"
+              style={{ width: '100%', margin: '16px 0 18px 0' }}
+            >
+              新增通道
+            </PermissionButton>
+          </div>
+          {filterList.length > 0 ? (
             <Tabs
               style={{ height: 600 }}
               tabPosition={'left'}
-              defaultActiveKey={opcId}
+              activeKey={opcId}
               onChange={(e) => {
                 setOpcId(e);
                 setParam({
@@ -250,7 +287,7 @@ const Opcua = () => {
                 });
               }}
             >
-              {bindList.map((item: any) => (
+              {filterList.map((item: any) => (
                 <Tabs.TabPane
                   key={item.id}
                   tab={
@@ -306,56 +343,69 @@ const Opcua = () => {
                 ></Tabs.TabPane>
               ))}
             </Tabs>
-          </div>
-          <div style={{ width: '100%' }}>
-            <ProTable
-              actionRef={actionRef}
-              params={param}
-              columns={columns}
-              rowKey="id"
-              search={false}
-              headerTitle={
-                <>
-                  <PermissionButton
-                    onClick={() => {
-                      setPointVisiable(true);
-                      setCurrent({});
-                    }}
-                    isPermission={permission.add}
-                    key="add"
-                    icon={<PlusOutlined />}
-                    type="primary"
-                  >
-                    {intl.formatMessage({
-                      id: 'pages.data.option.add',
-                      defaultMessage: '新增',
-                    })}
-                  </PermissionButton>
-                </>
-              }
-              request={async (params) => {
-                const res = await service.PointList({
-                  ...params,
-                  sorts: [{ name: 'createTime', order: 'desc' }],
-                });
-                setData(res.result.data);
+          ) : (
+            <Empty description={<>暂无绑定通道</>} />
+          )}
+        </div>
+        <div style={{ width: '100%' }}>
+          <ProTable
+            actionRef={actionRef}
+            params={param}
+            columns={columns}
+            rowKey="id"
+            search={false}
+            headerTitle={
+              <>
+                <PermissionButton
+                  onClick={() => {
+                    setPointVisiable(true);
+                    setCurrent({});
+                  }}
+                  isPermission={permission.add}
+                  key="add"
+                  icon={<PlusOutlined />}
+                  type="primary"
+                >
+                  {intl.formatMessage({
+                    id: 'pages.data.option.add',
+                    defaultMessage: '新增',
+                  })}
+                </PermissionButton>
+              </>
+            }
+            request={async (params) => {
+              if (Object.keys(params).length && !params.terms[0].value) {
                 return {
-                  code: res.message,
+                  code: 200,
                   result: {
-                    data: res.result.data,
+                    data: [],
                     pageIndex: 0,
                     pageSize: 0,
                     total: 0,
                   },
-                  status: res.status,
+                  status: 200,
                 };
-              }}
-            />
-          </div>
+              }
+              const res = await service.PointList({
+                ...params,
+                sorts: [{ name: 'createTime', order: 'desc' }],
+              });
+              setData(res.result.data);
+              return {
+                code: res.message,
+                result: {
+                  data: res.result.data,
+                  pageIndex: res.result.pageIndex,
+                  pageSize: res.result.pageSize,
+                  total: res.result.total,
+                },
+                status: res.status,
+              };
+            }}
+          />
         </div>
-      ) : (
-        <Empty />
-      )}
+      </div>
+
       {visible && edit}
       {pointVisiable && (
         <AddPoint

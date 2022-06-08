@@ -24,7 +24,7 @@ const Access = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const location = useLocation<string>();
-  const [param, setParam] = useState({});
+  const [param, setParam] = useState<any>({});
   const [opcUaId, setOpcUaId] = useState<any>('');
   const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
   const [deviceVisiable, setDeviceVisiable] = useState<boolean>(false);
@@ -37,6 +37,7 @@ const Access = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const [propertyValue, setPropertyValue] = useState<any>({});
   const wsRef = useRef<any>();
+  const [filterList, setFilterList] = useState([]);
 
   const columns: ProColumns<any>[] = [
     {
@@ -174,14 +175,17 @@ const Access = () => {
         }),
       )
       .then((res: any) => {
-        console.log(res.result);
         if (res.status === 200) {
-          setDeviceId(res.result[0]?.id);
-          setProductId(res.result[0]?.productId);
-          setParam({
-            terms: [{ column: 'deviceId', value: res.result[0]?.deviceId }],
-          });
-          setBindList(res.result);
+          if (res.result && res.result !== 0) {
+            setDeviceId(res.result[0]?.id);
+            setProductId(res.result[0]?.productId);
+            setBindList(res.result);
+            setFilterList(res.result);
+            setParam({
+              deviceId: res.result[0]?.id,
+              // terms: [{ column: 'deviceId', value: res.result[0]?.deviceId }],
+            });
+          }
         }
       });
   };
@@ -216,38 +220,77 @@ const Access = () => {
     return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [data]);
 
+  useEffect(() => {
+    console.log(deviceId);
+  }, [deviceId]);
+
   return (
     <PageContainer>
       <Card className={styles.list}>
-        <PermissionButton
-          onClick={() => {
-            setDeviceVisiable(true);
-          }}
-          isPermission={permission.add}
-          key="add"
-          icon={<PlusOutlined />}
-          type="dashed"
-          style={{ width: '200px', margin: '16px 0 18px 20px' }}
-        >
-          绑定设备
-        </PermissionButton>
-        {bindList.length > 0 ? (
-          <div style={{ display: 'flex' }}>
-            <div>
+        <div style={{ display: 'flex' }}>
+          <div>
+            <div style={{ width: '250px', marginTop: 15 }}>
+              <Input.Search
+                placeholder="请输入绑定设备名称"
+                allowClear
+                onSearch={(value) => {
+                  if (value) {
+                    const items = bindList.filter((item: any) => item.name.match(value));
+                    setFilterList(items);
+                    setFilterList(items);
+                    if (items.length === 0) {
+                      setParam({
+                        deviceId: undefined,
+                      });
+                    } else {
+                      setParam({
+                        deviceId: items[0]?.id,
+                        // terms: [{ column: 'deviceId', value: items[0]?.deviceId }],
+                      });
+                      setDeviceId(items[0]?.id);
+                    }
+                  } else {
+                    setFilterList(bindList);
+                    if (deviceId) {
+                      setParam({
+                        deviceId: deviceId,
+                      });
+                    } else {
+                      setParam({
+                        deviceId: undefined,
+                      });
+                    }
+                  }
+                }}
+              />
+              <PermissionButton
+                onClick={() => {
+                  setDeviceVisiable(true);
+                }}
+                isPermission={permission.add}
+                key="add"
+                icon={<PlusOutlined />}
+                type="dashed"
+                style={{ width: '100%', margin: '16px 0 18px 0' }}
+              >
+                绑定设备
+              </PermissionButton>
+            </div>
+            {filterList.length > 0 ? (
               <Tabs
                 style={{ height: 600 }}
                 tabPosition={'left'}
-                defaultActiveKey={deviceId}
+                activeKey={deviceId}
                 onChange={(e) => {
                   setDeviceId(e);
                   const items = bindList.find((item: any) => item.id === e);
                   setProductId(items?.productId);
                   setParam({
-                    terms: [{ column: 'deviceId', value: e }],
+                    deviceId: e,
                   });
                 }}
               >
-                {bindList.map((item: any) => (
+                {filterList.map((item: any) => (
                   <Tabs.TabPane
                     key={item.id}
                     tab={
@@ -275,76 +318,89 @@ const Access = () => {
                   ></Tabs.TabPane>
                 ))}
               </Tabs>
-            </div>
-            <div style={{ width: '100%' }}>
-              <ProTable
-                actionRef={actionRef}
-                params={param}
-                columns={columns}
-                rowKey="id"
-                search={false}
-                headerTitle={
-                  <>
-                    <PermissionButton
-                      onClick={() => {
-                        setPointVisiable(true);
-                        setCurrent({});
+            ) : (
+              <Empty description={<>暂无绑定设备</>} />
+            )}
+          </div>
+          <div style={{ width: '100%' }}>
+            <ProTable
+              actionRef={actionRef}
+              params={param}
+              columns={columns}
+              rowKey="id"
+              search={false}
+              headerTitle={
+                <>
+                  <PermissionButton
+                    onClick={() => {
+                      setPointVisiable(true);
+                      setCurrent({});
+                    }}
+                    isPermission={permission.add}
+                    key="add"
+                    icon={<PlusOutlined />}
+                    type="primary"
+                  >
+                    {intl.formatMessage({
+                      id: 'pages.data.option.add',
+                      defaultMessage: '新增',
+                    })}
+                  </PermissionButton>
+                  <div style={{ marginLeft: 10 }}>
+                    <Input.Search
+                      placeholder="请输入属性ID"
+                      allowClear
+                      onSearch={(value) => {
+                        console.log(value);
+                        if (value) {
+                          setParam({
+                            terms: [
+                              { column: 'metadataId', value: `%${value}%`, termType: 'like' },
+                            ],
+                          });
+                        } else {
+                          setParam({
+                            deviceId: deviceId,
+                            // terms: [{ column: 'deviceId', value: deviceId }],
+                          });
+                        }
                       }}
-                      isPermission={permission.add}
-                      key="add"
-                      icon={<PlusOutlined />}
-                      type="primary"
-                    >
-                      {intl.formatMessage({
-                        id: 'pages.data.option.add',
-                        defaultMessage: '新增',
-                      })}
-                    </PermissionButton>
-                    <div style={{ marginLeft: 10 }}>
-                      <Input.Search
-                        placeholder="请输入属性ID"
-                        allowClear
-                        onSearch={(value) => {
-                          console.log(value);
-                          if (value) {
-                            setParam({
-                              terms: [
-                                { column: 'metadataId', value: `%${value}%`, termType: 'like' },
-                              ],
-                            });
-                          } else {
-                            setParam({
-                              terms: [{ column: 'deviceId', value: deviceId }],
-                            });
-                          }
-                        }}
-                      />
-                    </div>
-                  </>
-                }
-                request={async (params) => {
-                  const res = await service.queryMetadataConfig(opcUaId, deviceId, {
-                    ...params,
-                    sorts: [{ name: 'createTime', order: 'desc' }],
-                  });
-                  setData(res.result.data);
+                    />
+                  </div>
+                </>
+              }
+              request={async (params) => {
+                if (!params.deviceId) {
                   return {
-                    code: res.message,
+                    code: 200,
                     result: {
-                      data: res.result.data,
+                      data: [],
                       pageIndex: 0,
                       pageSize: 0,
                       total: 0,
                     },
-                    status: res.status,
+                    status: 200,
                   };
-                }}
-              />
-            </div>
+                }
+                const res = await service.queryMetadataConfig(opcUaId, params.deviceId, {
+                  ...params.terms,
+                  sorts: [{ name: 'createTime', order: 'desc' }],
+                });
+                setData(res.result.data);
+                return {
+                  code: res.message,
+                  result: {
+                    data: res.result.data,
+                    pageIndex: res.result.pageIndex,
+                    pageSize: res.result.pageSize,
+                    total: res.result.total,
+                  },
+                  status: res.status,
+                };
+              }}
+            />
           </div>
-        ) : (
-          <Empty />
-        )}
+        </div>
       </Card>
       {deviceVisiable && (
         <BindDevice
