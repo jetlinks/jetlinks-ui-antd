@@ -6,6 +6,7 @@ import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/account/NotificationSubscription';
+import _ from 'lodash';
 
 interface Props {
   data: Partial<NotifitionSubscriptionItem>;
@@ -14,11 +15,19 @@ interface Props {
 }
 
 const Save = (props: Props) => {
-  const [data, setDada] = useState<Partial<NotifitionSubscriptionItem>>(props.data || {});
+  const [data, setDada] = useState<any>(props.data || {});
   const [dataList, setDataList] = useState<any[]>([]);
 
   useEffect(() => {
-    setDada(props.data);
+    if (props.data?.topicConfig) {
+      setDada({
+        ...props.data,
+        topicConfig: {
+          alarmConfigId: props.data?.topicConfig?.alarmConfigId.split(','),
+          alarmConfigName: props.data?.topicConfig?.alarmConfigName.split(','),
+        },
+      });
+    }
   }, [props.data]);
 
   const form = useMemo(
@@ -97,6 +106,7 @@ const Save = (props: Props) => {
           },
           'topicConfig.alarmConfigId': {
             title: '告警规则',
+            type: 'array',
             'x-component': 'Select',
             'x-decorator': 'FormItem',
             required: true,
@@ -106,7 +116,11 @@ const Save = (props: Props) => {
               layout: 'vertical',
             },
             'x-component-props': {
+              mode: 'multiple',
+              showArrow: true,
               placeholder: '请选择告警规则',
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
             'x-reactions': ['{{useAsyncDataSource(queryAlarmConfigList)}}'],
             'x-validator': [
@@ -168,13 +182,16 @@ const Save = (props: Props) => {
   const handleSave = async () => {
     let param: any = await form.submit();
     delete param.notice;
-    const config = dataList.find((item) => item?.value === param?.topicConfig?.alarmConfigId);
+    const config = dataList.filter((item) =>
+      param?.topicConfig?.alarmConfigId.includes(item?.value),
+    );
     param = {
       ...data,
       ...param,
       topicConfig: {
         ...param?.topicConfig,
-        alarmConfigName: config.label || '',
+        alarmConfigId: param?.topicConfig.alarmConfigId.join(','),
+        alarmConfigName: _.map(config, 'label').join(','),
       },
     };
     const response: any = await service.saveData(param);

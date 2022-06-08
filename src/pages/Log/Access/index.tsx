@@ -72,7 +72,6 @@ const Access = () => {
       valueType: 'dateTime',
       defaultSortOrder: 'descend',
       ellipsis: true,
-      width: 200,
       renderText: (text: string) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
@@ -80,7 +79,7 @@ const Access = () => {
         id: 'pages.log.access.requestTimeConsuming',
         defaultMessage: '请求耗时',
       }),
-      width: 80,
+      width: 100,
       renderText: (record: AccessLogItem) => (
         <Tag color="purple">{record.responseTime - record.requestTime}ms</Tag>
       ),
@@ -91,20 +90,7 @@ const Access = () => {
         defaultMessage: '请求用户',
       }),
       dataIndex: 'username',
-      render: (text, record: any) => (
-        <Tag color="geekblue">{record?.context?.username || '--'}</Tag>
-      ),
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.table.description',
-        defaultMessage: '说明',
-      }),
-      dataIndex: 'describe',
-      ellipsis: true,
-      // render: (text, record) => {
-      //   return `${record.action}-${record.describe}`;
-      // },
+      render: (text, record: any) => <Tag color="geekblue">{record?.context?.username || ''}</Tag>,
     },
     {
       title: intl.formatMessage({

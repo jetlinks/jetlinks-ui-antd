@@ -25,6 +25,7 @@ const Access = () => {
   const [config, setConfig] = useState<any>();
   const [access, setAccess] = useState<any>();
   const { permission } = usePermissions('link/AccessConfig');
+  const [dataSource, setDataSource] = useState<any[]>([]);
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -204,6 +205,11 @@ const Access = () => {
         productModel.current?.messageProtocol || '',
         productModel.current?.transportProtocol || '',
       );
+      service.getProviders().then((resp) => {
+        if (resp.status === 200) {
+          setDataSource(resp.result);
+        }
+      });
     }
   }, [productModel.current]);
 
@@ -386,16 +392,19 @@ const Access = () => {
                     </span>
                   }
                 />
-                <div className={styles.context}>{access?.name || '--'}</div>
-                <div className={styles.context}>{access?.description || '--'}</div>
+                <div className={styles.context}>{access?.name}</div>
+                <div className={styles.context}>
+                  {access?.description ||
+                    dataSource.find((item) => item?.id === access?.provider)?.description}
+                </div>
               </div>
 
               <div className={styles.item}>
                 <TitleComponent data={'消息协议'} />
-                <div className={styles.context}>{access?.protocolDetail?.name || '--'}</div>
+                <div className={styles.context}>{access?.protocolDetail?.name}</div>
                 {config?.document && (
                   <div className={styles.context}>
-                    <ReactMarkdown>{config?.document || '--'}</ReactMarkdown>
+                    <ReactMarkdown>{config?.document}</ReactMarkdown>
                   </div>
                 )}
               </div>
@@ -404,11 +413,7 @@ const Access = () => {
                 {(access?.channelInfo?.addresses || []).length > 0
                   ? (access?.channelInfo?.addresses || []).map((item: any) => (
                       <div key={item.address}>
-                        <Badge
-                          color={item.health === -1 ? 'red' : 'green'}
-                          text={item.address}
-                          style={{ marginLeft: '20px' }}
-                        />
+                        <Badge color={item.health === -1 ? 'red' : 'green'} text={item.address} />
                       </div>
                     ))
                   : '暂无连接信息'}

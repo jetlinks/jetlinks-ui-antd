@@ -159,7 +159,7 @@ const Save = (props: Props) => {
               gridSpan: 2,
             },
             'x-component-props': {
-              placeholder: '请输入连接地址，示例：localhost:5672',
+              placeholder: '请输入链接地址，示例：localhost:5672',
             },
             'x-validator': [
               {
