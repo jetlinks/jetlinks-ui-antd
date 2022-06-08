@@ -5,7 +5,7 @@ import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useMemo, useState } from 'react';
-import { createForm, onFieldReact, onFormInit } from '@formily/core';
+import { createForm, onFormInit } from '@formily/core';
 import FLevelInput from '@/components/FLevelInput';
 import type { IOConfigItem } from '@/pages/rule-engine/Alarm/Config/typing';
 import Service from '@/pages/rule-engine/Alarm/Config/service';
@@ -23,63 +23,54 @@ const Config = () => {
       name: '告警名称',
       type: 'string',
       desc: '推送的告警名称',
-      example: '烟感告警',
     },
     {
       key: 'id',
       name: '告警ID',
       type: 'string',
       desc: '告警唯一性标识',
-      example: '1515992841393119232',
     },
     {
       key: 'targetType',
       name: '告警类型',
       type: 'string',
       desc: '告警所属的业务类型，具体有产品、设备、部门、其他',
-      example: '产品',
     },
     {
       key: 'targetId',
       name: '告警目标ID',
       type: 'string',
       desc: '告警目标唯一性标识',
-      example: '运维部',
     },
     {
       key: 'targetName',
       name: '告警目标名称',
       type: 'string',
       desc: '告警目标实例名称',
-      example: '烟感告警',
     },
     {
       key: 'alarmDate',
       name: '最近告警时间',
       type: 'date',
       desc: '最近一次的告警触发时间',
-      example: '2021-01-01 09:00:00',
     },
     {
       key: 'level',
       name: '告警级别',
       type: 'int',
       desc: '告警严重程度指标',
-      example: '1',
     },
     {
       key: 'state',
       name: '告警状态',
       type: 'object',
       desc: 'value：告警状态 text：告警值',
-      example: '"text": "告警中", "value": "warning"',
     },
     {
       key: 'description',
       name: '告警说明',
       type: 'string',
       desc: '告警规则说明',
-      example: '1楼烟感统一告警规则设置',
     },
   ];
   const outputColumns = [
@@ -107,12 +98,6 @@ const Config = () => {
       key: 'desc',
       ellipsis: true,
     },
-    {
-      title: '示例值',
-      dataIndex: 'example',
-      key: 'example',
-      ellipsis: true,
-    },
   ];
 
   const subData = [
@@ -122,7 +107,6 @@ const Config = () => {
       type: 'string',
       require: '是',
       desc: '订阅的告警唯一性标识',
-      example: '1515992841393119232',
     },
     {
       key: 'describe',
@@ -130,7 +114,6 @@ const Config = () => {
       type: 'string',
       require: '是',
       desc: '告警处理内容详细描述说明',
-      example: '已联系第三方人员进行告警处理，现告警已恢复',
     },
     {
       key: 'state',
@@ -138,7 +121,6 @@ const Config = () => {
       type: 'string',
       require: '是',
       desc: '告警中, 无告警',
-      example: '告警中',
     },
     {
       key: 'handleTime',
@@ -146,7 +128,6 @@ const Config = () => {
       type: 'long',
       require: '否',
       desc: '告警处理时间，不填是默认为消息处理时间',
-      example: '1651233650840',
     },
   ];
 
@@ -179,20 +160,23 @@ const Config = () => {
               const _level = resp.result.levels.map(
                 (item: { level: number; title: string }) => item.title,
               );
+              while (_level.length < 5) {
+                _level.push('');
+              }
               form.setValuesIn('level', _level);
             }
           });
-          onFieldReact('level.0.remove', (state, f1) => {
-            state.setState({ display: 'none' });
-            f1.setFieldState('level.add', (state1) => {
-              const length = f1.values.level?.length;
-              if (length > 4) {
-                state1.display = 'none';
-              } else {
-                state1.display = 'visible';
-              }
-            });
-          });
+          // onFieldReact('level.0.remove', (state, f1) => {
+          //   state.setState({ display: 'none' });
+          //   f1.setFieldState('level.add', (state1) => {
+          //     const length = f1.values.level?.length;
+          //     if (length > 4) {
+          //       state1.display = 'none';
+          //     } else {
+          //       state1.display = 'visible';
+          //     }
+          //   });
+          // });
         },
       }),
     [],
@@ -256,27 +240,27 @@ const Config = () => {
                 gridSpan: 23,
               },
             },
-            remove: {
-              type: 'void',
-              title: <div style={{ width: '20px' }} />,
-              'x-decorator': 'FormItem',
-              'x-component': 'ArrayItems.Remove',
-              'x-decorator-props': {
-                gridSpan: 1,
-              },
-              'x-component-props': {
-                style: { marginTop: '40px' },
-              },
-            },
+            // remove: {
+            //   type: 'void',
+            //   title: <div style={{ width: '20px' }} />,
+            //   'x-decorator': 'FormItem',
+            //   'x-component': 'ArrayItems.Remove',
+            //   'x-decorator-props': {
+            //     gridSpan: 1,
+            //   },
+            //   'x-component-props': {
+            //     style: { marginTop: '40px' },
+            //   },
+            // },
           },
         },
-        properties: {
-          add: {
-            type: 'void',
-            title: '添加级别',
-            'x-component': 'ArrayItems.Addition',
-          },
-        },
+        // properties: {
+        //   add: {
+        //     type: 'void',
+        //     title: '添加级别',
+        //     'x-component': 'ArrayItems.Addition',
+        //   },
+        // },
       },
     },
   };
@@ -308,43 +292,43 @@ const Config = () => {
           placeholder: '请输入topic',
         },
       },
-      layout2: {
-        type: 'void',
-        'x-decorator': 'FormGrid',
-        'x-decorator-props': {
-          maxColumns: 2,
-          minColumns: 2,
-          columnGap: 24,
-        },
-        properties: {
-          username: {
-            title: '用户名',
-            type: 'string',
-            // required: true,
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            'x-component-props': {
-              placeholder: '请输入用户名',
-            },
-            'x-decorator-props': {
-              gridSpan: 1,
-            },
-          },
-          password: {
-            title: '密码',
-            type: 'string',
-            // required: true,
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-            'x-decorator-props': {
-              gridSpan: 1,
-            },
-            'x-component-props': {
-              placeholder: '请输入密码',
-            },
-          },
-        },
-      },
+      // layout2: {
+      //   type: 'void',
+      //   'x-decorator': 'FormGrid',
+      //   'x-decorator-props': {
+      //     maxColumns: 2,
+      //     minColumns: 2,
+      //     columnGap: 24,
+      //   },
+      //   properties: {
+      //     username: {
+      //       title: '用户名',
+      //       type: 'string',
+      //       // required: true,
+      //       'x-decorator': 'FormItem',
+      //       'x-component': 'Input',
+      //       'x-component-props': {
+      //         placeholder: '请输入用户名',
+      //       },
+      //       'x-decorator-props': {
+      //         gridSpan: 1,
+      //       },
+      //     },
+      //     password: {
+      //       title: '密码',
+      //       type: 'string',
+      //       // required: true,
+      //       'x-decorator': 'FormItem',
+      //       'x-component': 'Input',
+      //       'x-decorator-props': {
+      //         gridSpan: 1,
+      //       },
+      //       'x-component-props': {
+      //         placeholder: '请输入密码',
+      //       },
+      //     },
+      //   },
+      // },
     },
   };
 
@@ -486,28 +470,30 @@ const Config = () => {
         </div>
       </Col>
       <Col span={10}>
-        <div style={{ marginLeft: 20 }} className={styles.doc}>
-          <h1>功能图示</h1>
-          <div className={styles.image}>
-            <Image width="100%" src={ioImg} />
+        <div style={{ height: 560, marginLeft: 20, paddingBottom: 24 }}>
+          <div className={styles.doc}>
+            <h1>功能图示</h1>
+            <div className={styles.image}>
+              <Image width="100%" src={ioImg} />
+            </div>
+            <h1>功能说明</h1>
+            <div>
+              1、平台支持将告警数据输出到kafka，第三方系统可订阅kafka中的告警数据，进行业务处理。
+            </div>
+            <h2>输出参数</h2>
+            <div>
+              <Table dataSource={outputData} pagination={false} columns={outputColumns} />
+            </div>
+            <h2>示例</h2>
+            <ReactMarkdown className={styles.code}>{outputText}</ReactMarkdown>
+            <div>2、平台支持订阅kafka中告警处理数据，并更新告警记录状态。</div>
+            <h2>订阅参数</h2>
+            <div>
+              <Table dataSource={subData} pagination={false} columns={subColumns} />
+            </div>
+            <h2>示例</h2>
+            <ReactMarkdown className={styles.code}>{subText}</ReactMarkdown>
           </div>
-          <h1>功能说明</h1>
-          <div>
-            1、平台支持将告警数据输出到kafka，第三方系统可订阅kafka中的告警数据，进行业务处理。
-          </div>
-          <h2>输出参数</h2>
-          <div>
-            <Table dataSource={outputData} pagination={false} columns={outputColumns} />
-          </div>
-          <h2>示例</h2>
-          <ReactMarkdown className={styles.code}>{outputText}</ReactMarkdown>
-          <div>2、平台支持订阅kafka中告警处理数据，并更新告警记录状态。</div>
-          <h2>订阅参数</h2>
-          <div>
-            <Table dataSource={subData} pagination={false} columns={subColumns} />
-          </div>
-          <h2>示例</h2>
-          <ReactMarkdown className={styles.code}>{subText}</ReactMarkdown>
         </div>
       </Col>
     </Row>

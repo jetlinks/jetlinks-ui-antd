@@ -59,7 +59,7 @@ const MenuPermission = (props: Props) => {
           paddingLeft: (props?.level || 0) * 10,
           transition: 'background .3s',
           borderBottom: '1px solid #f0f0f0',
-          height: 50,
+          minHeight: 50,
         }}
         key={value?.id}
       >
@@ -118,7 +118,7 @@ const MenuPermission = (props: Props) => {
               {value?.name}
             </Checkbox>
           </div>
-          <div>
+          <div style={{ padding: 5 }}>
             {value.id === 'menu-permission' ? (
               <span style={{ fontWeight: value.id === 'menu-permission' ? 600 : 400 }}>
                 操作权限
@@ -156,6 +156,7 @@ const MenuPermission = (props: Props) => {
                   };
                   props.change(d);
                 }}
+                style={{ width: '100%' }}
                 options={(value?.buttons || []).map((i: any) => ({
                   label: i.name,
                   value: i.id,

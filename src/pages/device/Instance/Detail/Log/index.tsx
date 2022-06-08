@@ -5,38 +5,28 @@ import { Card, Input, Modal, Tooltip } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
 
 const Log = () => {
   const intl = useIntl();
 
-  const [type, setType] = useState<any>({});
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});
-
-  useEffect(() => {
-    service.queryLogsType().then((resp) => {
-      if (resp.status === 200) {
-        const list = (resp.result as { text: string; value: string }[]).reduce(
-          (previousValue, currentValue) => {
-            previousValue[currentValue.value] = currentValue;
-            return previousValue;
-          },
-          {},
-        );
-        setType({ ...list });
-      }
-    });
-  }, []);
 
   const columns: ProColumns<LogItem>[] = [
     {
       title: '类型',
       dataIndex: 'type',
-      renderText: (text) => text.text,
+      renderText: (text) => text?.text,
       valueType: 'select',
-      valueEnum: { ...type },
+      request: () =>
+        service.queryLogsType().then((resp: any) =>
+          (resp?.result || []).map((item: any) => ({
+            label: item.text,
+            value: item.value,
+          })),
+        ),
     },
     {
       title: '时间',

@@ -120,7 +120,10 @@ const ProductDetail = observer(() => {
             }
           }
           productModel.current = item;
-          message.success('操作成功');
+          message.success({
+            key: 'metadata',
+            content: '操作成功！',
+          });
         },
         error: async () => {
           message.success('操作失败');
@@ -205,6 +208,10 @@ const ProductDetail = observer(() => {
   ];
 
   useEffect(() => {
+    const { state } = location;
+    if (state && state?.tab) {
+      setMode(state?.tab);
+    }
     if ((location as any).query?.key) {
       setMode((location as any).query?.key || 'base');
     }
@@ -215,13 +222,6 @@ const ProductDetail = observer(() => {
       }
     });
     return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const { state } = location;
-    if (state && state?.tab) {
-      setMode(state?.tab);
-    }
   }, [location]);
 
   return (

@@ -1,4 +1,4 @@
-import { Col, Input, message, Pagination, Row, Space, Spin, Table } from 'antd';
+import { Col, Empty, Input, message, Pagination, Row, Space, Spin, Table } from 'antd';
 import CheckButton from '@/components/CheckButton';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
@@ -250,19 +250,24 @@ const Property = (props: Props) => {
             }}
           />
         </div>
-        <div style={{ marginTop: '20px' }}>
-          {check ? (
-            <Row gutter={[16, 16]}>
-              {dataSource.data.map((item: any) => (
-                <Col {...ColResponsiveProps} key={item.id}>
-                  <PropertyCard data={item} value={item?.id ? propertyValue[item?.id] : '--'} />
-                </Col>
-              ))}
-            </Row>
-          ) : (
-            <Table pagination={false} columns={columns} dataSource={dataSource.data} rowKey="id" />
-          )}
-          {dataSource.data.length > 0 && (
+        {dataSource.data?.length > 0 ? (
+          <div style={{ marginTop: '20px' }}>
+            {check ? (
+              <Row gutter={[16, 16]}>
+                {dataSource.data.map((item: any) => (
+                  <Col {...ColResponsiveProps} key={item.id}>
+                    <PropertyCard data={item} value={item?.id ? propertyValue[item?.id] : '--'} />
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <Table
+                pagination={false}
+                columns={columns}
+                dataSource={dataSource.data}
+                rowKey="id"
+              />
+            )}
             <div
               style={{
                 marginTop: '20px',
@@ -288,8 +293,20 @@ const Property = (props: Props) => {
                 }}
               />
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              height: 400,
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              justifyContent: 'center',
+            }}
+          >
+            <Empty />
+          </div>
+        )}
       </Spin>
       {visible && (
         <EditProperty

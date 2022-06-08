@@ -11,6 +11,7 @@ import CertificateFile from './components/CertificateFile';
 import Standard from './components/Standard';
 import { service } from '@/pages/link/Certificate';
 import { useParams } from 'umi';
+import './index.less';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
@@ -155,6 +156,24 @@ const Detail = observer(() => {
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>
+          </Col>
+          <Col span={12}>
+            <div className="doc">
+              <h1>1. 概述</h1>
+              <div>
+                证书由受信任的数字证书颁发机构CA，在验证服务器身份后颁发，具有服务器身份验证和数据传输加密功能，保障设备与平台间的数据传输安全。配置后可被网络组件引用。
+              </div>
+              <h1>2. 配置说明</h1>
+              <h2>1、证书文件</h2>
+              <div>
+                您可以使用文本编辑工具打开PEM或者CRT格式的证书文件，复制其中的内容并粘贴到该文本框，或者单击该文本框下的上传，并选择存储在本地计算机的证书文件，将文件内容上传到文本框。
+              </div>
+              <h2>2、证书私钥</h2>
+              <div>
+                填写证书私钥内容的PEM编码。
+                您可以使用文本编辑工具打开KEY格式的证书私钥文件，复制其中的内容并粘贴到该文本框，或者单击该文本框下的上传并选择存储在本地计算机的证书私钥文件，将文件内容上传到文本框。
+              </div>
+            </div>
           </Col>
         </Row>
       </Card>
