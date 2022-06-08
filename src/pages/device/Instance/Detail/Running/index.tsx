@@ -46,21 +46,23 @@ const Running = () => {
           <Empty />
         </div>
       ) : (
-        <Tabs
-          defaultActiveKey="1"
-          tabPosition="left"
-          style={{ minHeight: 600 }}
-          tabBarExtraContent={{ left: operations() }}
-        >
-          <Tabs.TabPane tab="属性" key="1">
-            <Property data={metadata?.properties || []} />
-          </Tabs.TabPane>
-          {list?.map((item) => (
-            <Tabs.TabPane tab={item.name} key={item.id}>
-              <Event data={item} />
+        <div className="tabs-full-active">
+          <Tabs
+            defaultActiveKey="1"
+            tabPosition="left"
+            style={{ minHeight: 600 }}
+            tabBarExtraContent={{ left: operations() }}
+          >
+            <Tabs.TabPane tab="属性" key="1">
+              <Property data={metadata?.properties || []} />
             </Tabs.TabPane>
-          ))}
-        </Tabs>
+            {list?.map((item) => (
+              <Tabs.TabPane tab={item.name} key={item.id}>
+                <Event data={item} />
+              </Tabs.TabPane>
+            ))}
+          </Tabs>
+        </div>
       )}
     </Card>
   );
