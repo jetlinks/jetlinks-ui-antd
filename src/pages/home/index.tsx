@@ -22,11 +22,10 @@ const Home = () => {
     service.queryView().then((resp) => {
       if (resp.status === 200) {
         if (resp.result.length == 0) {
-          setCurrent('ops');
+          setCurrent('init');
         } else {
-          // setCurrent(resp.result[0]?.content);
+          setCurrent(resp.result[0]?.content);
         }
-        setCurrent('ops');
       }
     });
   }, []);

@@ -85,20 +85,28 @@ const Save = (props: Props) => {
   );
 
   const getScene = () => {
+    const map = {
+      product: 'device',
+      device: 'device',
+      org: 'device',
+      other: undefined,
+    };
     return service
       .getScene(
         encodeQuery({
           terms: {
-            triggerType: form.getValuesIn('targetType'),
+            triggerType: map[form.getValuesIn('targetType')],
           },
         }),
       )
       .then((resp) => {
         Store.set('scene-data', resp.result);
-        return resp.result.map((item: { id: string; name: string }) => ({
-          label: item.name,
-          value: item.id,
-        }));
+        return form.getValuesIn('targetType')
+          ? resp.result.map((item: { id: string; name: string }) => ({
+              label: item.name,
+              value: item.id,
+            }))
+          : [];
       });
   };
 
