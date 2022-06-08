@@ -348,7 +348,7 @@ const Save = (props: Props) => {
             'x-component-props': {
               multiple: true,
               showArrow: true,
-              placeholder: '请选择角色',
+              placeholder: '请选择部门',
               showCheckedStrategy: ATreeSelect.SHOW_ALL,
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
@@ -395,6 +395,9 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               gridSpan: 1,
             },
+            'x-component-props': {
+              placeholder: '请输入手机号',
+            },
           },
           email: {
             title: '邮箱',
@@ -403,6 +406,9 @@ const Save = (props: Props) => {
             'x-validator': 'email',
             'x-decorator-props': {
               gridSpan: 1,
+            },
+            'x-component-props': {
+              placeholder: '请输入邮箱',
             },
           },
         },

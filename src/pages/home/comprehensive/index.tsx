@@ -232,7 +232,7 @@ const Comprehensive = () => {
           title={
             <span>
               设备接入推荐步骤
-              <Tooltip title={'不同的设备因为通信协议的不用，存在接入步骤的差异'}>
+              <Tooltip title={'不同的设备因为通信协议的不同，存在接入步骤的差异'}>
                 <QuestionCircleOutlined style={{ paddingLeft: 12 }} />
               </Tooltip>
             </span>
