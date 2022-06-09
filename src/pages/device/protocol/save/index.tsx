@@ -47,7 +47,7 @@ const Save: React.FC<Props> = props => {
 
   const initState: State = {
     protocolType: props.data?.type,
-    jarLocation: props.data?.configuration?.location,
+    jarLocation: props.data?.configuration?.location || props.data?.configuration?.fileId,
     providers: [],
     activeDebugger: '',
     script: props.data?.configuration?.script ? props.data.configuration?.script : '//解码,收到设备上行消息时\n' +
@@ -100,6 +100,9 @@ const Save: React.FC<Props> = props => {
         data.configuration.script = script;
         data.configuration.transport = data.configuration.transport.join(',');
       }
+      if(data.type === 'jar' || data.type === 'local'){
+        data.configuration.fileId = data.configuration.location
+      }
       props.save({
         ...fileValue,
       });
@@ -109,7 +112,7 @@ const Save: React.FC<Props> = props => {
   const uploadProps = {
     accept: '.jar,.zip',
     name: 'file',
-    action: `/jetlinks/file/static`,
+    action: `/jetlinks/file/upload`,
     showUploadList: false,
     headers: {
       'X-Access-Token': getAccessToken(),
@@ -119,8 +122,8 @@ const Save: React.FC<Props> = props => {
         setUploading(true);
       }
       if (info.file.status === 'done') {
-        setJarLocation(info.file.response.result);
-        setFieldsValue({ 'configuration.location': info.file.response.result })
+        setJarLocation(info.file.response.result?.id);
+        setFieldsValue({ 'configuration.location': info.file.response.result?.id })
         message.success(`${info.file.name} 上传成功`);
         setUploading(false);
       } else if (info.file.status === 'error') {

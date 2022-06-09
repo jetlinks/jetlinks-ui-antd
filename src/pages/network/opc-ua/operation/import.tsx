@@ -80,7 +80,7 @@ const Import: React.FC<Props> = props => {
       setImportLoading(true);
       let dt = 0;
       const source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/opc/device-bind/${product}/import?fileUrl=${fileUrl}&opcUaId=${props.opcId}&serverId=${serverId}&productId=${product}&:X_Access_Token=${getAccessToken()}`)
+        wrapAPI(`/jetlinks/opc/device-bind/${product}/import?fileId=${fileUrl}&opcUaId=${props.opcId}&serverId=${serverId}&productId=${product}&:X_Access_Token=${getAccessToken()}`)
       );
       setSource(source);
       source.onmessage = (e: any) => {
@@ -106,7 +106,7 @@ const Import: React.FC<Props> = props => {
 
   const uploadProps: UploadProps = {
     accept: fileType === ".xlsx" ? ".xlsx, .xls" : fileType,
-    action: '/jetlinks/file/static',
+    action: '/jetlinks/file/upload',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
@@ -120,7 +120,7 @@ const Import: React.FC<Props> = props => {
       if (info.file.status === 'done') {
         setUploading(false);
         message.success('文件上传成功');
-        submitData(info.file.response.result);
+        submitData(info.file.response.result?.id);
       }
     },
   };

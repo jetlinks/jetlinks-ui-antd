@@ -468,7 +468,7 @@ const DeviceModel: React.FC<Props> = props => {
                         ]}
                       >
                         <Card.Meta
-                          avatar={<Avatar size={40} src={item.photoUrl || productImg} />}
+                          avatar={<Avatar size={40} src={item.photoUrl ? `/jetlinks/file/${item.photoUrl}?:X_Access_Token=${getAccessToken()}` : productImg} />}
                           title={
                             <AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />
                           }

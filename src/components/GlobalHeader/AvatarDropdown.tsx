@@ -8,6 +8,7 @@ import { CurrentUser } from '@/models/user';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import Service from '@/pages/account/settings/service';
+import { getAccessToken } from '@/utils/authority';
 
 export interface GlobalHeaderRightProps extends ConnectProps {
   currentUser?: CurrentUser;
@@ -73,7 +74,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = props => {
   return currentUser && currentUser.name ? (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={user.avatar} alt="avatar" />
+        <Avatar size="small" className={styles.avatar} src={`/jetlinks/file/${user.avatar}?:X_Access_Token=${getAccessToken()}`} alt="avatar" />
         <span className={styles.name}>{currentUser.name}</span>
       </span>
     </HeaderDropdown>

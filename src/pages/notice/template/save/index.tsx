@@ -66,7 +66,7 @@ const Save: React.FC<Props> = props => {
     'qos1 /device/${#deviceId}\n\n${T(com.alibaba.fastjson.JSON).toJSONString(#this)}',
   );
   const uploadProps: UploadProps = {
-    action: '/jetlinks/file/static',
+    action: '/jetlinks/file/upload',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
@@ -74,7 +74,7 @@ const Save: React.FC<Props> = props => {
     // showUploadList: false,
     onChange(info) {
       if (info.file.status === 'done') {
-        let url = info.file.response.result;
+        let url = info.file.response.result?.id;
         delete info.file.response;
         const tempFile: any = info.file;
         tempFile.location = url;

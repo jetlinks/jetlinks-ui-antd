@@ -61,13 +61,13 @@ const Import: React.FC<Props> = props => {
   }, []);
 
 
-  const submitData = (fileUrl: string) => {
-    if (fileUrl) {
+  const submitData = (fileUrl: any) => {
+    if (fileUrl?.id) {
       setImportLoading(true);
       let dt = 0;
       // todo:后期需优化，更换为：websocket
       const source = new EventSourcePolyfill(
-        wrapAPI(`/jetlinks/device/instance/${product}/import?fileUrl=${fileUrl}&autoDeploy=${autoDeploy}&:X_Access_Token=${getAccessToken()}`)
+        wrapAPI(`/jetlinks/device/instance/${product}/import?fileId=${fileUrl?.id}&autoDeploy=${autoDeploy}&:X_Access_Token=${getAccessToken()}`)
       );
       setSource(source);
       source.onmessage = (e: any) => {
@@ -93,7 +93,7 @@ const Import: React.FC<Props> = props => {
 
   const uploadProps: UploadProps = {
     accept: fileType === ".xlsx" ? ".xlsx, .xls" : fileType,
-    action: '/jetlinks/file/static',
+    action: '/jetlinks/file/upload',
     headers: {
       'X-Access-Token': getAccessToken(),
     },

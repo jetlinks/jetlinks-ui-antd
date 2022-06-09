@@ -30,7 +30,7 @@ const BaseView: React.FC<Props> = (props) => {
 
     const uploadProps: UploadProps = {
         // accept: ,
-        action: '/jetlinks/file/static',
+        action: '/jetlinks/file/upload',
         headers: {
             'X-Access-Token': getAccessToken(),
         },
@@ -40,7 +40,7 @@ const BaseView: React.FC<Props> = (props) => {
                 setLoading(true);
             }
             if (info.file.status === 'done') {
-                setAvatar(info.file.response.result);
+                setAvatar(info.file.response.result.id);
                 message.success('上传成功');
                 setLoading(false);
             }
@@ -59,7 +59,7 @@ const BaseView: React.FC<Props> = (props) => {
                 dispatch({
                     type: 'user/saveCurrentUser',
                     payload: {
-                        avatar: avatar,
+                        avatar
                     }
                 });
             }
@@ -127,7 +127,7 @@ const BaseView: React.FC<Props> = (props) => {
                         头像
                 </div>
                     <div className={styles.avatar}>
-                        <img src={avatar || defaultImg} alt="avatar" />
+                        <img src={avatar ? `/jetlinks/file/${avatar}?:X_Access_Token=${getAccessToken()}` : defaultImg} alt="avatar" />
                     </div>
                     <Upload {...uploadProps} showUploadList={false}>
                         <div className={styles.button_view}>
