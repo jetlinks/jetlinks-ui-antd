@@ -33,7 +33,6 @@ const Modbus = () => {
   iconMap.set('2', require('/public/images/channel/2.png'));
   iconMap.set('3', require('/public/images/channel/3.png'));
   iconMap.set('4', require('/public/images/channel/4.png'));
-  const background = require('/public/images/channel/background.png');
 
   const columns: ProColumns<OpaUa>[] = [
     {
@@ -144,7 +143,7 @@ const Modbus = () => {
           key="link"
           type="link"
           tooltip={{
-            title: '设备接入',
+            title: '数据点绑定',
           }}
           onClick={() => {
             history.push(`${getMenuPathByCode('link/Channel/Modbus/Access')}?id=${record.id}`);
@@ -211,15 +210,8 @@ const Modbus = () => {
             <Col span={6} key={item.numeber}>
               <Card>
                 <div className={styles.topCard}>
-                  <div
-                    style={{
-                      background: `url(${background}) no-repeat`,
-                      backgroundSize: '100% 100%',
-                      width: '56px',
-                      height: '56px',
-                    }}
-                  >
-                    <img src={iconMap.get(item.numeber)} className={styles.img} />
+                  <div>
+                    <img src={iconMap.get(item.numeber)} />
                   </div>
                   <div className={styles.text}>
                     <p className={styles.p1}>{item.title}</p>

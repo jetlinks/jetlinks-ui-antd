@@ -52,10 +52,9 @@ const Service = {
       method: 'GET',
       params,
     }),
-  settingDetail: (data: any) =>
-    request(`/${SystemConst.API_BASE}/system/config/scopes`, {
-      method: 'POST',
-      data,
+  settingDetail: (scopes: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/${scopes}`, {
+      method: 'GET',
     }),
 };
 

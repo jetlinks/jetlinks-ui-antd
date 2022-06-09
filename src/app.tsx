@@ -46,7 +46,7 @@ export async function getInitialState(): Promise<{
   };
   const getSettings = async () => {
     try {
-      const res = await Service.settingDetail(['basis']);
+      const res = await Service.settingDetail('basis');
       return res.result;
     } catch (error) {
       history.push(loginPath);
@@ -61,7 +61,7 @@ export async function getInitialState(): Promise<{
     return {
       fetchUserInfo,
       currentUser,
-      settings: settings?.[0].properties,
+      settings: settings,
     };
   }
   // 链接websocket
