@@ -38,7 +38,6 @@ const Log = () => {
     {
       title: '内容',
       dataIndex: 'content',
-      valueType: 'option',
       ellipsis: true,
       render: (text, record) => <span>{String(record.content)}</span>,
     },

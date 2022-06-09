@@ -1,7 +1,7 @@
 import SearchComponent from '@/components/SearchComponent';
 import { FileFilled, FileTextFilled, ToolFilled } from '@ant-design/icons';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, Card, Col, Empty, Pagination, Row, Space, Tooltip } from 'antd';
+import { Badge, Button, Card, Col, Empty, Pagination, Row, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import './index.less';
 import SolveComponent from '../SolveComponent';
@@ -12,7 +12,6 @@ import { observer } from '@formily/reactive-react';
 import { service } from '@/pages/rule-engine/Alarm/Log';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
-import PermissionButton from '@/components/PermissionButton';
 import classNames from 'classnames';
 
 interface Props {
@@ -39,7 +38,6 @@ colorMap.set(4, '#999999');
 colorMap.set(5, '#C4C4C4');
 
 const TabComponent = observer((props: Props) => {
-  const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Log');
   const columns: ProColumns<any>[] = [
     {
       title: '名称',
@@ -79,18 +77,19 @@ const TabComponent = observer((props: Props) => {
 
   const handleSearch = (params: any) => {
     setParam(params);
+    const terms = [...params.terms];
+    if (props.type !== 'all') {
+      terms.push({
+        termType: 'eq',
+        column: 'targetType',
+        value: props.type,
+        type: 'and',
+      });
+    }
     service
       .query({
         ...params,
-        terms: [
-          ...params.terms,
-          {
-            termType: 'eq',
-            column: 'targetType',
-            value: props.type,
-            type: 'and',
-          },
-        ],
+        terms: [...terms],
         sorts: [{ name: 'alarmTime', order: 'desc' }],
       })
       .then((resp) => {
@@ -103,6 +102,68 @@ const TabComponent = observer((props: Props) => {
   useEffect(() => {
     handleSearch(param);
   }, [props.type]);
+
+  const tools = (record: any) => [
+    <Button
+      type={'link'}
+      key={'solve'}
+      style={{ padding: 0 }}
+      disabled={record.state.value === 'normal'}
+      onClick={() => {
+        AlarmLogModel.solveVisible = true;
+        AlarmLogModel.current = record;
+      }}
+    >
+      <Tooltip title={record.state?.value === 'normal' ? '无告警' : ''}>
+        <ToolFilled />
+        告警处理
+      </Tooltip>
+    </Button>,
+    <Button
+      type={'link'}
+      style={{ padding: 0 }}
+      key={'log'}
+      onClick={() => {
+        AlarmLogModel.current = record;
+        const url = getMenuPathByParams(MENUS_CODE['rule-engine/Alarm/Log/Detail'], record.id);
+        history.push(url);
+      }}
+    >
+      <FileFilled />
+      告警日志
+    </Button>,
+    <Button
+      type={'link'}
+      style={{ padding: 0 }}
+      key={'detail'}
+      onClick={() => {
+        AlarmLogModel.logVisible = true;
+        AlarmLogModel.current = record;
+      }}
+    >
+      <FileTextFilled />
+      处理记录
+    </Button>,
+  ];
+
+  const getAction = (actions: React.ReactNode[]) => {
+    return actions
+      .filter((item) => item)
+      .map((item: any) => {
+        return (
+          <div
+            className={classNames('card-button', {
+              disabled: item.disabled,
+            })}
+            key={item.key}
+          >
+            {item}
+          </div>
+        );
+      });
+  };
+
+  const defaultImage = require('/public/images/device-access.png');
 
   return (
     <div className="alarm-log-card">
@@ -119,130 +180,70 @@ const TabComponent = observer((props: Props) => {
       />
       <Card>
         {dataSource?.data.length > 0 ? (
-          <Row gutter={24} style={{ marginTop: 10 }}>
+          <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
             {(dataSource?.data || []).map((item: any) => (
-              <Col key={item.id} span={24}>
-                <div className="alarm-log-item">
-                  <div className="alarm-log-title">
-                    <div
-                      className="alarm-log-level"
-                      style={{ backgroundColor: colorMap.get(item.level) }}
-                    >
-                      <div className="alarm-log-text">
-                        {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)?.title ||
-                          item.level}
+              <Col key={item.id} span={12}>
+                <div className={classNames('iot-card')}>
+                  <div className={'card-warp'}>
+                    <div className={classNames('card-content')}>
+                      <div
+                        style={{ fontSize: 20, fontWeight: 700, marginBottom: 20 }}
+                        className="ellipsis"
+                      >
+                        <Tooltip title={item.alarmName}>
+                          <a>{item.alarmName}</a>
+                        </Tooltip>
                       </div>
-                    </div>
-                    <div className="alarm-log-title-text">
-                      <Tooltip placement="topLeft" title={item.alarmName}>
-                        {item.alarmName}
-                      </Tooltip>
-                    </div>
-                  </div>
-                  <div className="alarm-log-content">
-                    <div className="alarm-log-data">
-                      <div className="alarm-log-image">
-                        <img
-                          width={88}
-                          height={88}
-                          src={imgMap.get(props.type)}
-                          alt={''}
-                          style={{ marginRight: 20 }}
-                        />
-                        <div className="alarm-type">
-                          <div className="name">{titleMap.get(item.targetType)}</div>
-                          <div className="text">
-                            <Tooltip placement="topLeft" title={item.targetName}>
-                              {item.targetName}
-                            </Tooltip>
+                      <div className="alarm-log-context">
+                        <div className="context-left">
+                          <div className="context-img">
+                            <img width={70} height={70} src={defaultImage} alt={''} />
+                          </div>
+                          <div className="left-item">
+                            <div className="left-item-title">{titleMap.get(item.targetType)}</div>
+                            <div className="left-item-value ellipsis">
+                              <Tooltip placement="topLeft" title={item.targetName}>
+                                {item.targetName}
+                              </Tooltip>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="alarm-log-right">
-                        <div className="alarm-log-time">
-                          <div className="log-title">最近告警时间</div>
-                          <div className="context">
-                            {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
+                        <div className="context-right">
+                          <div className="right-item">
+                            <div className="right-item-title">最近告警时间</div>
+                            <div className="right-item-value ellipsis">
+                              {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
+                            </div>
                           </div>
-                        </div>
-                        <div
-                          className="alarm-log-time alarm-log-status"
-                          style={{ paddingLeft: 10 }}
-                        >
-                          <div className="log-title">状态</div>
-                          <div className="context">
-                            <Badge status={item.state.value === 'warning' ? 'error' : 'default'} />
-                            <span
-                              style={{
-                                color: item.state.value === 'warning' ? '#E50012' : 'black',
-                              }}
-                            >
-                              {item.state.text}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="alarm-log-actions">
-                      <Space>
-                        {item.state.value === 'warning' && (
-                          <div
-                            className={classNames(
-                              permission.action ? 'alarm-log-action' : 'alarm-log-disabled',
-                            )}
-                          >
-                            <Tooltip title={permission.action ? '' : '暂无权限，请联系管理员'}>
-                              <Button
-                                type={'link'}
-                                disabled={!permission.action}
-                                onClick={() => {
-                                  AlarmLogModel.solveVisible = true;
-                                  AlarmLogModel.current = item;
+                          <div className="right-item">
+                            <div className="right-item-title">状态</div>
+                            <div className="right-item-value">
+                              <Badge
+                                status={item.state.value === 'warning' ? 'error' : 'default'}
+                              />
+                              <span
+                                style={{
+                                  color: item.state.value === 'warning' ? '#E50012' : 'black',
                                 }}
                               >
-                                <div className="btn">
-                                  <ToolFilled className="icon" />
-                                  <div>告警处理</div>
-                                </div>
-                              </Button>
-                            </Tooltip>
+                                {item.state.text}
+                              </span>
+                            </div>
                           </div>
-                        )}
-                        <div className="alarm-log-action">
-                          <Button
-                            type={'link'}
-                            onClick={() => {
-                              AlarmLogModel.current = item;
-                              const url = getMenuPathByParams(
-                                MENUS_CODE['rule-engine/Alarm/Log/Detail'],
-                                item.id,
-                              );
-                              history.push(url);
-                            }}
-                          >
-                            <div className="btn">
-                              <FileFilled className="icon" />
-                              <div>告警日志</div>
-                            </div>
-                          </Button>
                         </div>
-                        <div className="alarm-log-action">
-                          <Button
-                            type={'link'}
-                            onClick={() => {
-                              AlarmLogModel.logVisible = true;
-                              AlarmLogModel.current = item;
-                            }}
-                          >
-                            <div className="btn">
-                              <FileTextFilled className="icon" />
-                              <div>处理记录</div>
-                            </div>
-                          </Button>
+                      </div>
+                      <div
+                        className={'alarm-log-state'}
+                        style={{ backgroundColor: colorMap.get(item.level) }}
+                      >
+                        <div className={'card-state-content'}>
+                          {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)?.title ||
+                            item.level}
                         </div>
-                      </Space>
+                      </div>
                     </div>
                   </div>
+                  <div className={'card-tools'}>{getAction(tools(item))}</div>
                 </div>
               </Col>
             ))}

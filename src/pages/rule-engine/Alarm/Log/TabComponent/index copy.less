@@ -1,0 +1,181 @@
+@import '~antd/es/style/themes/default.less';
+
+@alarm-log-padding-left: 60px;
+
+.ellipsis {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.alarm-log-card {
+  .alarm-log-item {
+    display: flex;
+    margin-bottom: 20px;
+
+    .alarm-log-title {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 15%;
+      padding: 10px;
+      overflow: hidden;
+      color: @primary-color;
+      background-color: #f0f2f3;
+      .alarm-log-level {
+        position: absolute;
+        top: 10px;
+        right: -12px;
+        display: flex;
+        justify-content: center;
+        width: 100px;
+        padding: 2px 0;
+        color: white;
+        background-color: red;
+        transform: skewX(45deg);
+        .alarm-log-text {
+          transform: skewX(-45deg);
+        }
+      }
+      .alarm-log-title-text {
+        margin: 0 10px;
+        .ellipsis();
+      }
+    }
+    .alarm-log-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 87%;
+      padding: 20px;
+      background: url('/images/alarm/background.png') no-repeat;
+      background-size: 100% 100%;
+
+      .alarm-log-data {
+        display: flex;
+        align-items: center;
+        min-width: 60%;
+        max-width: 100%;
+
+        .alarm-log-image {
+          display: flex;
+          align-items: center;
+          padding-right: @alarm-log-padding-left;
+          border-right: 1px solid rgba(0, 0, 0, 0.09);
+
+          .alarm-type {
+            width: 40px;
+
+            .name {
+              color: #000;
+              font-size: 18px;
+            }
+
+            .text {
+              margin-top: 8px;
+              color: #666;
+              font-size: 14px;
+              .ellipsis();
+            }
+          }
+        }
+        .alarm-log-right {
+          display: flex;
+          justify-content: space-between;
+          width: 50%;
+          padding-left: @alarm-log-padding-left;
+
+          .alarm-log-time {
+            max-width: 165px;
+
+            .log-title {
+              margin-top: 8px;
+              color: #666;
+              font-size: 12px;
+            }
+
+            .context {
+              margin-top: 8px;
+              color: rgba(#000, 0.85);
+              font-size: 14px;
+              .ellipsis();
+            }
+          }
+
+          .alarm-log-status {
+            margin-left: @alarm-log-padding-left;
+          }
+        }
+      }
+      .alarm-log-actions {
+        .alarm-log-action {
+          display: flex;
+          justify-content: center;
+          width: 72px;
+          height: 72px;
+          background-color: #fff;
+          border: 1px solid @primary-color;
+
+          .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            .icon {
+              margin-bottom: 5px;
+              color: @primary-color;
+              font-size: 25px;
+            }
+
+            div {
+              color: @primary-color;
+              font-size: 12px;
+            }
+          }
+        }
+
+        .alarm-log-action:hover {
+          background-color: @primary-color;
+
+          .icon,
+          div {
+            color: #fff;
+          }
+        }
+        .alarm-log-disabled {
+          display: flex;
+          justify-content: center;
+          width: 72px;
+          height: 72px;
+          border: 1px solid rgba(0, 0, 0, 0.25);
+          .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            .icon {
+              margin-bottom: 5px;
+              color: rgba(0, 0, 0, 0.25);
+              font-size: 25px;
+            }
+
+            div {
+              color: rgba(0, 0, 0, 0.25);
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .alarm-log-item:hover {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  }
+}
