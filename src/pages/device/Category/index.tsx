@@ -12,6 +12,7 @@ import { observer } from '@formily/react';
 import type { Response } from '@/utils/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton } from '@/components';
+import { getDomFullHeight } from '@/utils/util';
 
 export const service = new Service('device/category');
 
@@ -195,6 +196,8 @@ const Category = observer(() => {
             status: response.status,
           };
         }}
+        className={'device-category'}
+        tableStyle={{ minHeight: getDomFullHeight('device-category', 94) }}
         rowKey="id"
         columns={columns}
         onChange={(_, f, sorter: any) => {

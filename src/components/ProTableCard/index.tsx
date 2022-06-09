@@ -1,13 +1,14 @@
 import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { isFunction } from 'lodash';
 import { Empty, Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import LoadingComponent from '@ant-design/pro-layout/es/PageLoading';
 import './index.less';
+import { getDomFullHeight } from '@/utils/util';
 
 enum ModelEnum {
   TABLE = 'TABLE',
@@ -39,32 +40,43 @@ const ProTableCard = <
   const [column, setColumn] = useState(props.gridColumn || 4);
   const [loading, setLoading] = useState(false);
   const [dataLength, setDataLength] = useState<number>(0);
+  const [minHeight, setMinHeight] = useState(100);
 
   /**
    * 处理 Card
    * @param dataSource
    */
-  const handleCard = (dataSource: readonly T[] | undefined): JSX.Element => {
-    setDataLength(dataSource ? dataSource.length : 0);
-    return (
-      <>
-        {dataSource && dataSource.length ? (
-          <div
-            className={'pro-table-card-items'}
-            style={{ gridTemplateColumns: `repeat(${column}, 1fr)` }}
-          >
-            {dataSource.map((item) =>
-              cardRender && isFunction(cardRender) ? cardRender(item) : null,
-            )}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Empty />
-          </div>
-        )}
-      </>
-    );
-  };
+  const handleCard = useCallback(
+    (dataSource: readonly T[] | undefined): JSX.Element => {
+      setDataLength(dataSource ? dataSource.length : 0);
+      return (
+        <>
+          {dataSource && dataSource.length ? (
+            <div
+              className={'pro-table-card-items'}
+              style={{ gridTemplateColumns: `repeat(${column}, 1fr)` }}
+            >
+              {dataSource.map((item) =>
+                cardRender && isFunction(cardRender) ? cardRender(item) : null,
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: minHeight - 150,
+              }}
+            >
+              <Empty />
+            </div>
+          )}
+        </>
+      );
+    },
+    [minHeight],
+  );
 
   const windowChange = () => {
     if (window.innerWidth <= 1440) {
@@ -92,7 +104,15 @@ const ProTableCard = <
   }, [props.params]);
 
   return (
-    <div className={'pro-table-card'}>
+    <div
+      className={'pro-table-card'}
+      style={{ minHeight: minHeight }}
+      ref={(ref) => {
+        if (ref) {
+          setMinHeight(getDomFullHeight('pro-table-card'));
+        }
+      }}
+    >
       <ProTable<T, U, ValueType>
         {...extraProps}
         params={
@@ -103,6 +123,7 @@ const ProTableCard = <
             pageSize,
           } as any
         }
+        className={'pro-table-card-body'}
         options={model === ModelEnum.CARD ? false : props.options}
         request={async (param, sort, filter) => {
           if (request) {
