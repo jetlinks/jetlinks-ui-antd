@@ -14,9 +14,9 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
-import encodeQueryParam from "@/utils/encodeParam";
-import {DeviceInstance} from '@/pages/device/instance/data';
-import { getAccessToken } from '@/utils/authority';
+// import encodeQueryParam from "@/utils/encodeParam";
+// import { DeviceInstance } from '@/pages/device/instance/data';
+// import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -27,7 +27,7 @@ interface State {
   deviceList: any[];
   operateType: string;
   modelFormat: [];
-  modelId:string;
+  modelId: string;
 }
 
 const QuickImport: React.FC<Props> = props => {
@@ -67,7 +67,7 @@ const QuickImport: React.FC<Props> = props => {
   }, []);
 
   const submitData = () => {
-    let data:string = '';
+    let data: string = '';
     // if (operateType === 'copy') {
     //   form.validateFields((err, fileValue) => {
     //     if (err) return;
@@ -81,18 +81,18 @@ const QuickImport: React.FC<Props> = props => {
     //     }
     //   });
     // } else {
-      if(modelId !== ''){
-        apis.deviceProdcut.getModel(modelId, metaData).then(res => {
-          if(res.status === 200){
-            data = JSON.stringify(res.result)
-            props.update(data);
-          }
-        })
-      }else {
-        message.error('物模型不能为空')
-        // data = metaData;
-        // props.update(data);
-      }
+    if (modelId !== '') {
+      apis.deviceProdcut.getModel(modelId, metaData).then(res => {
+        if (res.status === 200) {
+          data = JSON.stringify(res.result)
+          props.update(data);
+        }
+      })
+    } else {
+      message.error('物模型不能为空')
+      // data = metaData;
+      // props.update(data);
+    }
     // }
   };
 
@@ -149,10 +149,10 @@ const QuickImport: React.FC<Props> = props => {
             <Tooltip title={
               <span>
                 物模型格式请参考文档：
-          <a target='_blank'
+                <a target='_blank'
                   href='http://doc.jetlinks.cn/basics-guide/device-manager.html#%E8%AE%BE%E5%A4%87%E5%9E%8B%E5%8F%B7'>
                   设备型号
-          </a>
+                </a>
               </span>
             }>
               <Icon type="question-circle-o" />
@@ -162,26 +162,48 @@ const QuickImport: React.FC<Props> = props => {
           <Row gutter={24}>
             <Col span={6}>
               <Upload
-              action="/jetlinks/file/static"
-              headers={{
-                'X-Access-Token': getAccessToken(),
-              }}
+                // action="/jetlinks/file/static"
+                // headers={{
+                //   'X-Access-Token': getAccessToken(),
+                // }}
                 showUploadList={false} accept='.json'
                 beforeUpload={(file) => {
+                  // const reader = new FileReader();
+                  // reader.readAsText(file);
+                  // reader.onload = (result) => {
+                  //   try {
+                  //     let data = JSON.parse(result.target.result);
+                  //     if (data.tags || data.properties || data.functions || data.events) {
+                  //       setMetaData(JSON.stringify(data, null, 2));
+                  //     } else {
+                  //       message.error('文件内容格式错误');
+                  //     }
+                  //   } catch (error) {
+                  //     message.error('文件内容格式错误');
+                  //   }
+                  // }
                   const reader = new FileReader();
                   reader.readAsText(file);
-                  reader.onload = (result) => {
+                  reader.onload = async (result) => {
+                    const text = result.target?.result as string;
+                    if (!file.type.includes('json')) {
+                      message.error('请上传json格式文件');
+                      return false;
+                    }
                     try {
-                      let data = JSON.parse(result.target.result);
+                      const data = JSON.parse(text || '{}');
                       if (data.tags || data.properties || data.functions || data.events) {
                         setMetaData(JSON.stringify(data, null, 2));
                       } else {
                         message.error('文件内容格式错误');
                       }
-                    } catch (error) {
-                      message.error('文件内容格式错误');
+                      return true;
+                    } catch {
+                      message.error('请上传json格式文件');
                     }
-                  }
+                    return true;
+                  };
+                  return false;
                 }}
               >
                 <Button>
@@ -190,8 +212,8 @@ const QuickImport: React.FC<Props> = props => {
               </Upload>
             </Col>
             <Col span={18}>
-              <Select placeholder="JetLinks物模型" allowClear style={{width: '200px'}} onChange={(value: string) => {
-                if(value !== '{}' && value !== undefined){
+              <Select placeholder="JetLinks物模型" allowClear style={{ width: '200px' }} onChange={(value: string) => {
+                if (value !== '{}' && value !== undefined) {
                   setModelId(value)
                 }
               }}>
