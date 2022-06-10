@@ -11,6 +11,10 @@ export const service = new Service('alarm/record');
 const Log = observer(() => {
   const list = [
     {
+      key: 'all',
+      tab: '全部',
+    },
+    {
       key: 'product',
       tab: '产品',
     },

@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table } from 'antd';
+import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table, Tooltip } from 'antd';
 import { service } from '@/pages/device/Instance';
 import './index.less';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+// import { throttle } from 'lodash';
 
 const defaultImage = require('/public/images/metadata-map.png');
 
@@ -49,7 +51,7 @@ const EditableCell = ({
       const values = await form.validateFields();
       handleSave({
         ...record,
-        originalId: values?.originalId,
+        originalId: !!values?.originalId ? values?.originalId : record.metadataId,
         customMapping: values?.originalId !== '',
       });
     } catch (errInfo) {
@@ -69,6 +71,20 @@ const EditableCell = ({
   if (editable) {
     childNode = (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        {/* <AutoComplete onChange={throttle(save, 5000)}>
+          <AutoComplete.Option value={''}>使用物模型属性</AutoComplete.Option>
+          {record.customMapping && temp && (
+            <AutoComplete.Option value={record.originalId}>
+              {temp?.name}({temp?.id})
+            </AutoComplete.Option>
+          )}
+          {tempList.length > 0 &&
+            tempList.map((item: any) => (
+              <AutoComplete.Option key={item?.id} value={item?.id}>
+                {item?.name}({item?.id})
+              </AutoComplete.Option>
+            ))}
+        </AutoComplete> */}
         <Select
           onChange={save}
           showSearch
@@ -109,7 +125,14 @@ const EditableTable = (props: Props) => {
       render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
     },
     {
-      title: '设备上报属性',
+      title: (
+        <span>
+          设备上报属性
+          <Tooltip title="设备上报属性无法根据标识与物模型属性匹配时，默认使用物模型属性">
+            <QuestionCircleOutlined />
+          </Tooltip>
+        </span>
+      ),
       dataIndex: 'originalId',
       width: '30%',
       editable: true,

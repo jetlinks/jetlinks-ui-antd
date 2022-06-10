@@ -18,18 +18,6 @@ const Save = (props: Props) => {
   const [data, setDada] = useState<any>(props.data || {});
   const [dataList, setDataList] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (props.data?.topicConfig) {
-      setDada({
-        ...props.data,
-        topicConfig: {
-          alarmConfigId: props.data?.topicConfig?.alarmConfigId.split(','),
-          alarmConfigName: props.data?.topicConfig?.alarmConfigName.split(','),
-        },
-      });
-    }
-  }, [props.data]);
-
   const form = useMemo(
     () =>
       createForm({
@@ -38,6 +26,20 @@ const Save = (props: Props) => {
       }),
     [],
   );
+
+  useEffect(() => {
+    if (props.data?.topicConfig) {
+      const param = {
+        ...props.data,
+        topicConfig: {
+          alarmConfigId: props.data?.topicConfig?.alarmConfigId.split(','),
+          alarmConfigName: props.data?.topicConfig?.alarmConfigName.split(','),
+        },
+      };
+      setDada({ ...param });
+      form.setValues(param);
+    }
+  }, [props.data]);
 
   const queryProvidersList = () => service.getProvidersList();
 
