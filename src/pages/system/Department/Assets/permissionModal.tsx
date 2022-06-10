@@ -1,19 +1,18 @@
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Checkbox } from '@formily/antd';
-import { message, Modal } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import { message } from 'antd';
 import type { ISchema } from '@formily/json-schema';
 import type { ModalProps } from 'antd/lib/modal/Modal';
-import { useParams } from 'umi';
 import Service from './service';
+import { forwardRef, useImperativeHandle } from 'react';
 
 type PermissionType = 'device' | 'product' | 'deviceCategory';
 
 export interface PerModalProps extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   type: PermissionType;
+  parentId: string;
   bindKeys: string[];
-  visible: boolean;
   /**
    * Model关闭事件
    * @param type 是否为请求接口后关闭，用于外部table刷新数据
@@ -23,10 +22,7 @@ export interface PerModalProps extends Omit<ModalProps, 'onOk' | 'onCancel'> {
 
 const service = new Service('assets');
 
-export default (props: PerModalProps) => {
-  const intl = useIntl();
-  const params = useParams<{ id: string }>();
-
+const Permission = forwardRef((props: PerModalProps, ref) => {
   const SchemaField = createSchemaField({
     components: {
       Form,
@@ -56,7 +52,7 @@ export default (props: PerModalProps) => {
       .bind(props.type, [
         {
           targetType: 'org',
-          targetId: params.id,
+          targetId: props.parentId,
           assetType: props.type,
           assetIdList: props.bindKeys,
           permission: formData.permission,
@@ -71,6 +67,10 @@ export default (props: PerModalProps) => {
       });
   };
 
+  useImperativeHandle(ref, () => ({
+    saveData,
+  }));
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -84,26 +84,19 @@ export default (props: PerModalProps) => {
           { label: '编辑', value: 'save' },
           { label: '删除', value: 'delete' },
         ],
+        required: true,
         'x-value': ['read'],
       },
     },
   };
 
   return (
-    <Modal
-      title={intl.formatMessage({
-        id: `pages.data.option.`,
-        defaultMessage: '资产权限',
-      })}
-      visible={props.visible}
-      onOk={saveData}
-      onCancel={() => {
-        modalClose(false);
-      }}
-    >
-      <Form form={form} labelCol={5} wrapperCol={16}>
+    <div style={{ borderBottom: '1px solid #f0f0f0' }}>
+      <Form form={form}>
         <SchemaField schema={schema} />
       </Form>
-    </Modal>
+    </div>
   );
-};
+});
+
+export default Permission;

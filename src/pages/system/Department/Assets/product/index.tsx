@@ -1,10 +1,8 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useParams } from 'umi';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
@@ -12,14 +10,18 @@ import Service from '@/pages/system/Department/Assets/service';
 import Models from './model';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
+import {
+  ExtraProductCard,
+  handlePermissionsMap,
+} from '@/components/ProTableCard/CardItems/product';
+import { ProTableCard } from '@/components';
 
 export const service = new Service<ProductItem>('assets');
 
-export default observer(() => {
+export default observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
-  const param = useParams<{ id: string }>();
   const [searchParam, setSearchParam] = useState({});
 
   /**
@@ -31,7 +33,7 @@ export default observer(() => {
         .unBind('product', [
           {
             targetType: 'org',
-            targetId: param.id,
+            targetId: props.parentId,
             assetType: 'product',
             assetIdList: Models.unBindKeys,
           },
@@ -68,6 +70,14 @@ export default observer(() => {
       }),
       search: {
         transform: (value) => ({ name$LIKE: value }),
+      },
+    },
+    {
+      title: '资产权限',
+      dataIndex: 'grantedPermissions',
+      hideInSearch: true,
+      render: (_, row) => {
+        return handlePermissionsMap(row.grantedPermissions);
       },
     },
     {
@@ -117,13 +127,48 @@ export default observer(() => {
     Models.bindKeys = [];
   };
 
+  useEffect(() => {
+    setSearchParam({
+      terms: [
+        {
+          column: 'id',
+          termType: 'dim-assets',
+          value: {
+            assetType: 'product',
+            targets: [
+              {
+                type: 'org',
+                id: props.parentId,
+              },
+            ],
+          },
+        },
+      ],
+    });
+    actionRef.current?.reload();
+    //  初始化所有状态
+    Models.bindKeys = [];
+    Models.unBindKeys = [];
+  }, [props.parentId]);
+
+  const getData = (params: any, parentId: string) => {
+    return new Promise((resolve) => {
+      service.queryProductList2(params, parentId).subscribe((data) => {
+        resolve(data);
+      });
+    });
+  };
+
   return (
     <>
-      <Bind
-        visible={Models.bind}
-        onCancel={closeModal}
-        reload={() => actionRef.current?.reload()}
-      />
+      {Models.bind && (
+        <Bind
+          visible={Models.bind}
+          onCancel={closeModal}
+          reload={() => actionRef.current?.reload()}
+          parentId={props.parentId}
+        />
+      )}
       <SearchComponent<ProductItem>
         field={columns}
         defaultParam={[
@@ -135,7 +180,7 @@ export default observer(() => {
               targets: [
                 {
                   type: 'org',
-                  id: param.id,
+                  id: props.parentId,
                 },
               ],
             },
@@ -152,19 +197,48 @@ export default observer(() => {
         // }}
         target="department-assets-product"
       />
-      <ProTable<ProductItem>
+      <ProTableCard<ProductItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
         search={false}
+        gridColumn={2}
         params={searchParam}
-        request={(params) => service.queryProductList(params)}
+        request={async (params) => {
+          if (!props.parentId) {
+            return {
+              code: 200,
+              result: {
+                data: [],
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: 200,
+            };
+          }
+          const resp: any = await getData(params, props.parentId);
+          return {
+            code: resp.status,
+            result: resp.result,
+            status: resp.status,
+          };
+        }}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
+            console.log(selectedRows);
             Models.unBindKeys = selectedRows.map((item) => item.id);
           },
         }}
+        cardRender={(record) => (
+          <ExtraProductCard
+            {...record}
+            onUnBind={() => {
+              singleUnBind(record.id);
+            }}
+          />
+        )}
         toolBarRender={() => [
           <Button
             onClick={() => {
@@ -173,6 +247,7 @@ export default observer(() => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            disabled={!props.parentId}
           >
             {intl.formatMessage({
               id: 'pages.data.option.assets',

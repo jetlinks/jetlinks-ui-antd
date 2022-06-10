@@ -47,8 +47,48 @@ const ProTableCard = <
    * @param dataSource
    */
   const handleCard = useCallback(
-    (dataSource: readonly T[] | undefined): JSX.Element => {
+    (dataSource: readonly T[] | undefined, rowSelection?: any): JSX.Element => {
       setDataLength(dataSource ? dataSource.length : 0);
+
+      const Item = (dom: React.ReactNode) => {
+        if (!rowSelection || (rowSelection && !rowSelection.selectedRowKeys)) {
+          return dom;
+        }
+        const { selectedRowKeys, onChange } = rowSelection;
+
+        // @ts-ignore
+        const id = dom.props.id;
+
+        // @ts-ignore
+        return React.cloneElement(dom, {
+          // @ts-ignore
+          className: classNames(dom.props.className, {
+            'item-active': selectedRowKeys && selectedRowKeys.includes(id),
+          }),
+          key: id,
+          onClick: (e) => {
+            e.stopPropagation();
+            if (onChange) {
+              const isSelect = selectedRowKeys.includes(id);
+
+              if (isSelect) {
+                const nowRowKeys = selectedRowKeys.filter((key: string) => key !== id);
+                onChange(
+                  nowRowKeys,
+                  dataSource!.filter((item) => nowRowKeys.includes(item.id)),
+                );
+              } else {
+                const nowRowKeys = [...selectedRowKeys, id];
+                onChange(
+                  nowRowKeys,
+                  dataSource!.filter((item) => nowRowKeys.includes(item.id)),
+                );
+              }
+            }
+          },
+        });
+      };
+
       return (
         <>
           {dataSource && dataSource.length ? (
@@ -57,7 +97,7 @@ const ProTableCard = <
               style={{ gridTemplateColumns: `repeat(${column}, 1fr)` }}
             >
               {dataSource.map((item) =>
-                cardRender && isFunction(cardRender) ? cardRender(item) : null,
+                cardRender && isFunction(cardRender) ? Item(cardRender(item)) : null,
               )}
             </div>
           ) : (
@@ -190,7 +230,7 @@ const ProTableCard = <
         tableViewRender={
           model === ModelEnum.CARD
             ? (tableProps) => {
-                return handleCard(tableProps.dataSource);
+                return handleCard(tableProps.dataSource, extraProps?.rowSelection);
               }
             : undefined
         }
