@@ -70,7 +70,7 @@ const Update: React.FC<Props> = props => {
           })(
             <Radio.Group buttonStyle="solid">
               <Radio.Button value="UDP">UDP</Radio.Button>
-              <Radio.Button value="TCP_ACTIVE">TCP主动</Radio.Button>
+              {/* <Radio.Button value="TCP_ACTIVE">TCP主动</Radio.Button> */}
               <Radio.Button value="TCP_PASSIVE">TCP被动</Radio.Button>
             </Radio.Group>
           )}

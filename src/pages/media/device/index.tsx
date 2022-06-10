@@ -40,7 +40,7 @@ const MediaDevice: React.FC<Props> = () => {
 
   const streamMode = new Map();
   streamMode.set('UDP', 'UDP');
-  streamMode.set('TCP_ACTIVE', 'TCP主动');
+  // streamMode.set('TCP_ACTIVE', 'TCP主动');
   streamMode.set('TCP_PASSIVE', 'TCP被动');
 
   useEffect(() => {
