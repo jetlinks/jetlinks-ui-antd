@@ -4,7 +4,7 @@ export default {
   'pages.login.success': '登录成功！',
   'pages.login.username.placeholder': '用户名',
   'pages.login.password.placeholder': '密码',
-  'pages.login.captcha.placeholder': '请输入验证码！',
+  'pages.login.captcha.placeholder': '请输入验证码',
   'pages.login.submit': '登录',
   'pages.welcome.alertMessage': '更快更强的重型组件，已经发布。',
   'pages.admin.subPage.title': ' 这个页面只有 admin 权限才能查看',

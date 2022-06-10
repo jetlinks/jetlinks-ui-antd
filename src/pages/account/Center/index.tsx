@@ -44,6 +44,12 @@ const Center = () => {
   bGroundMap.set('dingtalk', require('/public/images/notice/dingtalk-background.png'));
   bGroundMap.set('wechat-webapp', require('/public/images/notice/wechat-background.png'));
 
+  const getDetail = () => {
+    service.getUserDetail().subscribe((res) => {
+      setData(res.result);
+      setImageUrl(res.result.avatar);
+    });
+  };
   const uploadProps: UploadProps = {
     showUploadList: false,
     accept: 'image/jpeg,image/png',
@@ -72,6 +78,7 @@ const Center = () => {
           .subscribe((res) => {
             if (res.status === 200) {
               setImageUrl(info.file.response.result);
+              getDetail();
               message.success('上传成功');
             }
           });
@@ -80,12 +87,6 @@ const Center = () => {
     },
   };
 
-  const getDetail = () => {
-    service.getUserDetail().subscribe((res) => {
-      setData(res.result);
-      setImageUrl(res.result.avatar);
-    });
-  };
   const saveInfo = (parms: UserDetail) => {
     service.saveUserDetail(parms).subscribe((res) => {
       if (res.status === 200) {
@@ -126,10 +127,12 @@ const Center = () => {
   }, []);
 
   useEffect(() => {
+    console.log(data);
     if (data?.name) {
       const item = {
         ...initialState?.currentUser?.user,
         name: data.name,
+        avatar: data.avatar,
       };
       setInitialState({
         ...initialState,

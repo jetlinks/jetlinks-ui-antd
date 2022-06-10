@@ -6,6 +6,7 @@ import {
   DownloadOutlined,
   EditOutlined,
   EyeOutlined,
+  PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
@@ -19,7 +20,7 @@ import { useEffect, useRef, useState } from 'react';
 import Save from '@/pages/device/Product/Save';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { AIcon, PermissionButton, ProTableCard } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
 import { downloadObject } from '@/utils/util';
 import { service as categoryService } from '@/pages/device/Category';
@@ -209,7 +210,7 @@ const Product = observer(() => {
       type={'link'}
       isPermission={permission.action}
     >
-      {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
+      {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
     </PermissionButton>,
     <PermissionButton
       key="unBindUser"
@@ -559,7 +560,7 @@ const Product = observer(() => {
                 type={'link'}
                 isPermission={permission.action}
               >
-                {record.state ? <StopOutlined /> : <AIcon type={'icon-fabu'} />}
+                {record.state ? <StopOutlined /> : <PlayCircleOutlined />}
                 {intl.formatMessage({
                   id: `pages.data.option.${record.state ? 'disabled' : 'enabled'}`,
                   defaultMessage: record.state ? '禁用' : '启用',

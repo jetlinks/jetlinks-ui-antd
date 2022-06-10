@@ -7,7 +7,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import Service from '@/pages/user/Login/service';
-import { service as SystemConfigService } from '@/pages/system/Config';
+// import { service as SystemConfigService } from '@/pages/system/Config';
 import Token from '@/utils/token';
 import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
@@ -38,7 +38,15 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     try {
       const user = await Service.queryCurrent();
-      return user.result;
+      const detail = await Service.userDetail();
+      // console.log(user.result,'user')
+      return {
+        ...user.result,
+        user: {
+          ...user.result.user,
+          avatar: detail.result.avatar,
+        },
+      };
     } catch (error) {
       history.push(loginPath);
     }
@@ -218,7 +226,7 @@ const MenuItemIcon = (
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
-  // console.log({ ...initialState });
+  console.log({ ...initialState });
   return {
     navTheme: 'light',
     headerTheme: 'light',
@@ -293,9 +301,14 @@ export function patchRoutes(routes: any) {
 
 export function render(oldRender: any) {
   if (history.location.pathname !== loginPath && history.location.pathname !== bindPath) {
-    SystemConfigService.getAMapKey().then((res) => {
+    // SystemConfigService.getAMapKey().then((res) => {
+    //   if (res && res.status === 200 && res.result) {
+    //     localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);
+    //   }
+    // });
+    Service.settingDetail('api').then((res) => {
       if (res && res.status === 200 && res.result) {
-        localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);
+        localStorage.setItem(SystemConst.AMAP_KEY, res.result.api);
       }
     });
     MenuService.queryOwnThree({ paging: false }).then((res) => {

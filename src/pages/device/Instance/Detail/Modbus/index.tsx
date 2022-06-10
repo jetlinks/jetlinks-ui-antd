@@ -380,9 +380,9 @@ const Modbus = () => {
                 code: res.message,
                 result: {
                   data: res.result.data,
-                  pageIndex: 0,
-                  pageSize: 0,
-                  total: 0,
+                  pageIndex: res.result.pageIndex,
+                  pageSize: res.result.pageSize,
+                  total: res.result.total,
                 },
                 status: res.status,
               };

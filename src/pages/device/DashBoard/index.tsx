@@ -8,10 +8,11 @@ import { useRequest } from 'umi';
 import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import type { EChartsOption } from 'echarts';
 import Echarts from '@/components/DashBoard/echarts';
-import moment from 'moment';
+// import moment from 'moment';
 import { AMap } from '@/components';
 import { Marker } from 'react-amap';
 import { EnvironmentOutlined } from '@ant-design/icons';
+import SystemConst from '@/utils/const';
 
 type RefType = {
   getValues: Function;
@@ -31,6 +32,7 @@ const DeviceBoard = () => {
   const [month, setMonth] = useState(0);
   const [day, setDay] = useState(0);
   const [point, setPoint] = useState([]);
+  const [amapKey, setAmapKey] = useState<any>();
 
   const ref = useRef<RefType>();
 
@@ -85,20 +87,21 @@ const DeviceBoard = () => {
     const res = await service.dashboard([
       {
         dashboard: 'device',
-        object: 'status',
-        measurement: 'record',
-        dimension: 'aggOnline',
+        object: 'session',
+        measurement: 'online',
+        dimension: 'agg',
         group: 'aggOnline',
         params: {
           state: 'online',
           limit: 15,
           from: 'now-15d',
           time: '1d',
+          format: 'yyyy-MM-dd',
         },
       },
     ]);
     if (res.status === 200) {
-      const x = res.result.map((item: any) => item.data.timeString);
+      const x = res.result.map((item: any) => item.data.timeString).reverse();
       const y = res.result.map((item: any) => item.data.value);
       setYesterdayCount(y?.[1]);
       setOnlineOptions({
@@ -112,7 +115,7 @@ const DeviceBoard = () => {
           show: false,
         },
         grid: {
-          top: '2%',
+          top: '5%',
           bottom: 0,
         },
         tooltip: {
@@ -124,7 +127,7 @@ const DeviceBoard = () => {
         series: [
           {
             name: '在线数',
-            data: y,
+            data: y.reverse(),
             type: 'bar',
             itemStyle: {
               color: '#2F54EB',
@@ -182,8 +185,8 @@ const DeviceBoard = () => {
       setDay(oneDay);
       setMonth(thisMonth);
       const today = res.result.filter((item: any) => item.group === 'today');
-      const x = today.map((item: any) => item.data.timeString);
-      const y = today.map((item: any) => item.data.value);
+      const x = today.map((item: any) => item.data.timeString).reverse();
+      const y = today.map((item: any) => item.data.value).reverse();
       setDeviceOptions({
         tooltip: {
           trigger: 'axis',
@@ -241,7 +244,7 @@ const DeviceBoard = () => {
   const getEcharts = async () => {
     const data = ref.current!.getValues();
     if (data) {
-      console.log(Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1));
+      // console.log(Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1));
       const res = await service.dashboard([
         {
           dashboard: 'device',
@@ -253,14 +256,16 @@ const DeviceBoard = () => {
             time: '1d',
             format: 'yyyy.MM.dd',
             limit: Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1),
-            from: moment(data.time.start).format('yyyy-MM-DD'),
-            to: moment(data.time.end).format('yyyy-MM-DD'),
+            // from: moment(data.time.start).format('yyyy-MM-DD HH:MM:SS'),
+            // to: moment(data.time.end).format('yyyy-MM-DD HH:MM:SS'),
+            from: data.time.start,
+            to: data.time.end,
           },
         },
       ]);
       if (res.status === 200) {
-        const x = res.result.map((item: any) => item.data.timeString);
-        const y = res.result.map((item: any) => item.data.value);
+        const x = res.result.map((item: any) => item.data.timeString).reverse();
+        const y = res.result.map((item: any) => item.data.value).reverse();
         setOptions({
           xAxis: {
             type: 'category',
@@ -269,13 +274,44 @@ const DeviceBoard = () => {
           yAxis: {
             type: 'value',
           },
+          tooltip: {
+            trigger: 'axis',
+            // axisPointer: {
+            //   type: 'shadow',
+            // },
+          },
+          grid: {
+            top: '2%',
+            bottom: '5%',
+            left: '2%',
+            right: '2%',
+          },
           series: [
             {
+              name: '消息量',
               data: y,
-              type: 'bar',
-              barMaxWidth: 20,
-              itemStyle: {
-                color: '#2F54EB',
+              type: 'line',
+              smooth: true,
+              color: '#685DEB',
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: '#685DEB', // 100% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: '#FFFFFF', //   0% 处的颜色
+                    },
+                  ],
+                  global: false, // 缺省为 false
+                },
               },
             },
           ],
@@ -287,7 +323,6 @@ const DeviceBoard = () => {
   const geo = async (data?: any) => {
     const res = await service.getGeo(data);
     if (res.status === 200) {
-      console.log(res.result.features);
       setPoint(res.result.features);
     }
   };
@@ -299,6 +334,11 @@ const DeviceBoard = () => {
     getDevice();
     geo({});
   }, []);
+
+  useEffect(() => {
+    const api = localStorage.getItem(SystemConst.AMAP_KEY);
+    setAmapKey(api);
+  }, [localStorage.getItem(SystemConst.AMAP_KEY)]);
 
   return (
     <PageContainer>
@@ -375,54 +415,57 @@ const DeviceBoard = () => {
           ref={ref}
           height={500}
           defaultTime={'week'}
+          showTime={true}
           onParamsChange={getEcharts}
         />
-        <Card style={{ marginTop: 10 }}>
-          <div
-            style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-              marginBottom: 10,
-            }}
-          >
-            设备分布
-          </div>
-          <div>
-            <AMap
-              AMapUI
+        {amapKey && (
+          <Card style={{ marginTop: 10 }}>
+            <div
               style={{
-                height: 500,
-                width: '100%',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                marginBottom: 10,
               }}
             >
-              {point.map((item: any) => (
-                //@ts-ignore
-                <Marker
-                  position={{
-                    longitude: item.geometry.coordinates?.[0],
-                    latitude: item.geometry.coordinates?.[1],
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div
-                      style={{
-                        backgroundColor: '#666666',
-                        color: 'white',
-                        textAlign: 'center',
-                        marginBottom: 5,
-                      }}
-                    >
-                      {item.properties.deviceName}
+              设备分布
+            </div>
+            <div>
+              <AMap
+                AMapUI
+                style={{
+                  height: 500,
+                  width: '100%',
+                }}
+              >
+                {point.map((item: any) => (
+                  //@ts-ignore
+                  <Marker
+                    position={{
+                      longitude: item.geometry.coordinates?.[0],
+                      latitude: item.geometry.coordinates?.[1],
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div
+                        style={{
+                          backgroundColor: '#666666',
+                          color: 'white',
+                          textAlign: 'center',
+                          marginBottom: 5,
+                        }}
+                      >
+                        {item.properties.deviceName}
+                      </div>
+                      <div>
+                        <EnvironmentOutlined style={{ color: 'blue', fontSize: 22 }} />
+                      </div>
                     </div>
-                    <div>
-                      <EnvironmentOutlined style={{ color: 'blue', fontSize: 22 }} />
-                    </div>
-                  </div>
-                </Marker>
-              ))}
-            </AMap>
-          </div>
-        </Card>
+                  </Marker>
+                ))}
+              </AMap>
+            </div>
+          </Card>
+        )}
       </div>
     </PageContainer>
   );
