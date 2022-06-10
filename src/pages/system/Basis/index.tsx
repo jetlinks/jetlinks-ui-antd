@@ -56,6 +56,7 @@ const Basis = () => {
     if (res.status === 200) {
       const basis = res.result?.filter((item: any) => item.scope === 'basis');
       const api = res?.result.filter((item: any) => item.scope === 'api');
+      localStorage.setItem(SystemConst.AMAP_KEY, api[0].properties.api);
       // console.log(basis?.[0])
       setImageUrl(basis[0].properties?.logo);
       form.setFieldsValue({
@@ -102,7 +103,6 @@ const Basis = () => {
   };
 
   useEffect(() => {
-    console.log(initialState);
     detail(['basis', 'api']);
   }, []);
 
@@ -151,12 +151,20 @@ const Basis = () => {
             </div>
             <Upload {...uploadProps}>
               {imageUrl ? (
-                <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%' }} />
+                <img
+                  src={imageUrl}
+                  alt="avatar"
+                  onError={() => {
+                    setImageUrl(require('/public/images/img-miss.png'));
+                  }}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
               ) : (
                 uploadButton
               )}
             </Upload>
           </div>
+          <div style={{ paddingTop: 215, color: '#a2a5a7' }}>推荐分辨率200*200</div>
         </div>
         <div>
           <PermissionButton

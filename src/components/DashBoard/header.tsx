@@ -21,6 +21,7 @@ export interface HeaderProps {
    */
   closeInitialParams?: boolean;
   defaultTime?: TimeType;
+  showTime?: boolean;
 }
 
 export default forwardRef((props: HeaderProps, ref) => {
@@ -64,7 +65,7 @@ export default forwardRef((props: HeaderProps, ref) => {
             <Col span={props.extraParams ? 18 : 24}>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Form.Item noStyle name={'time'}>
-                  <RangePicker defaultTime={props.defaultTime} />
+                  <RangePicker defaultTime={props.defaultTime} showTime={props.showTime} />
                 </Form.Item>
               </div>
             </Col>
