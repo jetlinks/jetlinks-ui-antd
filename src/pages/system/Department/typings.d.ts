@@ -27,6 +27,7 @@ export type ProductItem = {
   id: string;
   name: string;
   description: string;
+  grantedPermissions?: string[];
 };
 
 // 产品分类
@@ -37,6 +38,7 @@ export type DeviceItem = {
   id: string;
   name: string;
   productName: string;
-  createTime: string;
+  createTime: number;
   state: State;
+  grantedPermissions?: string[];
 };

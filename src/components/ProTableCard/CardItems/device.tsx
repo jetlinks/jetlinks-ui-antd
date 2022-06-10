@@ -1,25 +1,112 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
+import { DisconnectOutlined } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
 
-export interface DeviceCardProps extends DeviceInstance {
+export interface DeviceCardProps extends Partial<DeviceInstance> {
   detail?: React.ReactNode;
   actions?: React.ReactNode[];
   avatarSize?: number;
+  className?: string;
+  content?: React.ReactNode[];
+  onClick?: () => void;
+  grantedPermissions?: string[];
+  onUnBind?: (e: any) => void;
 }
 
 const defaultImage = require('/public/images/device-type-3-big.png');
+
+export const PermissionsMap = {
+  read: '查看',
+  save: '编辑',
+  delete: '删除',
+};
+
+export const handlePermissionsMap = (permissions?: string[]) => {
+  return permissions && permissions.length
+    ? permissions.map((item) => PermissionsMap[item]).toString()
+    : '--';
+};
+
+export const ExtraDeviceCard = (props: DeviceCardProps) => {
+  const intl = useIntl();
+  const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
+
+  return (
+    <TableCard
+      showTool={false}
+      showMask={false}
+      status={props.state?.value}
+      statusText={props.state?.text}
+      statusNames={{
+        online: StatusColorEnum.processing,
+        offline: StatusColorEnum.error,
+        notActive: StatusColorEnum.warning,
+      }}
+      onClick={props.onClick}
+      className={props.className}
+    >
+      <div className={'pro-table-card-item'}>
+        <div className={'card-item-avatar'}>
+          <img
+            width={88}
+            height={88}
+            src={imgUrl}
+            alt={''}
+            onError={() => {
+              setImgUrl(defaultImage);
+            }}
+          />
+        </div>
+        <div className={'card-item-body'}>
+          <div className={'card-item-header'}>
+            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+          </div>
+          <div className={'card-item-content-flex'}>
+            <div className={'flex-auto'}>
+              <label>ID</label>
+              <div className={'ellipsis'}>{props.id || '--'}</div>
+            </div>
+            <div className={'flex-auto'}>
+              <label>资产权限</label>
+              <div className={'ellipsis'}>{handlePermissionsMap(props.grantedPermissions)}</div>
+            </div>
+            <Popconfirm
+              title={intl.formatMessage({
+                id: 'pages.system.role.option.unBindUser',
+                defaultMessage: '是否解除绑定',
+              })}
+              key="unBind"
+              onConfirm={(e) => {
+                e?.stopPropagation();
+                if (props.onUnBind) {
+                  props.onUnBind(e);
+                }
+              }}
+            >
+              <div className={'flex-button'}>
+                <DisconnectOutlined />
+              </div>
+            </Popconfirm>
+          </div>
+        </div>
+      </div>
+    </TableCard>
+  );
+};
 
 export default (props: DeviceCardProps) => {
   return (
     <TableCard
       detail={props.detail}
       actions={props.actions}
-      status={props.state.value}
-      statusText={props.state.text}
+      status={props.state?.value}
+      statusText={props.state?.text}
       statusNames={{
         online: StatusColorEnum.processing,
         offline: StatusColorEnum.error,

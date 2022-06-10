@@ -1,7 +1,6 @@
 // Modal 弹窗，用于新增、修改数据
 import React from 'react';
-import type { Field } from '@formily/core';
-import { createForm, onFieldReact } from '@formily/core';
+import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
   ArrayTable,
@@ -30,14 +29,13 @@ import type BaseService from '@/utils/BaseService';
 export interface SaveModalProps<T> extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   service: BaseService<T>;
   data?: Partial<T>;
-  reload?: () => void;
+  reload?: (pId: string) => void;
   /**
    * Model关闭事件
    * @param type 是否为请求接口后关闭，用于外部table刷新数据
    */
   onCancel?: (type: boolean, id?: React.Key) => void;
   schema: ISchema;
-  parentChange: (value?: string) => number;
 }
 
 const Save = <T extends object>(props: SaveModalProps<T>) => {
@@ -71,15 +69,6 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
   const form = createForm({
     validateFirst: true,
     initialValues: data || {},
-    effects: () => {
-      onFieldReact('sortIndex', (field) => {
-        const value = (field as Field).value;
-        if (props.parentChange && !value) {
-          const sortIndex = props.parentChange(field.query('parentId').value());
-          (field as Field).value = !!sortIndex ? sortIndex : sortIndex + 1;
-        }
-      });
-    },
   });
 
   /**
@@ -105,6 +94,9 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
     if (response.status === 200) {
       message.success('操作成功！');
       modalClose(true, response.result.parentId);
+      if (props.reload) {
+        props.reload(response.result.parentId);
+      }
       if ((window as any).onTabSaveSuccess) {
         (window as any).onTabSaveSuccess(response.result);
         setTimeout(() => window.close(), 300);

@@ -3,7 +3,6 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { getTableKeys, service } from './index';
 import { Button, message, Modal, Space } from 'antd';
-import { useParams } from 'umi';
 import Models from './model';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
@@ -17,14 +16,14 @@ interface Props {
   reload: () => void;
   visible: boolean;
   onCancel: () => void;
+  parentId: string;
 }
 
 const Bind = observer((props: Props) => {
   const intl = useIntl();
-  const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
-  const [perVisible, setPerVisible] = useState(false);
   const [searchParam, setSearchParam] = useState({});
+  const saveRef = useRef<{ saveData: Function }>();
 
   const columns: ProColumns<ProductCategoryItem>[] = [
     {
@@ -52,8 +51,8 @@ const Bind = observer((props: Props) => {
   ];
 
   const handleBind = () => {
-    if (Models.bindKeys.length) {
-      setPerVisible(true);
+    if (Models.bindKeys.length && saveRef.current) {
+      saveRef.current.saveData();
     } else {
       message.warn('请先勾选数据');
       // props.onCancel();
@@ -75,11 +74,11 @@ const Bind = observer((props: Props) => {
       title="绑定"
     >
       <PermissionModal
-        visible={perVisible}
         type="deviceCategory"
         bindKeys={Models.bindKeys}
+        ref={saveRef}
+        parentId={props.parentId}
         onCancel={(type) => {
-          setPerVisible(false);
           if (type) {
             props.reload();
             props.onCancel();
@@ -99,7 +98,7 @@ const Bind = observer((props: Props) => {
               targets: [
                 {
                   type: 'org',
-                  id: param.id,
+                  id: props.parentId,
                 },
               ],
             },

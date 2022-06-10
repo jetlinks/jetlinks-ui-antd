@@ -1,11 +1,12 @@
-import { Card, Empty } from 'antd';
+import { Card } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
 import EditableTable from './EditableTable';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useParams } from 'umi';
-import { PermissionButton } from '@/components';
+import { PermissionButton, Empty } from '@/components';
+import { getDomFullHeight } from '@/utils/util';
 
 interface Props {
   type: 'device' | 'product';
@@ -17,6 +18,7 @@ const MetadataMap = (props: Props) => {
   const [data, setData] = useState<any>({});
   const params = useParams<{ id: string }>();
   const { permission } = PermissionButton.usePermission('device/Product');
+  const [minHeight, setMinHeight] = useState(300);
 
   const handleSearch = async () => {
     if (props.type === 'product') {
@@ -50,6 +52,7 @@ const MetadataMap = (props: Props) => {
   const renderComponent = () => {
     const metadata = JSON.parse(product?.metadata || '{}');
     const dmetadata = JSON.parse(data?.metadata || '{}');
+    const height = minHeight - 150;
     if (product) {
       const flag =
         (type === 'device' &&
@@ -59,24 +62,70 @@ const MetadataMap = (props: Props) => {
       if (!product.accessId && flag) {
         if (!permission.update) {
           return (
-            <Empty
-              description={<span>请联系管理员配置物模型属性，并选择对应产品的设备接入方式</span>}
-            />
+            <div style={{ height }}>
+              <Empty
+                description={<span>请联系管理员配置物模型属性，并选择对应产品的设备接入方式</span>}
+              />
+            </div>
           );
         } else {
           return (
+            <div style={{ height }}>
+              <Empty
+                description={
+                  <span>
+                    请先配置对应产品的
+                    <a
+                      onClick={() => {
+                        checkUrl('metadata');
+                      }}
+                    >
+                      物模型属性
+                    </a>
+                    ,并选择对应产品的
+                    <a
+                      onClick={() => {
+                        checkUrl('access');
+                      }}
+                    >
+                      设备接入方式
+                    </a>
+                  </span>
+                }
+              />
+            </div>
+          );
+        }
+      } else if (flag && product.accessId) {
+        return (
+          <div style={{ height }}>
+            <Empty
+              description={
+                !permission.update ? (
+                  <span>请联系管理员配置物模型属性</span>
+                ) : (
+                  <span>
+                    请配置对应产品的
+                    <a
+                      onClick={() => {
+                        checkUrl('metadata');
+                      }}
+                    >
+                      物模型属性
+                    </a>
+                  </span>
+                )
+              }
+            />
+          </div>
+        );
+      } else if (!flag && !product.accessId) {
+        return (
+          <div style={{ height }}>
             <Empty
               description={
                 <span>
-                  请先配置对应产品的
-                  <a
-                    onClick={() => {
-                      checkUrl('metadata');
-                    }}
-                  >
-                    物模型属性
-                  </a>
-                  ,并选择对应产品的
+                  请选择对应产品的
                   <a
                     onClick={() => {
                       checkUrl('access');
@@ -87,58 +136,32 @@ const MetadataMap = (props: Props) => {
                 </span>
               }
             />
-          );
-        }
-      } else if (flag && product.accessId) {
-        return (
-          <Empty
-            description={
-              !permission.update ? (
-                <span>请联系管理员配置物模型属性</span>
-              ) : (
-                <span>
-                  请配置对应产品的
-                  <a
-                    onClick={() => {
-                      checkUrl('metadata');
-                    }}
-                  >
-                    物模型属性
-                  </a>
-                </span>
-              )
-            }
-          />
-        );
-      } else if (!flag && !product.accessId) {
-        return (
-          <Empty
-            description={
-              <span>
-                请选择对应产品的
-                <a
-                  onClick={() => {
-                    checkUrl('access');
-                  }}
-                >
-                  设备接入方式
-                </a>
-              </span>
-            }
-          />
+          </div>
         );
       } else {
         return <EditableTable data={data} type={type} />;
       }
     }
-    return <Empty />;
+    return (
+      <div style={{ height }}>
+        <Empty />
+      </div>
+    );
   };
 
   useEffect(() => {
     handleSearch();
   }, [props.type]);
 
-  return <Card bordered={false}>{renderComponent()}</Card>;
+  useEffect(() => {
+    setMinHeight(getDomFullHeight('device-detail-metadataMap', 12));
+  }, []);
+
+  return (
+    <Card bordered={false} className="device-detail-metadataMap" style={{ minHeight }}>
+      {renderComponent()}
+    </Card>
+  );
 };
 
 export default MetadataMap;

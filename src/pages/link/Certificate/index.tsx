@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { message, Tooltip } from 'antd';
@@ -11,6 +11,7 @@ import usePermissions from '@/hooks/permission';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
 import Service from '../service';
+import { getDomFullHeight } from '@/utils/util';
 
 export const service = new Service('network/certificate');
 
@@ -19,6 +20,7 @@ const Certificate = () => {
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const { permission } = usePermissions('link/Certificate');
+  const [minHeight, setMinHeight] = useState(100);
 
   const columns: ProColumns<CertificateItem>[] = [
     {
@@ -103,6 +105,10 @@ const Certificate = () => {
     },
   ];
 
+  useEffect(() => {
+    setMinHeight(getDomFullHeight('link-certificate', 94));
+  }, []);
+
   return (
     <PageContainer>
       <SearchComponent<CertificateItem>
@@ -120,6 +126,8 @@ const Certificate = () => {
         columns={columns}
         search={false}
         rowKey="id"
+        className={'link-certificate'}
+        tableStyle={{ minHeight }}
         headerTitle={
           <PermissionButton
             onClick={() => {

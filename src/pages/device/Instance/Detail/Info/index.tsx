@@ -11,6 +11,7 @@ import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
 import { PermissionButton } from '@/components';
+import { getDomFullHeight } from '@/utils/util';
 
 const Info = observer(() => {
   const intl = useIntl();
@@ -19,7 +20,10 @@ const Info = observer(() => {
 
   return (
     <>
-      <Card>
+      <Card
+        className={'device-detail-body'}
+        style={{ minHeight: getDomFullHeight('device-detail-body', 12) }}
+      >
         <Descriptions
           size="small"
           column={3}

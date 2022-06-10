@@ -7,6 +7,7 @@ import './index.less';
 import classNames from 'classnames';
 import { Store } from 'jetlinks-store';
 import { DiagnoseStatusModel } from './Status/model';
+import { getDomFullHeight } from '@/utils/util';
 
 interface ListProps {
   key: string;
@@ -131,7 +132,7 @@ const Diagnose = () => {
     };
   }, []);
   return (
-    <Card className="diagnose">
+    <Card className="diagnose" style={{ minHeight: getDomFullHeight('diagnose', 12) }}>
       <div className={current === 'message' ? 'header-message' : 'header'}>
         <Row gutter={24} style={{ padding: 10, width: '100%' }}>
           {list.map((item: ListProps) => (

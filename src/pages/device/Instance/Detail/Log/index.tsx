@@ -7,6 +7,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
+import { getDomFullHeight } from '@/utils/util';
 
 const Log = () => {
   const intl = useIntl();
@@ -78,7 +79,10 @@ const Log = () => {
   ];
 
   return (
-    <Card>
+    <Card
+      className={'device-detail-log'}
+      style={{ minHeight: getDomFullHeight('device-detail-log', 12) }}
+    >
       <SearchComponent<LogItem>
         field={[...columns]}
         target="logs"

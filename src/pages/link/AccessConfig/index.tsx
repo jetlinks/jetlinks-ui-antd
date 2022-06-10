@@ -2,13 +2,14 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Card, Col, Empty, message, Pagination, Row } from 'antd';
+import { Card, Col, message, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'umi';
 import Service from './service';
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
-import { PermissionButton } from '@/components';
+import { PermissionButton, Empty } from '@/components';
+import { getDomFullHeight } from '@/utils/util';
 
 export const service = new Service('gateway/device');
 
@@ -16,6 +17,7 @@ const AccessConfig = () => {
   const history = useHistory();
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const { permission } = PermissionButton.usePermission('link/AccessConfig');
+  const [minHeight, setMinHeight] = useState(100);
 
   const columns: ProColumns<any>[] = [
     {
@@ -67,20 +69,25 @@ const AccessConfig = () => {
 
   return (
     <PageContainer>
-      <Card>
-        <SearchComponent
-          field={columns}
-          // enableSave={false}
-          target={'access-config'}
-          onSearch={(data: any) => {
-            const dt = {
-              pageSize: 10,
-              terms: [...data?.terms],
-            };
-            handleSearch(dt);
+      <SearchComponent
+        field={columns}
+        // enableSave={false}
+        target={'access-config'}
+        onSearch={(data: any) => {
+          const dt = {
+            pageSize: 10,
+            terms: [...data?.terms],
+          };
+          handleSearch(dt);
+        }}
+      />
+      <Card className={'link-accessConfig'} style={{ minHeight }}>
+        <div
+          style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}
+          ref={() => {
+            setMinHeight(getDomFullHeight('link-accessConfig'));
           }}
-        />
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
+        >
           <PermissionButton
             isPermission={permission.add}
             onClick={() => {
@@ -177,7 +184,9 @@ const AccessConfig = () => {
             ))}
           </Row>
         ) : (
-          <Empty />
+          <div style={{ height: minHeight - 150 }}>
+            <Empty />
+          </div>
         )}
         {dataSource.data.length > 0 && (
           <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>

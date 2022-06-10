@@ -3,8 +3,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useParams } from 'umi';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import MemberModel from '@/pages/system/Department/Member/model';
 import type { MemberItem } from '@/pages/system/Department/typings';
@@ -12,19 +11,19 @@ import Service from '@/pages/system/Department/Member/service';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
+import Models from '@/pages/system/Department/Assets/productCategory/model';
 
 export const service = new Service('tenant');
 
-const Member = observer(() => {
+const Member = observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
-  const param = useParams<{ id: string }>();
   const [searchParam, setSearchParam] = useState({});
 
   const handleUnBind = () => {
     if (MemberModel.unBindUsers.length) {
-      service.handleUser(param.id, MemberModel.unBindUsers, 'unbind').subscribe({
+      service.handleUser(props.parentId, MemberModel.unBindUsers, 'unbind').subscribe({
         next: () => message.success('操作成功'),
         error: () => message.error('操作失败'),
         complete: () => {
@@ -149,17 +148,30 @@ const Member = observer(() => {
     MemberModel.bind = false;
   };
 
+  useEffect(() => {
+    setSearchParam({
+      terms: [{ column: 'id$in-dimension$org', value: props.parentId }],
+    });
+    actionRef.current?.reset?.();
+    //  初始化所有状态
+    Models.bindKeys = [];
+    Models.unBindKeys = [];
+  }, [props.parentId]);
+
   return (
     <>
-      <Bind
-        visible={MemberModel.bind}
-        onCancel={closeModal}
-        reload={() => actionRef.current?.reload()}
-      />
+      {MemberModel.bind && (
+        <Bind
+          visible={MemberModel.bind}
+          onCancel={closeModal}
+          reload={() => actionRef.current?.reload()}
+          parentId={props.parentId}
+        />
+      )}
       <SearchComponent<MemberItem>
         // pattern={'simple'}
         field={columns}
-        defaultParam={[{ column: 'id$in-dimension$org', value: param.id }]}
+        defaultParam={[{ column: 'id$in-dimension$org', value: props.parentId }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);
@@ -176,7 +188,21 @@ const Member = observer(() => {
         columns={columns}
         search={false}
         rowKey="id"
-        request={(params) => service.queryUser(params)}
+        request={(params) => {
+          if (!props.parentId) {
+            return {
+              code: 200,
+              result: {
+                data: [],
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: 200,
+            };
+          }
+          return service.queryUser(params);
+        }}
         rowSelection={{
           selectedRowKeys: MemberModel.unBindUsers,
           onChange: (selectedRowKeys, selectedRows) => {
@@ -192,6 +218,7 @@ const Member = observer(() => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            disabled={!props.parentId}
           >
             {intl.formatMessage({
               id: 'pages.system.role.option.bindUser',

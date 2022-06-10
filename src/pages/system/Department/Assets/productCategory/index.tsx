@@ -3,8 +3,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useParams } from 'umi';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
@@ -29,10 +28,9 @@ export const getTableKeys = (rows: ProductCategoryItem[]): string[] => {
   return keys;
 };
 
-export default observer(() => {
+export default observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-  const param = useParams<{ id: string }>();
   const [searchParam, setSearchParam] = useState({});
 
   /**
@@ -44,7 +42,7 @@ export default observer(() => {
         .unBind('deviceCategory', [
           {
             targetType: 'org',
-            targetId: param.id,
+            targetId: props.parentId,
             assetType: 'deviceCategory',
             assetIdList: Models.unBindKeys,
           },
@@ -137,13 +135,41 @@ export default observer(() => {
     Models.bindKeys = [];
   };
 
+  useEffect(() => {
+    setSearchParam({
+      terms: [
+        {
+          column: 'id',
+          termType: 'dim-assets',
+          value: {
+            assetType: 'deviceCategory',
+            targets: [
+              {
+                type: 'org',
+                id: props.parentId,
+              },
+            ],
+          },
+        },
+      ],
+    });
+    actionRef.current?.reset?.();
+    //  初始化所有状态
+    Models.bindKeys = [];
+    Models.unBindKeys = [];
+    console.log(props.parentId);
+  }, [props.parentId]);
+
   return (
     <>
-      <Bind
-        visible={Models.bind}
-        onCancel={closeModal}
-        reload={() => actionRef.current?.reload()}
-      />
+      {Models.bind && (
+        <Bind
+          visible={Models.bind}
+          onCancel={closeModal}
+          reload={() => actionRef.current?.reload()}
+          parentId={props.parentId}
+        />
+      )}
       <SearchComponent<ProductCategoryItem>
         field={columns}
         defaultParam={[
@@ -155,7 +181,7 @@ export default observer(() => {
               targets: [
                 {
                   type: 'org',
-                  id: param.id,
+                  id: props.parentId,
                 },
               ],
             },
@@ -179,6 +205,18 @@ export default observer(() => {
         search={false}
         rowKey="id"
         request={async (params) => {
+          if (!props.parentId) {
+            return {
+              code: 200,
+              result: {
+                data: [],
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: 200,
+            };
+          }
           const response = await service.queryProductCategoryList(params);
           return {
             code: response.message,
@@ -240,6 +278,7 @@ export default observer(() => {
             }}
             icon={<PlusOutlined />}
             type="primary"
+            disabled={!props.parentId}
             key="bind"
           >
             {intl.formatMessage({

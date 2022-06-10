@@ -1,10 +1,8 @@
-// 资产分配-产品分类
+// 资产分配-设备管理
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
-import { useRef, useState } from 'react';
-import { useParams } from 'umi';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { DeviceItem } from '@/pages/system/Department/typings';
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
@@ -12,6 +10,8 @@ import Models from './model';
 import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
+import { ExtraDeviceCard, handlePermissionsMap } from '@/components/ProTableCard/CardItems/device';
+import { ProTableCard } from '@/components';
 
 export const service = new Service<DeviceItem>('assets');
 
@@ -28,11 +28,10 @@ export const DeviceBadge = (props: DeviceBadgeProps) => {
   return <Badge status={STATUS[props.type]} text={props.text} />;
 };
 
-export default observer(() => {
+export default observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
 
-  const param = useParams<{ id: string }>();
   const [searchParam, setSearchParam] = useState({});
   /**
    * 解除资产绑定
@@ -43,7 +42,7 @@ export default observer(() => {
         .unBind('device', [
           {
             targetType: 'org',
-            targetId: param.id,
+            targetId: props.parentId,
             assetType: 'device',
             assetIdList: Models.unBindKeys,
           },
@@ -87,6 +86,14 @@ export default observer(() => {
       dataIndex: 'configuration',
       render: (_, row) => {
         return row.productName;
+      },
+    },
+    {
+      title: '资产权限',
+      dataIndex: 'grantedPermissions',
+      hideInSearch: true,
+      render: (_, row) => {
+        return handlePermissionsMap(row.grantedPermissions);
       },
     },
     {
@@ -178,13 +185,48 @@ export default observer(() => {
     Models.bindKeys = [];
   };
 
+  const getData = (params: any, parentId: string) => {
+    return new Promise((resolve) => {
+      service.queryDeviceList2(params, parentId).subscribe((data) => {
+        resolve(data);
+      });
+    });
+  };
+
+  useEffect(() => {
+    setSearchParam({
+      terms: [
+        {
+          column: 'id',
+          termType: 'dim-assets',
+          value: {
+            assetType: 'device',
+            targets: [
+              {
+                type: 'org',
+                id: props.parentId,
+              },
+            ],
+          },
+        },
+      ],
+    });
+    actionRef.current?.reset?.();
+    //  初始化所有状态
+    Models.bindKeys = [];
+    Models.unBindKeys = [];
+  }, [props.parentId]);
+
   return (
     <>
-      <Bind
-        visible={Models.bind}
-        onCancel={closeModal}
-        reload={() => actionRef.current?.reload()}
-      />
+      {Models.bind && (
+        <Bind
+          visible={Models.bind}
+          onCancel={closeModal}
+          reload={() => actionRef.current?.reload()}
+          parentId={props.parentId}
+        />
+      )}
       <SearchComponent<DeviceItem>
         field={columns}
         defaultParam={[
@@ -196,7 +238,7 @@ export default observer(() => {
               targets: [
                 {
                   type: 'org',
-                  id: param.id,
+                  id: props.parentId,
                 },
               ],
             },
@@ -213,19 +255,48 @@ export default observer(() => {
         // }}
         target="department-assets-device"
       />
-      <ProTable<DeviceItem>
+      <ProTableCard<DeviceItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
         search={false}
         params={searchParam}
-        request={(params) => service.queryDeviceList(params)}
+        gridColumn={2}
+        request={async (params) => {
+          if (!props.parentId) {
+            return {
+              code: 200,
+              result: {
+                data: [],
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: 200,
+            };
+          }
+          const resp: any = await getData(params, props.parentId);
+          return {
+            code: resp.status,
+            result: resp.result,
+            status: resp.status,
+          };
+        }}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
             Models.unBindKeys = selectedRows.map((item) => item.id);
           },
         }}
+        cardRender={(record) => (
+          <ExtraDeviceCard
+            {...record}
+            onUnBind={(e) => {
+              e.stopPropagation();
+              singleUnBind(record.id);
+            }}
+          />
+        )}
         toolBarRender={() => [
           <Button
             onClick={() => {
@@ -234,6 +305,7 @@ export default observer(() => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            disabled={!props.parentId}
           >
             {intl.formatMessage({
               id: 'pages.data.option.assets',
