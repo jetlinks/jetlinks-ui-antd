@@ -42,6 +42,7 @@ const User = observer(() => {
         defaultMessage: '姓名',
       }),
       dataIndex: 'name',
+      fixed: 'left',
       // copyable: true,
       ellipsis: true,
       // tip: intl.formatMessage({
@@ -125,6 +126,7 @@ const User = observer(() => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           style={{ padding: 0 }}
@@ -228,6 +230,7 @@ const User = observer(() => {
         actionRef={actionRef}
         params={param}
         columns={columns}
+        scroll={{ x: 1366 }}
         search={false}
         headerTitle={
           <PermissionButton

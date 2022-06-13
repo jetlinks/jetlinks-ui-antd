@@ -248,6 +248,7 @@ const Product = observer(() => {
       dataIndex: 'id',
       width: 300,
       ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '名称',
@@ -258,7 +259,7 @@ const Product = observer(() => {
     {
       title: '接入方式',
       dataIndex: 'transportProtocol',
-      width: 120,
+      width: 150,
     },
     {
       title: '设备类型',
@@ -278,7 +279,7 @@ const Product = observer(() => {
           status: 'gateway',
         },
       },
-      width: 120,
+      width: 150,
       render: (_, row) => <>{row.deviceType ? row.deviceType.text : undefined}</>,
     },
     {
@@ -317,6 +318,8 @@ const Product = observer(() => {
         id: 'pages.system.description',
         defaultMessage: '说明',
       }),
+      ellipsis: true,
+      width: 300,
       // hideInSearch: true,
     },
     {
@@ -385,6 +388,7 @@ const Product = observer(() => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (_, record) => tools(record),
     },
   ];
@@ -405,6 +409,7 @@ const Product = observer(() => {
         columns={columns}
         actionRef={actionRef}
         options={{ fullScreen: true }}
+        scroll={{ x: 1366 }}
         // request={async (params = {}) => {
         //   return await lastValueFrom(
         //     service.queryZipCount(encodeQuery({ ...params, sorts: { id: 'ascend' } })),

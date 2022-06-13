@@ -26,6 +26,7 @@ const System = () => {
       }),
       dataIndex: 'name',
       ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '日志级别',
@@ -91,6 +92,7 @@ const System = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <a
           key="editable"
@@ -119,6 +121,7 @@ const System = () => {
       <ProTable<SystemLogItem>
         columns={columns}
         params={param}
+        scroll={{ x: 1366 }}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }

@@ -122,7 +122,16 @@ const EditableTable = (props: Props) => {
     {
       title: '物模型属性',
       dataIndex: 'name',
-      render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
+      width: '30%',
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text: any, record: any) => (
+        <Tooltip placement="topLeft" title={`${record.name}(${record.id})`}>
+          {`${record.name}(${record.id})`}
+        </Tooltip>
+      ),
+      // render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
     },
     {
       title: (

@@ -35,6 +35,7 @@ const NotificationRecord = () => {
     {
       dataIndex: 'topicProvider',
       title: '类型',
+      fixed: 'left',
       render: (text: any, record: any) => {
         return <span>{typeList[record?.topicProvider]?.text || text}</span>;
       },
@@ -50,6 +51,7 @@ const NotificationRecord = () => {
     {
       dataIndex: 'message',
       title: '消息',
+      ellipsis: true,
     },
     {
       dataIndex: 'notifyTime',
@@ -85,6 +87,7 @@ const NotificationRecord = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key={'update'}
@@ -143,6 +146,7 @@ const NotificationRecord = () => {
         params={param}
         columns={columns}
         rowKey="id"
+        scroll={{ x: 1366 }}
         search={false}
         request={async (params) =>
           service.queryList(encodeQuery({ ...params, sorts: { notifyTime: 'desc' } }))

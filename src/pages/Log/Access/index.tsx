@@ -24,6 +24,7 @@ const Access = () => {
       title: 'IP',
       dataIndex: 'ip',
       ellipsis: true,
+      fixed: 'left',
     },
     {
       title: intl.formatMessage({
@@ -99,6 +100,7 @@ const Access = () => {
       }),
       valueType: 'option',
       align: 'center',
+      fixed: 'right',
       render: (text, record) => [
         <a
           key="editable"
@@ -127,6 +129,7 @@ const Access = () => {
       <ProTable<AccessLogItem>
         columns={columns}
         params={param}
+        scroll={{ x: 1366 }}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'responseTime', order: 'desc' }] })
         }

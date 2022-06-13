@@ -210,6 +210,7 @@ const Instance = () => {
       dataIndex: 'id',
       width: 300,
       ellipsis: true,
+      fixed: 'left',
     },
     {
       title: intl.formatMessage({
@@ -394,6 +395,7 @@ const Instance = () => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => tools(record),
     },
   ];
@@ -528,6 +530,7 @@ const Instance = () => {
       />
       <ProTableCard<DeviceInstance>
         columns={columns}
+        scroll={{ x: 1366 }}
         actionRef={actionRef}
         params={searchParams}
         options={{ fullScreen: true }}

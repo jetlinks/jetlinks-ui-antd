@@ -38,6 +38,9 @@ const Opcua = () => {
     {
       title: '通道名称',
       dataIndex: 'name',
+      fixed: 'left',
+      width: 300,
+      ellipsis: true,
     },
     {
       title: '服务地址',
@@ -52,6 +55,7 @@ const Opcua = () => {
       title: '状态',
       dataIndex: 'state',
       valueType: 'select',
+      width: 100,
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
       ),
@@ -77,6 +81,7 @@ const Opcua = () => {
       title: '操作',
       valueType: 'option',
       align: 'center',
+      fixed: 'right',
       width: 200,
       render: (text, record) => [
         <PermissionButton
@@ -243,6 +248,7 @@ const Opcua = () => {
       <ProTable<OpaUa>
         actionRef={actionRef}
         params={param}
+        scroll={{ x: 1366 }}
         columns={columns}
         rowKey="id"
         search={false}

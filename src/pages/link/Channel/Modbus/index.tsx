@@ -38,6 +38,8 @@ const Modbus = () => {
     {
       title: '通道名称',
       dataIndex: 'name',
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       title: 'IP',
@@ -76,6 +78,7 @@ const Modbus = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}
@@ -238,6 +241,7 @@ const Modbus = () => {
         params={param}
         columns={columns}
         rowKey="id"
+        scroll={{ x: 1366 }}
         search={false}
         headerTitle={
           <PermissionButton

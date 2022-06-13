@@ -29,6 +29,7 @@ const BindDevice = (props: Props) => {
     {
       title: '设备ID',
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: '设备名称',
@@ -39,6 +40,7 @@ const BindDevice = (props: Props) => {
     {
       title: '产品名称',
       dataIndex: 'productName',
+      ellipsis: true,
     },
     {
       title: '注册时间',

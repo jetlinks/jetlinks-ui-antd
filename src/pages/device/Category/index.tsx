@@ -64,6 +64,9 @@ const Category = observer(() => {
         defaultMessage: '分类名称',
       }),
       dataIndex: 'name',
+      width: 300,
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '分类排序',
@@ -82,7 +85,6 @@ const Category = observer(() => {
         defaultMessage: '说明',
       }),
       dataIndex: 'description',
-      width: 300,
       ellipsis: true,
     },
     {
@@ -92,6 +94,7 @@ const Category = observer(() => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key="editable"
@@ -178,6 +181,7 @@ const Category = observer(() => {
       <ProTable
         params={param}
         search={false}
+        scroll={{ x: 1366 }}
         request={async (params) => {
           const response = await service.queryTree({
             paging: false,

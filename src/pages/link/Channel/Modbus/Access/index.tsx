@@ -43,6 +43,7 @@ const Access = () => {
     {
       title: '属性ID',
       dataIndex: 'metadataId',
+      ellipsis: true,
     },
     {
       title: '功能码',
@@ -58,6 +59,7 @@ const Access = () => {
     },
     {
       title: '值',
+      width: 100,
       render: (record: any) => <>{propertyValue[record?.metadataId] || '-'}</>,
     },
     {

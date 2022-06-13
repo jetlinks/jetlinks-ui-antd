@@ -75,14 +75,18 @@ const Channel = () => {
     {
       dataIndex: 'deviceName',
       title: '设备名称',
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       dataIndex: 'name',
       title: '通道名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'gbChannelId',
       title: '国标ID',
+      // ellipsis:true,
       tooltip: '国标级联有18位、20位两种格式。在当前页面修改不会修改视频设备-通道页面中的国标ID',
       render: (text: any, record: any) => (
         <span>
@@ -126,10 +130,12 @@ const Channel = () => {
     {
       dataIndex: 'address',
       title: '安装地址',
+      ellipsis: true,
     },
     {
       dataIndex: 'manufacturer',
       title: '厂商',
+      ellipsis: true,
     },
     {
       dataIndex: 'status',
@@ -161,6 +167,7 @@ const Channel = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text: any, record: any) => [
         <PermissionButton
           isPermission={permission.channel}
@@ -196,6 +203,7 @@ const Channel = () => {
         actionRef={actionRef}
         params={param}
         columns={columns}
+        scroll={{ x: 1366 }}
         search={false}
         headerTitle={'通道列表'}
         request={async (params) => {

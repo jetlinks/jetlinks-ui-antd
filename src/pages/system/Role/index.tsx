@@ -34,6 +34,8 @@ const Role: React.FC = observer(() => {
         defaultMessage: '标识',
       }),
       dataIndex: 'id',
+      fixed: 'left',
+      width: '25%',
       // copyable: true,
       ellipsis: true,
       // sorter: true,
@@ -85,6 +87,7 @@ const Role: React.FC = observer(() => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key="editable"
@@ -213,6 +216,7 @@ const Role: React.FC = observer(() => {
         moduleName="role"
         columns={columns}
         service={service}
+        scroll={{ x: 1366 }}
         search={false}
         title={intl.formatMessage({
           id: 'pages.system.role',

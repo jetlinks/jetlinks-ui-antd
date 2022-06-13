@@ -73,6 +73,7 @@ export default () => {
       dataIndex: 'channelId',
       title: '通道ID',
       width: 220,
+      ellipsis: true,
     },
     {
       dataIndex: 'name',
@@ -81,6 +82,7 @@ export default () => {
         defaultMessage: '名称',
       }),
       width: 220,
+      ellipsis: true,
     },
     {
       dataIndex: 'manufacturer',
@@ -93,6 +95,7 @@ export default () => {
     {
       dataIndex: 'address',
       title: '安装地址',
+      ellipsis: true,
     },
     {
       dataIndex: 'state',
@@ -230,6 +233,7 @@ export default () => {
           <ProTable<ChannelItem>
             columns={columns}
             actionRef={actionRef}
+            // scroll={{x:1366}}
             options={{ fullScreen: true }}
             params={queryParam}
             defaultParams={[

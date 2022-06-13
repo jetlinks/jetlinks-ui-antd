@@ -152,7 +152,7 @@ const AddPoint = (props: Props) => {
           </Col>
         </Row>
         <Row gutter={[24, 24]}>
-          <Col span={24}>
+          <Col span={12}>
             <Form.Item
               label="地址"
               name="address"
@@ -165,6 +165,25 @@ const AddPoint = (props: Props) => {
                       return Promise.resolve();
                     }
                     return Promise.reject(new Error('请输入1~255之间的数字'));
+                  },
+                }),
+              ]}
+            >
+              <InputNumber style={{ width: '100%' }} placeholder="请输入" min={1} />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="寄存器数量"
+              name="quantity"
+              rules={[
+                { required: true, message: '请输入寄存器数量' },
+                ({}) => ({
+                  validator(_, value) {
+                    if (/(^[0-9]\d*$)/.test(value)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('请输入正整数'));
                   },
                 }),
               ]}
@@ -212,14 +231,15 @@ const AddPoint = (props: Props) => {
         <Row gutter={[24, 24]}>
           <Col span={12}>
             <Form.Item
-              label="数据格式转换"
-              name={['codecConfig', 'unsigned']}
+              label="数据格式"
+              name={['codecConfig', 'format']}
               required
-              rules={[{ required: true, message: '数据格式转换必填' }]}
+              rules={[{ required: true, message: '数据格式必选' }]}
             >
               <Select placeholder="请选择">
-                <Select.Option value={false}>无符号数字</Select.Option>
-                <Select.Option value={true}>有符号数字</Select.Option>
+                <Select.Option value={'unsigned'}>无符号数字</Select.Option>
+                <Select.Option value={'signed'}>有符号数字</Select.Option>
+                <Select.Option value={'ieee754'}>IEEE754</Select.Option>
               </Select>
             </Form.Item>
           </Col>

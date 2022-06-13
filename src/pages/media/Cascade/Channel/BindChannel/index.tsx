@@ -43,18 +43,22 @@ const BindChannel = (props: Props) => {
     {
       dataIndex: 'deviceName',
       title: '设备名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'name',
       title: '通道名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'address',
       title: '安装地址',
+      ellipsis: true,
     },
     {
       dataIndex: 'manufacturer',
       title: '厂商',
+      ellipsis: true,
     },
     {
       dataIndex: 'status',

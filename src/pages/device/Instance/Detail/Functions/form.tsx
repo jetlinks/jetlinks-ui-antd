@@ -80,6 +80,7 @@ export default (props: FunctionProps) => {
       title: '名称',
       width: 200,
       editable: false,
+      ellipsis: true,
     },
     {
       dataIndex: 'type',

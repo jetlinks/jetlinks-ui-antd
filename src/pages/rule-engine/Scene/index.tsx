@@ -162,6 +162,9 @@ const Scene = () => {
   const columns: ProColumns<SceneItem>[] = [
     {
       dataIndex: 'name',
+      fixed: 'left',
+      ellipsis: true,
+      width: 300,
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -173,7 +176,7 @@ const Scene = () => {
         id: 'pages.ruleEngine.scene.triggers',
         defaultMessage: '触发方式',
       }),
-      width: 120,
+      // width: 120,
       valueType: 'select',
       valueEnum: {
         manual: {
@@ -205,7 +208,7 @@ const Scene = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      width: '90px',
+      // width: '90px',
       valueType: 'select',
       renderText: (record) =>
         record ? (
@@ -240,6 +243,7 @@ const Scene = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => Tools(record, 'table'),
     },
   ];
@@ -257,6 +261,7 @@ const Scene = () => {
       <ProTableCard<SceneItem>
         columns={columns}
         actionRef={actionRef}
+        scroll={{ x: 1366 }}
         params={searchParams}
         options={{ fullScreen: true }}
         request={(params) =>

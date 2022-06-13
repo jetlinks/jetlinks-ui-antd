@@ -55,6 +55,8 @@ const Config = observer(() => {
       dataIndex: 'name',
       title: '配置名称',
       ellipsis: true,
+      fixed: 'left',
+      width: '25%',
     },
     {
       dataIndex: 'provider',
@@ -74,6 +76,7 @@ const Config = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         (id === 'dingTalk' || id === 'weixin') && (
           <PermissionButton
@@ -211,6 +214,7 @@ const Config = observer(() => {
         search={false}
         params={param}
         columns={columns}
+        scroll={{ x: 1366 }}
         headerTitle={
           <Space>
             <PermissionButton

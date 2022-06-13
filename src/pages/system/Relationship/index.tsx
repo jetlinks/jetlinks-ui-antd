@@ -25,6 +25,8 @@ const Relationship = () => {
       dataIndex: 'name',
       title: '名称',
       ellipsis: true,
+      fixed: 'left',
+      width: '20%',
     },
     {
       dataIndex: 'objectTypeName',
@@ -46,6 +48,7 @@ const Relationship = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}
@@ -108,6 +111,7 @@ const Relationship = () => {
         columns={columns}
         search={false}
         rowKey="id"
+        scroll={{ x: 1366 }}
         request={async (params) => {
           return service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] });
         }}

@@ -123,6 +123,9 @@ const NotificationSubscription = observer(() => {
     {
       dataIndex: 'subscribeName',
       title: '名称',
+      fixed: 'left',
+      ellipsis: true,
+      width: '25%',
     },
     {
       dataIndex: 'topicProvider',
@@ -136,6 +139,7 @@ const NotificationSubscription = observer(() => {
       dataIndex: 'topicConfig',
       title: '告警规则',
       hideInSearch: true,
+      ellipsis: true,
       render: (text: any, record: any) => (
         <span>{record?.topicConfig?.alarmConfigName || '-'}</span>
       ),
@@ -156,6 +160,7 @@ const NotificationSubscription = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [Tools(record)],
     },
   ];
@@ -175,6 +180,7 @@ const NotificationSubscription = observer(() => {
         actionRef={actionRef}
         params={param}
         columns={columns}
+        scroll={{ x: 1366 }}
         search={false}
         rowKey="id"
         request={async (params) =>

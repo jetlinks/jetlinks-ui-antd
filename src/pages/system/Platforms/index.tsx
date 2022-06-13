@@ -46,6 +46,7 @@ export default () => {
     {
       dataIndex: 'name',
       title: '名称',
+      fixed: 'left',
       ellipsis: true,
     },
     {
@@ -101,6 +102,7 @@ export default () => {
       }),
       hideInSearch: true,
       ellipsis: true,
+      // width:'20%'
     },
     {
       title: intl.formatMessage({
@@ -110,6 +112,7 @@ export default () => {
       valueType: 'option',
       align: 'center',
       width: 250,
+      fixed: 'right',
       render: (_, record: any) => [
         <PermissionButton
           key={'update'}
@@ -261,6 +264,7 @@ export default () => {
       />
       <ProTable
         rowKey="id"
+        scroll={{ x: 1366 }}
         search={false}
         params={param}
         columns={columns}

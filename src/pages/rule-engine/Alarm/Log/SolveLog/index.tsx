@@ -67,6 +67,7 @@ const SolveLog = (props: Props) => {
     {
       dataIndex: 'description',
       title: '告警处理',
+      ellipsis: true,
     },
   ];
 
