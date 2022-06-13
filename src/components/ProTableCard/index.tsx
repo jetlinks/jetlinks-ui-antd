@@ -1,14 +1,14 @@
 import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { isFunction } from 'lodash';
 import { Empty, Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import LoadingComponent from '@ant-design/pro-layout/es/PageLoading';
 import './index.less';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 enum ModelEnum {
   TABLE = 'TABLE',
@@ -40,7 +40,9 @@ const ProTableCard = <
   const [column, setColumn] = useState(props.gridColumn || 4);
   const [loading, setLoading] = useState(false);
   const [dataLength, setDataLength] = useState<number>(0);
-  const [minHeight, setMinHeight] = useState(100);
+
+  const domRef = useRef<HTMLDivElement>(null);
+  const { minHeight } = useDomFullHeight(domRef);
 
   /**
    * 处理 Card
@@ -144,15 +146,7 @@ const ProTableCard = <
   }, [props.params]);
 
   return (
-    <div
-      className={'pro-table-card'}
-      style={{ minHeight: minHeight }}
-      ref={(ref) => {
-        if (ref) {
-          setMinHeight(getDomFullHeight('pro-table-card'));
-        }
-      }}
-    >
+    <div className={'pro-table-card'} style={{ minHeight: minHeight }} ref={domRef}>
       <ProTable<T, U, ValueType>
         {...extraProps}
         params={

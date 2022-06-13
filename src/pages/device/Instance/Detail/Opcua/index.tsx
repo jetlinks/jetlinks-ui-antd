@@ -17,7 +17,7 @@ import { InstanceModel } from '@/pages/device/Instance';
 import AddPoint from '@/pages/link/Channel/Opcua/Access/addPoint';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 const Opcua = () => {
   const intl = useIntl();
@@ -38,6 +38,8 @@ const Opcua = () => {
   const [propertyValue, setPropertyValue] = useState<any>({});
   const wsRef = useRef<any>();
   const [filterList, setFilterList] = useState([]);
+
+  const { minHeight } = useDomFullHeight(`.styles.list`);
 
   const columns: ProColumns<any>[] = [
     {
@@ -227,7 +229,7 @@ const Opcua = () => {
   }, [data]);
 
   return (
-    <Card className={styles.list} style={{ minHeight: getDomFullHeight(styles.list, 12) }}>
+    <Card className={styles.list} style={{ minHeight }}>
       <div style={{ display: 'flex' }}>
         <div>
           <div style={{ width: '250px', marginTop: 15 }}>

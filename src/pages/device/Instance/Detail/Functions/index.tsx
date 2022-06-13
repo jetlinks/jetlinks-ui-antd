@@ -3,19 +3,14 @@ import { InstanceModel } from '@/pages/device/Instance';
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
 import FnForm from './form';
 import AModel from './AdvancedMode';
-import { getDomFullHeight } from '@/utils/util';
-import { useEffect, useState } from 'react';
 import { Empty } from '@/components';
+import { useDomFullHeight } from '@/hooks';
 
 const Functions = () => {
   const functionList = JSON.parse(InstanceModel.detail.metadata || '{}')
     .functions as FunctionMetadata[];
 
-  const [minHeight, setMinHeight] = useState(100);
-
-  useEffect(() => {
-    setMinHeight(getDomFullHeight('device-detail-function', 12));
-  }, []);
+  const { minHeight } = useDomFullHeight(`.device-detail-function`);
 
   return (
     <Card className={'device-detail-function'} style={{ minHeight: minHeight }}>

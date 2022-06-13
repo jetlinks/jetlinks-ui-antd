@@ -5,7 +5,7 @@ import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
-import { useHistory, useLocation } from '@/hooks';
+import { useDomFullHeight, useHistory, useLocation } from '@/hooks';
 import Metadata from '@/pages/device/components/Metadata';
 import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -17,7 +17,6 @@ import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { getDomFullHeight } from '@/utils/util';
 
 export const ModelEnum = {
   base: 'base',
@@ -32,6 +31,8 @@ const ProductDetail = observer(() => {
   const [loading, setLoading] = useState<boolean>(false);
   const location = useLocation();
   const history = useHistory();
+
+  const { minHeight } = useDomFullHeight('.product-detail-body');
 
   const { permission } = PermissionButton.usePermission('device/Product');
 
@@ -314,10 +315,7 @@ const ProductDetail = observer(() => {
         </PermissionButton>,
       ]}
     >
-      <Card
-        className={'product-detail-body'}
-        style={{ minHeight: getDomFullHeight('product-detail-body', 12) }}
-      >
+      <Card className={'product-detail-body'} style={{ minHeight }}>
         {list.find((k) => k.key === mode)?.component}
         {/* <Tabs
           defaultActiveKey={ModelEnum.base}
