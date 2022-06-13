@@ -6,7 +6,7 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useParams } from 'umi';
 import { PermissionButton, Empty } from '@/components';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 interface Props {
   type: 'device' | 'product';
@@ -18,7 +18,8 @@ const MetadataMap = (props: Props) => {
   const [data, setData] = useState<any>({});
   const params = useParams<{ id: string }>();
   const { permission } = PermissionButton.usePermission('device/Product');
-  const [minHeight, setMinHeight] = useState(300);
+
+  const { minHeight } = useDomFullHeight(`.device-detail-metadataMap`);
 
   const handleSearch = async () => {
     if (props.type === 'product') {
@@ -152,10 +153,6 @@ const MetadataMap = (props: Props) => {
   useEffect(() => {
     handleSearch();
   }, [props.type]);
-
-  useEffect(() => {
-    setMinHeight(getDomFullHeight('device-detail-metadataMap', 12));
-  }, []);
 
   return (
     <Card bordered={false} className="device-detail-metadataMap" style={{ minHeight }}>

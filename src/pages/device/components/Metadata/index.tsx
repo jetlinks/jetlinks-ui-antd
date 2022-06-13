@@ -14,7 +14,7 @@ import { PermissionButton } from '@/components';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useParams } from 'umi';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 interface Props {
   tabAction?: ReactNode;
@@ -31,6 +31,8 @@ const Metadata = observer((props: Props) => {
     props.type === 'device' ? 'device/Instance' : 'device/Product',
   );
 
+  const { minHeight } = useDomFullHeight(`.device-detail-metadata`, 12);
+
   const params = useParams<{ id: string }>();
 
   const resetMetadata = async () => {
@@ -45,10 +47,7 @@ const Metadata = observer((props: Props) => {
   };
 
   return (
-    <div
-      className={'device-detail-metadata'}
-      style={{ position: 'relative', minHeight: getDomFullHeight('device-detail-metadata', 32) }}
-    >
+    <div className={'device-detail-metadata'} style={{ position: 'relative', minHeight }}>
       <div className={styles.tips}>
         <InfoCircleOutlined style={{ marginRight: '3px' }} />
         {InstanceModel.detail?.independentMetadata

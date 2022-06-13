@@ -9,7 +9,7 @@ import Service from './service';
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 import { PermissionButton, Empty } from '@/components';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('gateway/device');
 
@@ -17,7 +17,8 @@ const AccessConfig = () => {
   const history = useHistory();
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const { permission } = PermissionButton.usePermission('link/AccessConfig');
-  const [minHeight, setMinHeight] = useState(100);
+
+  const { minHeight } = useDomFullHeight(`.link-accessConfig`);
 
   const columns: ProColumns<any>[] = [
     {
@@ -82,12 +83,7 @@ const AccessConfig = () => {
         }}
       />
       <Card className={'link-accessConfig'} style={{ minHeight }}>
-        <div
-          style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}
-          ref={() => {
-            setMinHeight(getDomFullHeight('link-accessConfig'));
-          }}
-        >
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
           <PermissionButton
             isPermission={permission.add}
             onClick={() => {

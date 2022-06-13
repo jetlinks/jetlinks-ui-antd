@@ -11,19 +11,17 @@ import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
 import { PermissionButton } from '@/components';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 const Info = observer(() => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
+  const { minHeight } = useDomFullHeight(`.device-detail-body`);
 
   return (
     <>
-      <Card
-        className={'device-detail-body'}
-        style={{ minHeight: getDomFullHeight('device-detail-body', 12) }}
-      >
+      <Card className={'device-detail-body'} style={{ minHeight }}>
         <Descriptions
           size="small"
           column={3}

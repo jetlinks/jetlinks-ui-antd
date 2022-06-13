@@ -11,7 +11,7 @@ import BindChildDevice from './BindChildDevice';
 import moment from 'moment';
 import { Link } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 const ChildDevice = () => {
   const intl = useIntl();
@@ -20,6 +20,8 @@ const ChildDevice = () => {
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
+
+  const { minHeight } = useDomFullHeight(`.device-detail-childDevice`);
 
   const unBindSingleDevice = async (id: string) => {
     const resp = await service.unbindDevice(InstanceModel.detail.id!, id, {});
@@ -122,10 +124,7 @@ const ChildDevice = () => {
   ];
 
   return (
-    <Card
-      className={'device-detail-childDevice'}
-      style={{ minHeight: getDomFullHeight('device-detail-childDevice', 12) }}
-    >
+    <Card className={'device-detail-childDevice'} style={{ minHeight }}>
       <SearchComponent<LogItem>
         field={[...columns]}
         target="child-device"

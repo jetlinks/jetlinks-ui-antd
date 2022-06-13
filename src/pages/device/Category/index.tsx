@@ -12,7 +12,7 @@ import { observer } from '@formily/react';
 import type { Response } from '@/utils/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton } from '@/components';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('device/category');
 
@@ -54,6 +54,7 @@ const Category = observer(() => {
   const [treeData, setTreeData] = useState<any[]>([]);
   const permissionCode = 'device/Category';
   const { permission } = PermissionButton.usePermission(permissionCode);
+  const { minHeight } = useDomFullHeight(`.device-category`, 24);
 
   const intl = useIntl();
 
@@ -200,8 +201,8 @@ const Category = observer(() => {
             status: response.status,
           };
         }}
-        className={'device-category'}
-        tableStyle={{ minHeight: getDomFullHeight('device-category', 94) }}
+        tableClassName={'device-category'}
+        tableStyle={{ minHeight }}
         rowKey="id"
         columns={columns}
         onChange={(_, f, sorter: any) => {

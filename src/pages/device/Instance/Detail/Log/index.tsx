@@ -7,13 +7,14 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
-import { getDomFullHeight } from '@/utils/util';
+import { useDomFullHeight } from '@/hooks';
 
 const Log = () => {
   const intl = useIntl();
 
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});
+  const { minHeight } = useDomFullHeight(`.device-detail-log`);
 
   const columns: ProColumns<LogItem>[] = [
     {
@@ -78,10 +79,7 @@ const Log = () => {
   ];
 
   return (
-    <Card
-      className={'device-detail-log'}
-      style={{ minHeight: getDomFullHeight('device-detail-log', 12) }}
-    >
+    <Card className={'device-detail-log'} style={{ minHeight }}>
       <SearchComponent<LogItem>
         field={[...columns]}
         target="logs"

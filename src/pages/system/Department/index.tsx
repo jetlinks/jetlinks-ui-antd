@@ -1,15 +1,15 @@
 // 部门管理
 import { PageContainer } from '@ant-design/pro-layout';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card } from 'antd';
 import Service from '@/pages/system/Department/service';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { getDomFullHeight } from '@/utils/util';
 import Assets from './Assets';
 import Tree from './Tree';
 import './style';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('organization');
 
@@ -26,15 +26,7 @@ export const State = model<ModelType>({
 
 export default observer(() => {
   const [parentId, setParentId] = useState('');
-  const [minHeight, setMinHeight] = useState(100);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setMinHeight(getDomFullHeight('department'));
-    }, 0);
-
-    /* eslint-disable */
-  }, []);
+  const { minHeight } = useDomFullHeight(`.department`);
 
   return (
     <PageContainer>
