@@ -128,6 +128,8 @@ const Cascade = () => {
   const columns: ProColumns<CascadeItem>[] = [
     {
       dataIndex: 'name',
+      ellipsis: true,
+      fixed: 'left',
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -142,6 +144,7 @@ const Cascade = () => {
     {
       dataIndex: 'sipConfigs[0].publicHost',
       title: '上级SIP 地址',
+      ellipsis: true,
       hideInSearch: true,
       render: (text: any, record: any) => record.sipConfigs[0].publicHost,
     },
@@ -200,6 +203,8 @@ const Cascade = () => {
         id: 'pages.data.option',
         defaultMessage: '操作',
       }),
+      ellipsis: true,
+      fixed: 'right',
       valueType: 'option',
       align: 'center',
       render: (text, record) => [
@@ -319,6 +324,7 @@ const Cascade = () => {
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
+        scroll={{ x: 1366 }}
         options={{ fullScreen: true }}
         request={async (params = {}) => {
           return await lastValueFrom(

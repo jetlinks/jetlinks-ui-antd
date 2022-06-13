@@ -32,14 +32,18 @@ const ChildDevice = () => {
     {
       title: 'ID',
       dataIndex: 'id',
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '设备名称',
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: '所属产品',
       dataIndex: 'productName',
+      ellipsis: true,
     },
     {
       title: '注册时间',
@@ -86,6 +90,7 @@ const ChildDevice = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <Link
           to={`${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id)}`}
@@ -139,6 +144,7 @@ const ChildDevice = () => {
         search={false}
         columns={columns}
         size="small"
+        scroll={{ x: 1366 }}
         actionRef={actionRef}
         params={searchParams}
         rowKey="id"

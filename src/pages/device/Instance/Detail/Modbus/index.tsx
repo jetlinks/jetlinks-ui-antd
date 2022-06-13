@@ -40,6 +40,7 @@ const Modbus = () => {
     {
       title: '属性ID',
       dataIndex: 'metadataId',
+      ellipsis: true,
     },
     {
       title: '功能码',
@@ -55,10 +56,12 @@ const Modbus = () => {
     },
     {
       title: '值',
+      width: 120,
       render: (record: any) => <>{propertyValue[record?.metadataId] || '-'}</>,
     },
     {
       title: '状态',
+      width: 90,
       dataIndex: 'state',
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />

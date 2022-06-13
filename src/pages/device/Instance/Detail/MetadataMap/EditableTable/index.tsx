@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table } from 'antd';
+import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table, Tooltip } from 'antd';
 import { service } from '@/pages/device/Instance';
 import './index.less';
 
@@ -106,7 +106,16 @@ const EditableTable = (props: Props) => {
     {
       title: '物模型属性',
       dataIndex: 'name',
-      render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
+      width: '30%',
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (text: any, record: any) => (
+        <Tooltip placement="topLeft" title={`${record.name}(${record.id})`}>
+          {`${record.name}(${record.id})`}
+        </Tooltip>
+      ),
+      // render: (text: any, record: any) => <span>{`${record.name}(${record.id})`}</span>,
     },
     {
       title: '设备上报属性',

@@ -15,6 +15,7 @@ const Log = observer(() => {
     {
       dataIndex: 'id',
       title: 'ID',
+      ellipsis: true,
     },
     {
       dataIndex: 'notifyTime',

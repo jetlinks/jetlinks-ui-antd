@@ -43,6 +43,7 @@ const Protocol = () => {
       title: 'ID',
       sorter: true,
       ellipsis: true,
+      fixed: 'left',
       defaultSortOrder: 'ascend',
     },
     {
@@ -87,6 +88,7 @@ const Protocol = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}
@@ -183,6 +185,7 @@ const Protocol = () => {
       <ProTableCard<ProtocolItem>
         columns={columns}
         actionRef={actionRef}
+        scroll={{ x: 1366 }}
         params={searchParams}
         options={{ fullScreen: true }}
         request={(params) =>

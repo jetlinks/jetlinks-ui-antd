@@ -11,10 +11,12 @@ const BaseColumns: ProColumns<MetadataItem>[] = [
   {
     title: '标识',
     dataIndex: 'id',
+    ellipsis: true,
   },
   {
     title: '名称',
     dataIndex: 'name',
+    ellipsis: true,
   },
   {
     title: '说明',

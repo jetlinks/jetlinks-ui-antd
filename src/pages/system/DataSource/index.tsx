@@ -47,6 +47,8 @@ const DataSource = observer(() => {
       title: '名称',
       dataIndex: 'name',
       ellipsis: true,
+      fixed: 'left',
+      width: 250,
     },
     {
       title: '类型',
@@ -78,6 +80,7 @@ const DataSource = observer(() => {
       }),
       dataIndex: 'state',
       valueType: 'select',
+      width: 120,
       valueEnum: {
         enabled: {
           text: intl.formatMessage({
@@ -108,6 +111,7 @@ const DataSource = observer(() => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (_, record) => [
         <PermissionButton
           style={{ padding: 0 }}
@@ -228,6 +232,7 @@ const DataSource = observer(() => {
         columns={columns}
         search={false}
         rowKey="id"
+        scroll={{ x: 1366 }}
         headerTitle={
           <PermissionButton
             onClick={() => {

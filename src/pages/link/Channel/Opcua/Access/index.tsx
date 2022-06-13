@@ -46,14 +46,17 @@ const Access = () => {
     {
       title: '属性ID',
       dataIndex: 'property',
+      ellipsis: true,
     },
     {
       title: '名称',
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: 'OPC点位ID',
       dataIndex: 'opcPointId',
+      ellipsis: true,
     },
     {
       title: '数据类型',
@@ -61,11 +64,13 @@ const Access = () => {
     },
     {
       title: '值',
+      width: 100,
       render: (record: any) => <>{propertyValue[record?.property] || '-'}</>,
     },
     {
       title: '状态',
       dataIndex: 'state',
+      width: 100,
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disable' ? 'error' : 'success'} />
       ),

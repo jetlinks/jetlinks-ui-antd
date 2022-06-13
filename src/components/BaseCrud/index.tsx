@@ -48,6 +48,7 @@ export type Props<T> = {
   moduleName?: string; //
   footer?: React.ReactNode;
   disableAdd?: boolean;
+  scroll?: any;
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
@@ -71,6 +72,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
     form,
     moduleName,
     footer,
+    scroll,
   } = props;
 
   const [param, setParam] = useState({});
@@ -89,6 +91,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         formRef={ref}
         columns={columns}
         actionRef={actionRef}
+        scroll={scroll}
         options={{ fullScreen: true }}
         request={
           request ||

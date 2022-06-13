@@ -36,6 +36,7 @@ const Configuration = () => {
       dataIndex: 'name',
       title: '名称',
       ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '类型',
@@ -99,6 +100,7 @@ const Configuration = () => {
       title: '操作',
       valueType: 'option',
       align: 'center',
+      fixed: 'right',
       render: (_, record) => [
         record.sceneTriggerType === 'manual' && (
           <PermissionButton
@@ -227,6 +229,7 @@ const Configuration = () => {
         actionRef={actionRef}
         rowKey="id"
         search={false}
+        scroll={{ x: 1366 }}
         params={param}
         columns={columns}
         request={(params) =>

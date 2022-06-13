@@ -93,6 +93,7 @@ export default observer(() => {
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({

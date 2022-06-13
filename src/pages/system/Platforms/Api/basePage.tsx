@@ -142,6 +142,7 @@ export default (props: TableProps) => {
           {
             title: '说明',
             dataIndex: 'summary',
+            ellipsis: true,
           },
         ]}
         pagination={false}

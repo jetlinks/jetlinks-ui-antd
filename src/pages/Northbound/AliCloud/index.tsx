@@ -128,14 +128,18 @@ const AliCloud = () => {
     {
       title: '名称',
       dataIndex: 'name',
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       title: '网桥产品',
       dataIndex: 'bridgeProductName',
+      ellipsis: true,
     },
     {
       title: '说明',
       dataIndex: 'description',
+      ellipsis: true,
     },
     {
       title: '状态',
@@ -168,6 +172,7 @@ const AliCloud = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => Tools(record, 'table'),
     },
   ];
@@ -198,6 +203,7 @@ const AliCloud = () => {
       <ProTableCard<AliCloudType>
         rowKey="id"
         search={false}
+        scroll={{ x: 1366 }}
         columns={columns}
         actionRef={actionRef}
         params={searchParams}

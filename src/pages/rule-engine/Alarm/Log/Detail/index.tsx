@@ -41,6 +41,7 @@ const Detail = observer(() => {
       dataIndex: 'alarmTime',
       title: '告警时间',
       valueType: 'dateTime',
+      fixed: 'left',
       render: (text: any, record: any) => (
         <span>{moment(record.alarmTime).format('YYYY-MM-DD HH:mm:ss')}</span>
       ),
@@ -60,6 +61,7 @@ const Detail = observer(() => {
       title: '操作',
       hideInSearch: true,
       valueType: 'option',
+      fixed: 'right',
       render: (_: any, record: any) => (
         <Button type="link">
           <SearchOutlined
@@ -116,6 +118,7 @@ const Detail = observer(() => {
         params={param}
         columns={AlarmLogModel.columns}
         search={false}
+        scroll={{ x: 1366 }}
         headerTitle={'记录列表'}
         request={async (data) => {
           return service.queryHistoryList({

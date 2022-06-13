@@ -120,6 +120,7 @@ const Instance = () => {
         defaultMessage: '名称',
       }),
       ellipsis: true,
+      fixed: 'left',
     },
     {
       dataIndex: 'state',
@@ -159,6 +160,7 @@ const Instance = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}
@@ -274,6 +276,7 @@ const Instance = () => {
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
+        scroll={{ x: 1366 }}
         options={{ fullScreen: true }}
         request={(params) =>
           service.query({

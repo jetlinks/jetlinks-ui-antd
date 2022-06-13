@@ -26,6 +26,7 @@ const Certificate = () => {
       title: '证书标准',
       render: (_, record: any) => <span>{record.type?.text || '-'}</span>,
       valueType: 'select',
+      fixed: 'left',
       valueEnum: {
         common: {
           text: '国际标准',
@@ -43,6 +44,7 @@ const Certificate = () => {
       dataIndex: 'description',
       title: '说明',
       width: '30%',
+      ellipsis: true,
       render: (text: any) => (
         <div style={{ width: '100%' }} className="ellipsis">
           <Tooltip placement="topLeft" title={text}>
@@ -59,6 +61,7 @@ const Certificate = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key={'update'}
@@ -119,6 +122,7 @@ const Certificate = () => {
         params={param}
         columns={columns}
         search={false}
+        scroll={{ x: 1366 }}
         rowKey="id"
         headerTitle={
           <PermissionButton

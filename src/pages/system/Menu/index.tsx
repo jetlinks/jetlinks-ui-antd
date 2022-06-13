@@ -79,6 +79,7 @@ export default observer(() => {
       }),
       width: 300,
       dataIndex: 'code',
+      fixed: 'left',
     },
     {
       title: intl.formatMessage({
@@ -87,6 +88,7 @@ export default observer(() => {
       }),
       width: 220,
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -94,6 +96,7 @@ export default observer(() => {
         defaultMessage: '页面地址',
       }),
       dataIndex: 'url',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -112,6 +115,7 @@ export default observer(() => {
       width: 200,
       dataIndex: 'describe',
       hideInSearch: true,
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -132,6 +136,7 @@ export default observer(() => {
       }),
       valueType: 'option',
       width: 240,
+      fixed: 'right',
       render: (_, record) => [
         <Button
           type="link"
@@ -246,6 +251,7 @@ export default observer(() => {
         columns={columns}
         actionRef={actionRef}
         rowKey="id"
+        scroll={{ x: 1366 }}
         pagination={false}
         search={false}
         params={param}

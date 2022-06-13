@@ -90,9 +90,12 @@ const Device = () => {
     {
       dataIndex: 'id',
       title: 'ID',
+      ellipsis: true,
+      fixed: 'left',
     },
     {
       dataIndex: 'name',
+      ellipsis: true,
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -128,6 +131,7 @@ const Device = () => {
     },
     {
       dataIndex: 'manufacturer',
+      ellipsis: true,
       title: intl.formatMessage({
         id: 'pages.media.device.manufacturer',
         defaultMessage: '设备厂家',
@@ -191,6 +195,7 @@ const Device = () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key="edit"
@@ -299,6 +304,7 @@ const Device = () => {
         actionRef={actionRef}
         options={{ fullScreen: true }}
         params={queryParam}
+        scroll={{ x: 1366 }}
         request={(params = {}) =>
           service.query({
             ...params,

@@ -49,6 +49,8 @@ const Network = () => {
   const columns: ProColumns<NetworkItem>[] = [
     {
       dataIndex: 'name',
+      fixed: 'left',
+      ellipsis: true,
       title: intl.formatMessage({
         id: 'pages.table.name',
         defaultMessage: '名称',
@@ -88,6 +90,7 @@ const Network = () => {
     {
       dataIndex: 'configuration',
       title: '详情',
+      ellipsis: true,
       renderText: (text, record) => {
         if (record.shareCluster) {
           const publicHost = record.configuration.publicHost;
@@ -149,6 +152,7 @@ const Network = () => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           type="link"
@@ -241,6 +245,7 @@ const Network = () => {
         actionRef={actionRef}
         params={param}
         columns={columns}
+        scroll={{ x: 1366 }}
         search={false}
         headerTitle={
           <PermissionButton

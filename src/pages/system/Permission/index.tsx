@@ -115,6 +115,8 @@ const Permission: React.FC = observer(() => {
       dataIndex: 'id',
       // copyable: true,
       ellipsis: true,
+      fixed: 'left',
+      width: '30%',
       // sorter: true,
       defaultSortOrder: 'ascend',
     },
@@ -133,6 +135,7 @@ const Permission: React.FC = observer(() => {
         defaultMessage: '状态',
       }),
       dataIndex: 'status',
+      // width:120,
       // filters: true,
       valueType: 'select',
       valueEnum: {
@@ -162,6 +165,7 @@ const Permission: React.FC = observer(() => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key="editable"
@@ -262,6 +266,7 @@ const Permission: React.FC = observer(() => {
         params={param}
         columns={columns}
         search={false}
+        scroll={{ x: 1366 }}
         headerTitle={
           <Space>
             <PermissionButton

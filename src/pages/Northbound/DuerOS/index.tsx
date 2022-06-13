@@ -134,6 +134,8 @@ export default () => {
         defaultMessage: '名称',
       }),
       dataIndex: 'name',
+      fixed: 'left',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -142,6 +144,7 @@ export default () => {
       }),
       dataIndex: 'productName',
       hideInSearch: true,
+      ellipsis: true,
       valueType: 'select',
       request: async () => {
         const res = await service.getProduct();
@@ -175,6 +178,7 @@ export default () => {
     {
       title: '状态',
       dataIndex: 'state',
+      width: 90,
       renderText: (data) => {
         const map = {
           disabled: <Badge status="error" text="禁用" />,
@@ -202,6 +206,7 @@ export default () => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => Tools(record, 'table'),
     },
   ];
@@ -235,6 +240,7 @@ export default () => {
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
+        scroll={{ x: 1366 }}
         options={{ fullScreen: true }}
         request={(params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
