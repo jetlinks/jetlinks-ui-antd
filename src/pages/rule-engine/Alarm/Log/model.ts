@@ -12,7 +12,7 @@ export const AlarmLogModel = model<{
   }[];
   columns: ProColumns<AlarmLogHistoryItem>[];
 }>({
-  tab: 'product',
+  tab: 'all',
   current: {},
   solveVisible: false,
   logVisible: false,

@@ -11,3 +11,4 @@ export { default as PermissionButton } from './PermissionButton';
 export { default as TitleComponent } from './TitleComponent';
 export { default as AMap } from './AMapComponent/amap';
 export { default as PathSimplifier } from './AMapComponent/PathSimplifier';
+export { default as Empty } from './Empty';

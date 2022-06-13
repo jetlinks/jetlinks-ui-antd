@@ -49,7 +49,7 @@ const Property = (props: Props) => {
           <Tooltip title={title}>{title}</Tooltip>
         </div>
         <Space style={{ fontSize: 12 }}>
-          {data.expands?.type.includes('write') && (
+          {data.expands?.type?.includes('write') && (
             <Tooltip placement="top" title="设置属性至设备">
               <EditOutlined
                 onClick={() => {
@@ -70,7 +70,7 @@ const Property = (props: Props) => {
                 />
               </Tooltip>
             )}
-          {data.expands?.type.includes('read') && (
+          {data.expands?.type?.includes('read') && (
             <Tooltip placement="top" title="获取最新属性值">
               <SyncOutlined onClick={refreshProperty} />
             </Tooltip>

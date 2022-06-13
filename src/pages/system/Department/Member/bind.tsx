@@ -3,7 +3,6 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from '@/pages/system/Department/Member';
 import { message, Modal } from 'antd';
-import { useParams } from 'umi';
 import MemberModel from '@/pages/system/Department/Member/model';
 import { observer } from '@formily/react';
 import { useEffect, useRef, useState } from 'react';
@@ -14,11 +13,11 @@ interface Props {
   reload: () => void;
   visible: boolean;
   onCancel: () => void;
+  parentId: string;
 }
 
 const Bind = observer((props: Props) => {
   const intl = useIntl();
-  const param = useParams<{ id: string }>();
   const [searchParam, setSearchParam] = useState({});
   const actionRef = useRef<ActionType>();
 
@@ -53,7 +52,7 @@ const Bind = observer((props: Props) => {
 
   const handleBind = () => {
     if (MemberModel.bindUsers.length) {
-      service.handleUser(param.id, MemberModel.bindUsers, 'bind').subscribe({
+      service.handleUser(props.parentId, MemberModel.bindUsers, 'bind').subscribe({
         next: () => message.success('操作成功'),
         error: () => message.error('操作失败'),
         complete: () => {
@@ -80,7 +79,7 @@ const Bind = observer((props: Props) => {
         // pattern={'simple'}
         enableSave={false}
         field={columns}
-        defaultParam={[{ column: 'id$in-dimension$org$not', value: param.id }]}
+        defaultParam={[{ column: 'id$in-dimension$org$not', value: props.parentId }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);

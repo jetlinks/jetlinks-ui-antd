@@ -100,3 +100,21 @@ export const randomString = (length?: number) => {
   }
   return pwd;
 };
+
+/**
+ * 获取当前DOM元素需要撑满的高度
+ * @param className
+ * @param extraHeight 额外减去的高度
+ */
+export const getDomFullHeight = (className: string, extraHeight: number = 0): number => {
+  const dom = document.querySelector(`.${className}`);
+  if (dom) {
+    const bodyClient = document.body.getBoundingClientRect();
+    const domClient = dom.getBoundingClientRect();
+    if (domClient.y < 50) {
+      return 100;
+    }
+    return bodyClient.height - domClient.y - 24 - extraHeight;
+  }
+  return 0;
+};

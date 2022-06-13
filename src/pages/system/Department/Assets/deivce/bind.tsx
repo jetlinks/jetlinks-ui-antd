@@ -1,9 +1,7 @@
 // 资产-产品分类-绑定
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import ProTable from '@jetlinks/pro-table';
 import { DeviceBadge, service } from './index';
 import { message, Modal } from 'antd';
-import { useParams } from 'umi';
 import Models from './model';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
@@ -11,19 +9,21 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import type { DeviceItem } from '@/pages/system/Department/typings';
 import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
 import SearchComponent from '@/components/SearchComponent';
+import { ExtraDeviceCard } from '@/components/ProTableCard/CardItems/device';
+import { ProTableCard } from '@/components';
 
 interface Props {
   reload: () => void;
   visible: boolean;
   onCancel: () => void;
+  parentId: string;
 }
 
 const Bind = observer((props: Props) => {
   const intl = useIntl();
-  const param = useParams<{ id: string }>();
   const actionRef = useRef<ActionType>();
-  const [perVisible, setPerVisible] = useState(false);
   const [searchParam, setSearchParam] = useState({});
+  const saveRef = useRef<{ saveData: Function }>();
 
   const columns: ProColumns<DeviceItem>[] = [
     {
@@ -100,7 +100,7 @@ const Bind = observer((props: Props) => {
 
   const handleBind = () => {
     if (Models.bindKeys.length) {
-      setPerVisible(true);
+      saveRef.current?.saveData();
     } else {
       message.warn('请先勾选数据');
       // props.onCancel();
@@ -122,11 +122,11 @@ const Bind = observer((props: Props) => {
       title="绑定"
     >
       <PermissionModal
-        visible={perVisible}
         type="device"
         bindKeys={Models.bindKeys}
+        parentId={props.parentId}
+        ref={saveRef}
         onCancel={(type) => {
-          setPerVisible(false);
           if (type) {
             props.reload();
             props.onCancel();
@@ -146,7 +146,7 @@ const Bind = observer((props: Props) => {
               targets: [
                 {
                   type: 'org',
-                  id: param.id,
+                  id: props.parentId,
                 },
               ],
             },
@@ -163,11 +163,13 @@ const Bind = observer((props: Props) => {
         // }}
         target="department-assets-device"
       />
-      <ProTable<DeviceItem>
+      <ProTableCard<DeviceItem>
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
         search={false}
+        gridColumn={2}
+        cardRender={(record) => <ExtraDeviceCard {...record} />}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

@@ -17,6 +17,7 @@ import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { getDomFullHeight } from '@/utils/util';
 
 export const ModelEnum = {
   base: 'base',
@@ -313,7 +314,10 @@ const ProductDetail = observer(() => {
         </PermissionButton>,
       ]}
     >
-      <Card>
+      <Card
+        className={'product-detail-body'}
+        style={{ minHeight: getDomFullHeight('product-detail-body', 12) }}
+      >
         {list.find((k) => k.key === mode)?.component}
         {/* <Tabs
           defaultActiveKey={ModelEnum.base}

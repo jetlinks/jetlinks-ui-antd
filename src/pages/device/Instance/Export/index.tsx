@@ -116,7 +116,7 @@ const Export = (props: Props) => {
       onOk={downloadTemplate}
     >
       <Alert
-        message="不勾选产品，默认导出所有设备的基础数据，勾选单个产品可导出下属的详细数据"
+        message="选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数据"
         type="warning"
         showIcon
         closable

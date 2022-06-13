@@ -11,6 +11,7 @@ import BindChildDevice from './BindChildDevice';
 import moment from 'moment';
 import { Link } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getDomFullHeight } from '@/utils/util';
 
 const ChildDevice = () => {
   const intl = useIntl();
@@ -121,7 +122,10 @@ const ChildDevice = () => {
   ];
 
   return (
-    <Card>
+    <Card
+      className={'device-detail-childDevice'}
+      style={{ minHeight: getDomFullHeight('device-detail-childDevice', 12) }}
+    >
       <SearchComponent<LogItem>
         field={[...columns]}
         target="child-device"

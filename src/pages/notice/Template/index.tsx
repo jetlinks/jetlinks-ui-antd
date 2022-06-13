@@ -251,6 +251,7 @@ const Template = observer(() => {
             <Upload
               disabled={!templatePermission.import}
               key={'import'}
+              accept=".json"
               showUploadList={false}
               beforeUpload={(file) => {
                 const reader = new FileReader();

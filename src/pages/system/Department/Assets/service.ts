@@ -2,7 +2,7 @@ import BaseService from '@/utils/BaseService';
 import { request } from '@@/plugin-request/request';
 import SystemConst from '@/utils/const';
 import { defer, from } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 
 class Service<T> extends BaseService<T> {
   // 资产绑定
@@ -29,6 +29,7 @@ class Service<T> extends BaseService<T> {
       },
     });
   };
+
   // 资产-设备
   queryDeviceList = (params: any) => {
     return request<T>(`${SystemConst.API_BASE}/device/instance/_query`, {
@@ -36,6 +37,34 @@ class Service<T> extends BaseService<T> {
       data: params,
     });
   };
+
+  queryDeviceList2 = (params: any, parentId: string) =>
+    from(
+      request(`${SystemConst.API_BASE}/device/instance/_query`, { method: 'POST', data: params }),
+    ).pipe(
+      filter((item) => item.status === 200),
+      mergeMap((result) => {
+        const ids = result?.result?.data?.map((item: any) => item.id) || [];
+        return from(
+          request(`${SystemConst.API_BASE}/assets/bindings/device/org/${parentId}/_query`, {
+            method: 'POST',
+            data: ids,
+          }),
+        ).pipe(
+          filter((item) => item.status === 200),
+          map((item: any) => item.result || []),
+          map((item: any) => {
+            result.result.data = result.result.data.map((a: any) => {
+              a.grantedPermissions =
+                item.find((b: any) => b.assetId === a.id)?.grantedPermissions || [];
+              return a;
+            });
+            return result;
+          }),
+        );
+      }),
+    );
+
   // 资产-产品
   queryProductList = (params: any) => {
     return request<T>(`${SystemConst.API_BASE}/device-product/_query`, {
@@ -43,6 +72,33 @@ class Service<T> extends BaseService<T> {
       data: params,
     });
   };
+
+  queryProductList2 = (params: any, parentId: string) =>
+    from(
+      request(`${SystemConst.API_BASE}/device-product/_query`, { method: 'POST', data: params }),
+    ).pipe(
+      filter((item) => item.status === 200),
+      mergeMap((result) => {
+        const ids = result?.result?.data?.map((item: any) => item.id) || [];
+        return from(
+          request(`${SystemConst.API_BASE}/assets/bindings/device-product/org/${parentId}/_query`, {
+            method: 'POST',
+            data: ids,
+          }),
+        ).pipe(
+          filter((item) => item.status === 200),
+          map((item: any) => item.result || []),
+          map((item: any) => {
+            result.result.data = result.result.data.map((a: any) => {
+              a.grantedPermissions =
+                item.find((b: any) => b.assetId === a.id)?.grantedPermissions || [];
+              return a;
+            });
+            return result;
+          }),
+        );
+      }),
+    );
 }
 
 export default Service;

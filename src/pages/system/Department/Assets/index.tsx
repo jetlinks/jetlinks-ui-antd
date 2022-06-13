@@ -4,35 +4,46 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import ProductCategory from './productCategory';
 import Product from './product';
 import Device from '@/pages/system/Department/Assets/deivce';
+import Member from '@/pages/system/Department/Member';
 
-// 资产类型
-const TabsArray = [
-  {
-    intlTitle: '1',
-    defaultMessage: '产品分类',
-    key: 'ProductCategory',
-    components: ProductCategory,
-  },
-  {
-    intlTitle: '2',
-    defaultMessage: '产品',
-    key: 'Product',
-    components: Product,
-  },
-  {
-    intlTitle: '3',
-    defaultMessage: '设备',
-    key: 'Device',
-    components: Device,
-  },
-];
+interface AssetsProps {
+  parentId: string;
+}
 
-const Assets = () => {
+const Assets = (props: AssetsProps) => {
   const intl = useIntl();
 
+  // 资产类型
+  const TabsArray = [
+    {
+      intlTitle: '1',
+      defaultMessage: '产品分类',
+      key: 'ProductCategory',
+      components: ProductCategory,
+    },
+    {
+      intlTitle: '2',
+      defaultMessage: '产品',
+      key: 'Product',
+      components: Product,
+    },
+    {
+      intlTitle: '3',
+      defaultMessage: '设备',
+      key: 'Device',
+      components: Device,
+    },
+    {
+      intlTitle: '4',
+      defaultMessage: '用户',
+      key: 'User',
+      components: Member,
+    },
+  ];
+
   return (
-    <div style={{ background: '#fff', padding: 12 }}>
-      <Tabs tabPosition="left" defaultActiveKey="ProductCategory">
+    <div>
+      <Tabs defaultActiveKey="ProductCategory">
         {TabsArray.map((item) => (
           <Tabs.TabPane
             tab={intl.formatMessage({
@@ -41,7 +52,7 @@ const Assets = () => {
             })}
             key={item.key}
           >
-            <item.components />
+            <item.components parentId={props.parentId} />
           </Tabs.TabPane>
         ))}
       </Tabs>
