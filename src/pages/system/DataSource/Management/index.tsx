@@ -9,6 +9,7 @@ import DataTable from './DataTable';
 import styles from './index.less';
 import EditTable from './EditTable';
 import _ from 'lodash';
+import { useDomFullHeight } from '@/hooks';
 
 const Management = () => {
   const location = useLocation<{ id: string }>();
@@ -22,6 +23,7 @@ const Management = () => {
   const [model, setModel] = useState<'edit' | 'add' | 'list'>('list');
   const [tableList, setTableList] = useState<any[]>([]);
   const [param, setParam] = useState<string | undefined>(undefined);
+  const { minHeight } = useDomFullHeight(`.management`);
 
   const handleSearch = () => {
     service.rdbTree(id).then((resp) => {
@@ -64,7 +66,7 @@ const Management = () => {
 
   return (
     <PageContainer>
-      <Card>
+      <Card className="management" style={{ minHeight }}>
         <div className={styles.datasourceBox}>
           <div className={styles.left}>
             <Input.Search

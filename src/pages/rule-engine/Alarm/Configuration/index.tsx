@@ -64,7 +64,7 @@ const Configuration = () => {
     {
       title: '关联场景联动',
       dataIndex: 'sceneName',
-      width: 160,
+      width: 250,
       render: (text: any, record: any) => (
         <PermissionButton
           type={'link'}

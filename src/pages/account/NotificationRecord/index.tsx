@@ -10,6 +10,7 @@ import Detail from './detail';
 import { Badge, message } from 'antd';
 import Service from './service';
 import encodeQuery from '@/utils/encodeQuery';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('notifications');
 
@@ -20,6 +21,7 @@ const NotificationRecord = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<NotifitionRecord>>({});
   const [typeList, setTypeList] = useState<any>({});
+  const { minHeight } = useDomFullHeight(`.record`, 24);
 
   useEffect(() => {
     service.getProvidersList().then((resp) => {
@@ -148,6 +150,8 @@ const NotificationRecord = () => {
         rowKey="id"
         scroll={{ x: 1366 }}
         search={false}
+        tableClassName={'record'}
+        tableStyle={{ minHeight }}
         request={async (params) =>
           service.queryList(encodeQuery({ ...params, sorts: { notifyTime: 'desc' } }))
         }

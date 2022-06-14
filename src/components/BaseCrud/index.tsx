@@ -1,5 +1,5 @@
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Tooltip } from 'antd';
+import { Button, Card, Tooltip } from 'antd';
 import type { ActionType, ProColumns, RequestData } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 
@@ -17,6 +17,7 @@ import type { Form } from '@formily/core';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import type { SearchConfig } from '@ant-design/pro-form/lib/components/Submitter';
+import { useDomFullHeight } from '@/hooks';
 
 export type Option = {
   model: 'edit' | 'preview' | 'add';
@@ -52,6 +53,7 @@ export type Props<T> = {
 };
 
 const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
+  const { minHeight } = useDomFullHeight(`.BaseCrud`);
   const intl = useIntl();
   const ref = useRef<ProFormInstance>();
   const {
@@ -76,8 +78,9 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
   } = props;
 
   const [param, setParam] = useState({});
+
   return (
-    <>
+    <Card className="BaseCrud" style={{ minHeight }}>
       <SearchComponent<T>
         field={columns}
         onSearch={async (data) => {
@@ -168,7 +171,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         customForm={form}
         footer={footer}
       />
-    </>
+    </Card>
   );
 };
 

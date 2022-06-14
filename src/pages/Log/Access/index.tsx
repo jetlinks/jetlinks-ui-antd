@@ -9,6 +9,7 @@ import { EyeOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import Detail from '@/pages/Log/Access/Detail';
+import { useDomFullHeight } from '@/hooks';
 
 const service = new BaseService('logger/access');
 
@@ -18,6 +19,7 @@ const Access = () => {
   const [param, setParam] = useState({});
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<AccessLogItem>>({});
+  const { minHeight } = useDomFullHeight(`.accessLog`, 24);
 
   const columns: ProColumns<AccessLogItem>[] = [
     {
@@ -129,6 +131,8 @@ const Access = () => {
       <ProTable<AccessLogItem>
         columns={columns}
         params={param}
+        tableClassName={'accessLog'}
+        tableStyle={{ minHeight }}
         scroll={{ x: 1366 }}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'responseTime', order: 'desc' }] })

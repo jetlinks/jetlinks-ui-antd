@@ -13,6 +13,7 @@ import { service } from '@/pages/rule-engine/Alarm/Log';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import classNames from 'classnames';
+import { useDomFullHeight } from '@/hooks';
 
 interface Props {
   type: string;
@@ -38,6 +39,7 @@ colorMap.set(4, '#999999');
 colorMap.set(5, '#C4C4C4');
 
 const TabComponent = observer((props: Props) => {
+  const { minHeight } = useDomFullHeight(`.alarmLog`);
   const columns: ProColumns<any>[] = [
     {
       title: '名称',
@@ -178,7 +180,7 @@ const TabComponent = observer((props: Props) => {
           handleSearch(dt);
         }}
       />
-      <Card>
+      <Card className="alarmLog" style={{ minHeight }}>
         {dataSource?.data.length > 0 ? (
           <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
             {(dataSource?.data || []).map((item: any) => (
@@ -249,7 +251,7 @@ const TabComponent = observer((props: Props) => {
             ))}
           </Row>
         ) : (
-          <Empty />
+          <Empty style={{ marginTop: '10%' }} />
         )}
         {dataSource.data.length > 0 && (
           <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>

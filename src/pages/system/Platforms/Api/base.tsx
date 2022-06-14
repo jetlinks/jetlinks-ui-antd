@@ -7,6 +7,7 @@ import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import './index.less';
 import { useLocation } from 'umi';
+import { useDomFullHeight } from '@/hooks';
 
 export const ApiModel = model<{
   data: any[];
@@ -40,6 +41,7 @@ export default observer((props: ApiPageProps) => {
   const location = useLocation();
   const [operations, setOperations] = useState<string[]>([]);
   const [GrantKeys, setGrantKeys] = useState<string[]>([]);
+  const { minHeight } = useDomFullHeight(`.platforms-api`);
 
   const initModel = () => {
     ApiModel.data = [];
@@ -89,7 +91,7 @@ export default observer((props: ApiPageProps) => {
   }, []);
 
   return (
-    <div className={'platforms-api'}>
+    <div className={'platforms-api'} style={{ minHeight }}>
       <div className={'platforms-api-tree'}>
         <Tree
           isShowGranted={props.isShowGranted}

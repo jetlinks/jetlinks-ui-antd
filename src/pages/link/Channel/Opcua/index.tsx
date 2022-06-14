@@ -17,6 +17,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import Save from './Save';
 import { getMenuPathByCode } from '@/utils/menu';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('opc/client');
 
@@ -27,6 +28,7 @@ const Opcua = () => {
   const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<OpaUa>>({});
+  const { minHeight } = useDomFullHeight(`.opcua`, 24);
 
   const iconMap = new Map();
   iconMap.set('1', require('/public/images/channel/1.png'));
@@ -252,6 +254,8 @@ const Opcua = () => {
         columns={columns}
         rowKey="id"
         search={false}
+        tableClassName={'opcua'}
+        tableStyle={{ minHeight }}
         headerTitle={
           <PermissionButton
             onClick={() => {
