@@ -80,7 +80,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
   const [param, setParam] = useState({});
 
   return (
-    <Card className="BaseCrud" style={{ minHeight }}>
+    <>
       <SearchComponent<T>
         field={columns}
         onSearch={async (data) => {
@@ -89,89 +89,91 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
         }}
         target={moduleName}
       />
-      <ProTable<T>
-        params={param}
-        formRef={ref}
-        columns={columns}
-        actionRef={actionRef}
-        scroll={scroll}
-        options={{ fullScreen: true }}
-        request={
-          request ||
-          (async (params = {}) =>
-            service.query({
-              ...params,
-              sorts: [{ name: 'createTime', order: 'desc' }], // 默认排序
-            }))
-        }
-        editable={{
-          type: 'multiple',
-        }}
-        rowKey="id"
-        search={
-          search === false
-            ? false
-            : {
-                labelWidth: 'auto',
-              }
-        }
-        form={{
-          syncToUrl: false,
-        }}
-        pagination={
-          pagination === false
-            ? false
-            : {
-                pageSize: 10,
-              }
-        }
-        dateFormatter="string"
-        headerTitle={
-          <Tooltip title={props.disableAdd ? '暂无权限，请联系管理员' : ''}>
-            <Button
-              disabled={props.disableAdd}
-              onClick={CurdModel.add}
-              key="button"
-              icon={<PlusOutlined />}
-              type="primary"
-            >
-              {intl.formatMessage({
-                id: 'pages.data.option.add',
-                defaultMessage: '新增',
-              })}
-            </Button>
-          </Tooltip>
-        }
-        defaultParams={defaultParams}
-        // toolBarRender={() =>
-        //   toolBar || [
-        //     <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
-        //       {intl.formatMessage({
-        //         id: 'pages.data.option.add',
-        //         defaultMessage: '新增',
-        //       })}
-        //     </Button>,
-        //     menu && (
-        //       <Dropdown key="menu" overlay={menu}>
-        //         <Button>
-        //           <EllipsisOutlined />
-        //         </Button>
-        //       </Dropdown>
-        //     ),
-        //   ]
-        // }
-      />
-      <Save
-        reload={() => actionRef.current?.reload()}
-        service={service}
-        schema={schema}
-        schemaConfig={schemaConfig}
-        modelConfig={modelConfig}
-        formEffect={formEffect}
-        customForm={form}
-        footer={footer}
-      />
-    </Card>
+      <Card className="BaseCrud" style={{ minHeight }}>
+        <ProTable<T>
+          params={param}
+          formRef={ref}
+          columns={columns}
+          actionRef={actionRef}
+          scroll={scroll}
+          options={{ fullScreen: true }}
+          request={
+            request ||
+            (async (params = {}) =>
+              service.query({
+                ...params,
+                sorts: [{ name: 'createTime', order: 'desc' }], // 默认排序
+              }))
+          }
+          editable={{
+            type: 'multiple',
+          }}
+          rowKey="id"
+          search={
+            search === false
+              ? false
+              : {
+                  labelWidth: 'auto',
+                }
+          }
+          form={{
+            syncToUrl: false,
+          }}
+          pagination={
+            pagination === false
+              ? false
+              : {
+                  pageSize: 10,
+                }
+          }
+          dateFormatter="string"
+          headerTitle={
+            <Tooltip title={props.disableAdd ? '暂无权限，请联系管理员' : ''}>
+              <Button
+                disabled={props.disableAdd}
+                onClick={CurdModel.add}
+                key="button"
+                icon={<PlusOutlined />}
+                type="primary"
+              >
+                {intl.formatMessage({
+                  id: 'pages.data.option.add',
+                  defaultMessage: '新增',
+                })}
+              </Button>
+            </Tooltip>
+          }
+          defaultParams={defaultParams}
+          // toolBarRender={() =>
+          //   toolBar || [
+          //     <Button onClick={CurdModel.add} key="button" icon={<PlusOutlined />} type="primary">
+          //       {intl.formatMessage({
+          //         id: 'pages.data.option.add',
+          //         defaultMessage: '新增',
+          //       })}
+          //     </Button>,
+          //     menu && (
+          //       <Dropdown key="menu" overlay={menu}>
+          //         <Button>
+          //           <EllipsisOutlined />
+          //         </Button>
+          //       </Dropdown>
+          //     ),
+          //   ]
+          // }
+        />
+        <Save
+          reload={() => actionRef.current?.reload()}
+          service={service}
+          schema={schema}
+          schemaConfig={schemaConfig}
+          modelConfig={modelConfig}
+          formEffect={formEffect}
+          customForm={form}
+          footer={footer}
+        />
+      </Card>
+    </>
   );
 };
 
