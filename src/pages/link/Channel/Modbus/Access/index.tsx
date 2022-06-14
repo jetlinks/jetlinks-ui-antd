@@ -19,6 +19,7 @@ import styles from './index.less';
 import AddPoint from './addPoint';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
+import { useDomFullHeight } from '@/hooks';
 
 const Access = () => {
   const intl = useIntl();
@@ -38,6 +39,7 @@ const Access = () => {
   const [propertyValue, setPropertyValue] = useState<any>({});
   const wsRef = useRef<any>();
   const [filterList, setFilterList] = useState([]);
+  const { minHeight } = useDomFullHeight(`.modbusAccess`, 26);
 
   const columns: ProColumns<any>[] = [
     {
@@ -222,14 +224,14 @@ const Access = () => {
     return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [data]);
 
-  useEffect(() => {
-    console.log(deviceId);
-  }, [deviceId]);
+  // useEffect(() => {
+  //   console.log(deviceId);
+  // }, [deviceId]);
 
   return (
     <PageContainer>
       <Card className={styles.list}>
-        <div style={{ display: 'flex' }}>
+        <div className="modbusAccess" style={{ display: 'flex', minHeight }}>
           <div>
             <div style={{ width: '250px', marginTop: 15 }}>
               <Input.Search

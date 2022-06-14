@@ -19,6 +19,7 @@ import PasswordModal from './password';
 import Service from './service';
 import { message } from 'antd';
 import { getMenuPathByCode } from '@/utils/menu';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('api-client');
 
@@ -33,6 +34,7 @@ export default () => {
   const [editData, setEditData] = useState<any | undefined>(undefined);
 
   const { permission } = PermissionButton.usePermission('system/Platforms');
+  const { minHeight } = useDomFullHeight(`.platform`, 24);
 
   const deleteById = async (id: string) => {
     const resp: any = await service.remove(id);
@@ -47,6 +49,7 @@ export default () => {
       dataIndex: 'name',
       title: '名称',
       fixed: 'left',
+      width: '20%',
       ellipsis: true,
     },
     {
@@ -269,6 +272,8 @@ export default () => {
         params={param}
         columns={columns}
         actionRef={actionRef}
+        tableClassName={'platform'}
+        tableStyle={{ minHeight }}
         request={(params: any) =>
           service.query({
             ...params,

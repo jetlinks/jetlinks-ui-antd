@@ -9,6 +9,7 @@ import { useIntl } from 'umi';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import Save from './Save';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('relation');
 
@@ -19,6 +20,7 @@ const Relationship = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const { permission } = PermissionButton.usePermission('system/Relationship');
+  const { minHeight } = useDomFullHeight(`.relation`, 24);
 
   const columns: ProColumns<ReationItem>[] = [
     {
@@ -112,6 +114,8 @@ const Relationship = () => {
         search={false}
         rowKey="id"
         scroll={{ x: 1366 }}
+        tableClassName={'relation'}
+        tableStyle={{ minHeight }}
         request={async (params) => {
           return service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] });
         }}

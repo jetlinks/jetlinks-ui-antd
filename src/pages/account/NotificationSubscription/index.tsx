@@ -16,6 +16,7 @@ import { Badge, message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import Save from './save';
 import Service from './service';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('notifications/subscriptions');
 
@@ -26,6 +27,7 @@ const NotificationSubscription = observer(() => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<NotifitionSubscriptionItem>>({});
   const [typeList, setTypeList] = useState<any>({});
+  const { minHeight } = useDomFullHeight(`.subscription`, 24);
 
   useEffect(() => {
     service.getProvidersList().then((resp) => {
@@ -182,6 +184,8 @@ const NotificationSubscription = observer(() => {
         columns={columns}
         scroll={{ x: 1366 }}
         search={false}
+        tableClassName={'subscription'}
+        tableStyle={{ minHeight }}
         rowKey="id"
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })

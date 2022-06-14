@@ -21,13 +21,14 @@ import { downloadObject } from '@/utils/util';
 import Token from '@/utils/token';
 import { getButtonPermission } from '@/utils/menu';
 import { PermissionButton } from '@/components';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('permission');
 const Permission: React.FC = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const permissionCode = 'system/Permission';
-
+  const { minHeight } = useDomFullHeight(`.permission`, 24);
   const [param, setParam] = useState({});
   const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
   const [current, setCurrent] = useState<Partial<PermissionItem>>({});
@@ -267,6 +268,8 @@ const Permission: React.FC = observer(() => {
         columns={columns}
         search={false}
         scroll={{ x: 1366 }}
+        tableClassName={'permission'}
+        tableStyle={{ minHeight }}
         headerTitle={
           <Space>
             <PermissionButton

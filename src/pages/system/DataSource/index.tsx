@@ -21,6 +21,7 @@ import Save from './Save';
 import { Store } from 'jetlinks-store';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('datasource/config');
 
@@ -32,6 +33,7 @@ const DataSource = observer(() => {
   const { permission: userPermission } = usePermissions('system/DataSource');
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<DataSourceItem>>({});
+  const { minHeight } = useDomFullHeight(`.datasource`, 24);
 
   useEffect(() => {
     service.getType().then((res) => {
@@ -233,6 +235,8 @@ const DataSource = observer(() => {
         search={false}
         rowKey="id"
         scroll={{ x: 1366 }}
+        tableClassName={'datasource'}
+        tableStyle={{ minHeight }}
         headerTitle={
           <PermissionButton
             onClick={() => {

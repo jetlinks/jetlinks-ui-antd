@@ -22,6 +22,7 @@ import { ProviderValue } from '../index';
 import Live from './Live';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import Tree from './Tree';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('media');
 
@@ -35,6 +36,7 @@ export default () => {
   const [deviceId, setDeviceId] = useState('');
   const [channelId, setChannelId] = useState('');
   const [type, setType] = useState('');
+  const { minHeight } = useDomFullHeight(`.channelDevice`, 24);
 
   const location = useLocation();
   const history = useHistory();
@@ -234,6 +236,8 @@ export default () => {
             columns={columns}
             actionRef={actionRef}
             // scroll={{x:1366}}
+            tableClassName={'channelDevice'}
+            tableStyle={{ minHeight }}
             options={{ fullScreen: true }}
             params={queryParam}
             defaultParams={[

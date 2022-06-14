@@ -20,6 +20,7 @@ import type { MenuItem } from './typing';
 import moment from 'moment';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('menu');
 
@@ -38,7 +39,7 @@ export const State = model<ModelType>({
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-
+  const { minHeight } = useDomFullHeight(`.menu`, 24);
   const [param, setParam] = useState({});
   const history = useHistory();
   const { permission } = PermissionButton.usePermission('system/Menu');
@@ -252,6 +253,8 @@ export default observer(() => {
         actionRef={actionRef}
         rowKey="id"
         scroll={{ x: 1366 }}
+        tableClassName={'menu'}
+        tableStyle={{ minHeight }}
         pagination={false}
         search={false}
         params={param}

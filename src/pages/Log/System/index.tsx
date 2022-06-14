@@ -9,6 +9,7 @@ import BaseService from '@/utils/BaseService';
 import { EyeOutlined } from '@ant-design/icons';
 import SearchComponent from '@/components/SearchComponent';
 import Detail from '@/pages/Log/System/Detail';
+import { useDomFullHeight } from '@/hooks';
 
 const service = new BaseService<SystemLogItem>('logger/system');
 const System = () => {
@@ -17,6 +18,7 @@ const System = () => {
   const [param, setParam] = useState({});
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<SystemLogItem>>({});
+  const { minHeight } = useDomFullHeight(`.systemLog`, 24);
 
   const columns: ProColumns<SystemLogItem>[] = [
     {
@@ -122,6 +124,8 @@ const System = () => {
         columns={columns}
         params={param}
         scroll={{ x: 1366 }}
+        tableClassName={'systemLog'}
+        tableStyle={{ minHeight }}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }

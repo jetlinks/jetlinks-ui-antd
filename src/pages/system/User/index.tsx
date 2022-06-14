@@ -19,12 +19,14 @@ import { observer } from '@formily/react';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import ResetPassword from '@/pages/system/User/ResetPassword';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('user');
 
 const User = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const { minHeight } = useDomFullHeight(`.user`, 24);
 
   const { permission: userPermission } = usePermissions('system/User');
   const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
@@ -231,6 +233,8 @@ const User = observer(() => {
         params={param}
         columns={columns}
         scroll={{ x: 1366 }}
+        tableClassName={'user'}
+        tableStyle={{ minHeight }}
         search={false}
         headerTitle={
           <PermissionButton

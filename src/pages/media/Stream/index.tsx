@@ -11,6 +11,7 @@ import styles from './index.less';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { model } from '@formily/reactive';
 import { PermissionButton } from '@/components';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('media/server');
 
@@ -25,6 +26,7 @@ const Stream = () => {
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const permissionCode = 'media/Stream';
   const { permission } = PermissionButton.usePermission(permissionCode);
+  const { minHeight } = useDomFullHeight(`.stream`);
 
   const columns: ProColumns<StreamItem>[] = [
     {
@@ -75,7 +77,7 @@ const Stream = () => {
           });
         }}
       />
-      <Card>
+      <Card className="stream" style={{ minHeight }}>
         {dataSource.data.length > 0 ? (
           <>
             <PermissionButton
@@ -202,6 +204,7 @@ const Stream = () => {
           </>
         ) : (
           <Empty
+            style={{ marginTop: '10%' }}
             description={
               <span>
                 暂无数据，请先

@@ -17,6 +17,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import Save from './Save';
 import { getMenuPathByCode } from '@/utils/menu';
+import { useDomFullHeight } from '@/hooks';
 
 export const service = new Service('modbus/master');
 
@@ -27,6 +28,7 @@ const Modbus = () => {
   const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<OpaUa>>({});
+  const { minHeight } = useDomFullHeight(`.modbus`, 24);
 
   const iconMap = new Map();
   iconMap.set('1', require('/public/images/channel/1.png'));
@@ -243,6 +245,8 @@ const Modbus = () => {
         rowKey="id"
         scroll={{ x: 1366 }}
         search={false}
+        tableClassName={'modbus'}
+        tableStyle={{ minHeight }}
         headerTitle={
           <PermissionButton
             onClick={() => {

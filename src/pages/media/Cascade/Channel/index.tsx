@@ -10,6 +10,7 @@ import { useIntl, useLocation } from 'umi';
 import BindChannel from './BindChannel';
 import BadgeStatus, { StatusColorEnum } from '@/components/BadgeStatus';
 import { PermissionButton } from '@/components';
+import { useDomFullHeight } from '@/hooks';
 
 const Channel = () => {
   const location: any = useLocation();
@@ -22,6 +23,7 @@ const Channel = () => {
   const [data, setData] = useState<string>('');
   const [popVisible, setPopvisible] = useState<string>('');
   const { permission } = PermissionButton.usePermission('media/Cascade');
+  const { minHeight } = useDomFullHeight(`.cascadeDevice`, 24);
 
   const unbind = async (list: string[]) => {
     const resp = await service.unbindChannel(id, list);
@@ -205,6 +207,8 @@ const Channel = () => {
         columns={columns}
         scroll={{ x: 1366 }}
         search={false}
+        tableClassName={'cascadeDevice'}
+        tableStyle={{ minHeight }}
         headerTitle={'通道列表'}
         request={async (params) => {
           return service.queryBindChannel(id, {
