@@ -39,10 +39,14 @@ export default (props: AccessConfigCardProps) => {
         <div className="card">
           <div className="header">
             <div className="title ellipsis">
-              <Tooltip title={props.name}>{props.name || '--'}</Tooltip>
+              <Tooltip title={props.name} placement="topLeft">
+                {props.name || '--'}
+              </Tooltip>
             </div>
             <div className="desc">
-              <Tooltip title={props.description}>{props.description || '--'}</Tooltip>
+              <Tooltip title={props.description} placement="topLeft">
+                {props.description || '--'}
+              </Tooltip>
             </div>
           </div>
           <div className="container">

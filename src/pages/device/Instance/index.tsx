@@ -394,7 +394,7 @@ const Instance = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      width: 200,
+      width: 120,
       fixed: 'right',
       render: (text, record) => tools(record),
     },

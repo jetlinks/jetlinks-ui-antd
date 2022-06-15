@@ -144,6 +144,7 @@ const Network = () => {
     {
       dataIndex: 'description',
       title: '说明',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -151,7 +152,7 @@ const Network = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      width: 200,
+      width: 120,
       fixed: 'right',
       render: (text, record) => [
         <PermissionButton

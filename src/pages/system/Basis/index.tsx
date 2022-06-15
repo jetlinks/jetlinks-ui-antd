@@ -10,6 +10,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { PageContainer } from '@ant-design/pro-layout';
 import Service from './service';
+import { useDomFullHeight } from '@/hooks';
 
 const Basis = () => {
   const service = new Service();
@@ -18,6 +19,7 @@ const Basis = () => {
   const { permission: userPermission } = usePermissions('system/Basis');
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const { minHeight } = useDomFullHeight(`.basis`);
 
   const uploadProps: UploadProps = {
     showUploadList: false,
@@ -108,7 +110,7 @@ const Basis = () => {
 
   return (
     <PageContainer>
-      <Card>
+      <Card className="basis" style={{ minHeight }}>
         <div
           style={{
             display: 'flex',

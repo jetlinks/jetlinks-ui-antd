@@ -22,6 +22,7 @@ import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import { PermissionButton } from '@/components';
+import { useDomFullHeight } from '@/hooks';
 
 interface Props {
   change: () => void;
@@ -31,7 +32,7 @@ interface Props {
 
 const Access = (props: Props) => {
   const [form] = Form.useForm();
-
+  const { minHeight } = useDomFullHeight(`.access`);
   const history = useHistory();
 
   const [current, setCurrent] = useState<number>(0);
@@ -356,6 +357,7 @@ const Access = (props: Props) => {
               </Row>
             ) : (
               <Empty
+                style={{ marginTop: '10%', marginBottom: '10%' }}
                 description={
                   <span>
                     暂无数据
@@ -451,6 +453,7 @@ const Access = (props: Props) => {
               </Row>
             ) : (
               <Empty
+                style={{ marginTop: '10%', marginBottom: '10%' }}
                 description={
                   <span>
                     暂无数据
@@ -628,7 +631,7 @@ const Access = (props: Props) => {
   };
 
   return (
-    <Card>
+    <Card className="access" style={{ minHeight }}>
       {!props.data?.id && (
         <Button
           type="link"
