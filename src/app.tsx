@@ -226,7 +226,7 @@ const MenuItemIcon = (
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
-  console.log({ ...initialState });
+  // console.log({ ...initialState });
   return {
     navTheme: 'light',
     headerTheme: 'light',
@@ -234,6 +234,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     disableContentMargin: false,
     waterMarkProps: {
       // content: initialState?.currentUser?.name,
+    },
+    itemRender: (route, _, routes) => {
+      const chilck = routes.indexOf(route) > 1;
+      return chilck && route.path !== '/iot/rule-engine/Alarm' ? (
+        <Link to={route.path}>{route.breadcrumbName}</Link>
+      ) : (
+        <span>{route.breadcrumbName}</span>
+      );
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
