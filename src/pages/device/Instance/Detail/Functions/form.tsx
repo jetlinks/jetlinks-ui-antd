@@ -78,14 +78,14 @@ export default (props: FunctionProps) => {
     {
       dataIndex: 'name',
       title: '名称',
-      width: 200,
+      width: 120,
       editable: false,
       ellipsis: true,
     },
     {
       dataIndex: 'type',
       title: '类型',
-      width: 200,
+      width: 120,
       editable: false,
     },
     {
@@ -95,7 +95,6 @@ export default (props: FunctionProps) => {
       }),
       dataIndex: 'value',
       align: 'center',
-      width: 260,
       renderFormItem: (_, row: any) => {
         return getItemNode(row.record);
       },
