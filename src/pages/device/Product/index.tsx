@@ -30,8 +30,8 @@ import useLocation from '@/hooks/route/useLocation';
 
 export const service = new Service('device-product');
 export const statusMap = {
-  1: <Badge status="processing" text="已发布" />,
-  0: <Badge status="error" text="未发布" />,
+  1: <Badge status="success" text="正常" />,
+  0: <Badge status="error" text="禁用" />,
 };
 export const productModel = model<{
   current: ProductItem | undefined;
@@ -62,10 +62,10 @@ const Product = observer(() => {
   const status = {
     1: (
       <Badge
-        status="processing"
+        status="success"
         text={intl.formatMessage({
-          id: 'pages.system.tenant.assetInformation.published',
-          defaultMessage: '已发布',
+          id: 'pages.device.product.status.enabled',
+          defaultMessage: '正常',
         })}
       />
     ),
@@ -73,8 +73,8 @@ const Product = observer(() => {
       <Badge
         status="error"
         text={intl.formatMessage({
-          id: 'pages.system.tenant.assetInformation.unpublished',
-          defaultMessage: '未发布',
+          id: 'pages.device.product.status.disabled',
+          defaultMessage: '禁用',
         })}
       />
     ),
@@ -298,15 +298,15 @@ const Product = observer(() => {
         // },
         0: {
           text: intl.formatMessage({
-            id: 'pages.device.product.status.unpublished',
-            defaultMessage: '未发布',
+            id: 'pages.device.product.status.disabled',
+            defaultMessage: '禁用',
           }),
           status: 0,
         },
         1: {
           text: intl.formatMessage({
-            id: 'pages.device.product.status.published',
-            defaultMessage: '已发布',
+            id: 'pages.device.product.status.enabled',
+            defaultMessage: '正常',
           }),
           status: 1,
         },
@@ -582,7 +582,7 @@ const Product = observer(() => {
                     ? {
                         title: intl.formatMessage({
                           id: 'pages.device.productDetail.deleteTip',
-                          defaultMessage: '已发布的产品不能进行删除操作',
+                          defaultMessage: '已启用的产品不能进行删除操作',
                         }),
                       }
                     : undefined

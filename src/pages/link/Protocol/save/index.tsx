@@ -242,20 +242,20 @@ const Save = (props: Props) => {
         >
           保存
         </Button>,
-        <Button
-          key={3}
-          type="primary"
-          onClick={() => {
-            save(true);
-          }}
-          disabled={
-            props.data?.id
-              ? !permission.update && !permission.action
-              : !permission.add && !permission.action
-          }
-        >
-          保存并发布
-        </Button>,
+        // <Button
+        //   key={3}
+        //   type="primary"
+        //   onClick={() => {
+        //     save(true);
+        //   }}
+        //   disabled={
+        //     props.data?.id
+        //       ? !permission.update && !permission.action
+        //       : !permission.add && !permission.action
+        //   }
+        // >
+        //   保存并发布
+        // </Button>,
       ]}
     >
       <Form form={form} layout="vertical">

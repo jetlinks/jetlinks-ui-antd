@@ -26,7 +26,7 @@ export default (props: DeviceCardProps) => {
       status={props.state.value}
       statusText={props.state.text}
       statusNames={{
-        started: StatusColorEnum.processing,
+        started: StatusColorEnum.success,
         disable: StatusColorEnum.error,
         notActive: StatusColorEnum.warning,
       }}

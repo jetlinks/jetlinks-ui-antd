@@ -59,11 +59,11 @@ const AccessConfig = (props: Props) => {
       valueType: 'select',
       valueEnum: {
         disabled: {
-          text: '已停止',
+          text: '禁用',
           status: 'disabled',
         },
         enabled: {
-          text: '已启动',
+          text: '正常',
           status: 'enabled',
         },
       },

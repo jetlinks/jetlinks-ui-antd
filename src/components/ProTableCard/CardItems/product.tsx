@@ -113,12 +113,12 @@ export default (props: ProductCardProps) => {
       actions={props.actions}
       status={props.state}
       statusText={intl.formatMessage({
-        id: `pages.system.tenant.assetInformation.${props.state ? 'published' : 'unpublished'}`,
-        defaultMessage: '已发布',
+        id: `pages.device.product.status.${props.state ? 'enabled' : 'disabled'}`,
+        defaultMessage: '正常',
       })}
       statusNames={{
         0: StatusColorEnum.error,
-        1: StatusColorEnum.processing,
+        1: StatusColorEnum.success,
       }}
     >
       <div className={'pro-table-card-item'}>
