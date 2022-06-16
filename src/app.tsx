@@ -189,7 +189,7 @@ export const request: RequestConfig = {
               .catch(() => {
                 notification.error({
                   key: 'error',
-                  message: '系统错误',
+                  message: '系统开小差，请稍后重试',
                 });
               });
           }
@@ -198,7 +198,7 @@ export const request: RequestConfig = {
     }
     if (!response) {
       notification.error({
-        description: '您的网络发生异常，无法连接服务器',
+        description: '网络异常，请检查网络连接',
         message: '网络异常',
       });
     }
@@ -226,7 +226,7 @@ const MenuItemIcon = (
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
-  console.log({ ...initialState });
+  // console.log({ ...initialState });
   return {
     navTheme: 'light',
     headerTheme: 'light',
@@ -234,6 +234,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     disableContentMargin: false,
     waterMarkProps: {
       // content: initialState?.currentUser?.name,
+    },
+    itemRender: (route, _, routes) => {
+      const chilck = routes.indexOf(route) > 1;
+      return chilck && route.path !== '/iot/rule-engine/Alarm' ? (
+        <Link to={route.path}>{route.breadcrumbName}</Link>
+      ) : (
+        <span>{route.breadcrumbName}</span>
+      );
     },
     footerRender: () => <Footer />,
     onPageChange: () => {

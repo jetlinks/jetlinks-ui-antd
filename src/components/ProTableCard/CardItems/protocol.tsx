@@ -20,9 +20,9 @@ export default (props: ProcotolCardProps) => {
       showMask={false}
       actions={props.actions}
       status={props.state === 1 ? 'enabled' : 'disabled'}
-      statusText={props.state === 1 ? '已发布' : '未发布'}
+      statusText={props.state === 1 ? '正常' : '禁用'}
       statusNames={{
-        enabled: StatusColorEnum.processing,
+        enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,
       }}
     >

@@ -6,11 +6,13 @@ import { ScreenPlayer } from '@/components';
 import { ptzStart, ptzStop, ptzTool } from './service';
 import { useRef, useState } from 'react';
 import './index.less';
+import { useDomFullHeight } from '@/hooks';
 
 const SplitScreen = () => {
   const [deviceId, setDeviceId] = useState('');
   const [channelId, setChannelId] = useState('');
   const player = useRef<any>(null);
+  const { minHeight } = useDomFullHeight(`.splitScreen`);
 
   const getMediaUrl = (dId: string, cId: string): string => {
     return ptzStart(dId, cId, 'mp4');
@@ -24,7 +26,7 @@ const SplitScreen = () => {
 
   return (
     <PageContainer>
-      <Card>
+      <Card style={{ minHeight }} className="splitScreen">
         <div className="split-screen">
           <LeftTree onSelect={mediaStart} />
           <div className="right-content">

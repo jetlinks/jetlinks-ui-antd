@@ -71,8 +71,8 @@ const Opcua = () => {
         },
         enabled: {
           text: intl.formatMessage({
-            id: 'pages.data.option.enabled',
-            defaultMessage: '启用',
+            id: 'pages.device.product.status.enabled',
+            defaultMessage: '正常',
           }),
           status: 'enabled',
         },

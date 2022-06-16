@@ -126,17 +126,17 @@ const Network = () => {
       valueType: 'select',
       valueEnum: {
         disabled: {
-          text: '已停止',
+          text: '禁用',
           status: 'disabled',
         },
         enabled: {
-          text: '已启动',
+          text: '正常',
           status: 'enabled',
         },
       },
       render: (text, record) => {
         if (record.state.value === 'enabled') {
-          return <Badge color="lime" text="正常" />;
+          return <Badge color="#52c41a" text="正常" />;
         }
         return <Badge color="red" text="禁用" />;
       },
@@ -144,6 +144,7 @@ const Network = () => {
     {
       dataIndex: 'description',
       title: '说明',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -151,7 +152,7 @@ const Network = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      width: 200,
+      width: 120,
       fixed: 'right',
       render: (text, record) => [
         <PermissionButton

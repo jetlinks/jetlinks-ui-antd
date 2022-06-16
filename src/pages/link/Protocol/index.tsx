@@ -73,8 +73,19 @@ const Protocol = () => {
     {
       dataIndex: 'state',
       title: '状态',
+      valueType: 'select',
+      valueEnum: {
+        0: {
+          text: '禁用',
+          status: 0,
+        },
+        1: {
+          text: '正常',
+          status: 1,
+        },
+      },
       renderText: (text) => (
-        <Badge color={text !== 1 ? 'red' : 'green'} text={text !== 1 ? '未发布' : '已发布'} />
+        <Badge color={text !== 1 ? 'red' : 'green'} text={text !== 1 ? '禁用' : '正常'} />
       ),
     },
     {
@@ -114,10 +125,10 @@ const Protocol = () => {
           type={'link'}
           style={{ padding: 0 }}
           tooltip={{
-            title: record.state === 1 ? '撤销' : '发布',
+            title: record.state === 1 ? '禁用' : '启用',
           }}
           popConfirm={{
-            title: `确认${record.state === 1 ? '撤销' : '发布'}`,
+            title: `确认${record.state === 1 ? '禁用' : '启用'}`,
             onConfirm: () => {
               if (record.state === 1) {
                 modifyState(record.id, 'un-deploy');
