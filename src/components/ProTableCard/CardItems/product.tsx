@@ -113,12 +113,12 @@ export default (props: ProductCardProps) => {
       actions={props.actions}
       status={props.state}
       statusText={intl.formatMessage({
-        id: `pages.system.tenant.assetInformation.${props.state ? 'published' : 'unpublished'}`,
-        defaultMessage: '已发布',
+        id: `pages.device.product.status.${props.state ? 'enabled' : 'disabled'}`,
+        defaultMessage: '正常',
       })}
       statusNames={{
         0: StatusColorEnum.error,
-        1: StatusColorEnum.processing,
+        1: StatusColorEnum.success,
       }}
     >
       <div className={'pro-table-card-item'}>
@@ -132,11 +132,11 @@ export default (props: ProductCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : '--'}</div>
+              <div className={'ellipsis'}>{props?.deviceType?.text}</div>
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.transportProtocol || '--'}</div>
+              <div className={'ellipsis'}>{props.transportProtocol || '未接入'}</div>
             </div>
           </div>
         </div>

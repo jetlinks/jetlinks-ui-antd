@@ -429,6 +429,7 @@ export default () => {
             initialValues={{ type: 'bytesSent' }}
             height={400}
             closeInitialParams={true}
+            showTimeTool={true}
             extraParams={{
               key: 'type',
               Children: (

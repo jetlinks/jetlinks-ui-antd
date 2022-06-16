@@ -10,6 +10,7 @@ import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 import { PermissionButton, Empty } from '@/components';
 import { useDomFullHeight } from '@/hooks';
+import { Store } from 'jetlinks-store';
 
 export const service = new Service('gateway/device');
 
@@ -26,16 +27,29 @@ const AccessConfig = () => {
       dataIndex: 'name',
     },
     {
+      title: '网关类型',
+      dataIndex: 'provider',
+      renderText: (text) => text?.text,
+      valueType: 'select',
+      request: () =>
+        service.getProviders().then((resp: any) => {
+          return (resp?.result || []).map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        }),
+    },
+    {
       title: '状态',
       dataIndex: 'state',
       valueType: 'select',
       valueEnum: {
         disabled: {
-          text: '已停止',
+          text: '禁用',
           status: 'disabled',
         },
         enabled: {
-          text: '已启动',
+          text: '正常',
           status: 'enabled',
         },
       },
@@ -65,6 +79,11 @@ const AccessConfig = () => {
   };
 
   useEffect(() => {
+    service.getProviders().then((resp: any) => {
+      if (resp.status === 200) {
+        Store.set('access-providers', resp.result);
+      }
+    });
     handleSearch(param);
   }, []);
 

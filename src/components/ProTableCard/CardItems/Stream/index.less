@@ -1,0 +1,56 @@
+@import '~antd/es/style/themes/default.less';
+
+.stream-card-item {
+  width: 100%;
+  background: url('/images/access-config-enabled.png') no-repeat;
+  background-size: 100% 100%;
+
+  .context-stream {
+    display: flex;
+    width: 100%;
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      width: 0;
+      margin-left: 20px;
+
+      .header {
+        .stream-title {
+          width: 100%;
+          font-weight: 700;
+          font-size: 18px;
+        }
+      }
+      .container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 20px;
+        padding-right: 20px;
+
+        div {
+          label {
+            color: #000;
+            font-size: 12px;
+            opacity: 0.45;
+          }
+
+          div {
+            color: #000;
+            font-weight: 700;
+            font-size: 12px;
+            opacity: 0.75;
+          }
+        }
+      }
+    }
+  }
+}
+
+:global {
+  .ant-pagination-item {
+    display: none;
+  }
+}

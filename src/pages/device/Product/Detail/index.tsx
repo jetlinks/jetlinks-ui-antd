@@ -264,7 +264,7 @@ const ProductDetail = observer(() => {
       subTitle={
         permission.update ? (
           <Popconfirm
-            title={productModel.current?.state === 1 ? '确认取消发布' : '确认发布'}
+            title={productModel.current?.state === 1 ? '确认禁用' : '确认启用'}
             onConfirm={() => {
               changeDeploy(statusMap[productModel.current?.state || 0].action);
             }}
@@ -272,8 +272,8 @@ const ProductDetail = observer(() => {
             <Switch
               key={2}
               checked={productModel.current?.state === 1}
-              checkedChildren="已发布"
-              unCheckedChildren="未发布"
+              checkedChildren="正常"
+              unCheckedChildren="禁用"
             />
           </Popconfirm>
         ) : (
@@ -287,8 +287,8 @@ const ProductDetail = observer(() => {
               key={2}
               disabled
               checked={productModel.current?.state === 1}
-              checkedChildren="已发布"
-              unCheckedChildren="未发布"
+              checkedChildren="正常"
+              unCheckedChildren="禁用"
             />
           </Tooltip>
         )
@@ -304,7 +304,7 @@ const ProductDetail = observer(() => {
               changeDeploy('deploy');
             },
           }}
-          tooltip={productModel.current?.state === 0 ? { title: '请先发布产品' } : undefined}
+          tooltip={productModel.current?.state === 0 ? { title: '请先启用产品' } : undefined}
           isPermission={permission.update}
           disabled={productModel.current?.state === 0}
         >

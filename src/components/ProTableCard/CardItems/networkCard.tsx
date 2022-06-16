@@ -50,7 +50,7 @@ export default (props: NoticeCardProps) => {
       statusText={props.state.text}
       statusNames={{
         disabled: StatusColorEnum.error,
-        enabled: StatusColorEnum.processing,
+        enabled: StatusColorEnum.success,
       }}
       showMask={false}
     >

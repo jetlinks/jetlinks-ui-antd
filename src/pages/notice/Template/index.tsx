@@ -99,8 +99,6 @@ const Template = observer(() => {
       dataIndex: 'name',
       title: '模版名称',
       ellipsis: true,
-      fixed: 'left',
-      width: '25%',
     },
     {
       dataIndex: 'provider',
@@ -120,9 +118,8 @@ const Template = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 200,
-      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key="edit"
@@ -229,7 +226,6 @@ const Template = observer(() => {
         rowKey="id"
         search={false}
         params={param}
-        scroll={{ x: 1366 }}
         columns={columns}
         headerTitle={
           <Space>

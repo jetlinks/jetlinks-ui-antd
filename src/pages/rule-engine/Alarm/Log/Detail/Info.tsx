@@ -2,6 +2,7 @@ import { Descriptions, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Store } from 'jetlinks-store';
+import styles from './index.less';
 
 interface Props {
   data: Partial<AlarmLogHistoryItem>;
@@ -16,7 +17,14 @@ const Info = (props: Props) => {
   }, [props.data]);
 
   return (
-    <Modal title={'详情'} visible onCancel={props.close} onOk={props.close} width={1000}>
+    <Modal
+      title={'详情'}
+      visible
+      onCancel={props.close}
+      onOk={props.close}
+      width={1000}
+      className={styles.conent}
+    >
       <Descriptions bordered column={2}>
         {data.targetType === 'device' && (
           <>
