@@ -26,7 +26,7 @@ export default (props: AccessConfigCardProps) => {
       status={props.state.value}
       statusText={props.state.text}
       statusNames={{
-        enabled: StatusColorEnum.processing,
+        enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,
       }}
       showTool={props.showTool}

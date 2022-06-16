@@ -59,11 +59,11 @@ const AccessConfig = (props: Props) => {
       valueType: 'select',
       valueEnum: {
         disabled: {
-          text: '已停止',
+          text: '禁用',
           status: 'disabled',
         },
         enabled: {
-          text: '已启动',
+          text: '正常',
           status: 'enabled',
         },
       },
@@ -98,19 +98,26 @@ const AccessConfig = (props: Props) => {
             messageProtocol: currrent.protocol,
           });
           if (resp.status === 200) {
-            service1
-              .changeDeploy(productModel.current?.id || '', 'deploy')
-              .subscribe((response) => {
-                if (response) {
-                  service1.detail(productModel.current?.id || '').then((res) => {
-                    if (res.status === 200) {
-                      productModel.current = { ...res.result };
-                      message.success('操作成功！');
-                    }
-                    close();
-                  });
-                }
-              });
+            service1.detail(productModel.current?.id || '').then((res) => {
+              if (res.status === 200) {
+                productModel.current = { ...res.result };
+                message.success('操作成功！');
+              }
+              close();
+            });
+            // service1
+            //   .changeDeploy(productModel.current?.id || '', 'deploy')
+            //   .subscribe((response) => {
+            //     if (response) {
+            //       service1.detail(productModel.current?.id || '').then((res) => {
+            //         if (res.status === 200) {
+            //           productModel.current = { ...res.result };
+            //           message.success('操作成功！');
+            //         }
+            //         close();
+            //       });
+            //     }
+            //   });
           }
         } else {
           message.success('请选择接入方式');

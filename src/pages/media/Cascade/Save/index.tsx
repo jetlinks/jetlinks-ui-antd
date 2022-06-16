@@ -80,6 +80,10 @@ const Save = () => {
                 host: sipConfigs.host,
                 port: sipConfigs.port,
               },
+              remotePublic: {
+                host: sipConfigs.publicHost,
+                port: sipConfigs.publicPort,
+              },
             },
           };
           form.setFieldsValue(data);
@@ -117,6 +121,8 @@ const Save = () => {
               remotePort: values.sipConfigs.public.port,
               host: values.sipConfigs.local.host,
               port: values.sipConfigs.local.port,
+              publicHost: values.sipConfigs.remotePublic.host,
+              publicPort: values.sipConfigs.remotePublic.port,
             };
             delete values.sipConfigs;
             delete sipConfigs.public;
@@ -227,24 +233,6 @@ const Save = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                label="传输协议"
-                name={['sipConfigs', 'transport']}
-                rules={[{ required: true, message: '请选择传输协议' }]}
-              >
-                <Radio.Group
-                  optionType="button"
-                  buttonStyle="solid"
-                  onChange={(e) => {
-                    setTransport(e.target.value);
-                  }}
-                >
-                  <Radio.Button value="UDP">UDP</Radio.Button>
-                  <Radio.Button value="TCP">TCP</Radio.Button>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
                 label={
                   <span>
                     SIP本地地址
@@ -260,6 +248,33 @@ const Save = () => {
                 ]}
               >
                 <SipSelectComponent data={list} transport={transport} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="SIP远程地址"
+                name={['sipConfigs', 'remotePublic']}
+                rules={[{ required: true, message: '请输入SIP远程地址' }, { validator: checkSIP }]}
+              >
+                <SipComponent />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                label="传输协议"
+                name={['sipConfigs', 'transport']}
+                rules={[{ required: true, message: '请选择传输协议' }]}
+              >
+                <Radio.Group
+                  optionType="button"
+                  buttonStyle="solid"
+                  onChange={(e) => {
+                    setTransport(e.target.value);
+                  }}
+                >
+                  <Radio.Button value="UDP">UDP</Radio.Button>
+                  <Radio.Button value="TCP">TCP</Radio.Button>
+                </Radio.Group>
               </Form.Item>
             </Col>
             <Col span={12}>

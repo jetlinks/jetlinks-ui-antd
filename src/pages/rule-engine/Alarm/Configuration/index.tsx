@@ -99,8 +99,9 @@ const Configuration = () => {
     {
       title: '操作',
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       fixed: 'right',
+      width: 150,
       render: (_, record) => [
         record.sceneTriggerType === 'manual' && (
           <PermissionButton

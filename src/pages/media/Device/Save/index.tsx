@@ -122,7 +122,7 @@ export default (props: SaveProps) => {
           form.resetFields();
           close();
         }}
-        width={610}
+        width={640}
         title={intl.formatMessage({
           id: `pages.data.option.${props.model || 'add'}`,
           defaultMessage: '新增',

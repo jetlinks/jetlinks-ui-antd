@@ -192,6 +192,8 @@ export default {
   'pages.device.product.deviceClass': '设备分类',
   'pages.device.product.status.published': '已发布',
   'pages.device.product.status.unpublished': '未发布',
+  'pages.device.product.status.enabled': '正常',
+  'pages.device.product.status.disabled': '禁用',
   'pages.device.product.status.all': '全部',
   'pages.device.productDetail': '产品详情',
   'pages.device.productDetail.id': '产品ID',
@@ -238,7 +240,7 @@ export default {
   'pages.device.productDetail.setting': '应用配置',
   'pages.device.productDetail.disable': '停用',
   'pages.device.productDetail.enabled': '启用',
-  'pages.device.productDetail.deleteTip': '已发布的产品不能进行删除操作',
+  'pages.device.productDetail.deleteTip': '已启用的产品不能进行删除操作',
 
   // 设备管理-设备分类
   'pages.device.type.device': '直连设备',

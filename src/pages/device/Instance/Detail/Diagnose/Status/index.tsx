@@ -47,13 +47,13 @@ const Status = observer((props: Props) => {
       key: 'product',
       name: '产品状态',
       data: 'product',
-      desc: '诊断产品状态是否已发布，未发布的状态将导致连接失败',
+      desc: '诊断产品状态是否正常，禁用状态将导致连接失败',
     },
     {
       key: 'device',
       name: '设备状态',
       data: 'device',
-      desc: '诊断设备状态是否已启用，未启用的状态将导致连接失败',
+      desc: '诊断设备状态是否正常，禁用状态将导致连接失败。',
     },
     {
       key: 'device-access',
@@ -207,7 +207,7 @@ const Status = observer((props: Props) => {
                                 text={
                                   networkPermission.action ? (
                                     <span>
-                                      网络组件未启用， 请
+                                      网络组件已禁用， 请
                                       <Popconfirm
                                         title="确认启用"
                                         onConfirm={async () => {
@@ -229,7 +229,7 @@ const Status = observer((props: Props) => {
                                       网络组件
                                     </span>
                                   ) : (
-                                    '网络组件未启用，请联系管理员'
+                                    '网络组件已禁用，请联系管理员'
                                   )
                                 }
                               />
@@ -327,9 +327,9 @@ const Status = observer((props: Props) => {
                   text={
                     productPermission.action ? (
                       <span>
-                        产品未发布，请
+                        产品已禁用，请
                         <Popconfirm
-                          title="确认发布"
+                          title="确认启用"
                           onConfirm={async () => {
                             const resp = await service.deployProduct(
                               InstanceModel.detail?.productId || '',
@@ -345,12 +345,12 @@ const Status = observer((props: Props) => {
                             }
                           }}
                         >
-                          <a>发布</a>
+                          <a>启用</a>
                         </Popconfirm>
                         产品
                       </span>
                     ) : (
-                      '无产品发布权限时：产品未发布，请联系管理员处理'
+                      '无产品发布权限时：产品已禁用，请联系管理员处理'
                     )
                   }
                 />
@@ -383,7 +383,7 @@ const Status = observer((props: Props) => {
                 text={
                   devicePermission.action ? (
                     <span>
-                      设备未启用，请
+                      设备已禁用，请
                       <Popconfirm
                         title="确认启用"
                         onConfirm={async () => {
@@ -405,7 +405,7 @@ const Status = observer((props: Props) => {
                       设备
                     </span>
                   ) : (
-                    '设备未启用，请联系管理员处理'
+                    '设备已禁用，请联系管理员处理'
                   )
                 }
               />
