@@ -123,7 +123,7 @@ const Basis = () => {
               <Form.Item
                 label="系统名称"
                 name="title"
-                rules={[{ required: true, message: '请输入系统名称' }]}
+                // rules={[{ required: true, message: '请输入系统名称' }]}
               >
                 <Input />
               </Form.Item>

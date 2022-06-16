@@ -2,7 +2,7 @@ import moment from 'moment';
 import type { Field, FieldDataSource } from '@formily/core';
 import { action } from '@formily/reactive';
 import Token from '@/utils/token';
-
+import { message } from 'antd';
 /**
  * 下载文件
  * @param url 下载链接
@@ -118,3 +118,12 @@ export const getDomFullHeight = (className: string, extraHeight: number = 0): nu
   }
   return 0;
 };
+export const onlyMessage = (
+  msg: string,
+  type: 'success' | 'error' | 'warning' = 'success',
+  key: number = 1,
+) =>
+  message[type]({
+    content: msg,
+    key: key,
+  });

@@ -1,4 +1,4 @@
-import { Button, message, Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import { createForm, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +9,8 @@ import { service } from '@/pages/link/Protocol';
 import FileUpload from '../FileUpload';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { PermissionButton } from '@/components';
-
+import { RadioCard } from '@/components';
+import { onlyMessage } from '@/utils/util';
 interface Props {
   data: ProtocolItem | undefined;
   close: () => void;
@@ -44,6 +45,7 @@ const Save = (props: Props) => {
       Select,
       FileUpload,
       FormGrid,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
@@ -59,8 +61,9 @@ const Save = (props: Props) => {
         type: 'void',
         'x-component': 'FormGrid',
         'x-component-props': {
-          maxColumns: 1,
-          minColumns: 1,
+          maxColumns: 2,
+          minColumns: 2,
+          columnGap: 24,
         },
         properties: {
           id: {
@@ -69,7 +72,7 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-disabled': !!props.data?.id,
             'x-decorator-props': {
-              gridSpan: 1,
+              gridSpan: 2,
             },
             'x-validator': [
               {
@@ -112,7 +115,7 @@ const Save = (props: Props) => {
             'x-component': 'Input',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              gridSpan: 1,
+              gridSpan: 2,
             },
             'x-component-props': {
               placeholder: '请输入名称',
@@ -130,14 +133,30 @@ const Save = (props: Props) => {
           },
           type: {
             title: '类型',
-            'x-component': 'Select',
+            'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-disabled': !!props.data?.id,
             'x-decorator-props': {
+              gridSpan: 2,
               tooltip: <div>jar：上传协议jar包，文件格式支持.jar或.zip</div>,
             },
             'x-component-props': {
-              placeholder: '请选择类型',
+              model: 'singular',
+              itemStyle: {
+                width: '50%',
+              },
+              options: [
+                {
+                  label: 'Jar',
+                  value: 'jar',
+                  imgUrl: require('/public/images/jar.png'),
+                },
+                {
+                  label: 'Local',
+                  value: 'local',
+                  imgUrl: require('/public/images/local.png'),
+                },
+              ],
             },
             'x-validator': [
               {
@@ -145,11 +164,11 @@ const Save = (props: Props) => {
                 message: '请选择类型',
               },
             ],
-            enum: [
-              { label: 'jar', value: 'jar' },
-              { label: 'local', value: 'local' },
-              // { label: 'script', value: 'script' },
-            ],
+            // enum: [
+            //   { label: 'jar', value: 'jar' },
+            //   { label: 'local', value: 'local' },
+            //   // { label: 'script', value: 'script' },
+            // ],
           },
           configuration: {
             type: 'object',
@@ -159,10 +178,9 @@ const Save = (props: Props) => {
                 'x-decorator': 'FormItem',
                 'x-visible': false,
                 'x-decorator-props': {
+                  gridSpan: 2,
                   tooltip: (
-                    <div>
-                      local：填写本地协议编译目录绝对地址，如：d:/workspace/protocol/target/classes
-                    </div>
+                    <div>local：填写本地协议编译目录绝对地址，如：d:/protocol/target/classes</div>
                   ),
                 },
                 'x-validator': [
@@ -189,6 +207,9 @@ const Save = (props: Props) => {
             title: '说明',
             'x-component': 'Input.TextArea',
             'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
             'x-component-props': {
               rows: 3,
               showCount: true,
@@ -209,7 +230,7 @@ const Save = (props: Props) => {
       response = await service.update(value);
     }
     if (response && response.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
       if (deploy) {
         await service.modifyState(value.id, 'deploy');
       }

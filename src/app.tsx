@@ -189,7 +189,7 @@ export const request: RequestConfig = {
               .catch(() => {
                 notification.error({
                   key: 'error',
-                  message: '系统错误',
+                  message: '系统开小差，请稍后重试',
                 });
               });
           }
@@ -198,7 +198,7 @@ export const request: RequestConfig = {
     }
     if (!response) {
       notification.error({
-        description: '您的网络发生异常，无法连接服务器',
+        description: '网络异常，请检查网络连接',
         message: '网络异常',
       });
     }

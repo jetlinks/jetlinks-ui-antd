@@ -98,19 +98,26 @@ const AccessConfig = (props: Props) => {
             messageProtocol: currrent.protocol,
           });
           if (resp.status === 200) {
-            service1
-              .changeDeploy(productModel.current?.id || '', 'deploy')
-              .subscribe((response) => {
-                if (response) {
-                  service1.detail(productModel.current?.id || '').then((res) => {
-                    if (res.status === 200) {
-                      productModel.current = { ...res.result };
-                      message.success('操作成功！');
-                    }
-                    close();
-                  });
-                }
-              });
+            service1.detail(productModel.current?.id || '').then((res) => {
+              if (res.status === 200) {
+                productModel.current = { ...res.result };
+                message.success('操作成功！');
+              }
+              close();
+            });
+            // service1
+            //   .changeDeploy(productModel.current?.id || '', 'deploy')
+            //   .subscribe((response) => {
+            //     if (response) {
+            //       service1.detail(productModel.current?.id || '').then((res) => {
+            //         if (res.status === 200) {
+            //           productModel.current = { ...res.result };
+            //           message.success('操作成功！');
+            //         }
+            //         close();
+            //       });
+            //     }
+            //   });
           }
         } else {
           message.success('请选择接入方式');
