@@ -3,7 +3,7 @@ import type { BaseItem } from '@/utils/typings';
 type AccessItem = {
   id: string | undefined;
   name: string;
-  description: string;
+  description?: string;
   provider: string;
   protocol: string;
   transport: string;

@@ -14,7 +14,7 @@ const DingTalkRebot = () => {
       <h1>2.模板配置说明</h1>
       <div>
         <h2> 1、绑定配置</h2>
-        <div> 绑定通知配置</div>
+        <div> 使用固定的通知配置发送此通知模板</div>
         <h2> 2、消息类型</h2>
         <div> 目前支持text、markdown、link3种。</div>
         <h2> 3. 模板内容</h2>
