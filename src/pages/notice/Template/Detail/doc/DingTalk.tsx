@@ -19,7 +19,7 @@ const DingTalk = () => {
       </div>
       <h1> 2.模板配置说明</h1>
       <h2> 1、绑定配置</h2>
-      <div> 绑定通知配置</div>
+      <div> 使用固定的通知配置发送此通知模板</div>
       <h2> 2. Agentid</h2>
       <div> 应用唯一标识</div>
       <div className="image">

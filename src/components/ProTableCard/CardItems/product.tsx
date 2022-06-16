@@ -132,11 +132,11 @@ export default (props: ProductCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : '--'}</div>
+              <div className={'ellipsis'}>{props?.deviceType?.text}</div>
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.transportProtocol || '--'}</div>
+              <div className={'ellipsis'}>{props.transportProtocol || '未接入'}</div>
             </div>
           </div>
         </div>
