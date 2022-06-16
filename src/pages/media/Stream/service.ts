@@ -1,7 +1,6 @@
 import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
-import type { StreamItem } from './typings';
 
 class Service extends BaseService<StreamItem> {
   queryProviders = () =>

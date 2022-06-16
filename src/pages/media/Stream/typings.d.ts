@@ -1,7 +1,7 @@
-import type { BaseItem } from '@/utils/typings';
-
 type StreamItem = {
-  description: string;
+  id?: string;
+  name: string;
+  description?: string;
   provider: string;
   configuration: {
     secret?: string;
@@ -12,4 +12,4 @@ type StreamItem = {
     dynamicRtpPort: boolean;
     dynamicRtpPortRange: number[];
   };
-} & BaseItem;
+};
