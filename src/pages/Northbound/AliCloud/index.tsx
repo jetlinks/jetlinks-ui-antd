@@ -7,7 +7,7 @@ import { PermissionButton, ProTableCard } from '@/components';
 import {
   DeleteOutlined,
   EditOutlined,
-  ExclamationCircleFilled,
+  InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
@@ -196,7 +196,7 @@ const AliCloud = () => {
             backgroundColor: '#f6f6f6',
           }}
         >
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           将平台产品与设备数据通过API的方式同步到阿里云物联网平台
         </div>
       </div>

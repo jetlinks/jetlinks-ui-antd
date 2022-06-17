@@ -1,7 +1,7 @@
 import { Button, Card, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import OneNet from './OneNet';
 import CTWing from './CTWing';
 import Protocol from './Protocol';
@@ -40,7 +40,7 @@ const Cloud = (props: Props) => {
         return (
           <div>
             <div className={styles.alert}>
-              <ExclamationCircleFilled style={{ marginRight: 10 }} />
+              <InfoCircleOutlined style={{ marginRight: 10 }} />
               通过{props?.provider?.id === 'OneNet' ? 'OneNet' : 'CTWing'}
               平台的HTTP推送服务进行数据接入
             </div>
@@ -57,7 +57,7 @@ const Cloud = (props: Props) => {
         return (
           <div>
             <div className={styles.alert}>
-              <ExclamationCircleFilled style={{ marginRight: 10 }} />
+              <InfoCircleOutlined style={{ marginRight: 10 }} />
               只能选择HTTP通信方式的协议
             </div>
             <div style={{ marginTop: 10 }}>

@@ -7,7 +7,7 @@ import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
-  ExclamationCircleFilled,
+  InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -230,7 +230,7 @@ export default () => {
             backgroundColor: '#f6f6f6',
           }}
         >
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           将平台产品通过API的方式同步DuerOS平台
         </div>
       </div>
