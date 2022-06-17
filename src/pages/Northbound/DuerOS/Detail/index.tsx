@@ -5,11 +5,13 @@ import { Card, Col, message, Row } from 'antd';
 import {
   ArrayCollapse,
   ArrayTable,
+  DatePicker,
   Form,
   FormButtonGroup,
   FormGrid,
   FormItem,
   Input,
+  NumberPicker,
   PreviewText,
   Select,
 } from '@formily/antd';
@@ -29,6 +31,7 @@ import { Store } from 'jetlinks-store';
 import { useParams } from 'umi';
 import Doc from '@/pages/Northbound/DuerOS/Detail/Doc';
 import _ from 'lodash';
+import FUpload from '@/components/Upload';
 
 const Save = () => {
   const SchemaField = createSchemaField({
@@ -99,7 +102,7 @@ const Save = () => {
             );
             const value = (field as Field).value;
 
-            const title = actions.find((item: any) => item.id === value)?.name;
+            const title = actions?.find((item: any) => item.id === value)?.name;
             f.setFieldState(actionPath, (state) => {
               state.componentProps = {
                 header: title || '动作映射',
@@ -122,7 +125,7 @@ const Save = () => {
               const product = field.query('id').value();
               const _functionList = findProductMetadata(product)?.functions;
               const _function =
-                _functionList && _functionList.find((item: any) => item.id === functionId);
+                _functionList && _functionList?.find((item: any) => item.id === functionId);
               form1.setFieldState(field.query('.inputs'), (state) => {
                 state.value = _function?.inputs.map((item: any) => ({
                   ...item,
@@ -141,7 +144,7 @@ const Save = () => {
               (index) => `propertyMappings.${index}`,
             );
             const value = (field as Field).value;
-            const title = propertiesList.find((item: any) => item.id === value)?.name;
+            const title = propertiesList?.find((item: any) => item.id === value)?.name;
             f.setFieldState(propertyMappingPath, (state) => {
               state.componentProps = {
                 header: title || '属性映射',
@@ -151,6 +154,39 @@ const Save = () => {
           onFieldReact('propertyMappings.*.layout.target', (field) => {
             const product = field.query('id').value();
             (field as Field).setDataSource(findProductMetadata(product)?.properties);
+          });
+          onFieldReact('actionMappings.*.layout.command.message.inputs.*.valueType', (field) => {
+            const value = (field as Field).value;
+            const format = field.query('.value').take() as any;
+            if (!format) return;
+            switch (value) {
+              case 'date':
+                format.setComponent(DatePicker);
+                break;
+              case 'string':
+                format.setComponent(Input);
+                break;
+              case 'number':
+              case 'int':
+                format.setComponent(NumberPicker);
+                break;
+              case 'boolean':
+                format.setComponent(Select);
+                format.setDataSource([
+                  { label: '是', value: true },
+                  { label: '否', value: false },
+                ]);
+                break;
+              case 'file':
+                format.setComponent(FUpload, {
+                  type: 'file',
+                });
+                break;
+
+              case 'other':
+                format.setComponent(Input);
+                break;
+            }
           });
         },
       }),
@@ -246,6 +282,10 @@ const Save = () => {
                 label: 'name',
                 value: 'id',
               },
+              showSearch: true,
+              showArrow: true,
+              filterOption: (input: string, option: any) =>
+                option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
             'x-reactions': '{{useAsyncDataSource(getTypes)}}',
             required: true,

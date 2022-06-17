@@ -42,6 +42,53 @@ export const state = model<{
   log: false,
   syncUser: false,
 });
+const list = {
+  weixin: {
+    corpMessage: {
+      text: '企业消息',
+      status: 'corpMessage',
+    },
+    // officialMessage: {
+    //   text: '服务号消息',
+    //   status: 'officialMessage',
+    // },
+  },
+  dingTalk: {
+    dingTalkMessage: {
+      text: '钉钉消息',
+      status: 'dingTalkMessage',
+    },
+    dingTalkRobotWebHook: {
+      text: '群机器人消息',
+      status: 'dingTalkRobotWebHook',
+    },
+  },
+  voice: {
+    aliyun: {
+      text: '阿里云语音',
+      status: 'aliyun',
+    },
+  },
+  sms: {
+    aliyunSms: {
+      text: '阿里云短信',
+      status: 'aliyunSms',
+    },
+  },
+  email: {
+    embedded: {
+      text: '默认',
+      status: 'embedded',
+    },
+  },
+  webhook: {
+    http: {
+      text: 'Webhook',
+      status: 'http',
+    },
+  },
+};
+
 const Config = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -62,6 +109,8 @@ const Config = observer(() => {
       dataIndex: 'provider',
       title: '通知方式',
       renderText: (text, record) => typeList[record.type][record.provider],
+      valueType: 'select',
+      valueEnum: list[id],
     },
     {
       dataIndex: 'description',
