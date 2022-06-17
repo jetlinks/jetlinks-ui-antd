@@ -1,7 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef } from 'react';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { message } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
@@ -13,6 +12,7 @@ import SystemConst from '@/utils/const';
 import { CurdModel } from '@/components/BaseCrud/model';
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('role');
 
@@ -114,7 +114,7 @@ const Role: React.FC = observer(() => {
             }),
             onConfirm: async () => {
               await service.remove(record.id);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

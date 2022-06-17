@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { AuthorizationModel } from '@/components/Authorization/autz';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import DB from '@/db';
+import { onlyMessage } from '@/utils/util';
 
 const service = new Service();
 
@@ -182,7 +183,7 @@ const Authorization = observer((props: AuthorizationProps) => {
         permissionList: permissions,
       })
       .subscribe(async () => {
-        await message.success('授权成功');
+        await onlyMessage('授权成功');
       });
   };
 

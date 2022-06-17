@@ -1,4 +1,4 @@
-import { message, Modal, Typography } from 'antd';
+import { Modal, Typography } from 'antd';
 import { useMemo } from 'react';
 import { createForm, Field, onFieldInit, onFieldValueChange } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -7,7 +7,7 @@ import { ISchema } from '@formily/json-schema';
 import { PermissionButton } from '@/components';
 import { PlusOutlined } from '@ant-design/icons';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import styles from './index.less';
 import { service as ConfigService } from '../../Config';
 import { Store } from 'jetlinks-store';
@@ -135,7 +135,7 @@ const Save = (props: Props) => {
     });
 
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
       props.close();
     }
   };

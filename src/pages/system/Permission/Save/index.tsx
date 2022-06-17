@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import { useIntl } from 'umi';
 import { createForm, onFormSubmitStart } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -9,6 +8,7 @@ import type { ISchema } from '@formily/json-schema';
 import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { service } from '@/pages/system/Permission';
 import { Modal } from '@/components';
+import { onlyMessage } from '@/utils/util';
 interface Props {
   model: 'add' | 'edit' | 'query';
   data: Partial<PermissionItem>;
@@ -238,7 +238,7 @@ const Save = (props: Props) => {
       response = await service.update(value);
     }
     if (response && response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功',

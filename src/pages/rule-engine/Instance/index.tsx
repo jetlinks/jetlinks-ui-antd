@@ -11,7 +11,7 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { Button, message, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
@@ -20,6 +20,7 @@ import Save from '@/pages/rule-engine/Instance/Save';
 import SystemConst from '@/utils/const';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import useLocation from '@/hooks/route/useLocation';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('rule-engine/instance');
 
@@ -67,7 +68,7 @@ const Instance = () => {
           } else {
             await service.startRule(record.id);
           }
-          message.success(
+          onlyMessage(
             intl.formatMessage({
               id: 'pages.data.option.success',
               defaultMessage: '操作成功!',
@@ -93,7 +94,7 @@ const Instance = () => {
         onConfirm: async () => {
           if (record.state.value === 'disable') {
             await service.remove(record.id);
-            message.success(
+            onlyMessage(
               intl.formatMessage({
                 id: 'pages.data.option.success',
                 defaultMessage: '操作成功!',
@@ -101,7 +102,7 @@ const Instance = () => {
             );
             actionRef.current?.reload();
           } else {
-            message.error('未停止不能删除');
+            onlyMessage('未停止不能删除', 'error');
           }
         },
       }}
@@ -209,7 +210,7 @@ const Instance = () => {
               } else {
                 await service.startRule(record.id);
               }
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -239,7 +240,7 @@ const Instance = () => {
               if (record.state.value === 'disable') {
                 const resp: any = await service.remove(record.id);
                 if (resp.status === 200) {
-                  message.success(
+                  onlyMessage(
                     intl.formatMessage({
                       id: 'pages.data.option.success',
                       defaultMessage: '操作成功!',
@@ -248,7 +249,7 @@ const Instance = () => {
                   actionRef.current?.reload();
                 }
               } else {
-                message.error('未停止不能删除');
+                onlyMessage('未停止不能删除', 'error');
               }
             },
           }}

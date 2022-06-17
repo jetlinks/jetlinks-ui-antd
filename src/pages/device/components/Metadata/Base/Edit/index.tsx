@@ -52,6 +52,7 @@ import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
 import { action } from '@formily/reactive';
 import { asyncUpdateMedata, updateMetadata } from '../../metadata';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   type: 'product' | 'device';
@@ -1058,7 +1059,7 @@ const Edit = observer((props: Props) => {
         MetadataModel.item = {};
       }
     } else {
-      message.error('操作失败！');
+      onlyMessage('操作失败！', 'error');
     }
     setLoading(false);
   };

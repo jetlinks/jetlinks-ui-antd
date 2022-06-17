@@ -1,7 +1,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
-import { Badge, Button, Card, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, Card, Popconfirm, Tooltip } from 'antd';
 import { DisconnectOutlined, SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
@@ -12,6 +12,7 @@ import moment from 'moment';
 import { Link } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 const ChildDevice = () => {
   const intl = useIntl();
@@ -27,7 +28,7 @@ const ChildDevice = () => {
     const resp = await service.unbindDevice(InstanceModel.detail.id!, id, {});
     if (resp.status === 200) {
       actionRef.current?.reset?.();
-      message.success('操作成功！');
+      onlyMessage('操作成功！');
     }
   };
 
@@ -173,7 +174,7 @@ const ChildDevice = () => {
             onConfirm={async () => {
               const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
               if (resp.status === 200) {
-                message.success('操作成功！');
+                onlyMessage('操作成功！');
                 setBindKeys([]);
                 actionRef.current?.reset?.();
               }

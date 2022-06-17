@@ -1,4 +1,4 @@
-import { Alert, message, Modal } from 'antd';
+import { Alert, Modal } from 'antd';
 import { FormItem, Input } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
@@ -39,7 +39,7 @@ const EditProperty = (props: Props) => {
   const handleSetPropertyValue = async (propertyValue: string) => {
     const resp = await service.setProperty(params.id, { [`${data.id}`]: propertyValue });
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     }
     props.onCancel();
   };

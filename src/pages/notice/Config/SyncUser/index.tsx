@@ -1,16 +1,4 @@
-import {
-  Badge,
-  Button,
-  Col,
-  Input,
-  message,
-  Modal,
-  Popconfirm,
-  Row,
-  Spin,
-  Tooltip,
-  Tree,
-} from 'antd';
+import { Badge, Button, Col, Input, Modal, Popconfirm, Row, Spin, Tooltip, Tree } from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -19,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { history, useLocation } from 'umi';
 import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
 import BindUser from '../BindUser';
+import { onlyMessage } from '@/utils/util';
 
 const SyncUser = observer(() => {
   const [dept, setDept] = useState<string>();
@@ -83,7 +72,7 @@ const SyncUser = observer(() => {
                       bindingId: record.bindingId,
                     });
                     if (resp.status === 200) {
-                      message.success('操作成功！');
+                      onlyMessage('操作成功！');
                       actionRef.current?.reload();
                     }
                   }
@@ -233,7 +222,7 @@ const SyncUser = observer(() => {
                         [...arr],
                       );
                       if (resp.status === 200) {
-                        message.success('操作成功！');
+                        onlyMessage('操作成功！');
                         actionRef.current?.reload();
                       }
                     }}

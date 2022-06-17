@@ -1,4 +1,4 @@
-import { Button, Input, message, Tree } from 'antd';
+import { Button, Input, Tree } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -15,6 +15,7 @@ import Save from '../save';
 import { ISchema } from '@formily/json-schema';
 import { useLocation } from 'umi';
 import { DepartmentItem } from '@/pages/system/Department/typings';
+import { onlyMessage } from '@/utils/util';
 
 interface TreeProps {
   onSelect: (id: string) => void;
@@ -77,7 +78,7 @@ export default (props: TreeProps) => {
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功!',

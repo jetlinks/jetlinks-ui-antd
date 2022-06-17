@@ -10,7 +10,7 @@ import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/Relationship';
 import { Modal } from '@/components';
-import { message } from 'antd';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<ReationItem>;
@@ -262,7 +262,7 @@ const Save = (props: Props) => {
     delete temp.target;
     const response: any = await service[!props.data?.id ? 'save' : 'update']({ ...temp });
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功',
@@ -270,7 +270,7 @@ const Save = (props: Props) => {
       );
       props.close();
     } else {
-      message.error('操作失败！');
+      onlyMessage('操作失败！', 'error');
     }
   };
 

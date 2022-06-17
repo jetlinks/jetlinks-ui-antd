@@ -1,4 +1,4 @@
-import { Card, Form, Input, message, Select, Upload } from 'antd';
+import { Card, Form, Input, Select, Upload } from 'antd';
 import { useModel } from '@@/plugin-model/useModel';
 import { useEffect, useState } from 'react';
 import usePermissions from '@/hooks/permission';
@@ -11,6 +11,7 @@ import styles from './index.less';
 import { PageContainer } from '@ant-design/pro-layout';
 import Service from './service';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 const Basis = () => {
   const service = new Service();
@@ -32,7 +33,7 @@ const Basis = () => {
     beforeUpload(file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgOrPng) {
-        message.error('请上传.png.jpg格式的文件');
+        onlyMessage('请上传.png.jpg格式的文件', 'error');
       }
       return isJpgOrPng;
     },
@@ -96,11 +97,11 @@ const Basis = () => {
       ];
       const res = await service.save(item);
       if (res.status === 200) {
-        message.success('保存成功');
+        onlyMessage('保存成功');
         detail(['basis', 'api']);
       }
     } else {
-      message.error('请上传图片');
+      onlyMessage('请上传图片', 'error');
     }
   };
 

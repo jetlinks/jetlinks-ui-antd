@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { OpenApiItem } from '@/pages/system/OpenAPI/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { CurdModel } from '@/components/BaseCrud/model';
-import { Drawer, message, Popconfirm, Tooltip } from 'antd';
+import { Drawer, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   EditOutlined,
@@ -18,6 +18,7 @@ import Authorization from '@/components/Authorization';
 import { observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import _ from 'lodash';
+import { onlyMessage } from '@/utils/util';
 
 const service = new BaseService<OpenApiItem>('open-api');
 const OpenAPI: React.FC = observer(() => {
@@ -140,7 +141,7 @@ const OpenAPI: React.FC = observer(() => {
                 id: record.id,
                 status: record.status ? 0 : 1,
               });
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

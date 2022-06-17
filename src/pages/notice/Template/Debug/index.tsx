@@ -1,4 +1,4 @@
-import { message, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
@@ -15,7 +15,7 @@ import {
 import { ISchema } from '@formily/json-schema';
 import { configService, service, state } from '@/pages/notice/Template';
 import { useLocation } from 'umi';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import FUpload from '@/components/Upload';
 
@@ -253,7 +253,7 @@ const Debug = observer(() => {
       ),
     );
     if (resp.status === 200) {
-      message.success('操作成功!');
+      onlyMessage('操作成功!');
       setSpinning(false);
       state.debug = false;
     }

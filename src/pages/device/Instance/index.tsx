@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
-import { Badge, Button, Dropdown, Menu, message, Tooltip } from 'antd';
+import { Badge, Button, Dropdown, Menu, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useIntl } from 'umi';
 import {
@@ -33,6 +33,7 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useLocation } from '@/hooks';
 import { service as deptService } from '@/pages/system/Department';
 import { service as categoryService } from '@/pages/device/Category';
+import { onlyMessage } from '@/utils/util';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'success');
@@ -134,7 +135,7 @@ const Instance = () => {
           if (record.state.value !== 'notActive') {
             service.undeployDevice(record.id).then((resp: any) => {
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -146,7 +147,7 @@ const Instance = () => {
           } else {
             service.deployDevice(record.id).then((resp: any) => {
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -187,7 +188,7 @@ const Instance = () => {
         onConfirm: async () => {
           if (record.state.value === 'notActive') {
             await service.remove(record.id);
-            message.success(
+            onlyMessage(
               intl.formatMessage({
                 id: 'pages.data.option.success',
                 defaultMessage: '操作成功!',
@@ -195,7 +196,7 @@ const Instance = () => {
             );
             actionRef.current?.reload();
           } else {
-            message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+            onlyMessage(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }), 'error');
           }
         },
       }}
@@ -475,7 +476,7 @@ const Instance = () => {
               onConfirm: () => {
                 service.batchDeleteDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
-                    message.success('操作成功');
+                    onlyMessage('操作成功');
                     actionRef.current?.reset?.();
                   }
                 });
@@ -498,7 +499,7 @@ const Instance = () => {
               onConfirm() {
                 service.batchUndeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
-                    message.success('操作成功');
+                    onlyMessage('操作成功');
                     actionRef.current?.reset?.();
                   }
                 });
@@ -624,7 +625,7 @@ const Instance = () => {
                     } else {
                       await service.deployDevice(record.id);
                     }
-                    message.success(
+                    onlyMessage(
                       intl.formatMessage({
                         id: 'pages.data.option.success',
                         defaultMessage: '操作成功!',
@@ -661,7 +662,7 @@ const Instance = () => {
                   onConfirm: async () => {
                     if (record.state.value === 'notActive') {
                       await service.remove(record.id);
-                      message.success(
+                      onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',
                           defaultMessage: '操作成功!',
@@ -669,7 +670,10 @@ const Instance = () => {
                       );
                       actionRef.current?.reload();
                     } else {
-                      message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+                      onlyMessage(
+                        intl.formatMessage({ id: 'pages.device.instance.deleteTip' }),
+                        'error',
+                      );
                     }
                   },
                 }}

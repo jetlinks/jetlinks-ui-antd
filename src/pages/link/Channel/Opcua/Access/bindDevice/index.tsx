@@ -1,10 +1,11 @@
 import { Modal } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, message } from 'antd';
+import { Badge } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/link/Channel/Opcua';
 import moment from 'moment';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   id: string;
@@ -67,12 +68,12 @@ const BindDevice = (props: Props) => {
       }));
       service.bind(params).then((res) => {
         if (res.status === 200) {
-          message.success('绑定成功');
+          onlyMessage('绑定成功');
           props.close();
         }
       });
     } else {
-      message.error('请勾选数据');
+      onlyMessage('请勾选数据', 'error');
     }
   };
 

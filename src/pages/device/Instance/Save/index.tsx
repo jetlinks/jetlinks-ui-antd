@@ -1,4 +1,4 @@
-import { Col, Form, Input, message, Modal, Row, Select } from 'antd';
+import { Col, Form, Input, Modal, Row, Select } from 'antd';
 import { service } from '@/pages/device/Instance';
 import type { DeviceInstance } from '../typings';
 import { useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { UploadImage } from '@/components';
 import { debounce } from 'lodash';
 import encodeQuery from '@/utils/encodeQuery';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -85,7 +86,7 @@ const Save = (props: Props) => {
       const resp = (await service.update(values)) as any;
       setLoading(false);
       if (resp.status === 200) {
-        message.success('保存成功');
+        onlyMessage('保存成功');
         if (props.reload) {
           props.reload();
         }

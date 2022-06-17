@@ -1,8 +1,9 @@
-import { Button, message, Table } from 'antd';
+import { Button, Table } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'umi';
 import { service } from '../index';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
+import { onlyMessage } from '@/utils/util';
 
 interface TableProps {
   data: any;
@@ -103,13 +104,13 @@ export default (props: TableProps) => {
       const resp = await service.apiOperationsAdd(addGrant);
       const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
       if (resp.status === 200 || resp2.status === 200) {
-        message.success('操作成功');
+        onlyMessage('操作成功');
       }
     } else {
       const resp = await service.addApiGrant(code!, { operations: addOperations });
       const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
       if (resp.status === 200 || resp2.status === 200) {
-        message.success('操作成功');
+        onlyMessage('操作成功');
       }
     }
     setLoading(false);

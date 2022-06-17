@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, Popconfirm, Tooltip } from 'antd';
 import moment from 'moment';
 import { useRef } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -12,6 +12,7 @@ import { observer } from '@formily/react';
 import type { FirmwareItem, TaskItem } from '@/pages/device/Firmware/typings';
 import Service from '@/pages/device/Firmware/service';
 import Save from '@/pages/device/Firmware/Save';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('firmware');
 
@@ -131,7 +132,7 @@ const Firmware = observer(() => {
             })}
             onConfirm={async () => {
               await service.remove(record.id);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

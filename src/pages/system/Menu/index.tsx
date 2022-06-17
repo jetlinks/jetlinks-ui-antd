@@ -4,7 +4,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   PlusCircleOutlined,
@@ -47,7 +47,7 @@ export default observer(() => {
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功!',

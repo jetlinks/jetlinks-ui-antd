@@ -1,4 +1,4 @@
-import { Button, message, Modal, Space, Upload } from 'antd';
+import { Button, Modal, Space, Upload } from 'antd';
 import MetadataModel from '@/pages/device/components/Metadata/Base/model';
 import { FormItem, FormLayout, Radio } from '@formily/antd';
 import { createForm, onFieldValueChange } from '@formily/core';
@@ -9,7 +9,7 @@ import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { useParams } from 'umi';
 import { productModel, service } from '../..';
-import { downloadFile } from '@/utils/util';
+import { downloadFile, onlyMessage } from '@/utils/util';
 import type { DeviceMetadata, ProductItem } from '@/pages/device/Product/typings';
 import { Store } from 'jetlinks-store';
 import { asyncUpdateMedata, updateMetadata } from '@/pages/device/components/Metadata/metadata';
@@ -35,7 +35,7 @@ const NormalUpload = (props: any) => {
     // const resp = await service.update(_product);
     const resp = await asyncUpdateMedata(props.type, _data);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
       // 刷新物模型
 
       if (props.type === 'product') {
@@ -61,7 +61,7 @@ const NormalUpload = (props: any) => {
           }}
           onChange={async (info) => {
             if (info.file.status === 'done') {
-              message.success('上传成功');
+              onlyMessage('上传成功');
               const resp: any = info.file.response || { result: '' };
               await mergeMetadata(resp?.result);
               // service.importProductProperty(param.id, resp?.result).then((r) => {

@@ -1,4 +1,4 @@
-import { Col, Empty, Input, message, Pagination, Row, Space, Spin, Table } from 'antd';
+import { Col, Empty, Input, Pagination, Row, Space, Spin, Table } from 'antd';
 import CheckButton from '@/components/CheckButton';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
@@ -13,6 +13,7 @@ import PropertyLog from '../../MetadataLog/Property';
 import styles from './index.less';
 import { groupBy, throttle, toArray } from 'lodash';
 import PropertyTable from './PropertyTable';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<PropertyMetadata>[];
@@ -51,7 +52,7 @@ const Property = (props: Props) => {
     if (!id) return;
     const resp = await service.getProperty(params.id, id);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     }
   };
 

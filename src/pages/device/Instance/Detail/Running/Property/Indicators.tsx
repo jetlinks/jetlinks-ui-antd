@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import {
   ArrayItems,
   Checkbox,
@@ -15,6 +15,7 @@ import { createSchemaField } from '@formily/react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -222,7 +223,7 @@ const Indicators = (props: Props) => {
         });
         const resp = await service.saveMetric(InstanceModel.detail.id || '', data.id || '', list);
         if (resp.status === 200) {
-          message.success('操作成功！');
+          onlyMessage('操作成功！');
           props.onCancel();
         }
       }}

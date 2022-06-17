@@ -1,6 +1,7 @@
-import { Col, Form, Input, InputNumber, message, Modal, Row, Select } from 'antd';
+import { Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/link/Channel/Modbus';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: any;
@@ -25,7 +26,7 @@ const AddPoint = (props: Props) => {
       })
       .then((res: any) => {
         if (res.status === 200) {
-          message.success('操作成功！');
+          onlyMessage('操作成功！');
           props.close();
         }
       });

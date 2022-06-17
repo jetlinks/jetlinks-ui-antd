@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
-import { Badge, message } from 'antd';
+import { Badge } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import {
   DeleteOutlined,
@@ -16,6 +16,7 @@ import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton, ProTableCard } from '@/components';
 import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
 import Save from './save';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('protocol');
 
@@ -30,9 +31,9 @@ const Protocol = () => {
   const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
     const resp = await service.modifyState(id, type);
     if (resp.status === 200) {
-      message.success('操作成功!');
+      onlyMessage('操作成功!');
     } else {
-      message.error(resp?.message || '操作失败');
+      onlyMessage(resp?.message || '操作失败', 'error');
     }
     actionRef.current?.reload();
   };
@@ -153,7 +154,7 @@ const Protocol = () => {
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -161,7 +162,7 @@ const Protocol = () => {
                 );
                 actionRef.current?.reload();
               } else {
-                message.error(resp?.message || '操作失败');
+                onlyMessage(resp?.message || '操作失败', 'error');
               }
             },
           }}
@@ -288,7 +289,7 @@ const Protocol = () => {
                   onConfirm: async () => {
                     const resp: any = await service.remove(record.id);
                     if (resp.status === 200) {
-                      message.success(
+                      onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',
                           defaultMessage: '操作成功!',
@@ -296,7 +297,7 @@ const Protocol = () => {
                       );
                       actionRef.current?.reload();
                     } else {
-                      message.error(resp?.message || '操作失败');
+                      onlyMessage(resp?.message || '操作失败', 'error');
                     }
                   },
                 }}

@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useIntl } from 'umi';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -8,6 +8,7 @@ import { Form, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/rule-engine/Instance';
 import type { InstanceItem } from '../typings';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<InstanceItem>;
@@ -93,7 +94,7 @@ const Save = (props: Props) => {
       response = await service.modify(props.data.id, { ...props.data, ...value });
     }
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功',
@@ -101,7 +102,7 @@ const Save = (props: Props) => {
       );
       props.close();
     } else {
-      message.error('操作失败！');
+      onlyMessage('操作失败！', 'error');
     }
   };
 

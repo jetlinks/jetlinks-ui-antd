@@ -3,9 +3,10 @@ import { service } from '@/pages/device/Product';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { RadioCard, UploadImage } from '@/components';
-import { Col, Form, Input, message, Modal, Row, TreeSelect } from 'antd';
+import { Col, Form, Input, Modal, Row, TreeSelect } from 'antd';
 import { useRequest } from 'umi';
 import { debounce } from 'lodash';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -81,7 +82,7 @@ const Save = (props: Props) => {
       const res = await service.update(extraFormData);
       setLoading(false);
       if (res.status === 200) {
-        message.success('保存成功');
+        onlyMessage('保存成功');
         if (props.reload) {
           props.reload();
         }

@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Badge, message, Popconfirm } from 'antd';
+import { Badge, Popconfirm } from 'antd';
 import {
   CloseCircleOutlined,
   DatabaseOutlined,
@@ -22,6 +22,7 @@ import { Store } from 'jetlinks-store';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('datasource/config');
 
@@ -167,7 +168,7 @@ const DataSource = observer(() => {
                 record.state?.value === 'enabled' ? 'disable' : 'enable',
               );
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -198,7 +199,7 @@ const DataSource = observer(() => {
             onConfirm={async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',

@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import classNames from 'classnames';
 import LivePlayer from './index';
-import { Button, Dropdown, Empty, Menu, message, Popconfirm, Popover, Radio, Tooltip } from 'antd';
+import { Button, Dropdown, Empty, Menu, Popconfirm, Popover, Radio, Tooltip } from 'antd';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Input } from '@formily/antd';
 import { useFullscreen } from 'ahooks';
@@ -10,6 +10,7 @@ import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import Service from './service';
 import MediaTool from '@/components/Player/mediaTool';
 import { createForm } from '@formily/core';
+import { onlyMessage } from '@/utils/util';
 
 type Player = {
   id?: string;
@@ -196,9 +197,10 @@ export default forwardRef((props: ScreenProps, ref) => {
     if (resp.status === 200) {
       setVisible(false);
       getHistory();
-      message.success('保存成功!');
+      onlyMessage('保存成功!');
     } else {
-      message.error('保存失败');
+      onlyMessage('保存失败', 'error');
+      // message.error('保存失败');
     }
   }, [players, screen, historyForm]);
 

@@ -3,7 +3,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Badge, message, Popconfirm } from 'antd';
+import { Badge, Popconfirm } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -20,6 +20,7 @@ import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import ResetPassword from '@/pages/system/User/ResetPassword';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('user');
 
@@ -160,7 +161,7 @@ const User = observer(() => {
                 id: record.id,
                 status: record.status ? 0 : 1,
               });
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

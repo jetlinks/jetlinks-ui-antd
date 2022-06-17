@@ -1,7 +1,8 @@
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
+import { onlyMessage } from '@/utils/util';
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Input, message, Upload } from 'antd';
+import { Button, Input, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/lib/upload';
 import { useEffect, useState } from 'react';
 
@@ -23,14 +24,14 @@ const CertificateFile = (props: Props) => {
         file: { response },
       } = info;
       if (response.status === 200) {
-        message.success('上传成功');
+        onlyMessage('上传成功');
         setKeystoreBase64(response.result);
         if (props.onChange) {
           props.onChange(response.result);
         }
       }
     } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
+      onlyMessage(`${info.file.name} file upload failed.`, 'error');
     }
   };
 

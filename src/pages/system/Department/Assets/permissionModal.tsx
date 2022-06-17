@@ -1,11 +1,11 @@
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Checkbox } from '@formily/antd';
-import { message } from 'antd';
 import type { ISchema } from '@formily/json-schema';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import Service from './service';
 import { forwardRef, useImperativeHandle } from 'react';
+import { onlyMessage } from '@/utils/util';
 
 type PermissionType = 'device' | 'product' | 'deviceCategory';
 
@@ -59,8 +59,8 @@ const Permission = forwardRef((props: PerModalProps, ref) => {
         },
       ])
       .subscribe({
-        next: () => message.success('操作成功'),
-        error: () => message.error('操作失败'),
+        next: () => onlyMessage('操作成功'),
+        error: () => onlyMessage('操作失败', 'error'),
         complete: () => {
           modalClose(true);
         },
