@@ -1,11 +1,11 @@
-import { Card } from 'antd';
+import { Button, Card, Empty } from 'antd';
 import { useEffect, useState } from 'react';
-import { service } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import EditableTable from './EditableTable';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useParams } from 'umi';
-import { PermissionButton, Empty } from '@/components';
+import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 
 interface Props {
@@ -55,92 +55,94 @@ const MetadataMap = (props: Props) => {
     const dmetadata = JSON.parse(data?.metadata || '{}');
     const height = minHeight - 150;
     if (product) {
+      // 是否有物模型属性
       const flag =
         (type === 'device' &&
           (metadata?.properties || []).length === 0 &&
           (dmetadata?.properties || []).length === 0) ||
         (type === 'product' && (dmetadata?.properties || []).length === 0);
-      if (!product.accessId && flag) {
+
+      const isIndependent = InstanceModel.detail?.independentMetadata;
+      let description = undefined;
+
+      if (type === 'device' && isIndependent && flag) {
+        description = (
+          <span>
+            暂无数据，请配置
+            <Button
+              style={{ margin: 0, padding: '0 4px' }}
+              type={'link'}
+              onClick={() => {
+                InstanceModel.active = 'metadata';
+              }}
+            >
+              物模型属性
+            </Button>
+          </span>
+        );
+      } else if (!product.accessId && flag) {
         if (!permission.update) {
-          return (
-            <div style={{ height }}>
-              <Empty
-                description={<span>请联系管理员配置物模型属性，并选择对应产品的设备接入方式</span>}
-              />
-            </div>
-          );
+          description = <span>请联系管理员配置物模型属性，并选择对应产品的设备接入方式</span>;
         } else {
-          return (
-            <div style={{ height }}>
-              <Empty
-                description={
-                  <span>
-                    请先配置对应产品的
-                    <a
-                      onClick={() => {
-                        checkUrl('metadata');
-                      }}
-                    >
-                      物模型属性
-                    </a>
-                    ,并选择对应产品的
-                    <a
-                      onClick={() => {
-                        checkUrl('access');
-                      }}
-                    >
-                      设备接入方式
-                    </a>
-                  </span>
-                }
-              />
-            </div>
+          description = (
+            <span>
+              请先配置对应产品的
+              <a
+                onClick={() => {
+                  checkUrl('metadata');
+                }}
+              >
+                物模型属性
+              </a>
+              ,并选择对应产品的
+              <a
+                onClick={() => {
+                  checkUrl('access');
+                }}
+              >
+                设备接入方式
+              </a>
+            </span>
           );
         }
       } else if (flag && product.accessId) {
-        return (
-          <div style={{ height }}>
-            <Empty
-              description={
-                !permission.update ? (
-                  <span>请联系管理员配置物模型属性</span>
-                ) : (
-                  <span>
-                    请配置对应产品的
-                    <a
-                      onClick={() => {
-                        checkUrl('metadata');
-                      }}
-                    >
-                      物模型属性
-                    </a>
-                  </span>
-                )
-              }
-            />
-          </div>
+        description = !permission.update ? (
+          <span>请联系管理员配置物模型属性</span>
+        ) : (
+          <span>
+            请配置对应产品的
+            <a
+              onClick={() => {
+                checkUrl('metadata');
+              }}
+            >
+              物模型属性
+            </a>
+          </span>
         );
       } else if (!flag && !product.accessId) {
+        description = (
+          <span>
+            请选择对应产品的
+            <a
+              onClick={() => {
+                checkUrl('access');
+              }}
+            >
+              设备接入方式
+            </a>
+          </span>
+        );
+      }
+
+      if (!description) {
+        return <EditableTable data={data} type={type} />;
+      } else {
         return (
           <div style={{ height }}>
-            <Empty
-              description={
-                <span>
-                  请选择对应产品的
-                  <a
-                    onClick={() => {
-                      checkUrl('access');
-                    }}
-                  >
-                    设备接入方式
-                  </a>
-                </span>
-              }
-            />
+            <Empty description={description} />
           </div>
         );
-      } else {
-        return <EditableTable data={data} type={type} />;
       }
     }
     return (

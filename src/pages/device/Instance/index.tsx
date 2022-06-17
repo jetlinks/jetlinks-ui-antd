@@ -55,6 +55,7 @@ export const InstanceModel = model<{
   detail: {},
   config: {},
   metadataItem: {},
+  active: 'detail',
   params: new Set<string>(['test']),
 });
 export const service = new Service('device-instance');

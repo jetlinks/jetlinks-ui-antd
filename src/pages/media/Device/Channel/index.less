@@ -1,8 +1,45 @@
 .device-channel-warp {
   display: flex;
 
-  .left {
-    width: 300px;
+  .left-warp {
+    position: relative;
+    margin-right: 16px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 2px;
+
+    .left-content {
+      width: 0;
+      height: 100%;
+      overflow: hidden;
+
+      &.active {
+        width: 260px;
+      }
+    }
+
+    .left-warp--btn {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      padding: 20px 4px;
+      color: rgba(#000, 0.3);
+      background-color: rgba(#f0f0f0, 6);
+      border-radius: ~'100% 0 0 100% / 50% 0 0 50%';
+      cursor: pointer;
+
+      &:hover {
+        color: rgba(#000, 0.5);
+        background-color: rgba(#f0f0f0, 8);
+      }
+
+      &.active {
+        right: 50%;
+        background-color: transparent;
+        border-radius: 0;
+        transform: translateX(50%) rotate(180deg);
+      }
+    }
   }
 
   .right {

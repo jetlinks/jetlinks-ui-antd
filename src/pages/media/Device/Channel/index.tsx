@@ -13,6 +13,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
+  LeftOutlined,
   VideoCameraAddOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
@@ -23,6 +24,7 @@ import Live from './Live';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import Tree from './Tree';
 import { useDomFullHeight } from '@/hooks';
+import classnames from 'classnames';
 
 export const service = new Service('media');
 
@@ -37,6 +39,7 @@ export default () => {
   const [channelId, setChannelId] = useState('');
   const [type, setType] = useState('');
   const { minHeight } = useDomFullHeight(`.channelDevice`, 24);
+  const [show, setShow] = useState(false);
 
   const location = useLocation();
   const history = useHistory();
@@ -211,24 +214,35 @@ export default () => {
     <PageContainer>
       <div className={'device-channel-warp'}>
         {type === ProviderValue.GB281 && (
-          <div className={'left'}>
-            <Tree
-              deviceId={deviceId}
-              onSelect={(key) => {
-                if (key === deviceId && actionRef.current?.reset) {
-                  actionRef.current?.reset();
-                } else {
-                  setQueryParam({
-                    terms: [
-                      {
-                        column: 'parentId',
-                        value: key,
-                      },
-                    ],
-                  });
-                }
+          <div className={classnames('left-warp')}>
+            <div className={classnames('left-content', { active: show })}>
+              <Tree
+                deviceId={deviceId}
+                onSelect={(key) => {
+                  if (key === deviceId && actionRef.current?.reset) {
+                    actionRef.current?.reset();
+                  } else {
+                    setQueryParam({
+                      terms: [
+                        {
+                          column: 'parentId',
+                          value: key,
+                        },
+                      ],
+                    });
+                  }
+                }}
+                onTreeLoad={setShow}
+              />
+            </div>
+            <div
+              className={classnames('left-warp--btn', { active: !show })}
+              onClick={() => {
+                setShow(!show);
               }}
-            />
+            >
+              <LeftOutlined />
+            </div>
           </div>
         )}
         <div className={'right'}>
