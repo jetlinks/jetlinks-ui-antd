@@ -9,6 +9,7 @@ import { debounce } from 'lodash';
 interface TreeProps {
   deviceId: string;
   onSelect: (id: React.Key) => void;
+  onTreeLoad: (type: boolean) => void;
 }
 
 export default (props: TreeProps) => {
@@ -19,6 +20,7 @@ export default (props: TreeProps) => {
     formatResult: (res) => res.result,
     onSuccess: (res) => {
       treeData[0].children = res.result || [];
+      props.onTreeLoad(treeData[0].children.length > 10);
       setTreeData(treeData);
     },
   });
