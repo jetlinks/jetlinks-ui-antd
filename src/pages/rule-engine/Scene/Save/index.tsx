@@ -1,16 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Radio,
-  Space,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Button, Card, Form, Input, InputNumber, Radio, Space, Switch, Tooltip } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
@@ -25,6 +14,7 @@ import './index.less';
 import { model } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 import moment from 'moment';
+import { onlyMessage } from '@/utils/util';
 
 type ShakeLimitType = {
   enabled: boolean;
@@ -133,10 +123,10 @@ export default () => {
 
       setLoading(false);
       if (resp.status === 200) {
-        message.success('操作成功');
+        onlyMessage('操作成功');
         history.back();
       } else {
-        message.error(resp.message);
+        onlyMessage(resp.message);
       }
     }
   }, [shakeLimit]);

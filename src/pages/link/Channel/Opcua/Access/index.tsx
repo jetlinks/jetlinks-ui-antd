@@ -1,7 +1,7 @@
 import PermissionButton from '@/components/PermissionButton';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Empty, Input, message, Popconfirm, Tabs, Tooltip } from 'antd';
+import { Badge, Card, Empty, Input, Popconfirm, Tabs, Tooltip } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -20,6 +20,7 @@ import AddPoint from './addPoint';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 const Access = () => {
   const intl = useIntl();
@@ -119,7 +120,7 @@ const Access = () => {
               } else {
                 await service.stopPoint(bindDeviceId, [record.id]);
               }
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -157,7 +158,7 @@ const Access = () => {
             onConfirm: async () => {
               const resp: any = await service.deletePoint(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -308,7 +309,7 @@ const Access = () => {
                           onConfirm={() => {
                             service.unbind([item.deviceId], opcUaId).then((res: any) => {
                               if (res.status === 200) {
-                                message.success('解绑成功');
+                                onlyMessage('解绑成功');
                                 getBindList(
                                   encodeQuery({
                                     terms: {

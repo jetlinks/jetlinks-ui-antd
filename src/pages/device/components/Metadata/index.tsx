@@ -1,5 +1,5 @@
 import { observer } from '@formily/react';
-import { message, Space, Tabs } from 'antd';
+import { Space, Tabs } from 'antd';
 import BaseMetadata from './Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from './Import';
@@ -15,6 +15,7 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useParams } from 'umi';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   tabAction?: ReactNode;
@@ -38,7 +39,7 @@ const Metadata = observer((props: Props) => {
   const resetMetadata = async () => {
     const resp = await instanceService.deleteMetadata(params.id);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
       Store.set(SystemConst.REFRESH_DEVICE, true);
       setTimeout(() => {
         Store.set(SystemConst.REFRESH_METADATA_TABLE, true);

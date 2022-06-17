@@ -3,7 +3,6 @@ import Service from '@/pages/device/Category/service';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { DeleteOutlined, EditOutlined, PlusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Save from '@/pages/device/Category/Save';
@@ -13,6 +12,7 @@ import type { Response } from '@/utils/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('device/category');
 
@@ -146,9 +146,9 @@ const Category = observer(() => {
             onConfirm: async () => {
               const resp = (await service.remove(record.id)) as Response<any>;
               if (resp.status === 200) {
-                message.success('操作成功');
+                onlyMessage('操作成功');
               } else {
-                message.error('操作失败');
+                onlyMessage('操作失败', 'error');
               }
               actionRef.current?.reload();
             },

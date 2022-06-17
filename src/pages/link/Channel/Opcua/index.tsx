@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Col, message, Row } from 'antd';
+import { Badge, Card, Col, Row } from 'antd';
 import styles from './index.less';
 import { PermissionButton } from '@/components';
 import { history, useIntl } from 'umi';
@@ -18,6 +18,7 @@ import Service from './service';
 import Save from './Save';
 import { getMenuPathByCode } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('opc/client');
 
@@ -119,7 +120,7 @@ const Opcua = () => {
               if (record.state.value === 'disabled') {
                 const res = await service.enable(record.id);
                 if (res.status === 200) {
-                  message.success(
+                  onlyMessage(
                     intl.formatMessage({
                       id: 'pages.data.option.success',
                       defaultMessage: '操作成功!',
@@ -130,7 +131,7 @@ const Opcua = () => {
               } else {
                 const res = await service.disable(record.id);
                 if (res.status === 200) {
-                  message.success(
+                  onlyMessage(
                     intl.formatMessage({
                       id: 'pages.data.option.success',
                       defaultMessage: '操作成功!',
@@ -175,7 +176,7 @@ const Opcua = () => {
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',

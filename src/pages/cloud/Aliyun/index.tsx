@@ -3,7 +3,7 @@ import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import BaseCrud from '@/components/BaseCrud';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   EditOutlined,
@@ -13,6 +13,7 @@ import {
 import { CurdModel } from '@/components/BaseCrud/model';
 import type { AliyunItem } from '@/pages/cloud/Aliyun/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new BaseService<AliyunItem>('device/aliyun/bridge');
 
@@ -95,7 +96,7 @@ const Aliyun = () => {
             onConfirm={async () => {
               // const state = record.state.value === 'disabled' ? 'enable' : 'disable';
               // await service.changeStatus(record.id, state);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

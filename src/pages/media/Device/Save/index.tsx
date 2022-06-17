@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, message, Modal, Radio, Row, Select, Tooltip } from 'antd';
+import { Button, Col, Form, Input, Modal, Radio, Row, Select, Tooltip } from 'antd';
 import { useIntl } from 'umi';
 import { RadioCard, UploadImage } from '@/components';
 import { PlusOutlined } from '@ant-design/icons';
@@ -7,6 +7,7 @@ import { service } from '../index';
 import SaveProductModal from './SaveProduct';
 import type { DeviceItem } from '../typings';
 import { getButtonPermission } from '@/utils/menu';
+import { onlyMessage } from '@/utils/util';
 
 interface SaveProps {
   visible: boolean;
@@ -82,9 +83,9 @@ export default (props: SaveProps) => {
         }
         form.resetFields();
         close();
-        message.success('操作成功');
+        onlyMessage('操作成功');
       } else {
-        message.error('操作失败');
+        onlyMessage('操作失败', 'error');
       }
     }
   }, [props.model, oldPassword]);

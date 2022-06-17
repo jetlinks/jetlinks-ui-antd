@@ -1,10 +1,10 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/account/NotificationSubscription';
 import _ from 'lodash';
 
@@ -198,7 +198,7 @@ const Save = (props: Props) => {
     };
     const response: any = await service.saveData(param);
     if (response.status === 200) {
-      message.success('操作成功！');
+      onlyMessage('操作成功！');
       props.reload();
     }
   };

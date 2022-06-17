@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, Button, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Button, Popconfirm, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import MemberModel from '@/pages/system/Department/Member/model';
@@ -12,6 +12,7 @@ import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import Models from '@/pages/system/Department/Assets/productCategory/model';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('tenant');
 
@@ -24,15 +25,15 @@ const Member = observer((props: { parentId: string }) => {
   const handleUnBind = () => {
     if (MemberModel.unBindUsers.length) {
       service.handleUser(props.parentId, MemberModel.unBindUsers, 'unbind').subscribe({
-        next: () => message.success('操作成功'),
-        error: () => message.error('操作失败'),
+        next: () => onlyMessage('操作成功'),
+        error: () => onlyMessage('操作失败', 'error'),
         complete: () => {
           MemberModel.unBindUsers = [];
           actionRef.current?.reload();
         },
       });
     } else {
-      message.warning('请勾选需要解绑的数据');
+      onlyMessage('请勾选需要解绑的数据', 'warning');
     }
   };
 

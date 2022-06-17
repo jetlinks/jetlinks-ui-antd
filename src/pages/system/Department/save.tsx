@@ -18,13 +18,14 @@ import {
   TreeSelect,
   Upload,
 } from '@formily/antd';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import type { ModalProps } from 'antd/lib/modal/Modal';
 import FUpload from '@/components/Upload';
 import * as ICONS from '@ant-design/icons';
 import type BaseService from '@/utils/BaseService';
+import { onlyMessage } from '@/utils/util';
 
 export interface SaveModalProps<T> extends Omit<ModalProps, 'onOk' | 'onCancel'> {
   service: BaseService<T>;
@@ -92,7 +93,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
       data && 'id' in data ? await service.update(formData) : await service.save(formData);
 
     if (response.status === 200) {
-      message.success('操作成功！');
+      onlyMessage('操作成功！');
       modalClose(true, response.result.parentId);
       if (props.reload) {
         props.reload(response.result.parentId);
@@ -102,7 +103,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
         setTimeout(() => window.close(), 300);
       }
     } else {
-      message.error('操作成功！');
+      onlyMessage('操作失败！', 'error');
     }
   };
 

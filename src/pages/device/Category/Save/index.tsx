@@ -17,12 +17,13 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import FUpload from '@/components/Upload';
 import * as ICONS from '@ant-design/icons';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import type { CategoryItem } from '@/pages/visualization/Category/typings';
 import { service, state } from '@/pages/device/Category';
 import type { Response } from '@/utils/typings';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -70,12 +71,12 @@ const Save = (props: Props) => {
       ? await service.update(value as CategoryItem)
       : ((await service.save(value as any)) as Response<CategoryItem>);
     if (resp.status === 200) {
-      message.success('操作成功!');
+      onlyMessage('操作成功');
       if (props.reload) {
         props.reload();
       }
     } else {
-      message.error('操作失败');
+      onlyMessage('操作失败', 'error');
     }
     props.close();
   };

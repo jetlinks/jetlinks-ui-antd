@@ -4,9 +4,10 @@ import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/device/components/Alarm';
 import { useParams } from 'umi';
-import { Input, message, Modal, Tag, Tooltip } from 'antd';
+import { Input, Modal, Tag, Tooltip } from 'antd';
 import { AuditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   type: 'device' | 'product';
@@ -126,7 +127,7 @@ const Record = (props: Props) => {
         onCancel={() => setVisible(false)}
         onOk={async () => {
           if (handleText === '') {
-            message.success('请填写处理结果');
+            onlyMessage('请填写处理结果', 'error');
           } else {
             const resp = await service.solve(id, handleText);
             if (resp.status === 200) {

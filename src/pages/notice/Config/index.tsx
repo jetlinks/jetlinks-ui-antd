@@ -11,10 +11,10 @@ import {
   TeamOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { message, Space, Upload } from 'antd';
+import { Space, Upload } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { downloadObject } from '@/utils/util';
+import { downloadObject, onlyMessage } from '@/utils/util';
 import Service from '@/pages/notice/Config/service';
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
@@ -222,7 +222,7 @@ const Config = observer(() => {
           popConfirm={{
             onConfirm: async () => {
               await service.remove(record.id);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -291,18 +291,18 @@ const Config = observer(() => {
                 reader.onload = async (result) => {
                   const text = result.target?.result as string;
                   if (!file.type.includes('json')) {
-                    message.warning('文件内容格式错误');
+                    onlyMessage('文件内容格式错误', 'warning');
                     return;
                   }
                   try {
                     const data = JSON.parse(text || '{}');
                     const res: any = await service.savePatch(data);
                     if (res.status === 200) {
-                      message.success('操作成功');
+                      onlyMessage('操作成功');
                       actionRef.current?.reload();
                     }
                   } catch {
-                    message.warning('文件内容格式错误');
+                    onlyMessage('文件内容格式错误', 'warning');
                   }
                 };
                 return false;
@@ -319,9 +319,9 @@ const Config = observer(() => {
                   const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
                   if (resp.status === 200) {
                     downloadObject(resp.result, '通知配置数据');
-                    message.success('导出成功');
+                    onlyMessage('导出成功');
                   } else {
-                    message.error('导出错误');
+                    onlyMessage('导出错误', 'error');
                   }
                 },
               }}

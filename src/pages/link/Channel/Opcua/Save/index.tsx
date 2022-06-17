@@ -1,15 +1,15 @@
 import { useIntl } from 'umi';
+import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Opcua';
 import { Modal } from '@/components';
-import { message } from 'antd';
 import { useMemo } from 'react';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
-import type { Field } from '@formily/core';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<OpaUa>;
@@ -237,7 +237,7 @@ const Save = (props: Props) => {
     if (props.data.id) {
       service.modify(props.data.id, item).then((res: any) => {
         if (res.status === 200) {
-          message.success('保存成功');
+          onlyMessage('保存成功');
           props.close();
         }
       });
@@ -254,7 +254,7 @@ const Save = (props: Props) => {
             };
             service.bind(params).then((resp) => {
               if (resp.status === 200) {
-                message.success('保存成功');
+                onlyMessage('保存成功');
                 props.close();
               }
             });
@@ -263,7 +263,7 @@ const Save = (props: Props) => {
       } else {
         service.save(item).then((res: any) => {
           if (res.status === 200) {
-            message.success('保存成功');
+            onlyMessage('保存成功');
             props.close();
           }
         });

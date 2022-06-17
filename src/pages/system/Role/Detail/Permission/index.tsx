@@ -1,9 +1,9 @@
-import { Button, Card, Col, Form, Input, message, Row, Spin } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Spin } from 'antd';
 import Allocate from '@/pages/system/Role/Detail/Permission/Allocate';
 import { useEffect, useState } from 'react';
 import { history, useParams } from 'umi';
 import { service } from '@/pages/system/Role';
-import { flattenArray } from '@/utils/util';
+import { flattenArray, onlyMessage } from '@/utils/util';
 import TitleComponent from '@/components/TitleComponent';
 
 const Permission = () => {
@@ -83,7 +83,7 @@ const Permission = () => {
             })
             .subscribe((resp) => {
               if (resp.status === 200) {
-                message.success('操作成功');
+                onlyMessage('操作成功');
                 history.goBack();
               }
             });

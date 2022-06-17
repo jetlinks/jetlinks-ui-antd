@@ -1,7 +1,7 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable, { ActionType } from '@jetlinks/pro-table';
 import type { AlarmSetting } from '@/pages/device/Product/typings';
-import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Button, Popconfirm, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useParams } from 'umi';
 import {
@@ -15,6 +15,7 @@ import {
 import Edit from '../Edit';
 import { useRef, useState } from 'react';
 import { service } from '@/pages/device/components/Alarm';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   type: 'product' | 'device';
@@ -31,7 +32,7 @@ const Setting = (props: Props) => {
   const action = async (id: string, ac: 'start' | 'stop') => {
     const resp = await service.action(id, ac);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     }
     actionRef.current?.reload();
   };
@@ -123,7 +124,7 @@ const Setting = (props: Props) => {
           onConfirm={async () => {
             const resp = await service.remove(record.id);
             if (resp.status === 200) {
-              message.success('操作成功');
+              onlyMessage('操作成功');
             }
             actionRef.current?.reload();
           }}

@@ -1,18 +1,19 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef } from 'react';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import type { CommandItem } from '@/pages/device/Command/typings';
-import { Button, message, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import moment from 'moment';
 import { EyeOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Command/service';
-import ProTable from '@jetlinks/pro-table';
 import Create from '@/pages/device/Command/create';
 import encodeQuery from '@/utils/encodeQuery';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import Cat from '@/pages/device/Command/cat';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('device/message/task');
 
@@ -158,9 +159,9 @@ const Command = observer(() => {
             onClick={async () => {
               const resp = await service.resend(encodeQuery({ terms: { id: record.id } }));
               if (resp.status === 200) {
-                message.success('操作成功！');
+                onlyMessage('操作成功！');
               } else {
-                message.error('操作失败！');
+                onlyMessage('操作失败！', 'error');
               }
             }}
           >

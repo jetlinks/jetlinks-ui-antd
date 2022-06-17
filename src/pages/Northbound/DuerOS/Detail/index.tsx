@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { createSchemaField } from '@formily/react';
 import { ISchema } from '@formily/json-schema';
-import { Card, Col, message, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 import {
   ArrayCollapse,
   ArrayTable,
@@ -25,7 +25,7 @@ import {
   onFieldValueChange,
   onFormInit,
 } from '@formily/core';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { service } from '..';
 import { Store } from 'jetlinks-store';
 import { useParams } from 'umi';
@@ -640,9 +640,9 @@ const Save = () => {
     const productName = Store.get('product-list')?.find((item: any) => item.id === data.id)?.name;
     const resp: any = await service.savePatch({ ...data, productName });
     if (resp.status === 200) {
-      message.success('保存成功!');
+      onlyMessage('保存成功!');
     } else {
-      message.error('保存失败!');
+      onlyMessage('保存失败!', 'error');
     }
     history.back();
   };

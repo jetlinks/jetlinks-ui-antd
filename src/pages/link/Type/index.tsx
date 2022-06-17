@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, message, Popconfirm, Tooltip } from 'antd';
+import { Badge, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -19,6 +19,7 @@ import { Store } from 'jetlinks-store';
 import { PermissionButton, ProTableCard } from '@/components';
 import NetworkCard from '@/components/ProTableCard/CardItems/networkCard';
 import usePermissions from '@/hooks/permission';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('network/config');
 
@@ -190,7 +191,7 @@ const Network = () => {
                 enabled: 'shutdown',
               };
               await service.changeState(record.id, map[record.state.value]);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -224,7 +225,7 @@ const Network = () => {
             onConfirm={async () => {
               const response: any = await service.remove(record.id);
               if (response.status === 200) {
-                message.success('删除成功');
+                onlyMessage('删除成功');
                 actionRef.current?.reload();
               }
             }}
@@ -310,7 +311,7 @@ const Network = () => {
                       enabled: 'shutdown',
                     };
                     await service.changeState(record.id, map[record.state.value]);
-                    message.success(
+                    onlyMessage(
                       intl.formatMessage({
                         id: 'pages.data.option.success',
                         defaultMessage: '操作成功!',
@@ -347,7 +348,7 @@ const Network = () => {
                   onConfirm={async () => {
                     const response: any = await service.remove(record.id);
                     if (response.status === 200) {
-                      message.success('删除成功');
+                      onlyMessage('删除成功');
                       actionRef.current?.reload();
                     }
                   }}

@@ -5,10 +5,11 @@ import { ArrayTable, Form, FormItem, Input, Select, Space } from '@formily/antd'
 import { action } from '@formily/reactive';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/device/Command';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import FSelectDevices from '@/components/FSelectDevices';
 import { useRef } from 'react';
 import type { DeviceMetadata, ProductItem } from '@/pages/device/Product/typings';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   close: () => void;
@@ -235,9 +236,9 @@ const Create = (props: Props) => {
     }
     const resp = await service.task(values);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     } else {
-      message.error('操作失败');
+      onlyMessage('操作失败', 'error');
     }
     close();
   };

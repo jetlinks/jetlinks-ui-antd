@@ -11,13 +11,12 @@ import {
   Select,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
-import { onFormInit } from '@formily/core';
-import { createForm, FormPath, onFieldChange, onFieldValueChange } from '@formily/core';
+import { createForm, FormPath, onFieldChange, onFieldValueChange, onFormInit } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
-import { Card, Col, Image, message, Row } from 'antd';
+import { Card, Col, Image, Row } from 'antd';
 import { useMemo } from 'react';
 import { useParams } from 'umi';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import './index.less';
 import { service } from '@/pages/Northbound/AliCloud';
 import usePermissions from '@/hooks/permission';
@@ -406,7 +405,7 @@ const Detail = observer(() => {
     data.bridgeProductName = product?.label || '';
     const response: any = data.id ? await service.update(data) : await service.save(data);
     if (response.status === 200) {
-      message.success('保存成功');
+      onlyMessage('保存成功');
       history.back();
     }
   };

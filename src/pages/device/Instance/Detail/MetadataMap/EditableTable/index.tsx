@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Col, Form, Input, message, Pagination, Row, Select, Table, Tooltip } from 'antd';
+import { Badge, Col, Form, Input, Pagination, Row, Select, Table, Tooltip } from 'antd';
 import { service } from '@/pages/device/Instance';
 import './index.less';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { onlyMessage } from '@/utils/util';
 // import { throttle } from 'lodash';
 
 const defaultImage = require('/public/images/metadata-map.png');
@@ -260,7 +261,7 @@ const EditableTable = (props: Props) => {
         },
       ]);
       if (resp.status === 200) {
-        message.success('操作成功！');
+        onlyMessage('操作成功！');
         // 刷新
         initData(protocolMetadata);
       }

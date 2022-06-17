@@ -5,8 +5,8 @@ import { Form, FormGrid, FormItem, Input, NumberPicker, Select } from '@formily/
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Modbus';
 import { Modal } from '@/components';
-import { message } from 'antd';
 import { useEffect } from 'react';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: any;
@@ -137,7 +137,7 @@ const Save = (props: Props) => {
         })
         .then((res: any) => {
           if (res.status === 200) {
-            message.success('保存成功');
+            onlyMessage('保存成功');
             props.close();
           }
         });
@@ -147,7 +147,7 @@ const Save = (props: Props) => {
           if (res.status === 200) {
             service.bind([props.device.id], res.result.id).then((resp: any) => {
               if (resp.status === 200) {
-                message.success('保存成功');
+                onlyMessage('保存成功');
                 props.close();
               }
             });
@@ -156,7 +156,7 @@ const Save = (props: Props) => {
       } else {
         service.save(value).then((res: any) => {
           if (res.status === 200) {
-            message.success('保存成功');
+            onlyMessage('保存成功');
             props.close();
           }
         });

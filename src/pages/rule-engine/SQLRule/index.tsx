@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SQLRuleItem } from '@/pages/rule-engine/SQLRule/typings';
-import { message, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import {
   CaretRightOutlined,
   DownloadOutlined,
@@ -14,6 +14,7 @@ import {
 import BaseCrud from '@/components/BaseCrud';
 import { service } from '@/pages/rule-engine/Instance';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 const SQLRule = () => {
   const intl = useIntl();
@@ -115,7 +116,7 @@ const SQLRule = () => {
           >
             <DownloadOutlined
               onClick={() => {
-                message.success(
+                onlyMessage(
                   `${intl.formatMessage({
                     id: 'pages.data.option.download',
                     defaultMessage: '下载',

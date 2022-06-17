@@ -1,16 +1,4 @@
-import {
-  Card,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Radio,
-  Row,
-  Select,
-  Tooltip,
-  TreeSelect,
-} from 'antd';
+import { Card, Col, Form, Input, InputNumber, Radio, Row, Select, Tooltip, TreeSelect } from 'antd';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useState } from 'react';
@@ -23,6 +11,7 @@ import Icons from '../components/Icons';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 type EditProps = {
   data: MenuItem;
@@ -78,14 +67,14 @@ export default (props: EditProps) => {
         : await service.update(formData);
       setLoading(false);
       if (response.status === 200) {
-        message.success('操作成功！');
+        onlyMessage('操作成功！');
         // setDisabled(true);
         // 新增后刷新页面，编辑则不需要
         if (!props.data.id) {
           pageJump(response.result.id);
         }
       } else {
-        message.error('操作失败！');
+        onlyMessage('操作失败！', 'error');
       }
     }
   };

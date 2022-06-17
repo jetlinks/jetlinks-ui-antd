@@ -1,14 +1,15 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import moment from 'moment';
-import { Form, Input, message, Modal, Tag, Tooltip } from 'antd';
+import { Form, Input, Modal, Tag, Tooltip } from 'antd';
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import ProTable from '@jetlinks/pro-table';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
+import { onlyMessage } from '@/utils/util';
 
 const service = new BaseService<AlarmItem>('device/alarm/history');
 const Alarm = () => {
@@ -142,9 +143,9 @@ const Alarm = () => {
                       },
                     );
                     if (resp.status === 200) {
-                      message.success('操作成功');
+                      onlyMessage('操作成功');
                     } else {
-                      message.error('操作失败');
+                      onlyMessage('操作失败', 'error');
                     }
                     actionRef.current?.reload();
                   },

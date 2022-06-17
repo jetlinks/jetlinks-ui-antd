@@ -1,4 +1,4 @@
-import { Button, Drawer, message } from 'antd';
+import { Button, Drawer } from 'antd';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import {
@@ -29,6 +29,7 @@ import Trigger from '@/components/AlarmEditor/Trigger';
 import Action from '@/components/AlarmEditor/Action';
 import { service } from '@/pages/device/components/Alarm';
 import { useParams } from 'umi';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -304,7 +305,7 @@ const EditAlarm = (props: Props) => {
         },
       };
       await service.saveAlarm(type, id, data);
-      message.success('保存成功');
+      onlyMessage('保存成功');
       props.close();
     }
   };

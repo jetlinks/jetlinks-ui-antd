@@ -4,13 +4,14 @@ import { CloseOutlined, DisconnectOutlined, EditOutlined } from '@ant-design/ico
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Input, message, Popover, Space } from 'antd';
+import { Button, Input, Popover, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl, useLocation } from 'umi';
 import BindChannel from './BindChannel';
 import BadgeStatus, { StatusColorEnum } from '@/components/BadgeStatus';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 const Channel = () => {
   const location: any = useLocation();
@@ -29,7 +30,7 @@ const Channel = () => {
     const resp = await service.unbindChannel(id, list);
     if (resp.status === 200) {
       actionRef.current?.reload();
-      message.success('操作成功！');
+      onlyMessage('操作成功！');
       if (list.length === 1) {
         const index = selectedRowKey.indexOf(list[0]);
         const dt = [...selectedRowKey];
@@ -58,12 +59,12 @@ const Channel = () => {
                 gbChannelId: data,
               });
               if (resp.status === 200) {
-                message.success('操作成功');
+                onlyMessage('操作成功');
                 actionRef.current?.reload();
                 setPopvisible('');
               }
             } else {
-              message.error('请输入国标ID');
+              onlyMessage('请输入国标ID', 'error');
             }
           }}
         >
@@ -265,7 +266,7 @@ const Channel = () => {
                   unbind(selectedRowKey);
                   setSelectedRowKey([]);
                 } else {
-                  message.error('请先选择需要解绑的通道列表');
+                  onlyMessage('请先选择需要解绑的通道列表', 'error');
                 }
               },
             }}

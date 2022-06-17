@@ -2,15 +2,16 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Card, Col, message, Pagination, Row } from 'antd';
+import { Card, Col, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'umi';
 import Service from './service';
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
-import { PermissionButton, Empty } from '@/components';
+import { Empty, PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { Store } from 'jetlinks-store';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('gateway/device');
 
@@ -146,14 +147,14 @@ const AccessConfig = () => {
                           if (item.state.value !== 'disabled') {
                             service.shutDown(item.id).then((resp) => {
                               if (resp.status === 200) {
-                                message.success('操作成功！');
+                                onlyMessage('操作成功！');
                                 handleSearch(param);
                               }
                             });
                           } else {
                             service.startUp(item.id).then((resp) => {
                               if (resp.status === 200) {
-                                message.success('操作成功！');
+                                onlyMessage('操作成功！');
                                 handleSearch(param);
                               }
                             });
@@ -180,10 +181,10 @@ const AccessConfig = () => {
                         onConfirm: () => {
                           service.remove(item.id).then((resp: any) => {
                             if (resp.status === 200) {
-                              message.success('操作成功！');
+                              onlyMessage('操作成功！');
                               handleSearch(param);
                             } else {
-                              message.error(resp?.message || '操作失败');
+                              onlyMessage(resp?.message || '操作失败', 'error');
                             }
                           });
                         },
