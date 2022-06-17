@@ -145,7 +145,7 @@ const Detail = () => {
         setProviders(resp.result);
       }
     });
-    if (params.id) {
+    if (params.id && params.id != ':id') {
       service.detail(params.id).then((resp) => {
         if (resp.status === 200) {
           StreamModel.current = resp.result;
