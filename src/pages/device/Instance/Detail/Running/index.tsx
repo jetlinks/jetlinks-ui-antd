@@ -1,13 +1,16 @@
 import { InstanceModel } from '@/pages/device/Instance';
-import { Card, Empty, Input, Tabs } from 'antd';
+import { Card, Input, Tabs } from 'antd';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import Property from '@/pages/device/Instance/Detail/Running/Property';
 import Event from '@/pages/device/Instance/Detail/Running/Event';
 import { useEffect, useState } from 'react';
+import Empty from '@/pages/device/components/Empty';
+import { useDomFullHeight } from '@/hooks';
 
 const Running = () => {
   const metadata = JSON.parse((InstanceModel.detail?.metadata || '{}') as string) as DeviceMetadata;
   const [list, setList] = useState<any[]>([]);
+  const { minHeight } = useDomFullHeight(`.device-detail-running`);
 
   useEffect(() => {
     setList(metadata?.events || []);
@@ -32,27 +35,18 @@ const Running = () => {
   );
 
   return (
-    <Card>
+    <Card className={'device-detail-running'} style={{ minHeight }}>
       {list?.length === 0 && (metadata?.properties || [])?.length === 0 ? (
         <div
           style={{
-            height: 480,
-            display: 'flex',
-            alignItems: 'center',
-            width: '100%',
-            justifyContent: 'center',
+            height: minHeight - 150,
           }}
         >
           <Empty />
         </div>
       ) : (
         <div className="tabs-full-active">
-          <Tabs
-            defaultActiveKey="1"
-            tabPosition="left"
-            style={{ minHeight: 600 }}
-            tabBarExtraContent={{ left: operations() }}
-          >
+          <Tabs defaultActiveKey="1" tabPosition="left" tabBarExtraContent={{ left: operations() }}>
             <Tabs.TabPane tab="属性" key="1">
               <Property data={metadata?.properties || []} />
             </Tabs.TabPane>
