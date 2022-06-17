@@ -1,13 +1,14 @@
 // 收信人
 import { useEffect, useState } from 'react';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
-import { Input, Select } from 'antd';
+import { Input, Select, TreeSelect } from 'antd';
 import {
   queryDingTalkUsers,
   queryPlatformUsers,
   queryRelationUsers,
   queryWechatUsers,
 } from '@/pages/rule-engine/Scene/Save/action/service';
+import { forkJoin, filter, from, defer, map } from 'rxjs';
 
 type ChangeType = {
   source?: string;
@@ -26,8 +27,11 @@ interface UserProps {
 export default (props: UserProps) => {
   const [source, setSource] = useState(props.value?.source);
   const [value, setValue] = useState<string | undefined>();
-  const [userList, setUserList] = useState({ platform: [], relation: [] });
   const [relationList, setRelationList] = useState([]);
+  const [treeData, setTreeData] = useState([
+    { name: '平台用户', id: 'p1', selectable: false, children: [] },
+    { name: '关系用户', id: 'p2', selectable: false, children: [] },
+  ]);
 
   useEffect(() => {
     setSource(props.value?.source);
@@ -48,30 +52,25 @@ export default (props: UserProps) => {
   }, [props.value]);
 
   const getPlatformUser = async () => {
-    const _userList: any = {
-      platform: [],
-      relation: [],
-    };
-    const resp1 = await queryPlatformUsers();
-    if (resp1.status === 200) {
-      _userList.platform = resp1.result.map((item: any) => ({
-        label: item.name,
-        value: item.id,
-        username: item.username,
-      }));
-    }
-
-    const resp2 = await queryRelationUsers();
-    if (resp2.status === 200) {
-      _userList.relation = resp2.result.map((item: any) => ({
-        label: item.name,
-        value: item.relation,
-        username: '',
-      }));
-    }
-
-    setUserList(_userList);
+    forkJoin(
+      defer(() => from(queryPlatformUsers())).pipe(
+        filter((item) => item.status === 200),
+        map((resp) => resp.result),
+      ),
+      defer(() => from(queryRelationUsers())).pipe(
+        filter((item) => item.status === 200),
+        map((resp) => resp.result),
+      ),
+    ).subscribe((res) => {
+      const newTree = [...treeData];
+      res.forEach((item, index) => {
+        newTree[index].children = item;
+      });
+      setTreeData(newTree);
+    });
   };
+
+  console.log('treeData', treeData);
 
   const getRelationUsers = async (notifyType: string, configId: string) => {
     if (notifyType === 'dingTalk') {
@@ -170,55 +169,56 @@ export default (props: UserProps) => {
     } else {
       obj.value = _value;
     }
-    console.log(obj);
+
     if (props.onChange) {
       props.onChange(obj);
     }
   };
 
   const filterOption = (input: string, option: any) => {
-    return option.label ? option.label.toLowerCase().includes(input.toLowerCase()) : false;
+    return option.name ? option.name.toLowerCase().includes(input.toLowerCase()) : false;
+  };
+
+  const createTreeNode = (data: any): React.ReactNode => {
+    return data.map((item: any) => {
+      if (item.children) {
+        return (
+          <TreeSelect.TreeNode value={item.id} title={item.name} selectable={false}>
+            {createTreeNode(item.children)}
+          </TreeSelect.TreeNode>
+        );
+      } else {
+        return (
+          <TreeSelect.TreeNode
+            name={item.name}
+            value={item.id}
+            title={
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>{item.name}</span>
+                <span style={{ color: '#cfcfcf' }}>{item.username}</span>
+              </div>
+            }
+          />
+        );
+      }
+    });
   };
 
   const userSelect =
     source === 'relation' ? (
-      <Select
+      <TreeSelect
         showSearch
         value={value}
-        onChange={(key, node) => {
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        placeholder={'请选择收信人'}
+        onSelect={(key: any, node: any) => {
           setValue(key);
           onchange(source, key, node.isRelation);
         }}
-        placeholder={'请选择收信人'}
-        listHeight={200}
-        filterOption={filterOption}
-        optionLabelProp="label"
+        filterTreeNode={filterOption}
       >
-        {userList.platform.length ? (
-          <Select.OptGroup label={'平台用户'}>
-            {userList.platform.map((item: any) => (
-              <Select.Option value={item.value} isRelation={false} label={item.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{item.label}</span>
-                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
-                </div>
-              </Select.Option>
-            ))}
-          </Select.OptGroup>
-        ) : null}
-        {userList.relation.length ? (
-          <Select.OptGroup label={'关系用户'}>
-            {userList.relation.map((item: any) => (
-              <Select.Option value={item.value} isRelation={false} label={item.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{item.label}</span>
-                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
-                </div>
-              </Select.Option>
-            ))}
-          </Select.OptGroup>
-        ) : null}
-      </Select>
+        {createTreeNode(treeData)}
+      </TreeSelect>
     ) : (
       <Select
         showSearch
@@ -239,43 +239,19 @@ export default (props: UserProps) => {
 
   const emailSelect =
     source === 'relation' ? (
-      <Select
+      <TreeSelect
         showSearch
         value={value}
-        onChange={(key, node) => {
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        placeholder={'请选择收信人'}
+        onSelect={(key: any, node: any) => {
           setValue(key);
           onchange(source, key, node.isRelation);
         }}
-        placeholder={'请选择收信人'}
-        listHeight={200}
-        filterOption={filterOption}
-        optionLabelProp="label"
+        filterTreeNode={filterOption}
       >
-        {userList.platform.length ? (
-          <Select.OptGroup label={'平台用户'}>
-            {userList.platform.map((item: any) => (
-              <Select.Option value={item.value} isRelation={false} label={item.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{item.label}</span>
-                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
-                </div>
-              </Select.Option>
-            ))}
-          </Select.OptGroup>
-        ) : null}
-        {userList.relation.length ? (
-          <Select.OptGroup label={'关系用户'}>
-            {userList.relation.map((item: any) => (
-              <Select.Option value={item.value} isRelation={true} label={item.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{item.label}</span>
-                  <span style={{ color: '#cfcfcf' }}>{item.username}</span>
-                </div>
-              </Select.Option>
-            ))}
-          </Select.OptGroup>
-        ) : null}
-      </Select>
+        {createTreeNode(treeData)}
+      </TreeSelect>
     ) : (
       <Input
         value={value}
@@ -288,36 +264,19 @@ export default (props: UserProps) => {
 
   const voiceSelect =
     source === 'relation' ? (
-      <Select
+      <TreeSelect
         showSearch
         value={value}
-        onChange={(key, node) => {
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        placeholder={'请选择收信人'}
+        onSelect={(key: any, node: any) => {
           setValue(key);
           onchange(source, key, node.isRelation);
         }}
-        placeholder={'请选择收信人'}
-        listHeight={200}
-        filterOption={filterOption}
+        filterTreeNode={filterOption}
       >
-        {userList.platform.length ? (
-          <Select.OptGroup label={'平台用户'}>
-            {userList.platform.map((item: any) => (
-              <Select.Option value={item.value} isRelation={false}>
-                {item.label}
-              </Select.Option>
-            ))}
-          </Select.OptGroup>
-        ) : null}
-        {userList.relation.length ? (
-          <Select.OptGroup label={'关系用户'}>
-            {userList.relation.map((item: any) => (
-              <Select.Option value={item.value} isRelation={true}>
-                {item.label}
-              </Select.Option>
-            ))}
-          </Select.OptGroup>
-        ) : null}
-      </Select>
+        {createTreeNode(treeData)}
+      </TreeSelect>
     ) : (
       <Input
         value={value}

@@ -36,7 +36,7 @@ deviceStatus.set('notActive', <Badge status="processing" text={'未启用'} />);
 
 const InstanceDetail = observer(() => {
   const intl = useIntl();
-  const [tab, setTab] = useState<string>('detail');
+  // const [tab, setTab] = useState<string>('detail');
   const params = useParams<{ id: string }>();
   const service = new Service('device-instance');
   const { permission } = PermissionButton.usePermission('device/Instance');
@@ -225,7 +225,8 @@ const InstanceDetail = observer(() => {
     if (!InstanceModel.current && !params.id) {
       history.goBack();
     } else {
-      setTab('detail');
+      // setTab('detail');
+      InstanceModel.active = 'detail';
       getDetail(params?.id || InstanceModel.current?.id || '');
     }
     return () => {
@@ -234,9 +235,9 @@ const InstanceDetail = observer(() => {
   }, [params.id]);
 
   useEffect(() => {
-    console.log(location.query);
     if ((location as any).query?.key) {
-      setTab((location as any).query?.key || 'detail');
+      // setTab((location as any).query?.key || 'detail');
+      InstanceModel.active = (location as any).query?.key || 'detail';
     }
     const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
       if ((window as any).onTabSaveSuccess) {
@@ -250,7 +251,8 @@ const InstanceDetail = observer(() => {
   useEffect(() => {
     const { state } = location;
     if (state && state?.tab) {
-      setTab(state?.tab);
+      // setTab(state?.tab);
+      InstanceModel.active = state?.tab;
     }
   }, [location]);
 
@@ -258,9 +260,11 @@ const InstanceDetail = observer(() => {
     <PageContainer
       className={'page-title-show'}
       onBack={history.goBack}
-      onTabChange={setTab}
+      onTabChange={(e) => {
+        InstanceModel.active = e;
+      }}
       tabList={list}
-      tabActiveKey={tab}
+      tabActiveKey={InstanceModel.active}
       content={
         <Descriptions size="small" column={4}>
           <Descriptions.Item label={'ID'}>{InstanceModel.detail?.id}</Descriptions.Item>
@@ -363,7 +367,7 @@ const InstanceDetail = observer(() => {
       //   </Button>,
       // ]}
     >
-      {list.find((k) => k.key === tab)?.component}
+      {list.find((k) => k.key === InstanceModel.active)?.component}
     </PageContainer>
   );
 });
