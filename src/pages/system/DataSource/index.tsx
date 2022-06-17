@@ -139,12 +139,13 @@ const DataSource = observer(() => {
           type="link"
           isPermission={userPermission.action}
           key="manage"
+          disabled={record.state?.value !== 'enabled'}
           onClick={() => {
             const url = getMenuPathByCode(MENUS_CODE[`system/DataSource/Management`]);
             history.push(`${url}?id=${record.id}`);
           }}
           tooltip={{
-            title: '管理',
+            title: record.state?.value !== 'enabled' ? '请先启用数据源' : '管理',
           }}
         >
           <DatabaseOutlined />

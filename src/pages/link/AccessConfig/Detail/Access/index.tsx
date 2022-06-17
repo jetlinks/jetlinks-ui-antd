@@ -11,6 +11,7 @@ import TitleComponent from '@/components/TitleComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+import { MetworkTypeMapping, ProcotoleMapping, descriptionList } from './data';
 
 interface Props {
   change: () => void;
@@ -32,25 +33,6 @@ const Access = (props: Props) => {
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const protocolPermission = PermissionButton.usePermission('link/Protocol').permission;
   const [steps, setSteps] = useState<string[]>(['网络组件', '消息协议', '完成']);
-
-  const MetworkTypeMapping = new Map();
-  MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
-  MetworkTypeMapping.set('http-server-gateway', 'HTTP_SERVER');
-  MetworkTypeMapping.set('udp-device-gateway', 'UDP');
-  MetworkTypeMapping.set('coap-server-gateway', 'COAP_SERVER');
-  MetworkTypeMapping.set('mqtt-client-gateway', 'MQTT_CLIENT');
-  MetworkTypeMapping.set('mqtt-server-gateway', 'MQTT_SERVER');
-  MetworkTypeMapping.set('tcp-server-gateway', 'TCP_SERVER');
-
-  const ProcotoleMapping = new Map();
-  ProcotoleMapping.set('websocket-server', 'WebSocket');
-  ProcotoleMapping.set('http-server-gateway', 'HTTP');
-  ProcotoleMapping.set('udp-device-gateway', 'UDP');
-  ProcotoleMapping.set('coap-server-gateway', 'COAP');
-  ProcotoleMapping.set('mqtt-client-gateway', 'MQTT');
-  ProcotoleMapping.set('mqtt-server-gateway', 'MQTT');
-  ProcotoleMapping.set('tcp-server-gateway', 'TCP');
-  ProcotoleMapping.set('child-device', '');
 
   const queryNetworkList = (id: string, params?: any) => {
     service.getNetworkList(MetworkTypeMapping.get(id), params).then((resp) => {
@@ -319,7 +301,11 @@ const Access = (props: Props) => {
                         setNetworkCurrent(item.id);
                       }}
                     >
-                      <div className={styles.title}>{item.name || '--'}</div>
+                      <div className={styles.title}>
+                        <Tooltip placement="topLeft" title={item.name}>
+                          {item.name}
+                        </Tooltip>
+                      </div>
                       <div className={styles.cardContent}>
                         <div
                           style={{
@@ -337,7 +323,14 @@ const Access = (props: Props) => {
                             </div>
                           ))}
                         </div>
-                        <div className={styles.desc}>{item?.description || '--'}</div>
+                        <div className={styles.desc}>
+                          <Tooltip
+                            placement="topLeft"
+                            title={item?.description || descriptionList[props.provider?.id]}
+                          >
+                            {item?.description || descriptionList[props.provider?.id]}
+                          </Tooltip>
+                        </div>
                       </div>
                     </Card>
                   </Col>
@@ -432,8 +425,14 @@ const Access = (props: Props) => {
                       }}
                     >
                       <div style={{ height: '45px' }}>
-                        <div className={styles.title}>{item.name || '--'}</div>
-                        <div className={styles.desc}>{item.description || '--'}</div>
+                        <div className={styles.title}>
+                          <Tooltip title={item.name}>{item.name}</Tooltip>
+                        </div>
+                        <div className={styles.desc}>
+                          <Tooltip placement="topLeft" title={item.description}>
+                            {item.description}
+                          </Tooltip>
+                        </div>
                       </div>
                     </Card>
                   </Col>
@@ -455,7 +454,6 @@ const Access = (props: Props) => {
                           const tab: any = window.open(`${origin}/#${url}?save=true`);
                           tab!.onTabSaveSuccess = (resp: any) => {
                             if (resp.status === 200) {
-                              console.log(props.provider);
                               queryProcotolList(props.provider?.id);
                             }
                           };
@@ -562,17 +560,17 @@ const Access = (props: Props) => {
               <div className={styles.config}>
                 <div className={styles.item}>
                   <div className={styles.title}>接入方式</div>
-                  <div className={styles.context}>{props.provider?.name || '--'}</div>
-                  <div className={styles.context}>{props.provider?.description || '--'}</div>
+                  <div className={styles.context}>{props.provider?.name}</div>
+                  <div className={styles.context}>{props.provider?.description}</div>
                 </div>
                 <div className={styles.item}>
                   <div className={styles.title}>消息协议</div>
                   <div className={styles.context}>
-                    {procotolList.find((i) => i.id === procotolCurrent)?.name || '--'}
+                    {procotolList.find((i) => i.id === procotolCurrent)?.name}
                   </div>
                   {config?.document && (
                     <div className={styles.context}>
-                      {<ReactMarkdown>{config?.document}</ReactMarkdown> || '--'}
+                      {<ReactMarkdown>{config?.document}</ReactMarkdown>}
                     </div>
                   )}
                 </div>
@@ -585,12 +583,11 @@ const Access = (props: Props) => {
                             <Badge
                               color={item.health === -1 ? 'red' : 'green'}
                               text={item.address}
-                              style={{ marginLeft: '20px' }}
                             />
                           </div>
                         ),
                       )
-                    : '--'}
+                    : ''}
                 </div>
                 {config?.routes && config?.routes?.length > 0 && (
                   <div className={styles.item}>

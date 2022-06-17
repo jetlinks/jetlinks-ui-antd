@@ -193,7 +193,7 @@ const EditTable = (props: Props) => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { title: '说明' },
               properties: {
-                description: {
+                comment: {
                   'x-component': 'Input',
                   'x-decorator': 'FormItem',
                   'x-component-props': {
