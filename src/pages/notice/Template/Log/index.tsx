@@ -84,12 +84,13 @@ const Log = observer(() => {
       destroyOnClose
       onCancel={() => (state.log = false)}
       title="通知记录"
-      width={'70vw'}
+      width={'50vw'}
       visible={state.log && !!state.current?.id}
     >
       <SearchComponent
         defaultParam={[{ column: 'notifyType$IN', value: id }]}
         field={columns}
+        model="simple"
         onSearch={(data) => {
           actionRef.current?.reset?.();
           setParam(data);

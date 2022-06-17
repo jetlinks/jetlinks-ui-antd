@@ -20,6 +20,7 @@ const Log = observer(() => {
     {
       dataIndex: 'notifyTime',
       title: '发送时间',
+      valueType: 'dateTime',
     },
     {
       dataIndex: 'state',
@@ -80,10 +81,11 @@ const Log = observer(() => {
       footer={null}
       onCancel={() => (state.log = false)}
       title="通知记录"
-      width={'70vw'}
+      width="50vw"
       visible={state.log && !!state.current?.id}
     >
       <SearchComponent
+        model="simple"
         defaultParam={[{ column: 'notifyType$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
