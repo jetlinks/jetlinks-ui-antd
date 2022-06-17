@@ -254,7 +254,7 @@ const User = observer(() => {
           </PermissionButton>
         }
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.queryDetailList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
       />
       <Save

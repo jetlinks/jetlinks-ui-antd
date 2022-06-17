@@ -14,6 +14,12 @@ class Service extends BaseService<DuerOSItem> {
       method: 'POST',
       data: {
         paging: false,
+        terms: [
+          {
+            column: 'id$dueros-product$not',
+            value: 1,
+          },
+        ],
       },
     });
 

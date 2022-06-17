@@ -15,6 +15,12 @@ class Service extends BaseService<UserItem> {
       params,
     });
 
+  queryDetailList = (data?: any) =>
+    request(`${SystemConst.API_BASE}/user/detail/_query`, {
+      method: 'POST',
+      data,
+    });
+
   queryDetail = (id: string) =>
     request(`/${SystemConst.API_BASE}/user/detail/${id}`, {
       method: 'GET',

@@ -352,7 +352,7 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入服务器地址',
                       style: {
-                        width: '200px',
+                        width: '180px',
                       },
                     },
                     'x-component': 'FAutoComplete',
@@ -407,6 +407,9 @@ const Detail = observer(() => {
                     'x-decorator': 'FormItem',
                     'x-component-props': {
                       children: '开启SSL',
+                      style: {
+                        width: '100px',
+                      },
                     },
                     // enum: [{label: '开启SSL', value: true}],
                   },

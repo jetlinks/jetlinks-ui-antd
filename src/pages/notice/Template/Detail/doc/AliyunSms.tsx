@@ -5,7 +5,9 @@ const AliyunSms = () => {
     <div className="doc">
       <div className="url">
         阿里云短信服务平台：
-        <a href="https://dysms.console.aliyun.com">https://dysms.console.aliyun.com</a>
+        <a href="https://dysms.console.aliyun.com" target="_blank" rel="noopener noreferrer">
+          https://dysms.console.aliyun.com
+        </a>
       </div>
       <h1>1. 概述</h1>
       <div>

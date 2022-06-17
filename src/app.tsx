@@ -13,10 +13,15 @@ import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
-import getRoutes, { extraRouteArr, getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
+import getRoutes, {
+  extraRouteArr,
+  getMenuPathByCode,
+  getMenus,
+  handleRoutes,
+  saveMenusCache,
+} from '@/utils/menu';
 import { AIcon } from '@/components';
 import React from 'react';
-import { getMenuPathByCode } from '@/utils/menu';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
