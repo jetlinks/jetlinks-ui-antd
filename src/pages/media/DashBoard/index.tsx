@@ -223,6 +223,7 @@ export default () => {
           </DashBoardTopCard.Item>
         </DashBoardTopCard>
         <DashBoard
+          showTimeTool={true}
           className={'media-dash-board-body'}
           title={'播放数量(人次)'}
           options={options}

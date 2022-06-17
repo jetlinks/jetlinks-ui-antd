@@ -1,5 +1,5 @@
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { Badge, Modal } from 'antd';
 import styles from './index.less';
 
@@ -42,7 +42,7 @@ const DiagnosticAdvice = (props: Props) => {
     >
       <div className={styles.advice}>
         <div className={styles.alert}>
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           所有诊断均无异常但设备任未上线，请检查以下内容
         </div>
         {(data?.product || []).map((item: any) => (

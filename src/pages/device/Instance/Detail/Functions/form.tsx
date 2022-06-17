@@ -9,6 +9,7 @@ import ProForm from '@ant-design/pro-form';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import moment from 'moment';
 import './index.less';
+import { GeoPoint, MetadataJsonInput } from '@/components';
 
 type FunctionProps = {
   data: FunctionMetadata;
@@ -57,6 +58,10 @@ export default (props: FunctionProps) => {
       case 'float':
       case 'double':
         return <InputNumber style={{ width: '100%' }} placeholder={'请输入' + name} />;
+      case 'geoPoint':
+        return <GeoPoint />;
+      case 'object':
+        return <MetadataJsonInput json={record.json} />;
       case 'date':
         return (
           <>
@@ -78,14 +83,14 @@ export default (props: FunctionProps) => {
     {
       dataIndex: 'name',
       title: '名称',
-      width: 200,
+      width: 120,
       editable: false,
       ellipsis: true,
     },
     {
       dataIndex: 'type',
       title: '类型',
-      width: 200,
+      width: 120,
       editable: false,
     },
     {
@@ -95,7 +100,6 @@ export default (props: FunctionProps) => {
       }),
       dataIndex: 'value',
       align: 'center',
-      width: 260,
       renderFormItem: (_, row: any) => {
         return getItemNode(row.record);
       },
@@ -107,12 +111,16 @@ export default (props: FunctionProps) => {
     const properties = data.valueType ? data.valueType.properties : data.inputs;
 
     for (const datum of properties) {
+      console.log(datum);
+      const type = datum.valueType ? datum.valueType.type : '-';
+
       array.push({
         id: datum.id,
         name: datum.name,
-        type: datum.valueType ? datum.valueType.type : '-',
+        type: type,
         format: datum.valueType ? datum.valueType.format : undefined,
         options: datum.valueType ? datum.valueType.elements : undefined,
+        json: type === 'object' ? datum['json']['properties'][0] : undefined,
         value: undefined,
       });
     }
@@ -135,6 +143,8 @@ export default (props: FunctionProps) => {
         if (d.value) {
           if (d.type === 'date') {
             data[d.id] = moment(d.value).format('YYYY-MM-DD HH:mm:ss');
+          } else if (d.type === 'object') {
+            data[d.id] = JSON.parse(d.value);
           } else {
             data[d.id] = d.value;
           }

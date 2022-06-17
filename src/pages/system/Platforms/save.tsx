@@ -385,8 +385,8 @@ export default (props: SaveProps) => {
             },
             'x-validator': [
               {
-                max: 64,
-                message: '最多可输入64个字符',
+                max: 128,
+                message: '最多可输入128个字符',
               },
               {
                 required: true,

@@ -19,7 +19,7 @@ import { service } from '@/pages/link/AccessConfig';
 import { useLocation } from 'umi';
 import SipComponent from '@/components/SipComponent';
 import TitleComponent from '@/components/TitleComponent';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { testIP } from '@/utils/util';
 import { getButtonPermission } from '@/utils/menu';
 
@@ -395,7 +395,7 @@ const Media = (props: Props) => {
     return (
       <div>
         <div className={styles.alert}>
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           配置设备信令参数
         </div>
         <AForm form={aform} layout="vertical" style={{ padding: 30 }}>

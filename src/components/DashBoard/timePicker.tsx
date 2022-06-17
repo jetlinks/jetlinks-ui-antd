@@ -1,7 +1,7 @@
 import type { DatePickerProps } from 'antd';
 import { DatePicker, Radio } from 'antd';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 export enum TimeKey {
   'today' = 'today',
@@ -18,7 +18,9 @@ interface ExtraTimePickerProps extends Omit<DatePickerProps, 'onChange' | 'value
   onChange?: (data: ValueType) => void;
   value?: ValueType;
   defaultTime?: TimeType;
+  pickerTimeChange?: () => void;
   showTime?: boolean;
+  showTimeTool?: boolean;
 }
 
 export const getTimeByType = (type: TimeType) => {
@@ -34,7 +36,7 @@ export const getTimeByType = (type: TimeType) => {
   }
 };
 
-export default (props: ExtraTimePickerProps) => {
+export default forwardRef((props: ExtraTimePickerProps, ref) => {
   const [radioValue, setRadioValue] = useState<TimeType | undefined>(undefined);
 
   const { value, onChange, ...extraProps } = props;
@@ -55,6 +57,10 @@ export default (props: ExtraTimePickerProps) => {
     setRadioValue(type);
     change(startTime, endTime, type);
   };
+
+  useImperativeHandle(ref, () => ({
+    timeChange,
+  }));
 
   useEffect(() => {
     timeChange(props.defaultTime || TimeKey.today);
@@ -78,26 +84,33 @@ export default (props: ExtraTimePickerProps) => {
             if (rangeValue && rangeValue.length === 2) {
               change(rangeValue[0]!.valueOf(), rangeValue[1]!.valueOf(), radioValue!);
             }
+            if (props.pickerTimeChange) {
+              props.pickerTimeChange();
+            }
           }}
-          renderExtraFooter={() => (
-            <div style={{ padding: '12px 0' }}>
-              <Radio.Group
-                defaultValue="day"
-                buttonStyle="solid"
-                value={radioValue}
-                onChange={(e) => {
-                  timeChange(e.target.value);
-                }}
-              >
-                <Radio.Button value={TimeKey.today}>当天</Radio.Button>
-                <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
-                <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
-                <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
-              </Radio.Group>
-            </div>
-          )}
+          renderExtraFooter={
+            props.showTimeTool !== true
+              ? () => (
+                  <div style={{ padding: '12px 0' }}>
+                    <Radio.Group
+                      defaultValue="day"
+                      buttonStyle="solid"
+                      value={radioValue}
+                      onChange={(e) => {
+                        timeChange(e.target.value);
+                      }}
+                    >
+                      <Radio.Button value={TimeKey.today}>当天</Radio.Button>
+                      <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
+                      <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
+                      <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
+                    </Radio.Group>
+                  </div>
+                )
+              : undefined
+          }
         />
       }
     </>
   );
-};
+});

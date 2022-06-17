@@ -32,7 +32,7 @@ type EditProps = {
 
 export default (props: EditProps) => {
   const intl = useIntl();
-  const [disabled, setDisabled] = useState(true);
+  // const [disabled, setDisabled] = useState(true);
   const [show] = useState(true);
   const [loading, setLoading] = useState(false);
   const [accessSupport, setAccessSupport] = useState('unsupported');
@@ -79,7 +79,7 @@ export default (props: EditProps) => {
       setLoading(false);
       if (response.status === 200) {
         message.success('操作成功！');
-        setDisabled(true);
+        // setDisabled(true);
         // 新增后刷新页面，编辑则不需要
         if (!props.data.id) {
           pageJump(response.result.id);
@@ -120,7 +120,7 @@ export default (props: EditProps) => {
       });
       setAccessSupport(props.data.accessSupport ? props.data.accessSupport.value : 'unsupported');
     }
-    setDisabled(!!props.data.id);
+    // setDisabled(!!props.data.id);
 
     // if (props.data.options) {
     //   setShow(props.data.options.switch);
@@ -146,7 +146,7 @@ export default (props: EditProps) => {
                   disabled={disabled}
                   style={{ width: 140, height: 130 }}
                 /> */}
-                <Icons disabled={disabled} />
+                <Icons />
               </Form.Item>
             </Col>
             <Col span={21}>
@@ -164,7 +164,7 @@ export default (props: EditProps) => {
                       { max: 64, message: '最多可输入64个字符' },
                     ]}
                   >
-                    <Input disabled={disabled} placeholder={'请输入名称'} />
+                    <Input placeholder={'请输入名称'} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -177,7 +177,7 @@ export default (props: EditProps) => {
                     required={true}
                     rules={[{ required: true, message: '请输入编码' }]}
                   >
-                    <Input disabled={disabled} placeholder={'请输入编码'} />
+                    <Input placeholder={'请输入编码'} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -195,7 +195,7 @@ export default (props: EditProps) => {
                       { max: 120, message: '最多可输入120字符' },
                     ]}
                   >
-                    <Input disabled={disabled} placeholder={'请输入页面地址'} />
+                    <Input placeholder={'请输入页面地址'} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -212,24 +212,14 @@ export default (props: EditProps) => {
                       },
                     ]}
                   >
-                    <InputNumber
-                      style={{ width: '100%' }}
-                      disabled={disabled}
-                      placeholder={'请输入排序'}
-                    />
+                    <InputNumber style={{ width: '100%' }} placeholder={'请输入排序'} />
                   </Form.Item>
                 </Col>
               </Row>
             </Col>
             <Col span={24}>
               <Form.Item name={'describe'} label={'说明'}>
-                <Input.TextArea
-                  disabled={disabled}
-                  rows={4}
-                  maxLength={200}
-                  showCount
-                  placeholder={'请输入说明'}
-                />
+                <Input.TextArea rows={4} maxLength={200} showCount placeholder={'请输入说明'} />
               </Form.Item>
             </Col>
           </Row>
@@ -262,7 +252,7 @@ export default (props: EditProps) => {
                     onChange={(e) => {
                       setAccessSupport(e.target.value);
                     }}
-                    disabled={disabled}
+                    // disabled={disabled}
                   >
                     <Radio value={'unsupported'}>不支持</Radio>
                     <Radio value={'support'}>支持</Radio>
@@ -284,7 +274,7 @@ export default (props: EditProps) => {
                   >
                     <Select
                       style={{ width: 500 }}
-                      disabled={disabled}
+                      // disabled={disabled}
                       placeholder={'请选择资产类型'}
                       options={
                         assetsType
@@ -301,7 +291,7 @@ export default (props: EditProps) => {
                   >
                     <TreeSelect
                       style={{ width: 400 }}
-                      disabled={disabled}
+                      // disabled={disabled}
                       multiple
                       placeholder={'请选择关联菜单'}
                       fieldNames={{ label: 'name', value: 'id' }}
@@ -323,7 +313,7 @@ export default (props: EditProps) => {
                       id: 'page.system.menu.permissions.operate',
                       defaultMessage: '操作权限',
                     })}
-                    disabled={disabled}
+                    // disabled={disabled}
                     data={permissions}
                   />
                   {/*</Form.Item>*/}
@@ -334,17 +324,19 @@ export default (props: EditProps) => {
           <PermissionButton
             type="primary"
             onClick={() => {
-              if (disabled) {
-                setDisabled(false);
-              } else {
-                saveData();
-              }
+              // if (disabled) {
+              //   setDisabled(false);
+              // } else {
+              //   saveData();
+              // }
+              saveData();
             }}
             loading={loading}
             isPermission={getOtherPermission(['add', 'update'])}
           >
             {intl.formatMessage({
-              id: `pages.data.option.${disabled ? 'edit' : 'save'}`,
+              // id: `pages.data.option.${disabled ? 'edit' : 'save'}`,
+              id: `pages.data.option.save`,
               defaultMessage: '编辑',
             })}
           </PermissionButton>
