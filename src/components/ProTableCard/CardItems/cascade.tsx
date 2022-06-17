@@ -22,7 +22,7 @@ export default (props: CascadeCardProps) => {
       status={props.status.value}
       statusText={props.status.text}
       statusNames={{
-        enabled: StatusColorEnum.processing,
+        enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,
       }}
     >

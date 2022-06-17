@@ -156,7 +156,7 @@ const AliCloud = () => {
       valueType: 'select',
       valueEnum: {
         disabled: {
-          text: '停用',
+          text: '禁用',
           status: 'disabled',
         },
         enabled: {

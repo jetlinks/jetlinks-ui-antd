@@ -20,7 +20,7 @@ export default (props: AliyunCardProps) => {
       status={props?.state?.value}
       statusText={props?.state?.text}
       statusNames={{
-        enabled: StatusColorEnum.processing,
+        enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,
       }}
       showMask={false}

@@ -257,7 +257,7 @@ export default {
   // 设备管理-设备
   'pages.device.instance': '设备',
   'pages.device.instance.registrationTime': '注册时间',
-  'pages.device.instance.status.notActive': '未启用',
+  'pages.device.instance.status.notActive': '禁用',
   'pages.device.instance.status.offLine': '离线',
   'pages.device.instance.status.onLine': '在线',
   'pages.device.instance.deleteTip': '已启用的设备无法删除',

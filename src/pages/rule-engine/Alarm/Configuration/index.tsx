@@ -105,9 +105,26 @@ const Configuration = () => {
     {
       title: '状态',
       dataIndex: 'state',
+      valueType: 'select',
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
       ),
+      valueEnum: {
+        disabled: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.disabled',
+            defaultMessage: '禁用',
+          }),
+          status: 'disabled',
+        },
+        enabled: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.enabled',
+            defaultMessage: '正常',
+          }),
+          status: 'enabled',
+        },
+      },
     },
     {
       title: '说明',
