@@ -7,6 +7,7 @@ import MonacoEditor from 'react-monaco-editor';
 import { isObject } from 'lodash';
 
 import './index.less';
+import { MetaDataJsonHandle } from '@/components/FormItems/MetadataJsonInput';
 
 type FunctionProps = {
   data: FunctionMetadata;
@@ -44,9 +45,31 @@ export default (props: FunctionProps) => {
 
   const handleData = (data: any) => {
     const obj = {};
-    const properties = data.valueType ? data.valueType.properties : [];
+
+    const properties = data.valueType ? data.valueType.properties : data.inputs;
+
     for (const datum of properties) {
-      obj[datum.id] = '';
+      switch (datum.valueType.type) {
+        case 'object':
+          obj[datum.id] = MetaDataJsonHandle(datum['json']['properties'][0]);
+          break;
+        case 'array':
+          obj[datum.id] = [];
+          break;
+        case 'int':
+        case 'long':
+        case 'float':
+        case 'double':
+          obj[datum.id] = 0;
+          break;
+        case 'boolean':
+          obj[datum.id] = false;
+          break;
+        default:
+          obj[datum.id] = '';
+          break;
+      }
+      // obj[datum.id] = '';
     }
     setValue(JSON.stringify(obj));
 
@@ -57,6 +80,9 @@ export default (props: FunctionProps) => {
 
   const editorDidMountHandle = (editor: any) => {
     monacoRef.current = editor;
+    editor.onDidContentSizeChange?.(() => {
+      editor.getAction('editor.action.formatDocument').run();
+    });
   };
 
   useEffect(() => {

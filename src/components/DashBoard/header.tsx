@@ -1,8 +1,8 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import Style from './index.less';
-import { Col, Form, Row } from 'antd';
+import { Col, Form, Radio, Row } from 'antd';
 import type { TimeType } from './timePicker';
-import RangePicker from './timePicker';
+import RangePicker, { TimeKey } from './timePicker';
 
 export interface HeaderProps {
   title: string;
@@ -22,11 +22,14 @@ export interface HeaderProps {
   closeInitialParams?: boolean;
   defaultTime?: TimeType;
   showTime?: boolean;
+  showTimeTool?: boolean;
 }
 
 export default forwardRef((props: HeaderProps, ref) => {
   const [form] = Form.useForm();
+  const [radioValue, setRadioValue] = useState<TimeType | undefined>(undefined);
   const isCloseInitial = useRef<boolean>(false);
+  const pickerRef = useRef<any>(null);
 
   const change = async (data: any) => {
     if (props.onParamsChange) {
@@ -37,6 +40,10 @@ export default forwardRef((props: HeaderProps, ref) => {
   useImperativeHandle(ref, () => ({
     getValues: form.getFieldsValue,
   }));
+
+  useEffect(() => {
+    setRadioValue(props.defaultTime || TimeKey.today);
+  }, []);
 
   return (
     <div className={Style.header}>
@@ -62,10 +69,37 @@ export default forwardRef((props: HeaderProps, ref) => {
                 <Form.Item name={props.extraParams.key}>{props.extraParams.Children}</Form.Item>
               </Col>
             )}
+            {}
             <Col span={props.extraParams ? 18 : 24}>
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                {props.showTimeTool ? (
+                  <Radio.Group
+                    defaultValue="day"
+                    buttonStyle="solid"
+                    value={radioValue}
+                    onChange={(e) => {
+                      setRadioValue(e.target.value);
+                      if (pickerRef.current) {
+                        pickerRef.current.timeChange(e.target.value);
+                      }
+                    }}
+                  >
+                    <Radio.Button value={TimeKey.today}>当天</Radio.Button>
+                    <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
+                    <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
+                    <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
+                  </Radio.Group>
+                ) : null}
                 <Form.Item noStyle name={'time'}>
-                  <RangePicker defaultTime={props.defaultTime} showTime={props.showTime} />
+                  <RangePicker
+                    ref={pickerRef}
+                    defaultTime={props.defaultTime}
+                    showTime={props.showTime}
+                    showTimeTool={props.showTimeTool}
+                    pickerTimeChange={() => {
+                      setRadioValue(undefined);
+                    }}
+                  />
                 </Form.Item>
               </div>
             </Col>

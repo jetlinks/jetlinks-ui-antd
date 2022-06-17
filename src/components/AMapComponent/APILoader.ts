@@ -19,7 +19,7 @@ export const getAMapPlugins = (type: string, map: any, callback: Function) => {
   }
 };
 
-export const getAMapUiPromise = (version: string = '1.1'): Promise<any> => {
+export const getAMapUiPromise = (version: string = '1.0'): Promise<any> => {
   if ((window as any).AMapUI) {
     return Promise.resolve();
   }
