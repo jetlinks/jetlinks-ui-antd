@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useRef, useState } from 'react';
-import { Badge, message, Space } from 'antd';
+import { Badge, message, Space, Tooltip } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
 import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
@@ -54,12 +54,19 @@ const Configuration = () => {
     {
       title: '告警级别',
       dataIndex: 'level',
-      ellipsis: true,
       render: (text: any) => (
-        <span>
-          {(Store.get('default-level') || []).find((item: any) => item?.level === text)?.title ||
-            text}
-        </span>
+        <Tooltip
+          placement="topLeft"
+          title={
+            (Store.get('default-level') || []).find((item: any) => item?.level === text)?.title ||
+            text
+          }
+        >
+          <div className="ellipsis">
+            {(Store.get('default-level') || []).find((item: any) => item?.level === text)?.title ||
+              text}
+          </div>
+        </Tooltip>
       ),
     },
     {
@@ -70,7 +77,7 @@ const Configuration = () => {
         <PermissionButton
           type={'link'}
           isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
-          style={{ padding: 0, height: 'auto', width: '100%' }}
+          style={{ padding: 0, height: 'auto' }}
           tooltip={{
             title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
               ? text
@@ -81,7 +88,16 @@ const Configuration = () => {
             history.push(`${url}?id=${record.sceneId}`);
           }}
         >
-          <span className="ellipsis">{text}</span>
+          <span
+            style={{
+              width: '200px',
+              overflow: 'hidden',
+              textAlign: 'left',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {text}
+          </span>
         </PermissionButton>
       ),
     },
