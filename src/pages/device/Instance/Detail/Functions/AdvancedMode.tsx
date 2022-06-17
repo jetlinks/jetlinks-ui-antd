@@ -1,6 +1,6 @@
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Input, Button } from 'antd';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Input } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import MonacoEditor from 'react-monaco-editor';

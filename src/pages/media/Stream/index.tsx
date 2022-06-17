@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Button, Card, Col, Empty, message, Pagination, Row } from 'antd';
+import { Button, Card, Col, Empty, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
 import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
@@ -11,6 +11,7 @@ import { model } from '@formily/reactive';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import StreamCard from '@/components/ProTableCard/CardItems/Stream';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('media/server');
 
@@ -118,7 +119,7 @@ const Stream = () => {
                           onConfirm: () => {
                             service.remove(item.id).then((resp: any) => {
                               if (resp.status === 200) {
-                                message.success('操作成功！');
+                                onlyMessage('操作成功！');
                                 handleSearch({ pageSize: 10, terms: [] });
                               }
                             });

@@ -1,5 +1,6 @@
 import { service } from '@/pages/rule-engine/Alarm/Log';
-import { Form, Input, message, Modal } from 'antd';
+import { onlyMessage } from '@/utils/util';
+import { Form, Input, Modal } from 'antd';
 
 interface Props {
   close: () => void;
@@ -32,10 +33,10 @@ const SolveComponent = (props: Props) => {
             state: 'normal',
           });
           if (resp.status === 200) {
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             props.reload();
           } else {
-            message.error('操作失败！');
+            onlyMessage('操作失败！', 'error');
           }
         }}
       >

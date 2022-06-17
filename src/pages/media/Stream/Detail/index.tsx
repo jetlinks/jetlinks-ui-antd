@@ -1,23 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Row,
-  Select,
-  Tooltip,
-} from 'antd';
+import { Button, Card, Checkbox, Col, Form, Input, InputNumber, Row, Select, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { service, StreamModel } from '@/pages/media/Stream';
 import { useParams } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import SipComponent from '@/components/SipComponent';
-import { testIP } from '@/utils/util';
+import { onlyMessage, testIP } from '@/utils/util';
 
 interface RTPComponentProps {
   onChange?: (data: any) => void;
@@ -145,7 +133,7 @@ const Detail = () => {
         setProviders(resp.result);
       }
     });
-    if (params.id) {
+    if (params.id && params.id != ':id') {
       service.detail(params.id).then((resp) => {
         if (resp.status === 200) {
           StreamModel.current = resp.result;
@@ -269,7 +257,7 @@ const Detail = () => {
               resp = await service.save(param);
             }
             if (resp && resp.status === 200) {
-              message.success('操作成功！');
+              onlyMessage('操作成功！');
               history.back();
             }
           }}

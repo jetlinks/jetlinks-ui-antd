@@ -1,7 +1,7 @@
 import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Badge, Button, Card, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Badge, Button, Card, Popconfirm, Space, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import BindUser from './BindUser';
@@ -10,6 +10,7 @@ import { useParams } from 'umi';
 import Service from '@/pages/system/Role/service';
 import moment from 'moment';
 import SearchComponent from '@/components/SearchComponent';
+import { onlyMessage } from '@/utils/util';
 
 const UserManage = () => {
   const roleService = new Service('role');
@@ -23,7 +24,7 @@ const UserManage = () => {
   const unBindUser = (id: string, ids: string[]) => {
     roleService.unbindUser(id, ids).subscribe((resp) => {
       if (resp.status === 200) {
-        message.success('操作成功！');
+        onlyMessage('操作成功！');
         actionRef.current?.reload();
       }
     });

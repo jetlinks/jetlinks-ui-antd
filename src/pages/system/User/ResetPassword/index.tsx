@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Password } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
@@ -6,6 +6,7 @@ import { useIntl } from 'umi';
 import { useMemo } from 'react';
 import { createForm } from '@formily/core';
 import { service } from '@/pages/system/User';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -163,7 +164,7 @@ const ResetPassword = (props: Props) => {
         if (props.data.id) {
           const resp = await service.resetPassword(props.data.id, value.confirmPassword);
           if (resp.status === 200) {
-            message.success('操作成功');
+            onlyMessage('操作成功');
             props.close();
           }
         }

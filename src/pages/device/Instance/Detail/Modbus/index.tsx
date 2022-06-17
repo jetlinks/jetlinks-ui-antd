@@ -1,5 +1,5 @@
 import PermissionButton from '@/components/PermissionButton';
-import { Badge, Card, Empty, Input, message, Tabs, Tooltip } from 'antd';
+import { Badge, Card, Empty, Input, Tabs, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import styles from '@/pages/link/Channel/Opcua/Access/index.less';
@@ -18,6 +18,7 @@ import AddPoint from '@/pages/link/Channel/Modbus/Access/addPoint';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 const Modbus = () => {
   const intl = useIntl();
@@ -111,7 +112,7 @@ const Modbus = () => {
                 state: record.state.value === 'enabled' ? 'disabled' : 'enabled',
               };
               await service.saveMetadataConfig(opcId, deviceId, item);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -149,7 +150,7 @@ const Modbus = () => {
             onConfirm: async () => {
               const resp: any = await service.removeMetadataConfig(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -315,7 +316,7 @@ const Modbus = () => {
                             const resp: any = await service.remove(item.id);
                             if (resp.status === 200) {
                               getModbus(deviceId);
-                              message.success(
+                              onlyMessage(
                                 intl.formatMessage({
                                   id: 'pages.data.option.success',
                                   defaultMessage: '操作成功!',

@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { GatewayItem } from '@/pages/link/Gateway/typings';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import {
   EditOutlined,
   MinusOutlined,
@@ -19,7 +19,7 @@ import { CurdModel } from '@/components/BaseCrud/model';
 import type { Field, FormPathPattern } from '@formily/core';
 import { onFieldReact, onFieldValueChange } from '@formily/core';
 import { action } from '@formily/reactive';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 
 export const service = new Service('gateway/device');
 
@@ -30,9 +30,9 @@ const Gateway = () => {
   const handleAction = async (id: string, type: 'shutdown' | 'startup' | 'pause') => {
     const resp = await service.action(id, type);
     if (resp.status === 200) {
-      message.success('操作成功！');
+      onlyMessage('操作成功！');
     } else {
-      message.error('操作失败');
+      onlyMessage('操作失败', 'error');
     }
     actionRef.current?.reload();
   };
@@ -132,7 +132,7 @@ const Gateway = () => {
             <Popconfirm
               onConfirm={async () => {
                 await service.remove(record.id);
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',

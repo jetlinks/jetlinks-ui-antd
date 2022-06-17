@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { message, Modal, Spin } from 'antd';
+import { Modal, Spin } from 'antd';
 import {
   ArrayItems,
   ArrayTable,
@@ -34,6 +34,7 @@ import FUpload from '@/components/Upload';
 import FileUpload from '@/pages/link/Protocol/FileUpload';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import FBraftEditor from '@/components/FBraftEditor';
+import { onlyMessage } from '@/utils/util';
 
 interface Props<T> {
   schema: ISchema;
@@ -111,7 +112,7 @@ const Save = <T extends Record<string, any>>(props: Props<T>) => {
     if (response.status === 200) {
       Store.set(SystemConst.BASE_UPDATE_DATA, response.result);
     }
-    message.success(
+    onlyMessage(
       intl.formatMessage({
         id: 'pages.data.option.success',
         defaultMessage: '操作成功',

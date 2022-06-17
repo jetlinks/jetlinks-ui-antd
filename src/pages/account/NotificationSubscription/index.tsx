@@ -12,11 +12,12 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { observer } from '@formily/reactive-react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Badge, message } from 'antd';
+import { Badge } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import Save from './save';
 import Service from './service';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('notifications/subscriptions');
 
@@ -77,10 +78,10 @@ const NotificationSubscription = observer(() => {
                 ? await service._disabled(record.id)
                 : await service._enabled(record.id);
             if (resp.status === 200) {
-              message.success('操作成功！');
+              onlyMessage('操作成功！');
               actionRef.current?.reload?.();
             } else {
-              message.error('操作失败！');
+              onlyMessage('操作失败！', 'error');
             }
           },
         }}
@@ -105,10 +106,10 @@ const NotificationSubscription = observer(() => {
           onConfirm: async () => {
             const resp: any = await service.remove(record.id);
             if (resp.status === 200) {
-              message.success('操作成功！');
+              onlyMessage('操作成功！');
               actionRef.current?.reload?.();
             } else {
-              message.error('操作失败！');
+              onlyMessage('操作失败！', 'error');
             }
           },
         }}

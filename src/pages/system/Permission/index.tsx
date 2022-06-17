@@ -7,7 +7,7 @@ import {
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Dropdown, Menu, message, Popconfirm, Space, Tooltip, Upload } from 'antd';
+import { Badge, Button, Dropdown, Menu, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -17,7 +17,7 @@ import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import Save from './Save';
 import SystemConst from '@/utils/const';
-import { downloadObject } from '@/utils/util';
+import { downloadObject, onlyMessage } from '@/utils/util';
 import Token from '@/utils/token';
 import { getButtonPermission } from '@/utils/menu';
 import { PermissionButton } from '@/components';
@@ -58,16 +58,16 @@ const Permission: React.FC = observer(() => {
                   const data = JSON.parse(result.target.result);
                   service.batchAdd(data).subscribe((resp) => {
                     if (resp.status === 200) {
-                      message.success('导入成功');
+                      onlyMessage('导入成功');
                       actionRef.current?.reload();
                     }
                   });
                 } catch (error) {
-                  message.error('导入失败，请重试！');
+                  onlyMessage('导入失败，请重试！', 'error');
                 }
               };
             } else {
-              message.error('请上传json格式');
+              onlyMessage('请上传json格式', 'error');
             }
           }}
         >
@@ -88,9 +88,9 @@ const Permission: React.FC = observer(() => {
             service.getPermission({ ...param, paging: false }).subscribe((resp) => {
               if (resp.status === 200) {
                 downloadObject(resp.result, '权限数据');
-                message.success('导出成功');
+                onlyMessage('导出成功');
               } else {
-                message.error('导出错误');
+                onlyMessage('导出错误', 'error');
               }
             });
           }}
@@ -200,7 +200,7 @@ const Permission: React.FC = observer(() => {
                 id: record.id,
                 status: record.status ? 0 : 1,
               });
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -234,7 +234,7 @@ const Permission: React.FC = observer(() => {
             onConfirm: async () => {
               if (record.status) {
                 await service.remove(record.id);
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',

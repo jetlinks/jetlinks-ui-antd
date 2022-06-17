@@ -9,6 +9,7 @@ import { observer } from '@formily/react';
 import { BindModel } from '@/components/BindUser/model';
 import { columns, service } from '@/components/BindUser/index';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 const Bound = observer(() => {
   const intl = useIntl();
@@ -23,7 +24,7 @@ const Bound = observer(() => {
 
   const handleUnBindResult = {
     next: async () => {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.bindUser.theBoundUser.success',
           defaultMessage: '解绑成功',

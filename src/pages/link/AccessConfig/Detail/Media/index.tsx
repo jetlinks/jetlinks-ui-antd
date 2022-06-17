@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, Input, message, Row, Steps } from 'antd';
+import { Button, Card, Col, Form, Input, Row, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
 import {
@@ -19,8 +19,8 @@ import { service } from '@/pages/link/AccessConfig';
 import { useLocation } from 'umi';
 import SipComponent from '@/components/SipComponent';
 import TitleComponent from '@/components/TitleComponent';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import { testIP } from '@/utils/util';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { onlyMessage, testIP } from '@/utils/util';
 import { getButtonPermission } from '@/utils/menu';
 
 type LocationType = {
@@ -395,7 +395,7 @@ const Media = (props: Props) => {
     return (
       <div>
         <div className={styles.alert}>
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           配置设备信令参数
         </div>
         <AForm form={aform} layout="vertical" style={{ padding: 30 }}>
@@ -507,7 +507,7 @@ const Media = (props: Props) => {
                     resp = await service.save({ ...param });
                   }
                   if (resp.status === 200) {
-                    message.success('操作成功！');
+                    onlyMessage('操作成功！');
                     if (params.get('save')) {
                       if ((window as any).onTabSaveSuccess) {
                         if (resp.result) {

@@ -1,11 +1,12 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/system/User/index';
 import Service from '@/pages/system/Role/service';
 import SearchComponent from '@/components/SearchComponent';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -64,7 +65,7 @@ const BindUser = (props: Props) => {
       onOk={() => {
         roleService.bindUser(props.data.id, selectedRowKeys).subscribe((resp) => {
           if (resp.status === 200) {
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             actionRef.current?.reload();
           }
         });

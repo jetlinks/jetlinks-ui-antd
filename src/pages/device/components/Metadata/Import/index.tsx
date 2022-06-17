@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { createSchemaField } from '@formily/react';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -10,6 +10,7 @@ import { service } from '@/pages/device/Product';
 import { useParams } from 'umi';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -183,17 +184,17 @@ const Import = (props: Props) => {
     if (data.metadata === 'alink') {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
-          message.success('导入成功');
+          onlyMessage('导入成功');
           await service.modify(param.id, { metadata: JSON.stringify(meta) });
         },
         error: () => {
-          message.error('发生错误!');
+          onlyMessage('发生错误!', 'error');
         },
       });
     } else {
       const resp = await service.modify(param.id, { metadata: data[data.type] });
       if (resp.status === '200') {
-        message.success('导入成功');
+        onlyMessage('导入成功');
       }
     }
     Store.set(SystemConst.GET_METADATA, true);

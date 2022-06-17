@@ -4,7 +4,7 @@ import {
   SyncOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Card, message, Space, Spin, Tooltip } from 'antd';
+import { Card, Space, Spin, Tooltip } from 'antd';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -15,6 +15,7 @@ import moment from 'moment';
 import Indicators from './Indicators';
 import './PropertyCard.less';
 import FileComponent from './FileComponent';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -33,7 +34,7 @@ const Property = (props: Props) => {
     const resp = await service.getProperty(params.id, data.id);
     setLoading(false);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     }
   };
 

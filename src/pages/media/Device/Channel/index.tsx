@@ -77,7 +77,7 @@ export default () => {
     {
       dataIndex: 'channelId',
       title: '通道ID',
-      width: 220,
+      width: 200,
       ellipsis: true,
     },
     {
@@ -86,7 +86,7 @@ export default () => {
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-      width: 220,
+      width: 200,
       ellipsis: true,
     },
     {
@@ -104,6 +104,7 @@ export default () => {
     },
     {
       dataIndex: 'state',
+      width: 90,
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
@@ -138,7 +139,7 @@ export default () => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 200,
+      width: 120,
       render: (_, record) => [
         <Tooltip
           key="edit"

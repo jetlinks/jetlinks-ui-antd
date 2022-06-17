@@ -1,11 +1,12 @@
 import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message, Modal, Space } from 'antd';
+import { Modal, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { service } from '@/pages/media/Cascade';
 import { useIntl } from 'umi';
 import BadgeStatus, { StatusColorEnum } from '@/components/BadgeStatus';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: string;
@@ -85,11 +86,11 @@ const BindChannel = (props: Props) => {
         if (selectedRowKey.length > 0) {
           const resp = await service.bindChannel(props.data, selectedRowKey);
           if (resp.status === 200) {
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             props.close();
           }
         } else {
-          message.error('请勾选数据');
+          onlyMessage('请勾选数据', 'error');
         }
       }}
       width={1200}

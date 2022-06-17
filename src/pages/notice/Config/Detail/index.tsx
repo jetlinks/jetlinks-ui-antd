@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { Card, Col, Input, message, Row } from 'antd';
+import { Card, Col, Input, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useState } from 'react';
 import { createSchemaField, observer } from '@formily/react';
@@ -20,7 +20,7 @@ import {
 } from '@formily/antd';
 import styles from './index.less';
 import { service, state } from '@/pages/notice/Config';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { useParams } from 'umi';
 import { typeList } from '@/pages/notice';
 import FUpload from '@/components/Upload';
@@ -352,7 +352,7 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入服务器地址',
                       style: {
-                        width: '200px',
+                        width: '180px',
                       },
                     },
                     'x-component': 'FAutoComplete',
@@ -407,6 +407,9 @@ const Detail = observer(() => {
                     'x-decorator': 'FormItem',
                     'x-component-props': {
                       children: '开启SSL',
+                      style: {
+                        width: '100px',
+                      },
                     },
                     // enum: [{label: '开启SSL', value: true}],
                   },
@@ -571,7 +574,7 @@ const Detail = observer(() => {
     }
 
     if (response?.status === 200) {
-      message.success('保存成功');
+      onlyMessage('保存成功');
       history.back();
     }
   };

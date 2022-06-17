@@ -2,9 +2,10 @@ import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { ArrayTable, FormItem, Input } from '@formily/antd';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useIntl } from 'umi';
 import GeoComponent from './location/GeoComponent';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   close: () => void;
@@ -155,7 +156,7 @@ const Edit = (props: Props) => {
         const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
         if (resp.status === 200) {
           InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
-          message.success('操作成功！');
+          onlyMessage('操作成功！');
           props.close();
         }
       }}

@@ -7,7 +7,7 @@ import { PermissionButton, ProTableCard } from '@/components';
 import {
   DeleteOutlined,
   EditOutlined,
-  ExclamationCircleFilled,
+  InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
@@ -16,7 +16,8 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import AliyunCard from '@/components/ProTableCard/CardItems/aliyun';
 import Service from './service';
-import { Badge, message } from 'antd';
+import { Badge } from 'antd';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('device/aliyun/bridge');
 
@@ -74,10 +75,10 @@ const AliCloud = () => {
                 ? await service._disable(record.id)
                 : await service._enable(record.id);
             if (resp.status === 200) {
-              message.success('操作成功！');
+              onlyMessage('操作成功！');
               actionRef.current?.reload?.();
             } else {
-              message.error('操作失败！');
+              onlyMessage('操作失败！', 'error');
             }
           },
         }}
@@ -102,7 +103,7 @@ const AliCloud = () => {
           onConfirm: async () => {
             if (record?.state?.value === 'disabled') {
               await service.remove(record.id);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
@@ -110,7 +111,7 @@ const AliCloud = () => {
               );
               actionRef.current?.reload();
             } else {
-              message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+              onlyMessage(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }), 'error');
             }
           },
         }}
@@ -196,7 +197,7 @@ const AliCloud = () => {
             backgroundColor: '#f6f6f6',
           }}
         >
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           将平台产品与设备数据通过API的方式同步到阿里云物联网平台
         </div>
       </div>
@@ -278,10 +279,10 @@ const AliCloud = () => {
                         ? await service._disable(record.id)
                         : await service._enable(record.id);
                     if (resp.status === 200) {
-                      message.success('操作成功！');
+                      onlyMessage('操作成功！');
                       actionRef.current?.reload?.();
                     } else {
-                      message.error('操作失败！');
+                      onlyMessage('操作失败！', 'error');
                     }
                   },
                 }}
@@ -313,7 +314,7 @@ const AliCloud = () => {
                   onConfirm: async () => {
                     if (record?.state?.value === 'disabled') {
                       await service.remove(record.id);
-                      message.success(
+                      onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',
                           defaultMessage: '操作成功!',
@@ -321,7 +322,10 @@ const AliCloud = () => {
                       );
                       actionRef.current?.reload();
                     } else {
-                      message.error(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }));
+                      onlyMessage(
+                        intl.formatMessage({ id: 'pages.device.instance.deleteTip' }),
+                        'error',
+                      );
                     }
                   },
                 }}

@@ -1,12 +1,13 @@
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from '@/pages/system/Tenant';
-import { message, Space } from 'antd';
+import { Space } from 'antd';
 import { useParams } from 'umi';
 import TenantModel from '@/pages/system/Tenant/model';
 import { observer } from '@formily/react';
 import { useRef } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   reload: () => void;
@@ -41,8 +42,8 @@ const Bind = observer((props: Props) => {
 
   const handleBind = () => {
     service.handleUser(param.id, TenantModel.bindUsers, 'bind').subscribe({
-      next: () => message.success('操作成功'),
-      error: () => message.error('操作失败'),
+      next: () => onlyMessage('操作成功'),
+      error: () => onlyMessage('操作失败', 'error'),
       complete: () => {
         TenantModel.bindUsers = [];
         actionRef.current?.reload();

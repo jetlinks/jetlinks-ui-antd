@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, Input, message, Row } from 'antd';
+import { Button, Card, Col, Form, Input, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/link/AccessConfig';
 import { ProcotoleMapping } from '../Cloud/Protocol';
@@ -6,6 +6,7 @@ import TitleComponent from '@/components/TitleComponent';
 import { getButtonPermission } from '@/utils/menu';
 import ReactMarkdown from 'react-markdown';
 import { useHistory } from 'umi';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   change: () => void;
@@ -87,7 +88,7 @@ const Media = (props: Props) => {
                       };
                       const resp: any = await service[!props.data?.id ? 'save' : 'update'](param);
                       if (resp.status === 200) {
-                        message.success('操作成功！');
+                        onlyMessage('操作成功！');
                         history.goBack();
                       }
                     } catch (errorInfo) {

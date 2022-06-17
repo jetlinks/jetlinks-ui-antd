@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Select } from '@formily/antd';
@@ -6,6 +6,7 @@ import type { ISchema } from '@formily/json-schema';
 import FSelectDevices from '@/components/FSelectDevices';
 import { service, state } from '@/pages/device/Firmware';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   close: () => void;
@@ -36,9 +37,9 @@ const Release = (props: Props) => {
       values?.part?.map((i) => i.id),
     );
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     } else {
-      message.error('操作失败');
+      onlyMessage('操作失败', 'error');
     }
     props.close();
   };

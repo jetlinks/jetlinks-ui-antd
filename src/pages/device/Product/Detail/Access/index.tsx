@@ -1,4 +1,4 @@
-import { Badge, Button, Col, Empty, message, Row, Table, Tooltip } from 'antd';
+import { Badge, Button, Col, Empty, Row, Table, Tooltip } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel, service as productService } from '@/pages/device/Product';
 import styles from './index.less';
@@ -14,6 +14,7 @@ import { createForm } from '@formily/core';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import usePermissions from '@/hooks/permission';
+import { onlyMessage } from '@/utils/util';
 
 const componentMap = {
   string: 'Input',
@@ -312,7 +313,7 @@ const Access = () => {
                     configuration: { ...values },
                   });
                   if (resp.status === 200) {
-                    message.success('操作成功！');
+                    onlyMessage('操作成功！');
                     if ((window as any).onTabSaveSuccess) {
                       if (resp.result) {
                         (window as any).onTabSaveSuccess(resp);

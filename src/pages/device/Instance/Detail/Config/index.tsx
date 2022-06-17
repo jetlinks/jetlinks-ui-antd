@@ -1,4 +1,4 @@
-import { Descriptions, message, Space, Tooltip } from 'antd';
+import { Descriptions, Space, Tooltip } from 'antd';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
 import type { ConfigMetadata } from '@/pages/device/Product/typings';
@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import Edit from './Edit';
 import { PermissionButton } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 const Config = () => {
   const params = useParams<{ id: string }>();
@@ -99,7 +100,7 @@ const Config = () => {
                 onConfirm: async () => {
                   const resp = await service.deployDevice(id || '');
                   if (resp.status === 200) {
-                    message.success('操作成功');
+                    onlyMessage('操作成功');
                     getDetail();
                   }
                 },
@@ -121,7 +122,7 @@ const Config = () => {
                 onConfirm: async () => {
                   const resp = await service.configurationReset(id || '');
                   if (resp.status === 200) {
-                    message.success('恢复默认配置成功');
+                    onlyMessage('恢复默认配置成功');
                     getDetail();
                   }
                 },

@@ -1,10 +1,11 @@
-import { Button, Card, message, Form, Input } from 'antd';
+import { Button, Card, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/account/Center/service';
 import api from '@/pages/user/Login/service';
 import styles from './index.less';
 import Token from '@/utils/token';
 import { useModel } from '@@/plugin-model/useModel';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service();
 
@@ -85,11 +86,11 @@ const Bind = () => {
         Token.set(userInfo.token);
         await fetchUserInfo();
         localStorage.setItem('onLogin', 'yes');
-        message.success('登录成功');
+        onlyMessage('登录成功');
         setTimeout(() => window.close(), 1000);
       },
       error: () => {
-        message.error('登录失败,请重试！');
+        onlyMessage('登录失败,请重试', 'error');
       },
     });
   };
@@ -193,11 +194,11 @@ const Bind = () => {
                 onClick={() => {
                   service.bind(code).then((res) => {
                     if (res.status === 200) {
-                      message.success('绑定成功');
+                      onlyMessage('绑定成功');
                       localStorage.setItem('onBind', 'true');
                       setTimeout(() => window.close(), 1000);
                     } else {
-                      message.error('绑定失败');
+                      onlyMessage('绑定失败', 'error');
                     }
                   });
                 }}

@@ -4,10 +4,11 @@ import BaseService from '@/utils/BaseService';
 import { CloseCircleOutlined, EditOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import { useRef } from 'react';
 import type { CtwingItem } from '@/pages/cloud/Ctwing/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new BaseService<CtwingItem>('ctwing/product');
 
@@ -79,7 +80,7 @@ const Ctwing = () => {
             onConfirm={async () => {
               // const state = record.state.value === 'disabled' ? 'enable' : 'disable';
               // await service.changeStatus(record.id, state);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

@@ -2,8 +2,9 @@ import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { useState } from 'react';
 import { connect } from '@formily/react';
-import { Button, Input, message, Spin, Upload } from 'antd';
+import { Button, Input, Spin, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/lib/upload/interface';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   value: string;
@@ -18,7 +19,7 @@ const FileUpload = connect((props: Props) => {
   const handleChange = (info: UploadChangeParam) => {
     setLoading(true);
     if (info.file.status === 'done') {
-      message.success('上传成功！');
+      onlyMessage('上传成功！');
       info.file.url = info.file.response?.result;
       setUrl(info.file.response?.result);
       setLoading(false);

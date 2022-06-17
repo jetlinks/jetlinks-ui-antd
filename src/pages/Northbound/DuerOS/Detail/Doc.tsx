@@ -7,7 +7,11 @@ const Doc = () => {
     <div className="doc">
       <div className="url">
         小度智能家居开放平台：
-        <a href="https://dueros.baidu.com/dbp/bot/index#/iotopenplatform">
+        <a
+          href="https://dueros.baidu.com/dbp/bot/index#/iotopenplatform"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           https://dueros.baidu.com/dbp/bot/index#/iotopenplatform
         </a>
       </div>

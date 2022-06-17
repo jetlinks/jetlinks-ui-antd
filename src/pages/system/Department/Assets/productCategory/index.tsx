@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Space, Tooltip } from 'antd';
+import { Button, Popconfirm, Space, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductCategoryItem } from '@/pages/system/Department/typings';
@@ -12,6 +12,7 @@ import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import { difference } from 'lodash';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service<ProductCategoryItem>('assets');
 
@@ -48,15 +49,15 @@ export default observer((props: { parentId: string }) => {
           },
         ])
         .subscribe({
-          next: () => message.success('操作成功'),
-          error: () => message.error('操作失败'),
+          next: () => onlyMessage('操作成功'),
+          error: () => onlyMessage('操作失败', 'error'),
           complete: () => {
             Models.unBindKeys = [];
             actionRef.current?.reload();
           },
         });
     } else {
-      message.warning('请勾选需要解绑的数据');
+      onlyMessage('请勾选需要解绑的数据', 'warning');
     }
   };
 

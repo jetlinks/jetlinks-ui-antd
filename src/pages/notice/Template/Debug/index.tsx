@@ -1,5 +1,5 @@
-import { message, Modal } from 'antd';
-import { useEffect, useMemo, useRef } from 'react';
+import { Modal, Spin } from 'antd';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import {
@@ -15,7 +15,7 @@ import {
 import { ISchema } from '@formily/json-schema';
 import { configService, service, state } from '@/pages/notice/Template';
 import { useLocation } from 'umi';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import FUpload from '@/components/Upload';
 
@@ -233,7 +233,9 @@ const Debug = observer(() => {
     },
   };
 
+  const [spinning, setSpinning] = useState<boolean>(false);
   const start = async () => {
+    setSpinning(true);
     const data: { configId: string; variableDefinitions: any } = await form.submit();
     // 应该取选择的配置信息
     if (!state.current) return;
@@ -251,7 +253,9 @@ const Debug = observer(() => {
       ),
     );
     if (resp.status === 200) {
-      message.success('操作成功!');
+      onlyMessage('操作成功!');
+      setSpinning(false);
+      state.debug = false;
     }
   };
   return (
@@ -264,9 +268,11 @@ const Debug = observer(() => {
       onCancel={() => (state.debug = false)}
       onOk={start}
     >
-      <Form form={form} layout={'vertical'}>
-        <SchemaField schema={schema} scope={{ getConfig, useAsyncDataSource }} />
-      </Form>
+      <Spin spinning={spinning}>
+        <Form form={form} layout={'vertical'}>
+          <SchemaField schema={schema} scope={{ getConfig, useAsyncDataSource }} />
+        </Form>
+      </Spin>
     </Modal>
   );
 });

@@ -1,7 +1,7 @@
 import { FormItem, FormLayout, Select } from '@formily/antd';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Badge, Button, Checkbox, message, Modal, Radio, Space, Upload } from 'antd';
+import { Badge, Button, Checkbox, Modal, Radio, Space, Upload } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -11,7 +11,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { EventSourcePolyfill } from 'event-source-polyfill';
-import { downloadFile } from '@/utils/util';
+import { downloadFile, onlyMessage } from '@/utils/util';
 import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
@@ -98,7 +98,7 @@ const NormalUpload = (props: any) => {
       };
       source.onopen = () => {};
     } else {
-      message.error('请先上传文件');
+      onlyMessage('请先上传文件', 'error');
     }
   };
   return (
@@ -112,7 +112,7 @@ const NormalUpload = (props: any) => {
           }}
           onChange={async (info) => {
             if (info.file.status === 'done') {
-              message.success('上传成功');
+              onlyMessage('上传成功');
               const resp: any = info.file.response || { result: '' };
               await submitData(resp?.result || '');
             }

@@ -14,7 +14,7 @@ import {
   Switch,
   TreeSelect,
 } from '@formily/antd';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
@@ -24,7 +24,7 @@ import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/Platforms/index';
-import { randomString } from '@/utils/util';
+import { onlyMessage, randomString } from '@/utils/util';
 
 interface SaveProps {
   visible: boolean;
@@ -450,7 +450,7 @@ export default (props: SaveProps) => {
           props.onReload();
         }
         modalClose();
-        message.success('操作成功');
+        onlyMessage('操作成功');
       }
     }
   }, [props.type]);

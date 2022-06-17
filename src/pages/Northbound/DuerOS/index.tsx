@@ -7,17 +7,18 @@ import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
-  ExclamationCircleFilled,
+  InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, message, Space } from 'antd';
+import { Badge, Space } from 'antd';
 import { DuerOSItem } from '@/pages/Northbound/DuerOS/types';
 import DuerOSCard from '@/components/ProTableCard/CardItems/duerOs';
 import { history } from '@@/core/history';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('dueros/product');
 export default () => {
@@ -73,14 +74,14 @@ export default () => {
             };
             const resp = await service.changeState(record.id, map[record.state?.value]);
             if (resp.status === 200) {
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',
                 }),
               );
             } else {
-              message.error('操作失败！');
+              onlyMessage('操作失败！', 'error');
             }
 
             actionRef.current?.reload();
@@ -117,7 +118,7 @@ export default () => {
           title: '确认删除？',
           onConfirm: async () => {
             await service.remove(record.id);
-            message.success('删除成功!');
+            onlyMessage('删除成功!');
             actionRef.current?.reload();
           },
         }}
@@ -230,7 +231,7 @@ export default () => {
             backgroundColor: '#f6f6f6',
           }}
         >
-          <ExclamationCircleFilled style={{ marginRight: 10 }} />
+          <InfoCircleOutlined style={{ marginRight: 10 }} />
           将平台产品通过API的方式同步DuerOS平台
         </div>
       </div>

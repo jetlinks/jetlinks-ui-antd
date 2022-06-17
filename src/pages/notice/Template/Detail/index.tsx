@@ -30,11 +30,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, message, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 import { typeList } from '@/pages/notice';
 import { configService, service, state } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import WeixinCorp from '@/pages/notice/Template/Detail/doc/WeixinCorp';
 import WeixinApp from '@/pages/notice/Template/Detail/doc/WeixinApp';
 import DingTalk from '@/pages/notice/Template/Detail/doc/DingTalk';
@@ -457,7 +457,7 @@ const Detail = observer(() => {
     }
 
     if (response?.status === 200) {
-      message.success('保存成功');
+      onlyMessage('保存成功');
       history.back();
     }
   };
@@ -1013,6 +1013,7 @@ const Detail = observer(() => {
                     properties: {
                       code: {
                         title: '模版',
+                        required: true,
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
@@ -1046,6 +1047,7 @@ const Detail = observer(() => {
                   },
                   signName: {
                     title: '签名',
+                    required: true,
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {

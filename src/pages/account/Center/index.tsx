@@ -24,6 +24,7 @@ import moment from 'moment';
 import { useModel } from 'umi';
 import usePermissions from '@/hooks/permission';
 import { PermissionButton } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service();
 
@@ -79,7 +80,7 @@ const Center = () => {
             if (res.status === 200) {
               setImageUrl(info.file.response.result);
               getDetail();
-              message.success('上传成功');
+              onlyMessage('上传成功');
             }
           });
         // setLoading(false);
@@ -90,18 +91,18 @@ const Center = () => {
   const saveInfo = (parms: UserDetail) => {
     service.saveUserDetail(parms).subscribe((res) => {
       if (res.status === 200) {
-        message.success('保存成功');
+        onlyMessage('保存成功');
         getDetail();
         setInfos(false);
       } else {
-        message.success('保存失败');
+        onlyMessage('保存失败', 'error');
       }
     });
   };
   const savePassword = (parms: { oldPassword: string; newPassword: string }) => {
     service.savePassWord(parms).subscribe((res) => {
       if (res.status === 200) {
-        message.success('保存成功');
+        onlyMessage('保存成功');
       }
     });
   };
@@ -115,7 +116,7 @@ const Center = () => {
   const unBind = (type: string, provider: string) => {
     service.unbind(type, provider).then((res) => {
       if (res.status === 200) {
-        message.success('解绑成功');
+        onlyMessage('解绑成功');
         getBindInfo();
       }
     });

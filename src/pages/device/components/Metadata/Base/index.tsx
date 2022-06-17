@@ -5,7 +5,6 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { message } from 'antd';
 import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
@@ -19,6 +18,7 @@ import { InstanceModel } from '@/pages/device/Instance';
 import { asyncUpdateMedata, removeMetadata } from '../metadata';
 import type { permissionType } from '@/hooks/permission';
 import { PermissionButton } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   type: MetadataType;
@@ -45,12 +45,12 @@ const BaseMetadata = observer((props: Props) => {
     const _currentData = removeMetadata(type, [record], typeMap.get(target), removeDB);
     const result = await asyncUpdateMedata(target, _currentData);
     if (result.status === 200) {
-      message.success('操作成功！');
+      onlyMessage('操作成功！');
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
       MetadataModel.edit = false;
       MetadataModel.item = {};
     } else {
-      message.error('操作失败！');
+      onlyMessage('操作失败！', 'error');
     }
   };
 

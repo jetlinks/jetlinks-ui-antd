@@ -7,10 +7,11 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
 import Detail from './detail';
-import { Badge, message } from 'antd';
+import { Badge } from 'antd';
 import Service from './service';
 import encodeQuery from '@/utils/encodeQuery';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('notifications');
 
@@ -105,7 +106,7 @@ const NotificationRecord = () => {
               const state = record?.state?.value !== 'read' ? 'read' : 'unread';
               const resp = await service.saveData(state, [record.id]);
               if (resp.status === 200) {
-                message.success('操作成功');
+                onlyMessage('操作成功');
                 actionRef.current?.reload();
               }
             },

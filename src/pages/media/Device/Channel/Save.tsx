@@ -2,11 +2,12 @@
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, FormTab, Input, Select } from '@formily/antd';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useState } from 'react';
 import { ProviderValue } from '../index';
+import { onlyMessage } from '@/utils/util';
 
 interface SaveModalProps {
   visible: boolean;
@@ -203,13 +204,13 @@ const Save = (props: SaveModalProps) => {
       setLoading(false);
 
       if (resp.status === 200) {
-        message.success('操作成功');
+        onlyMessage('操作成功');
         modalClose();
         if (props.onReload) {
           props.onReload();
         }
       } else {
-        message.error('操作失败');
+        onlyMessage('操作失败', 'error');
       }
     }
   };

@@ -1,11 +1,12 @@
 import { TitleComponent } from '@/components';
 import { getButtonPermission } from '@/utils/menu';
-import { Button, Col, Form, Input, message, Row } from 'antd';
+import { Button, Col, Form, Input, Row } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { useHistory } from 'umi';
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ProcotoleMapping } from '../Protocol';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   prev: () => void;
@@ -79,7 +80,7 @@ const Finish = (props: Props) => {
                   };
                   const resp: any = await service[!props.data?.id ? 'save' : 'update'](param);
                   if (resp.status === 200) {
-                    message.success('操作成功！');
+                    onlyMessage('操作成功！');
                     history.goBack();
                     if ((window as any).onTabSaveSuccess) {
                       (window as any).onTabSaveSuccess(resp);

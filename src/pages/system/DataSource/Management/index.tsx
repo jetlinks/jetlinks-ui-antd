@@ -1,54 +1,65 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Input, message, Popconfirm, Space, Tooltip, Tree } from 'antd';
+import { Card, Input, message, Spin, Tooltip, Tree, Empty } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/DataSource';
 import { useLocation } from 'umi';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-// import usePermissions from '@/hooks/permission';
+import { PlusOutlined } from '@ant-design/icons';
 import DataTable from './DataTable';
 import styles from './index.less';
 import EditTable from './EditTable';
 import _ from 'lodash';
 import { useDomFullHeight } from '@/hooks';
+import { Store } from 'jetlinks-store';
 
 const Management = () => {
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id;
 
+  const [info, setInfo] = useState<Partial<DataSourceItem>>({});
   const [rdbList, setRdbList] = useState<any[]>([]);
   const [allList, setAllList] = useState<any[]>([]);
   const [defaultSelectedKeys, setDefaultSelectedKeys] = useState<any[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<any>({});
-  const [model, setModel] = useState<'edit' | 'add' | 'list'>('list');
   const [tableList, setTableList] = useState<any[]>([]);
   const [param, setParam] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
   const { minHeight } = useDomFullHeight(`.management`);
 
-  const handleSearch = () => {
+  const queryTables = (key: string) => {
+    setLoading(true);
+    service.rdbTables(id, key).then((resp) => {
+      if (resp.status === 200) {
+        setTableList(resp.result?.columns || []);
+      }
+      setLoading(false);
+    });
+  };
+
+  const handleSearch = (refresh: boolean) => {
     service.rdbTree(id).then((resp) => {
       if (resp.status === 200) {
+        Store.set('datasource-detail-list', resp.result);
         setAllList(resp.result);
-        setDefaultSelectedKeys([resp.result[0]?.name]);
+        if (refresh) {
+          setDefaultSelectedKeys([resp.result[0]?.name]);
+          queryTables(resp.result[0]?.name);
+        } else {
+          queryTables(defaultSelectedKeys[0]);
+        }
       }
     });
   };
 
   useEffect(() => {
-    handleSearch();
-  }, []);
-
-  useEffect(() => {
-    if (defaultSelectedKeys.length > 0) {
-      service.rdbTables(id, defaultSelectedKeys[0]).then((resp) => {
+    if (id) {
+      service.detail(id).then((resp) => {
         if (resp.status === 200) {
-          setTableList(resp.result?.columns || []);
+          setInfo(resp.result);
         }
       });
-    } else {
-      setTableList([]);
+      handleSearch(true);
     }
-  }, [defaultSelectedKeys]);
+  }, [id]);
 
   useEffect(() => {
     if (!!param) {
@@ -58,141 +69,115 @@ const Management = () => {
       setRdbList([...list]);
       if (!_.map(list, 'name').includes(defaultSelectedKeys[0])) {
         setDefaultSelectedKeys([list[0]?.name]);
+        queryTables(list[0]?.name);
       }
     } else {
       setRdbList([...allList]);
     }
   }, [allList, param]);
 
+  const saveTables = async (name: string, data: any) => {
+    const resp = await service.saveRdbTables(id, {
+      name: name,
+      columns: [...data.array],
+    });
+    if (resp.status === 200) {
+      message.success('保存成功');
+      handleSearch(false);
+    }
+  };
+
   return (
     <PageContainer>
-      <Card className="management" style={{ minHeight }}>
-        <div className={styles.datasourceBox}>
-          <div className={styles.left}>
-            <Input.Search
-              placeholder="请输入"
-              onSearch={(val: string) => {
-                setParam(val);
-              }}
-              allowClear
-              style={{ width: '100%', marginBottom: 20 }}
-            />
-            <div className={styles.tables}>
-              <Tree showLine showIcon defaultExpandAll height={500}>
-                <Tree.TreeNode
-                  title={() => {
-                    return (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', width: 230 }}>
-                        <div>数据源名称</div>
-                        <div>
-                          <a>
-                            <PlusOutlined
-                              onClick={() => {
-                                setCurrent({});
-                                setModel('add');
-                                setVisible(true);
-                              }}
-                            />
-                          </a>
-                        </div>
-                      </div>
-                    );
+      <Spin spinning={loading}>
+        <Card className="management" style={{ minHeight }}>
+          <div className={styles.datasourceBox}>
+            <div className={styles.left}>
+              <Input.Search
+                placeholder="请输入"
+                onSearch={(val: string) => {
+                  setParam(val);
+                }}
+                allowClear
+                style={{ width: '100%', marginBottom: 20 }}
+              />
+              <div className={styles.tables}>
+                <Tree
+                  showLine
+                  showIcon
+                  selectedKeys={defaultSelectedKeys}
+                  defaultExpandAll
+                  height={500}
+                  onSelect={(value: any) => {
+                    setDefaultSelectedKeys(value);
+                    queryTables(value[0]);
                   }}
-                  key={'tables'}
                 >
-                  {rdbList.map((item, index) => (
-                    <Tree.TreeNode
-                      key={item.name}
-                      title={() => {
-                        return (
-                          <div className={styles.treeTitle}>
-                            <div
-                              className={styles.title}
-                              onClick={() => {
-                                setDefaultSelectedKeys([item.name]);
-                              }}
-                            >
-                              <span
-                                className={
-                                  defaultSelectedKeys[0] === item?.name ? styles.active : ''
-                                }
-                              >
-                                <Tooltip title={item.name}>{item.name}</Tooltip>
-                              </span>
-                            </div>
-                            <div className={styles.options}>
-                              <Space>
-                                <a>
-                                  <EditOutlined
-                                    onClick={() => {
-                                      setCurrent(item);
-                                      setVisible(true);
-                                      setModel('edit');
-                                    }}
-                                  />
-                                </a>
-                                <a>
-                                  <Popconfirm
-                                    title="确认删除！"
-                                    onConfirm={() => {
-                                      const list = [...rdbList];
-                                      list.splice(index, 1);
-                                      setAllList([...list]);
-                                      if (item.name === defaultSelectedKeys[0]) {
-                                        setDefaultSelectedKeys([list[0]?.name]);
-                                      }
-                                    }}
-                                  >
-                                    <DeleteOutlined />
-                                  </Popconfirm>
-                                </a>
-                              </Space>
-                            </div>
+                  <Tree.TreeNode
+                    selectable={false}
+                    title={() => {
+                      return (
+                        <div
+                          style={{ display: 'flex', justifyContent: 'space-between', width: 230 }}
+                        >
+                          <div>{info?.shareConfig?.schema || '数据源名称'}</div>
+                          <div>
+                            <a>
+                              <PlusOutlined
+                                onClick={() => {
+                                  setVisible(true);
+                                }}
+                              />
+                            </a>
                           </div>
-                        );
-                      }}
-                    />
-                  ))}
-                </Tree.TreeNode>
-              </Tree>
+                        </div>
+                      );
+                    }}
+                    key={'tables'}
+                  >
+                    {rdbList.map((item) => (
+                      <Tree.TreeNode
+                        key={item.name}
+                        title={() => {
+                          return (
+                            <div className={styles.treeTitle}>
+                              <div className={styles.title}>
+                                <Tooltip title={item.name}>{item.name}</Tooltip>
+                              </div>
+                            </div>
+                          );
+                        }}
+                      />
+                    ))}
+                  </Tree.TreeNode>
+                </Tree>
+              </div>
+            </div>
+            <div className={styles.right}>
+              {defaultSelectedKeys.length > 0 ? (
+                <EditTable
+                  table={{ id, table: defaultSelectedKeys[0] }}
+                  data={tableList}
+                  onChange={(data: any) => {
+                    saveTables(defaultSelectedKeys[0], data);
+                  }}
+                />
+              ) : (
+                <Empty />
+              )}
             </div>
           </div>
-          <div className={styles.right}>
-            <EditTable
-              table={{ id, table: defaultSelectedKeys[0] }}
-              data={tableList}
-              onChange={async (data: any) => {
-                const resp = await service.saveRdbTables(id, {
-                  name: defaultSelectedKeys[0],
-                  columns: [...data.array],
-                });
-                if (resp.status === 200) {
-                  message.success('保存成功');
-                  handleSearch();
-                }
-              }}
-            />
-          </div>
-        </div>
-      </Card>
+        </Card>
+      </Spin>
       {visible && (
         <DataTable
-          data={current}
+          data={{}}
           save={(data) => {
-            if (model === 'edit') {
-              const list = [...rdbList].map((item) => {
-                return {
-                  name: item?.name === current?.name ? data.name : item.name,
-                };
-              });
-              setAllList(list);
-            } else {
-              const list = [...rdbList];
-              list.unshift(data);
-              setAllList([...list]);
-            }
-            setModel('list');
-            message.success('操作成功！');
+            const list = [...rdbList];
+            list.unshift(data);
+            setAllList([...list]);
+            setDefaultSelectedKeys([data.name]);
+            setTableList([]);
             setVisible(false);
           }}
           close={() => {
