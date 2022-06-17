@@ -16,7 +16,7 @@ export const imgMap = {
     dingTalkRobotWebHook: require('/public/images/notice/dingTalk-rebot.png'),
   },
   weixin: {
-    corpMessage: require('/public/images/notice/wechat.png'),
+    corpMessage: require('/public/images/notice/weixin-corp.png'),
     officialMessage: require('/public/images/notice/weixin-official.png'),
   },
   email: {

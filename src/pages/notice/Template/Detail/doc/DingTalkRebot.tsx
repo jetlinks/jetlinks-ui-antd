@@ -5,7 +5,10 @@ const DingTalkRebot = () => {
   return (
     <div className="doc">
       <div className="url">
-        钉钉管理后台：<a href="https://www.dingtalk.com">https://www.dingtalk.com</a>
+        钉钉管理后台：
+        <a href="https://www.dingtalk.com" target="_blank" rel="noopener noreferrer">
+          https://www.dingtalk.com
+        </a>
       </div>
       <h1>1. 概述</h1>
       <div>

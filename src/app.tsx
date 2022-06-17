@@ -13,7 +13,13 @@ import type { RequestOptionsInit } from 'umi-request';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
-import getRoutes, { extraRouteArr, getMenus, handleRoutes, saveMenusCache } from '@/utils/menu';
+import getRoutes, {
+  extraRouteArr,
+  getMenuPathByCode,
+  getMenus,
+  handleRoutes,
+  saveMenusCache,
+} from '@/utils/menu';
 import { AIcon } from '@/components';
 import React from 'react';
 
@@ -236,8 +242,21 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       // content: initialState?.currentUser?.name,
     },
     itemRender: (route, _, routes) => {
-      const chilck = routes.indexOf(route) > 1;
-      return chilck && route.path !== '/iot/rule-engine/Alarm' ? (
+      console.log(route);
+      const isToParentUrl = getMenuPathByCode('notice');
+      const chilck = routes.indexOf(route) !== 0;
+      const goto = routes.some((item) => {
+        if (!route.path.includes('iot')) {
+          return routes.indexOf(route) <= 1;
+        } else {
+          if (route.path.includes('notice')) {
+            return item.path.indexOf(isToParentUrl) > -1;
+          } else {
+            return routes.indexOf(route) > 1;
+          }
+        }
+      });
+      return chilck && goto && route.path !== '/iot/rule-engine/Alarm' ? (
         <Link to={route.path}>{route.breadcrumbName}</Link>
       ) : (
         <span>{route.breadcrumbName}</span>

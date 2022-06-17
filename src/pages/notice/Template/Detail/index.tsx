@@ -1013,6 +1013,7 @@ const Detail = observer(() => {
                     properties: {
                       code: {
                         title: '模版',
+                        required: true,
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
@@ -1046,6 +1047,7 @@ const Detail = observer(() => {
                   },
                   signName: {
                     title: '签名',
+                    required: true,
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {

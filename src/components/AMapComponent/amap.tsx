@@ -12,7 +12,7 @@ interface AMapProps extends Omit<MapProps, 'amapkey' | 'useAMapUI'> {
 }
 
 export default (props: AMapProps) => {
-  const { style, className, events, onInstanceCreated, ...extraProps } = props;
+  const { style, className, events, onInstanceCreated, children, ...extraProps } = props;
 
   const [uiLoading, setUiLoading] = useState(false);
 
@@ -36,12 +36,13 @@ export default (props: AMapProps) => {
     }
   };
 
+  console.log(isOpenUi, uiLoading);
+
   return (
     <div style={style || { width: '100%', height: '100%' }} className={className}>
       {amapKey ? (
         // @ts-ignore
         <Map
-          version={'2.0'}
           amapkey={amapKey}
           zooms={[3, 20]}
           events={
@@ -56,7 +57,7 @@ export default (props: AMapProps) => {
           }
           {...extraProps}
         >
-          {isOpenUi ? (uiLoading ? props.children : null) : props.children}
+          {isOpenUi ? (uiLoading ? children : null) : children}
         </Map>
       ) : (
         <Empty description={'请配置高德地图key'} />

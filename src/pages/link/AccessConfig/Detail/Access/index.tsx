@@ -19,7 +19,7 @@ import encodeQuery from '@/utils/encodeQuery';
 import { useHistory } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
@@ -258,7 +258,7 @@ const Access = (props: Props) => {
         return (
           <div>
             <div className={styles.alert}>
-              <ExclamationCircleFilled style={{ marginRight: 10 }} />
+              <InfoCircleOutlined style={{ marginRight: 10 }} />
               选择与设备通信的网络组件
             </div>
             <div className={styles.search}>
@@ -384,7 +384,7 @@ const Access = (props: Props) => {
         return (
           <div>
             <div className={styles.alert}>
-              <ExclamationCircleFilled style={{ marginRight: 10 }} />
+              <InfoCircleOutlined style={{ marginRight: 10 }} />
               使用选择的消息协议，对网络组件通信数据进行编解码、认证等操作
             </div>
             <div className={styles.search}>

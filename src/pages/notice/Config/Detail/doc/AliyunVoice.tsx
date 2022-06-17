@@ -8,7 +8,9 @@ const AliyunVoice = () => {
     <div className={'doc'}>
       <div className={'url'}>
         阿里云管理控制台：
-        <a href="https://home.console.aliyun.com">https://home.console.aliyun.com</a>
+        <a href="https://home.console.aliyun.com" target="_blank" rel="noopener noreferrer">
+          https://home.console.aliyun.com
+        </a>
       </div>
       <h1>1. 概述</h1>
       <div>

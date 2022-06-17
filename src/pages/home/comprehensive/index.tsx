@@ -354,7 +354,7 @@ const Comprehensive = () => {
               content: '根据不同的传输类型，关联消息协议，配置设备接入网关相关参数。',
               url: require('/public/images/home/bottom-4.png'),
               onClick: () => {
-                const url = getMenuPathByCode(MENUS_CODE['link/Gateway']);
+                const url = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
                 if (!!url) {
                   history.push(url);
                 } else {

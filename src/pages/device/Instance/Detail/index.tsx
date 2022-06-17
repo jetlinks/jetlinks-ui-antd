@@ -233,6 +233,7 @@ const InstanceDetail = observer(() => {
   }, [params.id]);
 
   useEffect(() => {
+    console.log(location.query);
     if ((location as any).query?.key) {
       setTab((location as any).query?.key || 'detail');
     }

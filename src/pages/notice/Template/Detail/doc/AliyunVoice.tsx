@@ -5,7 +5,9 @@ const AliyunVoice = () => {
     <div className="doc">
       <div className="url">
         阿里云语音服务平台：
-        <a href="https://account.console.aliyun.com">https://account.console.aliyun.com</a>
+        <a href="https://account.console.aliyun.com" target="_blank" rel="noopener noreferrer">
+          https://account.console.aliyun.com
+        </a>
       </div>
       <h1>1. 概述</h1>
       <div>

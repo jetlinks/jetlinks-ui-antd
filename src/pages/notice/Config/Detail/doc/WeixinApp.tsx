@@ -8,7 +8,10 @@ const WeixinApp = () => {
   return (
     <div className={'doc'}>
       <div className={'url'}>
-        微信公众平台：<a href="https://mp.weixin.qq.com/">https://mp.weixin.qq.com/</a>
+        微信公众平台：
+        <a href="https://mp.weixin.qq.com/" target="_blank" rel="noopener noreferrer">
+          https://mp.weixin.qq.com/
+        </a>
       </div>
       <h1>1. 概述</h1>
       <div>

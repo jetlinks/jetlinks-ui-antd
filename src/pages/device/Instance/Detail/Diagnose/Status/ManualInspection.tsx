@@ -4,7 +4,7 @@ import type { ISchema } from '@formily/json-schema';
 import { Form, FormGrid, FormItem, Input, Password, PreviewText } from '@formily/antd';
 import { Modal } from 'antd';
 import styles from './index.less';
-import { ExclamationCircleFilled } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const componentMap = {
   string: 'Input',
@@ -132,7 +132,7 @@ const ManualInspection = (props: Props) => {
       visible
     >
       <div className={styles.alert}>
-        <ExclamationCircleFilled style={{ marginRight: 10 }} />
+        <InfoCircleOutlined style={{ marginRight: 10 }} />
         {data.type === 'product'
           ? `当前填写的数据将与产品-设备接入配置中的${data.data.name}数据进行比对`
           : `当前填写的数据将与设备-实例信息配置中的${data.data.name}数据进行比对`}

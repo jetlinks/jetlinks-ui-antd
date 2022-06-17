@@ -54,6 +54,7 @@ const Configuration = () => {
     {
       title: '告警级别',
       dataIndex: 'level',
+      ellipsis: true,
       render: (text: any) => (
         <span>
           {(Store.get('default-level') || []).find((item: any) => item?.level === text)?.title ||

@@ -416,6 +416,7 @@ const DeviceBoard = () => {
           height={500}
           defaultTime={'week'}
           showTime={true}
+          showTimeTool={true}
           onParamsChange={getEcharts}
         />
         {amapKey && (

@@ -336,6 +336,7 @@ const Dashboard = observer(() => {
         <DashBoard
           title="告警统计"
           height={600}
+          showTimeTool={true}
           options={options}
           onParamsChange={getEcharts}
           ref={alarmCountRef}
