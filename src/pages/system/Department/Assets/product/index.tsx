@@ -1,7 +1,7 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, Popconfirm, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
@@ -15,6 +15,7 @@ import {
   handlePermissionsMap,
 } from '@/components/ProTableCard/CardItems/product';
 import { ProTableCard } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service<ProductItem>('assets');
 
@@ -39,15 +40,15 @@ export default observer((props: { parentId: string }) => {
           },
         ])
         .subscribe({
-          next: () => message.success('操作成功'),
-          error: () => message.error('操作失败'),
+          next: () => onlyMessage('操作成功'),
+          error: () => onlyMessage('操作失败', 'error'),
           complete: () => {
             Models.unBindKeys = [];
             actionRef.current?.reload();
           },
         });
     } else {
-      message.warning('请勾选需要解绑的数据');
+      onlyMessage('请勾选需要解绑的数据', 'warning');
     }
   };
 

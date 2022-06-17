@@ -3,7 +3,7 @@ import usePermissions from '@/hooks/permission';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Form, FormButtonGroup, FormItem } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import { Card, Col, Input, message, Row } from 'antd';
+import { Card, Col, Input, Row } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import { useEffect, useMemo } from 'react';
 import { createForm } from '@formily/core';
@@ -12,6 +12,7 @@ import Standard from './components/Standard';
 import { service } from '@/pages/link/Certificate';
 import { useParams } from 'umi';
 import './index.less';
+import { onlyMessage } from '@/utils/util';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
@@ -146,7 +147,7 @@ const Detail = observer(() => {
                         ? await service.update(data)
                         : await service.save(data);
                       if (response.status === 200) {
-                        message.success('操作成功');
+                        onlyMessage('操作成功');
                         history.back();
                       }
                     }}

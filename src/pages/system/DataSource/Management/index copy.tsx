@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Input, message, Popconfirm, Space, Tooltip, Tree } from 'antd';
+import { Card, Input, Popconfirm, Space, Tooltip, Tree } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/system/DataSource';
 import { useIntl, useLocation } from 'umi';
@@ -12,6 +12,7 @@ import SearchComponent from '@/components/SearchComponent';
 import DataTable from './DataTable';
 import styles from './index.less';
 import DataRow from './DataRow';
+import { onlyMessage } from '@/utils/util';
 
 const Management = () => {
   const location = useLocation<{ id: string }>();
@@ -266,7 +267,7 @@ const Management = () => {
           save={(data) => {
             rdbList.push(data);
             setRdbList([...rdbList]);
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             setVisible(false);
           }}
           close={() => {

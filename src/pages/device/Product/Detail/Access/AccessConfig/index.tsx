@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Col, message, Modal, Pagination, Row } from 'antd';
+import { Col, Modal, Pagination, Row } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel } from '@/pages/device/Product';
 import SearchComponent from '@/components/SearchComponent';
@@ -10,6 +10,7 @@ import Service from '@/pages/device/Product/service';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 import { getMenuPathByCode } from '@/utils/menu';
 import PermissionButton from '@/components/PermissionButton';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   close: () => void;
@@ -101,7 +102,7 @@ const AccessConfig = (props: Props) => {
             service1.detail(productModel.current?.id || '').then((res) => {
               if (res.status === 200) {
                 productModel.current = { ...res.result };
-                message.success('操作成功！');
+                onlyMessage('操作成功！');
               }
               close();
             });
@@ -120,7 +121,7 @@ const AccessConfig = (props: Props) => {
             //   });
           }
         } else {
-          message.success('请选择接入方式');
+          onlyMessage('请选择接入方式', 'error');
         }
       }}
     >

@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { createForm, onFieldValueChange } from '@formily/core';
-import { Card, Col, Input, message, Row } from 'antd';
+import { Card, Col, Input, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useState } from 'react';
 import { createSchemaField, observer } from '@formily/react';
@@ -20,7 +20,7 @@ import {
 } from '@formily/antd';
 import styles from './index.less';
 import { service, state } from '@/pages/notice/Config';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { useParams } from 'umi';
 import { typeList } from '@/pages/notice';
 import FUpload from '@/components/Upload';
@@ -571,7 +571,7 @@ const Detail = observer(() => {
     }
 
     if (response?.status === 200) {
-      message.success('保存成功');
+      onlyMessage('保存成功');
       history.back();
     }
   };

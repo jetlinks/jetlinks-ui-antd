@@ -1,6 +1,6 @@
 import type { ProColumns, ActionType } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Card, Col, message, Row, Space } from 'antd';
+import { Button, Card, Col, Row, Space } from 'antd';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import type { TenantMember } from '@/pages/system/Tenant/typings';
 import { service } from '@/pages/system/Tenant';
@@ -10,6 +10,7 @@ import { observer } from '@formily/react';
 import TenantModel from '@/pages/system/Tenant/model';
 import { useRef } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 const Member = observer(() => {
   const intl = useIntl();
@@ -53,8 +54,8 @@ const Member = observer(() => {
   ];
   const handleUnBind = () => {
     service.handleUser(param.id, TenantModel.unBindUsers, 'unbind').subscribe({
-      next: () => message.success('操作成功'),
-      error: () => message.error('操作失败'),
+      next: () => onlyMessage('操作成功'),
+      error: () => onlyMessage('操作失败', 'error'),
       complete: () => {
         TenantModel.unBindUsers = [];
         actionRef.current?.reload();

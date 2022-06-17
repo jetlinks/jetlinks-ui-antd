@@ -1,17 +1,4 @@
-import {
-  Badge,
-  Button,
-  Card,
-  Col,
-  Empty,
-  Form,
-  Input,
-  message,
-  Row,
-  Steps,
-  Table,
-  Tooltip,
-} from 'antd';
+import { Badge, Button, Card, Col, Empty, Form, Input, Row, Steps, Table, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
 import { service } from '@/pages/link/AccessConfig';
@@ -23,6 +10,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   change: () => void;
@@ -121,7 +109,7 @@ const Access = (props: Props) => {
   const next = () => {
     if (current === 0) {
       if (!networkCurrent) {
-        message.error('请选择网络组件！');
+        onlyMessage('请选择网络组件！', 'error');
       } else {
         queryProcotolList(props.provider?.id);
         setCurrent(current + 1);
@@ -129,7 +117,7 @@ const Access = (props: Props) => {
     }
     if (current === 1) {
       if (!procotolCurrent) {
-        message.error('请选择消息协议！');
+        onlyMessage('请选择消息协议！', 'error');
       } else {
         service
           .getConfigView(procotolCurrent, ProcotoleMapping.get(props.provider?.id))
@@ -531,7 +519,7 @@ const Access = (props: Props) => {
                             })
                             .then((resp: any) => {
                               if (resp.status === 200) {
-                                message.success('操作成功！');
+                                onlyMessage('操作成功！');
                                 history.goBack();
                                 if ((window as any).onTabSaveSuccess) {
                                   (window as any).onTabSaveSuccess(resp);
@@ -551,7 +539,7 @@ const Access = (props: Props) => {
                             })
                             .then((resp: any) => {
                               if (resp.status === 200) {
-                                message.success('操作成功！');
+                                onlyMessage('操作成功！');
                                 history.goBack();
                                 if ((window as any).onTabSaveSuccess) {
                                   (window as any).onTabSaveSuccess(resp);

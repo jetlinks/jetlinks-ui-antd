@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Button, message, Tooltip } from 'antd';
+import { Button, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,6 +21,7 @@ import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 import Save from './Save';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('media/device');
 
@@ -62,7 +63,7 @@ const Device = () => {
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功!',
@@ -80,9 +81,9 @@ const Device = () => {
     const resp = await service.updateChannels(id);
     if (resp.status === 200) {
       actionRef.current?.reload();
-      message.success('通道更新成功');
+      onlyMessage('通道更新成功');
     } else {
-      message.error('通道更新失败');
+      onlyMessage('通道更新失败', 'error');
     }
   };
 
@@ -281,7 +282,7 @@ const Device = () => {
               if (record.state.value !== 'offline') {
                 await deleteItem(record.id);
               } else {
-                message.error('在线设备不能进行删除操作');
+                onlyMessage('在线设备不能进行删除操作', 'error');
               }
             },
           }}
@@ -421,7 +422,7 @@ const Device = () => {
                     if (record.state.value === 'offline') {
                       await deleteItem(record.id);
                     } else {
-                      message.error('在线设备不能进行删除操作');
+                      onlyMessage('在线设备不能进行删除操作', 'error');
                     }
                   },
                 }}

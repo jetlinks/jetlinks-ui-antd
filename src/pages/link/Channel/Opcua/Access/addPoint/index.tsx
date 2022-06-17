@@ -1,7 +1,8 @@
-import { Col, Form, Input, InputNumber, message, Modal, Radio, Row, Select } from 'antd';
+import { Col, Form, Input, InputNumber, Modal, Radio, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/link/Channel/Opcua';
 import { DataTypeList } from '@/pages/device/data';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: any;
@@ -37,7 +38,7 @@ const AddPoint = (props: Props) => {
           )
           .then((res) => {
             if (res.status === 200) {
-              message.success('保存成功');
+              onlyMessage('保存成功');
               props.close();
             }
           });
@@ -54,7 +55,7 @@ const AddPoint = (props: Props) => {
           )
           .then((res) => {
             if (res.status === 200) {
-              message.success('保存成功');
+              onlyMessage('保存成功');
               props.close();
             }
           });
@@ -75,7 +76,7 @@ const AddPoint = (props: Props) => {
           })
           .then((res) => {
             if (res.status === 200) {
-              message.success('保存成功');
+              onlyMessage('保存成功');
               props.close();
             }
           });
@@ -89,7 +90,7 @@ const AddPoint = (props: Props) => {
           })
           .then((res) => {
             if (res.status === 200) {
-              message.success('保存成功');
+              onlyMessage('保存成功');
               props.close();
             }
           });

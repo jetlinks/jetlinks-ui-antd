@@ -2,7 +2,6 @@ import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
-import { message } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -17,6 +16,7 @@ import Service from './service';
 import { useHistory, useIntl } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
 import { StatusColorEnum } from '@/components/BadgeStatus';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('scene');
 
@@ -41,7 +41,7 @@ const Scene = () => {
         actionRef.current?.reload();
       }
     } else {
-      message.warning('该场景已绑定告警，不可删除');
+      onlyMessage('该场景已绑定告警，不可删除', 'warning');
     }
   };
 
@@ -90,7 +90,7 @@ const Scene = () => {
             if (record.state.value !== 'started') {
               const resp = await service.startScene(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
@@ -101,7 +101,7 @@ const Scene = () => {
             } else {
               const resp = await service.stopScene(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',

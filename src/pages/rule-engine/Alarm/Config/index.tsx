@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Divider, Image, message, Row, Table, Tooltip } from 'antd';
+import { Button, Card, Col, Divider, Image, Row, Table, Tooltip } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
@@ -12,6 +12,7 @@ import Service from '@/pages/rule-engine/Alarm/Config/service';
 import styles from './index.less';
 import ReactMarkdown from 'react-markdown';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('alarm/config');
 const ioImg = require('/public/images/alarm/io.png');
@@ -356,7 +357,7 @@ const Config = () => {
     });
 
     if (inputResp.status === 200 && outputResp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     }
   };
 
@@ -365,7 +366,7 @@ const Config = () => {
     const _level = values?.level.map((l: string, i: number) => ({ level: i + 1, title: l }));
     const resp = await service.saveLevel(_level);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     }
   };
 

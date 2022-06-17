@@ -1,22 +1,10 @@
 import TitleComponent from '@/components/TitleComponent';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Radio,
-  Row,
-  Select,
-  Tooltip,
-} from 'antd';
+import { Button, Card, Col, Form, Input, InputNumber, Radio, Row, Select, Tooltip } from 'antd';
 import SipComponent from '@/components/SipComponent';
 import SipSelectComponent from '@/components/SipSelectComponent';
-import { testIP } from '@/utils/util';
+import { onlyMessage, testIP } from '@/utils/util';
 import { useEffect, useState } from 'react';
 import { service } from '../index';
 import { useLocation } from 'umi';
@@ -135,7 +123,7 @@ const Save = () => {
               resp = await service.save(param);
             }
             if (resp && resp.status === 200) {
-              message.success('操作成功！');
+              onlyMessage('操作成功！');
               history.back();
             }
           }}

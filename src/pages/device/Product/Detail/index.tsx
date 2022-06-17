@@ -17,6 +17,7 @@ import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { onlyMessage } from '@/utils/util';
 
 export const ModelEnum = {
   base: 'base',
@@ -128,7 +129,7 @@ const ProductDetail = observer(() => {
           });
         },
         error: async () => {
-          message.success('操作失败');
+          onlyMessage('操作失败', 'error');
         },
         complete: () => {
           setLoading(false);

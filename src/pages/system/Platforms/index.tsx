@@ -17,9 +17,9 @@ import { StatusColorEnum } from '@/components/BadgeStatus';
 import SaveModal from './save';
 import PasswordModal from './password';
 import Service from './service';
-import { message } from 'antd';
 import { getMenuPathByCode } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('api-client');
 
@@ -39,7 +39,7 @@ export default () => {
   const deleteById = async (id: string) => {
     const resp: any = await service.remove(id);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
       actionRef.current?.reload();
     }
   };
@@ -196,7 +196,7 @@ export default () => {
               if (record.state.value !== 'disabled') {
                 service.undeploy(record.id).then((resp: any) => {
                   if (resp.status === 200) {
-                    message.success(
+                    onlyMessage(
                       intl.formatMessage({
                         id: 'pages.data.option.success',
                         defaultMessage: '操作成功!',
@@ -208,7 +208,7 @@ export default () => {
               } else {
                 service.deploy(record.id).then((resp: any) => {
                   if (resp.status === 200) {
-                    message.success(
+                    onlyMessage(
                       intl.formatMessage({
                         id: 'pages.data.option.success',
                         defaultMessage: '操作成功!',

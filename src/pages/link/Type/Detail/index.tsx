@@ -17,9 +17,9 @@ import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Field } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
-import { Card, message } from 'antd';
+import { Card } from 'antd';
 import styles from './index.less';
-import { useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
 import _ from 'lodash';
 import FAutoComplete from '@/components/FAutoComplete';
@@ -714,7 +714,7 @@ const Save = observer(() => {
     }
     const response: any = data.id ? await service.update(data) : await service.save(data);
     if (response.status === 200) {
-      message.success('保存成功');
+      onlyMessage('保存成功');
       history.back();
       if ((window as any).onTabSaveSuccess) {
         if (response.result?.id) {

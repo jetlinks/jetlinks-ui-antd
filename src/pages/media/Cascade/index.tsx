@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, message } from 'antd';
+import { Badge } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -21,6 +21,7 @@ import { useHistory } from 'umi';
 import Service from './service';
 import Publish from './Publish';
 import { lastValueFrom } from 'rxjs';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('media/gb28181-cascade');
 
@@ -91,7 +92,7 @@ const Cascade = () => {
             resp = await service.disabled(record.id);
           }
           if (resp?.status === 200) {
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             actionRef.current?.reset?.();
           }
         },
@@ -113,7 +114,7 @@ const Cascade = () => {
         onConfirm: async () => {
           const resp: any = await service.remove(record.id);
           if (resp.status === 200) {
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             actionRef.current?.reset?.();
           }
         },
@@ -271,7 +272,7 @@ const Cascade = () => {
                 resp = await service.disabled(record.id);
               }
               if (resp?.status === 200) {
-                message.success('操作成功！');
+                onlyMessage('操作成功！');
                 actionRef.current?.reset?.();
               }
             },
@@ -295,7 +296,7 @@ const Cascade = () => {
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
-                message.success('操作成功！');
+                onlyMessage('操作成功！');
                 actionRef.current?.reset?.();
               }
             },

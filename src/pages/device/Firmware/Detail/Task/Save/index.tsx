@@ -1,9 +1,10 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { service, state } from '../../..';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   visible: boolean;
@@ -61,9 +62,9 @@ const Save = (props: Props) => {
     values.firmwareId = state.current?.id;
     const resp = await service.saveTask(values);
     if (resp.status === 200) {
-      message.success('操作成功');
+      onlyMessage('操作成功');
     } else {
-      message.error('操作失败');
+      onlyMessage('操作失败', 'error');
     }
     props.close();
   };

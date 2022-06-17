@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   EditOutlined,
@@ -13,6 +13,7 @@ import BaseCrud from '@/components/BaseCrud';
 import { CurdModel } from '@/components/BaseCrud/model';
 import type { OnenetItem } from '@/pages/cloud/Onenet/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new BaseService<OnenetItem>('one-net/product');
 
@@ -82,7 +83,7 @@ const Onenet = () => {
               defaultMessage: `确认${record.state.value === 'disabled' ? '启' : '禁'}用？`,
             })}
             onConfirm={async () => {
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

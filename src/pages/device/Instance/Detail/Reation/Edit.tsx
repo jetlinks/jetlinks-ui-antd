@@ -5,10 +5,11 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
 import { Form, FormGrid, FormItem, PreviewText, Select } from '@formily/antd';
 import { useParams } from 'umi';
-import { Button, Drawer, message, Space } from 'antd';
+import { Button, Drawer, Space } from 'antd';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { useEffect, useMemo, useState } from 'react';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   close: () => void;
@@ -145,7 +146,7 @@ const Edit = (props: Props) => {
                 });
                 const resp = await service.saveRelations(id || '', param);
                 if (resp.status === 200) {
-                  message.success('操作成功！');
+                  onlyMessage('操作成功！');
                   props.close();
                   if (props.reload) {
                     props.reload();

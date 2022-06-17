@@ -1,4 +1,4 @@
-import { message, TreeSelect as ATreeSelect } from 'antd';
+import { TreeSelect as ATreeSelect } from 'antd';
 import { useIntl } from 'umi';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -22,6 +22,7 @@ import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/User';
 import { Modal, PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   model: 'add' | 'edit' | 'query';
@@ -425,7 +426,7 @@ const Save = (props: Props) => {
     temp.roleIdList = value.roleIdList;
     const response = await service.saveUser(temp, model);
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功',
@@ -433,7 +434,7 @@ const Save = (props: Props) => {
       );
       props.close();
     } else {
-      message.error('操作失败！');
+      onlyMessage('操作失败！', 'error');
     }
   };
 

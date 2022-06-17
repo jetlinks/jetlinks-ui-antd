@@ -1,4 +1,4 @@
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
@@ -11,6 +11,7 @@ import { service } from '@/pages/device/Firmware';
 import type { Response } from '@/utils/typings';
 import { useRef } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data?: FirmwareItem;
@@ -54,9 +55,9 @@ const Save = (props: Props) => {
     values.productName = product?.name || '';
     const resp = (await service.save(values)) as Response<FirmwareItem>;
     if (resp.status === 200) {
-      message.success('保存成功！');
+      onlyMessage('保存成功！');
     } else {
-      message.error('保存失败！');
+      onlyMessage('保存失败！', 'error');
     }
   };
   const schema: ISchema = {

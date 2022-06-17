@@ -1,5 +1,5 @@
 import TitleComponent from '@/components/TitleComponent';
-import { Badge, Button, Col, message, Popconfirm, Row } from 'antd';
+import { Badge, Button, Col, Popconfirm, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
 import { InstanceModel, service } from '@/pages/device/Instance';
@@ -10,6 +10,7 @@ import { DiagnoseStatusModel } from './model';
 import { PermissionButton } from '@/components';
 import DiagnosticAdvice from './DiagnosticAdvice';
 import ManualInspection from './ManualInspection';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   onChange: (type: string) => void;
@@ -215,7 +216,7 @@ const Status = observer((props: Props) => {
                                             DiagnoseStatusModel.gateway?.channelId,
                                           );
                                           if (res.status === 200) {
-                                            message.success('操作成功！');
+                                            onlyMessage('操作成功！');
                                             DiagnoseStatusModel.status.network = {
                                               status: 'success',
                                               text: '正常',
@@ -335,7 +336,7 @@ const Status = observer((props: Props) => {
                               InstanceModel.detail?.productId || '',
                             );
                             if (resp.status === 200) {
-                              message.success('操作成功！');
+                              onlyMessage('操作成功！');
                               DiagnoseStatusModel.status.product = {
                                 status: 'success',
                                 text: '正常',
@@ -389,7 +390,7 @@ const Status = observer((props: Props) => {
                         onConfirm={async () => {
                           const resp = await service.deployDevice(InstanceModel.detail?.id || '');
                           if (resp.status === 200) {
-                            message.success('操作成功！');
+                            onlyMessage('操作成功！');
                             DiagnoseStatusModel.status.device = {
                               status: 'success',
                               text: '正常',
@@ -567,7 +568,7 @@ const Status = observer((props: Props) => {
                           onConfirm={async () => {
                             const resp = await service.startGateway(gateway?.id || '');
                             if (resp.status === 200) {
-                              message.success('操作成功！');
+                              onlyMessage('操作成功！');
                               DiagnoseStatusModel.status.deviceAccess = {
                                 status: 'success',
                                 text: '正常',

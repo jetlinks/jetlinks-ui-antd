@@ -2,12 +2,13 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from '@/pages/system/Department/Member';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import MemberModel from '@/pages/system/Department/Member/model';
 import { observer } from '@formily/react';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   reload: () => void;
@@ -53,8 +54,8 @@ const Bind = observer((props: Props) => {
   const handleBind = () => {
     if (MemberModel.bindUsers.length) {
       service.handleUser(props.parentId, MemberModel.bindUsers, 'bind').subscribe({
-        next: () => message.success('操作成功'),
-        error: () => message.error('操作失败'),
+        next: () => onlyMessage('操作成功'),
+        error: () => onlyMessage('操作失败', 'error'),
         complete: () => {
           MemberModel.bindUsers = [];
           actionRef.current?.reload();

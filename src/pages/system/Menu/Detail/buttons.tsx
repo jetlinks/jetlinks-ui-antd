@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Modal, Tooltip } from 'antd';
+import { Button, Form, Input, Modal, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useCallback, useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
@@ -9,6 +9,7 @@ import type { MenuButtonInfo, MenuItem } from '@/pages/system/Menu/typing';
 import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
 import { PermissionButton } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -75,12 +76,12 @@ export default (props: ButtonsProps) => {
         });
         setLoading(false);
         if (response.status === 200) {
-          message.success('操作成功!');
+          onlyMessage('操作成功!');
           props.onLoad();
           resetForm();
           setVisible(false);
         } else {
-          message.error('操作失败!');
+          onlyMessage('操作失败!', 'error');
         }
       }
       /* eslint-disable */
@@ -251,7 +252,7 @@ export default (props: ButtonsProps) => {
           <PermissionButton
             onClick={() => {
               if (!props.data) {
-                message.warning('请先新增菜单基本信息');
+                onlyMessage('请先新增菜单基本信息', 'warning');
                 return;
               }
               form.resetFields();

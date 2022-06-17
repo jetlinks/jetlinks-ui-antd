@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Input, message, Popconfirm, Space, Tooltip, Tree } from 'antd';
+import { Card, Input, Popconfirm, Space, Tooltip, Tree } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/DataSource';
 import { useLocation } from 'umi';
@@ -10,6 +10,7 @@ import styles from './index.less';
 import EditTable from './EditTable';
 import _ from 'lodash';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 const Management = () => {
   const location = useLocation<{ id: string }>();
@@ -167,7 +168,7 @@ const Management = () => {
                   columns: [...data.array],
                 });
                 if (resp.status === 200) {
-                  message.success('保存成功');
+                  onlyMessage('保存成功');
                   handleSearch();
                 }
               }}
@@ -192,7 +193,7 @@ const Management = () => {
               setAllList([...list]);
             }
             setModel('list');
-            message.success('操作成功！');
+            onlyMessage('操作成功！');
             setVisible(false);
           }}
           close={() => {

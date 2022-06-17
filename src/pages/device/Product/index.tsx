@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Button, message, Space, Tooltip, Upload } from 'antd';
+import { Badge, Button, Space, Tooltip, Upload } from 'antd';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import {
   DeleteOutlined,
@@ -22,7 +22,7 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton, ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
-import { downloadObject } from '@/utils/util';
+import { downloadObject, onlyMessage } from '@/utils/util';
 import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
 import { omit } from 'lodash';
@@ -93,7 +93,7 @@ const Product = observer(() => {
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
     if (response.status === 200) {
-      message.success(
+      onlyMessage(
         intl.formatMessage({
           id: 'pages.data.option.success',
           defaultMessage: '操作成功!',
@@ -184,7 +184,7 @@ const Product = observer(() => {
             defaultMessage: '产品',
           }),
         );
-        message.success('操作成功');
+        onlyMessage('操作成功');
       }}
     >
       <DownloadOutlined />
@@ -457,7 +457,7 @@ const Product = observer(() => {
               reader.onload = async (result) => {
                 const text = result.target?.result as string;
                 if (!file.type.includes('json')) {
-                  message.error('请上传json格式文件');
+                  onlyMessage('请上传json格式文件', 'error');
                   return false;
                 }
                 try {
@@ -465,17 +465,17 @@ const Product = observer(() => {
                   // 设置导入的产品状态为未发布
                   data.state = 0;
                   if (Array.isArray(data)) {
-                    message.error('请上传json格式文件');
+                    onlyMessage('请上传json格式文件', 'error');
                     return false;
                   }
                   const res = await service.update(data);
                   if (res.status === 200) {
-                    message.success('操作成功');
+                    onlyMessage('操作成功');
                     actionRef.current?.reload();
                   }
                   return true;
                 } catch {
-                  message.error('请上传json格式文件');
+                  onlyMessage('请上传json格式文件', 'error');
                 }
                 return true;
               };
@@ -541,7 +541,7 @@ const Product = observer(() => {
                       defaultMessage: '产品',
                     }),
                   );
-                  message.success('操作成功');
+                  onlyMessage('操作成功');
                 }}
               >
                 <DownloadOutlined />

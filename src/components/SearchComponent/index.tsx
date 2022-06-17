@@ -24,7 +24,7 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Empty, Menu, message, Popover, Typography } from 'antd';
+import { Button, Card, Dropdown, Empty, Menu, Popover, Typography } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -33,7 +33,7 @@ import Service from '@/components/SearchComponent/service';
 import _ from 'lodash';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
-import { randomString } from '@/utils/util';
+import { onlyMessage, randomString } from '@/utils/util';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -454,7 +454,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   e?.stopPropagation();
                   const response = await service.history.remove(`${target}-search`, item.key);
                   if (response.status === 200) {
-                    message.success('操作成功');
+                    onlyMessage('操作成功');
                     const temp = history.filter((h: any) => h.key !== item.key);
                     setHistory(temp);
                   }
@@ -530,9 +530,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       content: JSON.stringify(value),
     });
     if (response.status === 200) {
-      message.success('保存成功!');
+      onlyMessage('保存成功!');
     } else {
-      message.error('保存失败');
+      onlyMessage('保存失败', 'error');
     }
     setAliasVisible(!aliasVisible);
   };

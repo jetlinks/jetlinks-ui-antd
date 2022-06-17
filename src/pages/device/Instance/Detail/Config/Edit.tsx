@@ -3,8 +3,9 @@ import { createSchemaField } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
 import { Form, FormGrid, FormItem, Input, Password, PreviewText } from '@formily/antd';
-import { Button, Drawer, message, Space } from 'antd';
+import { Button, Drawer, Space } from 'antd';
 import { useParams } from 'umi';
+import { onlyMessage } from '@/utils/util';
 
 const componentMap = {
   string: 'Input',
@@ -100,7 +101,7 @@ const Edit = (props: Props) => {
                 configuration: { ...values },
               });
               if (resp.status === 200) {
-                message.success('操作成功！');
+                onlyMessage('操作成功！');
                 if ((window as any).onTabSaveSuccess) {
                   if (resp.result) {
                     (window as any).onTabSaveSuccess(resp);

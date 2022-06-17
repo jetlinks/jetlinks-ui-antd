@@ -1,9 +1,10 @@
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Select } from '@formily/antd';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { service, state } from '..';
 import { useEffect, useState } from 'react';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   close: () => void;
@@ -96,7 +97,7 @@ const BindUser = (props: Props) => {
           ],
         );
         if (resp.status === 200) {
-          message.success('操作成功！');
+          onlyMessage('操作成功！');
           props.reload();
         }
       }}

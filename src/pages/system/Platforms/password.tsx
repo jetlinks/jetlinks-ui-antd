@@ -1,10 +1,11 @@
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Password } from '@formily/antd';
-import { message, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/system/Platforms/index';
+import { onlyMessage } from '@/utils/util';
 
 interface SaveProps {
   visible: boolean;
@@ -152,7 +153,7 @@ export default (props: SaveProps) => {
       setLoading(false);
       if (resp.status === 200) {
         modalClose();
-        message.success('操作成功');
+        onlyMessage('操作成功');
         await form.reset();
       }
     }

@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, message, Space, Tooltip } from 'antd';
+import { Badge, Card, Descriptions, Divider, Space, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -27,6 +27,7 @@ import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
+import { onlyMessage } from '@/utils/util';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -298,7 +299,7 @@ const InstanceDetail = observer(() => {
                   onConfirm: async () => {
                     const resp = await service.deployDevice(params.id);
                     if (resp.status === 200) {
-                      message.success(
+                      onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',
                           defaultMessage: '操作成功!',
@@ -325,7 +326,7 @@ const InstanceDetail = observer(() => {
                   onConfirm: async () => {
                     const resp = await service.disconnectDevice(params.id);
                     if (resp.status === 200) {
-                      message.success(
+                      onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',
                           defaultMessage: '操作成功!',

@@ -10,7 +10,7 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { message, Space, Upload } from 'antd';
+import { Space, Upload } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/notice/Template/service';
 import ConfigService from '@/pages/notice/Config/service';
@@ -20,7 +20,7 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { model } from '@formily/reactive';
 import Debug from './Debug';
 import Log from '@/pages/notice/Template/Log';
-import { downloadObject } from '@/utils/util';
+import { downloadObject, onlyMessage } from '@/utils/util';
 import moment from 'moment';
 import { PermissionButton, ProTableCard } from '@/components';
 import NoticeCard, { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
@@ -255,18 +255,18 @@ const Template = observer(() => {
                 reader.onload = async (result) => {
                   const text = result.target?.result as string;
                   if (!file.type.includes('json')) {
-                    message.warning('文件内容格式错误');
+                    onlyMessage('文件内容格式错误', 'warning');
                     return;
                   }
                   try {
                     const data = JSON.parse(text || '{}');
                     const res: any = await service.savePatch(data);
                     if (res.status === 200) {
-                      message.success('操作成功');
+                      onlyMessage('操作成功');
                       actionRef.current?.reload();
                     }
                   } catch {
-                    message.warning('文件内容格式错误');
+                    onlyMessage('文件内容格式错误', 'warning');
                   }
                 };
                 return false;
@@ -284,9 +284,9 @@ const Template = observer(() => {
                   const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
                   if (resp.status === 200) {
                     downloadObject(resp.result, '通知模版数据');
-                    message.success('导出成功');
+                    onlyMessage('导出成功');
                   } else {
-                    message.error('导出错误');
+                    onlyMessage('导出错误', 'error');
                   }
                 },
               }}

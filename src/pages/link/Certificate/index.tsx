@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
@@ -12,6 +12,7 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
 import Service from '../service';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('network/certificate');
 
@@ -85,7 +86,7 @@ const Certificate = () => {
             title: '确认删除？',
             onConfirm: async () => {
               await service.remove(record.id);
-              message.success(
+              onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
                   defaultMessage: '操作成功!',

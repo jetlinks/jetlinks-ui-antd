@@ -7,9 +7,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { PermissionButton } from '@/components';
 import { useIntl } from 'umi';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { message } from 'antd';
 import Save from './Save';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('relation');
 
@@ -78,7 +78,7 @@ const Relationship = () => {
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
-                message.success(
+                onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
                     defaultMessage: '操作成功!',
