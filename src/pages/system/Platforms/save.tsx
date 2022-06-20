@@ -384,10 +384,10 @@ export default (props: SaveProps) => {
               tooltip: '授权后自动跳转的页面地址',
             },
             'x-validator': [
-              {
-                max: 128,
-                message: '最多可输入128个字符',
-              },
+              // {
+              //   max: 128,
+              //   message: '最多可输入128个字符',
+              // },
               {
                 required: true,
                 message: '请输入redirectUrl',
