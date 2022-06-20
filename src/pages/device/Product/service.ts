@@ -111,7 +111,7 @@ class Service extends BaseService<ProductItem> {
   public category = () =>
     request(`/${SystemConst.API_BASE}/device/category/_tree?paging=false`, {
       method: 'GET',
-      params: encodeQuery({ sorts: { id: 'desc' } }),
+      params: encodeQuery({ sorts: { sortIndex: 'asc' } }),
     });
 
   public getOrg = () =>

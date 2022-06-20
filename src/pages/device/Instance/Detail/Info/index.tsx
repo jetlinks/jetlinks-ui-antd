@@ -99,7 +99,8 @@ const Info = observer(() => {
               defaultMessage: '注册时间',
             })}
           >
-            {moment(InstanceModel.detail?.registerTime).format('YYYY-MM-DD HH:mm:ss')}
+            {InstanceModel.detail?.registerTime &&
+              moment(InstanceModel.detail?.registerTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({

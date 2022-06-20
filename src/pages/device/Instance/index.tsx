@@ -250,7 +250,9 @@ const Instance = () => {
       dataIndex: 'registryTime',
       width: '200px',
       valueType: 'dateTime',
-      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      render: (_: any, row) => {
+        return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '/';
+      },
       sorter: true,
     },
     {
