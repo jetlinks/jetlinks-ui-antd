@@ -4,6 +4,7 @@ import '@/style/common.less';
 import '../index.less';
 import { Tooltip } from 'antd';
 import { DuerOSItem } from '@/pages/cloud/DuerOS/typings';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export interface DuerOSProps extends DuerOSItem {
   detail?: React.ReactNode;
@@ -17,14 +18,14 @@ export default (props: DuerOSProps) => {
   return (
     <TableCard
       actions={props.action}
-      // detail={props.detail}
-      showStatus={false}
-      // status={props.state?.value}
-      // statusText={props.state?.text}
-      // statusNames={{
-      //   enabled: StatusColorEnum.success,
-      //   disabled: StatusColorEnum.error,
-      // }}
+      detail={props.detail}
+      // showStatus={false}
+      status={props?.state?.value}
+      statusText={props?.state?.text}
+      statusNames={{
+        enabled: StatusColorEnum.success,
+        disabled: StatusColorEnum.error,
+      }}
       showMask={false}
     >
       <div className={'pro-table-card-item'}>

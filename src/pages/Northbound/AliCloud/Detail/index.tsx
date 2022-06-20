@@ -11,8 +11,7 @@ import {
   Select,
 } from '@formily/antd';
 import type { Field } from '@formily/core';
-import { onFormInit } from '@formily/core';
-import { createForm, FormPath, onFieldChange, onFieldValueChange } from '@formily/core';
+import { createForm, FormPath, onFieldChange, onFieldValueChange, onFormInit } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Card, Col, Image, Row } from 'antd';
 import { useMemo } from 'react';

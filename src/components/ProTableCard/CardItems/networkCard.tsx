@@ -19,23 +19,27 @@ export default (props: NoticeCardProps) => {
   const createDetail = () => {
     const record = props;
     if (record.shareCluster) {
-      const publicHost = record.configuration.publicHost;
-      const publicPort = record.configuration.publicPort;
-      return publicHost ? (
+      const host = record.configuration.publicHost || record.configuration.remoteHost;
+      const port = record.configuration.publicPort || record.configuration.remotePort;
+      return host ? (
         <>
           {networkMap[record.type]}
-          {publicHost}:{publicPort}
+          {host}:{port}
         </>
       ) : null;
     } else {
       const log = record.cluster?.map(
-        (item) => `${item.configuration.publicHost}:${item.configuration.publicPort}`,
+        (item) =>
+          `${item.configuration.publicHost || record.configuration.remoteHost}:${
+            item.configuration.publicPort || record.configuration.remotePort
+          }`,
       );
       return (
         <>
           {log.map((item) => (
             <div key={item}>
-              `${networkMap[record.type]}${item}`
+              {networkMap[record.type]}
+              {item}
             </div>
           ))}
         </>

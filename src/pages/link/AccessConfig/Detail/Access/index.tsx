@@ -11,7 +11,7 @@ import TitleComponent from '@/components/TitleComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
-import { MetworkTypeMapping, ProcotoleMapping, descriptionList } from './data';
+import { descriptionList, MetworkTypeMapping, ProcotoleMapping } from './data';
 
 interface Props {
   change: () => void;

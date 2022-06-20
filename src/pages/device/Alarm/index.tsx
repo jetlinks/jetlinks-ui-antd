@@ -1,12 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import BaseService from '@/utils/BaseService';
 import { useRef } from 'react';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import moment from 'moment';
 import { Form, Input, Modal, Tag, Tooltip } from 'antd';
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import ProTable from '@jetlinks/pro-table';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
 import { onlyMessage } from '@/utils/util';

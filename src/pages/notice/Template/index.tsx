@@ -45,10 +45,10 @@ const list = {
       text: '企业消息',
       status: 'corpMessage',
     },
-    officialMessage: {
-      text: '服务号消息',
-      status: 'officialMessage',
-    },
+    // officialMessage: {
+    //   text: '服务号消息',
+    //   status: 'officialMessage',
+    // },
   },
   dingTalk: {
     dingTalkMessage: {

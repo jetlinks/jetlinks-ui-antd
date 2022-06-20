@@ -8,7 +8,7 @@ import { useHistory } from 'umi';
 import Service from './service';
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
-import { PermissionButton, Empty } from '@/components';
+import { Empty, PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { Store } from 'jetlinks-store';
 import { onlyMessage } from '@/utils/util';

@@ -1,4 +1,4 @@
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { service } from '@/pages/system/Tenant';
 import { Space } from 'antd';

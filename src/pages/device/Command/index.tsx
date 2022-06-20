@@ -1,13 +1,13 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useRef } from 'react';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import type { CommandItem } from '@/pages/device/Command/typings';
 import { Button, Tooltip } from 'antd';
 import moment from 'moment';
 import { EyeOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Command/service';
-import ProTable from '@jetlinks/pro-table';
 import Create from '@/pages/device/Command/create';
 import encodeQuery from '@/utils/encodeQuery';
 import { model } from '@formily/reactive';

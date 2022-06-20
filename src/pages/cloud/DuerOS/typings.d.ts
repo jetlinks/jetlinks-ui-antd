@@ -36,6 +36,10 @@ type DuerOSItem = {
     text: string;
     value: string;
   };
+  state?: {
+    text: string;
+    value: string;
+  };
   actionMappings: ActionMapping[];
   propertyMappings: PropertyMapping[];
 } & BaseItem;

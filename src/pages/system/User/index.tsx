@@ -5,12 +5,12 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Badge, Popconfirm } from 'antd';
 import {
-  CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   SafetyOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
@@ -177,7 +177,7 @@ const User = observer(() => {
             }),
           }}
         >
-          {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+          {record.status ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           type="link"
