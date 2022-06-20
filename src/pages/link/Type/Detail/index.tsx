@@ -282,7 +282,7 @@ const Save = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         'x-component-props': {
-          placeholder: '请输入本地端口',
+          placeholder: '请选择本地端口',
         },
         'x-reactions': {
           dependencies: ['type'],

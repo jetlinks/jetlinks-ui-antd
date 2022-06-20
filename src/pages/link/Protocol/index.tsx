@@ -261,10 +261,10 @@ const Protocol = () => {
                 type={'link'}
                 style={{ padding: 0 }}
                 tooltip={{
-                  title: record.state === 1 ? '撤销' : '发布',
+                  title: record.state === 1 ? '禁用' : '启用',
                 }}
                 popConfirm={{
-                  title: `确认${record.state === 1 ? '撤销' : '发布'}`,
+                  title: `确认${record.state === 1 ? '禁用' : '启用'}`,
                   onConfirm: () => {
                     if (record.state === 1) {
                       modifyState(record.id, 'un-deploy');
@@ -275,7 +275,7 @@ const Protocol = () => {
                 }}
               >
                 {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
-                {record.state === 1 ? '撤销' : '发布'}
+                {record.state === 1 ? '禁用' : '启用'}
               </PermissionButton>,
               <PermissionButton
                 isPermission={permission.delete}

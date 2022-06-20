@@ -12,8 +12,8 @@ import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
-  PlusOutlined,
   LeftOutlined,
+  PlusOutlined,
   VideoCameraAddOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';

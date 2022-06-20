@@ -102,7 +102,6 @@ const Debug = observer(() => {
     // 从后端接口来获取变量参数
     service.getVariableDefinitions(state.current?.id || '').then((resp) => {
       const _template = resp.result;
-      console.log(resp, 'userEfffect', state.current);
       if (_template?.variableDefinitions?.length > 0) {
         variableRef.current = _template?.variableDefinitions;
         form.setFieldState('variableDefinitions', (state1) => {
@@ -215,6 +214,7 @@ const Debug = observer(() => {
               'x-component-props': { title: '值', width: '120px' },
               properties: {
                 value: {
+                  required: true,
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
@@ -236,27 +236,36 @@ const Debug = observer(() => {
   const [spinning, setSpinning] = useState<boolean>(false);
   const start = async () => {
     setSpinning(true);
-    const data: { configId: string; variableDefinitions: any } = await form.submit();
-    // 应该取选择的配置信息
-    if (!state.current) return;
-    const resp = await service.debug(
-      data.configId,
-      state?.current.id,
-      data.variableDefinitions?.reduce(
-        (previousValue: any, currentValue: { id: any; value: any }) => {
-          return {
-            ...previousValue,
-            [currentValue.id]: currentValue.value,
-          };
-        },
-        {},
-      ),
-    );
-    if (resp.status === 200) {
-      onlyMessage('操作成功!');
-      setSpinning(false);
-      state.debug = false;
-    }
+    // const data: { configId: string; variableDefinitions: any } = await form.submit();
+    form
+      .submit()
+      .then(async (data: any) => {
+        // 应该取选择的配置信息
+        if (!state.current) return;
+        const resp = await service.debug(
+          data.configId,
+          state?.current.id,
+          data.variableDefinitions?.reduce(
+            (previousValue: any, currentValue: { id: any; value: any }) => {
+              return {
+                ...previousValue,
+                [currentValue.id]: currentValue.value,
+              };
+            },
+            {},
+          ),
+        );
+        if (resp.status === 200) {
+          onlyMessage('操作成功!');
+          setSpinning(false);
+          state.debug = false;
+        } else {
+          setSpinning(false);
+        }
+      })
+      .catch(() => {
+        setSpinning(false);
+      });
   };
   return (
     <Modal

@@ -134,7 +134,6 @@ const MetadataMap = (props: Props) => {
           </span>
         );
       }
-
       if (!description) {
         return <EditableTable data={data} type={type} />;
       } else {
@@ -157,7 +156,12 @@ const MetadataMap = (props: Props) => {
   }, [props.type]);
 
   return (
-    <Card bordered={false} className="device-detail-metadataMap" style={{ minHeight }}>
+    <Card
+      bordered={false}
+      bodyStyle={{ padding: type === 'device' ? 24 : 0 }}
+      className="device-detail-metadataMap"
+      style={{ minHeight }}
+    >
       {renderComponent()}
     </Card>
   );

@@ -5,6 +5,7 @@ import { createSchemaField, FormProvider } from '@formily/react';
 import { service } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<PropertyMetadata>;
