@@ -6,7 +6,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import Config from '@/pages/device/Instance/Detail/Config';
 import Reation from '@/pages/device/Instance/Detail/Reation';
 import Save from '../../Save';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
@@ -18,6 +18,10 @@ const Info = observer(() => {
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
   const { minHeight } = useDomFullHeight(`.device-detail-body`);
+
+  useEffect(() => {
+    console.log(InstanceModel.detail);
+  }, [InstanceModel.detail]);
 
   return (
     <>
@@ -131,6 +135,7 @@ const Info = observer(() => {
             InstanceModel.detail = {
               ...InstanceModel.detail,
               ...data,
+              describe: data.description,
             };
           }
         }}

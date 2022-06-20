@@ -325,6 +325,7 @@ const Network = () => {
               </PermissionButton>,
               <PermissionButton
                 type="link"
+                key="other-delete"
                 style={{ padding: 0 }}
                 isPermission={networkPermission.delete}
                 disabled={record.state.value === 'enabled'}
@@ -337,19 +338,18 @@ const Network = () => {
                         })
                       : '请先禁用该组件，再删除。',
                 }}
-              >
-                <Popconfirm
-                  title="确认删除?"
-                  onConfirm={async () => {
+                popConfirm={{
+                  title: '确认删除?',
+                  onConfirm: async () => {
                     const response: any = await service.remove(record.id);
                     if (response.status === 200) {
                       onlyMessage('删除成功');
                       actionRef.current?.reload();
                     }
-                  }}
-                >
-                  <DeleteOutlined />
-                </Popconfirm>
+                  },
+                }}
+              >
+                <DeleteOutlined />
               </PermissionButton>,
             ]}
           />

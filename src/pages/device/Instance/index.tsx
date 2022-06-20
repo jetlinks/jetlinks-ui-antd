@@ -662,14 +662,16 @@ const Instance = () => {
                   disabled: record.state.value !== 'notActive',
                   onConfirm: async () => {
                     if (record.state.value === 'notActive') {
-                      await service.remove(record.id);
-                      onlyMessage(
-                        intl.formatMessage({
-                          id: 'pages.data.option.success',
-                          defaultMessage: '操作成功!',
-                        }),
-                      );
-                      actionRef.current?.reload();
+                      const resp: any = await service.remove(record.id);
+                      if (resp.code === 200) {
+                        onlyMessage(
+                          intl.formatMessage({
+                            id: 'pages.data.option.success',
+                            defaultMessage: '操作成功!',
+                          }),
+                        );
+                        actionRef.current?.reload();
+                      }
                     } else {
                       onlyMessage(
                         intl.formatMessage({ id: 'pages.device.instance.deleteTip' }),
