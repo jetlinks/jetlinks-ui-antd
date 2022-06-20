@@ -37,6 +37,9 @@ const Save = (props: Props) => {
       .getProductList(
         encodeQuery({
           paging: false,
+          sorts: {
+            createTime: 'desc',
+          },
           terms: {
             state: 1,
           },
@@ -222,6 +225,7 @@ const Save = (props: Props) => {
               <Select
                 showSearch
                 options={productList}
+                disabled={props.model === 'edit'}
                 onSelect={(_: any, node: any) => {
                   form.setFieldsValue({
                     productName: node.label,

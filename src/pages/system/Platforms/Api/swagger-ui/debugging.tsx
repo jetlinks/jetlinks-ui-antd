@@ -196,7 +196,6 @@ export default observer(() => {
             {ApiModel.swagger.method ? ApiModel.swagger.method.toUpperCase() : ''}
           </Button>
           <Input
-            allowClear
             style={{
               width: `calc(100% - ${ApiModel.swagger.method !== 'delete' ? '140px' : '150px'})`,
             }}
@@ -237,7 +236,7 @@ export default observer(() => {
       </div>
       <div className={'swagger-content-item'}>
         <TitleComponent data={'响应内容'} />
-        <div>
+        <div style={{ border: '1px solid #fefefe', borderRadius: 2 }}>
           {
             // @ts-ignore
             <ReactJson
