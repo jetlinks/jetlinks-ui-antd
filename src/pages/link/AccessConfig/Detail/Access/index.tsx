@@ -307,22 +307,36 @@ const Access = (props: Props) => {
                         </Tooltip>
                       </div>
                       <div className={styles.cardContent}>
-                        <div
-                          style={{
-                            width: '100%',
-                            height: '20px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {item.addresses.slice(0, 1).map((i: any) => (
-                            <div className={styles.item} key={i.address}>
-                              <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
+                        <Tooltip
+                          placement="topLeft"
+                          title={
+                            <div>
+                              {[...item.addresses].map((i: any) => (
+                                <div key={i.address}>
+                                  <Badge color={i.health === -1 ? 'red' : 'green'} />
+                                  {i.address}
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          }
+                        >
+                          <div
+                            style={{
+                              width: '100%',
+                              height: '20px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            {item.addresses.slice(0, 1).map((i: any) => (
+                              <div className={styles.item} key={i.address}>
+                                <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
+                              </div>
+                            ))}
+                          </div>
+                        </Tooltip>
                         <div className={styles.desc}>
                           <Tooltip
                             placement="topLeft"

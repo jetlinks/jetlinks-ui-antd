@@ -129,6 +129,7 @@ const AccessConfig = (props: Props) => {
         <SearchComponent
           field={columns}
           enableSave={false}
+          model="simple"
           onSearch={(data: any) => {
             const dt = {
               pageSize: 4,

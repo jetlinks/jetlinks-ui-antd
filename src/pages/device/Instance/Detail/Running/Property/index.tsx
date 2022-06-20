@@ -1,9 +1,14 @@
-import { Col, Empty, Input, Pagination, Row, Space, Spin, Table } from 'antd';
+import { Col, Empty, Input, Pagination, Row, Space, Spin, Table, Tooltip } from 'antd';
 import CheckButton from '@/components/CheckButton';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import PropertyCard from './PropertyCard';
-import { EditOutlined, SyncOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import {
+  ClockCircleOutlined,
+  EditOutlined,
+  SyncOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
@@ -14,6 +19,7 @@ import styles from './index.less';
 import { groupBy, throttle, toArray } from 'lodash';
 import PropertyTable from './PropertyTable';
 import { onlyMessage } from '@/utils/util';
+import Indicators from './Indicators';
 
 interface Props {
   data: Partial<PropertyMetadata>[];
@@ -44,6 +50,7 @@ const Property = (props: Props) => {
     pageSize: 8,
     currentPage: 0,
   });
+  const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [check, setCheck] = useState<boolean>(true);
@@ -83,30 +90,53 @@ const Property = (props: Props) => {
       key: 'action',
       render: (text: any, record: any) => (
         <Space size="middle">
-          {(record.expands?.readOnly === false || record.expands?.readOnly === 'false') && (
+          {record.expands?.type?.includes('write') && (
+            <Tooltip placement="top" title="设置属性至设备">
+              <a
+                onClick={() => {
+                  setVisible(true);
+                }}
+              >
+                <EditOutlined />
+              </a>
+            </Tooltip>
+          )}
+          {(record.expands?.metrics || []).length > 0 &&
+            ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+              record.valueType?.type || '',
+            ) && (
+              <Tooltip placement="top" title="指标">
+                <a
+                  onClick={() => {
+                    setIndicatorVisible(true);
+                    setCurrentInfo(record);
+                  }}
+                >
+                  <ClockCircleOutlined />
+                </a>
+              </Tooltip>
+            )}
+          {record.expands?.type?.includes('read') && (
+            <Tooltip placement="top" title="获取最新属性值">
+              <a
+                onClick={() => {
+                  refreshProperty(record?.id);
+                }}
+              >
+                <SyncOutlined />
+              </a>
+            </Tooltip>
+          )}
+          <Tooltip placement="top" title="详情">
             <a
               onClick={() => {
-                setVisible(true);
+                setCurrentInfo(record);
+                setInfoVisible(true);
               }}
             >
-              <EditOutlined />
+              <UnorderedListOutlined />
             </a>
-          )}
-          <a
-            onClick={() => {
-              refreshProperty(record?.id);
-            }}
-          >
-            <SyncOutlined />
-          </a>
-          <a
-            onClick={() => {
-              setCurrentInfo(record);
-              setInfoVisible(true);
-            }}
-          >
-            <UnorderedListOutlined />
-          </a>
+          </Tooltip>
         </Space>
       ),
     },
@@ -318,6 +348,14 @@ const Property = (props: Props) => {
         />
       )}
       {infoVisible && <PropertyLog data={currentInfo} close={() => setInfoVisible(false)} />}
+      {indicatorVisible && (
+        <Indicators
+          data={currentInfo}
+          onCancel={() => {
+            setIndicatorVisible(false);
+          }}
+        />
+      )}
     </div>
   );
 };

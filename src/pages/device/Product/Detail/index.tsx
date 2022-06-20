@@ -33,6 +33,76 @@ const ProductDetail = observer(() => {
   const location = useLocation();
   const history = useHistory();
 
+  const initList = [
+    {
+      key: 'base',
+      tab: intl.formatMessage({
+        id: 'pages.device.productDetail.base',
+        defaultMessage: '配置信息',
+      }),
+      component: (
+        <BaseInfo
+          onJump={(type) => {
+            if (type) {
+              setMode(type);
+            }
+          }}
+        />
+      ),
+    },
+    {
+      key: 'metadata',
+      tab: (
+        <>
+          {intl.formatMessage({
+            id: 'pages.device.instanceDetail.metadata',
+            defaultMessage: '物模型',
+          })}
+          <Tooltip
+            title={
+              <>
+                属性：
+                <br />
+                用于描述设备运行时具体信息和状态。
+                <br />
+                功能：
+                <br />
+                指设备可供外部调用的指令或方法。
+                <br />
+                事件：
+                <br />
+                设备运行时，主动上报给云端的信息。
+                <br />
+                标签：
+                <br />
+                统一为设备添加拓展字段，添加后将在设备信息页显示。
+              </>
+            }
+          >
+            <QuestionCircleOutlined style={{ marginLeft: 5 }} />
+          </Tooltip>
+        </>
+      ),
+      component: <Metadata type="product" />,
+    },
+    {
+      key: 'access',
+      tab: '设备接入',
+      component: <Access />,
+    },
+  ];
+
+  const pList = [
+    'websocket-server',
+    'http-server-gateway',
+    'udp-device-gateway',
+    'coap-server-gateway',
+    'mqtt-client-gateway',
+    'mqtt-server-gateway',
+    'tcp-server-gateway',
+  ];
+  const [list, setList] = useState<any[]>([...initList]);
+
   const { minHeight } = useDomFullHeight('.product-detail-body');
 
   const { permission } = PermissionButton.usePermission('device/Product');
@@ -73,6 +143,16 @@ const ProductDetail = observer(() => {
       if (data.metadata) {
         const metadata: DeviceMetadata = JSON.parse(data.metadata);
         MetadataAction.insert(metadata);
+      }
+      if (data?.accessProvider && pList.includes(data?.accessProvider)) {
+        setList([
+          ...initList,
+          {
+            key: 'metadata-map',
+            tab: '物模型映射',
+            component: <MetadataMap type="product" />,
+          },
+        ]);
       }
       service.instanceCount(encodeQuery({ terms: { productId: param?.id } })).then((res: any) => {
         if (res.status === 200) {
@@ -145,70 +225,6 @@ const ProductDetail = observer(() => {
     });
     return subscription.unsubscribe;
   }, [changeDeploy, param.id]);
-
-  const list = [
-    {
-      key: 'base',
-      tab: intl.formatMessage({
-        id: 'pages.device.productDetail.base',
-        defaultMessage: '配置信息',
-      }),
-      component: (
-        <BaseInfo
-          onJump={(type) => {
-            if (type) {
-              setMode(type);
-            }
-          }}
-        />
-      ),
-    },
-    {
-      key: 'metadata',
-      tab: (
-        <>
-          {intl.formatMessage({
-            id: 'pages.device.instanceDetail.metadata',
-            defaultMessage: '物模型',
-          })}
-          <Tooltip
-            title={
-              <>
-                属性：
-                <br />
-                用于描述设备运行时具体信息和状态。
-                <br />
-                功能：
-                <br />
-                指设备可供外部调用的指令或方法。
-                <br />
-                事件：
-                <br />
-                设备运行时，主动上报给云端的信息。
-                <br />
-                标签：
-                <br />
-                统一为设备添加拓展字段，添加后将在设备信息页显示。
-              </>
-            }
-          >
-            <QuestionCircleOutlined style={{ marginLeft: 5 }} />
-          </Tooltip>
-        </>
-      ),
-      component: <Metadata type="product" />,
-    },
-    {
-      key: 'access',
-      tab: '设备接入',
-      component: <Access />,
-    },
-    {
-      key: 'metadata-map',
-      tab: '物模型映射',
-      component: <MetadataMap type="product" />,
-    },
-  ];
 
   useEffect(() => {
     const { state } = location;

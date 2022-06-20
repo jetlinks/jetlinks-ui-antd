@@ -1,7 +1,7 @@
 import { useIntl } from '@/.umi/plugin-locale/localeExports';
 import PermissionButton from '@/components/PermissionButton';
 import SearchComponent from '@/components/SearchComponent';
-import { ReadOutlined, SearchOutlined } from '@ant-design/icons';
+import Icon, { SearchOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
@@ -12,6 +12,7 @@ import Service from './service';
 import encodeQuery from '@/utils/encodeQuery';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 export const service = new Service('notifications');
 
@@ -33,6 +34,25 @@ const NotificationRecord = () => {
       setTypeList(obj);
     });
   }, []);
+
+  const ReadSvg = () => (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 18H6L2 22V2C2 2 2.9 2 4 2H20C21.1 2 22 2 22 2V11H20V4H4V16H12V18ZM23 14.34L21.59 12.93L17.35 17.17L15.23 15.05L13.82 16.46L17.34 20L23 14.34Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+
+  const ReadIcon = (props: Partial<CustomIconComponentProps>) => (
+    <Icon component={ReadSvg} {...props} />
+  );
 
   const columns: ProColumns<NotifitionRecord>[] = [
     {
@@ -112,7 +132,8 @@ const NotificationRecord = () => {
             },
           }}
         >
-          <ReadOutlined />
+          {/* <ReadOutlined /> */}
+          <ReadIcon />
         </PermissionButton>,
         <PermissionButton
           key={'action'}
