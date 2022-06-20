@@ -5,12 +5,12 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Badge, Popconfirm } from 'antd';
 import {
-  CloseCircleOutlined,
   DatabaseOutlined,
   DeleteOutlined,
   EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useRef, useState } from 'react';
@@ -185,7 +185,7 @@ const DataSource = observer(() => {
             }),
           }}
         >
-          {record.state?.value === 'enabled' ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+          {record.state?.value === 'enabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           type="link"
