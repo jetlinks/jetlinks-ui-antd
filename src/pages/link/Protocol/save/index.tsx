@@ -138,7 +138,6 @@ const Save = (props: Props) => {
             'x-disabled': !!props.data?.id,
             'x-decorator-props': {
               gridSpan: 2,
-              tooltip: <div>jar：上传协议jar包，文件格式支持.jar或.zip</div>,
             },
             'x-component-props': {
               model: 'singular',
@@ -179,9 +178,6 @@ const Save = (props: Props) => {
                 'x-visible': false,
                 'x-decorator-props': {
                   gridSpan: 2,
-                  tooltip: (
-                    <div>local：填写本地协议编译目录绝对地址，如：d:/protocol/target/classes</div>
-                  ),
                 },
                 'x-validator': [
                   {
@@ -197,6 +193,8 @@ const Save = (props: Props) => {
                       componentType: '{{$deps[0]==="jar"?"FileUpload":"Input"}}',
                       componentProps:
                         '{{$deps[0]==="jar"?{type:"file", accept: ".jar, .zip"}:{placeholder: "请输入文件地址"}}}',
+                      decoratorProps:
+                        '{{$deps[0]!=="jar"?{gridSpan:"2",tooltip:"local:填写本地协议编译目录绝对地址,如:d:/protocol/target/classes"}:{gridSpan:"2",tooltip:"jar:上传协议jar包,文件格式支持.jar或.zip"}}}',
                     },
                   },
                 },

@@ -267,7 +267,7 @@ const Instance = () => {
         notActive: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.notActive',
-            defaultMessage: '未启用',
+            defaultMessage: '禁用',
           }),
           status: 'notActive',
         },

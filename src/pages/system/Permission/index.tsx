@@ -1,11 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useRef, useState } from 'react';
 import {
-  CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import { Badge, Button, Dropdown, Menu, Popconfirm, Space, Tooltip, Upload } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -217,7 +217,7 @@ const Permission: React.FC = observer(() => {
             }),
           }}
         >
-          {record.status ? <CloseCircleOutlined /> : <PlayCircleOutlined />}
+          {record.status ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           type={'link'}
