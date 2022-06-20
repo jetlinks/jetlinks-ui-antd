@@ -180,10 +180,10 @@ const Indicators = (props: Props) => {
       service.queryMetric(InstanceModel.detail.id || '', data.id || '').then((resp) => {
         if (resp.status === 200) {
           if ((resp?.result || []).length > 0) {
-            const list = resp.result.map((item: any) => {
+            const list = resp?.result.map((item: any) => {
               return {
                 ...item,
-                value: item.value.split(','),
+                value: Array.isArray(item?.value) ? item?.value : item?.value?.split(','),
               };
             });
             setMetrics(list);

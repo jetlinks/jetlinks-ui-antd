@@ -1,5 +1,5 @@
 import { Form, FormGrid, FormItem, Input, Password, Select } from '@formily/antd';
-import { createForm } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
 import { Modal } from 'antd';
@@ -17,6 +17,18 @@ const Save = (props: Props) => {
   const form = createForm({
     validateFirst: true,
     initialValues: props.data,
+    effects: () => {
+      onFieldValueChange('typeId', (field, form1) => {
+        if (field.modified) {
+          form1.setFieldState('description', (state) => {
+            state.value = '';
+          });
+          form1.setFieldState('shareConfig.*', (state) => {
+            state.value = '';
+          });
+        }
+      });
+    },
   });
 
   const SchemaField = createSchemaField({

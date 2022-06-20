@@ -14,6 +14,7 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import classNames from 'classnames';
 import { useDomFullHeight } from '@/hooks';
+import PermissionButton from '@/components/PermissionButton';
 
 interface Props {
   type: string;
@@ -39,7 +40,9 @@ colorMap.set(4, '#999999');
 colorMap.set(5, '#C4C4C4');
 
 const TabComponent = observer((props: Props) => {
-  const { minHeight } = useDomFullHeight(`.alarmLog`);
+  const { minHeight } = useDomFullHeight(`.alarmLog`, 36);
+  const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Log');
+
   const columns: ProColumns<any>[] = [
     {
       title: '名称',
@@ -106,21 +109,30 @@ const TabComponent = observer((props: Props) => {
   }, [props.type]);
 
   const tools = (record: any) => [
-    <Button
-      type={'link'}
+    <Tooltip
       key={'solve'}
-      style={{ padding: 0 }}
-      disabled={record.state.value === 'normal'}
-      onClick={() => {
-        AlarmLogModel.solveVisible = true;
-        AlarmLogModel.current = record;
-      }}
+      title={
+        !permission.action
+          ? '暂无权限，请联系管理员'
+          : record.state?.value === 'normal'
+          ? '无告警'
+          : ''
+      }
     >
-      <Tooltip title={record.state?.value === 'normal' ? '无告警' : ''}>
+      <Button
+        type={'link'}
+        key={'solve'}
+        style={{ padding: 0 }}
+        disabled={record.state.value === 'normal' || !permission.action}
+        onClick={() => {
+          AlarmLogModel.solveVisible = true;
+          AlarmLogModel.current = record;
+        }}
+      >
         <ToolFilled />
         告警处理
-      </Tooltip>
-    </Button>,
+      </Button>
+    </Tooltip>,
     <Button
       type={'link'}
       style={{ padding: 0 }}
@@ -180,104 +192,118 @@ const TabComponent = observer((props: Props) => {
           handleSearch(dt);
         }}
       />
-      <Card className="alarmLog" style={{ minHeight }}>
-        {dataSource?.data.length > 0 ? (
-          <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
-            {(dataSource?.data || []).map((item: any) => (
-              <Col key={item.id} span={12}>
-                <div className={classNames('iot-card')}>
-                  <div className={'card-warp'}>
-                    <div className={classNames('card-content')}>
-                      <div
-                        style={{ fontSize: 20, fontWeight: 700, marginBottom: 20 }}
-                        className="ellipsis"
-                      >
-                        <Tooltip title={item.alarmName}>
-                          <a>{item.alarmName}</a>
-                        </Tooltip>
-                      </div>
-                      <div className="alarm-log-context">
-                        <div className="context-left">
-                          <div className="context-img">
-                            <img width={70} height={70} src={defaultImage} alt={''} />
+      <Card>
+        <div className="alarmLog" style={{ minHeight, position: 'relative' }}>
+          <div style={{ height: '100%', paddingBottom: 48 }}>
+            {dataSource?.data.length > 0 ? (
+              <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
+                {(dataSource?.data || []).map((item: any) => (
+                  <Col key={item.id} span={12}>
+                    <div className={classNames('iot-card')}>
+                      <div className={'card-warp'}>
+                        <div className={classNames('card-content')}>
+                          <div
+                            style={{ fontSize: 20, fontWeight: 700, marginBottom: 20 }}
+                            className="ellipsis"
+                          >
+                            <Tooltip title={item.alarmName}>
+                              <a style={{ cursor: 'default' }}>{item.alarmName}</a>
+                            </Tooltip>
                           </div>
-                          <div className="left-item">
-                            <div className="left-item-title">{titleMap.get(item.targetType)}</div>
-                            <div className="left-item-value ellipsis">
-                              <Tooltip placement="topLeft" title={item.targetName}>
-                                {item.targetName}
-                              </Tooltip>
+                          <div className="alarm-log-context">
+                            <div className="context-left">
+                              <div className="context-img">
+                                <img width={70} height={70} src={defaultImage} alt={''} />
+                              </div>
+                              <div className="left-item">
+                                <div className="left-item-title">
+                                  {titleMap.get(item.targetType)}
+                                </div>
+                                <div className="left-item-value ellipsis">
+                                  <Tooltip placement="topLeft" title={item.targetName}>
+                                    {item.targetName}
+                                  </Tooltip>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="context-right">
+                              <div className="right-item">
+                                <div className="right-item-title">最近告警时间</div>
+                                <div className="right-item-value ellipsis">
+                                  {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
+                                </div>
+                              </div>
+                              <div className="right-item">
+                                <div className="right-item-title">状态</div>
+                                <div className="right-item-value">
+                                  <Badge
+                                    status={item.state.value === 'warning' ? 'error' : 'default'}
+                                  />
+                                  <span
+                                    style={{
+                                      color: item.state.value === 'warning' ? '#E50012' : 'black',
+                                    }}
+                                  >
+                                    {item.state.text}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className={'alarm-log-state'}
+                            style={{ backgroundColor: colorMap.get(item.level) }}
+                          >
+                            <div className={'card-state-content'}>
+                              {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
+                                ?.title || item.level}
                             </div>
                           </div>
                         </div>
-                        <div className="context-right">
-                          <div className="right-item">
-                            <div className="right-item-title">最近告警时间</div>
-                            <div className="right-item-value ellipsis">
-                              {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
-                            </div>
-                          </div>
-                          <div className="right-item">
-                            <div className="right-item-title">状态</div>
-                            <div className="right-item-value">
-                              <Badge
-                                status={item.state.value === 'warning' ? 'error' : 'default'}
-                              />
-                              <span
-                                style={{
-                                  color: item.state.value === 'warning' ? '#E50012' : 'black',
-                                }}
-                              >
-                                {item.state.text}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
                       </div>
-                      <div
-                        className={'alarm-log-state'}
-                        style={{ backgroundColor: colorMap.get(item.level) }}
-                      >
-                        <div className={'card-state-content'}>
-                          {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)?.title ||
-                            item.level}
-                        </div>
-                      </div>
+                      <div className={'card-tools'}>{getAction(tools(item))}</div>
                     </div>
-                  </div>
-                  <div className={'card-tools'}>{getAction(tools(item))}</div>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        ) : (
-          <Empty style={{ marginTop: '10%' }} />
-        )}
-        {dataSource.data.length > 0 && (
-          <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>
-            <Pagination
-              showSizeChanger
-              size="small"
-              className={'pro-table-card-pagination'}
-              total={dataSource?.total || 0}
-              current={dataSource?.pageIndex + 1}
-              onChange={(page, size) => {
-                handleSearch({
-                  ...param,
-                  pageIndex: page - 1,
-                  pageSize: size,
-                });
-              }}
-              pageSizeOptions={[10, 20, 50, 100]}
-              pageSize={dataSource?.pageSize}
-              showTotal={(num) => {
-                const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-                const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-              }}
-            />
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <Empty style={{ marginTop: '10%' }} />
+            )}
           </div>
-        )}
+          {dataSource.data.length > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                position: 'absolute',
+                bottom: 0,
+                width: '100%',
+              }}
+            >
+              <Pagination
+                showSizeChanger
+                size="small"
+                className={'pro-table-card-pagination'}
+                total={dataSource?.total || 0}
+                current={dataSource?.pageIndex + 1}
+                onChange={(page, size) => {
+                  handleSearch({
+                    ...param,
+                    pageIndex: page - 1,
+                    pageSize: size,
+                  });
+                }}
+                pageSizeOptions={[10, 20, 50, 100]}
+                pageSize={dataSource?.pageSize}
+                showTotal={(num) => {
+                  const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+                  const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+                  return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+                }}
+              />
+            </div>
+          )}
+        </div>
       </Card>
       {AlarmLogModel.solveVisible && (
         <SolveComponent
