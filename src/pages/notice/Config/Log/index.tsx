@@ -81,7 +81,7 @@ const Log = observer(() => {
       footer={null}
       onCancel={() => (state.log = false)}
       title="通知记录"
-      width="50vw"
+      width="65vw"
       visible={state.log && !!state.current?.id}
     >
       <SearchComponent

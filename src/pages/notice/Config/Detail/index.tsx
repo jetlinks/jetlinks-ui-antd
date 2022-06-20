@@ -539,7 +539,7 @@ const Detail = observer(() => {
                   add: {
                     type: 'void',
                     'x-component': 'ArrayTable.Addition',
-                    title: '添加条目',
+                    title: '添加',
                   },
                 },
               },

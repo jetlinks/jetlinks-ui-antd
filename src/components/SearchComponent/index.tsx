@@ -436,6 +436,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     uiParamRef.current = ui2Server(log);
     const _expand =
       (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1);
+    console.log(
+      _expand,
+      '展开',
+      log,
+      (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1),
+    );
     if (_expand) {
       setExpand(false);
     }
