@@ -277,7 +277,13 @@ const ProductDetail = observer(() => {
           </Descriptions>
         </Spin>
       }
-      title={productModel.current?.name}
+      title={
+        <Tooltip placement="topLeft" title={productModel.current?.name}>
+          <div className="ellipsis" style={{ width: 250 }}>
+            {productModel.current?.name}
+          </div>
+        </Tooltip>
+      }
       subTitle={
         permission.update ? (
           <Popconfirm

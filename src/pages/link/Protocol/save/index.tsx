@@ -212,6 +212,7 @@ const Save = (props: Props) => {
               rows: 3,
               showCount: true,
               maxLength: 200,
+              placeholder: '请输入说明',
             },
           },
         },
@@ -259,7 +260,7 @@ const Save = (props: Props) => {
           }}
           disabled={props.data?.id ? !permission.update : !permission.add}
         >
-          保存
+          确定
         </Button>,
         // <Button
         //   key={3}

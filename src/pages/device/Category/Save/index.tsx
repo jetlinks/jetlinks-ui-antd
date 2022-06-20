@@ -123,6 +123,7 @@ const Save = (props: Props) => {
         'x-component': 'NumberPicker',
         'x-component-props': {
           placeholder: '请输入分类排序',
+          min: 1,
         },
         name: 'sortIndex',
       },

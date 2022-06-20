@@ -267,11 +267,18 @@ const InstanceDetail = observer(() => {
       tabActiveKey={InstanceModel.active}
       content={
         <Descriptions size="small" column={4}>
-          <Descriptions.Item label={'ID'}>{InstanceModel.detail?.id}</Descriptions.Item>
+          <Descriptions.Item label={'ID'}>
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
+              <div className="ellipsis-70">{InstanceModel.detail?.id}</div>
+            </Tooltip>
+          </Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>
             <PermissionButton
               type={'link'}
               size={'small'}
+              tooltip={{
+                title: InstanceModel.detail?.productName,
+              }}
               isPermission={!!getMenuPathByCode(MENUS_CODE['device/Product'])}
               onClick={() => {
                 const url = getMenuPathByParams(
@@ -283,14 +290,20 @@ const InstanceDetail = observer(() => {
                 }
               }}
             >
-              {InstanceModel.detail?.productName}
+              <div className="ellipsis" style={{ width: 250 }}>
+                {InstanceModel.detail?.productName}
+              </div>
             </PermissionButton>
           </Descriptions.Item>
         </Descriptions>
       }
       title={
-        <>
-          {InstanceModel.detail?.name}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip placement="topLeft" title={InstanceModel.detail?.name}>
+            <div className="ellipsis" style={{ width: 250 }}>
+              {InstanceModel.detail?.name}
+            </div>
+          </Tooltip>
           <Divider type="vertical" />
           <Space>
             {deviceStatus.get(InstanceModel.detail?.state?.value)}
@@ -349,7 +362,7 @@ const InstanceDetail = observer(() => {
               </PermissionButton>
             )}
           </Space>
-        </>
+        </div>
       }
       // extra={[
       //   statusMap[0],

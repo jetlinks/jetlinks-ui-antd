@@ -1,4 +1,4 @@
-import { Button, Descriptions } from 'antd';
+import { Button, Descriptions, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
@@ -45,7 +45,11 @@ const Tags = () => {
       >
         {(tags || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={`${item.name}（${item.key})`} key={item.key}>
-            {item.value || '--'}
+            <Tooltip title={item.value || '--'} placement="topLeft">
+              <div className="ellipsis" style={{ width: 300 }}>
+                {item.value || '--'}{' '}
+              </div>
+            </Tooltip>
           </Descriptions.Item>
         ))}
       </Descriptions>
