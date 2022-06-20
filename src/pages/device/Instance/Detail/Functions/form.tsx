@@ -1,6 +1,6 @@
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, DatePicker, Input, InputNumber, Select } from 'antd';
+import { Button, DatePicker, Input, InputNumber, Select, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { EditableProTable } from '@jetlinks/pro-table';
@@ -10,6 +10,7 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import moment from 'moment';
 import './index.less';
 import { GeoPoint, MetadataJsonInput } from '@/components';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 type FunctionProps = {
   data: FunctionMetadata;
@@ -82,22 +83,88 @@ export default (props: FunctionProps) => {
   const columns: ProColumns<FunctionTableDataType>[] = [
     {
       dataIndex: 'name',
-      title: '名称',
+      title: '参数名称',
       width: 120,
       editable: false,
       ellipsis: true,
     },
     {
       dataIndex: 'type',
-      title: '类型',
+      title: '输入类型',
       width: 120,
       editable: false,
+      render: (row) => {
+        switch (row) {
+          case 'array':
+            return (
+              <span>
+                {row}
+                <Tooltip
+                  title={
+                    <div>
+                      <p>输入示例：</p>
+                      <p>配置类型为int时，输入[1,2,3,4]</p>
+                    </div>
+                  }
+                >
+                  <QuestionCircleOutlined style={{ marginLeft: 8 }} />
+                </Tooltip>
+              </span>
+            );
+          case 'object':
+            return (
+              <span>
+                {row}
+                <Tooltip
+                  title={
+                    <div>
+                      <p>请按照json格式输入</p>
+                    </div>
+                  }
+                >
+                  <QuestionCircleOutlined style={{ marginLeft: 8 }} />
+                </Tooltip>
+              </span>
+            );
+          case 'file':
+            return (
+              <span>
+                {row}
+                <Tooltip
+                  title={
+                    <div>
+                      <p>输入示例：</p>
+                      <p>模型配置为base64时，输入YXNkZmRzYWY=</p>
+                    </div>
+                  }
+                >
+                  <QuestionCircleOutlined style={{ marginLeft: 8 }} />
+                </Tooltip>
+              </span>
+            );
+          case 'geoPoint':
+            return (
+              <span>
+                {row}
+                <Tooltip
+                  title={
+                    <div>
+                      <p>输入示例：</p>
+                      <p>[102,12231, 39.251423]</p>
+                    </div>
+                  }
+                >
+                  <QuestionCircleOutlined style={{ marginLeft: 8 }} />
+                </Tooltip>
+              </span>
+            );
+          default:
+            return row;
+        }
+      },
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.data.option',
-        defaultMessage: '操作',
-      }),
+      title: '值',
       dataIndex: 'value',
       align: 'center',
       renderFormItem: (_, row: any) => {
@@ -111,7 +178,6 @@ export default (props: FunctionProps) => {
     const properties = data.valueType ? data.valueType.properties : data.inputs;
 
     for (const datum of properties) {
-      console.log(datum);
       const type = datum.valueType ? datum.valueType.type : '-';
 
       array.push({
@@ -191,10 +257,7 @@ export default (props: FunctionProps) => {
               });
             }}
           >
-            {intl.formatMessage({
-              id: 'pages.data.option.cancel',
-              defaultMessage: '取消',
-            })}
+            清空
           </Button>
         </div>
       </div>

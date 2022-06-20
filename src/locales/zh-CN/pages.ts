@@ -57,7 +57,7 @@ export default {
   'pages.form.tip.max64': '最多输入64个字符',
   'pages.form.tip.id': '请输入英文或者数字或者-或者_',
   'pages.form.tooltip.id': '若不填写，系统将自动生成唯一ID',
-  'pages.form.tip.existsID': 'ID重复',
+  'pages.form.tip.existsID': '该ID已存在',
   'pages.form.tip.input.props': '请输入{name}',
   'pages.form.tip.select.props': '请选择{name}',
 

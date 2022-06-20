@@ -1,5 +1,5 @@
 import { Input, Modal } from 'antd';
-import { EnvironmentOutlined } from '@ant-design/icons';
+import { FormOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 import { isObject } from 'lodash';
@@ -75,7 +75,7 @@ export default (props: MetaDataJsonInputProps) => {
     <>
       <Input
         addonAfter={
-          <EnvironmentOutlined
+          <FormOutlined
             onClick={() => {
               setMonacoValue(value);
               setVisible(true);

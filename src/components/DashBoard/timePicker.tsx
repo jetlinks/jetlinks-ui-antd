@@ -72,6 +72,7 @@ export default forwardRef((props: ExtraTimePickerProps, ref) => {
         // @ts-ignore
         <DatePicker.RangePicker
           {...extraProps}
+          allowClear={false}
           showTime={props.showTime}
           value={
             value && [

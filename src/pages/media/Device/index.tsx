@@ -218,7 +218,7 @@ const Device = () => {
         </PermissionButton>,
         <PermissionButton
           tooltip={{
-            title: '查看设备',
+            title: '查看通道',
           }}
           style={{ padding: 0 }}
           type={'link'}
@@ -248,15 +248,23 @@ const Device = () => {
           </Button>
         </Tooltip>,
         <PermissionButton
-          tooltip={{
-            title:
-              record.provider === ProviderValue.FIXED
-                ? '接入方式为固定地址时不支持更新通道'
-                : '更新通道',
-          }}
+          tooltip={
+            record.state.value === 'offline' || record.provider === providerType['fixed-media']
+              ? {
+                  title:
+                    record.provider === providerType['fixed-media']
+                      ? '固定地址无法更新通道'
+                      : record.state.value === 'offline'
+                      ? '设备已离线'
+                      : '',
+                }
+              : undefined
+          }
           key={'updateChannel'}
-          isPermission={permission.action}
-          disabled={record.state.value === 'offline' || record.provider === ProviderValue.FIXED}
+          isPermission={permission.update}
+          disabled={
+            record.state.value === 'offline' || record.provider === providerType['fixed-media']
+          }
           style={{ padding: 0 }}
           type={'link'}
           onClick={() => {
@@ -273,13 +281,13 @@ const Device = () => {
           popConfirm={{
             title: intl.formatMessage({
               id:
-                record.state.value === 'offline'
-                  ? 'pages.device.productDetail.deleteTip'
+                record.state.value !== 'offline'
+                  ? 'pages.device.instance.deleteTip'
                   : 'page.table.isDelete',
               defaultMessage: '是否删除?',
             }),
             onConfirm: async () => {
-              if (record.state.value !== 'offline') {
+              if (record.state.value === 'offline') {
                 await deleteItem(record.id);
               } else {
                 onlyMessage('在线设备不能进行删除操作', 'error');
