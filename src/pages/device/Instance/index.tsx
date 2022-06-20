@@ -55,6 +55,7 @@ export const InstanceModel = model<{
   detail: {},
   config: {},
   metadataItem: {},
+  active: 'detail',
   params: new Set<string>(['test']),
 });
 export const service = new Service('device-instance');
@@ -266,7 +267,7 @@ const Instance = () => {
         notActive: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.notActive',
-            defaultMessage: '未启用',
+            defaultMessage: '禁用',
           }),
           status: 'notActive',
         },
