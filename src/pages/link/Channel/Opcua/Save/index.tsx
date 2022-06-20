@@ -1,4 +1,5 @@
 import { useIntl } from 'umi';
+import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
@@ -8,7 +9,6 @@ import { Modal } from '@/components';
 import { useMemo } from 'react';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
-import type { Field } from '@formily/core';
 import { onlyMessage } from '@/utils/util';
 
 interface Props {

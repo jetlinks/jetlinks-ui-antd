@@ -92,25 +92,30 @@ const Network = () => {
       dataIndex: 'configuration',
       title: '详情',
       ellipsis: true,
+      hideInSearch: true,
       renderText: (text, record) => {
         if (record.shareCluster) {
-          const publicHost = record.configuration.publicHost;
-          const publicPort = record.configuration.publicPort;
-          return publicHost ? (
+          const host = record.configuration.publicHost || record.configuration.remoteHost;
+          const port = record.configuration.publicPort || record.configuration.remotePort;
+          return host ? (
             <>
               {networkMap[record.type]}
-              {publicHost}:{publicPort}
+              {host}:{port}
             </>
           ) : null;
         } else {
           const log = record.cluster?.map(
-            (item) => `${item.configuration.publicHost}:${item.configuration.publicPort}`,
+            (item) =>
+              `${item.configuration.publicHost || record.configuration.remoteHost}:${
+                item.configuration.publicPort || record.configuration.remotePort
+              }`,
           );
           return (
             <>
               {log.map((item) => (
                 <div key={item}>
-                  `${networkMap[record.type]}${item}`
+                  {networkMap[record.type]}
+                  {item}
                 </div>
               ))}
             </>
@@ -325,6 +330,7 @@ const Network = () => {
               </PermissionButton>,
               <PermissionButton
                 type="link"
+                key="other-delete"
                 style={{ padding: 0 }}
                 isPermission={networkPermission.delete}
                 disabled={record.state.value === 'enabled'}
@@ -337,19 +343,18 @@ const Network = () => {
                         })
                       : '请先禁用该组件，再删除。',
                 }}
-              >
-                <Popconfirm
-                  title="确认删除?"
-                  onConfirm={async () => {
+                popConfirm={{
+                  title: '确认删除?',
+                  onConfirm: async () => {
                     const response: any = await service.remove(record.id);
                     if (response.status === 200) {
                       onlyMessage('删除成功');
                       actionRef.current?.reload();
                     }
-                  }}
-                >
-                  <DeleteOutlined />
-                </Popconfirm>
+                  },
+                }}
+              >
+                <DeleteOutlined />
               </PermissionButton>,
             ]}
           />

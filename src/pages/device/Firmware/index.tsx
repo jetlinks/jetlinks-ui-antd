@@ -1,5 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import type { ProColumns, ActionType } from '@jetlinks/pro-table';
+import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import ProTable from '@jetlinks/pro-table';
 import { Button, Popconfirm, Tooltip } from 'antd';
 import moment from 'moment';
 import { useRef } from 'react';
@@ -7,7 +8,6 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined, EyeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Link } from 'umi';
 import { model } from '@formily/reactive';
-import ProTable from '@jetlinks/pro-table';
 import { observer } from '@formily/react';
 import type { FirmwareItem, TaskItem } from '@/pages/device/Firmware/typings';
 import Service from '@/pages/device/Firmware/service';

@@ -5,6 +5,7 @@ import FnForm from './form';
 import AModel from './AdvancedMode';
 import { useDomFullHeight } from '@/hooks';
 import Empty from '@/pages/device/components/Empty';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const Functions = () => {
   const functionList = JSON.parse(InstanceModel.detail.metadata || '{}')
@@ -17,16 +18,22 @@ const Functions = () => {
       {functionList ? (
         <Tabs>
           <Tabs.TabPane tab={'精简模式'} key={1}>
-            <Tabs tabPosition="left">
-              {functionList &&
-                functionList.map((fn) => {
-                  return (
-                    <Tabs.TabPane tab={fn.name} key={fn.id}>
-                      <FnForm data={fn} />
-                    </Tabs.TabPane>
-                  );
-                })}
-            </Tabs>
+            <>
+              <div style={{ paddingBottom: 12 }}>
+                <ExclamationCircleOutlined style={{ marginRight: 12 }} />
+                精简模式下参数只支持已输入框的方式录入
+              </div>
+              <Tabs tabPosition="left">
+                {functionList &&
+                  functionList.map((fn) => {
+                    return (
+                      <Tabs.TabPane tab={fn.name} key={fn.id}>
+                        <FnForm data={fn} />
+                      </Tabs.TabPane>
+                    );
+                  })}
+              </Tabs>
+            </>
           </Tabs.TabPane>
           <Tabs.TabPane tab={'高级模式'} key={2}>
             <Tabs tabPosition="left">

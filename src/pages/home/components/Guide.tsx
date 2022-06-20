@@ -1,5 +1,4 @@
 import './index.less';
-import { getMenuPathByCode } from '@/utils/menu';
 import { message } from 'antd';
 import useHistory from '@/hooks/route/useHistory';
 import Title from './Title';
@@ -26,12 +25,11 @@ interface GuideItemProps {
 }
 
 const GuideItem = (props: GuideItemProps) => {
-  const path = getMenuPathByCode(props.url);
   const history = useHistory();
 
   const jumpPage = () => {
-    if (path && props.auth) {
-      history.push(`${path}`, props.param);
+    if (props.url && props.auth) {
+      history.push(`${props.url}`, props.param);
     } else {
       message.warning('暂无权限，请联系管理员');
     }

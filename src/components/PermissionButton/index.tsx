@@ -53,7 +53,7 @@ const PermissionButton = (props: PermissionButtonProps) => {
     if (isPermission) {
       if (popConfirm) {
         popConfirm.children = tooltip ? isTooltip : defaultButton;
-        return <Popconfirm disabled={!isPermission} {...popConfirm} />;
+        return <Popconfirm disabled={!isPermission || props.disabled} {...popConfirm} />;
       } else if (tooltip && !popConfirm) {
         return isTooltip;
       } else {

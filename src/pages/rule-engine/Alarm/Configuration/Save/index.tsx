@@ -140,6 +140,8 @@ const Save = (props: Props) => {
     }
   };
 
+  const { permission } = PermissionButton.usePermission('rule-engine/Scene');
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -234,20 +236,12 @@ const Save = (props: Props) => {
             <PermissionButton
               type="link"
               style={{ padding: 0 }}
-              isPermission={true}
+              isPermission={permission.add}
               onClick={() => {
                 const tab: any = window.open(`${origin}/#/iot/rule-engine/scene/Save`);
                 tab!.onTabSaveSuccess = (value: any) => {
                   form.setFieldState('sceneId', async (state) => {
                     state.dataSource = await getScene();
-                    // .then((resp) =>
-                    //   resp.result?.map((item: Record<string, unknown>) => ({
-                    //     ...item,
-                    //     label: item.name,
-                    //     value: item.id,
-                    //   })),
-                    // );
-                    console.log(value, 'value');
                     state.value = value?.result?.id;
                   });
                 };

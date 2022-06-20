@@ -1057,6 +1057,9 @@ const Edit = observer((props: Props) => {
         }
         MetadataModel.edit = false;
         MetadataModel.item = {};
+        if (InstanceModel.detail) {
+          InstanceModel.detail.independentMetadata = true;
+        }
       }
     } else {
       onlyMessage('操作失败！', 'error');

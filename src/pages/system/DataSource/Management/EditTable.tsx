@@ -1,8 +1,8 @@
+import { randomString } from '@/utils/util';
 import { ArrayTable, Editable, Form, FormItem, Input, NumberPicker, Radio } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Button } from 'antd';
-import { useEffect } from 'react';
 import RemoveData from './RemoveData';
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
 }
 
 const EditTable = (props: Props) => {
+  const _data = (props?.data || []).map((item) => ({ ...item, old_id: randomString() })) || [];
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -29,7 +30,7 @@ const EditTable = (props: Props) => {
 
   const form = createForm({
     initialValues: {
-      array: props.data,
+      array: _data,
     },
   });
 
@@ -52,6 +53,12 @@ const EditTable = (props: Props) => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { title: '列名' },
               properties: {
+                old_id: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                  'x-hidden': true,
+                },
                 name: {
                   type: 'string',
                   'x-decorator': 'FormItem',
@@ -71,6 +78,13 @@ const EditTable = (props: Props) => {
                     },
                   ],
                   required: true,
+                  'x-reactions': (field: any) => {
+                    const old_id = field.query('.old_id').take().value;
+                    const flag = _data.find((item: any) => {
+                      return old_id && item?.old_id && item?.old_id === old_id;
+                    });
+                    field.disabled = !!flag;
+                  },
                 },
               },
             },
@@ -107,23 +121,24 @@ const EditTable = (props: Props) => {
               'x-component-props': { title: '长度' },
               properties: {
                 length: {
-                  type: 'string',
+                  type: 'number',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-component-props': {
                     placeholder: '请输入长度',
                   },
+                  default: 0,
                   'x-validator': [
-                    {
-                      required: true,
-                      message: '请输入长度',
-                    },
+                    // {
+                    //   required: true,
+                    //   message: '请输入长度',
+                    // },
                     {
                       maximum: 99999,
                       minimum: 1,
                     },
                   ],
-                  required: true,
+                  // required: true,
                 },
               },
             },
@@ -133,23 +148,24 @@ const EditTable = (props: Props) => {
               'x-component-props': { title: '精度' },
               properties: {
                 scale: {
-                  type: 'string',
+                  type: 'number',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-component-props': {
                     placeholder: '请输入精度',
                   },
+                  default: 0,
                   'x-validator': [
-                    {
-                      required: true,
-                      message: '请输入精度',
-                    },
+                    // {
+                    //   required: true,
+                    //   message: '请输入精度',
+                    // },
                     {
                       maximum: 99999,
                       minimum: 0,
                     },
                   ],
-                  required: true,
+                  // required: true,
                 },
               },
             },
@@ -239,10 +255,6 @@ const EditTable = (props: Props) => {
     },
   };
 
-  useEffect(() => {
-    form.setValues({ array: props?.data || [] });
-  }, [props.data]);
-
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -251,7 +263,11 @@ const EditTable = (props: Props) => {
           style={{ marginBottom: 20 }}
           onClick={async () => {
             const data: any = await form.submit();
-            props.onChange(data);
+            const list = (data?.array || []).map((i: any) => {
+              const { old_id, ...extra } = i;
+              return { ...extra };
+            });
+            props.onChange({ array: list });
           }}
         >
           保存

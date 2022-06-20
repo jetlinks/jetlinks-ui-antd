@@ -8,9 +8,9 @@ import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Protocol';
 import FileUpload from '../FileUpload';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
-import { PermissionButton } from '@/components';
-import { RadioCard } from '@/components';
+import { PermissionButton, RadioCard } from '@/components';
 import { onlyMessage } from '@/utils/util';
+
 interface Props {
   data: ProtocolItem | undefined;
   close: () => void;

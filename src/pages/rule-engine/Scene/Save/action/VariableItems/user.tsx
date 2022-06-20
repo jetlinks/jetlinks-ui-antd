@@ -8,7 +8,7 @@ import {
   queryRelationUsers,
   queryWechatUsers,
 } from '@/pages/rule-engine/Scene/Save/action/service';
-import { forkJoin, filter, from, defer, map } from 'rxjs';
+import { defer, filter, forkJoin, from, map } from 'rxjs';
 
 type ChangeType = {
   source?: string;

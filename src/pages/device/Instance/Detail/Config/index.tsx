@@ -151,34 +151,35 @@ const Config = () => {
       </div>
       <div>
         {(metadata || []).map((i) => (
-          <Descriptions
-            size="small"
-            column={3}
-            key={i.name}
-            bordered
-            title={<h4 style={{ fontSize: 15 }}>{i.name}</h4>}
-          >
-            {(i?.properties || []).map((item: any) => (
-              <Descriptions.Item
-                span={1}
-                label={
-                  item?.description ? (
-                    <div>
-                      <span style={{ marginRight: '10px' }}>{item.name}</span>
-                      <Tooltip title={item.description}>
-                        <QuestionCircleOutlined />
-                      </Tooltip>
-                    </div>
-                  ) : (
-                    item.name
-                  )
-                }
-                key={item.property}
-              >
-                {renderComponent(item)}
-              </Descriptions.Item>
-            ))}
-          </Descriptions>
+          <div key={i.name} style={{ marginBottom: 20 }}>
+            <Descriptions
+              size="small"
+              column={3}
+              bordered
+              title={<h4 style={{ fontSize: 15 }}>{i.name}</h4>}
+            >
+              {(i?.properties || []).map((item: any) => (
+                <Descriptions.Item
+                  span={1}
+                  label={
+                    item?.description ? (
+                      <div>
+                        <span style={{ marginRight: '10px' }}>{item.name}</span>
+                        <Tooltip title={item.description}>
+                          <QuestionCircleOutlined />
+                        </Tooltip>
+                      </div>
+                    ) : (
+                      item.name
+                    )
+                  }
+                  key={item.property}
+                >
+                  {renderComponent(item)}
+                </Descriptions.Item>
+              ))}
+            </Descriptions>
+          </div>
         ))}
       </div>
       {visible && (
