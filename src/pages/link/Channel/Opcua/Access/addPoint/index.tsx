@@ -247,7 +247,7 @@ const AddPoint = (props: Props) => {
         <Row gutter={[24, 24]}>
           <Col span={24}>
             <Form.Item label="说明" name="description">
-              <Input.TextArea maxLength={200} />
+              <Input.TextArea maxLength={200} placeholder="请输入说明" />
             </Form.Item>
           </Col>
         </Row>

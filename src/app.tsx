@@ -242,7 +242,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       // content: initialState?.currentUser?.name,
     },
     itemRender: (route, _, routes) => {
-      console.log(route);
       const isToParentUrl = getMenuPathByCode('notice');
       const chilck = routes.indexOf(route) !== 0;
       const goto = routes.some((item) => {
@@ -256,7 +255,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
           }
         }
       });
-      return chilck && goto && route.path !== '/iot/rule-engine/Alarm' ? (
+      return chilck && goto && route.path !== '/iot/link/Channel' ? (
         <Link to={route.path}>{route.breadcrumbName}</Link>
       ) : (
         <span>{route.breadcrumbName}</span>

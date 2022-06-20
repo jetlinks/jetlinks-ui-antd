@@ -208,6 +208,7 @@ const Login: React.FC = () => {
                           type="link"
                           onClick={() => {
                             localStorage.setItem('onLogin', 'no');
+                            //  window.open(`/#/account/center/bind`);
                             window.open(`/${SystemConst.API_BASE}/sso/${item.provider}/login`);
                             window.onstorage = (e) => {
                               if (e.newValue) {
@@ -230,6 +231,7 @@ const Login: React.FC = () => {
           </div>
         </div>
         <div className={styles.right}>
+          {/* <img src={require('/public/images/login.png')}/> */}
           {/*<div className={styles.systemName}>{SystemConst.SYSTEM_NAME}</div>*/}
           {/*<div className={styles.systemDesc}>OPEN SOURCE INTERNET OF THINGS BASIC PLATFORM</div>*/}
         </div>

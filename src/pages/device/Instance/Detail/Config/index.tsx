@@ -71,7 +71,15 @@ const Config = () => {
           </div>
         );
       } else {
-        return <div>{config[item.property] || '--'}</div>;
+        return (
+          <div>
+            <Tooltip title={config[item.property] || '--'} placement="topLeft">
+              <div className="ellipsis" style={{ width: 300 }}>
+                {config[item.property] || '--'}
+              </div>
+            </Tooltip>
+          </div>
+        );
       }
     } else {
       return '--';

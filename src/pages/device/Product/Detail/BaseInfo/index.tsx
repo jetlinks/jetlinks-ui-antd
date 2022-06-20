@@ -1,5 +1,5 @@
 import { productModel, service } from '@/pages/device/Product';
-import { Button, Descriptions } from 'antd';
+import { Button, Descriptions, Tooltip } from 'antd';
 import { useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined } from '@ant-design/icons';
@@ -171,7 +171,13 @@ const BaseInfo = (props: BaseInfoProps) => {
         ]}
         bordered
       >
-        <Descriptions.Item label={'ID'}>{productModel.current?.id}</Descriptions.Item>
+        <Descriptions.Item label={'ID'}>
+          <Tooltip placement="topLeft" title={productModel.current?.id}>
+            <div className="ellipsis-70" style={{ width: 300 }}>
+              {productModel.current?.id}
+            </div>
+          </Tooltip>
+        </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
             id: 'pages.device.productDetail.classifiedName',

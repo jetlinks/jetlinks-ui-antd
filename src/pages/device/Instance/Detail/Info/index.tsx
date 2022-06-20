@@ -1,4 +1,4 @@
-import { Card, Descriptions } from 'antd';
+import { Card, Descriptions, Tooltip } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
 import moment from 'moment';
 import { observer } from '@formily/react';
@@ -47,7 +47,11 @@ const Info = observer(() => {
               defaultMessage: '设备ID',
             })}
           >
-            {InstanceModel.detail?.id}
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
+              <div className="ellipsis" style={{ width: 300 }}>
+                {InstanceModel.detail?.id}
+              </div>
+            </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -55,7 +59,11 @@ const Info = observer(() => {
               defaultMessage: '产品名称',
             })}
           >
-            {InstanceModel.detail?.productName}
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.productName}>
+              <div className="ellipsis" style={{ width: 300 }}>
+                {InstanceModel.detail?.productName}
+              </div>
+            </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -113,7 +121,9 @@ const Info = observer(() => {
               defaultMessage: '说明',
             })}
           >
-            {InstanceModel.detail?.description}
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.description}>
+              <div className="ellipsis">{InstanceModel.detail?.description}</div>
+            </Tooltip>
           </Descriptions.Item>
         </Descriptions>
         <Config />

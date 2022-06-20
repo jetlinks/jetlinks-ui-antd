@@ -70,7 +70,7 @@ const Category = observer(() => {
     {
       title: '分类排序',
       dataIndex: 'sortIndex',
-      valueType: 'digit',
+      // valueType: 'digit',
       sorter: true,
       // render: (text) => (
       //   <Space>{text}<EditOutlined onClick={() => {
