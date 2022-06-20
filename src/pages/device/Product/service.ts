@@ -150,6 +150,15 @@ class Service extends BaseService<ProductItem> {
     );
 
   public existsID = (id: string) => request(`${this.uri}/${id}/exists`, { method: 'GET' });
+
+  //接入网关
+  public queryGatewayList = () =>
+    request(`/${SystemConst.API_BASE}/gateway/device/_query/no-paging`, {
+      method: 'POST',
+      data: {
+        paging: false,
+      },
+    });
 }
 
 export default Service;

@@ -258,8 +258,19 @@ const Product = observer(() => {
     },
     {
       title: '接入方式',
-      dataIndex: 'transportProtocol',
+      dataIndex: 'accessId',
       width: 150,
+      valueType: 'select',
+      render: (_, row) => {
+        return row.protocolName;
+      },
+      request: () =>
+        service.queryGatewayList().then((resp: any) =>
+          resp.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          })),
+        ),
     },
     {
       title: '设备类型',
