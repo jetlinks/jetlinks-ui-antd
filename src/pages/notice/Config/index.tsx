@@ -8,10 +8,11 @@ import {
   EditOutlined,
   EyeOutlined,
   PlusOutlined,
+  SmallDashOutlined,
   TeamOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
-import { Space, Upload } from 'antd';
+import { Dropdown, Menu, Space, Upload } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { downloadObject, onlyMessage } from '@/utils/util';
@@ -351,20 +352,20 @@ const Config = observer(() => {
               </div>
             }
             actions={[
-              (record.provider === 'dingTalkMessage' || record.provider === 'corpMessage') && (
-                <PermissionButton
-                  key="syncUser"
-                  isPermission={true}
-                  type="link"
-                  onClick={() => {
-                    state.syncUser = true;
-                    state.current = record;
-                  }}
-                >
-                  <TeamOutlined />
-                  同步用户
-                </PermissionButton>
-              ),
+              // (record.provider === 'dingTalkMessage' || record.provider === 'corpMessage') && (
+              //   <PermissionButton
+              //     key="syncUser"
+              //     isPermission={true}
+              //     type="link"
+              //     onClick={() => {
+              //       state.syncUser = true;
+              //       state.current = record;
+              //     }}
+              //   >
+              //     <TeamOutlined />
+              //     同步用户
+              //   </PermissionButton>
+              // ),
               <PermissionButton
                 isPermission={configPermission.update}
                 type={'link'}
@@ -391,20 +392,6 @@ const Config = observer(() => {
               </PermissionButton>,
               <PermissionButton
                 type={'link'}
-                key="export"
-                isPermission={configPermission.export}
-                onClick={() =>
-                  downloadObject(
-                    record,
-                    `通知配置${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
-                  )
-                }
-              >
-                <ArrowDownOutlined />
-                导出
-              </PermissionButton>,
-              <PermissionButton
-                type={'link'}
                 key="log"
                 isPermission={configPermission.log}
                 onClick={() => {
@@ -415,7 +402,55 @@ const Config = observer(() => {
                 <UnorderedListOutlined />
                 通知记录
               </PermissionButton>,
-
+              <Dropdown
+                key={'more'}
+                placement="bottom"
+                overlay={
+                  <Menu>
+                    <Menu.Item key="export">
+                      <PermissionButton
+                        type={'link'}
+                        key="export"
+                        isPermission={configPermission.export}
+                        onClick={() =>
+                          downloadObject(
+                            record,
+                            `通知配置${record.name}-${moment(new Date()).format(
+                              'YYYY/MM/DD HH:mm:ss',
+                            )}`,
+                          )
+                        }
+                      >
+                        <ArrowDownOutlined />
+                        导出
+                      </PermissionButton>
+                      ,
+                    </Menu.Item>
+                    {(record.provider === 'dingTalkMessage' ||
+                      record.provider === 'corpMessage') && (
+                      <Menu.Item key="syncUser">
+                        <PermissionButton
+                          key="syncUser"
+                          isPermission={true}
+                          type="link"
+                          onClick={() => {
+                            state.syncUser = true;
+                            state.current = record;
+                          }}
+                        >
+                          <TeamOutlined />
+                          同步用户
+                        </PermissionButton>
+                      </Menu.Item>
+                    )}
+                  </Menu>
+                }
+              >
+                <PermissionButton type={'link'} isPermission={true} key="other">
+                  <SmallDashOutlined />
+                  其他
+                </PermissionButton>
+              </Dropdown>,
               <PermissionButton
                 key="delete"
                 isPermission={configPermission.delete}

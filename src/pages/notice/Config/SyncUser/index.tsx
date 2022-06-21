@@ -1,4 +1,16 @@
-import { Badge, Button, Col, Input, Modal, Popconfirm, Row, Spin, Tooltip, Tree } from 'antd';
+import {
+  Badge,
+  Button,
+  Col,
+  Empty,
+  Input,
+  Modal,
+  Popconfirm,
+  Row,
+  Spin,
+  Tooltip,
+  Tree,
+} from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -143,6 +155,11 @@ const SyncUser = observer(() => {
       title="同步用户"
       bodyStyle={{ height: '600px', overflowY: 'auto' }}
       visible={true}
+      footer={[
+        <Button key="back" onClick={() => (state.syncUser = false)}>
+          关闭
+        </Button>,
+      ]}
       onCancel={() => (state.syncUser = false)}
       width="80vw"
     >
@@ -155,21 +172,25 @@ const SyncUser = observer(() => {
                 style={{ marginBottom: 8 }}
                 placeholder="请输入部门名称"
               />
-              <Tree
-                fieldNames={{
-                  title: 'name',
-                  key: 'id',
-                }}
-                selectedKeys={[dept || '']}
-                onSelect={(key) => {
-                  setDept(key[0] as string);
-                }}
-                treeData={treeData}
-              />
+              {treeData && treeData.length !== 0 ? (
+                <Tree
+                  fieldNames={{
+                    title: 'name',
+                    key: 'id',
+                  }}
+                  selectedKeys={[dept || '']}
+                  onSelect={(key) => {
+                    setDept(key[0] as string);
+                  }}
+                  treeData={treeData}
+                />
+              ) : (
+                <Empty />
+              )}
             </div>
           </Col>
           <Col span={20}>
-            {dept && (
+            {dept ? (
               <ProTable
                 rowKey="thirdPartyUserId"
                 actionRef={actionRef}
@@ -227,10 +248,12 @@ const SyncUser = observer(() => {
                       }
                     }}
                   >
-                    <Button type="primary">保存</Button>
+                    <Button type="primary">自动绑定</Button>
                   </Popconfirm>
                 }
               />
+            ) : (
+              <Empty />
             )}
           </Col>
         </Row>
