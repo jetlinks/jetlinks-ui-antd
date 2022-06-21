@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input } from 'antd';
+import { Button, Card, Form, Input, message } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/account/Center/service';
 import api from '@/pages/user/Login/service';
@@ -6,6 +6,7 @@ import styles from './index.less';
 import Token from '@/utils/token';
 import { useModel } from '@@/plugin-model/useModel';
 import { onlyMessage } from '@/utils/util';
+import { catchError, filter, mergeMap } from 'rxjs/operators';
 
 export const service = new Service();
 
@@ -16,6 +17,7 @@ const Bind = () => {
   const [code, setCode] = useState<string>('');
   const [isLogin, setIslogin] = useState<any>('yes');
   const { initialState, setInitialState } = useModel('@@initialState');
+  const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
 
   const bindPage = require('/public/images/bind/bindPage.png');
   const Vector = require('/public/images/bind/Vector.png');
@@ -37,6 +39,16 @@ const Bind = () => {
     service.getUserDetail().subscribe((res) => {
       setUser(res?.result);
     });
+  };
+  const getCode = () => {
+    api
+      .captchaConfig()
+      .pipe(
+        filter((r) => r.enabled),
+        mergeMap(api.getCaptcha),
+        catchError(() => message.error('服务端挂了！')),
+      )
+      .subscribe(setCaptcha);
   };
 
   //未登录页
@@ -66,6 +78,29 @@ const Bind = () => {
           >
             <Input.Password />
           </Form.Item>
+          {captcha.key && (
+            <Form.Item
+              label="验证码"
+              name="verifyCode"
+              rules={[{ required: true, message: '请输入验证码' }]}
+            >
+              <Input
+                placeholder="请输入验证码"
+                addonAfter={
+                  <>
+                    <img
+                      style={{ width: 110 }}
+                      src={captcha.base64}
+                      alt="验证码"
+                      onClick={() => {
+                        getCode();
+                      }}
+                    />
+                  </>
+                }
+              />
+            </Form.Item>
+          )}
         </Form>
       </div>
     </div>
@@ -80,6 +115,7 @@ const Bind = () => {
       });
     }
   };
+
   const doLogin = async (data: any) => {
     api.login(data).subscribe({
       next: async (userInfo) => {
@@ -90,7 +126,11 @@ const Bind = () => {
         setTimeout(() => window.close(), 1000);
       },
       error: () => {
+        getCode();
         onlyMessage('登录失败,请重试', 'error');
+      },
+      complete: () => {
+        getCode();
       },
     });
   };
@@ -107,6 +147,7 @@ const Bind = () => {
       setIslogin(localStorage.getItem('onLogin'));
     }
   }, []);
+  useEffect(getCode, []);
 
   return (
     <>
@@ -180,12 +221,14 @@ const Bind = () => {
                   if (data) {
                     doLogin({
                       ...data,
+                      verifyKey: captcha.key,
                       bindCode: code,
+                      expires: 3600000,
                     });
                   }
                 }}
               >
-                登录并已绑定账户
+                登陆并绑定账户
               </Button>
             ) : (
               <Button
