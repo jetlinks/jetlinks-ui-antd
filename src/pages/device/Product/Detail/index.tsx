@@ -144,16 +144,6 @@ const ProductDetail = observer(() => {
         const metadata: DeviceMetadata = JSON.parse(data.metadata);
         MetadataAction.insert(metadata);
       }
-      if (data?.accessProvider && pList.includes(data?.accessProvider)) {
-        setList([
-          ...initList,
-          {
-            key: 'metadata-map',
-            tab: '物模型映射',
-            component: <MetadataMap type="product" />,
-          },
-        ]);
-      }
       service.instanceCount(encodeQuery({ terms: { productId: param?.id } })).then((res: any) => {
         if (res.status === 200) {
           productModel.current = { ...data, count: res.result };
@@ -161,6 +151,24 @@ const ProductDetail = observer(() => {
       });
     });
   };
+
+  useEffect(() => {
+    if (
+      productModel.current?.accessProvider &&
+      pList.includes(productModel.current?.accessProvider)
+    ) {
+      setList([
+        ...initList,
+        {
+          key: 'metadata-map',
+          tab: '物模型映射',
+          component: <MetadataMap type="product" />,
+        },
+      ]);
+    } else {
+      setList([...initList]);
+    }
+  }, [productModel.current]);
 
   useEffect(() => {
     const queryParam = new URLSearchParams(location.search);

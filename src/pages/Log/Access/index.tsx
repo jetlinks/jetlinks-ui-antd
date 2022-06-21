@@ -92,8 +92,9 @@ const Access = () => {
         id: 'pages.log.access.requestUser',
         defaultMessage: '请求用户',
       }),
-      dataIndex: 'username',
-      render: (text, record: any) => <Tag color="geekblue">{record?.context?.username || ''}</Tag>,
+      dataIndex: 'context.username',
+      render: (text, record: any) =>
+        record?.context?.username ? <Tag color="geekblue">{record?.context?.username}</Tag> : '',
     },
     {
       title: intl.formatMessage({

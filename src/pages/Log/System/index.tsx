@@ -68,7 +68,7 @@ const System = () => {
         id: 'pages.log.system.serviceName',
         defaultMessage: '服务名',
       }),
-      dataIndex: 'server',
+      dataIndex: 'context.server',
       width: 150,
       ellipsis: true,
       render: (text, record) => record?.context?.server || '--',
