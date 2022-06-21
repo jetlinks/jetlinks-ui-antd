@@ -442,6 +442,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       log,
       (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1),
     );
+    console.log(log.terms1, log.terms2, 'log-terms');
     if (_expand) {
       setExpand(false);
     }
