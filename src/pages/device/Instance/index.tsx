@@ -250,7 +250,9 @@ const Instance = () => {
       dataIndex: 'registryTime',
       width: '200px',
       valueType: 'dateTime',
-      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      render: (_: any, row) => {
+        return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '/';
+      },
       sorter: true,
     },
     {
@@ -662,14 +664,16 @@ const Instance = () => {
                   disabled: record.state.value !== 'notActive',
                   onConfirm: async () => {
                     if (record.state.value === 'notActive') {
-                      await service.remove(record.id);
-                      onlyMessage(
-                        intl.formatMessage({
-                          id: 'pages.data.option.success',
-                          defaultMessage: '操作成功!',
-                        }),
-                      );
-                      actionRef.current?.reload();
+                      const resp: any = await service.remove(record.id);
+                      if (resp.code === 200) {
+                        onlyMessage(
+                          intl.formatMessage({
+                            id: 'pages.data.option.success',
+                            defaultMessage: '操作成功!',
+                          }),
+                        );
+                        actionRef.current?.reload();
+                      }
                     } else {
                       onlyMessage(
                         intl.formatMessage({ id: 'pages.device.instance.deleteTip' }),

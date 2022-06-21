@@ -103,6 +103,7 @@ const Center = () => {
     service.savePassWord(parms).subscribe((res) => {
       if (res.status === 200) {
         onlyMessage('保存成功');
+        setPassword(false);
       }
     });
   };
@@ -324,7 +325,6 @@ const Center = () => {
         <PasswordEdit
           save={(item: any) => {
             savePassword(item);
-            setPassword(false);
           }}
           visible={password}
           close={() => {

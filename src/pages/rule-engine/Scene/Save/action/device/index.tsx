@@ -25,10 +25,7 @@ enum SourceEnum {
   'relation' = 'relation',
 }
 
-const DefaultSourceOptions = [
-  { label: '固定设备', value: SourceEnum.fixed },
-  { label: '按标签', value: SourceEnum.tag },
-];
+const DefaultSourceOptions = [{ label: '固定设备', value: SourceEnum.fixed }];
 
 export enum MessageTypeEnum {
   'WRITE_PROPERTY' = 'WRITE_PROPERTY',
@@ -82,7 +79,11 @@ export default (props: DeviceProps) => {
   useEffect(() => {
     props.form?.resetFields([['actions', name, 'device', 'selector']]);
     if (props.triggerType === 'device') {
-      setSourceList([...DefaultSourceOptions, { label: '按关系', value: SourceEnum.relation }]);
+      setSourceList([
+        ...DefaultSourceOptions,
+        { label: '按关系', value: SourceEnum.relation },
+        { label: '按标签', value: SourceEnum.tag },
+      ]);
     } else {
       setSourceList(DefaultSourceOptions);
     }

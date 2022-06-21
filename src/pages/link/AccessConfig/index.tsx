@@ -20,7 +20,7 @@ const AccessConfig = () => {
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const { permission } = PermissionButton.usePermission('link/AccessConfig');
 
-  const { minHeight } = useDomFullHeight(`.link-accessConfig`);
+  const { minHeight } = useDomFullHeight(`.link-accessConfig`, 36);
 
   const columns: ProColumns<any>[] = [
     {
@@ -102,133 +102,149 @@ const AccessConfig = () => {
           handleSearch(dt);
         }}
       />
-      <Card className={'link-accessConfig'} style={{ minHeight }}>
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
-          <PermissionButton
-            isPermission={permission.add}
-            onClick={() => {
-              history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}`);
-            }}
-            key="button"
-            type="primary"
-          >
-            新增
-          </PermissionButton>
+      <Card>
+        <div style={{ position: 'relative', minHeight }} className={'link-accessConfig'}>
+          <div style={{ height: '100%', paddingBottom: 48 }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
+              <PermissionButton
+                isPermission={permission.add}
+                onClick={() => {
+                  history.push(`${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}`);
+                }}
+                key="button"
+                type="primary"
+              >
+                新增
+              </PermissionButton>
+            </div>
+            {dataSource?.data.length > 0 ? (
+              <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
+                {(dataSource?.data || []).map((item: any) => (
+                  <Col key={item.id} span={12}>
+                    <AccessConfigCard
+                      {...item}
+                      actions={[
+                        <PermissionButton
+                          isPermission={permission.update}
+                          onClick={() => {
+                            history.push(
+                              `${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}?id=${
+                                item.id
+                              }`,
+                            );
+                          }}
+                          key="button"
+                          type="link"
+                        >
+                          <EditOutlined />
+                          编辑
+                        </PermissionButton>,
+                        <PermissionButton
+                          type={'link'}
+                          key={'state'}
+                          style={{ padding: 0 }}
+                          popConfirm={{
+                            title: `确认${item.state.value !== 'disabled' ? '禁用' : '启用'}`,
+                            onConfirm: () => {
+                              if (item.state.value !== 'disabled') {
+                                service.shutDown(item.id).then((resp) => {
+                                  if (resp.status === 200) {
+                                    onlyMessage('操作成功！');
+                                    handleSearch(param);
+                                  }
+                                });
+                              } else {
+                                service.startUp(item.id).then((resp) => {
+                                  if (resp.status === 200) {
+                                    onlyMessage('操作成功！');
+                                    handleSearch(param);
+                                  }
+                                });
+                              }
+                            },
+                          }}
+                          isPermission={permission.action}
+                          tooltip={{
+                            title: item.state.value !== 'disabled' ? '禁用' : '启用',
+                          }}
+                        >
+                          {item.state.value !== 'disabled' ? (
+                            <StopOutlined />
+                          ) : (
+                            <PlayCircleOutlined />
+                          )}
+                          {item.state.value !== 'disabled' ? '禁用' : '启用'}
+                        </PermissionButton>,
+                        <PermissionButton
+                          isPermission={permission.delete}
+                          disabled={item.state.value !== 'disabled'}
+                          tooltip={{
+                            title: item.state.value !== 'disabled' ? '请先禁用，再删除' : '',
+                          }}
+                          popConfirm={{
+                            title: '确认删除',
+                            disabled: item.state.value !== 'disabled',
+                            onConfirm: () => {
+                              service.remove(item.id).then((resp: any) => {
+                                if (resp.status === 200) {
+                                  onlyMessage('操作成功！');
+                                  handleSearch(param);
+                                } else {
+                                  onlyMessage(resp?.message || '操作失败', 'error');
+                                }
+                              });
+                            },
+                          }}
+                          key="delete"
+                          type="link"
+                        >
+                          <DeleteOutlined />
+                        </PermissionButton>,
+                      ]}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            ) : (
+              <div style={{ height: minHeight - 150 }}>
+                <Empty />
+              </div>
+            )}
+          </div>
+          {dataSource.data.length > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                position: 'absolute',
+                width: '100%',
+                bottom: 0,
+              }}
+            >
+              <Pagination
+                showSizeChanger
+                size="small"
+                className={'pro-table-card-pagination'}
+                total={dataSource?.total || 0}
+                current={dataSource?.pageIndex + 1}
+                onChange={(page, size) => {
+                  handleSearch({
+                    ...param,
+                    pageIndex: page - 1,
+                    pageSize: size,
+                  });
+                }}
+                pageSizeOptions={[10, 20, 50, 100]}
+                pageSize={dataSource?.pageSize}
+                showTotal={(num) => {
+                  const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+                  const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+                  return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+                }}
+              />
+            </div>
+          )}
         </div>
-        {dataSource?.data.length > 0 ? (
-          <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
-            {(dataSource?.data || []).map((item: any) => (
-              <Col key={item.id} span={12}>
-                <AccessConfigCard
-                  {...item}
-                  actions={[
-                    <PermissionButton
-                      isPermission={permission.update}
-                      onClick={() => {
-                        history.push(
-                          `${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}?id=${
-                            item.id
-                          }`,
-                        );
-                      }}
-                      key="button"
-                      type="link"
-                    >
-                      <EditOutlined />
-                      编辑
-                    </PermissionButton>,
-                    <PermissionButton
-                      type={'link'}
-                      key={'state'}
-                      style={{ padding: 0 }}
-                      popConfirm={{
-                        title: `确认${item.state.value !== 'disabled' ? '禁用' : '启用'}`,
-                        onConfirm: () => {
-                          if (item.state.value !== 'disabled') {
-                            service.shutDown(item.id).then((resp) => {
-                              if (resp.status === 200) {
-                                onlyMessage('操作成功！');
-                                handleSearch(param);
-                              }
-                            });
-                          } else {
-                            service.startUp(item.id).then((resp) => {
-                              if (resp.status === 200) {
-                                onlyMessage('操作成功！');
-                                handleSearch(param);
-                              }
-                            });
-                          }
-                        },
-                      }}
-                      isPermission={permission.action}
-                      tooltip={{
-                        title: item.state.value !== 'disabled' ? '禁用' : '启用',
-                      }}
-                    >
-                      {item.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
-                      {item.state.value !== 'disabled' ? '禁用' : '启用'}
-                    </PermissionButton>,
-                    <PermissionButton
-                      isPermission={permission.delete}
-                      disabled={item.state.value !== 'disabled'}
-                      tooltip={{
-                        title: item.state.value !== 'disabled' ? '请先禁用，再删除' : '',
-                      }}
-                      popConfirm={{
-                        title: '确认删除',
-                        disabled: item.state.value !== 'disabled',
-                        onConfirm: () => {
-                          service.remove(item.id).then((resp: any) => {
-                            if (resp.status === 200) {
-                              onlyMessage('操作成功！');
-                              handleSearch(param);
-                            } else {
-                              onlyMessage(resp?.message || '操作失败', 'error');
-                            }
-                          });
-                        },
-                      }}
-                      key="delete"
-                      type="link"
-                    >
-                      <DeleteOutlined />
-                    </PermissionButton>,
-                  ]}
-                />
-              </Col>
-            ))}
-          </Row>
-        ) : (
-          <div style={{ height: minHeight - 150 }}>
-            <Empty />
-          </div>
-        )}
-        {dataSource.data.length > 0 && (
-          <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>
-            <Pagination
-              showSizeChanger
-              size="small"
-              className={'pro-table-card-pagination'}
-              total={dataSource?.total || 0}
-              current={dataSource?.pageIndex + 1}
-              onChange={(page, size) => {
-                handleSearch({
-                  ...param,
-                  pageIndex: page - 1,
-                  pageSize: size,
-                });
-              }}
-              pageSizeOptions={[10, 20, 50, 100]}
-              pageSize={dataSource?.pageSize}
-              showTotal={(num) => {
-                const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-                const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-              }}
-            />
-          </div>
-        )}
       </Card>
     </PageContainer>
   );

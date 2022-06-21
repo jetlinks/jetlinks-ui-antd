@@ -136,7 +136,7 @@ export default (props: ProductCardProps) => {
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.transportProtocol || '未接入'}</div>
+              <div className={'ellipsis'}>{props.protocolName || '未接入'}</div>
             </div>
           </div>
         </div>

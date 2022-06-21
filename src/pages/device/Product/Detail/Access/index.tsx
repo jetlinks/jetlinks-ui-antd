@@ -393,10 +393,24 @@ const Access = () => {
                     </span>
                   }
                 />
-                <div className={styles.context}>{access?.name}</div>
                 <div className={styles.context}>
-                  {access?.description ||
-                    dataSource.find((item) => item?.id === access?.provider)?.description}
+                  <Tooltip placement="topLeft" title={access?.name}>
+                    <div className="ellipsis-70">{access?.name}</div>
+                  </Tooltip>
+                </div>
+                <div className={styles.context}>
+                  <Tooltip
+                    placement="topLeft"
+                    title={
+                      access?.description ||
+                      dataSource.find((item) => item?.id === access?.provider)?.description
+                    }
+                  >
+                    <div className="ellipsis-70">
+                      {access?.description ||
+                        dataSource.find((item) => item?.id === access?.provider)?.description}
+                    </div>
+                  </Tooltip>
                 </div>
               </div>
 

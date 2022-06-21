@@ -64,6 +64,9 @@ export default (props: LeftTreeType) => {
   );
 
   const handleTreeData = (data: any) => {
+    if (data && Object.keys(data).length) {
+      return [];
+    }
     const newArr = data.tags.map((item: any) => ({ id: item.name, name: item.name, isLeaf: true }));
 
     Object.keys(data.paths).forEach((a: any) => {

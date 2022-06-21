@@ -150,7 +150,8 @@ export default () => {
         <>
           <InputNumber
             value={shakeLimit.time}
-            min={0}
+            min={1}
+            max={100}
             onChange={(e: number) => {
               const newShake = {
                 ...shakeLimit,
@@ -162,7 +163,8 @@ export default () => {
           <span> 秒内发生 </span>
           <InputNumber
             value={shakeLimit.threshold}
-            min={0}
+            min={1}
+            max={100}
             onChange={(e: number) => {
               const newShake = {
                 ...shakeLimit,

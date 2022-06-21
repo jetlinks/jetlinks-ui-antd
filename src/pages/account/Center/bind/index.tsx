@@ -45,7 +45,7 @@ const Bind = () => {
       <div className={styles.topimg}>
         <img src={logo} style={{ width: '50px', height: '50px' }} />
         <img src={Vector} style={{ height: '15px', margin: '0 15px' }} />
-        <img src={logo} style={{ width: '50px', height: '50px' }} />
+        <img src={iconMap.get(bindUser?.type)} style={{ width: '50px', height: '50px' }} />
       </div>
       <div className={styles.topfont}>
         你已通过{bindUser?.type === 'dingtalk' ? '钉钉' : '微信'}授权,完善以下登录信息即可以完成绑定

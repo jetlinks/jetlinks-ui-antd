@@ -1,4 +1,4 @@
-import { Button, Drawer, Dropdown, Menu, message } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
 import type { Field, IFieldState } from '@formily/core';
@@ -1057,6 +1057,9 @@ const Edit = observer((props: Props) => {
         }
         MetadataModel.edit = false;
         MetadataModel.item = {};
+        if (InstanceModel.detail) {
+          InstanceModel.detail.independentMetadata = true;
+        }
       }
     } else {
       onlyMessage('操作失败！', 'error');
@@ -1064,13 +1067,13 @@ const Edit = observer((props: Props) => {
     setLoading(false);
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1" onClick={() => saveMetadata(true)}>
-        保存并生效
-      </Menu.Item>
-    </Menu>
-  );
+  // const menu = (
+  //   <Menu>
+  //     <Menu.Item key="1" onClick={() => saveMetadata(true)}>
+  //       保存并生效
+  //     </Menu.Item>
+  //   </Menu>
+  // );
   return (
     <>
       <Drawer
@@ -1092,20 +1095,23 @@ const Edit = observer((props: Props) => {
         zIndex={1000}
         placement={'right'}
         extra={
-          props.type === 'product' ? (
-            <Dropdown.Button
-              loading={loading}
-              type="primary"
-              onClick={() => saveMetadata()}
-              overlay={menu}
-            >
-              保存数据
-            </Dropdown.Button>
-          ) : (
-            <Button loading={loading} type="primary" onClick={() => saveMetadata()}>
-              保存数据
-            </Button>
-          )
+          <Button loading={loading} type="primary" onClick={() => saveMetadata()}>
+            保存
+          </Button>
+          // props.type === 'product' ? (
+          //   <Dropdown.Button
+          //     loading={loading}
+          //     type="primary"
+          //     onClick={() => saveMetadata()}
+          //     overlay={menu}
+          //   >
+          //     保存
+          //   </Dropdown.Button>
+          // ) : (
+          //   <Button loading={loading} type="primary" onClick={() => saveMetadata()}>
+          //     保存
+          //   </Button>
+          // )
         }
       >
         <Form form={form} layout="vertical" size="small">

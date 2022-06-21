@@ -50,16 +50,28 @@ export default (props: AccessConfigCardProps) => {
               {props?.channelInfo?.name && (
                 <div className="server">
                   <div className="subTitle">{props?.channelInfo?.name}</div>
-                  <div className="serverItem">
-                    {props.channelInfo?.addresses.slice(0, 1).map((i: any, index: number) => (
-                      <div className="subItem" key={i.address + `_address${index}`}>
-                        <Tooltip placement="topLeft" title={i.address}>
+                  <Tooltip
+                    placement="topLeft"
+                    title={
+                      <div>
+                        {[...props.channelInfo?.addresses].map((i: any, index: number) => (
+                          <div key={i.address + `_address${index}`}>
+                            <Badge color={i.health === -1 ? 'red' : 'green'} />
+                            {i.address}
+                          </div>
+                        ))}
+                      </div>
+                    }
+                  >
+                    <div className="serverItem">
+                      {props.channelInfo?.addresses.slice(0, 1).map((i: any, index: number) => (
+                        <div className="subItem" key={i.address + `_address${index}`}>
                           <Badge color={i.health === -1 ? 'red' : 'green'} />
                           {i.address}
-                        </Tooltip>
-                      </div>
-                    ))}
-                  </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Tooltip>
                 </div>
               )}
               {props.protocolDetail?.name && (

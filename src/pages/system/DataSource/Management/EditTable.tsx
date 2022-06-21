@@ -121,12 +121,13 @@ const EditTable = (props: Props) => {
               'x-component-props': { title: '长度' },
               properties: {
                 length: {
-                  type: 'string',
+                  type: 'number',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-component-props': {
                     placeholder: '请输入长度',
                   },
+                  default: 0,
                   'x-validator': [
                     // {
                     //   required: true,
@@ -147,12 +148,13 @@ const EditTable = (props: Props) => {
               'x-component-props': { title: '精度' },
               properties: {
                 scale: {
-                  type: 'string',
+                  type: 'number',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-component-props': {
                     placeholder: '请输入精度',
                   },
+                  default: 0,
                   'x-validator': [
                     // {
                     //   required: true,

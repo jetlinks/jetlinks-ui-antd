@@ -54,6 +54,21 @@ const BindDevice = (props: Props) => {
       title: '状态',
       dataIndex: 'state',
       renderText: (state) => <Badge text={state?.text} status={statusMap.get(state.value)} />,
+      valueType: 'select',
+      valueEnum: {
+        online: {
+          text: '在线',
+          status: 'disabled',
+        },
+        offline: {
+          text: '离线',
+          status: 'offline',
+        },
+        notActive: {
+          text: '未激活',
+          status: 'notActive',
+        },
+      },
     },
   ];
 

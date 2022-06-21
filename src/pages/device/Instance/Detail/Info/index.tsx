@@ -1,4 +1,4 @@
-import { Card, Descriptions } from 'antd';
+import { Card, Descriptions, Tooltip } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
 import moment from 'moment';
 import { observer } from '@formily/react';
@@ -6,7 +6,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import Config from '@/pages/device/Instance/Detail/Config';
 import Reation from '@/pages/device/Instance/Detail/Reation';
 import Save from '../../Save';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
@@ -18,6 +18,10 @@ const Info = observer(() => {
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
   const { minHeight } = useDomFullHeight(`.device-detail-body`);
+
+  useEffect(() => {
+    console.log(InstanceModel.detail);
+  }, [InstanceModel.detail]);
 
   return (
     <>
@@ -47,7 +51,11 @@ const Info = observer(() => {
               defaultMessage: '设备ID',
             })}
           >
-            {InstanceModel.detail?.id}
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
+              <div className="ellipsis" style={{ width: 300 }}>
+                {InstanceModel.detail?.id}
+              </div>
+            </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -55,7 +63,11 @@ const Info = observer(() => {
               defaultMessage: '产品名称',
             })}
           >
-            {InstanceModel.detail?.productName}
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.productName}>
+              <div className="ellipsis" style={{ width: 300 }}>
+                {InstanceModel.detail?.productName}
+              </div>
+            </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -95,7 +107,8 @@ const Info = observer(() => {
               defaultMessage: '注册时间',
             })}
           >
-            {moment(InstanceModel.detail?.registerTime).format('YYYY-MM-DD HH:mm:ss')}
+            {InstanceModel.detail?.registerTime &&
+              moment(InstanceModel.detail?.registerTime).format('YYYY-MM-DD HH:mm:ss')}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -113,7 +126,9 @@ const Info = observer(() => {
               defaultMessage: '说明',
             })}
           >
-            {InstanceModel.detail?.description}
+            <Tooltip placement="topLeft" title={InstanceModel.detail?.description}>
+              <div className="ellipsis">{InstanceModel.detail?.description}</div>
+            </Tooltip>
           </Descriptions.Item>
         </Descriptions>
         <Config />
@@ -131,6 +146,7 @@ const Info = observer(() => {
             InstanceModel.detail = {
               ...InstanceModel.detail,
               ...data,
+              describe: data.description,
             };
           }
         }}
