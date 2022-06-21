@@ -5,7 +5,6 @@ import { Button, message, Modal } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
-import encodeQuery from '@/utils/encodeQuery';
 import { PermissionButton } from '@/components';
 import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
@@ -29,16 +28,20 @@ const ProductChoose = (props: Props) => {
   });
 
   useEffect(() => {
-    service.getProductList(encodeQuery({ paging: false, terms: { state: 1 } })).then((resp) => {
-      if (resp.status === 200) {
-        const list = resp.result.map((item: { name: any; id: any }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setProductList(list);
-      }
-    });
-  }, []);
+    if (visible) {
+      service.getProductList().then((resp) => {
+        if (resp.status === 200) {
+          const list = resp.result
+            .filter((i: any) => !i?.accessId)
+            .map((item: { name: any; id: any }) => ({
+              label: item.name,
+              value: item.id,
+            }));
+          setProductList(list);
+        }
+      });
+    }
+  }, [visible]);
 
   const form = createForm({});
 

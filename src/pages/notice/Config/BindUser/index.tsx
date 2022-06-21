@@ -60,6 +60,8 @@ const BindUser = (props: Props) => {
         'x-component': 'Select',
         'x-component-props': {
           placeholder: '请选择用户',
+          showSearch: true,
+          showArrow: true,
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
         },
@@ -76,7 +78,7 @@ const BindUser = (props: Props) => {
 
   return (
     <Modal
-      title="绑定用户 "
+      title="绑定用户"
       onCancel={() => {
         props.close();
       }}

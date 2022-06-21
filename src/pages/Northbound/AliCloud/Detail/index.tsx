@@ -441,7 +441,7 @@ const Detail = observer(() => {
               </FormButtonGroup.Sticky>
             </Form>
           </Col>
-          <Col span={10}>
+          <Col span={10} className="aliyun">
             <div className="doc">
               <div className="url">
                 阿里云物联网平台：
@@ -467,6 +467,10 @@ const Detail = observer(() => {
                 <div>
                   阿里云内部给每台机器设置的唯一编号。请根据购买的阿里云服务器地址进行选择。
                 </div>
+                <div>获取路径：“阿里云物联网平台”--“服务地址”</div>
+                <div className={'image'}>
+                  <Image width="100%" src={require('/public/images/northbound/aliyun3.png')} />
+                </div>
                 <h2> 2、AccesskeyID/Secret</h2>
                 <div>
                   用于程序通知方式调用云服务费API的用户标识和秘钥获取路径：“阿里云管理控制台”--“用户头像”--“”--“AccessKey管理”--“查看”
@@ -479,7 +483,12 @@ const Detail = observer(() => {
                   物联网平台对于阿里云物联网平台，是一个网关设备，需要映射到阿里云物联网平台的具体产品
                 </div>
                 <h2> 4. 产品映射</h2>
-                <div>将阿里云物联网平台中的产品实例与物联网平台的产品实例进行关联</div>
+                <div>
+                  将阿里云物联网平台中的产品实例与物联网平台的产品实例进行关联。关联后需要进入该产品下的每一个设备的实例信息页，填入对应的阿里云物联网平台设备的DeviceName、DeviceSecret进行一对一绑定。
+                </div>
+                <div className={'image'}>
+                  <Image width="100%" src={require('/public/images/northbound/aliyun4.png')} />
+                </div>
               </div>
             </div>
           </Col>

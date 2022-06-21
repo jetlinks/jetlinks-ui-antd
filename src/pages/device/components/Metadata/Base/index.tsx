@@ -156,9 +156,9 @@ const BaseMetadata = observer((props: Props) => {
         columns={MetadataMapping.get(type)!.concat(actions)}
         rowKey="id"
         search={false}
-        pagination={{
-          pageSize: 5,
-        }}
+        // pagination={{
+        //   pageSize: 5,
+        // }}
         options={{
           density: false,
           fullScreen: false,
@@ -168,6 +168,7 @@ const BaseMetadata = observer((props: Props) => {
         }}
         toolbar={{
           search: {
+            placeholder: '请输入标识',
             onSearch: handleSearch,
           },
         }}

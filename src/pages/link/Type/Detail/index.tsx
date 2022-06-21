@@ -142,6 +142,9 @@ const Save = observer(() => {
               });
             } else {
               // 独立配置
+              f5.setFieldState('grid.cluster.cluster', (state) => {
+                state.value = [{}];
+              });
             }
           });
           onFieldValueChange('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
@@ -229,7 +232,7 @@ const Save = observer(() => {
           layout: 'vertical',
         },
         'x-component-props': {
-          placeholder: '请输入节点名称',
+          placeholder: '请选择节点名称',
         },
         'x-reactions': [
           {

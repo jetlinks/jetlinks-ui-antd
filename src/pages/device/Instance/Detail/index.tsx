@@ -153,6 +153,16 @@ const InstanceDetail = observer(() => {
       component: <MetadataMap type="device" />,
     },
   ];
+
+  // const pList = [
+  //   'websocket-server',
+  //   'http-server-gateway',
+  //   'udp-device-gateway',
+  //   'coap-server-gateway',
+  //   'mqtt-client-gateway',
+  //   'mqtt-server-gateway',
+  //   'tcp-server-gateway',
+  // ];
   const [list, setList] =
     useState<{ key: string; tab: string | ReactNode; component: ReactNode }[]>(baseList);
 
@@ -160,6 +170,9 @@ const InstanceDetail = observer(() => {
     service.detail(id).then((response) => {
       InstanceModel.detail = response?.result;
       const datalist = [...baseList];
+      // if(InstanceModel.detail){
+
+      // }
       if (response.result.protocol === 'modbus-tcp') {
         datalist.push({
           key: 'modbus',
