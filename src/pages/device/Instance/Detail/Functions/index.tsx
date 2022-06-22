@@ -15,7 +15,7 @@ const Functions = () => {
 
   return (
     <Card className={'device-detail-function'} style={{ minHeight: minHeight }}>
-      {functionList ? (
+      {functionList && functionList.length ? (
         <Tabs>
           <Tabs.TabPane tab={'精简模式'} key={1}>
             <>
