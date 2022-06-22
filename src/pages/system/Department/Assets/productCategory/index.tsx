@@ -13,6 +13,7 @@ import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import { difference } from 'lodash';
 import { onlyMessage } from '@/utils/util';
+import { AssetsModel, ASSETS_TABS_ENUM } from '@/pages/system/Department/Assets';
 
 export const service = new Service<ProductCategoryItem>('assets');
 
@@ -33,6 +34,12 @@ export default observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
+
+  useEffect(() => {
+    if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.ProductCategory && actionRef.current) {
+      actionRef.current.reload();
+    }
+  }, [AssetsModel.tabsIndex]);
 
   /**
    * 解除资产绑定
@@ -238,7 +245,6 @@ export default observer((props: { parentId: string }) => {
           selectedRowKeys: Models.unBindKeys,
           onSelect: (record, selected, selectedRows) => {
             const keys = getTableKeys(selected ? selectedRows : [record]);
-            console.log(record, selected, selectedRows);
             if (selected) {
               const _map = new Map();
               keys.forEach((k) => {

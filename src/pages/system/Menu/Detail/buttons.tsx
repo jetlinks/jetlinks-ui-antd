@@ -10,6 +10,7 @@ import Permission from '@/pages/system/Menu/components/permission';
 import { useRequest } from '@@/plugin-request/request';
 import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
+import { debounce } from 'lodash';
 
 type ButtonsProps = {
   data: MenuItem;
@@ -52,15 +53,15 @@ export default (props: ButtonsProps) => {
     setDisabled(false);
   };
 
-  // const filterThree = (e: any) => {
-  //   const _data: any = {
-  //     paging: false,
-  //   };
-  //   if (e.target.value) {
-  //     _data.terms = [{ column: 'name', value: e.target.value }];
-  //   }
-  //   queryPermissions(_data);
-  // };
+  const filterThree = (e: any) => {
+    const _data: any = {
+      paging: false,
+    };
+    if (e.target.value) {
+      _data.terms = [{ column: 'name$like', value: `%${e.target.value}%` }];
+    }
+    queryPermissions(_data);
+  };
 
   /**
    * 更新菜单信息
@@ -338,6 +339,11 @@ export default (props: ButtonsProps) => {
             })}
             required={true}
           >
+            <Input
+              onChange={debounce(filterThree, 500)}
+              style={{ width: 300, marginBottom: 12 }}
+              placeholder={'请输入权限名称'}
+            />
             <Form.Item name="permissions" rules={[{ required: true, message: '请选择权限' }]}>
               <Permission
                 title={intl.formatMessage({

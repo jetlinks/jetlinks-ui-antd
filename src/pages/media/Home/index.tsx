@@ -20,6 +20,7 @@ export default () => {
   const dashBoardUrl = getMenuPathByCode('media/DashBoard');
   const deviceUrl = getMenuPathByCode('media/Device');
   const channelUrl = getMenuPathByCode('media/Device/Channel');
+  const cascadeUrl = getMenuPathByCode('media/Cascade');
   const splitScreenUrl = getMenuPathByCode('media/SplitScreen');
 
   const [visible, setVisible] = useState(false);
@@ -83,8 +84,8 @@ export default () => {
       key: 'CASCADE',
       name: '国标级联',
       english: 'GB CASCADE',
-      auth: !!channelUrl,
-      url: channelUrl,
+      auth: !!cascadeUrl,
+      url: cascadeUrl,
     },
   ];
 
