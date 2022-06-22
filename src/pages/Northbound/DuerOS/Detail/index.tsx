@@ -63,8 +63,10 @@ const Save = () => {
 
   const getProduct = () =>
     service.getProduct().then((resp) => {
-      Store.set('product-list', resp.result);
-      return resp.result;
+      const _temp = resp.result.map((item: any) => ({ label: item.name, value: item.id }));
+      Store.set('product-list', _temp);
+      console.log(_temp, 'tmp');
+      return _temp;
     });
 
   const getTypes = () =>
@@ -88,7 +90,8 @@ const Save = () => {
             if (_data) {
               _data.applianceType = _data?.applianceType?.value;
             }
-            form1.setInitialValues(_data);
+            console.log(_data, 'data');
+            form1.setValues(_data);
           });
           onFieldReact('actionMappings.*.layout.action', (field, f) => {
             const productType = field.query('applianceType').value();
@@ -255,10 +258,10 @@ const Save = () => {
             'x-component': 'Select',
             'x-component-props': {
               placeholder: '请选择产品',
-              fieldNames: {
-                label: 'name',
-                value: 'id',
-              },
+              // fieldNames: {
+              //   label: 'name',
+              //   value: 'id',
+              // },
               showSearch: true,
               showArrow: true,
               filterOption: (input: string, option: any) =>
