@@ -3,7 +3,7 @@ import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { Col, message, Row, Tooltip } from 'antd';
 import Body from '../components/Body';
-import Guide from '../components/Guide';
+// import Guide from '../components/Guide';
 import Statistics from '../components/Statistics';
 import Steps from '../components/Steps';
 import { service } from '..';
@@ -14,6 +14,7 @@ import Pie from '../components/Pie';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ProductChoose from '../components/ProductChoose';
 import DeviceChoose from '../components/DeviceChoose';
+import GuideHome from '../components/GuideHome';
 
 const Comprehensive = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
@@ -91,6 +92,7 @@ const Comprehensive = () => {
     {
       key: 'product',
       name: '创建产品',
+      img: require('/public/images/home/guide-home1.png'),
       english: 'CREATE PRODUCT',
       auth: !!productPermission.add,
       url: 'device/Product',
@@ -102,6 +104,7 @@ const Comprehensive = () => {
       key: 'device',
       name: '创建设备',
       english: 'CREATE DEVICE',
+      img: require('/public/images/home/guide-home2.png'),
       auth: !!devicePermission.add,
       url: 'device/Instance',
       param: {
@@ -112,6 +115,7 @@ const Comprehensive = () => {
       key: 'rule-engine',
       name: '规则引擎',
       english: 'RULE ENGINE',
+      img: require('/public/images/home/guide-home3.png'),
       auth: !!rulePermission.add,
       url: 'rule-engine/Instance',
       param: {
@@ -124,6 +128,7 @@ const Comprehensive = () => {
     {
       key: 'access',
       name: '设备接入配置',
+      img: require('/public/images/home/guide-home4.png'),
       english: 'DEVICE ACCESS CONFIGURATION',
       auth: !!accessPermission,
       url: 'link/AccessConfig',
@@ -132,6 +137,7 @@ const Comprehensive = () => {
       key: 'logger',
       name: '日志排查',
       english: 'LOG SCREEN',
+      img: require('/public/images/home/guide-home5.png'),
       auth: !!logPermission,
       url: 'Log',
       param: {
@@ -141,6 +147,7 @@ const Comprehensive = () => {
     {
       key: 'realtime',
       name: '实时监控',
+      img: require('/public/images/home/guide-home6.png'),
       english: 'REAL-TIME MONITORING',
       auth: !!linkPermission,
       url: 'link/DashBoard',
@@ -152,80 +159,84 @@ const Comprehensive = () => {
 
   return (
     <Row gutter={24}>
-      <Col span={14}>
-        <Guide title="物联网引导" data={guideList} />
+      <Col span={6}>
+        <GuideHome title="物联网引导" data={guideList} />
+        <GuideHome title="运维引导" data={guideOpsList} />
       </Col>
-      <Col span={10}>
-        <Statistics
-          data={[
-            {
-              name: '产品数量',
-              value: productCount,
-              children: '',
-            },
-            {
-              name: '设备数量',
-              value: deviceCount,
-              children: '',
-            },
-          ]}
-          title="设备统计"
-          extra={
-            <div style={{ fontSize: 14, fontWeight: 400 }}>
-              <a
-                onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
-                  if (!!url) {
-                    history.push(`${url}`);
-                  } else {
-                    message.warning('暂无权限，请联系管理员');
-                  }
-                }}
-              >
-                详情
-              </a>
-            </div>
-          }
-        />
-      </Col>
-      <Col span={14}>
-        <Guide title="运维引导" data={guideOpsList} />
-      </Col>
-      <Col span={10}>
-        <Statistics
-          data={[
-            {
-              name: 'CPU使用率',
-              value: String(cpuValue) + '%',
-              children: <Pie value={cpuValue} />,
-            },
-            {
-              name: 'JVM内存',
-              value: String(jvmValue) + '%',
-              children: <Pie value={jvmValue} />,
-            },
-          ]}
-          title="基础统计"
-          extra={
-            <div style={{ fontSize: 14, fontWeight: 400 }}>
-              <a
-                onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
-                  if (!!url) {
-                    history.push(`${url}`);
-                  } else {
-                    message.warning('暂无权限，请联系管理员');
-                  }
-                }}
-              >
-                详情
-              </a>
-            </div>
-          }
-        />
-      </Col>
-      <Col span={24}>
-        <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
+      <Col span={18}>
+        <Row gutter={24}>
+          <Col span={12}>
+            <Statistics
+              data={[
+                {
+                  name: '产品数量',
+                  value: productCount,
+                  children: '',
+                },
+                {
+                  name: '设备数量',
+                  value: deviceCount,
+                  children: '',
+                },
+              ]}
+              title="设备统计"
+              extra={
+                <div style={{ fontSize: 14, fontWeight: 400 }}>
+                  <a
+                    onClick={() => {
+                      const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
+                      if (!!url) {
+                        history.push(`${url}`);
+                      } else {
+                        message.warning('暂无权限，请联系管理员');
+                      }
+                    }}
+                  >
+                    详情
+                  </a>
+                </div>
+              }
+            />
+          </Col>
+          <Col span={12}>
+            <Statistics
+              data={[
+                {
+                  name: 'CPU使用率',
+                  value: String(cpuValue) + '%',
+                  children: <Pie value={cpuValue} />,
+                },
+                {
+                  name: 'JVM内存',
+                  value: String(jvmValue) + '%',
+                  children: <Pie value={jvmValue} />,
+                },
+              ]}
+              title="基础统计"
+              extra={
+                <div style={{ fontSize: 14, fontWeight: 400 }}>
+                  <a
+                    onClick={() => {
+                      const url = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
+                      if (!!url) {
+                        history.push(`${url}`);
+                      } else {
+                        message.warning('暂无权限，请联系管理员');
+                      }
+                    }}
+                  >
+                    详情
+                  </a>
+                </div>
+              }
+            />
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col span={24} style={{ marginTop: 24 }}>
+            <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
+          </Col>
+        </Row>
       </Col>
       <Col span={24}>
         <Steps

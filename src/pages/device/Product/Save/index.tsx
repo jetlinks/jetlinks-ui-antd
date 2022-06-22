@@ -3,10 +3,11 @@ import { service } from '@/pages/device/Product';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { RadioCard, UploadImage } from '@/components';
-import { Col, Form, Input, Modal, Row, TreeSelect } from 'antd';
-import { useRequest } from 'umi';
+import { Button, Col, Form, Input, Modal, Row, TreeSelect } from 'antd';
+import { useHistory, useRequest } from 'umi';
 import { debounce } from 'lodash';
 import { onlyMessage } from '@/utils/util';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 interface Props {
   visible: boolean;
@@ -21,6 +22,7 @@ const Save = (props: Props) => {
   const intl = useIntl();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const history = useHistory<Record<string, string>>();
   const { data: classOptions, run: classRequest } = useRequest(service.category, {
     manual: true,
     formatResult: (response) => {
@@ -70,6 +72,47 @@ const Save = (props: Props) => {
     }
   }, [visible]);
 
+  const messageModel = (id: string) => {
+    return Modal.success({
+      title: <div style={{ fontWeight: 600 }}>产品创建成功</div>,
+      width: 600,
+      okText: '关闭',
+      content: (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+            <div>产品ID: {id}</div>
+            <Button
+              type="link"
+              onClick={() => {
+                history.push(`${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], id)}`);
+                Modal.destroyAll();
+              }}
+            >
+              查看详情
+            </Button>
+          </div>
+          <div>接下来推荐操作:</div>
+          <div style={{ fontWeight: 600 }}> 1、配置产品接入方式</div>
+          <div style={{ color: '#757575' }}>
+            点击具体产品的查看按钮，进入“设备接入”tab页，并参照设备铭牌说明选择匹配的接入方式
+          </div>
+          <div style={{ fontWeight: 600 }}>2、添加测试设备：</div>
+          <div style={{ color: '#757575' }}>
+            进入设备列表，添加单个设备，用于验证产品模型是否配置正确
+          </div>
+          <div style={{ fontWeight: 600 }}> 3、功能调试：</div>
+          <div style={{ color: '#757575' }}>
+            点击查看具体设备，进入“设备诊断”对添加的测试设备进行功能调试，验证能否连接到平台，设备功能是否配置正确
+          </div>
+          <div style={{ fontWeight: 600 }}> 4、批量添加设备：</div>
+          <div style={{ color: '#757575' }}>
+            进入设备列表页面，点击批量导入设备，批量添加同一产品下的设备
+          </div>
+        </>
+      ),
+    });
+  };
+
   const handleSave = async () => {
     const formData = await form.validateFields();
     if (formData) {
@@ -79,18 +122,36 @@ const Save = (props: Props) => {
       const { deviceTypeId, ...extraFormData } = formData;
       extraFormData.deviceType = formData.deviceTypeId;
       setLoading(true);
-      const res = await service.update(extraFormData);
-      setLoading(false);
-      if (res.status === 200) {
-        onlyMessage('保存成功');
-        if (props.reload) {
-          props.reload();
+      if (props.model === 'add') {
+        const res: any = await service.save(extraFormData);
+        setLoading(false);
+        if (res.status === 200) {
+          // onlyMessage('保存成功');
+          messageModel(res.result.id);
+          if (props.reload) {
+            props.reload();
+          }
+          props.close();
+          form.resetFields();
+          if ((window as any).onTabSaveSuccess) {
+            (window as any).onTabSaveSuccess(res);
+            setTimeout(() => window.close(), 300);
+          }
         }
-        props.close();
-        form.resetFields();
-        if ((window as any).onTabSaveSuccess) {
-          (window as any).onTabSaveSuccess(res);
-          setTimeout(() => window.close(), 300);
+      } else {
+        const res = await service.update(extraFormData);
+        setLoading(false);
+        if (res.status === 200) {
+          onlyMessage('保存成功');
+          if (props.reload) {
+            props.reload();
+          }
+          props.close();
+          form.resetFields();
+          if ((window as any).onTabSaveSuccess) {
+            (window as any).onTabSaveSuccess(res);
+            setTimeout(() => window.close(), 300);
+          }
         }
       }
     }
