@@ -28,6 +28,8 @@ class Service extends BaseService<DeviceItem> {
   // 查询设备接入配置
   queryProvider = (data?: any) =>
     request(`/${SystemConst.API_BASE}/gateway/device/detail/_query`, { method: 'POST', data });
+  //视频设备详情
+  getDetail = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
 }
 
 export default Service;

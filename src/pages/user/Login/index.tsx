@@ -60,7 +60,7 @@ const Login: React.FC = () => {
       .pipe(
         filter((r) => r.enabled),
         mergeMap(Service.getCaptcha),
-        catchError(() => message.error('服务端挂了！')),
+        catchError(() => message.error('系统开小差，请稍后重试')),
       )
       .subscribe(setCaptcha);
   };
