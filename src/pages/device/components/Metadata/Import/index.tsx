@@ -215,7 +215,7 @@ const Import = (props: Props) => {
         <p style={{ padding: 10 }}>
           <span style={{ color: '#f5222d' }}>注</span>
           ：导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
-          <br />
+          {/* <br /> */}
           {/*物模型格式请参考文档：*/}
           {/*<a*/}
           {/*  rel="noopener noreferrer"*/}
