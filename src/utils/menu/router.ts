@@ -53,6 +53,7 @@ export enum MENUS_CODE {
   'media/Cascade/Channel' = 'media/Cascade/Channel',
   'media/Config' = 'media/Config',
   'media/Device' = 'media/Device',
+  'media/Device/Save' = 'media/Device/Save',
   'media/Device/Channel' = 'media/Device/Channel',
   'media/Device/Playback' = 'media/Device/Playback',
   'media/Reveal' = 'media/Reveal',

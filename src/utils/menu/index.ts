@@ -26,6 +26,7 @@ const extraRouteObj = {
   },
   'media/Device': {
     children: [
+      { code: 'Save', name: '详情' },
       { code: 'Channel', name: '通道列表' },
       { code: 'Playback', name: '回放' },
     ],

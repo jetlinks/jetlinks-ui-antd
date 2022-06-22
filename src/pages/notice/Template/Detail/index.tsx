@@ -783,6 +783,25 @@ const Detail = observer(() => {
                       minColumns: 2,
                     },
                     properties: {
+                      departmentIdList: {
+                        title: '收信部门',
+                        required: true,
+                        'x-component': 'Select',
+                        'x-decorator': 'FormItem',
+                        'x-decorator-props': {
+                          tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
+                          gridSpan: 1,
+                        },
+                        'x-component-props': {
+                          placeholder: '请选择收信部门',
+                        },
+                        // 'x-reactions': {
+                        //   dependencies: ['configId'],
+                        //   fulfill: {
+                        //     run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
+                        //   },
+                        // },
+                      },
                       userIdList: {
                         title: '收信人',
                         'x-component': 'Select',
@@ -798,24 +817,6 @@ const Detail = observer(() => {
                         //   dependencies: ['configId'],
                         //   fulfill: {
                         //     run: '{{useAsyncDataSource(getDingTalkUser($deps[0]))}}',
-                        //   },
-                        // },
-                      },
-                      departmentIdList: {
-                        title: '收信部门',
-                        'x-component': 'Select',
-                        'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
-                          gridSpan: 1,
-                        },
-                        'x-component-props': {
-                          placeholder: '请选择收信部门',
-                        },
-                        // 'x-reactions': {
-                        //   dependencies: ['configId'],
-                        //   fulfill: {
-                        //     run: '{{useAsyncDataSource(getDingTalkDept($deps[0]))}}',
                         //   },
                         // },
                       },

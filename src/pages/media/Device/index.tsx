@@ -1,6 +1,6 @@
 // 视频设备列表
 import { PageContainer } from '@ant-design/pro-layout';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Button, Tooltip } from 'antd';
 import {
@@ -14,13 +14,11 @@ import {
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { useHistory, useIntl } from 'umi';
 import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
-import useLocation from '@/hooks/route/useLocation';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import SearchComponent from '@/components/SearchComponent';
 import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
-import Save from './Save';
 import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('media/device');
@@ -38,19 +36,9 @@ export const ProviderValue = {
 const Device = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-  const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<DeviceItem>();
   const [queryParam, setQueryParam] = useState({});
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('media/Device');
-  const location = useLocation();
-
-  useEffect(() => {
-    const { state } = location;
-    if (state && state.save) {
-      setVisible(true);
-    }
-  }, [location]);
 
   /**
    * table 查询参数
@@ -210,8 +198,8 @@ const Device = () => {
           style={{ padding: 0 }}
           type={'link'}
           onClick={() => {
-            setCurrent(record);
-            setVisible(true);
+            const url = getMenuPathByCode(MENUS_CODE[`media/Device/Save`]);
+            history.push(url + `?id=${record.id}`);
           }}
         >
           <EditOutlined />
@@ -330,8 +318,8 @@ const Device = () => {
         headerTitle={[
           <PermissionButton
             onClick={() => {
-              setCurrent(undefined);
-              setVisible(true);
+              const url = getMenuPathByCode(MENUS_CODE[`media/Device/Save`]);
+              history.push(url);
             }}
             key="button"
             icon={<PlusOutlined />}
@@ -364,8 +352,8 @@ const Device = () => {
                 key="edit"
                 isPermission={permission.update}
                 onClick={() => {
-                  setCurrent(record);
-                  setVisible(true);
+                  const url = getMenuPathByCode(MENUS_CODE[`media/Device/Save`]);
+                  history.push(url + `?id=${record.id}`);
                 }}
                 type={'link'}
                 style={{ padding: 0 }}
@@ -445,7 +433,7 @@ const Device = () => {
           />
         )}
       />
-      <Save
+      {/* <Save
         model={!current ? 'add' : 'edit'}
         data={current}
         close={() => {
@@ -455,7 +443,7 @@ const Device = () => {
           actionRef.current?.reload();
         }}
         visible={visible}
-      />
+      /> */}
     </PageContainer>
   );
 };
