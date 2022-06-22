@@ -253,6 +253,7 @@ const Access = (props: Props) => {
               <Input.Search
                 key={'network'}
                 placeholder="请输入名称"
+                allowClear
                 onSearch={(value: string) => {
                   queryNetworkList(
                     props.provider?.id,
@@ -392,6 +393,7 @@ const Access = (props: Props) => {
             <div className={styles.search}>
               <Input.Search
                 key={'protocol'}
+                allowClear
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryProcotolList(

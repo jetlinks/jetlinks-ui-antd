@@ -90,6 +90,10 @@ const Media = (props: Props) => {
                       if (resp.status === 200) {
                         onlyMessage('操作成功！');
                         history.goBack();
+                        if ((window as any).onTabSaveSuccess) {
+                          (window as any).onTabSaveSuccess(resp);
+                          setTimeout(() => window.close(), 300);
+                        }
                       }
                     } catch (errorInfo) {
                       console.error('Failed:', errorInfo);
