@@ -77,7 +77,7 @@ const list = {
   },
   email: {
     embedded: {
-      text: '默认',
+      text: '邮件',
       status: 'embedded',
     },
   },
