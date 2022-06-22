@@ -9,7 +9,7 @@
 
     .department-left {
       display: flex;
-      flex-basis: 300px;
+      width: 300px;
       height: 100%;
 
       .border-left {
@@ -41,11 +41,33 @@
       .left-tree-body {
         flex: 1 1 auto;
         overflow-y: auto;
+
+        .tree-node-name {
+          display: flex;
+
+          .tree-node-name--title {
+            display: flex;
+            flex-grow: 1;
+            width: 0;
+          }
+
+          .tree-node-name--btn {
+            width: 80px;
+            opacity: 0;
+            transition: opacity 0.3s;
+
+            &.show-btn {
+              opacity: 1;
+            }
+          }
+        }
       }
     }
 
     .department-right {
-      flex: 1 1 auto;
+      display: flex;
+      flex-grow: 1;
+      width: 0;
       padding-left: 24px;
     }
   }

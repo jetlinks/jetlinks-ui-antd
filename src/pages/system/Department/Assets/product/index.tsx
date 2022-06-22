@@ -16,6 +16,7 @@ import {
 } from '@/components/ProTableCard/CardItems/product';
 import { ProTableCard } from '@/components';
 import { onlyMessage } from '@/utils/util';
+import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 
 export const service = new Service<ProductItem>('assets');
 
@@ -24,6 +25,12 @@ export default observer((props: { parentId: string }) => {
   const actionRef = useRef<ActionType>();
 
   const [searchParam, setSearchParam] = useState({});
+
+  useEffect(() => {
+    if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Product && actionRef.current) {
+      actionRef.current.reload();
+    }
+  }, [AssetsModel.tabsIndex]);
 
   /**
    * 解除资产绑定

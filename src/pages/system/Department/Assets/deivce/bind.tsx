@@ -169,7 +169,9 @@ const Bind = observer((props: Props) => {
         rowKey="id"
         search={false}
         gridColumn={2}
-        cardRender={(record) => <ExtraDeviceCard {...record} />}
+        cardRender={(record) => (
+          <ExtraDeviceCard showBindBtn={false} {...record} cardType={'bind'} />
+        )}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

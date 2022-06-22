@@ -1,4 +1,4 @@
-import { Button, Input, Tree } from 'antd';
+import { Button, Input, Tooltip, Tree } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -16,6 +16,7 @@ import { ISchema } from '@formily/json-schema';
 import { useLocation } from 'umi';
 import { DepartmentItem } from '@/pages/system/Department/typings';
 import { onlyMessage } from '@/utils/util';
+import classnames from 'classnames';
 
 interface TreeProps {
   onSelect: (id: string) => void;
@@ -50,6 +51,7 @@ export default (props: TreeProps) => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState<any>();
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const [showToolIndex, setShowToolIndex] = useState('');
   const searchKey = useRef('');
 
   const location = useLocation();
@@ -72,6 +74,9 @@ export default (props: TreeProps) => {
 
     if (resp.status === 200) {
       setTreeData(resp.result);
+      if (resp.result && resp.result.length) {
+        setKeys([resp.result[0].id]);
+      }
     }
   };
 
@@ -220,9 +225,25 @@ export default (props: TreeProps) => {
             }}
             titleRender={(nodeData: any) => {
               return (
-                <div>
-                  <span>{nodeData.name}</span>
-                  <span>
+                <div
+                  className={classnames('tree-node-name')}
+                  onMouseEnter={() => {
+                    setShowToolIndex(nodeData.id);
+                  }}
+                  onMouseLeave={() => {
+                    setShowToolIndex('');
+                  }}
+                >
+                  <span className={'tree-node-name--title'}>
+                    <Tooltip title={nodeData.name}>
+                      <span className={'ellipsis'}>{nodeData.name}</span>
+                    </Tooltip>
+                  </span>
+                  <span
+                    className={classnames('tree-node-name--btn', {
+                      'show-btn': nodeData.id === showToolIndex,
+                    })}
+                  >
                     <PermissionButton
                       key="editable"
                       tooltip={{
@@ -232,7 +253,7 @@ export default (props: TreeProps) => {
                         }),
                       }}
                       isPermission={permission.update}
-                      style={{ padding: '0 0 0 6px' }}
+                      style={{ padding: '0 0 0 10px', height: 24 }}
                       type="link"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -246,7 +267,7 @@ export default (props: TreeProps) => {
                     </PermissionButton>
                     <PermissionButton
                       key={'addChildren'}
-                      style={{ padding: '0 0 0 6px' }}
+                      style={{ padding: '0 0 0 10px', height: 24 }}
                       tooltip={{
                         title: intl.formatMessage({
                           id: 'pages.system.department.option.add',
@@ -269,7 +290,7 @@ export default (props: TreeProps) => {
                     <PermissionButton
                       type="link"
                       key="delete"
-                      style={{ padding: '0 0 0 6px' }}
+                      style={{ padding: '0 0 0 10px', height: 24 }}
                       popConfirm={{
                         title: intl.formatMessage({
                           id: 'pages.system.role.option.delete',

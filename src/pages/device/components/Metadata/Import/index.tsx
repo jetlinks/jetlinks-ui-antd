@@ -216,14 +216,14 @@ const Import = (props: Props) => {
           <span style={{ color: '#f5222d' }}>注</span>
           ：导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
           <br />
-          物模型格式请参考文档：
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href="http://doc.jetlinks.cn/basics-guide/device-manager.html#%E8%AE%BE%E5%A4%87%E5%9E%8B%E5%8F%B7"
-          >
-            设备型号
-          </a>
+          {/*物模型格式请参考文档：*/}
+          {/*<a*/}
+          {/*  rel="noopener noreferrer"*/}
+          {/*  target="_blank"*/}
+          {/*  href="http://doc.jetlinks.cn/basics-guide/device-manager.html#%E8%AE%BE%E5%A4%87%E5%9E%8B%E5%8F%B7"*/}
+          {/*>*/}
+          {/*  设备型号*/}
+          {/*</a>*/}
         </p>
       </div>
       <Form form={form} layout="vertical">
