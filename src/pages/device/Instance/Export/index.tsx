@@ -9,8 +9,6 @@ import type { DeviceInstance } from '../typings';
 import SystemConst from '@/utils/const';
 import encodeQuery from '@/utils/encodeQuery';
 import { downloadFile } from '@/utils/util';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import styles from './index.less';
 interface Props {
   visible: boolean;
   close: () => void;
@@ -116,9 +114,10 @@ const Export = (props: Props) => {
       title="导出"
       onOk={downloadTemplate}
     >
-      <div className={styles.alert}>
-        <InfoCircleOutlined style={{ margin: '5px 10px 0 0' }} />
-        <div>选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数</div>
+      <div style={{ background: 'rgb(236, 237, 238)' }}>
+        <p style={{ padding: 10 }}>
+          选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数
+        </p>
       </div>
       <div style={{ marginTop: '20px' }}>
         <FormProvider form={form}>

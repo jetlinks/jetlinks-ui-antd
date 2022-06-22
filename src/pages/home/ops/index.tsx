@@ -1,6 +1,5 @@
 import { Col, message, Row, Tooltip } from 'antd';
 import Guide from '../components/Guide';
-import { PermissionButton } from '@/components';
 import Statistics from '../components/Statistics';
 import Pie from '@/pages/home/components/Pie';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
@@ -16,9 +15,9 @@ const Ops = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const history = useHistory();
 
-  const productPermission = PermissionButton.usePermission('device/Product').permission;
-  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
-  const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
+  const accessPermission = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
+  const logPermission = getMenuPathByCode(MENUS_CODE['Log']);
+  const linkPermission = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
 
   const [cpuValue, setCpuValue] = useState<number>(0);
   const [jvmValue, setJvmValue] = useState<number>(0);
@@ -57,30 +56,34 @@ const Ops = () => {
       jvmRealTime?.unsubscribe();
     };
   }, []);
-  const guideOpsList: any[] = [
+
+  const guideOpsList = [
     {
-      key: 'product',
+      key: 'access',
       name: '设备接入配置',
-      english: 'CREATE PRODUCT',
-      auth: !!productPermission.add,
-      url: 'device/Product',
-      param: '?save=true',
+      english: 'DEVICE ACCESS CONFIGURATION',
+      auth: !!accessPermission,
+      url: accessPermission,
     },
     {
-      key: 'device',
+      key: 'logger',
       name: '日志排查',
-      english: 'CREATE DEVICE',
-      auth: !!devicePermission.add,
-      url: 'device/Instance',
-      param: '?save=true',
+      english: 'LOG SCREEN',
+      auth: !!logPermission,
+      url: logPermission,
+      param: {
+        key: 'system',
+      },
     },
     {
-      key: 'rule-engine',
+      key: 'realtime',
       name: '实时监控',
-      english: 'RULE ENGINE',
-      auth: !!rulePermission.add,
-      url: 'rule-engine/Instance',
-      param: '?save=true',
+      english: 'REAL-TIME MONITORING',
+      auth: !!linkPermission,
+      url: linkPermission,
+      param: {
+        save: true,
+      },
     },
   ];
   return (
