@@ -21,7 +21,7 @@ const Functions = () => {
             <>
               <div style={{ paddingBottom: 12 }}>
                 <ExclamationCircleOutlined style={{ marginRight: 12 }} />
-                精简模式下参数只支持已输入框的方式录入
+                精简模式下参数只支持输入框的方式录入
               </div>
               <Tabs tabPosition="left">
                 {functionList &&

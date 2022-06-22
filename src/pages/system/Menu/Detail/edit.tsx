@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/Menu';
 import { useHistory, useRequest } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
-// import { debounce } from 'lodash';
+import { debounce } from 'lodash';
 import Title from '../components/Title';
 import Icons from '../components/Icons';
 import { QuestionCircleFilled } from '@ant-design/icons';
@@ -91,15 +91,15 @@ export default (props: EditProps) => {
     /* eslint-disable */
   }, []);
 
-  // const filterThree = (e: any) => {
-  //   const _data: any = {
-  //     paging: false,
-  //   };
-  //   if (e.target.value) {
-  //     _data.terms = [{ column: 'name', value: e.target.value }];
-  //   }
-  //   queryPermissions(_data);
-  // };
+  const filterThree = (e: any) => {
+    const _data: any = {
+      paging: false,
+    };
+    if (e.target.value) {
+      _data.terms = [{ column: 'name$like', value: `%${e.target.value}%` }];
+    }
+    queryPermissions(_data);
+  };
 
   useEffect(() => {
     if (form) {
@@ -123,7 +123,7 @@ export default (props: EditProps) => {
         <Card>
           <Title title={'基本信息'} />
           <Row>
-            <Col span={3}>
+            <Col flex={'186px'}>
               <Form.Item
                 name={'icon'}
                 label={'菜单图标'}
@@ -138,7 +138,7 @@ export default (props: EditProps) => {
                 <Icons />
               </Form.Item>
             </Col>
-            <Col span={21}>
+            <Col flex="auto">
               <Row gutter={[24, 0]}>
                 <Col span={12}>
                   <Form.Item
@@ -293,19 +293,22 @@ export default (props: EditProps) => {
                     id: 'page.system.menu.permissions',
                     defaultMessage: '权限',
                   })}
-                  name="permissions"
                 >
-                  {/*<Input disabled={disabled} onChange={debounce(filterThree, 300)} style={{ width: 300 }}/>*/}
-                  {/*<Form.Item name='permissions'>*/}
-                  <Permission
-                    title={intl.formatMessage({
-                      id: 'page.system.menu.permissions.operate',
-                      defaultMessage: '操作权限',
-                    })}
-                    // disabled={disabled}
-                    data={permissions}
+                  <Input
+                    onChange={debounce(filterThree, 500)}
+                    style={{ width: 300, marginBottom: 12 }}
+                    placeholder={'请输入权限名称'}
                   />
-                  {/*</Form.Item>*/}
+                  <Form.Item name="permissions" noStyle>
+                    <Permission
+                      title={intl.formatMessage({
+                        id: 'page.system.menu.permissions.operate',
+                        defaultMessage: '操作权限',
+                      })}
+                      // disabled={disabled}
+                      data={permissions}
+                    />
+                  </Form.Item>
                 </Form.Item>
               </Col>
             </Row>

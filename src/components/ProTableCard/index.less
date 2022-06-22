@@ -58,7 +58,10 @@
           gap: 12px;
 
           .flex-auto {
-            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            width: 0;
           }
 
           .flex-button {
@@ -78,7 +81,7 @@
           }
 
           .ellipsis {
-            width: 70%;
+            max-width: 70%;
             font-weight: bold;
             font-size: 14px;
           }
@@ -103,7 +106,7 @@
           }
 
           .ellipsis {
-            width: 70%;
+            max-width: 70%;
             font-weight: bold;
             font-size: 14px;
           }

@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import DashBoard from '@/components/DashBoard';
-import { Progress, Radio, Select } from 'antd';
+import { Radio, Select } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import type { EChartsOption } from 'echarts';
 import { useRequest } from 'umi';
@@ -9,12 +9,142 @@ import moment from 'moment';
 import './index.less';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
+import Echarts, { echarts } from '@/components/DashBoard/echarts';
 
 type RefType = {
   getValues: Function;
 };
+type TopEchartsItemNodeType = {
+  value: any;
+  title: string;
+};
 
 const service = new Service('dashboard');
+
+const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
+  const options = {
+    series: [
+      {
+        type: 'gauge',
+        min: 0,
+        max: 100,
+        startAngle: 200,
+        endAngle: -20,
+        center: ['50%', '65%'],
+        title: {
+          show: false,
+        },
+        axisTick: {
+          distance: -20,
+          lineStyle: {
+            width: 1,
+            color: 'rgba(0,0,0,0.15)',
+          },
+        },
+        splitLine: {
+          distance: -22,
+          length: 9,
+          lineStyle: {
+            width: 1,
+            color: '#000',
+          },
+        },
+        axisLabel: {
+          distance: -18,
+          color: 'auto',
+          fontSize: 12,
+        },
+        pointer: {
+          length: '80%',
+          width: 4,
+          itemStyle: {
+            color: 'auto',
+          },
+        },
+        anchor: {
+          show: true,
+          showAbove: true,
+          size: 20,
+          itemStyle: {
+            borderWidth: 3,
+            borderColor: '#fff',
+            shadowBlur: 20,
+            shadowColor: 'rgba(0, 0, 0, .25)',
+            color: 'auto',
+          },
+        },
+        axisLine: {
+          lineStyle: {
+            width: 10,
+            color: [
+              [0.25, 'rgba(36, 178, 118, 1)'],
+              [
+                0.4,
+                new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: 'rgba(66, 147, 255, 1)',
+                  },
+                  {
+                    offset: 1,
+                    color: 'rgba(36, 178, 118, 1)',
+                  },
+                ]),
+              ],
+              [
+                0.5,
+                new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: 'rgba(250, 178, 71, 1)',
+                  },
+                  {
+                    offset: 1,
+                    color: 'rgba(66, 147, 255, 1)',
+                  },
+                ]),
+              ],
+              [
+                1,
+                new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: 'rgba(250, 178, 71, 1)',
+                  },
+                  {
+                    offset: 1,
+                    color: 'rgba(247, 111, 93, 1)',
+                  },
+                ]),
+              ],
+            ],
+          },
+        },
+        detail: {
+          show: false,
+        },
+        data: [{ value: props.value || 0 }],
+      },
+    ],
+  };
+
+  return (
+    <div className={'echarts-item'}>
+      <div className={'echarts-item-left'}>
+        <div className={'echarts-item-title'}>{props.title}</div>
+        <div className={'echarts-item-value'}>{props.value}%</div>
+      </div>
+      <div className={'echarts-item-right'}>
+        <>
+          {
+            // @ts-ignore
+            <Echarts options={options} />
+          }
+        </>
+      </div>
+    </div>
+  );
+};
 
 export default () => {
   const [networkOptions, setNetworkOptions] = useState<EChartsOption | undefined>(undefined);
@@ -39,11 +169,11 @@ export default () => {
     formatResult: (res) => res.result.map((item: any) => ({ label: item.name, value: item.id })),
   });
 
-  const handleNetworkOptions = (data: Record<string, any>) => {
+  const handleNetworkOptions = (data: Record<string, any>, xAxis: string[]) => {
     setNetworkOptions({
       xAxis: {
         type: 'category',
-        data: Object.keys(data),
+        data: xAxis,
       },
       tooltip: {
         trigger: 'axis',
@@ -52,25 +182,36 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '3%',
+        left: '80px',
         right: '2%',
       },
-      series: [
-        {
-          data: Object.values(data),
-          type: 'line',
+      color: ['#979AFF'],
+      series: Object.keys(data).map((key) => ({
+        data: data[key]._data,
+        name: key,
+        type: 'line',
+        smooth: true,
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 0,
+              color: 'rgba(151, 154, 255, 0)',
+            },
+            {
+              offset: 1,
+              color: 'rgba(151, 154, 255, .24)',
+            },
+          ]),
         },
-      ],
+      })),
     });
   };
 
-  const handleJVMOptions = (data: Record<string, any>) => {
+  const handleJVMOptions = (data: Record<string, any>, xAxis: string[]) => {
     setJvmOptions({
       xAxis: {
         type: 'category',
-        data: Object.keys(data).map((item) => {
-          return moment(Number(item)).format('YYYY-MM-DD HH:mm:ss');
-        }),
+        data: xAxis,
       },
       tooltip: {
         trigger: 'axis',
@@ -79,7 +220,7 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '3%',
+        left: '50px',
         right: '2%',
       },
       dataZoom: [
@@ -93,22 +234,33 @@ export default () => {
           end: 10,
         },
       ],
-      series: [
-        {
-          data: Object.values(data),
-          type: 'line',
+      color: ['#60DFC7'],
+      series: Object.keys(data).map((key) => ({
+        data: data[key],
+        name: key,
+        type: 'line',
+        smooth: true,
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 1,
+              color: 'rgba(96, 223, 199, 0)',
+            },
+            {
+              offset: 0,
+              color: 'rgba(96, 223, 199, .24)',
+            },
+          ]),
         },
-      ],
+      })),
     });
   };
 
-  const handleCpuOptions = (data: Record<string, any>) => {
+  const handleCpuOptions = (data: Record<string, any>, xAxis: string[]) => {
     setCpuOptions({
       xAxis: {
         type: 'category',
-        data: Object.keys(data).map((item) => {
-          return moment(Number(item)).format('YYYY-MM-DD HH:mm:ss');
-        }),
+        data: xAxis,
       },
       tooltip: {
         trigger: 'axis',
@@ -117,7 +269,7 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '3%',
+        left: '50px',
         right: '2%',
       },
       dataZoom: [
@@ -131,12 +283,25 @@ export default () => {
           end: 10,
         },
       ],
-      series: [
-        {
-          data: Object.values(data),
-          type: 'line',
+      color: ['#2CB6E0'],
+      series: Object.keys(data).map((key) => ({
+        data: data[key],
+        name: key,
+        type: 'line',
+        smooth: true,
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+              offset: 1,
+              color: 'rgba(44, 182, 224, 0)',
+            },
+            {
+              offset: 0,
+              color: 'rgba(44, 182, 224, .24)',
+            },
+          ]),
         },
-      ],
+      })),
     });
   };
 
@@ -186,29 +351,49 @@ export default () => {
       .then((res) => {
         if (res.status === 200) {
           const _networkOptions = {};
+          const _networkXAxis = new Set<string>();
           const _jvmOptions = {};
+          const _jvmXAxis = new Set<string>();
           const _cpuOptions = {};
+          const _cpuXAxis = new Set<string>();
 
           res.result.forEach((item: any) => {
             const value = item.data.value;
+            const nodeID = item.data.clusterNodeId;
             if (item.group === 'network') {
+              const _data: any[] = [];
               value.forEach((networkItem: any) => {
-                _networkOptions[networkItem.timeString] = networkItem.value;
+                _data.push(Number(networkItem.value).toFixed(2));
+                _networkXAxis.add(networkItem.timeString);
               });
+              _networkOptions[nodeID] = {
+                _data: _networkOptions[nodeID]
+                  ? _networkOptions[nodeID]._data.concat(_data)
+                  : _data,
+              };
             } else if (item.group === 'cpu') {
               const memoryJvmHeapFree = value.memoryJvmHeapFree;
               const memoryJvmHeapTotal = value.memoryJvmHeapTotal;
-              _jvmOptions[value.timestamp] = (
+              const _value = (
                 ((memoryJvmHeapTotal - memoryJvmHeapFree) / memoryJvmHeapTotal) *
                 100
               ).toFixed(2);
+              if (!_jvmOptions[nodeID]) {
+                _jvmOptions[nodeID] = [];
+              }
+              _jvmXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+              _jvmOptions[nodeID].push(_value);
             } else {
-              _cpuOptions[value.timestamp] = value.cpuSystemUsage;
+              if (!_cpuOptions[nodeID]) {
+                _cpuOptions[nodeID] = [];
+              }
+              _cpuXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+              _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
             }
           });
-          handleNetworkOptions(_networkOptions);
-          handleJVMOptions(_jvmOptions);
-          handleCpuOptions(_cpuOptions);
+          handleNetworkOptions(_networkOptions, [..._networkXAxis.keys()]);
+          handleJVMOptions(_jvmOptions, [..._jvmXAxis.keys()]);
+          handleCpuOptions(_cpuOptions, [..._cpuXAxis.keys()]);
         }
       });
   };
@@ -234,14 +419,24 @@ export default () => {
         ])
         .then((res) => {
           if (res.status === 200) {
-            const _options = {};
+            const _networkOptions = {};
+            const _networkXAxis = new Set<string>();
             res.result.forEach((item: any) => {
               const value = item.data.value;
+              const _data: any[] = [];
+              const nodeID = item.data.clusterNodeId;
               value.forEach((networkItem: any) => {
-                _options[networkItem.timeString] = networkItem.value;
+                _data.push(Number(networkItem.value).toFixed(2));
+                _networkXAxis.add(networkItem.timeString);
               });
+
+              _networkOptions[nodeID] = {
+                _data: _networkOptions[nodeID]
+                  ? _networkOptions[nodeID]._data.concat(_data)
+                  : _data,
+              };
             });
-            handleNetworkOptions(_options);
+            handleNetworkOptions(_networkOptions, [..._networkXAxis.keys()]);
           }
         });
     }
@@ -266,12 +461,18 @@ export default () => {
         ])
         .then((res) => {
           if (res.status === 200) {
-            const _options = {};
+            const _cpuOptions = {};
+            const _cpuXAxis = new Set<string>();
             res.result.forEach((item: any) => {
               const value = item.data.value;
-              _options[value.timestamp] = value.cpuSystemUsage;
+              const nodeID = item.data.clusterNodeId;
+              _cpuXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+              if (!_cpuOptions[nodeID]) {
+                _cpuOptions[nodeID] = [];
+              }
+              _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
             });
-            handleCpuOptions(_options);
+            handleCpuOptions(_cpuOptions, [..._cpuXAxis.keys()]);
           }
         });
     }
@@ -296,17 +497,25 @@ export default () => {
         ])
         .then((res) => {
           if (res.status === 200) {
-            const _options = {};
+            const _jvmOptions = {};
+            const _jvmXAxis = new Set<string>();
             res.result.forEach((item: any) => {
               const value = item.data.value;
               const memoryJvmHeapFree = value.memoryJvmHeapFree;
               const memoryJvmHeapTotal = value.memoryJvmHeapTotal;
-              _options[value.timestamp] = (
+              const nodeID = item.data.clusterNodeId;
+
+              const _value = (
                 ((memoryJvmHeapTotal - memoryJvmHeapFree) / memoryJvmHeapTotal) *
                 100
               ).toFixed(2);
+              if (!_jvmOptions[nodeID]) {
+                _jvmOptions[nodeID] = [];
+              }
+              _jvmXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
+              _jvmOptions[nodeID].push(_value);
             });
-            handleJVMOptions(_options);
+            handleJVMOptions(_jvmOptions, [..._jvmXAxis.keys()]);
           }
         });
     }
@@ -361,68 +570,73 @@ export default () => {
             onChange={(value) => {
               setServerId(value);
             }}
-            style={{ width: 300 }}
+            style={{ width: 300, marginBottom: 24 }}
           />
         ) : null}
         <div className={'echarts-items'}>
-          <div className={'echarts-item'}>
-            <Progress
-              type="circle"
-              strokeWidth={8}
-              width={160}
-              percent={topValues.cpu}
-              format={(percent) => (
-                <div>
-                  <div className={'echarts-item-title'}>CPU使用率</div>
-                  <div className={'echarts-item-value'}>{percent}%</div>
-                </div>
-              )}
-            />
-          </div>
-          <div className={'echarts-item'}>
-            <Progress
-              type="circle"
-              strokeWidth={8}
-              width={160}
-              percent={topValues.jvm}
-              format={(percent) => (
-                <div>
-                  <div className={'echarts-item-title'}>JVM内存</div>
-                  <div className={'echarts-item-value'}>{percent}%</div>
-                </div>
-              )}
-            />
-          </div>
-          <div className={'echarts-item'}>
-            <Progress
-              type="circle"
-              strokeWidth={8}
-              width={160}
-              percent={topValues.usage}
-              format={(percent) => (
-                <div>
-                  <div className={'echarts-item-title'}>磁盘占用率</div>
-                  <div className={'echarts-item-value'}>{percent}%</div>
-                </div>
-              )}
-            />
-          </div>
-          <div className={'echarts-item'}>
-            <Progress
-              type="circle"
-              strokeWidth={8}
-              width={160}
-              percent={topValues.systemUsage}
-              format={(percent) => (
-                <div>
-                  <div className={'echarts-item-title'}>系统内存</div>
-                  <div className={'echarts-item-value'}>{percent}%</div>
-                </div>
-              )}
-            />
-          </div>
+          <TopEchartsItemNode title={'CPU使用率'} value={topValues.cpu} />
+          <TopEchartsItemNode title={'JVM内存'} value={topValues.jvm} />
+          <TopEchartsItemNode title={'磁盘占用率'} value={topValues.usage} />
+          <TopEchartsItemNode title={'磁盘占用率'} value={topValues.systemUsage} />
+          {/*<div className={'echarts-item'}>*/}
+          {/*  */}
+          {/*  <Progress*/}
+          {/*    type="circle"*/}
+          {/*    strokeWidth={8}*/}
+          {/*    width={160}*/}
+          {/*    percent={topValues.cpu}*/}
+          {/*    format={(percent) => (*/}
+          {/*      <div>*/}
+          {/*        <div className={'echarts-item-title'}>CPU使用率</div>*/}
+          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
+          {/*      </div>*/}
+          {/*    )}*/}
+          {/*  />*/}
+          {/*</div>*/}
+          {/*<div className={'echarts-item'}>*/}
+          {/*  <Progress*/}
+          {/*    type="circle"*/}
+          {/*    strokeWidth={8}*/}
+          {/*    width={160}*/}
+          {/*    percent={topValues.jvm}*/}
+          {/*    format={(percent) => (*/}
+          {/*      <div>*/}
+          {/*        <div className={'echarts-item-title'}>JVM内存</div>*/}
+          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
+          {/*      </div>*/}
+          {/*    )}*/}
+          {/*  />*/}
+          {/*</div>*/}
+          {/*<div className={'echarts-item'}>*/}
+          {/*  <Progress*/}
+          {/*    type="circle"*/}
+          {/*    strokeWidth={8}*/}
+          {/*    width={160}*/}
+          {/*    percent={topValues.usage}*/}
+          {/*    format={(percent) => (*/}
+          {/*      <div>*/}
+          {/*        <div className={'echarts-item-title'}>磁盘占用率</div>*/}
+          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
+          {/*      </div>*/}
+          {/*    )}*/}
+          {/*  />*/}
+          {/*</div>*/}
+          {/*<div className={'echarts-item'}>*/}
+          {/*  <Progress*/}
+          {/*    type="circle"*/}
+          {/*    strokeWidth={8}*/}
+          {/*    width={160}*/}
+          {/*    percent={topValues.systemUsage}*/}
+          {/*    format={(percent) => (*/}
+          {/*      <div>*/}
+          {/*        <div className={'echarts-item-title'}>系统内存</div>*/}
+          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
+          {/*      </div>*/}
+          {/*    )}*/}
+          {/*  />*/}
+          {/*</div>*/}
         </div>
-        <div>
+        <div style={{ marginBottom: 24 }}>
           <DashBoard
             title={'网络流量'}
             ref={NETWORKRef}
@@ -444,7 +658,7 @@ export default () => {
             onParamsChange={getNetworkEcharts}
           />
         </div>
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', gap: 24 }}>
           <DashBoard
             title={'CPU使用率趋势'}
             closeInitialParams={true}

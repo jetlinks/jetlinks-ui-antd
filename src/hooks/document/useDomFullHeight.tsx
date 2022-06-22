@@ -38,7 +38,6 @@ const useDomFullHeight = (target: BasicTarget | string, extraHeight: number = 0)
         entries.forEach((entry) => {
           const bodyClient = document.body.getBoundingClientRect();
           const domClient = entry.target.getBoundingClientRect();
-          console.log(domClient);
           if (domClient.y < 50) {
             setState(100);
           } else {
