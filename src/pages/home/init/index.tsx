@@ -1,4 +1,5 @@
-import { Button, Col, Radio, Row } from 'antd';
+import { Button, Col, Row } from 'antd';
+import classNames from 'classnames';
 import { useState } from 'react';
 import { service } from '..';
 import styles from './index.less';
@@ -30,18 +31,22 @@ const Init = (props: Props) => {
   return (
     <div className={styles.homeBox}>
       <div className={styles.title}>请选择首页视图</div>
-      <Radio.Group value={value} onChange={(e) => setValue(e.target.value)}>
-        <Row gutter={24}>
-          {viewMap.map((item) => (
-            <Col span={8} key={item.value}>
-              <div className={styles.item}>
-                <img src={item.img} className={styles.item} />
-                <Radio value={item.value}>{item.title}</Radio>
-              </div>
-            </Col>
-          ))}
-        </Row>
-      </Radio.Group>
+
+      <Row gutter={24}>
+        {viewMap.map((item) => (
+          <Col
+            span={8}
+            key={item.value}
+            onClick={() => {
+              setValue(item.value);
+            }}
+          >
+            <div className={classNames(styles.item, value === item.value ? styles.active : {})}>
+              <img src={item.img} className={styles.item} />
+            </div>
+          </Col>
+        ))}
+      </Row>
 
       <div style={{ textAlign: 'center', marginTop: 48 }}>
         <Button

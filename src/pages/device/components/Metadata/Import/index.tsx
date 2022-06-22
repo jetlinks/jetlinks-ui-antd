@@ -40,11 +40,13 @@ const Import = (props: Props) => {
       paging: false,
       terms: [{ column: 'id$not', value: param.id }],
     })) as any;
-    field.dataSource = product.result.map((item: any) => ({
-      label: item.name,
-      value: item.metadata,
-      key: item.id,
-    }));
+    field.dataSource = product.result
+      .filter((i: any) => i?.metadata)
+      .map((item: any) => ({
+        label: item.name,
+        value: item.metadata,
+        key: item.id,
+      }));
     field.loading = false;
   };
 

@@ -1,7 +1,7 @@
 import { FormItem, FormLayout, Radio, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Alert, Modal } from 'antd';
+import { Modal } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -9,7 +9,8 @@ import type { DeviceInstance } from '../typings';
 import SystemConst from '@/utils/const';
 import encodeQuery from '@/utils/encodeQuery';
 import { downloadFile } from '@/utils/util';
-
+import { InfoCircleOutlined } from '@ant-design/icons';
+import styles from './index.less';
 interface Props {
   visible: boolean;
   close: () => void;
@@ -115,12 +116,10 @@ const Export = (props: Props) => {
       title="导出"
       onOk={downloadTemplate}
     >
-      <Alert
-        message="选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数据"
-        type="warning"
-        showIcon
-        closable
-      />
+      <div className={styles.alert}>
+        <InfoCircleOutlined style={{ margin: '5px 10px 0 0' }} />
+        <div>选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数</div>
+      </div>
       <div style={{ marginTop: '20px' }}>
         <FormProvider form={form}>
           <SchemaField schema={schema} />

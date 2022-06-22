@@ -43,14 +43,17 @@ export default (props: DeviceModalProps) => {
       dataIndex: 'id',
       title: '设备ID',
       width: 220,
+      ellipsis: true,
     },
     {
       dataIndex: 'name',
       title: '设备名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'productName',
       title: '产品名称',
+      ellipsis: true,
     },
     {
       dataIndex: 'modifyTime',
