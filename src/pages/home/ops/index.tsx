@@ -194,7 +194,9 @@ const Ops = () => {
               onClick: () => {
                 const url = getMenuPathByCode(MENUS_CODE['Log']);
                 if (!!url) {
-                  history.push(url);
+                  history.push(url, {
+                    key: 'system',
+                  });
                 } else {
                   message.warning('暂无权限，请联系管理员');
                 }

@@ -153,9 +153,13 @@ const Device = () => {
             {
               title: '配置产品接入方式',
               content:
-                '通过产品对同一类型的所有设备进行统一的接入方式配置。请参照设备铭牌说明选择匹配的接入方式。',
+                '通过产品对同一类型的设备进行统一的接入方式配置。请参照设备铭牌说明选择匹配的接入方式。',
               onClick: () => {
-                setProductVisible(true);
+                if (!!productPermission.update) {
+                  setProductVisible(true);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
               },
             },
             {
@@ -176,7 +180,11 @@ const Device = () => {
               title: '功能调试',
               content: '对添加的测试设备进行功能调试，验证能否连接到平台，设备功能是否配置正确。',
               onClick: () => {
-                setDeviceVisible(true);
+                if (!!devicePermission.update) {
+                  setDeviceVisible(true);
+                } else {
+                  message.warning('暂无权限，请联系管理员');
+                }
               },
             },
             {

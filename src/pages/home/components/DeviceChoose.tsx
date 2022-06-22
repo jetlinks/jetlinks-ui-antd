@@ -6,7 +6,7 @@ import SearchComponent from '@/components/SearchComponent';
 import type { DeviceItem } from '@/pages/media/Home/typings';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { BadgeStatus, PermissionButton } from '@/components';
+import { BadgeStatus } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
@@ -20,7 +20,6 @@ interface DeviceModalProps {
 export default (props: DeviceModalProps) => {
   const intl = useIntl();
   const history = useHistory();
-  const permission = PermissionButton.usePermission('device/Instance').permission;
 
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
@@ -103,17 +102,12 @@ export default (props: DeviceModalProps) => {
       onCancel={cancel}
       onOk={() => {
         if (deviceItem?.id) {
-          if (!!permission.update) {
-            history.push(
-              `${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], deviceItem.id)}`,
-              {
-                tab: 'diagnose',
-              },
-            );
-          } else {
-            message.warning('暂无权限，请联系管理员');
-            cancel();
-          }
+          history.push(
+            `${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], deviceItem.id)}`,
+            {
+              tab: 'diagnose',
+            },
+          );
         } else {
           message.warning('请选择设备');
         }
