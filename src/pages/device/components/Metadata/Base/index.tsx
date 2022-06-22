@@ -19,6 +19,7 @@ import { asyncUpdateMedata, removeMetadata } from '../metadata';
 import type { permissionType } from '@/hooks/permission';
 import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
+import { message } from 'antd';
 
 interface Props {
   type: MetadataType;
@@ -87,6 +88,7 @@ const BaseMetadata = observer((props: Props) => {
             MetadataModel.item = record;
             MetadataModel.type = type;
             MetadataModel.action = 'edit';
+            message.warning('修改物模型后会脱离产品物模型');
           }}
           tooltip={{
             title: operateLimits('add', type) ? '暂不支持' : '编辑',
