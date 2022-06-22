@@ -219,10 +219,7 @@ const Save = (props: Props) => {
           add: {
             type: 'void',
             'x-component': 'ArrayTable.Addition',
-            title: intl.formatMessage({
-              id: 'pages.system.permission.add',
-              defaultMessage: '添加条目',
-            }),
+            title: '添加',
           },
         },
       },

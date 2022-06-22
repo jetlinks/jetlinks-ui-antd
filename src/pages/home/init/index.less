@@ -1,5 +1,17 @@
+@import '~antd/es/style/themes/default.less';
+
+.homeBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: calc(100vh - 150px);
+  padding: 20px;
+  background-color: white;
+}
 .title {
-  margin-bottom: 10px;
+  margin-top: 28px;
+  margin-bottom: 48px;
   font-weight: 400;
   font-size: 26px;
   text-align: center;
@@ -10,8 +22,11 @@
   flex-direction: column;
   align-items: center;
 
+  &.active {
+    border: 2px solid @primary-color-active;
+  }
+
   img {
-    width: 80%;
-    margin-bottom: 5px;
+    width: 100%;
   }
 }

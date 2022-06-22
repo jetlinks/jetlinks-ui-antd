@@ -36,7 +36,7 @@ const GuideItem = (props: GuideItemProps) => {
   };
 
   return (
-    <div className={'home-guide-item step-bar arrow-2'} onClick={jumpPage}>
+    <div className={'home-guide-item step-bar arrow-2 pointer'} onClick={jumpPage}>
       <div className={'item-english'}>{props.english}</div>
       <div className={'item-title'}>{props.name}</div>
       <div className={`item-index`}>

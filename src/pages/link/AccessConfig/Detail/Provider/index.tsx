@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { TitleComponent } from '@/components';
-import { Button, Card, Col, Row } from 'antd';
+import { Button, Card, Col, Row, Tooltip } from 'antd';
 import styles from './index.less';
 
 interface Props {
@@ -84,7 +84,11 @@ const Provider = (props: Props) => {
                       </div>
                       <div className={styles.context}>
                         <div style={{ fontWeight: 600 }}>{item.name}</div>
-                        <div className={styles.desc}>{item?.description || ''}</div>
+                        <div className={styles.desc}>
+                          <Tooltip title={item?.description || ''}>
+                            {item?.description || ''}
+                          </Tooltip>
+                        </div>
                       </div>
                     </div>
                     <div style={{ width: '70px' }}>

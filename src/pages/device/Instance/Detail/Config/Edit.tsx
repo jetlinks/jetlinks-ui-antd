@@ -2,7 +2,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
-import { Form, FormGrid, FormItem, Input, Password, PreviewText } from '@formily/antd';
+import { Form, FormGrid, FormItem, Input, Password, PreviewText, Select } from '@formily/antd';
 import { Button, Drawer, Space } from 'antd';
 import { useParams } from 'umi';
 import { onlyMessage } from '@/utils/util';
@@ -10,6 +10,7 @@ import { onlyMessage } from '@/utils/util';
 const componentMap = {
   string: 'Input',
   password: 'Password',
+  enum: 'Select',
 };
 
 interface Props {
@@ -33,6 +34,7 @@ const Edit = (props: Props) => {
       FormItem,
       Input,
       Password,
+      Select,
       FormGrid,
       PreviewText,
     },
@@ -49,6 +51,15 @@ const Edit = (props: Props) => {
         'x-decorator-props': {
           tooltip: item.description,
         },
+        enum:
+          item?.type?.type === 'enum' && item?.type?.elements
+            ? (item?.type?.elements || []).map((t: { value: string; text: string }) => {
+                return {
+                  label: t.text,
+                  value: t.value,
+                };
+              })
+            : [],
       };
     });
     return config;

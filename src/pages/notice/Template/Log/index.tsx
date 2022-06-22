@@ -25,6 +25,17 @@ const Log = observer(() => {
     {
       dataIndex: 'state',
       title: '状态',
+      valueType: 'select',
+      valueEnum: {
+        success: {
+          text: '成功',
+          status: 'success',
+        },
+        error: {
+          text: '失败',
+          status: 'error',
+        },
+      },
       renderText: (text: { value: string; text: string }, record) => {
         return (
           <>

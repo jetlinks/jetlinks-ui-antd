@@ -5,7 +5,7 @@ import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { DisconnectOutlined } from '@ant-design/icons';
-import { Popconfirm } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
 export interface DeviceCardProps extends Partial<DeviceInstance> {
@@ -17,6 +17,8 @@ export interface DeviceCardProps extends Partial<DeviceInstance> {
   onClick?: () => void;
   grantedPermissions?: string[];
   onUnBind?: (e: any) => void;
+  showBindBtn?: boolean;
+  cardType?: 'bind' | 'unbind';
 }
 
 const defaultImage = require('/public/images/device-type-3-big.png');
@@ -30,7 +32,7 @@ export const PermissionsMap = {
 export const handlePermissionsMap = (permissions?: string[]) => {
   return permissions && permissions.length
     ? permissions.map((item) => PermissionsMap[item]).toString()
-    : '--';
+    : '';
 };
 
 export const ExtraDeviceCard = (props: DeviceCardProps) => {
@@ -65,34 +67,56 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <span className={'card-item-header-name'}>
+              <Tooltip title={props.name}>
+                <span className={'ellipsis'}>{props.name}</span>
+              </Tooltip>
+            </span>
           </div>
           <div className={'card-item-content-flex'}>
             <div className={'flex-auto'}>
               <label>ID</label>
-              <div className={'ellipsis'}>{props.id || '--'}</div>
-            </div>
-            <div className={'flex-auto'}>
-              <label>资产权限</label>
-              <div className={'ellipsis'}>{handlePermissionsMap(props.grantedPermissions)}</div>
-            </div>
-            <Popconfirm
-              title={intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '是否解除绑定',
-              })}
-              key="unBind"
-              onConfirm={(e) => {
-                e?.stopPropagation();
-                if (props.onUnBind) {
-                  props.onUnBind(e);
-                }
-              }}
-            >
-              <div className={'flex-button'}>
-                <DisconnectOutlined />
+              <div className={'ellipsis'}>
+                <Tooltip title={props.id}>{props.id || ''}</Tooltip>
               </div>
-            </Popconfirm>
+            </div>
+            {props.cardType === 'bind' ? (
+              <div className={'flex-auto'}>
+                <label>说明</label>
+                <Tooltip title={props.describe}>
+                  <div className={'ellipsis'}>{props.describe}</div>
+                </Tooltip>
+              </div>
+            ) : (
+              <div className={'flex-auto'}>
+                <label>资产权限</label>
+                <div className={'ellipsis'}>
+                  <Tooltip title={handlePermissionsMap(props.grantedPermissions)}>
+                    {handlePermissionsMap(props.grantedPermissions)}
+                  </Tooltip>
+                </div>
+              </div>
+            )}
+
+            {props.showBindBtn !== false && (
+              <Popconfirm
+                title={intl.formatMessage({
+                  id: 'pages.system.role.option.unBindUser',
+                  defaultMessage: '是否解除绑定',
+                })}
+                key="unBind"
+                onConfirm={(e) => {
+                  e?.stopPropagation();
+                  if (props.onUnBind) {
+                    props.onUnBind(e);
+                  }
+                }}
+              >
+                <div className={'flex-button'}>
+                  <DisconnectOutlined />
+                </div>
+              </Popconfirm>
+            )}
           </div>
         </div>
       </div>

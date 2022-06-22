@@ -385,30 +385,40 @@ const Save = () => {
               <h1>2.配置说明</h1>
               <div>以下配置说明以将本平台数据级联到LiveGBS平台为例。</div>
               <h2>1、上级SIP ID</h2>
-              <div>请填写第三方平台中配置的SIP ID。</div>
+              <div>
+                请填写第三方平台中配置的<b>SIP ID</b>。
+              </div>
               <div className={styles.image}>
                 <Image width="100%" src={img2} />
               </div>
               <h2>2、上级SIP 域</h2>
-              <div>请填写第三方平台中配置的SIP ID域。</div>
+              <div>
+                请填写第三方平台中配置的<b>SIP ID域</b>。
+              </div>
               <div className={styles.image}>
                 <Image width="100%" src={img1} />
               </div>
               <h2>3、上级SIP 地址</h2>
-              <div>请填写第三方平台中配置的SIP ID地址。</div>
+              <div>
+                请填写第三方平台中配置的<b>SIP ID地址</b>。
+              </div>
               <div className={styles.image}>
                 <Image width="100%" src={img3} />
               </div>
               <h2>4、本地SIP ID</h2>
               <div>
-                请填写本地的SIP ID地址。
-                地址由由中心编码(8位)、行业编码(2位)、类型编码(3位)和序号(7位)四个码段共20位十
+                请填写本地的<b>SIP ID地址</b>。
+                地址由中心编码(8位)、行业编码(2位)、类型编码(3位)和序号(7位)四个码段共20位十
                 进制数字字符构成。详细规则请参见《GB/T28181-2016》中附录D部分。
               </div>
               <h2>5、SIP本地地址</h2>
-              <div>请选择指定的网卡和端口，如有疑问请联系系统运维人员。</div>
+              <div>
+                请选择<b>指定的网卡和端口</b>，如有疑问请联系系统运维人员。
+              </div>
               <h2>6、用户</h2>
-              <div>部分平台有基于用于和接入密码的特殊认证。通常情况下,请填写本地SIP ID值。</div>
+              <div>
+                部分平台有基于用户和接入密码的特殊认证。通常情况下,请填写<b>本地SIP ID</b>值。
+              </div>
               <h2>7、接入密码</h2>
               <div>需与上级平台设置的接入密码一致，用于身份认证。</div>
               <h2>8、厂商/型号/版本号</h2>

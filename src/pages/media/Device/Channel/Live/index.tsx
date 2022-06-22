@@ -27,6 +27,17 @@ const LiveFC = (props: LiveProps) => {
   );
 
   useEffect(() => {
+    if (props.channelId && props.deviceId) {
+      //   查询当前视频是否在录像
+      service.ptzIsRecord(props.deviceId, props.channelId).then((res) => {
+        if (res.code === 200) {
+          setIsRecord(res.result ? 2 : 0);
+        }
+      });
+    }
+  }, [props.channelId, props.deviceId]);
+
+  useEffect(() => {
     if (props.visible) {
       mediaStart('mp4');
     }

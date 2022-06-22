@@ -30,8 +30,8 @@ export default (props: NoticeCardProps) => {
     } else {
       const log = record.cluster?.map(
         (item) =>
-          `${item.configuration?.publicHost || record.configuration?.remoteHost}:${
-            item.configuration?.publicPort || record.configuration?.remotePort
+          `${item.configuration?.publicHost || item.configuration?.remoteHost}:${
+            item.configuration?.publicPort || item.configuration?.remotePort
           }`,
       );
       return (

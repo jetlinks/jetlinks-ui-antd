@@ -6,7 +6,16 @@ import type { SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import AccessConfig from './AccessConfig';
 import ReactMarkdown from 'react-markdown';
-import { Form, FormGrid, FormItem, FormLayout, Input, Password, PreviewText } from '@formily/antd';
+import {
+  Form,
+  FormGrid,
+  FormItem,
+  FormLayout,
+  Input,
+  Password,
+  PreviewText,
+  Select,
+} from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import type { ConfigProperty } from '@/pages/device/Product/typings';
 import { createSchemaField } from '@formily/react';
@@ -19,6 +28,7 @@ import { onlyMessage } from '@/utils/util';
 const componentMap = {
   string: 'Input',
   password: 'Password',
+  enum: 'Select',
 };
 
 const Access = () => {
@@ -226,6 +236,7 @@ const Access = () => {
       PreviewText,
       FormItem,
       Input,
+      Select,
     },
   });
 
@@ -243,6 +254,15 @@ const Access = () => {
           labelAlign: 'left',
           layout: 'vertical',
         },
+        enum:
+          item?.type?.type === 'enum' && item?.type?.elements
+            ? (item?.type?.elements || []).map((t: { value: string; text: string }) => {
+                return {
+                  label: t.text,
+                  value: t.value,
+                };
+              })
+            : [],
       };
     });
     return obj;

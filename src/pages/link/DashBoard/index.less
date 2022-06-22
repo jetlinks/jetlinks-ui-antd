@@ -1,19 +1,25 @@
 .link-dash-board {
-  background-color: #fff;
-
   .echarts-items {
     position: relative;
     display: flex;
-    gap: 12px;
-    margin: 12px 0;
+    gap: 24px;
+    margin-bottom: 24px;
 
     .echarts-item {
       display: flex;
       flex-grow: 1;
-      align-items: center;
-      justify-content: center;
       width: 0;
-      height: 160px;
+      height: 180px;
+      padding: 16px;
+      background-color: #fff;
+
+      .echarts-item-left {
+        width: 45%;
+      }
+
+      .echarts-item-right {
+        width: 55%;
+      }
 
       .echarts-item-title {
         margin-bottom: 8px;
@@ -23,7 +29,7 @@
 
       .echarts-item-value {
         font-weight: bold;
-        font-size: 18px;
+        font-size: 36px;
       }
     }
   }
