@@ -647,7 +647,7 @@ const Save = () => {
     history.back();
   };
   return (
-    <PageContainer className={'page-title-show'}>
+    <PageContainer>
       <Card>
         <Row>
           <Col span={12}>

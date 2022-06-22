@@ -253,6 +253,7 @@ const Access = (props: Props) => {
               <Input.Search
                 key={'network'}
                 placeholder="请输入名称"
+                allowClear
                 onSearch={(value: string) => {
                   queryNetworkList(
                     props.provider?.id,
@@ -310,14 +311,18 @@ const Access = (props: Props) => {
                         <Tooltip
                           placement="topLeft"
                           title={
-                            <div>
-                              {[...item.addresses].map((i: any) => (
-                                <div key={i.address}>
-                                  <Badge color={i.health === -1 ? 'red' : 'green'} />
-                                  {i.address}
-                                </div>
-                              ))}
-                            </div>
+                            item.addresses?.length > 1 ? (
+                              <div>
+                                {[...item.addresses].map((i: any) => (
+                                  <div key={i.address}>
+                                    <Badge color={i.health === -1 ? 'red' : 'green'} />
+                                    {i.address}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              ''
+                            )
                           }
                         >
                           <div
@@ -333,6 +338,7 @@ const Access = (props: Props) => {
                             {item.addresses.slice(0, 1).map((i: any) => (
                               <div className={styles.item} key={i.address}>
                                 <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
+                                {item.addresses?.length > 1 && '...'}
                               </div>
                             ))}
                           </div>
@@ -392,6 +398,7 @@ const Access = (props: Props) => {
             <div className={styles.search}>
               <Input.Search
                 key={'protocol'}
+                allowClear
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
                   queryProcotolList(

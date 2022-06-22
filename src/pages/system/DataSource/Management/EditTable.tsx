@@ -135,7 +135,7 @@ const EditTable = (props: Props) => {
                     // },
                     {
                       maximum: 99999,
-                      minimum: 1,
+                      minimum: 0,
                     },
                   ],
                   // required: true,

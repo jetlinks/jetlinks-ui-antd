@@ -28,7 +28,7 @@ const Init = (props: Props) => {
     },
   ];
   return (
-    <div>
+    <div className={styles.homeBox}>
       <div className={styles.title}>请选择首页视图</div>
       <Radio.Group value={value} onChange={(e) => setValue(e.target.value)}>
         <Row gutter={24}>
@@ -43,7 +43,7 @@ const Init = (props: Props) => {
         </Row>
       </Radio.Group>
 
-      <div style={{ textAlign: 'center', marginTop: 30 }}>
+      <div style={{ textAlign: 'center', marginTop: 48 }}>
         <Button
           type="primary"
           onClick={() => {

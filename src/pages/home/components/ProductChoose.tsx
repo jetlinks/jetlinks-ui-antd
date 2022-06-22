@@ -1,12 +1,10 @@
 import { FormItem, FormLayout, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Button, message, Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
-import encodeQuery from '@/utils/encodeQuery';
-import { PermissionButton } from '@/components';
 import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
@@ -16,7 +14,6 @@ interface Props {
 }
 
 const ProductChoose = (props: Props) => {
-  const productPermission = PermissionButton.usePermission('device/Product').permission;
   const { visible, close } = props;
   const [productList, setProductList] = useState<any[]>([]);
 
@@ -29,16 +26,20 @@ const ProductChoose = (props: Props) => {
   });
 
   useEffect(() => {
-    service.getProductList(encodeQuery({ paging: false, terms: { state: 1 } })).then((resp) => {
-      if (resp.status === 200) {
-        const list = resp.result.map((item: { name: any; id: any }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setProductList(list);
-      }
-    });
-  }, []);
+    if (visible) {
+      service.getProductList().then((resp) => {
+        if (resp.status === 200) {
+          const list = resp.result
+            .filter((i: any) => !i?.accessId)
+            .map((item: { name: any; id: any }) => ({
+              label: item.name,
+              value: item.id,
+            }));
+          setProductList(list);
+        }
+      });
+    }
+  }, [visible]);
 
   const form = createForm({});
 
@@ -91,16 +92,13 @@ const ProductChoose = (props: Props) => {
           onClick={async () => {
             const data: any = await form.submit();
             const path = getMenuPathByParams(`device/Product/Detail`);
-            if (path && !!productPermission.update) {
+            if (path) {
               history.push(
                 `${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], data.product)}`,
                 {
                   tab: 'access',
                 },
               );
-            } else {
-              message.warning('暂无权限，请联系管理员');
-              close();
             }
           }}
         >

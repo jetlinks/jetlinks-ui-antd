@@ -106,13 +106,12 @@ const NormalUpload = (props: any) => {
       <Space>
         <Upload
           action={`/${SystemConst.API_BASE}/file/static`}
-          accept={`.${props?.fileType?.fileType || 'xlsx'}`}
+          accept={'.xlsx, .csv'}
           headers={{
             'X-Access-Token': Token.get(),
           }}
           onChange={async (info) => {
             if (info.file.status === 'done') {
-              onlyMessage('上传成功');
               const resp: any = info.file.response || { result: '' };
               await submitData(resp?.result || '');
             }
@@ -201,9 +200,11 @@ const Import = (props: Props) => {
         });
       });
       onFieldValueChange('fileType', (field) => {
+        const product = form.getValuesIn('product') || '';
         form.setFieldState('*(upload)', (state) => {
           state.componentProps = {
             fileType: field.value,
+            product,
           };
         });
       });
@@ -277,7 +278,7 @@ const Import = (props: Props) => {
         </Button>,
       ]}
     >
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: '10px' }}>
         <FormProvider form={form}>
           <SchemaField schema={schema} />
         </FormProvider>

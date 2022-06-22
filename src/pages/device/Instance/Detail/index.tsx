@@ -147,19 +147,35 @@ const InstanceDetail = observer(() => {
       tab: '设备诊断',
       component: <Diagnose />,
     },
-    {
-      key: 'metadata-map',
-      tab: '物模型映射',
-      component: <MetadataMap type="device" />,
-    },
+  ];
+
+  const pList = [
+    'websocket-server',
+    'http-server-gateway',
+    'udp-device-gateway',
+    'coap-server-gateway',
+    'mqtt-client-gateway',
+    'mqtt-server-gateway',
+    'tcp-server-gateway',
   ];
   const [list, setList] =
     useState<{ key: string; tab: string | ReactNode; component: ReactNode }[]>(baseList);
 
-  const getDetail = (id: string) => {
-    service.detail(id).then((response) => {
+  const getDetail = async (id: string) => {
+    const response = await service.detail(id);
+    if (response.status === 200) {
       InstanceModel.detail = response?.result;
       const datalist = [...baseList];
+      if (
+        InstanceModel.detail?.accessProvider &&
+        pList.includes(InstanceModel.detail?.accessProvider)
+      ) {
+        datalist.push({
+          key: 'metadata-map',
+          tab: '物模型映射',
+          component: <MetadataMap type="device" />,
+        });
+      }
       if (response.result.protocol === 'modbus-tcp') {
         datalist.push({
           key: 'modbus',
@@ -186,7 +202,7 @@ const InstanceDetail = observer(() => {
       // 写入物模型数据
       const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
       MetadataAction.insert(metadata);
-    });
+    }
   };
 
   const [subscribeTopic] = useSendWebsocketMessage();

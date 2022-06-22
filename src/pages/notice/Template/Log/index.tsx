@@ -84,7 +84,7 @@ const Log = observer(() => {
       destroyOnClose
       onCancel={() => (state.log = false)}
       title="通知记录"
-      width={'50vw'}
+      width={'65vw'}
       visible={state.log && !!state.current?.id}
     >
       <SearchComponent
@@ -99,9 +99,11 @@ const Log = observer(() => {
       />
       <ProTable<LogItem>
         search={false}
-        pagination={{
-          pageSize: 5,
-        }}
+        pagination={
+          {
+            // pageSize: 5,
+          }
+        }
         params={param}
         columns={columns}
         request={async (params) => service.getHistoryLog(state.current?.id || '', params)}

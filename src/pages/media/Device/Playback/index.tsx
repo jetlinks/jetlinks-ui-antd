@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Calendar, Empty, List, Select, Tooltip } from 'antd';
+import { Calendar, Empty, List, Tooltip } from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
 import './index.less';
@@ -17,8 +17,10 @@ import {
   LoadingOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import TimeLine from './timeLine';
+import { RadioCard } from '@/components';
 
 const service = new Service('media');
 
@@ -238,7 +240,47 @@ export default () => {
           />
         </div>
         <div className={'playback-right'}>
-          <Select
+          <Tooltip
+            // title={<>云端：存储在服务器中 本地：存储在设备本地</>}
+            title={
+              <>
+                <div>云端：存储在服务器中</div>
+                <div>本地：存储在设备本地</div>
+              </>
+            }
+            placement="topLeft"
+          >
+            <div>
+              类型: <QuestionCircleOutlined />
+            </div>
+          </Tooltip>
+          <RadioCard
+            model={'singular'}
+            value={type}
+            itemStyle={{ minWidth: 0, width: '100%' }}
+            onSelect={(key: string) => {
+              setType(key);
+              console.log(key);
+              if (key === 'cloud') {
+                queryServiceRecords(time!);
+              } else {
+                queryLocalRecords(time!);
+              }
+            }}
+            options={[
+              {
+                label: '云端',
+                value: 'cloud',
+                imgUrl: require('/public/images/media/cloud.png'),
+              },
+              {
+                label: '本地',
+                value: 'local',
+                imgUrl: require('/public/images/local.png'),
+              },
+            ]}
+          />
+          {/* <Select
             value={type}
             options={[
               { label: '云端', value: 'cloud' },
@@ -253,7 +295,7 @@ export default () => {
                 queryLocalRecords(time!);
               }
             }}
-          />
+          /> */}
           <div className={'playback-calendar'}>
             <Calendar
               value={time}

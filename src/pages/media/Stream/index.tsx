@@ -26,7 +26,7 @@ const Stream = () => {
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const permissionCode = 'media/Stream';
   const { permission } = PermissionButton.usePermission(permissionCode);
-  const { minHeight } = useDomFullHeight(`.stream`, 36);
+  const { minHeight } = useDomFullHeight(`.stream`, 24);
 
   const columns: ProColumns<StreamItem>[] = [
     {
