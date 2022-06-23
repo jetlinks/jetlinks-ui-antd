@@ -177,15 +177,29 @@ export default () => {
     return newArray;
   };
 
+  const getTimeFormat = (type: string) => {
+    switch (type) {
+      case 'year':
+        return 'YYYY-MM-DD';
+      case 'month':
+        return 'MM-DD';
+      case 'week':
+        return 'MM-DD HH';
+      default:
+        return 'HH';
+    }
+  };
+
   const getInterval = (type: string) => {
     switch (type) {
       case 'year':
         return '30d';
       case 'week':
-      case 'month':
         return '1d';
-      default:
+      case 'month':
         return '1h';
+      default:
+        return '1m';
     }
   };
 
@@ -206,24 +220,31 @@ export default () => {
         right: '2%',
       },
       color: ['#979AFF'],
-      series: Object.keys(data).map((key) => ({
-        data: data[key]._data,
-        name: key,
-        type: 'line',
-        smooth: true,
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 1,
-              color: 'rgba(151, 154, 255, 0)',
+      series: Object.keys(data).length
+        ? Object.keys(data).map((key) => ({
+            data: data[key]._data,
+            name: key,
+            type: 'line',
+            smooth: true,
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 1,
+                  color: 'rgba(151, 154, 255, 0)',
+                },
+                {
+                  offset: 0,
+                  color: 'rgba(151, 154, 255, .24)',
+                },
+              ]),
             },
+          }))
+        : [
             {
-              offset: 0,
-              color: 'rgba(151, 154, 255, .24)',
+              data: [],
+              type: 'line',
             },
-          ]),
-        },
-      })),
+          ],
     });
   };
 
@@ -255,24 +276,31 @@ export default () => {
         },
       ],
       color: ['#60DFC7'],
-      series: Object.keys(data).map((key) => ({
-        data: arrayReverse(data[key]),
-        name: key,
-        type: 'line',
-        smooth: true,
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 1,
-              color: 'rgba(96, 223, 199, 0)',
+      series: Object.keys(data).length
+        ? Object.keys(data).map((key) => ({
+            data: arrayReverse(data[key]),
+            name: key,
+            type: 'line',
+            smooth: true,
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 1,
+                  color: 'rgba(96, 223, 199, 0)',
+                },
+                {
+                  offset: 0,
+                  color: 'rgba(96, 223, 199, .24)',
+                },
+              ]),
             },
+          }))
+        : [
             {
-              offset: 0,
-              color: 'rgba(96, 223, 199, .24)',
+              data: [],
+              type: 'line',
             },
-          ]),
-        },
-      })),
+          ],
     });
   };
 
@@ -304,24 +332,31 @@ export default () => {
         },
       ],
       color: ['#2CB6E0'],
-      series: Object.keys(data).map((key) => ({
-        data: arrayReverse(data[key]),
-        name: key,
-        type: 'line',
-        smooth: true,
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 1,
-              color: 'rgba(44, 182, 224, 0)',
+      series: Object.keys(data).length
+        ? Object.keys(data).map((key) => ({
+            data: arrayReverse(data[key]),
+            name: key,
+            type: 'line',
+            smooth: true,
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 1,
+                  color: 'rgba(44, 182, 224, 0)',
+                },
+                {
+                  offset: 0,
+                  color: 'rgba(44, 182, 224, .24)',
+                },
+              ]),
             },
+          }))
+        : [
             {
-              offset: 0,
-              color: 'rgba(44, 182, 224, .24)',
+              data: [0],
+              type: 'line',
             },
-          ]),
-        },
-      })),
+          ],
     });
   };
 
@@ -378,41 +413,42 @@ export default () => {
           const _jvmXAxis = new Set<string>();
           const _cpuOptions = {};
           const _cpuXAxis = new Set<string>();
-
-          res.result.forEach((item: any) => {
-            const value = item.data.value;
-            const nodeID = item.data.clusterNodeId;
-            if (item.group === 'network') {
-              const _data: any[] = [];
-              value.forEach((networkItem: any) => {
-                _data.push(Number(networkItem.value).toFixed(2));
-                _networkXAxis.add(networkItem.timeString);
-              });
-              _networkOptions[nodeID] = {
-                _data: _networkOptions[nodeID]
-                  ? _networkOptions[nodeID]._data.concat(_data)
-                  : _data,
-              };
-            } else if (item.group === 'cpu') {
-              const memoryJvmHeapFree = value.memoryJvmHeapFree;
-              const memoryJvmHeapTotal = value.memoryJvmHeapTotal;
-              const _value = (
-                ((memoryJvmHeapTotal - memoryJvmHeapFree) / memoryJvmHeapTotal) *
-                100
-              ).toFixed(2);
-              if (!_jvmOptions[nodeID]) {
-                _jvmOptions[nodeID] = [];
+          if (res.result?.length) {
+            res.result.forEach((item: any) => {
+              const value = item.data.value;
+              const nodeID = item.data.clusterNodeId;
+              if (item.group === 'network') {
+                const _data: any[] = [];
+                value.forEach((networkItem: any) => {
+                  _data.push(Number(networkItem.value).toFixed(2));
+                  _networkXAxis.add(networkItem.timeString);
+                });
+                _networkOptions[nodeID] = {
+                  _data: _networkOptions[nodeID]
+                    ? _networkOptions[nodeID]._data.concat(_data)
+                    : _data,
+                };
+              } else if (item.group === 'cpu') {
+                const memoryJvmHeapFree = value.memoryJvmHeapFree;
+                const memoryJvmHeapTotal = value.memoryJvmHeapTotal;
+                const _value = (
+                  ((memoryJvmHeapTotal - memoryJvmHeapFree) / memoryJvmHeapTotal) *
+                  100
+                ).toFixed(2);
+                if (!_jvmOptions[nodeID]) {
+                  _jvmOptions[nodeID] = [];
+                }
+                _jvmXAxis.add(moment(value.timestamp).format(getTimeFormat('week')));
+                _jvmOptions[nodeID].push(_value);
+              } else {
+                if (!_cpuOptions[nodeID]) {
+                  _cpuOptions[nodeID] = [];
+                }
+                _cpuXAxis.add(moment(value.timestamp).format(getTimeFormat('week')));
+                _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
               }
-              _jvmXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-              _jvmOptions[nodeID].push(_value);
-            } else {
-              if (!_cpuOptions[nodeID]) {
-                _cpuOptions[nodeID] = [];
-              }
-              _cpuXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-              _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
-            }
-          });
+            });
+          }
           handleNetworkOptions(_networkOptions, [..._networkXAxis.keys()]);
           handleJVMOptions(_jvmOptions, [..._jvmXAxis.keys()]);
           handleCpuOptions(_cpuOptions, [..._cpuXAxis.keys()]);
@@ -444,21 +480,23 @@ export default () => {
           if (res.status === 200) {
             const _networkOptions = {};
             const _networkXAxis = new Set<string>();
-            res.result.forEach((item: any) => {
-              const value = item.data.value;
-              const _data: any[] = [];
-              const nodeID = item.data.clusterNodeId;
-              value.forEach((networkItem: any) => {
-                _data.push(Number(networkItem.value).toFixed(2));
-                _networkXAxis.add(networkItem.timeString);
-              });
+            if (res.result.length) {
+              res.result.forEach((item: any) => {
+                const value = item.data.value;
+                const _data: any[] = [];
+                const nodeID = item.data.clusterNodeId;
+                value.forEach((networkItem: any) => {
+                  _data.push(Number(networkItem.value).toFixed(2));
+                  _networkXAxis.add(networkItem.timeString);
+                });
 
-              _networkOptions[nodeID] = {
-                _data: _networkOptions[nodeID]
-                  ? _networkOptions[nodeID]._data.concat(_data)
-                  : _data,
-              };
-            });
+                _networkOptions[nodeID] = {
+                  _data: _networkOptions[nodeID]
+                    ? _networkOptions[nodeID]._data.concat(_data)
+                    : _data,
+                };
+              });
+            }
             handleNetworkOptions(_networkOptions, [..._networkXAxis.keys()]);
           }
         });
@@ -479,7 +517,6 @@ export default () => {
             params: {
               from: data.time.start,
               to: data.time.end,
-              interval: getInterval(data.time.type),
             },
           },
         ])
@@ -487,15 +524,17 @@ export default () => {
           if (res.status === 200) {
             const _cpuOptions = {};
             const _cpuXAxis = new Set<string>();
-            res.result.forEach((item: any) => {
-              const value = item.data.value;
-              const nodeID = item.data.clusterNodeId;
-              _cpuXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-              if (!_cpuOptions[nodeID]) {
-                _cpuOptions[nodeID] = [];
-              }
-              _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
-            });
+            if (res.result?.length) {
+              res.result.forEach((item: any) => {
+                const value = item.data.value;
+                const nodeID = item.data.clusterNodeId;
+                _cpuXAxis.add(moment(value.timestamp).format(getTimeFormat(data.time.type)));
+                if (!_cpuOptions[nodeID]) {
+                  _cpuOptions[nodeID] = [];
+                }
+                _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
+              });
+            }
             handleCpuOptions(_cpuOptions, [..._cpuXAxis.keys()]);
           }
         });
@@ -516,7 +555,6 @@ export default () => {
             params: {
               from: data.time.start,
               to: data.time.end,
-              interval: getInterval(data.time.type),
             },
           },
         ])
@@ -524,22 +562,24 @@ export default () => {
           if (res.status === 200) {
             const _jvmOptions = {};
             const _jvmXAxis = new Set<string>();
-            res.result.forEach((item: any) => {
-              const value = item.data.value;
-              const memoryJvmHeapFree = value.memoryJvmHeapFree;
-              const memoryJvmHeapTotal = value.memoryJvmHeapTotal;
-              const nodeID = item.data.clusterNodeId;
+            if (res.result?.length) {
+              res.result.forEach((item: any) => {
+                const value = item.data.value;
+                const memoryJvmHeapFree = value.memoryJvmHeapFree;
+                const memoryJvmHeapTotal = value.memoryJvmHeapTotal;
+                const nodeID = item.data.clusterNodeId;
 
-              const _value = (
-                ((memoryJvmHeapTotal - memoryJvmHeapFree) / memoryJvmHeapTotal) *
-                100
-              ).toFixed(2);
-              if (!_jvmOptions[nodeID]) {
-                _jvmOptions[nodeID] = [];
-              }
-              _jvmXAxis.add(moment(value.timestamp).format('YYYY-MM-DD HH:mm:ss'));
-              _jvmOptions[nodeID].push(_value);
-            });
+                const _value = (
+                  ((memoryJvmHeapTotal - memoryJvmHeapFree) / memoryJvmHeapTotal) *
+                  100
+                ).toFixed(2);
+                if (!_jvmOptions[nodeID]) {
+                  _jvmOptions[nodeID] = [];
+                }
+                _jvmXAxis.add(moment(value.timestamp).format(getTimeFormat(data.time.type)));
+                _jvmOptions[nodeID].push(_value);
+              });
+            }
             handleJVMOptions(_jvmOptions, [..._jvmXAxis.keys()]);
           }
         });
@@ -547,10 +587,10 @@ export default () => {
   };
 
   useEffect(() => {
-    if (serverId) {
-      getAllEcharts();
-    }
+    getAllEcharts();
+  }, []);
 
+  useEffect(() => {
     const id = 'operations-statistics-system-info-realTime';
     const topic = '/dashboard/systemMonitor/stats/info/realTime';
     const sub = subscribeTopic!(id, topic, {
@@ -602,7 +642,7 @@ export default () => {
           <TopEchartsItemNode title={'CPU使用率'} value={topValues.cpu} />
           <TopEchartsItemNode title={'JVM内存'} value={topValues.jvm} />
           <TopEchartsItemNode title={'磁盘占用率'} value={topValues.usage} />
-          <TopEchartsItemNode title={'磁盘占用率'} value={topValues.systemUsage} />
+          <TopEchartsItemNode title={'系统内存'} value={topValues.systemUsage} />
           {/*<div className={'echarts-item'}>*/}
           {/*  */}
           {/*  <Progress*/}
