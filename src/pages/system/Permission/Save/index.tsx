@@ -9,6 +9,7 @@ import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { service } from '@/pages/system/Permission';
 import { Modal } from '@/components';
 import { onlyMessage } from '@/utils/util';
+
 interface Props {
   model: 'add' | 'edit' | 'query';
   data: Partial<PermissionItem>;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Card, Col, Form, Input, Radio, Row, Select, Tooltip, Image } from 'antd';
+import { Button, Card, Col, Form, Image, Input, Radio, Row, Select, Tooltip } from 'antd';
 import { useIntl, useLocation } from 'umi';
 import { RadioCard, UploadImage } from '@/components';
 import { PlusOutlined } from '@ant-design/icons';

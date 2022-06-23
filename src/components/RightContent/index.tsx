@@ -6,6 +6,7 @@ import Avatar from './AvatarDropdown';
 import styles from './index.less';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { Store } from 'jetlinks-store';
+import NoticeIcon from '../NoticeIcon';
 
 // export type SiderTheme = 'light' | 'dark';
 
@@ -59,6 +60,9 @@ const GlobalHeaderRight: React.FC = () => {
         }}
       >
         <QuestionCircleOutlined />
+      </span>
+      <span>
+        <NoticeIcon />
       </span>
       <Avatar menu={true} />
       <SelectLang className={styles.action} />

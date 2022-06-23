@@ -128,14 +128,14 @@ export default (props: TableProps) => {
               return (
                 <Button
                   type={'link'}
-                  style={{ padding: 0 }}
+                  style={{ padding: 0, width: '100%' }}
                   onClick={() => {
                     console.log(record);
                     ApiModel.swagger = record;
                     ApiModel.showTable = false;
                   }}
                 >
-                  {text}
+                  <span className={'ellipsis'}>{text}</span>
                 </Button>
               );
             },

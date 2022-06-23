@@ -117,10 +117,7 @@ export default (props: FunctionProps) => {
               setValue('');
             }}
           >
-            {intl.formatMessage({
-              id: 'pages.data.option.cancel',
-              defaultMessage: '取消',
-            })}
+            清空
           </Button>
         </div>
       </div>

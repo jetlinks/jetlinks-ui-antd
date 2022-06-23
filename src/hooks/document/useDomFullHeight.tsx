@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import type { MutableRefObject } from 'react';
+import { useEffect, useState } from 'react';
 
 type TargetValue<T> = T | undefined | null;
 

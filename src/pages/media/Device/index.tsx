@@ -159,6 +159,13 @@ const Device = () => {
       ),
       valueType: 'select',
       valueEnum: {
+        notActive: {
+          text: intl.formatMessage({
+            id: 'pages.device.instance.status.notActive',
+            defaultMessage: '禁用',
+          }),
+          status: 'notActive',
+        },
         offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
@@ -267,13 +274,17 @@ const Device = () => {
             title: '删除',
           }}
           popConfirm={{
-            title: intl.formatMessage({
-              id:
-                record.state.value !== 'offline'
-                  ? 'pages.device.instance.deleteTip'
-                  : 'page.table.isDelete',
-              defaultMessage: '是否删除?',
-            }),
+            title: (
+              <div style={{ width: 100 }}>
+                {intl.formatMessage({
+                  id:
+                    record.state.value !== 'offline'
+                      ? 'pages.device.instance.deleteTip'
+                      : 'page.table.isDelete',
+                  defaultMessage: '是否删除?',
+                })}
+              </div>
+            ),
             onConfirm: async () => {
               if (record.state.value === 'offline') {
                 await deleteItem(record.id);

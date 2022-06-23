@@ -13,10 +13,12 @@ import encodeQuery from '@/utils/encodeQuery';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import { historyStateModel } from '@/hooks/route/useHistory';
+import { observer } from '@formily/reactive-react';
 
 export const service = new Service('notifications');
 
-const NotificationRecord = () => {
+const NotificationRecord = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
@@ -34,6 +36,13 @@ const NotificationRecord = () => {
       setTypeList(obj);
     });
   }, []);
+
+  useEffect(() => {
+    if (historyStateModel.state.id) {
+      setVisible(true);
+      setCurrent(historyStateModel.state);
+    }
+  }, [historyStateModel.state]);
 
   const ReadSvg = () => (
     <svg
@@ -189,6 +198,6 @@ const NotificationRecord = () => {
       )}
     </PageContainer>
   );
-};
+});
 
 export default NotificationRecord;

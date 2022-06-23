@@ -9,6 +9,7 @@ import type { DeviceInstance } from '../typings';
 import SystemConst from '@/utils/const';
 import encodeQuery from '@/utils/encodeQuery';
 import { downloadFile } from '@/utils/util';
+
 interface Props {
   visible: boolean;
   close: () => void;

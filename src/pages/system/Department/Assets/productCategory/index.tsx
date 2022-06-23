@@ -13,7 +13,7 @@ import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import { difference } from 'lodash';
 import { onlyMessage } from '@/utils/util';
-import { AssetsModel, ASSETS_TABS_ENUM } from '@/pages/system/Department/Assets';
+import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 
 export const service = new Service<ProductCategoryItem>('assets');
 

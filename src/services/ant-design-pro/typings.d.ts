@@ -84,7 +84,7 @@ declare namespace API {
     success?: boolean;
   };
 
-  type NoticeIconItemType = 'notification' | 'message' | 'event';
+  type NoticeIconItemType = 'read' | 'handle';
 
   type NoticeIconItem = {
     id?: string;
@@ -97,5 +97,15 @@ declare namespace API {
     datetime?: string;
     description?: string;
     type?: NoticeIconItemType;
+
+    state: any;
+    message: string;
+    dataId: string;
+    notifyTime: number | string;
+    subscribeId: string;
+    subscriber: string;
+    subscriberType: string;
+    topicName: any;
+    topicProvider: string;
   };
 }
