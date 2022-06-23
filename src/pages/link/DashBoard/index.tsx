@@ -169,6 +169,26 @@ export default () => {
     formatResult: (res) => res.result.map((item: any) => ({ label: item.name, value: item.id })),
   });
 
+  const arrayReverse = (data: any[]): any[] => {
+    const newArray = [];
+    for (let i = data.length - 1; i >= 0; i--) {
+      newArray.push(data[i]);
+    }
+    return newArray;
+  };
+
+  const getInterval = (type: string) => {
+    switch (type) {
+      case 'year':
+        return '30d';
+      case 'week':
+      case 'month':
+        return '1d';
+      default:
+        return '1h';
+    }
+  };
+
   const handleNetworkOptions = (data: Record<string, any>, xAxis: string[]) => {
     setNetworkOptions({
       xAxis: {
@@ -211,7 +231,7 @@ export default () => {
     setJvmOptions({
       xAxis: {
         type: 'category',
-        data: xAxis,
+        data: arrayReverse(xAxis),
       },
       tooltip: {
         trigger: 'axis',
@@ -236,7 +256,7 @@ export default () => {
       ],
       color: ['#60DFC7'],
       series: Object.keys(data).map((key) => ({
-        data: data[key],
+        data: arrayReverse(data[key]),
         name: key,
         type: 'line',
         smooth: true,
@@ -260,7 +280,7 @@ export default () => {
     setCpuOptions({
       xAxis: {
         type: 'category',
-        data: xAxis,
+        data: arrayReverse(xAxis),
       },
       tooltip: {
         trigger: 'axis',
@@ -285,7 +305,7 @@ export default () => {
       ],
       color: ['#2CB6E0'],
       series: Object.keys(data).map((key) => ({
-        data: data[key],
+        data: arrayReverse(data[key]),
         name: key,
         type: 'line',
         smooth: true,
@@ -320,7 +340,7 @@ export default () => {
           group: 'network',
           params: {
             type: networkData.type,
-            interval: networkData.time.type === 'today' ? '1h' : '1d',
+            interval: getInterval(networkData.time.type),
             from: networkData.time.start,
             to: networkData.time.end,
           },
@@ -334,6 +354,7 @@ export default () => {
           params: {
             from: cpuData.time.start,
             to: cpuData.time.end,
+            interval: getInterval(cpuData.time.type),
           },
         },
         {
@@ -345,6 +366,7 @@ export default () => {
           params: {
             from: jvmData.time.start,
             to: jvmData.time.end,
+            interval: getInterval(jvmData.time.type),
           },
         },
       ])
@@ -400,6 +422,7 @@ export default () => {
 
   const getNetworkEcharts = () => {
     const data = NETWORKRef.current!.getValues();
+
     if (data) {
       service
         .queryMulti([
@@ -411,7 +434,7 @@ export default () => {
             group: 'network',
             params: {
               type: data.type,
-              interval: data.time.type === 'today' ? '1h' : '1d',
+              interval: getInterval(data.time.type),
               from: data.time.start,
               to: data.time.end,
             },
@@ -456,6 +479,7 @@ export default () => {
             params: {
               from: data.time.start,
               to: data.time.end,
+              interval: getInterval(data.time.type),
             },
           },
         ])
@@ -492,6 +516,7 @@ export default () => {
             params: {
               from: data.time.start,
               to: data.time.end,
+              interval: getInterval(data.time.type),
             },
           },
         ])

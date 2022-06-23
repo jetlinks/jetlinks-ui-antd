@@ -64,7 +64,7 @@ export default (props: LeftTreeType) => {
   );
 
   const handleTreeData = (data: any) => {
-    if (data && Object.keys(data).length) {
+    if (!data || !(data && Object.keys(data).length)) {
       return [];
     }
     const newArr = data.tags.map((item: any) => ({ id: item.name, name: item.name, isLeaf: true }));
@@ -93,6 +93,7 @@ export default (props: LeftTreeType) => {
       if (resp) {
         ApiModel.components = { ...ApiModel.components, ...resp.components.schemas };
         const handleData = handleTreeData(resp);
+        console.log(handleData);
         setTreeData((origin) => {
           const data = updateTreeData(origin, key, handleData);
 
