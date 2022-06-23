@@ -67,6 +67,7 @@ const Login: React.FC = () => {
 
   useEffect(getCode, []);
   useEffect(() => {
+    localStorage.clear();
     Service.bindInfo().then((res) => {
       if (res.status === 200) {
         setBindings(res.result);

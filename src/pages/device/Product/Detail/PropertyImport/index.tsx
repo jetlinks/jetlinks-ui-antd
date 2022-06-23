@@ -128,6 +128,11 @@ const PropertyImport = (props: Props) => {
           };
         });
       });
+      onFieldValueChange('fileType', (field) => {
+        if (field.value === 'csv') {
+          field.title = '文件格式:  仅支持UTF-8格式编码格式';
+        } else field.title = '文件格式';
+      });
     },
   });
 
@@ -153,6 +158,14 @@ const PropertyImport = (props: Props) => {
               buttonStyle: 'solid',
               optionType: 'button',
             },
+            // 'x-reactions':{
+            //   dependencies:['properties'],
+            //   fulfill:{
+            //     state:{
+            //       title:'{{$deps[0]===csv?"文件格式: 仅支持UTF-8格式编码格式":"文件格式"}}'
+            //     }
+            //   }
+            // },
             enum: [
               {
                 label: 'xlsx',

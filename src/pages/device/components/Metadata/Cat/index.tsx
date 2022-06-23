@@ -91,17 +91,19 @@ const Cat = observer((props: Props) => {
       <Tabs onChange={convertMetadata}>
         {codecs?.map((item) => (
           <Tabs.TabPane tab={item.name} tabKey={item.id} key={item.id}>
-            <MonacoEditor
-              height={350}
-              theme="vs"
-              language="json"
-              value={value}
-              editorDidMount={(editor) => {
-                editor.onDidScrollChange?.(() => {
-                  editor.getAction('editor.action.formatDocument').run();
-                });
-              }}
-            />
+            <div style={{ border: '1px solid #eee' }}>
+              <MonacoEditor
+                height={350}
+                theme="vs"
+                language="json"
+                value={value}
+                editorDidMount={(editor) => {
+                  editor.onDidScrollChange?.(() => {
+                    editor.getAction('editor.action.formatDocument').run();
+                  });
+                }}
+              />
+            </div>
           </Tabs.TabPane>
         ))}
       </Tabs>
