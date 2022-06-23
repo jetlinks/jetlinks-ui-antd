@@ -522,8 +522,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   useEffect(() => {
-    form.setValues(JSON.parse(url.q));
-    handleSearch();
+    if (url.q) {
+      form.setValues(JSON.parse(url.q));
+      handleSearch();
+    }
   }, [url]);
 
   useEffect(() => {
