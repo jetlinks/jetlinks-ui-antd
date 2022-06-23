@@ -16,7 +16,7 @@ const OneNet = (props: Props) => {
   useEffect(() => {
     form.setFieldsValue({
       ...props.data,
-      apiAddress: 'https://ag-api.ctwing.cn/',
+      apiAddress: 'https://api.heclouds.com/',
     });
   }, [props.data]);
 

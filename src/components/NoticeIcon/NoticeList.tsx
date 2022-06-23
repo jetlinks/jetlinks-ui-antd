@@ -23,7 +23,7 @@ const NoticeList: React.FC<NoticeIconTabProps> = ({
   list = [],
   onClick,
   onClear,
-  title,
+  // title,
   onViewMore,
   emptyText,
   showClear = true,
@@ -89,11 +89,7 @@ const NoticeList: React.FC<NoticeIconTabProps> = ({
         }}
       />
       <div className={styles.bottomBar}>
-        {showClear ? (
-          <div onClick={onClear}>
-            {clearText} {title}
-          </div>
-        ) : null}
+        {showClear ? <div onClick={onClear}>{clearText}</div> : null}
         {showViewMore ? (
           <div
             onClick={(e) => {

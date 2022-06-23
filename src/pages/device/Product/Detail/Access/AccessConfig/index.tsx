@@ -29,7 +29,10 @@ const AccessConfig = (props: Props) => {
     pageIndex: 0,
     total: 0,
   });
-  const [param, setParam] = useState<any>({ pageSize: 4, terms: [] });
+  const [param, setParam] = useState<any>({
+    pageSize: 4,
+    terms: [],
+  });
 
   const [currrent, setCurrrent] = useState<any>({
     id: productModel.current?.accessId,
@@ -56,10 +59,26 @@ const AccessConfig = (props: Props) => {
                     termType: 'eq',
                     value: 'child-device',
                   },
+                  {
+                    column: 'state',
+                    termType: 'eq',
+                    value: 'enabled',
+                  },
                 ],
               },
             ]
-          : [...params?.terms],
+          : [
+              ...params?.terms,
+              {
+                terms: [
+                  {
+                    column: 'state',
+                    termType: 'eq',
+                    value: 'enabled',
+                  },
+                ],
+              },
+            ],
     };
     service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
       setDataSource(resp?.result);
