@@ -1,5 +1,5 @@
 import { observer } from '@formily/react';
-import { Space, Tabs } from 'antd';
+import { Space, Tabs, Tooltip } from 'antd';
 import BaseMetadata from './Base';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Import from './Import';
@@ -50,10 +50,20 @@ const Metadata = observer((props: Props) => {
   return (
     <div className={'device-detail-metadata'} style={{ position: 'relative', minHeight }}>
       <div className={styles.tips}>
-        <InfoCircleOutlined style={{ marginRight: '3px' }} />
-        {InstanceModel.detail?.independentMetadata && props.type === 'device'
-          ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
-          : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'}
+        <Tooltip
+          title={
+            InstanceModel.detail?.independentMetadata
+              ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
+              : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'
+          }
+        >
+          <span>
+            <InfoCircleOutlined style={{ marginRight: '3px' }} />
+            {InstanceModel.detail?.independentMetadata
+              ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
+              : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'}
+          </span>
+        </Tooltip>
       </div>
       <Tabs
         className={styles.metadataNav}

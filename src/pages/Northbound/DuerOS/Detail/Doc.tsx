@@ -1,6 +1,10 @@
-import { Image } from 'antd';
+import { InfoCircleFilled } from '@ant-design/icons';
+import { Alert, Image } from 'antd';
 
 const image = require('/public/images/cloud/dueros-doc.jpg');
+const image1 = require('/public/images/cloud/dueros-doc1.png');
+const image2 = require('/public/images/cloud/dueros-doc2.png');
+const image3 = require('/public/images/cloud/dueros-doc3.png');
 
 const Doc = () => {
   return (
@@ -25,6 +29,36 @@ const Doc = () => {
         <div className={'image'}>
           <Image width="100%" src={image} />
         </div>
+        <h1>授权地址</h1>
+        <div>物联网平台的登录地址。注意需要为https。</div>
+        <div>请复制并填写: https://pro.baidu.cn/#/user/login</div>
+        <div className={'image'}>
+          <Image width="100%" src={image1} />
+        </div>
+        <h1>Client_Id</h1>
+        <div>请填写物联网平台-第三方平台的clientId。</div>
+        <div className={'image'}>
+          <Image width="100%" src={image2} />
+        </div>
+        <h1>Token地址</h1>
+        <div>请复制DuerOS平台中的值，填写到第三方平台-redirectUrl中</div>
+        <div>
+          <Alert
+            icon={<InfoCircleFilled style={{ fontSize: 16, marginTop: 5 }} />}
+            description="注：需要将OAth2设置为开启状态。"
+            showIcon
+          />
+        </div>
+        <div className={'image'}>
+          <Image width="100%" src={image3} />
+        </div>
+        <h1>Token地址</h1>
+        <div>请复制并填写：HTTPS://【IP:端口】/api/v1/token</div>
+        <h2>ClientSecret</h2>
+        <div>请复制物联网平台-第三方平台中的secureKey，填写到DuerOS平台。</div>
+        <div></div>
+        <h1>WebService</h1>
+        <div>请复制并填写：/dueros/product/_query</div>
         <h2>2、登录物联网平台，进行平台内产品与dueros产品的数据映射。</h2>
         <h2>
           3、智能家居用户通过物联网平台中的用户，登录小度APP，获取平台内当前用户的所属设备。获取后即可进行语音控制。
