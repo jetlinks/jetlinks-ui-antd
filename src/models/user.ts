@@ -65,6 +65,13 @@ const UserModel: UserModelType = {
           const autz = JSON.stringify(response.result);
           autz && localStorage.setItem('hsweb-autz', autz);
         }
+        const tenants = response.result?.user?.tenants;
+        if (tenants && tenants[0]) {
+          //找到主租户
+          const temp = (response.result?.user?.tenants || []).find((i: any) => i.mainTenant)
+            .adminMember;
+          localStorage.setItem('tenants-admin', temp);
+        }
         yield put({
           type: 'saveCurrentUser',
           payload: response.result.user,
