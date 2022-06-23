@@ -11,6 +11,7 @@ import moment from 'moment';
 import './index.less';
 import { GeoPoint, MetadataJsonInput } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { onlyMessage } from '@/utils/util';
 
 type FunctionProps = {
   data: FunctionMetadata;
@@ -219,6 +220,7 @@ export default (props: FunctionProps) => {
       const res = await service.invokeFunction(id, props.data.id, data);
       if (res.status === 200) {
         setResult(res.result);
+        onlyMessage('操作成功');
       }
     }
   };

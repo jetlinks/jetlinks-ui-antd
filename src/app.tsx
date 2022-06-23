@@ -171,7 +171,7 @@ export const request: RequestConfig = {
       history.push('/user/login');
       return;
     }
-    if (response.status === 400 || response.status === 500) {
+    if (response.status === 400 || response.status === 500 || response.status === 404) {
       // 添加clone() 避免后续其它地方用response.text()时报错
       response
         .clone()

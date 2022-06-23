@@ -260,6 +260,7 @@ const Product = observer(() => {
       title: '接入方式',
       dataIndex: 'accessId',
       width: 150,
+      ellipsis: true,
       valueType: 'select',
       render: (_, row) => {
         return row.protocolName;
