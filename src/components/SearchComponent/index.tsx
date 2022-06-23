@@ -34,6 +34,7 @@ import _ from 'lodash';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
 import { onlyMessage, randomString } from '@/utils/util';
+import useUrlState from '@ahooksjs/use-url-state';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -436,13 +437,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     uiParamRef.current = ui2Server(log);
     const _expand =
       (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1);
-    console.log(
-      _expand,
-      '展开',
-      log,
-      (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1),
-    );
-    console.log(log.terms1, log.terms2, 'log-terms');
     if (_expand) {
       setExpand(false);
     }
@@ -500,18 +494,21 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
     return _value
       .filter((i) => i.terms && i.terms?.length > 0)
-      .map((term) => {
-        term.terms?.map((item) => {
-          if (item.termType === 'like') {
-            item.value = `%${item.value}%`;
+      .map((_term) => {
+        _term.terms = _term.terms
+          ?.filter((term) => term.value !== '')
+          .map((item) => {
+            if (item.termType === 'like' && item.value && item.value !== '') {
+              item.value = `%${item.value}%`;
+              return item;
+            }
             return item;
-          }
-          return item;
-        });
-        return term;
+          });
+        return _term;
       });
   };
 
+  const [url, setUrl] = useUrlState();
   const handleSearch = async () => {
     const value = form.values;
     const filterTerms = (data: Partial<Term>[] | undefined) =>
@@ -519,9 +516,15 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     const _terms = _.cloneDeep(value);
     _terms.terms1 = filterTerms(_terms.terms1);
     _terms.terms2 = filterTerms(_terms.terms2);
-
-    onSearch({ terms: formatValue(_terms) });
+    const _temp = formatValue(_terms);
+    setUrl({ q: JSON.stringify(value) });
+    onSearch({ terms: _temp });
   };
+
+  useEffect(() => {
+    form.setValues(JSON.parse(url.q));
+    handleSearch();
+  }, [url]);
 
   useEffect(() => {
     if (defaultParam) {

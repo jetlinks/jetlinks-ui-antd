@@ -65,7 +65,6 @@ const Save = () => {
     service.getProduct().then((resp) => {
       const _temp = resp.result.map((item: any) => ({ label: item.name, value: item.id }));
       Store.set('product-list', _temp);
-      console.log(_temp, 'tmp');
       return _temp;
     });
 
