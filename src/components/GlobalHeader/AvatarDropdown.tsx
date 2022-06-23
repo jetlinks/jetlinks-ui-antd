@@ -46,6 +46,14 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = props => {
     const u = service.get().subscribe(resp => {
       setUser(resp);
       localStorage.setItem('user-detail', JSON.stringify(resp));
+
+      const tenants = resp.tenants;
+      if (tenants && tenants[0]) {
+        //找到主租户
+        const temp = (resp.tenants || []).find((i: any) => i.mainTenant).adminMember;
+        localStorage.setItem('tenants-admin', temp);
+      }
+
       // localStorage.setItem('tenants-admin', resp.tenants[0]?.adminMember);
     });
     return () => {
@@ -74,7 +82,12 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = props => {
   return currentUser && currentUser.name ? (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={`/jetlinks/file/${user.avatar}?:X_Access_Token=${getAccessToken()}`} alt="avatar" />
+        <Avatar
+          size="small"
+          className={styles.avatar}
+          src={`/jetlinks/file/${user.avatar}?:X_Access_Token=${getAccessToken()}`}
+          alt="avatar"
+        />
         <span className={styles.name}>{currentUser.name}</span>
       </span>
     </HeaderDropdown>
