@@ -26,7 +26,7 @@ export type NoticeIconProps = {
   viewMoreText?: string;
   clearClose?: boolean;
   emptyImage?: string;
-  children?: React.ReactElement<NoticeIconTabProps>[];
+  children?: React.ReactElement<NoticeIconTabProps>[] | React.ReactElement<NoticeIconTabProps>;
 };
 
 const NoticeIcon: React.FC<NoticeIconProps> & {

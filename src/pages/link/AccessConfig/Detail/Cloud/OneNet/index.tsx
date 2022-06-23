@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row, Tooltip, Image } from 'antd';
+import { Button, Col, Form, Image, Input, Row, Tooltip } from 'antd';
 import { useEffect } from 'react';
 import styles from './index.less';
 
@@ -16,7 +16,7 @@ const OneNet = (props: Props) => {
   useEffect(() => {
     form.setFieldsValue({
       ...props.data,
-      apiAddress: 'https://ag-api.ctwing.cn/',
+      apiAddress: 'https://api.heclouds.com/',
     });
   }, [props.data]);
 
