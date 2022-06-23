@@ -336,15 +336,24 @@ export default observer(() => {
                         dataSource={handleResponseParam(item.entityName)}
                       />
                     </div>
-                    {
-                      // @ts-ignore
-                      <ReactJson
-                        displayObjectSize={false}
-                        displayDataTypes={false}
-                        name={false}
-                        src={item.result}
-                      />
-                    }
+                    <div
+                      style={{
+                        padding: 1,
+                        border: '1px solid #f0f0f0',
+                        borderRadius: 2,
+                        marginTop: 12,
+                      }}
+                    >
+                      {
+                        // @ts-ignore
+                        <ReactJson
+                          displayObjectSize={false}
+                          displayDataTypes={false}
+                          name={false}
+                          src={item.result}
+                        />
+                      }
+                    </div>
                   </div>
                 </Tabs.TabPane>
               );

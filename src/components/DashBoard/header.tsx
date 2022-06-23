@@ -69,7 +69,6 @@ export default forwardRef((props: HeaderProps, ref) => {
                 <Form.Item name={props.extraParams.key}>{props.extraParams.Children}</Form.Item>
               </Col>
             )}
-            {}
             <Col span={props.extraParams ? 18 : 24}>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
                 {props.showTimeTool ? (

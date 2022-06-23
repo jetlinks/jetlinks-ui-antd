@@ -128,7 +128,7 @@ export default (props: TableProps) => {
               return (
                 <Button
                   type={'link'}
-                  style={{ padding: 0, width: '100%' }}
+                  style={{ padding: 0, width: '100%', textAlign: 'left' }}
                   onClick={() => {
                     console.log(record);
                     ApiModel.swagger = record;
