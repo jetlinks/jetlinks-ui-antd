@@ -9,7 +9,9 @@ type LeftTreeType = {
    * 是否只展示已授权的接口
    */
   isShowGranted?: boolean;
-  grantKeys?: string[];
+  grantKeys?: string[]; // 已授权的接口
+  type?: 'all' | 'empowerment' | 'authorize'; // 全部、赋权、授权
+  operations?: string[]; // 能赋权的key
 };
 
 interface DataNode {
@@ -35,16 +37,34 @@ export default (props: LeftTreeType) => {
       return list.map((node) => {
         if (node.id === key) {
           const newChildren = node.children ? [...node.children, ...children] : children;
+          // // 屏蔽掉没有子节点的接口
+          // const noOperations = newChildren.filter((item: any) => {
+          //   return item.extraData &&
+          //     item.extraData.some((extraItem: any) =>
+          //       props.operations?.includes(extraItem.operationId),
+          //     )
+          // })
+
+          let filterChildren = newChildren;
           // api详情时，过滤掉没有授权的接口
-          const filterChildren = props.isShowGranted
-            ? newChildren.filter(
-                (item: any) =>
-                  item.extraData &&
-                  item.extraData.some((extraItem: any) =>
-                    props.grantKeys?.includes(extraItem.operationId),
-                  ),
-              )
-            : newChildren;
+          if (props.type === 'empowerment') {
+            filterChildren = newChildren.filter(
+              (item: any) =>
+                item.extraData &&
+                item.extraData.some((extraItem: any) =>
+                  props.operations?.includes(extraItem.operationId),
+                ),
+            );
+          } else if (props.type === 'authorize') {
+            filterChildren = newChildren.filter(
+              (item: any) =>
+                item.extraData &&
+                item.extraData.some((extraItem: any) =>
+                  props.grantKeys?.includes(extraItem.operationId),
+                ),
+            );
+          }
+
           return {
             ...node,
             children: filterChildren,
@@ -60,7 +80,7 @@ export default (props: LeftTreeType) => {
         return node;
       });
     },
-    [props.isShowGranted, props.grantKeys],
+    [props.isShowGranted, props.grantKeys, props.type, props.operations],
   );
 
   const handleTreeData = (data: any) => {
@@ -93,7 +113,6 @@ export default (props: LeftTreeType) => {
       if (resp) {
         ApiModel.components = { ...ApiModel.components, ...resp.components.schemas };
         const handleData = handleTreeData(resp);
-        console.log(handleData);
         setTreeData((origin) => {
           const data = updateTreeData(origin, key, handleData);
 

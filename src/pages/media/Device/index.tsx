@@ -152,7 +152,7 @@ const Device = () => {
           statusNames={{
             online: StatusColorEnum.success,
             offline: StatusColorEnum.error,
-            notActive: StatusColorEnum.processing,
+            notActive: StatusColorEnum.warning,
           }}
           text={record.state.text}
         />

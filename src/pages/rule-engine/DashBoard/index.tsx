@@ -1,13 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { EChartsOption } from 'echarts';
 import { useEffect, useRef, useState } from 'react';
-import { Card, Col } from 'antd';
+import { Badge, Card, Col, Tooltip } from 'antd';
 import './index.less';
 import Service from './service';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
-import { FireOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import moment from 'moment';
 import Echarts from '@/components/DashBoard/echarts';
@@ -172,7 +171,7 @@ const Dashboard = observer(() => {
         const levels = alarmLevel.result.levels;
         state.alarmList = currentAlarm.result?.data.map((item: { level: any }) => ({
           ...item,
-          level: levels.find((l: any) => l.level === item.level)?.title,
+          levelName: levels.find((l: any) => l.level === item.level)?.title,
         }));
       } else {
         state.alarmList = currentAlarm.result?.data;
@@ -308,20 +307,33 @@ const Dashboard = observer(() => {
             <div className={'dash-board-top-item'}>
               <div className={'content-left'}>
                 <div className={'content-left-title'}>最新告警</div>
-                <div>
+                <div className={'new-alarm-items'}>
                   <ul>
                     {state.alarmList.slice(0, 3).map((item) => (
                       <li key={item.id}>
-                        <div
-                          style={{ display: 'flex', justifyContent: 'space-between', margin: 10 }}
-                        >
-                          <div>
-                            <FireOutlined style={{ marginRight: 5 }} />{' '}
+                        <div className={'new-alarm-item'}>
+                          <div className={'new-alarm-item-time'}>
+                            <img src={require('/public/images/alarm/bashboard.png')} alt="" />
                             {moment(item.alarmTime).format('YYYY-MM-DD hh:mm:ss')}
                           </div>
-                          <div>{item.alarmName}</div>
-                          <div>{item.state?.text}</div>
-                          <div>{item.level}</div>
+                          <div className={'new-alarm-item-content ellipsis'}>
+                            <Tooltip title={item.alarmName}>{item.alarmName}</Tooltip>
+                          </div>
+                          <div className={'new-alarm-item-state'}>
+                            <Badge
+                              status={item.state?.value === 'warning' ? 'error' : 'default'}
+                              text={
+                                <span
+                                  className={item.state?.value === 'warning' ? 'error' : 'default'}
+                                >
+                                  {item.state?.text}
+                                </span>
+                              }
+                            />
+                          </div>
+                          <div className={`new-alarm-item-level level-${item.level}`}>
+                            {item.levelName}
+                          </div>
                         </div>
                       </li>
                     ))}
