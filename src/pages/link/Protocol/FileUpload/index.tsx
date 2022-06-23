@@ -10,6 +10,7 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   accept?: string;
+  disabled?: boolean;
 }
 
 const FileUpload = connect((props: Props) => {
@@ -43,13 +44,19 @@ const FileUpload = connect((props: Props) => {
           <Input
             style={{ width: 'calc(100% - 100px)' }}
             value={url}
+            disabled={props?.disabled}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
             }}
             placeholder="请上传文件"
           />
-          <Button shape="round" style={{ width: '100px', textAlign: 'center' }} type="primary">
+          <Button
+            disabled={props?.disabled}
+            shape="round"
+            style={{ width: '100px', textAlign: 'center' }}
+            type="primary"
+          >
             上传jar包
           </Button>
         </Input.Group>

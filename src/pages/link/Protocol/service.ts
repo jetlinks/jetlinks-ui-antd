@@ -16,6 +16,9 @@ class Service extends BaseService<ProtocolItem> {
     request(`${this.uri}/${type}`, { method: 'POST', data });
 
   public validator = (id: string) => request(`${SystemConst.API_BASE}/protocol/${id}/exists`);
+
+  public productCount = (data: Record<string, unknown>) =>
+    request(`${SystemConst.API_BASE}/device-product/_count`, { method: 'POST', data });
 }
 
 export default Service;

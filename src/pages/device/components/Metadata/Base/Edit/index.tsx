@@ -662,6 +662,18 @@ const Edit = observer((props: Props) => {
                 value: 'report',
               },
             ],
+            'x-reactions': [
+              {
+                dependencies: ['.source'],
+                fulfill: {
+                  state: {
+                    value:
+                      '{{$deps[0]==="manual" ? ["write"] : $deps[0]==="rule" ? ["report"] : []}}',
+                    disabled: '{{["manual", "rule"].includes($deps[0])}}',
+                  },
+                },
+              },
+            ],
           },
           // 存储配置
           configConfig: {

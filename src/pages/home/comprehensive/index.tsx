@@ -126,14 +126,14 @@ const Comprehensive = () => {
       name: '设备接入配置',
       english: 'DEVICE ACCESS CONFIGURATION',
       auth: !!accessPermission,
-      url: 'link/AccessConfig',
+      url: accessPermission,
     },
     {
       key: 'logger',
       name: '日志排查',
       english: 'LOG SCREEN',
       auth: !!logPermission,
-      url: 'Log',
+      url: logPermission,
       param: {
         key: 'system',
       },
@@ -143,7 +143,7 @@ const Comprehensive = () => {
       name: '实时监控',
       english: 'REAL-TIME MONITORING',
       auth: !!linkPermission,
-      url: 'link/DashBoard',
+      url: linkPermission,
       param: {
         save: true,
       },
