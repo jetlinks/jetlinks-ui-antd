@@ -214,11 +214,11 @@ export default () => {
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
-              offset: 0,
+              offset: 1,
               color: 'rgba(151, 154, 255, 0)',
             },
             {
-              offset: 1,
+              offset: 0,
               color: 'rgba(151, 154, 255, .24)',
             },
           ]),
