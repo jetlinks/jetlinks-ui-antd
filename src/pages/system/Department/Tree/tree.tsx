@@ -9,11 +9,10 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/system/Department';
 import { Empty, PermissionButton } from '@/components';
-import { useIntl } from 'umi';
+import { useIntl, useLocation } from 'umi';
 import { debounce } from 'lodash';
 import Save from '../save';
 import { ISchema } from '@formily/json-schema';
-import { useLocation } from 'umi';
 import { DepartmentItem } from '@/pages/system/Department/typings';
 import { onlyMessage } from '@/utils/util';
 import classnames from 'classnames';

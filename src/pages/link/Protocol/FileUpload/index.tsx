@@ -33,6 +33,7 @@ const FileUpload = connect((props: Props) => {
       <Upload
         accept={props?.accept || '*'}
         listType={'text'}
+        disabled={props?.disabled}
         action={`/${SystemConst.API_BASE}/file/static`}
         headers={{
           'X-Access-Token': Token.get(),
