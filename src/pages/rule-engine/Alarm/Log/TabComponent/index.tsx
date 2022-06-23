@@ -255,8 +255,18 @@ const TabComponent = observer((props: Props) => {
                             style={{ backgroundColor: colorMap.get(item.level) }}
                           >
                             <div className={'card-state-content'}>
-                              {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
-                                ?.title || item.level}
+                              <Tooltip
+                                placement="topLeft"
+                                title={
+                                  AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
+                                    ?.title || item.level
+                                }
+                              >
+                                <div className="ellipsis" style={{ maxWidth: 70 }}>
+                                  {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
+                                    ?.title || item.level}
+                                </div>
+                              </Tooltip>
                             </div>
                           </div>
                         </div>

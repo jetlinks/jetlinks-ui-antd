@@ -234,7 +234,11 @@ const Comprehensive = () => {
         </Row>
         <Row gutter={24}>
           <Col span={24} style={{ marginTop: 24 }}>
-            <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
+            <Body
+              title={'平台架构图'}
+              english={'PLATFORM ARCHITECTURE DIAGRAM'}
+              url={require('/public/images/home/content1.png')}
+            />
           </Col>
         </Row>
       </Col>

@@ -101,6 +101,14 @@ const Configuration = () => {
           </span>
         </PermissionButton>
       ),
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getScene({});
+        if (res.status === 200) {
+          return res.result.map((item: any) => ({ label: item.name, value: item.name }));
+        }
+        return [];
+      },
     },
     {
       title: '状态',

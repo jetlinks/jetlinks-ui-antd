@@ -32,7 +32,7 @@ import { onlyMessage } from '@/utils/util';
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
 deviceStatus.set('offline', <Badge status="error" text={'离线'} />);
-deviceStatus.set('notActive', <Badge status="processing" text={'未启用'} />);
+deviceStatus.set('notActive', <Badge status="processing" text={'禁用'} />);
 
 const InstanceDetail = observer(() => {
   const intl = useIntl();
@@ -316,7 +316,7 @@ const InstanceDetail = observer(() => {
       title={
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip placement="topLeft" title={InstanceModel.detail?.name}>
-            <div className="ellipsis" style={{ width: 250 }}>
+            <div className="ellipsis" style={{ maxWidth: 250 }}>
               {InstanceModel.detail?.name}
             </div>
           </Tooltip>

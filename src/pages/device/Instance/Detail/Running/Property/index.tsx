@@ -285,7 +285,7 @@ const Property = (props: Props) => {
         {dataSource.data?.length > 0 ? (
           <div style={{ marginTop: '20px' }}>
             {check ? (
-              <Row gutter={[16, 16]}>
+              <Row gutter={[16, 16]} style={{ minHeight: 450 }}>
                 {dataSource.data.map((item: any) => (
                   <Col {...ColResponsiveProps} key={item.id}>
                     <PropertyCard data={item} value={item?.id ? propertyValue[item?.id] : '--'} />
@@ -298,6 +298,7 @@ const Property = (props: Props) => {
                 columns={columns}
                 dataSource={dataSource.data}
                 rowKey="id"
+                style={{ minHeight: 450 }}
               />
             )}
             <div
