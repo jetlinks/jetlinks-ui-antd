@@ -200,9 +200,11 @@ const Import = (props: Props) => {
         });
       });
       onFieldValueChange('fileType', (field) => {
+        const product = form.getValuesIn('product') || '';
         form.setFieldState('*(upload)', (state) => {
           state.componentProps = {
             fileType: field.value,
+            product,
           };
         });
       });

@@ -5,12 +5,26 @@ import ProductCategory from './productCategory';
 import Product from './product';
 import Device from '@/pages/system/Department/Assets/deivce';
 import Member from '@/pages/system/Department/Member';
+import { model } from '@formily/reactive';
+import { observer } from '@formily/react';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface AssetsProps {
   parentId: string;
 }
 
-const Assets = (props: AssetsProps) => {
+export enum ASSETS_TABS_ENUM {
+  'ProductCategory' = 'ProductCategory',
+  'Product' = 'Product',
+  'Device' = 'Device',
+  'User' = 'User',
+}
+
+export const AssetsModel = model<{ tabsIndex: string }>({
+  tabsIndex: ASSETS_TABS_ENUM.ProductCategory,
+});
+
+const Assets = observer((props: AssetsProps) => {
   const intl = useIntl();
 
   // 资产类型
@@ -18,32 +32,41 @@ const Assets = (props: AssetsProps) => {
     {
       intlTitle: '1',
       defaultMessage: '产品分类',
-      key: 'ProductCategory',
+      key: ASSETS_TABS_ENUM.ProductCategory,
       components: ProductCategory,
     },
     {
       intlTitle: '2',
       defaultMessage: '产品',
-      key: 'Product',
+      key: ASSETS_TABS_ENUM.Product,
       components: Product,
     },
     {
       intlTitle: '3',
       defaultMessage: '设备',
-      key: 'Device',
+      key: ASSETS_TABS_ENUM.Device,
       components: Device,
     },
     {
       intlTitle: '4',
       defaultMessage: '用户',
-      key: 'User',
+      key: ASSETS_TABS_ENUM.User,
       components: Member,
     },
   ];
 
   return (
-    <div>
-      <Tabs defaultActiveKey="ProductCategory">
+    <div style={{ position: 'relative' }}>
+      <div style={{ position: 'absolute', top: 12, left: 270 }}>
+        <ExclamationCircleOutlined style={{ marginRight: 12 }} />
+        部门拥有的资产为所有类型资产的并集
+      </div>
+      <Tabs
+        accessKey={AssetsModel.tabsIndex}
+        onChange={(key) => {
+          AssetsModel.tabsIndex = key;
+        }}
+      >
         {TabsArray.map((item) => (
           <Tabs.TabPane
             tab={intl.formatMessage({
@@ -58,6 +81,6 @@ const Assets = (props: AssetsProps) => {
       </Tabs>
     </div>
   );
-};
+});
 
 export default Assets;

@@ -53,6 +53,8 @@ const DefaultOptions = {
   ],
 };
 
+export { echarts };
+
 export default (props: EchartsProps) => {
   const chartsRef = useRef<any>(null);
 

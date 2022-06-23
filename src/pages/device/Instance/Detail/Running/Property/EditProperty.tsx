@@ -29,7 +29,7 @@ const EditProperty = (props: Props) => {
     properties: {
       propertyValue: {
         type: 'string',
-        title: '自定义属性',
+        title: data?.name || '自定义属性',
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',

@@ -4,9 +4,9 @@ import useHistory from '@/hooks/route/useHistory';
 import Title from './Title';
 
 const Image = {
-  1: require('/public/images/home/1.png'),
-  2: require('/public/images/home/2.png'),
-  3: require('/public/images/home/3.png'),
+  1: require('/public/images/home/home-1.png'),
+  2: require('/public/images/home/home-2.png'),
+  3: require('/public/images/home/home-3.png'),
 };
 
 interface GuideProps {
@@ -22,6 +22,7 @@ interface GuideItemProps {
   param?: Record<string, any>;
   index?: number;
   auth: boolean;
+  img?: string;
 }
 
 const GuideItem = (props: GuideItemProps) => {
@@ -36,24 +37,40 @@ const GuideItem = (props: GuideItemProps) => {
   };
 
   return (
-    <div className={'home-guide-item step-bar arrow-2 pointer'} onClick={jumpPage}>
-      <div className={'item-english'}>{props.english}</div>
-      <div className={'item-title'}>{props.name}</div>
-      <div className={`item-index`}>
+    <div
+      className={'home-guide-item step-bar'}
+      onClick={jumpPage}
+      style={{ marginTop: 12, padding: 10, border: '1px solid #eee' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div>
+          <img src={props.img} />
+        </div>
+        <div>
+          <div className={'item-english'}>{`STP${props.index}`}</div>
+          <div
+            className={'item-title'}
+            style={{
+              margin: 0,
+              fontSize: '18px',
+            }}
+          >
+            {props.name}
+          </div>
+        </div>
+      </div>
+      <div className={`item-index`} style={{ width: 37 }}>
         <img src={Image[props.index!]} />
       </div>
     </div>
   );
 };
 
-const Guide = (props: GuideProps) => {
+const GuideHome = (props: GuideProps) => {
   return (
     <div className={'home-guide'}>
       <Title title={props.title} />
-      <div
-        className={'home-guide-items'}
-        style={{ gridTemplateColumns: `repeat(${props.data ? props.data.length : 1}, 1fr)` }}
-      >
+      <div>
         {props.data.map((item, index) => (
           <GuideItem {...item} index={index + 1} key={item.key} />
         ))}
@@ -62,6 +79,4 @@ const Guide = (props: GuideProps) => {
   );
 };
 
-Guide.Item = GuideItem;
-
-export default Guide;
+export default GuideHome;

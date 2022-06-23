@@ -9,6 +9,7 @@ import type { PermissionItem } from '@/pages/system/Permission/typings';
 import { service } from '@/pages/system/Permission';
 import { Modal } from '@/components';
 import { onlyMessage } from '@/utils/util';
+
 interface Props {
   model: 'add' | 'edit' | 'query';
   data: Partial<PermissionItem>;
@@ -219,10 +220,7 @@ const Save = (props: Props) => {
           add: {
             type: 'void',
             'x-component': 'ArrayTable.Addition',
-            title: intl.formatMessage({
-              id: 'pages.system.permission.add',
-              defaultMessage: '添加条目',
-            }),
+            title: '添加',
           },
         },
       },

@@ -95,6 +95,7 @@ const Property = (props: Props) => {
               <a
                 onClick={() => {
                   setVisible(true);
+                  setCurrentInfo(record);
                 }}
               >
                 <EditOutlined />

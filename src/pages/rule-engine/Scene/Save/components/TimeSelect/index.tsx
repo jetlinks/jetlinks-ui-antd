@@ -49,7 +49,7 @@ export default (props: TimeSelect) => {
     if (props.value && props.options) {
       if (props.value.length >= props.options.length) {
         setCheckedKeys([...props.value, 'null'].map(String));
-        setCheckedNames([...props.options.map((item) => item.label), '全部']);
+        setCheckedNames([...props.options.map((item) => item.label), '每天']);
       } else {
         setCheckedKeys(props.value.map(String));
         const selectedItems = props.options.filter((item) => {
@@ -65,7 +65,7 @@ export default (props: TimeSelect) => {
 
   const menu = (
     <Menu multiple={true} selectedKeys={checkedKeys} onClick={onclick}>
-      <Menu.Item key={'null'}>全部</Menu.Item>
+      <Menu.Item key={'null'}>每天</Menu.Item>
       {props.options &&
         props.options.map((item) => <Menu.Item key={item.value}>{item.label}</Menu.Item>)}
     </Menu>
@@ -106,7 +106,11 @@ export default (props: TimeSelect) => {
       >
         <div className={'time-select-content ellipsis'}>
           {checkedNames.length ? (
-            checkedNames.toString()
+            checkedKeys.includes('null') ? (
+              '每天'
+            ) : (
+              checkedNames.toString()
+            )
           ) : (
             <span style={{ color: 'rgba(0,0,0,.3)' }}>请选择时间</span>
           )}

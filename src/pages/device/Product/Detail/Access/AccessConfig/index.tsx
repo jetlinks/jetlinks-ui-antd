@@ -11,6 +11,7 @@ import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 import { getMenuPathByCode } from '@/utils/menu';
 import PermissionButton from '@/components/PermissionButton';
 import { onlyMessage } from '@/utils/util';
+import Empty from '@/components/Empty';
 
 interface Props {
   close: () => void;
@@ -28,7 +29,7 @@ const AccessConfig = (props: Props) => {
     pageIndex: 0,
     total: 0,
   });
-  const [param, setParam] = useState<any>({ pageSize: 4 });
+  const [param, setParam] = useState<any>({ pageSize: 4, terms: [] });
 
   const [currrent, setCurrrent] = useState<any>({
     id: productModel.current?.accessId,
@@ -42,11 +43,27 @@ const AccessConfig = (props: Props) => {
 
   const handleSearch = (params: any) => {
     setParam(params);
-    service
-      .queryList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-      .then((resp) => {
-        setDataSource(resp?.result);
-      });
+    const temp = {
+      ...params,
+      terms:
+        productModel.current?.deviceType?.value === 'childrenDevice'
+          ? [
+              ...params.terms,
+              {
+                terms: [
+                  {
+                    column: 'provider',
+                    termType: 'eq',
+                    value: 'child-device',
+                  },
+                ],
+              },
+            ]
+          : [...params?.terms],
+    };
+    service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
+      setDataSource(resp?.result);
+    });
   };
 
   const columns: ProColumns<any>[] = [
@@ -157,46 +174,52 @@ const AccessConfig = (props: Props) => {
           </PermissionButton>
         </div>
       </div>
-      <Row gutter={[16, 16]}>
-        {(dataSource?.data || []).map((item: any) => (
-          <Col
-            key={item.name}
-            span={12}
-            onClick={() => {
-              setCurrrent(item);
+      {dataSource?.data?.length > 0 ? (
+        <Row gutter={[16, 16]}>
+          {(dataSource?.data || []).map((item: any) => (
+            <Col
+              key={item.name}
+              span={12}
+              onClick={() => {
+                setCurrrent(item);
+              }}
+            >
+              <AccessConfigCard
+                {...item}
+                showTool={false}
+                activeStyle={currrent?.id === item.id ? 'active' : ''}
+              />
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <Empty />
+      )}
+      {dataSource?.data?.length > 0 && (
+        <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>
+          <Pagination
+            showSizeChanger
+            size="small"
+            className={'pro-table-card-pagination'}
+            total={dataSource?.total || 0}
+            current={dataSource?.pageIndex + 1}
+            onChange={(page, size) => {
+              handleSearch({
+                ...param,
+                pageIndex: page - 1,
+                pageSize: size,
+              });
             }}
-          >
-            <AccessConfigCard
-              {...item}
-              showTool={false}
-              activeStyle={currrent?.id === item.id ? 'active' : ''}
-            />
-          </Col>
-        ))}
-      </Row>
-      <div style={{ display: 'flex', marginTop: 20, justifyContent: 'flex-end' }}>
-        <Pagination
-          showSizeChanger
-          size="small"
-          className={'pro-table-card-pagination'}
-          total={dataSource?.total || 0}
-          current={dataSource?.pageIndex + 1}
-          onChange={(page, size) => {
-            handleSearch({
-              ...param,
-              pageIndex: page - 1,
-              pageSize: size,
-            });
-          }}
-          pageSizeOptions={[4, 8, 16, 32]}
-          pageSize={dataSource?.pageSize}
-          showTotal={(num) => {
-            const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-            const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-            return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-          }}
-        />
-      </div>
+            pageSizeOptions={[4, 8, 16, 32]}
+            pageSize={dataSource?.pageSize}
+            showTotal={(num) => {
+              const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+              const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+              return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+            }}
+          />
+        </div>
+      )}
     </Modal>
   );
 };

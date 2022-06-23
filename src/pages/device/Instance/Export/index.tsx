@@ -1,7 +1,7 @@
 import { FormItem, FormLayout, Radio, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { Alert, Modal } from 'antd';
+import { Modal } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
@@ -115,12 +115,11 @@ const Export = (props: Props) => {
       title="导出"
       onOk={downloadTemplate}
     >
-      <Alert
-        message="选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数据"
-        type="warning"
-        showIcon
-        closable
-      />
+      <div style={{ background: 'rgb(236, 237, 238)' }}>
+        <p style={{ padding: 10 }}>
+          选择单个产品时可导出其下属设备的详细数据,不选择产品时导出所有设备的基础数
+        </p>
+      </div>
       <div style={{ marginTop: '20px' }}>
         <FormProvider form={form}>
           <SchemaField schema={schema} />

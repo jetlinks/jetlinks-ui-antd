@@ -130,7 +130,9 @@ const Bind = observer((props: Props) => {
         }}
         request={(params) => service.queryProductList(params)}
         params={searchParam}
-        cardRender={(record) => <ExtraProductCard {...record} />}
+        cardRender={(record) => (
+          <ExtraProductCard showBindBtn={false} {...record} cardType={'bind'} />
+        )}
       />
     </Modal>
   );

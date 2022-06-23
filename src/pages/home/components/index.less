@@ -26,7 +26,10 @@
   background: linear-gradient(135.62deg, #f6f7fd 22.27%, rgba(255, 255, 255, 0.86) 91.82%);
   border-radius: 2px;
   box-shadow: 0 4px 18px #efefef;
-  cursor: pointer;
+
+  &.pointer {
+    cursor: pointer;
+  }
 
   .item-english {
     color: #4f4f4f;
@@ -87,6 +90,7 @@
 .home-body {
   .home-base;
 
+  min-height: 440px;
   margin-bottom: @margin;
   padding-bottom: 26.5%;
   overflow: hidden;
@@ -142,7 +146,7 @@
         padding: 16px 24px;
         color: #333;
         font-weight: bold;
-        font-size: 20px;
+        font-size: 14px;
         background-color: #f8f9fd;
         cursor: pointer;
 
@@ -151,6 +155,11 @@
           top: 0;
           right: 0;
           z-index: 1;
+          height: 100%;
+
+          img {
+            height: 100%;
+          }
         }
 
         > span {
