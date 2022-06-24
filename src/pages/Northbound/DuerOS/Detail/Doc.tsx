@@ -54,7 +54,7 @@ const Doc = () => {
         </div>
         <h1>Token地址</h1>
         <div>请复制并填写：HTTPS://{location.host}/api/v1/token</div>
-        <h2>ClientSecret</h2>
+        <h1>ClientSecret</h1>
         <div>请复制物联网平台-第三方平台中的secureKey，填写到DuerOS平台。</div>
         <div></div>
         <h1>WebService</h1>

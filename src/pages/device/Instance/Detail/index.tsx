@@ -285,7 +285,9 @@ const InstanceDetail = observer(() => {
         <Descriptions size="small" column={4}>
           <Descriptions.Item label={'ID'}>
             <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
-              <div className="ellipsis-70">{InstanceModel.detail?.id}</div>
+              <div className="ellipsis" style={{ maxWidth: 250 }}>
+                {InstanceModel.detail?.id}
+              </div>
             </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>

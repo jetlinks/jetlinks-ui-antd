@@ -77,8 +77,7 @@ export default (props: EchartsProps) => {
   };
 
   useEffect(() => {
-    (window as Window).addEventListener('resize', updateSize);
-
+    setTimeout(() => (window as Window).addEventListener('resize', updateSize), 100);
     return () => {
       (window as Window).removeEventListener('resize', updateSize);
     };

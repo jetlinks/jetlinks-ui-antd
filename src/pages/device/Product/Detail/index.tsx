@@ -287,7 +287,7 @@ const ProductDetail = observer(() => {
       }
       title={
         <Tooltip placement="topLeft" title={productModel.current?.name}>
-          <div className="ellipsis" style={{ width: 250 }}>
+          <div className="ellipsis" style={{ maxWidth: 250 }}>
             {productModel.current?.name}
           </div>
         </Tooltip>

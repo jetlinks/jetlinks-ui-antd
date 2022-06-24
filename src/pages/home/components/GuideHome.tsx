@@ -38,7 +38,7 @@ const GuideItem = (props: GuideItemProps) => {
 
   return (
     <div
-      className={'home-guide-item step-bar'}
+      className={'home-guide-item step-bar pointer'}
       onClick={jumpPage}
       style={{ marginTop: 12, padding: 10, border: '1px solid #eee' }}
     >

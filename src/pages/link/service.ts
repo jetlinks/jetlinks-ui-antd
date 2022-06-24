@@ -36,6 +36,11 @@ class Service extends BaseService<NetworkItem> {
 
   changeState = (id: string, status: 'start' | 'shutdown') =>
     request(`${SystemConst.API_BASE}/network/config/${id}/_${status}`, { method: 'POST' });
+
+  getCertificates = () =>
+    request(`/${SystemConst.API_BASE}/network/certificate/_query/no-paging?paging=false`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

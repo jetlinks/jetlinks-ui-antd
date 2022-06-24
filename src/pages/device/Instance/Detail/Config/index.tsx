@@ -74,7 +74,7 @@ const Config = () => {
         return (
           <div>
             <Tooltip title={config[item.property] || '--'} placement="topLeft">
-              <div className="ellipsis" style={{ width: 300 }}>
+              <div className="ellipsis" style={{ maxWidth: 300 }}>
                 {config[item.property] || '--'}
               </div>
             </Tooltip>

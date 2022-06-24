@@ -243,7 +243,6 @@ const DeviceBoard = () => {
 
   const getEcharts = async () => {
     const data = ref.current!.getValues();
-    console.log(data);
     if (data && data.time.type !== 'today') {
       const res = await service.dashboard([
         {
