@@ -51,7 +51,9 @@ const Save = (props: SaveModalProps) => {
           address: data.address,
           ptzType: data.ptzType ? data.ptzType.value : 0,
           description: data.description,
-          media_url: data.other ? data.other['media_url'] : '',
+          media_url: data.others ? data.others['media_url'] : '',
+          username: data.others ? data.others['media_username'] : '',
+          password: data.others ? data.others['media_password'] : '',
         });
       } else {
         form.setValues({
@@ -84,6 +86,7 @@ const Save = (props: SaveModalProps) => {
             },
             'x-decorator-props': {
               gridSpan: 1,
+              tooltip: '若不填写，系统将自动生成唯一ID',
             },
           },
           name: {
@@ -107,6 +110,7 @@ const Save = (props: SaveModalProps) => {
             ],
             'x-decorator-props': {
               gridSpan: 1,
+              tooltip: '不同厂家的RTSP固定地址规则不同，请按对应厂家的规则填写',
             },
           },
           manufacturer: {
@@ -128,9 +132,10 @@ const Save = (props: SaveModalProps) => {
               gridSpan: 2,
             },
           },
-          'others.media_url': {
+          media_url: {
             type: 'string',
             title: '视频地址',
+            required: true,
             'x-visible': props.type === ProviderValue.FIXED,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
@@ -139,8 +144,8 @@ const Save = (props: SaveModalProps) => {
             },
             'x-validator': [
               {
-                max: 128,
-                message: '最多可输入128个字符',
+                required: true,
+                message: '请输入视频地址',
               },
               {
                 validator: (value: string) => {
@@ -267,17 +272,19 @@ const Save = (props: SaveModalProps) => {
   const saveData = async () => {
     const formData: any = await form.submit();
     if (formData) {
-      const { media_url, ...extraFormData } = formData;
-      if (media_url) {
-        extraFormData.other = {
+      const { media_url, password, username, ...extraFormData } = formData;
+      if (media_url || password || username) {
+        extraFormData.others = {
           media_url,
+          media_password: password,
+          media_username: username,
         };
       }
       setLoading(true);
       const resp =
         props.model === 'edit'
-          ? await service.updateChannel(formData.id, formData)
-          : await service.saveChannel(formData);
+          ? await service.updateChannel(formData.id, extraFormData)
+          : await service.saveChannel(extraFormData);
       setLoading(false);
 
       if (resp.status === 200) {

@@ -38,6 +38,13 @@ class Service<T> extends BaseService<T> {
     });
   };
 
+  // 查询产品列表
+  getProductList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
+
   queryDeviceList2 = (params: any, parentId: string) =>
     from(
       request(`${SystemConst.API_BASE}/device/instance/_query`, { method: 'POST', data: params }),

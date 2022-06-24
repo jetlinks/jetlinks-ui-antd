@@ -44,6 +44,15 @@ const Bind = observer((props: Props) => {
         defaultMessage: '所属产品',
       }),
       dataIndex: 'configuration',
+      valueType: 'select',
+      filterMultiple: true,
+      request: async () => {
+        const res = await service.getProductList();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
       render: (_, row) => {
         return row.productName;
       },
@@ -118,7 +127,7 @@ const Bind = observer((props: Props) => {
       visible={props.visible}
       onOk={handleBind}
       onCancel={props.onCancel}
-      width={1300}
+      width={800}
       title="绑定"
     >
       <PermissionModal
@@ -136,7 +145,7 @@ const Bind = observer((props: Props) => {
       <SearchComponent<DeviceItem>
         field={columns}
         enableSave={false}
-        // pattern={'simple'}
+        model={'simple'}
         defaultParam={[
           {
             column: 'id',

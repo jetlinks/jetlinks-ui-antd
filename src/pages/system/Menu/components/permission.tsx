@@ -253,7 +253,10 @@ export default (props: PermissionType) => {
 
   return (
     <div className="permission-container">
-      <div className="permission-header">{props.title}</div>
+      <div className="permission-header">
+        <span style={{ width: 180, display: 'inline-block' }}>权限名称</span>
+        <span>权限操作</span>
+      </div>
       <div className="permission-content">
         <div className="permission-items">
           <div className="permission-parent">
