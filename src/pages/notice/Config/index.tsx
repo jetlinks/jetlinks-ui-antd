@@ -124,7 +124,6 @@ const Config = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       fixed: 'right',
       render: (text, record) => [

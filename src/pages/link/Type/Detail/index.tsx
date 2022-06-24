@@ -15,7 +15,7 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
-import type { Field } from '@formily/core';
+import { Field, FieldDataSource } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card } from 'antd';
 import styles from './index.less';
@@ -26,6 +26,7 @@ import FAutoComplete from '@/components/FAutoComplete';
 import { Store } from 'jetlinks-store';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
+import { action } from '@formily/reactive';
 
 /**
  *  根据类型过滤配置信息
@@ -65,6 +66,20 @@ const Save = observer(() => {
     });
   }, []);
 
+  const useAsyncData = (services: (arg0: Field) => Promise<FieldDataSource>) => (field: Field) => {
+    field.loading = true;
+    services(field).then(
+      action.bound!((resp: any) => {
+        const save = location.href.split('/');
+        if (save[save.length - 1] === ':id') {
+          field.value = resp[0].value;
+        }
+        field.dataSource = resp;
+        field.loading = false;
+      }),
+    );
+  };
+
   const getResourcesClusters = () => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const checked = form.getValuesIn('cluster')?.map((i: any) => i?.serverId) || [];
@@ -84,16 +99,16 @@ const Save = observer(() => {
       });
     }
   };
+  const getCertificates = () =>
+    service.getCertificates().then((resp: any) =>
+      resp.result?.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      })),
+    );
 
   const getResourceById = (id: string, type: string) =>
     service.getResourceClustersById(id).then((resp) => filterConfigByType(resp.result, type));
-
-  // const getAllResources = () =>
-  //   service.getAllResources().then((resp) =>
-  //     resp.result?.map((item: any) => ({
-  //       label: item.clusterNodeId,
-  //       value: item.clusterNodeId,
-  //     })));
 
   const form = useMemo(
     () =>
@@ -103,6 +118,7 @@ const Save = observer(() => {
         effects() {
           onFieldValueChange('type', (field, f) => {
             const value = (field as Field).value;
+            // console.log(field)
             if (f.modified) {
               f.deleteValuesIn('configuration');
               f.deleteValuesIn('cluster');
@@ -538,6 +554,79 @@ const Save = observer(() => {
           },
         },
       },
+      secure: {
+        title: '开启DTLS',
+        'x-decorator': 'FormItem',
+        'x-component': 'Radio.Group',
+        'x-decorator-props': {
+          gridSpan: 1,
+          labelAlign: 'left',
+          layout: 'vertical',
+        },
+        required: true,
+        default: false,
+        enum: [
+          { label: '是', value: true },
+          { label: '否', value: false },
+        ],
+      },
+      certId: {
+        title: '证书',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-component-props': {
+          placeholder: '请选择证书',
+        },
+        'x-decorator-props': {
+          gridSpan: 1,
+          labelAlign: 'left',
+          layout: 'vertical',
+        },
+        required: true,
+        'x-reactions': [
+          '{{useAsyncDataSource(getCertificates)}}',
+          {
+            dependencies: ['..secure'],
+            fulfill: {
+              state: {
+                visible: '{{$deps[0]===true}}',
+              },
+            },
+          },
+        ],
+      },
+      privateKeyAlias: {
+        title: '私钥别名',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入私钥别名',
+        },
+        'x-decorator-props': {
+          gridSpan: 1,
+          labelAlign: 'left',
+          layout: 'vertical',
+        },
+        required: true,
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入私钥别名',
+          },
+        ],
+        'x-reactions': {
+          dependencies: ['..secure'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0]===true}}',
+            },
+          },
+        },
+      },
     },
   };
   const schema: ISchema = {
@@ -584,13 +673,14 @@ const Save = observer(() => {
             'x-component-props': {
               placeholder: '请选择类型',
             },
+            default: {},
             'x-validator': [
               {
                 required: true,
                 message: '请输入名称',
               },
             ],
-            'x-reactions': ['{{useAsyncDataSource(getSupports)}}'],
+            'x-reactions': ['{{useAsyncData(getSupports)}}'],
           },
           shareCluster: {
             title: '集群',
@@ -737,7 +827,14 @@ const Save = observer(() => {
         <Form form={form} layout="vertical" style={{ padding: 30 }}>
           <SchemaField
             schema={schema}
-            scope={{ formCollapse, useAsyncDataSource, getSupports, getResourcesClusters }}
+            scope={{
+              formCollapse,
+              useAsyncDataSource,
+              useAsyncData,
+              getSupports,
+              getResourcesClusters,
+              getCertificates,
+            }}
           />
           <FormButtonGroup.Sticky>
             <FormButtonGroup.FormItem>
