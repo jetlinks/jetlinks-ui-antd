@@ -124,17 +124,17 @@ const Config = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       fixed: 'right',
       render: (text, record) => [
-        (id === 'dingTalk' || id === 'weixin') && (
+        (record.provider === 'dingTalkMessage' || record.provider === 'corpMessage') && (
           <PermissionButton
             tooltip={{
               title: '同步用户',
             }}
             style={{ padding: 0 }}
             type="link"
+            isPermission={configPermission.bind}
             onClick={() => {
               state.syncUser = true;
               state.current = record;
@@ -431,7 +431,7 @@ const Config = observer(() => {
                       <Menu.Item key="syncUser">
                         <PermissionButton
                           key="syncUser"
-                          isPermission={true}
+                          isPermission={configPermission.bind}
                           type="link"
                           onClick={() => {
                             state.syncUser = true;

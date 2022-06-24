@@ -1,4 +1,4 @@
-import { Card, Tabs } from 'antd';
+import { Card, Tabs, Tooltip } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
 import FnForm from './form';
@@ -27,7 +27,17 @@ const Functions = () => {
                 {functionList &&
                   functionList.map((fn) => {
                     return (
-                      <Tabs.TabPane tab={fn.name} key={fn.id}>
+                      <Tabs.TabPane
+                        tab={
+                          <Tooltip placement="topLeft" title={fn.name}>
+                            <div className="ellipsis" style={{ width: 100 }}>
+                              {fn.name}
+                            </div>
+                          </Tooltip>
+                        }
+                        // tab={fn.name}
+                        key={fn.id}
+                      >
                         <FnForm data={fn} />
                       </Tabs.TabPane>
                     );
@@ -40,7 +50,16 @@ const Functions = () => {
               {functionList &&
                 functionList.map((fn) => {
                   return (
-                    <Tabs.TabPane tab={fn.name} key={fn.id}>
+                    <Tabs.TabPane
+                      tab={
+                        <Tooltip placement="topLeft" title={fn.name}>
+                          <div className="ellipsis" style={{ width: 100 }}>
+                            {fn.name}
+                          </div>
+                        </Tooltip>
+                      }
+                      key={fn.id}
+                    >
                       <AModel data={fn} />
                     </Tabs.TabPane>
                   );

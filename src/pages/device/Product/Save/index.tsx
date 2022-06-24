@@ -96,15 +96,15 @@ const Save = (props: Props) => {
           <div style={{ color: '#757575' }}>
             点击具体产品的查看按钮，进入“设备接入”tab页，并参照设备铭牌说明选择匹配的接入方式
           </div>
-          <div style={{ fontWeight: 600 }}>2、添加测试设备：</div>
+          <div style={{ fontWeight: 600 }}>2、添加测试设备</div>
           <div style={{ color: '#757575' }}>
             进入设备列表，添加单个设备，用于验证产品模型是否配置正确
           </div>
-          <div style={{ fontWeight: 600 }}> 3、功能调试：</div>
+          <div style={{ fontWeight: 600 }}> 3、功能调试</div>
           <div style={{ color: '#757575' }}>
             点击查看具体设备，进入“设备诊断”对添加的测试设备进行功能调试，验证能否连接到平台，设备功能是否配置正确
           </div>
-          <div style={{ fontWeight: 600 }}> 4、批量添加设备：</div>
+          <div style={{ fontWeight: 600 }}> 4、批量添加设备</div>
           <div style={{ color: '#757575' }}>
             进入设备列表页面，点击批量导入设备，批量添加同一产品下的设备
           </div>

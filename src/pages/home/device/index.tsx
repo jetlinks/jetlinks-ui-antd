@@ -48,7 +48,7 @@ const Device = () => {
     {
       key: 'product',
       name: '创建产品',
-      english: 'CREATE PRODUCT',
+      english: 'STP 1',
       auth: !!productPermission.add,
       url: 'device/Product',
       param: {
@@ -58,7 +58,7 @@ const Device = () => {
     {
       key: 'device',
       name: '创建设备',
-      english: 'CREATE DEVICE',
+      english: 'STP 2',
       auth: !!devicePermission.add,
       url: 'device/Instance',
       param: {
@@ -68,7 +68,7 @@ const Device = () => {
     {
       key: 'rule-engine',
       name: '规则引擎',
-      english: 'RULE ENGINE',
+      english: 'STP 3',
       auth: !!rulePermission.add,
       url: 'rule-engine/Instance',
       param: {

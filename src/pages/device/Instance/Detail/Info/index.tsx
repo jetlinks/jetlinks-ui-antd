@@ -52,7 +52,7 @@ const Info = observer(() => {
             })}
           >
             <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
-              <div className="ellipsis" style={{ width: 300 }}>
+              <div className="ellipsis" style={{ maxWidth: 250 }}>
                 {InstanceModel.detail?.id}
               </div>
             </Tooltip>
@@ -64,7 +64,7 @@ const Info = observer(() => {
             })}
           >
             <Tooltip placement="topLeft" title={InstanceModel.detail?.productName}>
-              <div className="ellipsis" style={{ width: 300 }}>
+              <div className="ellipsis" style={{ maxWidth: 250 }}>
                 {InstanceModel.detail?.productName}
               </div>
             </Tooltip>
@@ -127,7 +127,9 @@ const Info = observer(() => {
             })}
           >
             <Tooltip placement="topLeft" title={InstanceModel.detail?.description}>
-              <div className="ellipsis">{InstanceModel.detail?.description}</div>
+              <div className="ellipsis" style={{ maxWidth: 250 }}>
+                {InstanceModel.detail?.description}
+              </div>
             </Tooltip>
           </Descriptions.Item>
         </Descriptions>

@@ -31,7 +31,7 @@ const Doc = () => {
         </div>
         <h1>授权地址</h1>
         <div>物联网平台的登录地址。注意需要为https。</div>
-        <div>请复制并填写: https://pro.baidu.cn/#/user/login</div>
+        <div>请复制并填写: https://{location.host}/#/user/login</div>
         <div className={'image'}>
           <Image width="100%" src={image1} />
         </div>
@@ -53,8 +53,8 @@ const Doc = () => {
           <Image width="100%" src={image3} />
         </div>
         <h1>Token地址</h1>
-        <div>请复制并填写：HTTPS://【IP:端口】/api/v1/token</div>
-        <h2>ClientSecret</h2>
+        <div>请复制并填写：HTTPS://{location.host}/api/v1/token</div>
+        <h1>ClientSecret</h1>
         <div>请复制物联网平台-第三方平台中的secureKey，填写到DuerOS平台。</div>
         <div></div>
         <h1>WebService</h1>

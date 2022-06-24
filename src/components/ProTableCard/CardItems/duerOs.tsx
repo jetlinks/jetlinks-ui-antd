@@ -34,7 +34,11 @@ export default (props: DuerOSProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props?.name}</span>
+            <span className={'card-item-header-name ellipsis'}>
+              <Tooltip title={props?.name} placement="topLeft">
+                {props?.name}
+              </Tooltip>
+            </span>
           </div>
           <div className={'card-item-content'}>
             <div>

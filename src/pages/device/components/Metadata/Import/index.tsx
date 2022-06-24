@@ -11,6 +11,7 @@ import { useParams } from 'umi';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { onlyMessage } from '@/utils/util';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface Props {
   visible: boolean;
@@ -213,8 +214,8 @@ const Import = (props: Props) => {
     >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
-          <span style={{ color: '#f5222d' }}>注</span>
-          ：导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
+          <ExclamationCircleOutlined style={{ marginRight: 5 }} />
+          导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
           {/* <br /> */}
           {/*物模型格式请参考文档：*/}
           {/*<a*/}
