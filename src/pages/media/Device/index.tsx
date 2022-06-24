@@ -244,13 +244,17 @@ const Device = () => {
         </Tooltip>,
         <PermissionButton
           tooltip={
-            record.state.value === 'offline' || record.provider === providerType['fixed-media']
+            record.state.value === 'offline' ||
+            record.state.value === 'notActive' ||
+            record.provider === providerType['fixed-media']
               ? {
                   title:
                     record.provider === providerType['fixed-media']
                       ? '固定地址无法更新通道'
                       : record.state.value === 'offline'
                       ? '设备已离线'
+                      : record.state.value === 'notActive'
+                      ? '设备已禁用'
                       : '',
                 }
               : undefined
@@ -258,7 +262,9 @@ const Device = () => {
           key={'updateChannel'}
           isPermission={permission.update}
           disabled={
-            record.state.value === 'offline' || record.provider === providerType['fixed-media']
+            record.state.value === 'offline' ||
+            record.state.value === 'notActive' ||
+            record.provider === providerType['fixed-media']
           }
           style={{ padding: 0 }}
           type={'link'}
@@ -393,6 +399,7 @@ const Device = () => {
                 isPermission={permission.update}
                 tooltip={
                   record.state.value === 'offline' ||
+                  record.state.value === 'notActive' ||
                   record.provider === providerType['fixed-media']
                     ? {
                         title:
@@ -400,12 +407,15 @@ const Device = () => {
                             ? '固定地址无法更新通道'
                             : record.state.value === 'offline'
                             ? '设备已离线'
+                            : record.state.value === 'notActive'
+                            ? '设备已禁用'
                             : '',
                       }
                     : undefined
                 }
                 disabled={
                   record.state.value === 'offline' ||
+                  record.state.value === 'notActive' ||
                   record.provider === providerType['fixed-media']
                 }
                 onClick={() => {
@@ -420,13 +430,13 @@ const Device = () => {
                 popConfirm={{
                   title: intl.formatMessage({
                     id:
-                      record.state.value !== 'offline'
-                        ? 'pages.device.instance.deleteTip'
-                        : 'page.table.isDelete',
+                      record.state.value === 'online'
+                        ? 'page.table.isDelete'
+                        : 'pages.device.instance.deleteTip',
                     defaultMessage: '是否删除?',
                   }),
                   onConfirm: async () => {
-                    if (record.state.value === 'offline') {
+                    if (record.state.value === 'offline' || record.state.value === 'notActive') {
                       await deleteItem(record.id);
                     } else {
                       onlyMessage('在线设备不能进行删除操作', 'error');

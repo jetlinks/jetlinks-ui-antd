@@ -1,7 +1,6 @@
 // 部门-资产分配
 import { Tabs } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import ProductCategory from './productCategory';
 import Product from './product';
 import Device from '@/pages/system/Department/Assets/deivce';
 import Member from '@/pages/system/Department/Member';
@@ -20,8 +19,12 @@ export enum ASSETS_TABS_ENUM {
   'User' = 'User',
 }
 
-export const AssetsModel = model<{ tabsIndex: string }>({
-  tabsIndex: ASSETS_TABS_ENUM.ProductCategory,
+export const AssetsModel = model<{
+  tabsIndex: string;
+  bindModal: boolean;
+}>({
+  tabsIndex: ASSETS_TABS_ENUM.Product,
+  bindModal: false,
 });
 
 const Assets = observer((props: AssetsProps) => {
@@ -29,12 +32,12 @@ const Assets = observer((props: AssetsProps) => {
 
   // 资产类型
   const TabsArray = [
-    {
-      intlTitle: '1',
-      defaultMessage: '产品分类',
-      key: ASSETS_TABS_ENUM.ProductCategory,
-      components: ProductCategory,
-    },
+    // {
+    //   intlTitle: '1',
+    //   defaultMessage: '产品分类',
+    //   key: ASSETS_TABS_ENUM.ProductCategory,
+    //   components: ProductCategory,
+    // },
     {
       intlTitle: '2',
       defaultMessage: '产品',
@@ -55,14 +58,16 @@ const Assets = observer((props: AssetsProps) => {
     },
   ];
 
+  console.log(AssetsModel.tabsIndex);
+
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{ position: 'absolute', top: 12, left: 270 }}>
+    <div style={{ position: 'relative', width: '100%' }}>
+      <div style={{ position: 'absolute', top: 12, left: 180 }}>
         <ExclamationCircleOutlined style={{ marginRight: 12 }} />
         部门拥有的资产为所有类型资产的并集
       </div>
       <Tabs
-        accessKey={AssetsModel.tabsIndex}
+        activeKey={AssetsModel.tabsIndex}
         onChange={(key) => {
           AssetsModel.tabsIndex = key;
         }}

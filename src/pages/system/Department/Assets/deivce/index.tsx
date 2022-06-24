@@ -40,6 +40,10 @@ export default observer((props: { parentId: string }) => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Device && actionRef.current) {
       actionRef.current.reload();
     }
+
+    if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Device && AssetsModel.bindModal) {
+      Models.bind = true;
+    }
   }, [AssetsModel.tabsIndex]);
   /**
    * 解除资产绑定
@@ -191,6 +195,9 @@ export default observer((props: { parentId: string }) => {
   const closeModal = () => {
     Models.bind = false;
     Models.bindKeys = [];
+    if (AssetsModel.bindModal) {
+      AssetsModel.bindModal = false;
+    }
   };
 
   const getData = (params: any, parentId: string) => {

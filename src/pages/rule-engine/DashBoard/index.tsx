@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { EChartsOption } from 'echarts';
 import { useEffect, useRef, useState } from 'react';
-import { Badge, Card, Col, Tooltip } from 'antd';
+import { Badge, Card, Col, Tooltip, Select } from 'antd';
 import './index.less';
 import Service from './service';
 import { observer } from '@formily/react';
@@ -216,7 +216,7 @@ const Dashboard = observer(() => {
       params: {
         // time: '1h',
         time: params.time.type === 'today' ? '1h' : '1d',
-        targetType: 'device',
+        targetType: params.targetType,
         from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
         to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
         limit: 9,
@@ -350,8 +350,25 @@ const Dashboard = observer(() => {
           height={600}
           showTimeTool={true}
           options={options}
+          initialValues={{
+            targetType: 'device',
+          }}
+          extraParams={{
+            key: 'targetType',
+            Children: (
+              <Select
+                options={[
+                  { label: '设备', value: 'device' },
+                  { label: '产品', value: 'product' },
+                  { label: '部门', value: 'org' },
+                  { label: '其它', value: 'other' },
+                ]}
+              />
+            ),
+          }}
           onParamsChange={getEcharts}
           ref={alarmCountRef}
+          defaultTime={'week'}
           echartsAfter={
             <div className={styles.alarmRank}>
               <h4>告警排名</h4>
