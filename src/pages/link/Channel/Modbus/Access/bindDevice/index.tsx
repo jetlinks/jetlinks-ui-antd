@@ -101,6 +101,7 @@ const BindDevice = (props: Props) => {
     >
       <SearchComponent
         field={columns}
+        model={'simple'}
         target="bindDevice"
         defaultParam={[
           { column: 'id$modbus-master$not', value: props.id },

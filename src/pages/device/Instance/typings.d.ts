@@ -41,6 +41,7 @@ export type DeviceInstance = {
   photoUrl: string;
   independentMetadata?: boolean;
   accessProvider?: string;
+  features?: any[];
 };
 
 type Unit = {
