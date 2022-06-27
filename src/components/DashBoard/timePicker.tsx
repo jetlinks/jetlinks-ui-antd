@@ -4,6 +4,7 @@ import moment from 'moment';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 export enum TimeKey {
+  'hour' = 'hour',
   'today' = 'today',
   'week' = 'week',
   'month' = 'month',
@@ -14,6 +15,11 @@ export type TimeType = keyof typeof TimeKey;
 
 type ValueType = { start: number; end: number; type: TimeType };
 
+type timeToolOptions = {
+  label: string;
+  value: string;
+};
+
 interface ExtraTimePickerProps extends Omit<DatePickerProps, 'onChange' | 'value'> {
   onChange?: (data: ValueType) => void;
   value?: ValueType;
@@ -21,10 +27,13 @@ interface ExtraTimePickerProps extends Omit<DatePickerProps, 'onChange' | 'value
   pickerTimeChange?: () => void;
   showTime?: boolean;
   showTimeTool?: boolean;
+  timeToolOptions?: timeToolOptions[];
 }
 
 export const getTimeByType = (type: TimeType) => {
   switch (type) {
+    case TimeKey.hour:
+      return moment().subtract(1, 'hours').valueOf();
     case TimeKey.week:
       return moment().subtract(6, 'days').valueOf();
     case TimeKey.month:
@@ -101,10 +110,18 @@ export default forwardRef((props: ExtraTimePickerProps, ref) => {
                         timeChange(e.target.value);
                       }}
                     >
-                      <Radio.Button value={TimeKey.today}>当天</Radio.Button>
-                      <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
-                      <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
-                      <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
+                      {props.timeToolOptions && Array.isArray(props.timeToolOptions) ? (
+                        props.timeToolOptions.map((item) => (
+                          <Radio.Button value={item.value}>{item.label}</Radio.Button>
+                        ))
+                      ) : (
+                        <>
+                          <Radio.Button value={TimeKey.today}>当天</Radio.Button>
+                          <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
+                          <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
+                          <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
+                        </>
+                      )}
                     </Radio.Group>
                   </div>
                 )

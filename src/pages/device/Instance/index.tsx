@@ -659,7 +659,7 @@ const Instance = () => {
                   onConfirm: async () => {
                     if (record.state.value === 'notActive') {
                       const resp: any = await service.remove(record.id);
-                      if (resp.code === 200) {
+                      if (resp.status === 200) {
                         onlyMessage(
                           intl.formatMessage({
                             id: 'pages.data.option.success',

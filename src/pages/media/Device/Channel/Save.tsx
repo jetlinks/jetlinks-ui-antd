@@ -110,7 +110,6 @@ const Save = (props: SaveModalProps) => {
             ],
             'x-decorator-props': {
               gridSpan: 1,
-              tooltip: '不同厂家的RTSP固定地址规则不同，请按对应厂家的规则填写',
             },
           },
           manufacturer: {
@@ -166,6 +165,7 @@ const Save = (props: SaveModalProps) => {
             ],
             'x-decorator-props': {
               gridSpan: 2,
+              tooltip: '不同厂家的RTSP固定地址规则不同，请按对应厂家的规则填写',
             },
           },
           username: {
