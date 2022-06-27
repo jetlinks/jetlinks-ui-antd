@@ -87,50 +87,50 @@ const Save = (props: Props) => {
           columnGap: 24,
         },
         properties: {
-          id: {
-            title: 'ID',
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-disabled': !!props.data?.id,
-            'x-decorator-props': {
-              gridSpan: 2,
-            },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入ID',
-              },
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
-              {
-                validateId: true,
-                message: 'ID只能由数字、26个英文字母或者下划线组成',
-              },
-              {
-                triggerType: 'onBlur',
-                validator: (value: string) => {
-                  if (!value) return;
-                  return new Promise((resolve) => {
-                    service
-                      .validator(value)
-                      .then((resp) => {
-                        if (!!resp?.result) {
-                          resolve('ID已存在');
-                        } else {
-                          resolve('');
-                        }
-                      })
-                      .catch(() => '验证失败!');
-                  });
-                },
-              },
-            ],
-            'x-component-props': {
-              placeholder: '请输入ID',
-            },
-          },
+          // id: {
+          //   title: 'ID',
+          //   'x-component': 'Input',
+          //   'x-decorator': 'FormItem',
+          //   'x-disabled': !!props.data?.id,
+          //   'x-decorator-props': {
+          //     gridSpan: 2,
+          //   },
+          //   'x-validator': [
+          //     {
+          //       required: true,
+          //       message: '请输入ID',
+          //     },
+          //     {
+          //       max: 64,
+          //       message: '最多可输入64个字符',
+          //     },
+          //     {
+          //       validateId: true,
+          //       message: 'ID只能由数字、26个英文字母或者下划线组成',
+          //     },
+          //     {
+          //       triggerType: 'onBlur',
+          //       validator: (value: string) => {
+          //         if (!value) return;
+          //         return new Promise((resolve) => {
+          //           service
+          //             .validator(value)
+          //             .then((resp) => {
+          //               if (!!resp?.result) {
+          //                 resolve('ID已存在');
+          //               } else {
+          //                 resolve('');
+          //               }
+          //             })
+          //             .catch(() => '验证失败!');
+          //         });
+          //       },
+          //     },
+          //   ],
+          //   'x-component-props': {
+          //     placeholder: '请输入ID',
+          //   },
+          // },
           name: {
             title: '名称',
             'x-component': 'Input',

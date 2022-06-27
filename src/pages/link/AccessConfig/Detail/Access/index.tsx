@@ -440,9 +440,13 @@ const Access = (props: Props) => {
                         borderColor:
                           procotolCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
                       }}
-                      hoverable
+                      hoverable={!props.data.id}
                       onClick={() => {
-                        setProcotolCurrent(item.id);
+                        if (!props.data.id) {
+                          setProcotolCurrent(item.id);
+                        } else {
+                          onlyMessage('消息协议不可修改', 'warning');
+                        }
                       }}
                     >
                       <div style={{ height: '45px' }}>

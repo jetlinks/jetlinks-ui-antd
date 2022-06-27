@@ -24,10 +24,11 @@ import SystemConst from '@/utils/const';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
+import Parsing from './Parsing';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -133,6 +134,14 @@ const InstanceDetail = observer(() => {
         defaultMessage: '设备功能',
       }),
       component: <Functions />,
+    },
+    {
+      key: 'parsing',
+      tab: intl.formatMessage({
+        id: 'pages.device.instanceDetail.parsing',
+        defaultMessage: '数据解析',
+      }),
+      component: <Parsing />,
     },
     {
       key: 'log',
@@ -378,6 +387,16 @@ const InstanceDetail = observer(() => {
               >
                 断开连接
               </PermissionButton>
+            )}
+            {InstanceModel.detail?.accessProvider === 'child-device' ? (
+              <div style={{ fontSize: 14, marginLeft: 10, fontWeight: 400 }}>
+                <ExclamationCircleOutlined style={{ fontSize: 14, marginRight: 5 }} />
+                {InstanceModel.detail?.features?.find((item) => item.id === 'selfManageState')
+                  ? '该设备的在线状态与父设备(网关设备)保持一致'
+                  : '该设备在线状态由设备自身运行状态决定，不继承父设备（网关设备）的在线状态'}
+              </div>
+            ) : (
+              ''
             )}
           </Space>
         </div>
