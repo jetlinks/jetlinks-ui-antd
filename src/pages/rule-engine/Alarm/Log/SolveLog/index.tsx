@@ -85,6 +85,7 @@ const SolveLog = (props: Props) => {
         field={columns}
         target="bind-channel"
         enableSave={false}
+        model={'simple'}
         onSearch={(data) => {
           actionRef.current?.reload();
           const terms = [

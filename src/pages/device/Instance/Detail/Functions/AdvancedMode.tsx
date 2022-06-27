@@ -80,6 +80,7 @@ export default (props: FunctionProps) => {
 
   const editorDidMountHandle = (editor: any) => {
     monacoRef.current = editor;
+    editor.getAction('editor.action.formatDocument').run();
     editor.onDidContentSizeChange?.(() => {
       editor.getAction('editor.action.formatDocument').run();
     });

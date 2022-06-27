@@ -98,6 +98,7 @@ const Cat = observer((props: Props) => {
                 language="json"
                 value={value}
                 editorDidMount={(editor) => {
+                  editor.getAction('editor.action.formatDocument').run();
                   editor.onDidScrollChange?.(() => {
                     editor.getAction('editor.action.formatDocument').run();
                   });

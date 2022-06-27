@@ -277,7 +277,7 @@ const Device = () => {
         <PermissionButton
           key={'delete'}
           tooltip={{
-            title: '删除',
+            title: record.state.value === 'online' ? '在线设备无法删除' : '删除',
           }}
           popConfirm={{
             title: (
@@ -292,7 +292,7 @@ const Device = () => {
               </div>
             ),
             onConfirm: async () => {
-              if (record.state.value === 'offline') {
+              if (record.state.value !== 'online') {
                 await deleteItem(record.id);
               } else {
                 onlyMessage('在线设备不能进行删除操作', 'error');
@@ -302,7 +302,7 @@ const Device = () => {
           type={'link'}
           style={{ padding: 0 }}
           isPermission={permission.delete}
-          disabled={record.state.value !== 'offline'}
+          disabled={record.state.value === 'online'}
         >
           <DeleteOutlined />
         </PermissionButton>,
@@ -398,9 +398,7 @@ const Device = () => {
                 key={'updateChannel'}
                 isPermission={permission.update}
                 tooltip={
-                  record.state.value === 'offline' ||
-                  record.state.value === 'notActive' ||
-                  record.provider === providerType['fixed-media']
+                  record.state.value !== 'online' || record.provider === providerType['fixed-media']
                     ? {
                         title:
                           record.provider === providerType['fixed-media']
@@ -414,9 +412,7 @@ const Device = () => {
                     : undefined
                 }
                 disabled={
-                  record.state.value === 'offline' ||
-                  record.state.value === 'notActive' ||
-                  record.provider === providerType['fixed-media']
+                  record.state.value !== 'online' || record.provider === providerType['fixed-media']
                 }
                 onClick={() => {
                   updateChannel(record.id);
@@ -430,23 +426,26 @@ const Device = () => {
                 popConfirm={{
                   title: intl.formatMessage({
                     id:
-                      record.state.value === 'online'
+                      record.state.value !== 'online'
                         ? 'page.table.isDelete'
                         : 'pages.device.instance.deleteTip',
                     defaultMessage: '是否删除?',
                   }),
                   onConfirm: async () => {
-                    if (record.state.value === 'offline' || record.state.value === 'notActive') {
+                    if (record.state.value !== 'online') {
                       await deleteItem(record.id);
                     } else {
                       onlyMessage('在线设备不能进行删除操作', 'error');
                     }
                   },
                 }}
+                tooltip={
+                  record.state.value === 'online' ? { title: '在线设备无法删除' } : undefined
+                }
                 type={'link'}
                 style={{ padding: 0 }}
                 isPermission={permission.delete}
-                disabled={record.state.value !== 'offline'}
+                disabled={record.state.value === 'online'}
               >
                 <DeleteOutlined />
               </PermissionButton>,

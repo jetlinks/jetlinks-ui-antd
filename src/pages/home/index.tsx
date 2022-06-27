@@ -9,7 +9,7 @@ import Service from './service';
 export const service = new Service();
 const Home = () => {
   type ViewType = keyof typeof ViewMap;
-  const [current, setCurrent] = useState<ViewType>('comprehensive');
+  const [current, setCurrent] = useState<ViewType>('init'); // 默认为初始化
 
   const ViewMap = {
     init: <Init changeView={(value: ViewType) => setCurrent(value)} />,
