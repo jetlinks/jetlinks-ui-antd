@@ -2,7 +2,7 @@ import { Modal } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { Badge } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { service } from '@/pages/link/Channel/Opcua';
 import moment from 'moment';
 import { onlyMessage } from '@/utils/util';
@@ -92,9 +92,9 @@ const BindDevice = (props: Props) => {
     }
   };
 
-  useEffect(() => {
-    console.log(props.id);
-  }, []);
+  // useEffect(() => {
+  //   console.log(props.id);
+  // }, []);
 
   return (
     <Modal
@@ -111,6 +111,7 @@ const BindDevice = (props: Props) => {
     >
       <SearchComponent
         field={columns}
+        model={'simple'}
         target="bindDevice"
         defaultParam={[
           { column: 'productId$dev-protocol', value: 'opc-ua' },
