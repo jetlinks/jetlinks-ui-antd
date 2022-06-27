@@ -171,7 +171,12 @@ export const request: RequestConfig = {
       history.push('/user/login');
       return;
     }
-    if (response.status === 400 || response.status === 500 || response.status === 404) {
+    if (
+      response.status === 400 ||
+      response.status === 500 ||
+      response.status === 404 ||
+      response.status === 403
+    ) {
       // 添加clone() 避免后续其它地方用response.text()时报错
       response
         .clone()
@@ -180,7 +185,7 @@ export const request: RequestConfig = {
           if (resp) {
             notification.error({
               key: 'error',
-              message: JSON.parse(resp).message || '服务器内部错误！',
+              message: JSON.parse(resp || '{}').message || '服务器内部错误！',
             });
           } else {
             response

@@ -90,6 +90,7 @@ interface Props {
 const Editor = (props: Props) => {
   const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
   const editorDidMountHandle = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+    editor.getAction('editor.action.formatDocument').run();
     editorRef.current = editor;
   };
 

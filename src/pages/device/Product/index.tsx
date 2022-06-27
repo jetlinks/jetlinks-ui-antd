@@ -335,7 +335,7 @@ const Product = observer(() => {
       // hideInSearch: true,
     },
     {
-      dataIndex: 'categoryId',
+      dataIndex: 'classifiedId',
       title: '分类',
       valueType: 'treeSelect',
       hideInTable: true,
