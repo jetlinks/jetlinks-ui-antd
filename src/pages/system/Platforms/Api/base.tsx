@@ -35,6 +35,7 @@ interface ApiPageProps {
    * false：table暂时所有接口
    */
   isOpenGranted?: boolean;
+  type?: 'all' | 'empowerment' | 'authorize';
 }
 
 export default observer((props: ApiPageProps) => {
@@ -96,6 +97,8 @@ export default observer((props: ApiPageProps) => {
         <Tree
           isShowGranted={props.isShowGranted}
           grantKeys={GrantKeys}
+          operations={operations}
+          type={props.type}
           onSelect={(data) => {
             ApiModel.data = data;
             ApiModel.showTable = true;

@@ -24,7 +24,7 @@ export default (props: ProductCardProps) => {
       statusNames={{
         offline: StatusColorEnum.error,
         online: StatusColorEnum.processing,
-        notActive: StatusColorEnum.processing,
+        notActive: StatusColorEnum.warning,
       }}
     >
       <div className={'pro-table-card-item'}>

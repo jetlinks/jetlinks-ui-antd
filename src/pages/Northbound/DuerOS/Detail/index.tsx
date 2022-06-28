@@ -136,6 +136,13 @@ const Save = () => {
               });
             },
           );
+          onFieldValueChange('id', (field, form1) => {
+            form1.setFieldState(field.query('productName'), (state) => {
+              if (field && field.inputValues && field && field.inputValues[1]) {
+                state.value = field.inputValues[1].label;
+              }
+            });
+          });
           onFieldReact('propertyMappings.*.layout.source', (field, f) => {
             const productType = field.query('applianceType').value();
             const propertiesList = findApplianceType(productType)?.properties;
@@ -291,6 +298,13 @@ const Save = () => {
             },
             'x-reactions': '{{useAsyncDataSource(getTypes)}}',
             required: true,
+          },
+          productName: {
+            title: '产品名称',
+            type: 'string',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-hidden': true,
           },
         },
       },
@@ -639,14 +653,11 @@ const Save = () => {
 
   const handleSave = async () => {
     const data: any = await form.submit();
-    const productName = Store.get('product-list')?.find((item: any) => item.id === data.id)?.name;
-    const resp: any = await service.savePatch({ ...data, productName });
+    const resp: any = await service.savePatch(data);
     if (resp.status === 200) {
       onlyMessage('保存成功!');
-    } else {
-      onlyMessage('保存失败!', 'error');
+      history.back();
     }
-    history.back();
   };
   return (
     <PageContainer>

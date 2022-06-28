@@ -72,7 +72,6 @@ const Instance = () => {
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('device/Instance');
-  const [jumpParams, setJumpParams] = useState<SearchTermsServer | undefined>(undefined);
 
   const intl = useIntl();
   const location = useLocation();
@@ -86,12 +85,7 @@ const Instance = () => {
           value: location.state[key],
         });
       });
-      setJumpParams([
-        {
-          terms: _terms,
-          type: 'or',
-        },
-      ]);
+
       if (location.state && location.state?.save) {
         setVisible(true);
         setCurrent({});
@@ -521,7 +515,7 @@ const Instance = () => {
       <SearchComponent<DeviceInstance>
         field={columns}
         target="device-instance"
-        initParam={jumpParams}
+        // initParam={jumpParams}
         onSearch={(data) => {
           actionRef.current?.reset?.();
           setSearchParams(data);
@@ -665,7 +659,7 @@ const Instance = () => {
                   onConfirm: async () => {
                     if (record.state.value === 'notActive') {
                       const resp: any = await service.remove(record.id);
-                      if (resp.code === 200) {
+                      if (resp.status === 200) {
                         onlyMessage(
                           intl.formatMessage({
                             id: 'pages.data.option.success',

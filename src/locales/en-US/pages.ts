@@ -246,6 +246,7 @@ export default {
   'pages.device.instanceDetail.metadata.readOnly.yes': 'Yes',
   'pages.device.instanceDetail.metadata.readOnly.no': 'No',
   'pages.device.instanceDetail.functions': 'Functions',
+  'pages.device.instanceDetail.parsing': 'Parsing',
   'pages.device.instanceDetail.log': 'Log',
   'pages.device.instanceDetail.alarm': 'Alarm',
   'pages.device.instanceDetail.visualization': 'Visualization',

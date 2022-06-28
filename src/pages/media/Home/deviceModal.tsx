@@ -138,11 +138,11 @@ export default (props: DeviceModalProps) => {
             ],
           })
         }
+        tableAlertRender={false}
         rowSelection={{
           type: 'radio',
           selectedRowKeys: deviceItem.id ? [deviceItem.id] : undefined,
           onSelect: (record) => {
-            console.log(record);
             setDeviceItem(record);
           },
         }}

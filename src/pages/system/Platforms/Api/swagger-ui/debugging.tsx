@@ -236,7 +236,7 @@ export default observer(() => {
       </div>
       <div className={'swagger-content-item'}>
         <TitleComponent data={'响应内容'} />
-        <div style={{ border: '1px solid #fefefe', borderRadius: 2 }}>
+        <div style={{ border: '1px solid #f0f0f0', borderRadius: 2, padding: 1 }}>
           {
             // @ts-ignore
             <ReactJson

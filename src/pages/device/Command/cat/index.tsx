@@ -24,6 +24,7 @@ const Cat = (props: Props) => {
         height={300}
         language={'json'}
         editorDidMount={(editor) => {
+          editor.getAction('editor.action.formatDocument').run();
           editor.onDidContentSizeChange?.(() => {
             editor.getAction('editor.action.formatDocument').run();
             // .finally(() => {

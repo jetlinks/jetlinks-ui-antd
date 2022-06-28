@@ -11,6 +11,7 @@ import type { ProductItem } from '@/pages/system/Department/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { ExtraProductCard } from '@/components/ProTableCard/CardItems/product';
 import { ProTableCard } from '@/components';
+import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 
 interface Props {
   reload: () => void;
@@ -24,6 +25,7 @@ const Bind = observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
   const saveRef = useRef<{ saveData: Function }>();
+  const [deviceVisible, setDeviceVisible] = useState(false);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -71,9 +73,27 @@ const Bind = observer((props: Props) => {
       visible={props.visible}
       onOk={handleBind}
       onCancel={props.onCancel}
-      width={1300}
+      width={800}
       title="绑定"
     >
+      <Modal
+        visible={deviceVisible}
+        width={600}
+        onCancel={() => {
+          setDeviceVisible(false);
+          props.reload();
+          props.onCancel();
+        }}
+        onOk={() => {
+          setDeviceVisible(false);
+          AssetsModel.tabsIndex = ASSETS_TABS_ENUM.Device;
+          AssetsModel.bindModal = true;
+          props.onCancel();
+        }}
+        title={'绑定'}
+      >
+        是否继续分配产品下的具体设备
+      </Modal>
       <PermissionModal
         type="product"
         parentId={props.parentId}
@@ -81,14 +101,13 @@ const Bind = observer((props: Props) => {
         ref={saveRef}
         onCancel={(type) => {
           if (type) {
-            props.reload();
-            props.onCancel();
+            setDeviceVisible(true);
           }
         }}
       />
       <SearchComponent<ProductItem>
         field={columns}
-        // pattern={'simple'}
+        model={'simple'}
         enableSave={false}
         defaultParam={[
           {

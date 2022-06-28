@@ -141,6 +141,12 @@ const sortField = (field: ProColumns[]) => {
 
 // 场景二：高级模式
 // 默认六组搜索条件。根据字段index排序
+// const nodeFor = <T extends Record<string, any>>(props: Props<T>, ref) => {
+//   console.log(props,ref)
+//   return (<></>)
+// }
+//
+// export const node = forwardRef(nodeFor) as <RecordType extends Record<string, any>>(props: Props<RecordType>, ref?: React.Ref<HTMLDivElement>) => React.ReactElement
 
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const { field, target, onSearch, defaultParam, enableSave = true, initParam, model } = props;
@@ -197,6 +203,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               f.setFieldState(typeFiled.query('.termType'), async (state) => {
                 state.value = 'eq';
               });
+              f.setFieldState(typeFiled.query('.value'), async (state) => {
+                state.componentType = 'Input';
+              });
             } else {
               switch (_field?.valueType) {
                 case 'select':
@@ -213,6 +222,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.value = 'eq';
                   });
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
+                    console.log(state.value);
                     state.componentType = 'Select';
                     state.dataSource = __option;
                   });
@@ -257,6 +267,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   });
                   break;
                 default:
+                  f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                    state.value = 'like';
+                  });
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
                     state.componentType = 'Input';
                   });
@@ -266,7 +279,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           });
           onFieldValueChange('*.*.column', (field1, form1) => {
             form1.setFieldState(field1.query('.value'), (state1) => {
-              state1.value = undefined;
+              if (field1.modified) {
+                state1.value = undefined;
+              }
             });
           });
         },
@@ -384,7 +399,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   const handleForm = (_expand?: boolean) => {
     const value = form.values;
-    const __expand = _expand || expand;
+    const __expand = _expand !== undefined ? _expand : expand;
     // 第一组条件值
     const _terms1 = _.cloneDeep(value.terms1?.[0]);
     const uiParam = uiParamRef.current;
@@ -401,11 +416,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         uiParam?.[1]?.terms?.[2] || defaultTerms(5),
       ];
     } else {
-      value.terms1 = _terms1 ? [_terms1] : [defaultTerms(0)];
+      value.terms1 = [uiParam?.[0]?.terms?.[0] || _terms1 || defaultTerms(0)];
       value.terms2 = [];
     }
     setInitParams(value);
   };
+
   const handleExpand = () => {
     handleForm();
     setExpand(!expand);
@@ -436,7 +452,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     setLogVisible(false);
     uiParamRef.current = ui2Server(log);
     const _expand =
-      (log.terms1 && log.terms1?.length > 1) || (log.terms2 && log.terms2?.length > 1);
+      !!(log.terms1 && log.terms1.length > 1) || !!(log.terms2 && log.terms2.length > 1);
     if (_expand) {
       setExpand(false);
     }
@@ -509,7 +525,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   const [url, setUrl] = useUrlState();
-  const handleSearch = async () => {
+  const handleSearch = async (type: boolean = true) => {
     const value = form.values;
     const filterTerms = (data: Partial<Term>[] | undefined) =>
       data && data.filter((item) => item.column != null).filter((item) => item.value !== undefined);
@@ -517,14 +533,27 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     _terms.terms1 = filterTerms(_terms.terms1);
     _terms.terms2 = filterTerms(_terms.terms2);
     const _temp = formatValue(_terms);
-    setUrl({ q: JSON.stringify(value) });
+
+    if (
+      (_terms.terms1 && _terms.terms1.length > 1) ||
+      (_terms.terms2 && _terms.terms2.length > 1)
+    ) {
+      // 展开高级搜索
+      uiParamRef.current = ui2Server(value);
+      setExpand(false);
+      handleForm(true);
+    }
+
+    if (type) {
+      setUrl({ q: JSON.stringify(value) });
+    }
     onSearch({ terms: _temp });
   };
 
   useEffect(() => {
     if (url.q) {
       form.setValues(JSON.parse(url.q));
-      handleSearch();
+      handleSearch(false);
     }
   }, [url]);
 
@@ -549,7 +578,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     setAliasVisible(!aliasVisible);
   };
 
-  const resetForm = async () => {
+  const resetForm = async (type: boolean) => {
+    console.log('resetForm', type);
     const value = form.values;
     if (!expand) {
       value.terms1 = [defaultTerms(0), defaultTerms(1), defaultTerms(2)];
@@ -559,20 +589,32 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       value.terms2 = [];
     }
     setInitParams(value);
-    await handleSearch();
+    await handleSearch(type);
   };
 
   const SearchBtn = {
     simple: (
-      <Button icon={<SearchOutlined />} onClick={handleSearch} type="primary">
-        搜索
-      </Button>
+      <>
+        {
+          // @ts-ignore
+          <Button
+            icon={<SearchOutlined />}
+            onClick={() => {
+              handleSearch(false);
+            }}
+            type="primary"
+          >
+            搜索
+          </Button>
+        }
+      </>
     ),
     advance: (
       <Dropdown.Button
         icon={<SearchOutlined />}
         placement={'bottomLeft'}
         destroyPopupOnHide
+        // @ts-ignore
         onClick={handleSearch}
         visible={logVisible}
         onVisibleChange={async (visible) => {
@@ -642,7 +684,13 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
             <Space>
               {enableSave ? SearchBtn.advance : SearchBtn.simple}
               {enableSave && SaveBtn}
-              <Button icon={<ReloadOutlined />} block onClick={resetForm}>
+              <Button
+                icon={<ReloadOutlined />}
+                block
+                onClick={() => {
+                  resetForm(model !== 'simple');
+                }}
+              >
                 重置
               </Button>
             </Space>

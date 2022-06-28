@@ -260,6 +260,7 @@ const Product = observer(() => {
       title: '接入方式',
       dataIndex: 'accessId',
       width: 150,
+      ellipsis: true,
       valueType: 'select',
       render: (_, row) => {
         return row.protocolName;
@@ -334,7 +335,7 @@ const Product = observer(() => {
       // hideInSearch: true,
     },
     {
-      dataIndex: 'categoryId',
+      dataIndex: 'classifiedId',
       title: '分类',
       valueType: 'treeSelect',
       hideInTable: true,

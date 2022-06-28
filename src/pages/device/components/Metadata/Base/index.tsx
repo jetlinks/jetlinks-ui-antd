@@ -88,7 +88,9 @@ const BaseMetadata = observer((props: Props) => {
             MetadataModel.item = record;
             MetadataModel.type = type;
             MetadataModel.action = 'edit';
-            message.warning('修改物模型后会脱离产品物模型');
+            if (!InstanceModel.detail?.independentMetadata && props.target === 'device') {
+              message.warning('修改物模型后会脱离产品物模型');
+            }
           }}
           tooltip={{
             title: operateLimits('add', type) ? '暂不支持' : '编辑',

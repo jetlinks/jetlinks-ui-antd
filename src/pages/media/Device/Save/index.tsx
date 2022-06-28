@@ -276,7 +276,7 @@ const Save = () => {
                             buttonStyle="solid"
                             options={[
                               { label: 'UDP', value: 'UDP' },
-                              { label: 'TCP', value: 'TCP_PASSIVE' },
+                              { label: 'TCP被动', value: 'TCP_PASSIVE' },
                             ]}
                           />
                         </Form.Item>

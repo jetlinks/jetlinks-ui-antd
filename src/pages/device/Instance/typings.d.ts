@@ -42,6 +42,7 @@ export type DeviceInstance = {
   independentMetadata?: boolean;
   accessProvider?: string;
   accessId?: string;
+  features?: any[];
 };
 
 type Unit = {

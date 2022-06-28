@@ -1,11 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { useIntl, useParams } from 'umi';
+import { useIntl, useParams, useHistory } from 'umi';
 import { Badge, Card, Descriptions, message, Popconfirm, Space, Spin, Switch, Tooltip } from 'antd';
 import BaseInfo from '@/pages/device/Product/Detail/BaseInfo';
 import { observer } from '@formily/react';
 import { productModel, service } from '@/pages/device/Product';
 import { useCallback, useEffect, useState } from 'react';
-import { useDomFullHeight, useHistory, useLocation } from '@/hooks';
+import { useDomFullHeight, useLocation } from '@/hooks';
 import Metadata from '@/pages/device/components/Metadata';
 import Access from '@/pages/device/Product/Detail/Access';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -271,11 +271,20 @@ const ProductDetail = observer(() => {
                 style={{ padding: 0, height: 'auto' }}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['device/Instance']);
-                  const params = {
-                    productId: productModel.current?.id,
+                  const searchParams = {
+                    terms1: [
+                      {
+                        column: 'productId',
+                        termType: 'eq',
+                        value: productModel.current?.id,
+                      },
+                    ],
+                    terms2: undefined,
+                    type: 'and',
                   };
                   if (url) {
-                    history.push(url, params);
+                    console.log(`${url}?q=${JSON.stringify(searchParams)}`);
+                    history.push(`${url}?q=${JSON.stringify(searchParams)}`);
                   }
                 }}
               >
@@ -287,7 +296,7 @@ const ProductDetail = observer(() => {
       }
       title={
         <Tooltip placement="topLeft" title={productModel.current?.name}>
-          <div className="ellipsis" style={{ width: 250 }}>
+          <div className="ellipsis" style={{ maxWidth: 250 }}>
             {productModel.current?.name}
           </div>
         </Tooltip>

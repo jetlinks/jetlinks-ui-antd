@@ -47,7 +47,7 @@ const Tags = () => {
           <Descriptions.Item span={1} label={`${item.name}（${item.key})`} key={item.key}>
             <Tooltip title={item.value || ''} placement="topLeft">
               <div className="ellipsis" style={{ width: 300 }}>
-                {item.value || ''}{' '}
+                {item.value || ''}
               </div>
             </Tooltip>
           </Descriptions.Item>

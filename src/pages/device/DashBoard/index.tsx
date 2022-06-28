@@ -243,8 +243,7 @@ const DeviceBoard = () => {
 
   const getEcharts = async () => {
     const data = ref.current!.getValues();
-    if (data) {
-      // console.log(Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1));
+    if (data && data.time.type !== 'today') {
       const res = await service.dashboard([
         {
           dashboard: 'device',
@@ -279,6 +278,74 @@ const DeviceBoard = () => {
             // axisPointer: {
             //   type: 'shadow',
             // },
+          },
+          grid: {
+            top: '2%',
+            bottom: '5%',
+            left: '2%',
+            right: '2%',
+          },
+          series: [
+            {
+              name: '消息量',
+              data: y,
+              type: 'line',
+              smooth: true,
+              color: '#685DEB',
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: '#685DEB', // 100% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: '#FFFFFF', //   0% 处的颜色
+                    },
+                  ],
+                  global: false, // 缺省为 false
+                },
+              },
+            },
+          ],
+        });
+      }
+    } else {
+      const res = await service.dashboard([
+        {
+          dashboard: 'device',
+          object: 'message',
+          measurement: 'quantity',
+          dimension: 'agg',
+          group: 'device_msg',
+          params: {
+            time: '1h',
+            format: 'yyyy.MM.dd HH:MM:SS',
+            limit: 24,
+            from: data.time.start,
+            to: data.time.end,
+          },
+        },
+      ]);
+      if (res.status === 200) {
+        const x = res.result.map((item: any) => item.data.timeString).reverse();
+        const y = res.result.map((item: any) => item.data.value).reverse();
+        setOptions({
+          xAxis: {
+            type: 'category',
+            data: x,
+          },
+          yAxis: {
+            type: 'value',
+          },
+          tooltip: {
+            trigger: 'axis',
           },
           grid: {
             top: '2%',

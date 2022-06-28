@@ -290,6 +290,7 @@ export default {
   'pages.device.instanceDetail.metadata.readOnly.no': '否',
   'pages.device.instanceDetail.metadata.unit': '单位',
   'pages.device.instanceDetail.functions': '设备功能',
+  'pages.device.instanceDetail.parsing': '数据解析',
   'pages.device.instanceDetail.log': '日志管理',
   'pages.device.instanceDetail.alarm': '告警设置',
   'pages.device.instanceDetail.visualization': '可视化',

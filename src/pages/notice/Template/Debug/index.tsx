@@ -74,20 +74,25 @@ const Debug = observer(() => {
               const a = variableRef.current?.find((i: any) => i.id === _id.value);
               const _configId = configId.value();
               const businessType = a?.expands?.businessType;
-              if (id === 'dingTalk' && _configId) {
-                switch (businessType) {
-                  case 'org':
-                    // 获取org
-                    const orgList = await service.dingTalk.getDepartments(_configId);
-                    format.setComponent(Select);
-                    format.setDataSource(orgList);
-                    break;
-                  case 'user':
-                    // 获取user
-                    const userList = await service.dingTalk.getUser(_configId);
-                    format.setComponent(Select);
-                    format.setDataSource(userList);
-                    break;
+              if (id === 'dingTalk' || id === 'weixin') {
+                if (_configId) {
+                  switch (businessType) {
+                    case 'org':
+                      // 获取org
+                      const orgList = await service[id].getDepartments(_configId);
+                      format.setComponent(Select);
+                      format.setDataSource(orgList);
+                      break;
+                    case 'user':
+                      // 获取user
+                      const userList = await service[id].getUser(_configId);
+                      format.setComponent(Select);
+                      format.setDataSource(userList);
+                      break;
+                  }
+                } else if (businessType === 'org' || businessType === 'user') {
+                  format.setComponent(Select);
+                  format.setDataSource([]);
                 }
               }
             }
@@ -100,16 +105,18 @@ const Debug = observer(() => {
   useEffect(() => {
     // const data = state.current;
     // 从后端接口来获取变量参数
-    service.getVariableDefinitions(state.current?.id || '').then((resp) => {
-      const _template = resp.result;
-      if (_template?.variableDefinitions?.length > 0) {
-        variableRef.current = _template?.variableDefinitions;
-        form.setFieldState('variableDefinitions', (state1) => {
-          state1.visible = true;
-          state1.value = _template?.variableDefinitions;
-        });
-      }
-    });
+    if (state.current?.id) {
+      service.getVariableDefinitions(state.current?.id || '').then((resp) => {
+        const _template = resp.result;
+        if (_template?.variableDefinitions?.length > 0) {
+          variableRef.current = _template?.variableDefinitions;
+          form.setFieldState('variableDefinitions', (state1) => {
+            state1.visible = true;
+            state1.value = _template?.variableDefinitions;
+          });
+        }
+      });
+    }
   }, [state.current, state.debug]);
 
   const SchemaField = createSchemaField({

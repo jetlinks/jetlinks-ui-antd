@@ -303,7 +303,7 @@ export default (props: EditProps) => {
                     <Permission
                       title={intl.formatMessage({
                         id: 'page.system.menu.permissions.operate',
-                        defaultMessage: '操作权限',
+                        defaultMessage: '权限操作',
                       })}
                       // disabled={disabled}
                       data={permissions}

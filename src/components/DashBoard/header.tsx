@@ -4,6 +4,11 @@ import { Col, Form, Radio, Row } from 'antd';
 import type { TimeType } from './timePicker';
 import RangePicker, { TimeKey } from './timePicker';
 
+interface timeToolOptions {
+  label: string;
+  value: string;
+}
+
 export interface HeaderProps {
   title: string;
   /**
@@ -20,9 +25,10 @@ export interface HeaderProps {
    * true 关闭初始化时触发onParamsChange
    */
   closeInitialParams?: boolean;
-  defaultTime?: TimeType;
+  defaultTime?: TimeType & string;
   showTime?: boolean;
   showTimeTool?: boolean;
+  timeToolOptions?: timeToolOptions[];
 }
 
 export default forwardRef((props: HeaderProps, ref) => {
@@ -69,7 +75,6 @@ export default forwardRef((props: HeaderProps, ref) => {
                 <Form.Item name={props.extraParams.key}>{props.extraParams.Children}</Form.Item>
               </Col>
             )}
-            {}
             <Col span={props.extraParams ? 18 : 24}>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
                 {props.showTimeTool ? (
@@ -84,16 +89,25 @@ export default forwardRef((props: HeaderProps, ref) => {
                       }
                     }}
                   >
-                    <Radio.Button value={TimeKey.today}>当天</Radio.Button>
-                    <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
-                    <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
-                    <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
+                    {props.timeToolOptions && Array.isArray(props.timeToolOptions) ? (
+                      props.timeToolOptions.map((item) => (
+                        <Radio.Button value={item.value}>{item.label}</Radio.Button>
+                      ))
+                    ) : (
+                      <>
+                        <Radio.Button value={TimeKey.today}>当天</Radio.Button>
+                        <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
+                        <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
+                        <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
+                      </>
+                    )}
                   </Radio.Group>
                 ) : null}
                 <Form.Item noStyle name={'time'}>
                   <RangePicker
                     ref={pickerRef}
                     defaultTime={props.defaultTime}
+                    timeToolOptions={props.timeToolOptions}
                     showTime={props.showTime}
                     showTimeTool={props.showTimeTool}
                     pickerTimeChange={() => {

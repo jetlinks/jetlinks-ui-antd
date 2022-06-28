@@ -49,20 +49,20 @@ const Metadata = observer((props: Props) => {
 
   return (
     <div className={'device-detail-metadata'} style={{ position: 'relative', minHeight }}>
-      <div className={styles.tips}>
+      <div className={styles.tips} style={{ width: '40%' }}>
         <Tooltip
           title={
-            InstanceModel.detail?.independentMetadata
+            InstanceModel.detail?.independentMetadata && props.type === 'device'
               ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
               : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'
           }
         >
-          <span>
+          <div className={'ellipsis'}>
             <InfoCircleOutlined style={{ marginRight: '3px' }} />
-            {InstanceModel.detail?.independentMetadata
+            {InstanceModel.detail?.independentMetadata && props.type === 'device'
               ? '该设备已脱离产品物模型，修改产品物模型对该设备无影响'
               : '设备会默认继承产品的物模型，修改设备物模型后将脱离产品物模型'}
-          </span>
+          </div>
         </Tooltip>
       </div>
       <Tabs

@@ -1,3 +1,5 @@
+@import '~antd/es/style/themes/default.less';
+
 .alarm-dash-board {
   .top-card-items {
     margin-bottom: 12px;
@@ -35,10 +37,78 @@
   .media-dash-board-body {
     border: 1px solid #f0f0f0;
   }
+
+  .new-alarm-items {
+    > ul {
+      padding: 0;
+
+      .new-alarm-item {
+        display: flex;
+        gap: 12px;
+        margin: 20px 0;
+        font-size: 12px;
+
+        .new-alarm-item-time {
+          width: 180px;
+          font-size: 14px;
+
+          > img {
+            margin-right: 8px;
+          }
+        }
+
+        .new-alarm-item-content {
+          width: ~'calc(100% - 360px)';
+        }
+
+        .new-alarm-item-state {
+          width: 90px;
+          text-align: center;
+
+          .error {
+            color: @error-color;
+          }
+
+          .default {
+            color: @text-color;
+          }
+        }
+
+        .new-alarm-item-level {
+          width: 52px;
+          padding: 2px 8px;
+          color: #fff;
+          text-align: center;
+          border-radius: 2px;
+
+          &.level-1 {
+            background-color: #e50012;
+          }
+
+          &.level-2 {
+            background-color: #ff9457;
+          }
+
+          &.level-3 {
+            background-color: #fabd47;
+          }
+
+          &.level-4 {
+            background-color: #999;
+          }
+
+          &.level-5 {
+            background-color: #bbb;
+          }
+        }
+      }
+    }
+  }
 }
 
 .alarmRank {
-  padding: 0 32px 32px 72px;
+  width: 250px;
+  padding-left: 12px;
 }
 
 .rankingList {
@@ -93,6 +163,7 @@
     .rankingItemTitle {
       flex: 1;
       margin-right: 8px;
+      padding-left: 8px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;

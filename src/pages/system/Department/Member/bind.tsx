@@ -73,11 +73,11 @@ const Bind = observer((props: Props) => {
       visible={props.visible}
       onOk={handleBind}
       onCancel={props.onCancel}
-      width={1300}
+      width={800}
       title="绑定"
     >
       <SearchComponent<UserItem>
-        // pattern={'simple'}
+        model={'simple'}
         enableSave={false}
         field={columns}
         defaultParam={[{ column: 'id$in-dimension$org$not', value: props.parentId }]}

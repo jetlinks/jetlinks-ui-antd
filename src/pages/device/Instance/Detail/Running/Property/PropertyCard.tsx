@@ -47,7 +47,9 @@ const Property = (props: Props) => {
     return (
       <div className="card-title-box">
         <div className="card-title">
-          <Tooltip title={title}>{title}</Tooltip>
+          <Tooltip title={title} placement="topLeft">
+            {title}
+          </Tooltip>
         </div>
         <Space style={{ fontSize: 12 }}>
           {data.expands?.type?.includes('write') && (

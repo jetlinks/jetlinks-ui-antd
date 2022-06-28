@@ -1,4 +1,4 @@
-import { Descriptions, Modal } from 'antd';
+import { Descriptions, Modal, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Store } from 'jetlinks-store';
@@ -43,11 +43,25 @@ const Info = (props: Props) => {
           {moment(data?.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
         </Descriptions.Item>
         <Descriptions.Item label="告警级别" span={1}>
-          {(Store.get('default-level') || []).find((item: any) => item?.level === data?.level)
-            ?.title || data?.level}
+          <Tooltip
+            placement="topLeft"
+            title={
+              (Store.get('default-level') || []).find((item: any) => item?.level === data?.level)
+                ?.title || data?.level
+            }
+          >
+            <div className="ellipsis" style={{ maxWidth: 100 }}>
+              {(Store.get('default-level') || []).find((item: any) => item?.level === data?.level)
+                ?.title || data?.level}
+            </div>
+          </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item label="告警说明" span={1}>
-          {data?.description || ''}
+          <Tooltip placement="topLeft" title={data?.description || ''}>
+            <div className="ellipsis" style={{ maxWidth: 1 }}>
+              {data?.description || ''}
+            </div>
+          </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
           {data?.alarmInfo || ''}

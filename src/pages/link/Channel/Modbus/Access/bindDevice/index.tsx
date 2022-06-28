@@ -20,7 +20,7 @@ const BindDevice = (props: Props) => {
   const statusMap = new Map();
   statusMap.set('在线', 'success');
   statusMap.set('离线', 'error');
-  statusMap.set('未激活', 'processing');
+  statusMap.set('禁用', 'processing');
   statusMap.set('online', 'success');
   statusMap.set('offline', 'error');
   statusMap.set('notActive', 'processing');
@@ -66,7 +66,7 @@ const BindDevice = (props: Props) => {
           status: 'offline',
         },
         notActive: {
-          text: '未激活',
+          text: '禁用',
           status: 'notActive',
         },
       },
@@ -101,6 +101,7 @@ const BindDevice = (props: Props) => {
     >
       <SearchComponent
         field={columns}
+        model={'simple'}
         target="bindDevice"
         defaultParam={[
           { column: 'id$modbus-master$not', value: props.id },

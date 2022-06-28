@@ -224,9 +224,9 @@ const SyncUser = observer(() => {
                     })
                 }
                 headerTitle={
-                  <Popconfirm
-                    title="确认保存"
-                    onConfirm={async () => {
+                  <Button
+                    type="primary"
+                    onClick={async () => {
                       const arr = list
                         .filter((item) => item.status === 0)
                         .map((i) => {
@@ -248,8 +248,8 @@ const SyncUser = observer(() => {
                       }
                     }}
                   >
-                    <Button type="primary">自动绑定</Button>
-                  </Popconfirm>
+                    自动绑定
+                  </Button>
                 }
               />
             ) : (
