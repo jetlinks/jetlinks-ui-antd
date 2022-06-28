@@ -28,7 +28,7 @@ const Operator = () => {
         description: `### ${p.name}
         \n 数据类型: ${p.valueType?.type}
         \n 是否只读: ${p.expands?.readOnly || 'false'}
-        \n 可写数值范围: ---`,
+        \n 可写数值范围: `,
         type: 'property',
       })),
     };

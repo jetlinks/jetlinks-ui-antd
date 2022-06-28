@@ -64,7 +64,7 @@ const Config = () => {
       if (isExit(item.property)) {
         return (
           <div>
-            <span style={{ marginRight: '10px' }}>{config[item.property] || '--'}</span>
+            <span style={{ marginRight: '10px' }}>{config[item.property] || ''}</span>
             <Tooltip title={`有效值:${config[item.property]}`}>
               <QuestionCircleOutlined />
             </Tooltip>
@@ -73,16 +73,16 @@ const Config = () => {
       } else {
         return (
           <div>
-            <Tooltip title={config[item.property] || '--'} placement="topLeft">
+            <Tooltip title={config[item.property] || ''} placement="topLeft">
               <div className="ellipsis" style={{ width: 300 }}>
-                {config[item.property] || '--'}
+                {config[item.property] || ''}
               </div>
             </Tooltip>
           </div>
         );
       }
     } else {
-      return '--';
+      return '';
     }
   };
 

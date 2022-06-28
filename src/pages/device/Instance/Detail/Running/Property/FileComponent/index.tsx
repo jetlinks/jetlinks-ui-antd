@@ -33,7 +33,9 @@ const FileComponent = (props: Props) => {
 
   const renderValue = () => {
     if (value?.formatValue !== 0 && !value?.formatValue) {
-      return <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>--</div>;
+      return (
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>{''}</div>
+      );
     } else if (data?.valueType?.type === 'file') {
       if (
         data?.valueType?.fileType === 'base64' ||

@@ -87,50 +87,50 @@ const Save = (props: Props) => {
           columnGap: 24,
         },
         properties: {
-          id: {
-            title: 'ID',
-            'x-component': 'Input',
-            'x-decorator': 'FormItem',
-            'x-disabled': !!props.data?.id,
-            'x-decorator-props': {
-              gridSpan: 2,
-            },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入ID',
-              },
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
-              {
-                validateId: true,
-                message: 'ID只能由数字、26个英文字母或者下划线组成',
-              },
-              {
-                triggerType: 'onBlur',
-                validator: (value: string) => {
-                  if (!value) return;
-                  return new Promise((resolve) => {
-                    service
-                      .validator(value)
-                      .then((resp) => {
-                        if (!!resp?.result) {
-                          resolve('ID已存在');
-                        } else {
-                          resolve('');
-                        }
-                      })
-                      .catch(() => '验证失败!');
-                  });
-                },
-              },
-            ],
-            'x-component-props': {
-              placeholder: '请输入ID',
-            },
-          },
+          // id: {
+          //   title: 'ID',
+          //   'x-component': 'Input',
+          //   'x-decorator': 'FormItem',
+          //   'x-disabled': !!props.data?.id,
+          //   'x-decorator-props': {
+          //     gridSpan: 2,
+          //   },
+          //   'x-validator': [
+          //     {
+          //       required: true,
+          //       message: '请输入ID',
+          //     },
+          //     {
+          //       max: 64,
+          //       message: '最多可输入64个字符',
+          //     },
+          //     {
+          //       validateId: true,
+          //       message: 'ID只能由数字、26个英文字母或者下划线组成',
+          //     },
+          //     {
+          //       triggerType: 'onBlur',
+          //       validator: (value: string) => {
+          //         if (!value) return;
+          //         return new Promise((resolve) => {
+          //           service
+          //             .validator(value)
+          //             .then((resp) => {
+          //               if (!!resp?.result) {
+          //                 resolve('ID已存在');
+          //               } else {
+          //                 resolve('');
+          //               }
+          //             })
+          //             .catch(() => '验证失败!');
+          //         });
+          //       },
+          //     },
+          //   ],
+          //   'x-component-props': {
+          //     placeholder: '请输入ID',
+          //   },
+          // },
           name: {
             title: '名称',
             'x-component': 'Input',
@@ -242,19 +242,11 @@ const Save = (props: Props) => {
     },
   };
 
-  const save = async (deploy: boolean) => {
+  const save = async () => {
     const value = await form.submit<ProtocolItem>();
-    let response = undefined;
-    if (!props.data?.id) {
-      response = await service.save(value);
-    } else {
-      response = await service.update(value);
-    }
-    if (response && response.status === 200) {
+    const response: any = await service.savePatch({ ...props.data, ...value });
+    if (response && response?.status === 200) {
       onlyMessage('操作成功');
-      if (deploy) {
-        await service.modifyState(value.id, 'deploy');
-      }
       props.reload();
       if ((window as any).onTabSaveSuccess) {
         (window as any).onTabSaveSuccess(response);
@@ -278,7 +270,7 @@ const Save = (props: Props) => {
           type="primary"
           key={2}
           onClick={() => {
-            save(false);
+            save();
           }}
           disabled={props.data?.id ? !permission.update : !permission.add}
         >
