@@ -9,7 +9,6 @@ import encodeQuery from '@/utils/encodeQuery';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import useHistory from '@/hooks/route/useHistory';
 import { throttleTime } from 'rxjs/operators';
-import Icon from '@ant-design/icons';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 
 export type GlobalHeaderRightProps = {
@@ -100,14 +99,14 @@ const NoticeIconView = () => {
       ?.pipe(throttleTime(2000))
       .subscribe((resp: any) => {
         getUnread();
-        notification.open({
+        notification.warning({
           message: resp?.payload?.topicName,
           description: resp?.payload?.message,
           key: resp.payload.id,
-          top: 60,
           btn: (
             <Button
               type="primary"
+              size="small"
               onClick={() => {
                 service.changeNoticeReadState(resp.payload.id).then((response) => {
                   if (response.status === 200) {
@@ -120,7 +119,6 @@ const NoticeIconView = () => {
               标记已读
             </Button>
           ),
-          icon: <Icon type="exclamation-circle" style={{ color: '#E23D38' }} />,
         });
       });
   };
@@ -136,11 +134,10 @@ const NoticeIconView = () => {
   const changeReadState = async (item: any) => {
     const resp = await service.changeNoticeReadState(item.id);
     if (resp.status === 200) {
-      getUnread();
+      const url = getMenuPathByCode(MENUS_CODE['account/NotificationRecord']);
+      history.push(url, { ...item });
+      setVisible(false);
     }
-    const url = getMenuPathByCode(MENUS_CODE['account/NotificationRecord']);
-    history.push(url, { ...item });
-    setVisible(false);
   };
 
   const clearReadState = async (title: string) => {
