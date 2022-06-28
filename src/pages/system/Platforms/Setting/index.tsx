@@ -9,7 +9,7 @@ export default () => {
         <ExclamationCircleOutlined style={{ marginRight: 12, fontSize: 16 }} />
         配置系统支持API赋权的范围
       </div>
-      <ApiPage type={'all'} showDebugger={true} isOpenGranted={false} />
+      <ApiPage type={'all'} showDebugger={true} isOpenGranted={false} showHome={false} />
     </PageContainer>
   );
 };

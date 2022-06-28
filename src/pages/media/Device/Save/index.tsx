@@ -136,6 +136,7 @@ const Save = () => {
                         model={'singular'}
                         itemStyle={{ width: '50%' }}
                         onSelect={(key) => {
+                          console.log(key);
                           setAccessType(key);
                           queryProduct(key);
                         }}

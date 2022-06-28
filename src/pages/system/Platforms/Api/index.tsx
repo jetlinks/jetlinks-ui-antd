@@ -4,7 +4,7 @@ import BasePage from './base';
 export default () => {
   return (
     <PageContainer>
-      <BasePage type={'empowerment'} />
+      <BasePage type={'empowerment'} showHome={true} />
     </PageContainer>
   );
 };

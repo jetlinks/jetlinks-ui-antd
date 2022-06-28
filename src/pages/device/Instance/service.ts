@@ -303,6 +303,39 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+  //获取产品解析规则
+  public productCode = (productId: string) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}`, {
+      method: 'GET',
+    });
+  //保存产品解析规则
+  public saveProductCode = (productId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}`, {
+      method: 'POST',
+      data,
+    });
+  //获取设备解析规则
+  public deviceCode = (productId: string, deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}/${deviceId}`, {
+      method: 'GET',
+    });
+  //保存设备解析规则
+  public saveDeviceCode = (productId: string, deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}/${deviceId}`, {
+      method: 'POST',
+      data,
+    });
+  //编码测试
+  public testCode = (data: any) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/decode-test`, {
+      method: 'POST',
+      data,
+    });
+  //获取指定协议
+  public getProtocal = (id: string, transport: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${id}/transport/${transport}`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

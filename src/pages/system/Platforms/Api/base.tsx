@@ -8,9 +8,10 @@ import { observer } from '@formily/react';
 import './index.less';
 import { useLocation } from 'umi';
 import { useDomFullHeight } from '@/hooks';
+import Home from '../Home';
 
 export const ApiModel = model<{
-  data: any[];
+  data: any[] | undefined;
   baseUrl: string;
   showTable: boolean;
   components: any;
@@ -36,6 +37,7 @@ interface ApiPageProps {
    */
   isOpenGranted?: boolean;
   type?: 'all' | 'empowerment' | 'authorize';
+  showHome?: boolean;
 }
 
 export default observer((props: ApiPageProps) => {
@@ -98,21 +100,29 @@ export default observer((props: ApiPageProps) => {
           isShowGranted={props.isShowGranted}
           grantKeys={GrantKeys}
           operations={operations}
+          showHome={props.showHome}
           type={props.type}
           onSelect={(data) => {
+            console.log(data);
             ApiModel.data = data;
             ApiModel.showTable = true;
           }}
         />
       </div>
       {ApiModel.showTable ? (
-        <Table
-          data={ApiModel.data}
-          operations={operations}
-          isOpenGranted={props.isOpenGranted}
-          isShowGranted={props.isShowGranted}
-          grantKeys={GrantKeys}
-        />
+        <>
+          {ApiModel.data ? (
+            <Table
+              data={ApiModel.data}
+              operations={operations}
+              isOpenGranted={props.isOpenGranted}
+              isShowGranted={props.isShowGranted}
+              grantKeys={GrantKeys}
+            />
+          ) : (
+            <Home />
+          )}
+        </>
       ) : (
         <SwaggerUI showDebugger={props.showDebugger} />
       )}

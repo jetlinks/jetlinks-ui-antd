@@ -12,6 +12,7 @@ type LeftTreeType = {
   grantKeys?: string[]; // 已授权的接口
   type?: 'all' | 'empowerment' | 'authorize'; // 全部、赋权、授权
   operations?: string[]; // 能赋权的key
+  showHome?: boolean;
 };
 
 interface DataNode {
@@ -28,7 +29,19 @@ export default (props: LeftTreeType) => {
   const getLevelOne = async () => {
     const resp = await service.getApiFirstLevel();
     if (resp.urls && resp.urls.length) {
-      setTreeData(resp.urls.map((item: any) => ({ ...item, id: item.url })));
+      if (props.showHome) {
+        const home = [
+          {
+            id: 'home',
+            name: '首页',
+            isLeaf: true,
+          },
+        ];
+        ApiModel.data = undefined;
+        setTreeData(home.concat(resp.urls.map((item: any) => ({ ...item, id: item.url }))));
+      } else {
+        setTreeData(resp.urls.map((item: any) => ({ ...item, id: item.url })));
+      }
     }
   };
 
@@ -152,6 +165,12 @@ export default (props: LeftTreeType) => {
           props.onSelect(node.extraData);
         }
       }}
+      // onExpand={(_,{node}:any)=>{
+      //   if (node.isLeaf && props.onSelect) {
+      //     props.onSelect(node.extraData);
+      //   }
+      // }}
+      defaultSelectedKeys={['home']}
       loadData={onLoadData}
       treeData={treeData}
     />
