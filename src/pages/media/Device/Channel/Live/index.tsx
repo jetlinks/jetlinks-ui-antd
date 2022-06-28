@@ -30,7 +30,7 @@ const LiveFC = (props: LiveProps) => {
     if (props.channelId && props.deviceId) {
       //   查询当前视频是否在录像
       service.ptzIsRecord(props.deviceId, props.channelId).then((res) => {
-        if (res.code === 200) {
+        if (res.status === 200) {
           setIsRecord(res.result ? 2 : 0);
         }
       });

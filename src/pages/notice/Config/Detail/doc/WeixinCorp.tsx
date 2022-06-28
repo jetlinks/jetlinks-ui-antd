@@ -18,7 +18,7 @@ const WeixinCorp = () => {
       </div>
       <h1>2.通知配置说明</h1>
       <div>
-        <h2>1. corpId</h2>
+        <h2>1、corpId</h2>
         <div>企业号的唯一专属编号。</div>
         <div>获取路径：“企业微信”管理后台--“我的企业”--“企业ID”</div>
         <div className={'image'}>
@@ -26,7 +26,7 @@ const WeixinCorp = () => {
         </div>
       </div>
 
-      <h2>2. corpSecret</h2>
+      <h2>2、corpSecret</h2>
       <div>
         <div>应用的唯一secret,一个企业微信中可以有多个corpSecret</div>
         <div>获取路径：“企业微信”--“应用与小程序”--“自建应用”中获取</div>

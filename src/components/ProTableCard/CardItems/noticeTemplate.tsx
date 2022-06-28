@@ -49,7 +49,7 @@ export const typeList = {
     aliyunSms: '阿里云短信',
   },
   email: {
-    embedded: '默认',
+    embedded: '邮件',
   },
   webhook: {
     http: 'webhook',

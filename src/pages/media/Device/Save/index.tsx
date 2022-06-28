@@ -277,7 +277,7 @@ const Save = () => {
                             buttonStyle="solid"
                             options={[
                               { label: 'UDP', value: 'UDP' },
-                              { label: 'TCP', value: 'TCP_PASSIVE' },
+                              { label: 'TCP被动', value: 'TCP_PASSIVE' },
                             ]}
                           />
                         </Form.Item>
@@ -342,13 +342,13 @@ const Save = () => {
               </Form>
             </Col>
             <Col span={12}>
-              {accessType === 'gb28181-2016' ? (
+              {accessType === DefaultAccessType ? (
                 <div className={styles.doc} style={{ height: 800 }}>
-                  <h1>1、概述</h1>
+                  <h1>1.概述</h1>
                   <div>
                     视频设备通过GB/T28181接入平台整体分为2部分，包括平台端配置和设备端配置，不同的设备端配置的路径或页面存在差异，但配置项基本大同小异。
                   </div>
-                  <h1>2、配置说明</h1>
+                  <h1>2.配置说明</h1>
                   <h1>平台端配置</h1>
                   <h2>1、ID</h2>
                   <div>设备唯一标识，若不填写，系统将自动生成唯一标识</div>
@@ -393,16 +393,16 @@ const Save = () => {
                   <div>不影响设备接入平台，可保持设备初始化值。</div>
                 </div>
               ) : (
-                <div className={styles.doc}>
-                  <h1>1、概述</h1>
+                <div className={styles.doc} style={{ height: 600 }}>
+                  <h1>1.概述</h1>
                   <div>视频设备通过RTSP、RTMP固定地址接入平台分为2步。</div>
                   <div>1.添加视频设备</div>
                   <div>2.添加视频下的通道地址。</div>
                   <div>注：当前页面为新增视频设备，新增完成后点击设备的“通道”按钮，添加通道。</div>
                   <h1>2.配置说明</h1>
-                  <h2>1. ID</h2>
+                  <h2>1、ID</h2>
                   <div>设备唯一标识，若不填写，系统将自动生成唯一标识。</div>
-                  <h2>2. 所属产品</h2>
+                  <h2>2、所属产品</h2>
                   <div>
                     只能选择接入方式为固定地址的产品，若当前无对应产品，可点击右侧快速添加按钮，填写产品名称和选择固定地址类型的网关完成产品创建。
                   </div>

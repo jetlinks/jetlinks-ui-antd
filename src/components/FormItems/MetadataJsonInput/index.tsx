@@ -55,6 +55,7 @@ export default (props: MetaDataJsonInputProps) => {
   };
 
   const editorDidMountHandle = (editor: any) => {
+    editor.getAction('editor.action.formatDocument').run();
     editor.onDidContentSizeChange?.(() => {
       editor.getAction('editor.action.formatDocument').run();
     });

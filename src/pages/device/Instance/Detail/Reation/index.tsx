@@ -58,11 +58,11 @@ const Reation = () => {
         {(data || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={item.relationName} key={item.objectId}>
             <Tooltip
-              title={item?.related ? _.map(item?.related || [], 'name').join(',') : '--'}
+              title={item?.related ? _.map(item?.related || [], 'name').join(',') : ''}
               placement="topLeft"
             >
               <div className="ellipsis" style={{ width: 300 }}>
-                {item?.related ? _.map(item?.related || [], 'name').join(',') : '--'}
+                {item?.related ? _.map(item?.related || [], 'name').join(',') : ''}
               </div>
             </Tooltip>
           </Descriptions.Item>

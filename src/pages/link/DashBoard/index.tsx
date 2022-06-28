@@ -151,6 +151,11 @@ export default () => {
   const [cpuOptions, setCpuOptions] = useState<EChartsOption | undefined>(undefined);
   const [jvmOptions, setJvmOptions] = useState<EChartsOption | undefined>(undefined);
   const [serverId, setServerId] = useState(undefined);
+  const [timeToolOptions] = useState([
+    { label: '最近1小时', value: 'hour' },
+    { label: '当天', value: 'today' },
+    { label: '近一周', value: 'week' },
+  ]);
 
   const [topValues, setTopValues] = useState({
     cpu: 0,
@@ -185,6 +190,8 @@ export default () => {
         return 'MM-DD';
       case 'week':
         return 'MM-DD HH';
+      case 'hour':
+        return 'HH:mm';
       default:
         return 'HH';
     }
@@ -389,7 +396,6 @@ export default () => {
           params: {
             from: cpuData.time.start,
             to: cpuData.time.end,
-            interval: getInterval(cpuData.time.type),
           },
         },
         {
@@ -401,7 +407,6 @@ export default () => {
           params: {
             from: jvmData.time.start,
             to: jvmData.time.end,
-            interval: getInterval(jvmData.time.type),
           },
         },
       ])
@@ -438,13 +443,13 @@ export default () => {
                 if (!_jvmOptions[nodeID]) {
                   _jvmOptions[nodeID] = [];
                 }
-                _jvmXAxis.add(moment(value.timestamp).format(getTimeFormat('week')));
+                _jvmXAxis.add(moment(value.timestamp).format(getTimeFormat(jvmData.time.type)));
                 _jvmOptions[nodeID].push(_value);
               } else {
                 if (!_cpuOptions[nodeID]) {
                   _cpuOptions[nodeID] = [];
                 }
-                _cpuXAxis.add(moment(value.timestamp).format(getTimeFormat('week')));
+                _cpuXAxis.add(moment(value.timestamp).format(getTimeFormat(cpuData.time.type)));
                 _cpuOptions[nodeID].push(Number(value.cpuSystemUsage).toFixed(2));
               }
             });
@@ -729,8 +734,9 @@ export default () => {
             closeInitialParams={true}
             ref={CPURef}
             height={400}
-            defaultTime={'week'}
+            defaultTime={'hour'}
             options={cpuOptions}
+            timeToolOptions={timeToolOptions}
             onParamsChange={getCPUEcharts}
           />
           <DashBoard
@@ -738,8 +744,9 @@ export default () => {
             closeInitialParams={true}
             ref={JVMRef}
             height={400}
-            defaultTime={'week'}
+            defaultTime={'hour'}
             options={jvmOptions}
+            timeToolOptions={timeToolOptions}
             onParamsChange={getJVMEcharts}
           />
         </div>

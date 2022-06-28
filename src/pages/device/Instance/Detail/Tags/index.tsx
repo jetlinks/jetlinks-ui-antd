@@ -45,9 +45,9 @@ const Tags = () => {
       >
         {(tags || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={`${item.name}（${item.key})`} key={item.key}>
-            <Tooltip title={item.value || '--'} placement="topLeft">
-              <div className="ellipsis" style={{ maxWidth: 300 }}>
-                {item.value || '--'}
+            <Tooltip title={item.value || ''} placement="topLeft">
+              <div className="ellipsis" style={{ width: 300 }}>
+                {item.value || ''}
               </div>
             </Tooltip>
           </Descriptions.Item>

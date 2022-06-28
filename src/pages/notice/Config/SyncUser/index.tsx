@@ -45,7 +45,7 @@ const SyncUser = observer(() => {
       dataIndex: 'userId',
       title: `用户`,
       render: (text: any, record: any) => (
-        <span>{record?.userId ? `${record?.userName}(${record?.username})` : '--'}</span>
+        <span>{record?.userId ? `${record?.userName}(${record?.username})` : ''}</span>
       ),
     },
     {
