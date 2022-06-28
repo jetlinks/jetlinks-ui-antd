@@ -99,6 +99,26 @@ const MenuPermission = (props: Props) => {
                 fontWeight: value.id === 'menu-permission' ? 600 : 400,
               }}
               onChange={(e) => {
+                let access: any[] = [];
+                if (e.target.checked && !checkValue) {
+                  setCheckValue('creator');
+                  access = (value?.assetAccesses || []).map((i: any) => {
+                    return {
+                      ...i,
+                      granted: i.supportId === 'creator',
+                    };
+                  });
+                } else if (!e.target.checked) {
+                  setCheckValue('');
+                  access = (value?.assetAccesses || []).map((i: any) => {
+                    return {
+                      ...i,
+                      granted: false,
+                    };
+                  });
+                } else {
+                  access = value?.assetAccesses || [];
+                }
                 setCheckAll(e.target.checked);
                 setIndeterminate(false);
                 const buttons = (value?.buttons || []).map((i: any) => {
@@ -109,6 +129,7 @@ const MenuPermission = (props: Props) => {
                 });
                 props.change({
                   ...value,
+                  assetAccesses: [...access],
                   check: e.target.checked ? 1 : 3, // 1: 全选 2: 只选了部分 3: 一个都没选
                   buttons: [...buttons],
                   children: checkAllData(value.children || [], e.target.checked),
@@ -131,6 +152,26 @@ const MenuPermission = (props: Props) => {
                   'id',
                 )}
                 onChange={(data: CheckboxValueType[]) => {
+                  let access: any[] = [];
+                  if (data.length > 0 && !checkValue) {
+                    setCheckValue('creator');
+                    access = (value?.assetAccesses || []).map((i: any) => {
+                      return {
+                        ...i,
+                        granted: i.supportId === 'creator',
+                      };
+                    });
+                  } else if (data.length === 0) {
+                    setCheckValue('');
+                    access = (value?.assetAccesses || []).map((i: any) => {
+                      return {
+                        ...i,
+                        granted: false,
+                      };
+                    });
+                  } else {
+                    access = value?.assetAccesses || [];
+                  }
                   const buttons = value.buttons.map((i: any) => {
                     return {
                       ...i,
@@ -152,6 +193,7 @@ const MenuPermission = (props: Props) => {
                   const d = {
                     ...value,
                     check,
+                    assetAccesses: [...access],
                     buttons: [...buttons],
                   };
                   props.change(d);
@@ -220,7 +262,7 @@ const MenuPermission = (props: Props) => {
                 <div>{value?.accessDescription}</div>
               ) : (
                 <Radio.Group
-                  defaultValue={value?.assetAccesses[0]?.supportId}
+                  defaultValue={'creator'}
                   value={checkValue}
                   onChange={(e) => {
                     setCheckValue(e.target.value);

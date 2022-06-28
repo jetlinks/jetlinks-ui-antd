@@ -29,15 +29,15 @@ const Info = (props: Props) => {
         {data.targetType === 'device' && (
           <>
             <Descriptions.Item label="告警设备" span={1}>
-              {data?.targetName || '--'}
+              {data?.targetName || ''}
             </Descriptions.Item>
             <Descriptions.Item label="设备ID" span={1}>
-              {data?.targetId || '--'}
+              {data?.targetId || ''}
             </Descriptions.Item>
           </>
         )}
         <Descriptions.Item label="告警名称" span={1}>
-          {data?.alarmConfigName || '--'}
+          {data?.alarmConfigName || ''}
         </Descriptions.Item>
         <Descriptions.Item label="告警时间" span={1}>
           {moment(data?.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
@@ -57,14 +57,14 @@ const Info = (props: Props) => {
           </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item label="告警说明" span={1}>
-          <Tooltip placement="topLeft" title={data?.description || '--'}>
+          <Tooltip placement="topLeft" title={data?.description || ''}>
             <div className="ellipsis" style={{ maxWidth: 1 }}>
-              {data?.description || '--'}
+              {data?.description || ''}
             </div>
           </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
-          {data?.alarmInfo || '--'}
+          {data?.alarmInfo || ''}
         </Descriptions.Item>
       </Descriptions>
     </Modal>

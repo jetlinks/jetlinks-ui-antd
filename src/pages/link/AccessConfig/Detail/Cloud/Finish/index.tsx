@@ -101,11 +101,11 @@ const Finish = (props: Props) => {
         <div style={{ marginLeft: 10 }}>
           <TitleComponent data={'配置概览'} />
           <div>
-            <p>接入方式：{props.provider?.name || '--'}</p>
-            {props.provider?.description && <p>{props.provider?.description || '--'}</p>}
+            <p>接入方式：{props.provider?.name || ''}</p>
+            {props.provider?.description && <p>{props.provider?.description || ''}</p>}
             <p>消息协议：{props.procotol}</p>
             {config?.document && (
-              <div>{<ReactMarkdown>{config?.document}</ReactMarkdown> || '--'}</div>
+              <div>{<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}</div>
             )}
           </div>
           <TitleComponent data={'设备接入指引'} />

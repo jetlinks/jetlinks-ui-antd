@@ -36,11 +36,11 @@ export default (props: AliyunCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>网桥产品</label>
-              <div className={'ellipsis'}>{props?.bridgeProductName || '--'}</div>
+              <div className={'ellipsis'}>{props?.bridgeProductName || ''}</div>
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>{props?.description || '--'}</div>
+              <div className={'ellipsis'}>{props?.description || ''}</div>
             </div>
           </div>
         </div>

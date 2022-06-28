@@ -118,7 +118,7 @@ const Info = observer(() => {
           >
             {InstanceModel.detail?.onlineTime
               ? moment(InstanceModel.detail?.onlineTime).format('YYYY-MM-DD HH:mm:ss')
-              : '--'}
+              : ''}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({

@@ -51,6 +51,9 @@ const FileUpload = connect((props: Props) => {
               e.stopPropagation();
             }}
             placeholder="请上传文件"
+            onBlur={(e) => {
+              props.onChange(e.target.value);
+            }}
           />
           <Button
             disabled={props?.disabled}

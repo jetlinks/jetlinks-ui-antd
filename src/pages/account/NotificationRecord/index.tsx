@@ -13,7 +13,7 @@ import encodeQuery from '@/utils/encodeQuery';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
-import { historyStateModel } from '@/hooks/route/useHistory';
+import useLocations from '@/hooks/route/useLocation';
 import { observer } from '@formily/reactive-react';
 
 export const service = new Service('notifications');
@@ -27,6 +27,8 @@ const NotificationRecord = observer(() => {
   const [typeList, setTypeList] = useState<any>({});
   const { minHeight } = useDomFullHeight(`.record`, 24);
 
+  const location = useLocations();
+
   useEffect(() => {
     service.getProvidersList().then((resp) => {
       const obj: any = {};
@@ -38,11 +40,12 @@ const NotificationRecord = observer(() => {
   }, []);
 
   useEffect(() => {
-    if (historyStateModel.state.id) {
+    console.log(location.state);
+    if (location.state?.id) {
       setVisible(true);
-      setCurrent(historyStateModel.state);
+      setCurrent(location.state);
     }
-  }, [historyStateModel.state]);
+  }, [location.state]);
 
   const ReadSvg = () => (
     <svg

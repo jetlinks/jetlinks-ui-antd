@@ -242,19 +242,11 @@ const Save = (props: Props) => {
     },
   };
 
-  const save = async (deploy: boolean) => {
+  const save = async () => {
     const value = await form.submit<ProtocolItem>();
-    let response = undefined;
-    if (!props.data?.id) {
-      response = await service.save(value);
-    } else {
-      response = await service.update(value);
-    }
-    if (response && response.status === 200) {
+    const response: any = await service.savePatch({ ...props.data, ...value });
+    if (response && response?.status === 200) {
       onlyMessage('操作成功');
-      if (deploy) {
-        await service.modifyState(value.id, 'deploy');
-      }
       props.reload();
       if ((window as any).onTabSaveSuccess) {
         (window as any).onTabSaveSuccess(response);
@@ -278,7 +270,7 @@ const Save = (props: Props) => {
           type="primary"
           key={2}
           onClick={() => {
-            save(false);
+            save();
           }}
           disabled={props.data?.id ? !permission.update : !permission.add}
         >
