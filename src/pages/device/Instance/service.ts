@@ -336,6 +336,16 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/protocol/${id}/transport/${transport}`, {
       method: 'GET',
     });
+  //删除设备解析规则
+  public delDeviceCode = (productId: string, deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}/${deviceId}`, {
+      method: 'DELETE',
+    });
+  //删除产品解析规则
+  public delProductCode = (productId: string) =>
+    request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}`, {
+      method: 'DELETE',
+    });
 }
 
 export default Service;

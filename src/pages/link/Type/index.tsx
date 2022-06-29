@@ -330,7 +330,7 @@ const Network = () => {
               </PermissionButton>,
               <PermissionButton
                 type="link"
-                key="other-delete"
+                key="delete"
                 style={{ padding: 0 }}
                 isPermission={networkPermission.delete}
                 disabled={record.state.value === 'enabled'}

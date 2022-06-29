@@ -1,9 +1,5 @@
 import { useDomFullHeight } from '@/hooks';
-import {
-  ExclamationCircleOutlined,
-  ExpandOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { ExclamationCircleOutlined, ExpandOutlined } from '@ant-design/icons';
 import { Card, Tooltip, Select, Input, Button, AutoComplete, message } from 'antd';
 import { useState, useRef, useEffect } from 'react';
 import MonacoEditor from 'react-monaco-editor';
@@ -20,7 +16,7 @@ const Parsing = (props: Props) => {
   const service = new Service('device-instance');
   const { minHeight } = useDomFullHeight(`.parsing`);
   const [value, setValue] = useState(
-    '//解码函数\r\n// function decode(context) {\r\n//     //原始报文\r\n//     var buffer = context.payload();\r\n//     // 转为json\r\n//     // var json = context.json();\r\n\r\n//     //mqtt 时通过此方法获取topic\r\n//     // var topic = context.topic();\r\n\r\n//     // 提取变量\r\n//     // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n//     //温度属性\r\n//     var temperature = buffer.getShort(3) * 10;\r\n//     //湿度属性\r\n//     var humidity = buffer.getShort(6) * 10;\r\n//     return {\r\n//         "temperature": temperature,\r\n//         "humidity": humidity\r\n//     };\r\n// }',
+    '//解码函数\r\nfunction decode(context) {\r\n    var json = context.json();\r\n    return json;\r\n}\r\n',
   );
   const ref = useRef(null);
   const size = useSize(ref);
@@ -34,6 +30,7 @@ const Parsing = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [resultValue, setResultValue] = useState<any>('');
   const [data, setData] = useState<any>({});
+  const [readOnly, setReadOnly] = useState<boolean>(true);
 
   const editorDidMountHandle = (editor: any) => {
     editor.getAction('editor.action.formatDocument').run();
@@ -53,11 +50,27 @@ const Parsing = (props: Props) => {
       }
     });
   };
+  //获取设备解析规则
+  const getDeviceCode = (productId: string, deviceId: string) => {
+    service.deviceCode(productId, deviceId).then((res) => {
+      if (res.status === 200) {
+        // console.log(res.result)
+        setValue(res.result?.configuration?.script);
+        setData(res.result);
+        if (res.result.deviceId) {
+          setReadOnly(false);
+        } else {
+          setReadOnly(true);
+        }
+      }
+    });
+  };
   //保存设备解析规则
   const saveDeviceCode = (productId: string, deviceId: string, datas: any) => {
     service.saveDeviceCode(productId, deviceId, datas).then((res) => {
       if (res.status === 200) {
         onlyMessage('保存成功');
+        getDeviceCode(props.data.productId, props.data.id);
       }
       // console.log(res.result)
     });
@@ -71,16 +84,7 @@ const Parsing = (props: Props) => {
       console.log(res.result);
     });
   };
-  //获取设备解析规则
-  const getDeviceCode = (productId: string, deviceId: string) => {
-    service.deviceCode(productId, deviceId).then((res) => {
-      if (res.status === 200) {
-        // console.log(res.result)
-        setValue(res.result?.configuration?.script);
-        setData(res.result);
-      }
-    });
-  };
+
   //获取产品解析规则
   const getProductCode = (productId: string) => {
     service.productCode(productId).then((res) => {
@@ -101,6 +105,14 @@ const Parsing = (props: Props) => {
       } else {
         setLoading(false);
         onlyMessage('调试失败', 'error');
+      }
+    });
+  };
+  //重置
+  const rest = (productId: string, deviceId: string) => {
+    service.delDeviceCode(productId, deviceId).then((res) => {
+      if (res.status === 200) {
+        getDeviceCode(productId, deviceId);
       }
     });
   };
@@ -130,36 +142,50 @@ const Parsing = (props: Props) => {
       setType(props.data.transportProtocol);
       getProductCode(props.data.id);
       getTopic(props.data.messageProtocol, props.data.transportProtocol);
+      setReadOnly(false);
     }
   }, []);
 
-  // useEffect(()=>{
-
-  // },[])
-
   return (
     <Card className="parsing" style={{ minHeight }}>
-      <div style={{ marginBottom: 10, color: '#8b8b8b' }}>
-        <ExclamationCircleOutlined style={{ marginRight: 5 }} />
-        {props.tag !== 'device' ? (
-          '设备会默认继承产品的数据解析，修改设备数据解析规则后将脱离产品数据解析'
-        ) : (
-          <>
-            {!data?.deviceId
-              ? '设备数据解析已脱离产品，修改产品数据解析对该设备无影响'
-              : '设备会自动继承产品的数据解析，修改设备数据解析将脱离产品'}
-          </>
-        )}
-      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ fontWeight: 600, fontSize: 16, marginRight: 10 }}>编辑脚本</div>
-          <Tooltip title="编写数据解析脚本，透传类设备上报数据时会自动调用脚本将数据解析为官方格式，您可以对脚本进行模拟和运行调试，运行正常后点击“提交”，发布该脚本。">
-            <QuestionCircleOutlined />
-          </Tooltip>
+          <div>
+            {props.tag === 'device' ? (
+              <>
+                <ExclamationCircleOutlined style={{ marginRight: 5 }} />
+                {data?.deviceId ? (
+                  <>
+                    当前数据解析内容已脱离产品影响，
+                    <a
+                      onClick={() => {
+                        rest(props.data.productId, props.data.id);
+                      }}
+                    >
+                      重置
+                    </a>
+                    后将继承产品数据解析内容
+                  </>
+                ) : (
+                  <>
+                    当前数据解析内容继承自产品，
+                    <a
+                      onClick={() => {
+                        setReadOnly(false);
+                      }}
+                    >
+                      修改
+                    </a>
+                    后将脱离产品影响。
+                  </>
+                )}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
         <div>
-          {' '}
           脚本语言:
           <Select defaultValue="JavaScript" style={{ width: 200, marginLeft: 5 }}>
             <Select.Option value="JavaScript">JavaScript(ECMAScript 5)</Select.Option>
@@ -167,7 +193,28 @@ const Parsing = (props: Props) => {
           <ExpandOutlined style={{ marginLeft: 20 }} onClick={setFull} />
         </div>
       </div>
-      <div ref={ref} style={{ height: 400, border: '1px solid #dcdcdc' }}>
+      <div ref={ref} style={{ height: 550, border: '1px solid #dcdcdc' }}>
+        {readOnly && (
+          <div
+            onClick={() => {
+              message.warning({
+                content: '请点击上方修改字样,用以编辑脚本',
+                key: 1,
+                style: {
+                  marginTop: 260,
+                },
+              });
+            }}
+            style={{
+              height: 766,
+              width: '100%',
+              position: 'absolute',
+              zIndex: 1,
+              backgroundColor: '#eeeeee38',
+              cursor: 'not-allowed',
+            }}
+          ></div>
+        )}
         <MonacoEditor
           width={'100%'}
           height={'100%'}
@@ -220,7 +267,7 @@ const Parsing = (props: Props) => {
               </div>
             </div>
             <Input.TextArea
-              autoSize={{ minRows: 10 }}
+              autoSize={{ minRows: 5 }}
               placeholder="// 二进制数据以0x开头的十六进制输入，字符串数据输入原始字符串"
               style={{ marginTop: 10 }}
               onChange={(e) => {
@@ -233,7 +280,7 @@ const Parsing = (props: Props) => {
           <div>
             <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>运行结果</div>
             <Input.TextArea
-              autoSize={{ minRows: 10 }}
+              autoSize={{ minRows: 5 }}
               style={{ marginTop: 10 }}
               value={
                 resultValue.success ? JSON.stringify(resultValue.outputs?.[0]) : resultValue.reason

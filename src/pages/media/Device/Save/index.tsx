@@ -68,6 +68,12 @@ const Save = () => {
     const formData = await form.validateFields();
     if (formData) {
       const { provider, ...extraFormData } = formData;
+      if (formData.password === oldPassword) {
+        delete extraFormData.password;
+      }
+      if (formData.id === '') {
+        delete extraFormData.id;
+      }
       // if (formData.password === oldPassword) {
       //   delete extraFormData.password;
       // }
@@ -163,30 +169,55 @@ const Save = () => {
                     </Form.Item>
                   </Col>
                   <Col span={16}>
-                    <Form.Item
-                      label={'ID'}
-                      name={'id'}
-                      required
-                      rules={[
-                        { required: true, message: '请输入ID' },
-                        {
-                          pattern: /^[a-zA-Z0-9_\-]+$/,
-                          message: intl.formatMessage({
-                            id: 'pages.form.tip.id',
-                            defaultMessage: '请输入英文或者数字或者-或者_',
-                          }),
-                        },
-                        {
-                          max: 64,
-                          message: intl.formatMessage({
-                            id: 'pages.form.tip.max64',
-                            defaultMessage: '最多输入64个字符',
-                          }),
-                        },
-                      ]}
-                    >
-                      <Input placeholder={'请输入ID'} disabled={!!id} />
-                    </Form.Item>
+                    {accessType === DefaultAccessType ? (
+                      <Form.Item
+                        label={'ID'}
+                        name={'id'}
+                        rules={[
+                          { required: true, message: '请输入ID' },
+                          {
+                            pattern: /^[a-zA-Z0-9_\-]+$/,
+                            message: intl.formatMessage({
+                              id: 'pages.form.tip.id',
+                              defaultMessage: '请输入英文或者数字或者-或者_',
+                            }),
+                          },
+                          {
+                            max: 64,
+                            message: intl.formatMessage({
+                              id: 'pages.form.tip.max64',
+                              defaultMessage: '最多输入64个字符',
+                            }),
+                          },
+                        ]}
+                      >
+                        <Input placeholder={'请输入ID'} disabled={!!id} />
+                      </Form.Item>
+                    ) : (
+                      <Form.Item
+                        label={'ID'}
+                        name={'id'}
+                        rules={[
+                          {
+                            pattern: /^[a-zA-Z0-9_\-]+$/,
+                            message: intl.formatMessage({
+                              id: 'pages.form.tip.id',
+                              defaultMessage: '请输入英文或者数字或者-或者_',
+                            }),
+                          },
+                          {
+                            max: 64,
+                            message: intl.formatMessage({
+                              id: 'pages.form.tip.max64',
+                              defaultMessage: '最多输入64个字符',
+                            }),
+                          },
+                        ]}
+                      >
+                        <Input placeholder={'请输入ID'} disabled={!!id} />
+                      </Form.Item>
+                    )}
+
                     <Form.Item
                       label={'设备名称'}
                       name={'name'}
@@ -351,7 +382,7 @@ const Save = () => {
                   <h1>2.配置说明</h1>
                   <h1>平台端配置</h1>
                   <h2>1、ID</h2>
-                  <div>设备唯一标识，若不填写，系统将自动生成唯一标识</div>
+                  <div>设备唯一标识，请填写设备端配置的设备编号。</div>
                   <h2>2、所属产品</h2>
                   <div>
                     只能选择接入方式为GB/T28281的产品，若当前无对应产品，可点击右侧快速添加按钮，填写产品名称和选择GB/T28181类型的网关完成产品创建
@@ -396,8 +427,8 @@ const Save = () => {
                 <div className={styles.doc} style={{ height: 600 }}>
                   <h1>1.概述</h1>
                   <div>视频设备通过RTSP、RTMP固定地址接入平台分为2步。</div>
-                  <div>1.添加视频设备</div>
-                  <div>2.添加视频下的通道地址。</div>
+                  <div>1、添加视频设备</div>
+                  <div>2、添加视频下的通道地址。</div>
                   <div>注：当前页面为新增视频设备，新增完成后点击设备的“通道”按钮，添加通道。</div>
                   <h1>2.配置说明</h1>
                   <h2>1、ID</h2>

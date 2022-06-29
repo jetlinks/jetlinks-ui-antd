@@ -35,7 +35,7 @@ const Access = () => {
   const [visible, setVisible] = useState<boolean>(true);
   const [config, setConfig] = useState<any>();
   const [access, setAccess] = useState<any>();
-  const { permission } = usePermissions('link/AccessConfig');
+  const { permission } = usePermissions('device/Product');
   const [dataSource, setDataSource] = useState<any[]>([]);
 
   const MetworkTypeMapping = new Map();
@@ -360,7 +360,7 @@ const Access = () => {
         <div style={{ padding: '100px 0' }}>
           <Empty
             description={
-              permission.add ? (
+              permission.update ? (
                 <span>
                   请先
                   <Button

@@ -122,7 +122,7 @@ const Finish = (props: Props) => {
               </p>
             ) : (
               <p>
-                3、添加设备，为每一台设备设置唯一的IMEI、SN、PSK码（需与CTWingt平台中填写的值一致，若CTWing平台没有对应的设备，将会通
+                3、添加设备，为每一台设备设置唯一的IMEI、SN、PSK码（需与CTWingt平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
               </p>
             )}
           </div>

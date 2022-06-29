@@ -91,6 +91,7 @@ const Home = () => {
             <Table
               dataSource={data}
               pagination={false}
+              size="small"
               columns={[
                 {
                   title: '示例数据类型',
@@ -117,7 +118,7 @@ const Home = () => {
         <div>
           <h3>服务器验签流程</h3>
           <div>
-            <img src={require('/public/images/apiHome.png')} />
+            <img src={require('/public/images/apiHome.png')} style={{ width: '80%' }} />
           </div>
         </div>
         <div style={{ width: 400 }}>
@@ -126,7 +127,7 @@ const Home = () => {
             <p>使用和签名相同的算法(不需要对响应结果排序)</p>
             <div>
               <MonacoEditor
-                width={400}
+                width={'100%'}
                 height={744}
                 theme="vs"
                 language={'java'}

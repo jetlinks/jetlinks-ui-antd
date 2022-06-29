@@ -285,7 +285,7 @@ const Instance = () => {
       filterMultiple: false,
     },
     {
-      dataIndex: 'categoryId',
+      dataIndex: 'classifiedId',
       title: '产品分类',
       valueType: 'treeSelect',
       hideInTable: true,
