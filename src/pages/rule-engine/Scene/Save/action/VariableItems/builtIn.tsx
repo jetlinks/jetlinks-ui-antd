@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import type { FormInstance } from 'antd';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
-import moment from 'moment';
 import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
+
+import moment from 'moment';
 
 type ChangeType = {
   source?: string;
@@ -45,7 +46,8 @@ export default (props: BuiltInProps) => {
             const actionParams = res.result.filter(
               (item: any) => item.id === `action_${props.name}`,
             );
-            setBuiltInList(BuiltInParamsHandleTreeData(actionParams));
+            const _data = props.name === 0 ? res.result : BuiltInParamsHandleTreeData(actionParams);
+            setBuiltInList(_data);
           }
         });
       } else {

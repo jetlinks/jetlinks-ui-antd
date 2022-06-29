@@ -123,6 +123,11 @@ export default observer((props: ActionProps) => {
       if (data.executor) {
         setType1(data.executor);
       }
+      console.log(data.terms);
+      if (data.terms) {
+        // 显示过滤条件
+        setIsFiltering(true);
+      }
 
       if (data.notify) {
         // 消息通知
@@ -207,15 +212,14 @@ export default observer((props: ActionProps) => {
   const parallelNode = (
     <Col span={2}>
       {!props.parallel ? (
-        <Form.Item noStyle>
-          <Checkbox
-            onChange={(e) => {
-              setIsFiltering(e.target.checked);
-            }}
-          >
-            条件过滤
-          </Checkbox>
-        </Form.Item>
+        <Checkbox
+          checked={isFiltering}
+          onChange={(e) => {
+            setIsFiltering(e.target.checked);
+          }}
+        >
+          条件过滤
+        </Checkbox>
       ) : null}
     </Col>
   );
@@ -330,7 +334,11 @@ export default observer((props: ActionProps) => {
           </Row>
           {!props.parallel && isFiltering && (
             <Row gutter={24}>
-              <ConditionalFiltering name={name} form={props.form} />
+              <ConditionalFiltering
+                name={name}
+                form={props.form}
+                data={props.actionItemData.terms}
+              />
             </Row>
           )}
         </>
@@ -338,22 +346,28 @@ export default observer((props: ActionProps) => {
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.READ_PROPERTY &&
       properties.length ? (
-        <Row gutter={24}>
-          <Col span={4}>
-            <Form.Item
-              name={[name, 'device', 'message', 'properties']}
-              rules={[{ required: true, message: '请选择属性' }]}
-            >
-              <ReadProperty properties={properties} />
-            </Form.Item>
-          </Col>
-          {parallelNode}
+        <>
+          <Row gutter={24}>
+            <Col span={4}>
+              <Form.Item
+                name={[name, 'device', 'message', 'properties']}
+                rules={[{ required: true, message: '请选择属性' }]}
+              >
+                <ReadProperty properties={properties} />
+              </Form.Item>
+            </Col>
+            {parallelNode}
+          </Row>
           {!props.parallel && isFiltering && (
             <Row gutter={24}>
-              <ConditionalFiltering name={name} form={props.form} />
+              <ConditionalFiltering
+                name={name}
+                form={props.form}
+                data={props.actionItemData.terms}
+              />
             </Row>
           )}
-        </Row>
+        </>
       ) : null}
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.INVOKE_FUNCTION &&
@@ -367,7 +381,7 @@ export default observer((props: ActionProps) => {
           </Form.Item>
           <Row gutter={24}>
             {parallelNode}
-            <ConditionalFiltering name={name} form={props.form} />
+            <ConditionalFiltering name={name} form={props.form} data={props.actionItemData.terms} />
           </Row>
         </>
       ) : null}

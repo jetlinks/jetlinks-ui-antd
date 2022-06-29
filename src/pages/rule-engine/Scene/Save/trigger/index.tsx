@@ -11,7 +11,6 @@ import { observer } from '@formily/reactive-react';
 import OrgTreeSelect from './OrgTreeSelect';
 import { FormModel } from '../index';
 import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
-import moment from 'moment';
 
 interface TriggerProps {
   value?: any;
@@ -30,10 +29,6 @@ enum OperatorEnum {
   'writeProperty' = 'writeProperty',
   'invokeFunction' = 'invokeFunction',
 }
-
-const CronRegEx = new RegExp(
-  '(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7])|([1-7])|(\\?)|(\\*)|(([1-7]L)|([1-7]\\#[1-4]))))|(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7] )|([1-7] )|(\\? )|(\\* )|(([1-7]L )|([1-7]\\#[1-4]) ))((19[789][0-9]|20[0-9][0-9])\\-(19[789][0-9]|20[0-9][0-9])))',
-);
 
 export default observer((props: TriggerProps) => {
   const [productList, setProductList] = useState<any[]>([]);
@@ -247,53 +242,54 @@ export default observer((props: TriggerProps) => {
       FormModel.trigger?.device?.operation?.operator === OperatorEnum.readProperty ||
       FormModel.trigger?.device?.operation?.operator === OperatorEnum.writeProperty ? (
         <Form.Item
-          name={['trigger', 'device', 'operation', 'timer']}
-          rules={[
-            {
-              validator: async (_: any, value: any) => {
-                if (value) {
-                  if (value.trigger === 'cron') {
-                    if (!value.cron) {
-                      return Promise.reject(new Error('请输入cron表达式'));
-                    } else if (value.cron.length > 64) {
-                      return Promise.reject(new Error('最多可输入64个字符'));
-                    } else if (!CronRegEx.test(value.cron)) {
-                      return Promise.reject(new Error('请输入正确的cron表达式'));
-                    }
-                  } else {
-                    if (!value.when.length) {
-                      return Promise.reject(new Error('请选择时间'));
-                    }
-                    if (value.period) {
-                      if (!value.period.from || !value.period.to) {
-                        return Promise.reject(new Error('请选择时间周期'));
-                      }
-                      if (!value.period.every) {
-                        return Promise.reject(new Error('请输入周期频率'));
-                      }
-                    } else if (value.once) {
-                      if (!value.once.time) {
-                        return Promise.reject(new Error('请选择时间周期'));
-                      }
-                    }
-                  }
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-          initialValue={{
-            trigger: 'week',
-            mod: 'period',
-            when: [],
-            period: {
-              unit: 'seconds',
-              from: moment(new Date()).format('HH:mm:ss'),
-              to: moment(new Date()).format('HH:mm:ss'),
-            },
-          }}
+          noStyle
+          // name={['trigger', 'device', 'operation', 'timer']}
+          // rules={[
+          //   {
+          //     validator: async (_: any, value: any) => {
+          //       if (value) {
+          //         if (value.trigger === 'cron') {
+          //           if (!value.cron) {
+          //             return Promise.reject(new Error('请输入cron表达式'));
+          //           } else if (value.cron.length > 64) {
+          //             return Promise.reject(new Error('最多可输入64个字符'));
+          //           } else if (!CronRegEx.test(value.cron)) {
+          //             return Promise.reject(new Error('请输入正确的cron表达式'));
+          //           }
+          //         } else {
+          //           if (!value.when.length) {
+          //             return Promise.reject(new Error('请选择时间'));
+          //           }
+          //           if (value.period) {
+          //             if (!value.period.from || !value.period.to) {
+          //               return Promise.reject(new Error('请选择时间周期'));
+          //             }
+          //             if (!value.period.every) {
+          //               return Promise.reject(new Error('请输入周期频率'));
+          //             }
+          //           } else if (value.once) {
+          //             if (!value.once.time) {
+          //               return Promise.reject(new Error('请选择时间周期'));
+          //             }
+          //           }
+          //         }
+          //       }
+          //       return Promise.resolve();
+          //     },
+          //   },
+          // ]}
+          // initialValue={{
+          //   trigger: 'week',
+          //   mod: 'period',
+          //   when: [],
+          //   period: {
+          //     unit: 'seconds',
+          //     from: moment(new Date()).format('HH:mm:ss'),
+          //     to: moment(new Date()).format('HH:mm:ss'),
+          //   },
+          // }}
         >
-          <TimingTrigger />
+          <TimingTrigger name={['trigger', 'device', 'operation']} form={props.form!} />
         </Form.Item>
       ) : null}
       {FormModel.trigger?.device?.operation?.operator === OperatorEnum.invokeFunction && (
@@ -373,7 +369,6 @@ export default observer((props: TriggerProps) => {
           <Col span={6}>
             <Form.Item
               name={['trigger', 'device', 'operation', 'readProperties']}
-              noStyle
               rules={[{ required: true, message: '请选择属性' }]}
             >
               <Select

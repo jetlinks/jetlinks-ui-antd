@@ -7,6 +7,7 @@ import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/servic
 interface ConditionalFilteringProps {
   name: number;
   form: FormInstance;
+  data?: any;
 }
 
 export default (props: ConditionalFilteringProps) => {
@@ -106,10 +107,16 @@ export default (props: ConditionalFilteringProps) => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log('Conditional', builtInList);
+    if (props.data[0] && props.data[0].column && builtInList && builtInList.length) {
+      getBuiltItemById(props.data[0].column);
+    }
+  }, [props.data, builtInList]);
   return (
     <>
       <Col span={4}>
-        <Form.Item name={[props.name, 'terms[0].column']}>
+        <Form.Item name={[props.name, 'terms', 0, 'column']}>
           <TreeSelect
             placeholder={'请选择参数'}
             fieldNames={{
@@ -117,15 +124,35 @@ export default (props: ConditionalFilteringProps) => {
               label: 'name',
             }}
             treeData={builtInList}
-            onSelect={(v: any) => {
-              getBuiltItemById(v);
-              props.form.resetFields([props.name, 'terms[0].termType']);
+            onSelect={() => {
+              props.form.setFields([
+                {
+                  name: [props.name, 'terms', 0, 'termType'],
+                  value: undefined,
+                },
+                {
+                  name: [props.name, 'terms', 0, 'value', 'source'],
+                  value: 'fixed',
+                },
+                {
+                  name: [props.name, 'terms', 0, 'value', 'value'],
+                  value: undefined,
+                },
+                {
+                  name: [props.name, 'terms', 0, 'value', 'value', 0],
+                  value: undefined,
+                },
+                {
+                  name: [props.name, 'terms', 0, 'value', 'value', 1],
+                  value: undefined,
+                },
+              ]);
             }}
           />
         </Form.Item>
       </Col>
       <Col span={2}>
-        <Form.Item name={[props.name, 'terms[0].termType']}>
+        <Form.Item name={[props.name, 'terms', 0, 'termType']}>
           <Select
             style={{ width: '100%' }}
             options={termTypes}
@@ -137,7 +164,7 @@ export default (props: ConditionalFilteringProps) => {
       <Col span={7}>
         <Form.Item noStyle>
           <ItemGroup>
-            <Form.Item name={[props.name, 'terms[0].value.source']}>
+            <Form.Item name={[props.name, 'terms', 0, 'value', 'source']} initialValue={'fixed'}>
               <Select
                 options={[
                   { label: '手动输入', value: 'fixed' },
@@ -149,21 +176,48 @@ export default (props: ConditionalFilteringProps) => {
                 }}
               />
             </Form.Item>
-            <Form.Item name={[props.name, 'terms[0].value.value[0]']}>
-              {source === 'fixed' ? (
-                valueTypeMap(type)
-              ) : (
-                <TreeSelect
-                  placeholder={'请选择参数'}
-                  fieldNames={{ value: 'id', label: 'name' }}
-                  treeData={builtInList}
-                />
-              )}
-            </Form.Item>
+            {['nbtw', 'btw'].includes(props.data[0] && props.data[0].termType) ? (
+              <>
+                <Form.Item name={[props.name, 'terms', 0, 'value', 'value', 0]}>
+                  {source === 'fixed' ? (
+                    valueTypeMap(type)
+                  ) : (
+                    <TreeSelect
+                      placeholder={'请选择参数'}
+                      fieldNames={{ value: 'id', label: 'name' }}
+                      treeData={builtInList}
+                    />
+                  )}
+                </Form.Item>
+                <Form.Item name={[props.name, 'terms', 0, 'value', 'value', 1]}>
+                  {source === 'fixed' ? (
+                    valueTypeMap(type)
+                  ) : (
+                    <TreeSelect
+                      placeholder={'请选择参数'}
+                      fieldNames={{ value: 'id', label: 'name' }}
+                      treeData={builtInList}
+                    />
+                  )}
+                </Form.Item>
+              </>
+            ) : (
+              <Form.Item name={[props.name, 'terms', 0, 'value', 'value']}>
+                {source === 'fixed' ? (
+                  valueTypeMap(type)
+                ) : (
+                  <TreeSelect
+                    placeholder={'请选择参数'}
+                    fieldNames={{ value: 'id', label: 'name' }}
+                    treeData={builtInList}
+                  />
+                )}
+              </Form.Item>
+            )}
           </ItemGroup>
         </Form.Item>
       </Col>
-      <Col span={1}>不执行后续动作</Col>
+      <Col>不执行后续动作</Col>
     </>
   );
 };
