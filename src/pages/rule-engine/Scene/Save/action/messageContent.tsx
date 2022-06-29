@@ -17,6 +17,7 @@ interface MessageContentProps {
   triggerType: string;
   configId: string;
   trigger?: any;
+  parallel?: boolean;
 }
 
 const rowGutter = 12;
@@ -148,7 +149,13 @@ export default (props: MessageContentProps) => {
                       ) : type === 'link' ? (
                         <Input placeholder={'请输入' + item.name} />
                       ) : (
-                        <BuiltIn type={props.triggerType} trigger={props.trigger} data={item} />
+                        <BuiltIn
+                          form={props.form}
+                          name={props.name}
+                          type={props.triggerType}
+                          trigger={props.trigger}
+                          data={item}
+                        />
                       )}
                     </Form.Item>
                   </Col>

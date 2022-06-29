@@ -202,16 +202,21 @@ export default () => {
     <PageContainer>
       <Card>
         <Form
+          scrollToFirstError
           form={form}
           colon={false}
           name="basicForm"
           layout={'vertical'}
           preserve={false}
           className={'scene-save'}
+          initialValues={{
+            actions: [undefined],
+          }}
           onValuesChange={(changeValue, allValues) => {
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
                 if (
+                  changeValue.trigger.device.productId ||
                   changeValue.trigger.device.selectorValues ||
                   (changeValue.trigger.device.operation &&
                     hasKeyInObject(
@@ -258,7 +263,6 @@ export default () => {
                 }),
               },
             ]}
-            required
           >
             <Input placeholder={'请输入名称'} />
           </Form.Item>
@@ -321,21 +325,6 @@ export default () => {
               </Form.Item>
             )}
             {triggerType === TriggerWayType.device && (
-              // <Form.Item
-              //   name={['trigger', 'device']}
-              //   rules={[
-              //     {
-              //       validator: async (_: any, value: any) => {
-              //         if (!value) {
-              //           return Promise.reject(new Error('请选择产品'));
-              //         }
-              //         return Promise.resolve();
-              //       },
-              //     },
-              //   ]}
-              // >
-              //   <TriggerDevice className={'trigger-type-content'} />
-              // </Form.Item>
               <TriggerDevice value={triggerDatas} className={'trigger-type-content'} form={form} />
             )}
           </Form.Item>
@@ -352,15 +341,7 @@ export default () => {
           <Form.Item
             label={
               <Space>
-                <TitleComponent
-                  data={
-                    <>
-                      <span>执行动作</span>
-                      <span style={{ color: 'red', margin: '0 4px' }}>*</span>
-                    </>
-                  }
-                  style={{ margin: 0 }}
-                />
+                <TitleComponent data={<span>执行动作</span>} style={{ margin: 0 }} />
                 <Tooltip
                   title={
                     <div>
@@ -386,19 +367,7 @@ export default () => {
               </Space>
             }
           >
-            <Form.List
-              name="actions"
-              rules={[
-                {
-                  validator: async (_: any, value: any) => {
-                    if (!value) {
-                      return Promise.reject(new Error('请添加执行动作'));
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
+            <Form.List name="actions">
               {(fields, { add, remove }, { errors }) => (
                 <>
                   <div className={'scene-actions'}>
@@ -412,6 +381,7 @@ export default () => {
                         triggerType={triggerType}
                         onRemove={() => remove(name)}
                         actionItemData={actionsData.length && actionsData[name]}
+                        parallel={parallel}
                       />
                     ))}
                     <Form.Item noStyle>

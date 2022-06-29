@@ -31,8 +31,8 @@ export const queryDeviceSelector = () =>
   request(`${SystemConst.API_BASE}/scene/device-selectors`, { method: 'GET' });
 
 // 内置参数
-export const queryBuiltInParams = (data: any) =>
-  request(`${SystemConst.API_BASE}/scene/parse-variables`, { method: 'POST', data });
+export const queryBuiltInParams = (data: any, params?: any) =>
+  request(`${SystemConst.API_BASE}/scene/parse-variables`, { method: 'POST', data, params });
 
 // 平台用户
 export const queryPlatformUsers = () =>

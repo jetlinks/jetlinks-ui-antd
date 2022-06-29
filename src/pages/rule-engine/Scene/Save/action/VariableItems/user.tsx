@@ -8,7 +8,6 @@ import {
   queryRelationUsers,
   queryWechatUsers,
 } from '@/pages/rule-engine/Scene/Save/action/service';
-import { defer, filter, forkJoin, from, map } from 'rxjs';
 
 type ChangeType = {
   source?: string;
@@ -30,7 +29,6 @@ export default (props: UserProps) => {
   const [relationList, setRelationList] = useState([]);
   const [treeData, setTreeData] = useState([
     { name: '平台用户', id: 'p1', selectable: false, children: [] },
-    { name: '关系用户', id: 'p2', selectable: false, children: [] },
   ]);
 
   useEffect(() => {
@@ -52,25 +50,15 @@ export default (props: UserProps) => {
   }, [props.value]);
 
   const getPlatformUser = async () => {
-    forkJoin(
-      defer(() => from(queryPlatformUsers())).pipe(
-        filter((item) => item.status === 200),
-        map((resp) => resp.result),
-      ),
-      defer(() => from(queryRelationUsers())).pipe(
-        filter((item) => item.status === 200),
-        map((resp) => resp.result),
-      ),
-    ).subscribe((res) => {
-      const newTree = [...treeData];
-      res.forEach((item, index) => {
-        newTree[index].children = item;
-      });
-      setTreeData(newTree);
-    });
-  };
+    const newTree = [...treeData];
+    const platformResp = await queryPlatformUsers();
 
-  console.log('treeData', treeData);
+    if (platformResp.status === 200) {
+      newTree[0].children = platformResp.result;
+    }
+
+    setTreeData(newTree);
+  };
 
   const getRelationUsers = async (notifyType: string, configId: string) => {
     if (notifyType === 'dingTalk') {
@@ -174,6 +162,31 @@ export default (props: UserProps) => {
       props.onChange(obj);
     }
   };
+
+  useEffect(() => {
+    if (props.type) {
+      const newTree = [...treeData];
+      if (props.type === 'device') {
+        queryRelationUsers().then((relationResp) => {
+          if (relationResp.status === 200) {
+            newTree.push({
+              name: '关系用户',
+              id: 'p2',
+              selectable: false,
+              children: relationResp.result,
+            });
+            setTreeData(newTree);
+          }
+        });
+      } else {
+        if (newTree.length > 1) {
+          newTree.splice(1, 1);
+          setTreeData(newTree);
+        }
+      }
+      onchange(props.value?.source, '');
+    }
+  }, [props.type]);
 
   const filterOption = (input: string, option: any) => {
     return option.name ? option.name.toLowerCase().includes(input.toLowerCase()) : false;
