@@ -18,6 +18,7 @@ import SystemConst from '@/utils/const';
 import { PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
+import Parsing from '../../Instance/Detail/Parsing';
 
 export const ModelEnum = {
   base: 'base',
@@ -153,6 +154,7 @@ const ProductDetail = observer(() => {
   };
 
   useEffect(() => {
+    console.log(productModel.current);
     if (
       productModel.current?.accessProvider &&
       pList.includes(productModel.current?.accessProvider)
@@ -167,6 +169,22 @@ const ProductDetail = observer(() => {
       ]);
     } else {
       setList([...initList]);
+    }
+    if (
+      productModel.current?.transportProtocol === 'MQTT' ||
+      productModel.current?.transportProtocol === 'HTTP'
+    ) {
+      setList([
+        ...initList,
+        {
+          key: 'parsing',
+          tab: intl.formatMessage({
+            id: 'pages.device.instanceDetail.parsing',
+            defaultMessage: '数据解析',
+          }),
+          component: <Parsing tag="product" data={productModel.current} />,
+        },
+      ]);
     }
   }, [productModel.current]);
 

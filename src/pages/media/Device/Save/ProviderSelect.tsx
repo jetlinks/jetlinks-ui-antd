@@ -113,12 +113,12 @@ export default (props: ProviderProps) => {
                 </div>
                 <div className={styles.card}>
                   <div className={styles.header}>
-                    <div className={styles.title}>{item.name || '--'}</div>
-                    <div className={styles.desc}>{item.description || '--'}</div>
+                    <div className={styles.title}>{item.name || ''}</div>
+                    <div className={styles.desc}>{item.description || ''}</div>
                   </div>
                   <div className={styles.container}>
                     <div className={styles.server}>
-                      <div className={styles.subTitle}>{item?.channelInfo?.name || '--'}</div>
+                      <div className={styles.subTitle}>{item?.channelInfo?.name || ''}</div>
                       <div style={{ width: '100%' }}>
                         {item.channelInfo?.addresses.map((i: any, index: number) => (
                           <p key={i.address + `_address${index}`}>
@@ -128,8 +128,8 @@ export default (props: ProviderProps) => {
                       </div>
                     </div>
                     <div className={styles.procotol}>
-                      <div className={styles.subTitle}>{item?.protocolDetail?.name || '--'}</div>
-                      <p>{item.protocolDetail?.description || '--'}</p>
+                      <div className={styles.subTitle}>{item?.protocolDetail?.name || ''}</div>
+                      <p>{item.protocolDetail?.description || ''}</p>
                     </div>
                   </div>
                 </div>

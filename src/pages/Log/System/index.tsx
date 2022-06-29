@@ -71,7 +71,7 @@ const System = () => {
       dataIndex: 'context.server',
       width: 150,
       ellipsis: true,
-      render: (text, record) => record?.context?.server || '--',
+      render: (text, record) => record?.context?.server || '',
     },
     {
       title: intl.formatMessage({

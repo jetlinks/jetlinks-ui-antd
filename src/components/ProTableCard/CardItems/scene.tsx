@@ -48,7 +48,7 @@ export default (props: DeviceCardProps) => {
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>{props.description || '--'}</div>
+              <div className={'ellipsis'}>{props.description || ''}</div>
             </div>
           </div>
         </div>

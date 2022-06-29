@@ -111,7 +111,7 @@ export default () => {
         </Col>
         <Col span={24}>
           <Card title={'API文档'}>
-            <ApiPage type={'authorize'} showDebugger={true} isShowGranted={true} />
+            <ApiPage type={'authorize'} showDebugger={true} isShowGranted={true} showHome={true} />
           </Card>
         </Col>
       </Row>

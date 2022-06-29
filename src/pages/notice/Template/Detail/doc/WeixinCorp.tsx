@@ -23,13 +23,13 @@ const WeixinCorp = () => {
       <div>
         <h2> 1、绑定配置</h2>
         <div> 使用固定的通知配置发送此通知模板</div>
-        <h2> 2. Agentid</h2>
+        <h2> 2、Agentid</h2>
         <div> 应用唯一标识</div>
         <div> 获取路径：“企业微信”管理后台--“应用管理”--“应用”--“查看应用”</div>
         <div className="image">
           <Image width="100%" src={agentId} />
         </div>
-        <h2> 3. 收信人ID、收信部门ID、标签推送</h2>
+        <h2> 3、收信人ID、收信部门ID、标签推送</h2>
         <div>
           接收通知的3种方式，3个字段若在此页面都没有填写，则在模板调试和配置告警通知时需要手动填写
         </div>

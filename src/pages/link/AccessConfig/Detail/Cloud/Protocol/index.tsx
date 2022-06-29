@@ -99,8 +99,8 @@ const Protocol = (props: Props) => {
                 }}
               >
                 <div style={{ height: '45px' }}>
-                  <div className={styles.title}>{item.name || '--'}</div>
-                  <div className={styles.desc}>{item.description || '--'}</div>
+                  <div className={styles.title}>{item.name || ''}</div>
+                  <div className={styles.desc}>{item.description || ''}</div>
                 </div>
               </Card>
             </Col>

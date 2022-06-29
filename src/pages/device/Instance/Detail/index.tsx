@@ -136,14 +136,6 @@ const InstanceDetail = observer(() => {
       component: <Functions />,
     },
     {
-      key: 'parsing',
-      tab: intl.formatMessage({
-        id: 'pages.device.instanceDetail.parsing',
-        defaultMessage: '数据解析',
-      }),
-      component: <Parsing />,
-    },
-    {
       key: 'log',
       tab: intl.formatMessage({
         id: 'pages.device.instanceDetail.log',
@@ -183,6 +175,16 @@ const InstanceDetail = observer(() => {
           key: 'metadata-map',
           tab: '物模型映射',
           component: <MetadataMap type="device" />,
+        });
+      }
+      if (response.result.transport === 'MQTT' || response.result.transport === 'HTTP') {
+        datalist.push({
+          key: 'parsing',
+          tab: intl.formatMessage({
+            id: 'pages.device.instanceDetail.parsing',
+            defaultMessage: '数据解析',
+          }),
+          component: <Parsing tag="device" data={InstanceModel.detail} />,
         });
       }
       if (response.result.protocol === 'modbus-tcp') {

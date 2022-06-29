@@ -148,11 +148,11 @@ export default (props: DeviceCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : '--'}</div>
+              <div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : ''}</div>
             </div>
             <div>
               <label>产品名称</label>
-              <div className={'ellipsis'}>{props.productName || '--'}</div>
+              <div className={'ellipsis'}>{props.productName || ''}</div>
             </div>
           </div>
         </div>

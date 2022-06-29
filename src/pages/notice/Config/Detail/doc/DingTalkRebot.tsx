@@ -15,7 +15,7 @@ const DingTalkRebot = () => {
       </div>
       <h1>2.通知配置说明</h1>
       <div>
-        <h2> 1. WebHook</h2>
+        <h2> 1、WebHook</h2>
         <div>在钉钉群内每创建一个钉钉群自定义机器人都会产生唯一的WebHook地址。</div>
         <div>获取路径：“钉钉桌面客户端”--“群设置”--“智能群助手”--“机器人信息”</div>
         <div className={'image'}>
