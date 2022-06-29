@@ -82,6 +82,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'id',
       title: 'ID',
       width: 220,
+      fixed: 'left',
     },
     {
       dataIndex: 'name',
@@ -89,6 +90,7 @@ export default observer((props: { parentId: string }) => {
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
+      width: 200,
     },
     {
       title: intl.formatMessage({
@@ -99,6 +101,7 @@ export default observer((props: { parentId: string }) => {
       render: (_, row) => {
         return row.productName;
       },
+      width: 200,
     },
     {
       title: '资产权限',
@@ -107,6 +110,7 @@ export default observer((props: { parentId: string }) => {
       render: (_, row) => {
         return handlePermissionsMap(row.grantedPermissions);
       },
+      width: 80,
     },
     {
       title: intl.formatMessage({
@@ -115,6 +119,7 @@ export default observer((props: { parentId: string }) => {
       }),
       dataIndex: 'registryTime',
       valueType: 'dateTime',
+      width: 160,
     },
     {
       title: intl.formatMessage({
@@ -126,13 +131,6 @@ export default observer((props: { parentId: string }) => {
       // onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: {
-          text: intl.formatMessage({
-            id: 'pages.searchTable.titleStatus.all',
-            defaultMessage: '全部',
-          }),
-          status: 'Default',
-        },
         onLine: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
@@ -150,13 +148,14 @@ export default observer((props: { parentId: string }) => {
         notActive: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.notActive',
-            defaultMessage: '未启用',
+            defaultMessage: '禁用',
           }),
           status: 'notActive',
         },
       },
       render: (_, row) => <DeviceBadge type={row.state.value} text={row.state.text} />,
       search: false,
+      width: 80,
     },
     {
       title: intl.formatMessage({
@@ -166,6 +165,7 @@ export default observer((props: { parentId: string }) => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <Popconfirm
           title={intl.formatMessage({
@@ -277,6 +277,7 @@ export default observer((props: { parentId: string }) => {
         search={false}
         params={searchParam}
         gridColumn={2}
+        scroll={{ x: 1366 }}
         request={async (params) => {
           if (!props.parentId) {
             return {

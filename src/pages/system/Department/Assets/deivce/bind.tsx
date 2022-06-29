@@ -73,13 +73,6 @@ const Bind = observer((props: Props) => {
       dataIndex: 'state',
       valueType: 'select',
       valueEnum: {
-        all: {
-          text: intl.formatMessage({
-            id: 'pages.searchTable.titleStatus.all',
-            defaultMessage: '全部',
-          }),
-          status: 'Default',
-        },
         onLine: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',

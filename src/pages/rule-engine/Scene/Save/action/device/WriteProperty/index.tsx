@@ -1,9 +1,10 @@
-import { Col, DatePicker, FormInstance, Input, InputNumber, Row, Select } from 'antd';
+import { Col, DatePicker, Input, InputNumber, Row, Select, TreeSelect } from 'antd';
+import type { FormInstance } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
-import { useRequest } from '@@/plugin-request/request';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import moment from 'moment';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
+import { Space } from '@formily/antd';
 
 interface WritePropertyProps {
   properties: any[];
@@ -11,30 +12,65 @@ interface WritePropertyProps {
   form: FormInstance;
   value?: any;
   onChange?: (value?: any) => void;
+  parallel?: boolean;
+  name: number;
 }
 
 export default (props: WritePropertyProps) => {
   const [source, setSource] = useState('fixed');
-  const [builtInList, setBuiltInList] = useState([]);
+  const [builtInList, setBuiltInList] = useState<any[]>([]);
   const [propertiesKey, setPropertiesKey] = useState<string | undefined>(undefined);
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
 
-  const { run: getBuiltInList } = useRequest(queryBuiltInParams, {
-    manual: true,
-    formatResult: (res) => res.result,
-    onSuccess: (res) => {
-      setBuiltInList(res);
-    },
-  });
+  const handleName = (data: any) => {
+    return (
+      <Space>
+        {data.name}
+        {data.description && (
+          <div style={{ color: 'grey', marginLeft: '5px' }}>({data.description})</div>
+        )}
+      </Space>
+    );
+  };
+
+  const handleTreeData = (data: any): any[] => {
+    if (data.length > 0) {
+      return data.map((item: any) => {
+        const name = handleName(item);
+        if (item.children) {
+          return { ...item, name, disabled: true, children: handleTreeData(item.children) };
+        }
+        return { ...item, name };
+      });
+    }
+    return [];
+  };
 
   useEffect(() => {
     if (source === 'upper') {
-      getBuiltInList({
-        trigger: { type: props.type },
-      });
+      if (props.parallel === false) {
+        const data = props.form.getFieldsValue();
+        const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+        queryBuiltInParams(data, params).then((res: any) => {
+          if (res.status === 200) {
+            const actionParams = res.result.filter(
+              (item: any) => item.id === `action_${props.name}`,
+            );
+            setBuiltInList(handleTreeData(actionParams));
+          }
+        });
+      } else {
+        queryBuiltInParams({
+          trigger: { type: props.type },
+        }).then((res: any) => {
+          if (res.status === 200) {
+            setBuiltInList(handleTreeData(res.result));
+          }
+        });
+      }
     }
-  }, [source, props.type]);
+  }, [source, props.type, props.parallel]);
 
   useEffect(() => {
     console.log('writeProperty', props.value);
@@ -121,7 +157,7 @@ export default (props: WritePropertyProps) => {
 
   return (
     <Row gutter={24}>
-      <Col span={4}>
+      <Col span={6}>
         <Select
           value={propertiesKey}
           options={props.properties.filter((item) => {
@@ -138,7 +174,7 @@ export default (props: WritePropertyProps) => {
           placeholder={'请选择属性'}
         ></Select>
       </Col>
-      <Col span={7}>
+      <Col span={16}>
         <ItemGroup compact>
           <Select
             value={source}
@@ -152,15 +188,27 @@ export default (props: WritePropertyProps) => {
             }}
           />
           {source === 'upper' ? (
-            <Select
-              options={builtInList}
-              fieldNames={{ label: 'name', value: 'id' }}
+            <TreeSelect
               placeholder={'请选择参数'}
+              fieldNames={{
+                value: 'id',
+                label: 'name',
+              }}
+              value={propertiesValue}
+              treeData={builtInList}
               onSelect={(value: any) => {
                 onChange(propertiesKey, value);
               }}
             />
           ) : (
+            // <Select
+            //   options={builtInList}
+            //   fieldNames={{ label: 'name', value: 'id' }}
+            //   placeholder={'请选择参数'}
+            //   onSelect={(value: any) => {
+            //     onChange(propertiesKey, value);
+            //   }}
+            // />
             <div>{inputNodeByType(propertiesType)}</div>
           )}
         </ItemGroup>

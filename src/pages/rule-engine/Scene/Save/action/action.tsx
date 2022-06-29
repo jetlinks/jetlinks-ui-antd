@@ -1,5 +1,5 @@
 import type { FormInstance } from 'antd';
-import { Button, Col, Form, Row, Select } from 'antd';
+import { Button, Checkbox, Col, Form, Row, Select } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import {
@@ -16,6 +16,7 @@ import FunctionCall from './device/functionCall';
 import { InputNumber } from '../components';
 import { DeleteOutlined } from '@ant-design/icons';
 import { observer } from '@formily/reactive-react';
+import ConditionalFiltering from './device/ConditionalFiltering';
 
 interface ActionProps {
   restField: any;
@@ -26,6 +27,7 @@ interface ActionProps {
   onRemove: () => void;
   actionItemData?: any;
   trigger?: any;
+  parallel?: boolean;
 }
 
 export default observer((props: ActionProps) => {
@@ -40,6 +42,8 @@ export default observer((props: ActionProps) => {
   const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
   const [properties, setProperties] = useState([]); // 物模型-属性
   const [functionList, setFunctionList] = useState([]); // 物模型-功能
+
+  const [isFiltering, setIsFiltering] = useState(false);
 
   const { data: messageType, run: queryMessageTypes } = useRequest(queryMessageType, {
     manual: true,
@@ -200,6 +204,22 @@ export default observer((props: ActionProps) => {
     </>
   );
 
+  const parallelNode = (
+    <Col span={2}>
+      {!props.parallel ? (
+        <Form.Item noStyle>
+          <Checkbox
+            onChange={(e) => {
+              setIsFiltering(e.target.checked);
+            }}
+          >
+            条件过滤
+          </Checkbox>
+        </Form.Item>
+      ) : null}
+    </Col>
+  );
+
   useEffect(() => {
     if (type1 === 'notify') {
       queryMessageTypes();
@@ -250,6 +270,7 @@ export default observer((props: ActionProps) => {
             onMessageTypeChange={setDeviceMessageType}
             onFunctionChange={setFunctionList}
             restField={props.restField}
+            parallel={props.parallel}
           />
         )}
         {type1 === 'delay' && (
@@ -270,30 +291,49 @@ export default observer((props: ActionProps) => {
           notifyType={notifyType}
           triggerType={props.triggerType}
           configId={configId}
+          parallel={props.parallel}
         />
       ) : null}
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.WRITE_PROPERTY &&
       properties.length ? (
-        <Form.Item
-          name={[name, 'device', 'message', 'properties']}
-          rules={[
-            {
-              validator: async (_: any, value: any) => {
-                if (value) {
-                  if (!Object.values(value)[0]) {
-                    return Promise.reject(new Error('请输入属性值'));
-                  }
-                } else {
-                  return Promise.reject(new Error('请选择属性'));
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
-          <WriteProperty properties={properties} type={props.triggerType} form={props.form} />
-        </Form.Item>
+        <>
+          <Row gutter={24}>
+            <Col span={18}>
+              <Form.Item
+                name={[name, 'device', 'message', 'properties']}
+                rules={[
+                  {
+                    validator: async (_: any, value: any) => {
+                      if (value) {
+                        if (!Object.values(value)[0]) {
+                          return Promise.reject(new Error('请输入属性值'));
+                        }
+                      } else {
+                        return Promise.reject(new Error('请选择属性'));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <WriteProperty
+                  name={name}
+                  properties={properties}
+                  type={props.triggerType}
+                  form={props.form}
+                  parallel={props.parallel}
+                />
+              </Form.Item>
+            </Col>
+            {parallelNode}
+          </Row>
+          {!props.parallel && isFiltering && (
+            <Row gutter={24}>
+              <ConditionalFiltering name={name} form={props.form} />
+            </Row>
+          )}
+        </>
       ) : null}
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.READ_PROPERTY &&
@@ -307,17 +347,29 @@ export default observer((props: ActionProps) => {
               <ReadProperty properties={properties} />
             </Form.Item>
           </Col>
+          {parallelNode}
+          {!props.parallel && isFiltering && (
+            <Row gutter={24}>
+              <ConditionalFiltering name={name} form={props.form} />
+            </Row>
+          )}
         </Row>
       ) : null}
       {type1 === 'device' &&
       deviceMessageType === MessageTypeEnum.INVOKE_FUNCTION &&
       functionList.length ? (
-        <Form.Item
-          name={[name, 'device', 'message', 'inputs']}
-          rules={[{ required: true, message: '请输入功能值' }]}
-        >
-          <FunctionCall functionData={functionList} />
-        </Form.Item>
+        <>
+          <Form.Item
+            name={[name, 'device', 'message', 'inputs']}
+            rules={[{ required: true, message: '请输入功能值' }]}
+          >
+            <FunctionCall functionData={functionList} />
+          </Form.Item>
+          <Row gutter={24}>
+            {parallelNode}
+            <ConditionalFiltering name={name} form={props.form} />
+          </Row>
+        </>
       ) : null}
     </div>
   );
