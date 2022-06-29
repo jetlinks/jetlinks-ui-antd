@@ -52,6 +52,7 @@ const Save = () => {
           const _accessType = res.result?.provider || DefaultAccessType;
           setAccessType(_accessType);
           queryProduct(_accessType);
+          setOldPassword(res.result.password);
         }
       });
     } else {
@@ -73,6 +74,9 @@ const Save = () => {
       if (formData.id === '') {
         delete extraFormData.id;
       }
+      // if (formData.password === oldPassword) {
+      //   delete extraFormData.password;
+      // }
       const resp =
         provider === DefaultAccessType
           ? await service.saveGB(extraFormData)
@@ -249,7 +253,6 @@ const Save = () => {
                             form.setFieldsValue({
                               password: pwd,
                             });
-                            setOldPassword(pwd);
                           }}
                         />
                       </Form.Item>

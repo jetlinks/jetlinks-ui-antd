@@ -52,6 +52,8 @@ const Member = observer((props: { parentId: string }) => {
       search: {
         transform: (value) => ({ name$LIKE: value }),
       },
+      width: 120,
+      fixed: 'left',
     },
     {
       dataIndex: 'username',
@@ -62,6 +64,7 @@ const Member = observer((props: { parentId: string }) => {
       search: {
         transform: (value) => ({ username$LIKE: value }),
       },
+      width: 120,
     },
     {
       title: intl.formatMessage({
@@ -111,6 +114,7 @@ const Member = observer((props: { parentId: string }) => {
           }
         />
       ),
+      width: 80,
     },
     {
       title: intl.formatMessage({
@@ -119,6 +123,7 @@ const Member = observer((props: { parentId: string }) => {
       }),
       valueType: 'option',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <Popconfirm
           title={intl.formatMessage({

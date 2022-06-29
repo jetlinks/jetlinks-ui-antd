@@ -37,6 +37,11 @@ class Service extends BaseService<AccessItem> {
       params,
     });
   };
+  public getChildConfigView = (id: string) => {
+    return request(`/${SystemConst.API_BASE}/protocol/${id}/transports`, {
+      method: 'GET',
+    });
+  };
   public getConfigView = (id: string, transport: string) =>
     request(`/${SystemConst.API_BASE}/protocol/${id}/transport/${transport}`, {
       method: 'GET',

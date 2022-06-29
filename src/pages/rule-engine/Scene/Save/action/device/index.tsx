@@ -16,6 +16,7 @@ interface DeviceProps {
   onProperties: (data: any) => void;
   onMessageTypeChange: (type: string) => void;
   onFunctionChange: (functionItem: any) => void;
+  parallel?: boolean;
 }
 
 enum SourceEnum {
@@ -77,7 +78,6 @@ export default (props: DeviceProps) => {
   };
 
   useEffect(() => {
-    props.form?.resetFields([['actions', name, 'device', 'selector']]);
     if (props.triggerType === 'device') {
       setSourceList([
         ...DefaultSourceOptions,
@@ -87,6 +87,12 @@ export default (props: DeviceProps) => {
     } else {
       setSourceList(DefaultSourceOptions);
     }
+    props.form?.setFields([
+      {
+        name: ['actions', name, 'device', 'selector'],
+        value: SourceEnum.fixed,
+      },
+    ]);
   }, [props.triggerType]);
 
   useEffect(() => {

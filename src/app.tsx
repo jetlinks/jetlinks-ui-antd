@@ -22,6 +22,9 @@ import getRoutes, {
 } from '@/utils/menu';
 import { AIcon } from '@/components';
 import React from 'react';
+import 'moment/dist/locale/zh-cn';
+import moment from 'moment';
+moment.locale('zh-cn');
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';

@@ -69,6 +69,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'id',
       title: 'ID',
       width: 220,
+      fixed: 'left',
     },
     {
       dataIndex: 'name',
@@ -79,6 +80,7 @@ export default observer((props: { parentId: string }) => {
       search: {
         transform: (value) => ({ name$LIKE: value }),
       },
+      width: 200,
     },
     {
       title: '资产权限',
@@ -87,6 +89,7 @@ export default observer((props: { parentId: string }) => {
       render: (_, row) => {
         return handlePermissionsMap(row.grantedPermissions);
       },
+      width: 80,
     },
     {
       title: intl.formatMessage({
@@ -95,6 +98,7 @@ export default observer((props: { parentId: string }) => {
       }),
       dataIndex: 'describe',
       hideInSearch: true,
+      width: 200,
     },
     {
       title: intl.formatMessage({
@@ -104,6 +108,7 @@ export default observer((props: { parentId: string }) => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <Popconfirm
           title={intl.formatMessage({
@@ -232,6 +237,7 @@ export default observer((props: { parentId: string }) => {
             status: resp.status,
           };
         }}
+        scroll={{ x: 1366 }}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

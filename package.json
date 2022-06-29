@@ -87,7 +87,7 @@
     "isomorphic-form-data": "^2.0.0",
     "jetlinks-store": "^0.0.3",
     "lodash": "^4.17.11",
-    "moment": "^2.25.3",
+    "moment": "^2.29.3",
     "monaco-editor": "^0.30.0",
     "monaco-editor-webpack-plugin": "^6.0.0",
     "omit.js": "^2.0.2",

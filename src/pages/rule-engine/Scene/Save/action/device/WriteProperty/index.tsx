@@ -1,9 +1,10 @@
-import { Col, DatePicker, FormInstance, Input, InputNumber, Row, Select } from 'antd';
+import { Col, DatePicker, Input, InputNumber, Row, Select, TreeSelect } from 'antd';
+import type { FormInstance } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
-import { useRequest } from '@@/plugin-request/request';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import moment from 'moment';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
+import { Space } from '@formily/antd';
 
 interface WritePropertyProps {
   properties: any[];
@@ -11,40 +12,90 @@ interface WritePropertyProps {
   form: FormInstance;
   value?: any;
   onChange?: (value?: any) => void;
+  parallel?: boolean;
+  name: number;
 }
 
 export default (props: WritePropertyProps) => {
   const [source, setSource] = useState('fixed');
-  const [builtInList, setBuiltInList] = useState([]);
+  const [builtInList, setBuiltInList] = useState<any[]>([]);
   const [propertiesKey, setPropertiesKey] = useState<string | undefined>(undefined);
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
 
-  const { run: getBuiltInList } = useRequest(queryBuiltInParams, {
-    manual: true,
-    formatResult: (res) => res.result,
-    onSuccess: (res) => {
-      setBuiltInList(res);
-    },
-  });
+  const handleName = (data: any) => {
+    return (
+      <Space>
+        {data.name}
+        {data.description && (
+          <div style={{ color: 'grey', marginLeft: '5px' }}>({data.description})</div>
+        )}
+      </Space>
+    );
+  };
+
+  const handleTreeData = (data: any): any[] => {
+    if (data.length > 0) {
+      return data.map((item: any) => {
+        const name = handleName(item);
+        if (item.children) {
+          return { ...item, name, disabled: true, children: handleTreeData(item.children) };
+        }
+        return { ...item, name };
+      });
+    }
+    return [];
+  };
+
+  const onChange = (key?: string, value?: any, _source: string = 'fixed') => {
+    if (props.onChange) {
+      props.onChange({
+        [key || 0]: {
+          value,
+          source: _source,
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     if (source === 'upper') {
-      getBuiltInList({
-        trigger: { type: props.type },
-      });
+      onChange(propertiesKey, undefined, source);
+      if (props.parallel === false) {
+        // 串行
+        const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+        const data = props.form.getFieldsValue();
+        queryBuiltInParams(data, params).then((res: any) => {
+          if (res.status === 200) {
+            const actionParams = res.result.filter(
+              (item: any) => item.id === `action_${props.name}`,
+            );
+            const _data = props.name === 0 ? res.result : handleTreeData(actionParams);
+            setBuiltInList(_data);
+          }
+        });
+      } else {
+        // 并行
+        queryBuiltInParams({
+          trigger: { type: props.type },
+        }).then((res: any) => {
+          if (res.status === 200) {
+            setBuiltInList(handleTreeData(res.result));
+          }
+        });
+      }
     }
-  }, [source, props.type]);
+  }, [source, props.type, props.parallel]);
 
   useEffect(() => {
-    console.log('writeProperty', props.value);
     if (props.value && props.properties && props.properties.length) {
       if (0 in props.value) {
         setPropertiesValue(props.value[0]);
       } else {
         Object.keys(props.value).forEach((key: string) => {
           setPropertiesKey(key);
-          setPropertiesValue(props.value[key]);
+          setPropertiesValue(props.value[key].value);
+          setSource(props.value[key].source);
           const propertiesItem = props.properties.find((item: any) => item.id === key);
           if (propertiesItem) {
             setPropertiesType(propertiesItem.valueType.type);
@@ -53,14 +104,6 @@ export default (props: WritePropertyProps) => {
       }
     }
   }, [props.value, props.properties]);
-
-  const onChange = (key?: string, value?: any) => {
-    if (props.onChange) {
-      props.onChange({
-        [key || 0]: value,
-      });
-    }
-  };
 
   const inputNodeByType = useCallback(
     (type: string) => {
@@ -76,7 +119,7 @@ export default (props: WritePropertyProps) => {
               ]}
               placeholder={'请选择'}
               onChange={(value) => {
-                onChange(propertiesKey, value);
+                onChange(propertiesKey, value, source);
               }}
             />
           );
@@ -90,7 +133,7 @@ export default (props: WritePropertyProps) => {
               value={propertiesValue}
               placeholder={'请输入'}
               onChange={(value) => {
-                onChange(propertiesKey, value);
+                onChange(propertiesKey, value, source);
               }}
             />
           );
@@ -101,7 +144,11 @@ export default (props: WritePropertyProps) => {
               style={{ width: '100%' }}
               value={propertiesValue ? moment(propertiesValue, 'YYYY-MM-DD HH:mm:ss') : undefined}
               onChange={(date) => {
-                onChange(propertiesKey, date ? date.format('YYYY-MM-DD HH:mm:ss') : undefined);
+                onChange(
+                  propertiesKey,
+                  date ? date.format('YYYY-MM-DD HH:mm:ss') : undefined,
+                  source,
+                );
               }}
             />
           );
@@ -111,17 +158,17 @@ export default (props: WritePropertyProps) => {
               style={{ width: '100%' }}
               value={propertiesValue}
               placeholder={'请输入'}
-              onChange={(e) => onChange(propertiesKey, e.target.value)}
+              onChange={(e) => onChange(propertiesKey, e.target.value, source)}
             />
           );
       }
     },
-    [propertiesKey, propertiesValue],
+    [propertiesKey, propertiesValue, source],
   );
 
   return (
     <Row gutter={24}>
-      <Col span={4}>
+      <Col span={6}>
         <Select
           value={propertiesKey}
           options={props.properties.filter((item) => {
@@ -133,12 +180,12 @@ export default (props: WritePropertyProps) => {
           fieldNames={{ label: 'name', value: 'id' }}
           style={{ width: '100%' }}
           onSelect={(key: any) => {
-            onChange(key, undefined);
+            onChange(key, undefined, source);
           }}
           placeholder={'请选择属性'}
         ></Select>
       </Col>
-      <Col span={7}>
+      <Col span={16}>
         <ItemGroup compact>
           <Select
             value={source}
@@ -149,18 +196,31 @@ export default (props: WritePropertyProps) => {
             style={{ width: 120 }}
             onChange={(key) => {
               setSource(key);
+              onChange(propertiesKey, propertiesValue, key);
             }}
           />
           {source === 'upper' ? (
-            <Select
-              options={builtInList}
-              fieldNames={{ label: 'name', value: 'id' }}
+            <TreeSelect
               placeholder={'请选择参数'}
+              fieldNames={{
+                value: 'id',
+                label: 'name',
+              }}
+              value={propertiesValue}
+              treeData={builtInList}
               onSelect={(value: any) => {
-                onChange(propertiesKey, value);
+                onChange(propertiesKey, value, source);
               }}
             />
           ) : (
+            // <Select
+            //   options={builtInList}
+            //   fieldNames={{ label: 'name', value: 'id' }}
+            //   placeholder={'请选择参数'}
+            //   onSelect={(value: any) => {
+            //     onChange(propertiesKey, value);
+            //   }}
+            // />
             <div>{inputNodeByType(propertiesType)}</div>
           )}
         </ItemGroup>

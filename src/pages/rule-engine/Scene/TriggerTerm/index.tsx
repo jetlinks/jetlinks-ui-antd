@@ -301,8 +301,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                     type: 'void',
                     'x-component': 'FormGrid',
                     'x-decorator-props': {
-                      maxColumns: 24,
-                      minColumns: 24,
+                      columns: 12,
                     },
                     properties: {
                       // columns

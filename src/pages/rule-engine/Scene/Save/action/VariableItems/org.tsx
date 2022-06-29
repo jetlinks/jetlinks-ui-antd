@@ -6,6 +6,7 @@ import {
 } from '@/pages/rule-engine/Scene/Save/action/service';
 
 type ChangeType = {
+  source?: string;
   value?: string[];
 };
 
@@ -54,7 +55,10 @@ export default (props: OrgProps) => {
       }}
       onChange={(key) => {
         if (props.onChange) {
-          props.onChange({ value: key });
+          props.onChange({
+            source: 'fixed',
+            value: key,
+          });
         }
       }}
       placeholder={'请选择部门'}

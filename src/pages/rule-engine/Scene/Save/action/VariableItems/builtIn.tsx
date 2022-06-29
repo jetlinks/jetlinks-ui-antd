@@ -1,8 +1,10 @@
 import { DatePicker, Input, InputNumber, Select } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
-import { useRequest } from 'umi';
+import type { FormInstance } from 'antd';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
+import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
+
 import moment from 'moment';
 
 type ChangeType = {
@@ -18,6 +20,9 @@ interface BuiltInProps {
   notifyType?: string;
   onChange?: (value: ChangeType) => void;
   trigger?: any;
+  parallel?: boolean;
+  form: FormInstance;
+  name: number;
 }
 
 export default (props: BuiltInProps) => {
@@ -25,22 +30,35 @@ export default (props: BuiltInProps) => {
   const [value, setValue] = useState(props.value?.value);
   const [upperKey, setUpperKey] = useState(props.value?.upperKey);
 
-  const [builtInList, setBuiltInList] = useState([]);
-
-  const { run: getBuiltInList } = useRequest(queryBuiltInParams, {
-    manual: true,
-    formatResult: (res) => res.result,
-    onSuccess: (res) => {
-      setBuiltInList(res);
-    },
-  });
+  const [builtInList, setBuiltInList] = useState<any[]>([]);
 
   useEffect(() => {
     console.log(props.trigger);
-    if (source === 'upper' && props.trigger) {
-      getBuiltInList({ ...props.trigger });
+    // if (source === 'upper' && props.trigger) {
+    //   getBuiltInList({ ...props.trigger });
+    // }
+    if (source === 'upper') {
+      if (props.parallel === false) {
+        const data = props.form.getFieldsValue();
+        const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+        queryBuiltInParams(data, params).then((res: any) => {
+          if (res.status === 200) {
+            const actionParams = res.result.filter(
+              (item: any) => item.id === `action_${props.name}`,
+            );
+            const _data = props.name === 0 ? res.result : BuiltInParamsHandleTreeData(actionParams);
+            setBuiltInList(_data);
+          }
+        });
+      } else {
+        queryBuiltInParams({ ...props.trigger }).then((res: any) => {
+          if (res.status === 200) {
+            setBuiltInList(BuiltInParamsHandleTreeData(res.result));
+          }
+        });
+      }
     }
-  }, [source, props.trigger]);
+  }, [source, props.trigger, props.parallel]);
 
   useEffect(() => {
     setSource(props.value?.source);

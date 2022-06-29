@@ -266,7 +266,7 @@ const Config = () => {
     },
   };
 
-  const ioSchema: ISchema = {
+  const outputSchema: ISchema = {
     type: 'object',
     properties: {
       id: {
@@ -330,6 +330,36 @@ const Config = () => {
       //     },
       //   },
       // },
+    },
+  };
+
+  const inputSchema: ISchema = {
+    type: 'object',
+    properties: {
+      id: {
+        'x-component': 'Input',
+        'x-hidden': true,
+      },
+      address: {
+        title: 'kafka地址',
+        type: 'string',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入kafka地址',
+        },
+      },
+      topic: {
+        title: 'topic',
+        type: 'string',
+        required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入topic',
+        },
+      },
     },
   };
 
@@ -443,7 +473,7 @@ const Config = () => {
               }
             />
             <Form form={outputForm} layout="vertical">
-              <SchemaField schema={ioSchema} />
+              <SchemaField schema={outputSchema} />
             </Form>
             <Divider />
             <TitleComponent
@@ -457,7 +487,7 @@ const Config = () => {
               }
             />
             <Form form={inputForm} layout="vertical">
-              <SchemaField schema={ioSchema} />
+              <SchemaField schema={inputSchema} />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
                   <Button type="primary" onClick={handleSaveIO}>

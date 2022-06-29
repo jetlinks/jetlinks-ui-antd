@@ -13,7 +13,6 @@ import { service } from '../index';
 import './index.less';
 import { model } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
-import moment from 'moment';
 import { onlyMessage } from '@/utils/util';
 
 type ShakeLimitType = {
@@ -30,10 +29,6 @@ const DefaultShakeLimit = {
 };
 
 export let FormModel = model<FormModelType>({});
-
-const CronRegEx = new RegExp(
-  '(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7])|([1-7])|(\\?)|(\\*)|(([1-7]L)|([1-7]\\#[1-4]))))|(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7] )|([1-7] )|(\\? )|(\\* )|(([1-7]L )|([1-7]\\#[1-4]) ))((19[789][0-9]|20[0-9][0-9])\\-(19[789][0-9]|20[0-9][0-9])))',
-);
 
 export default () => {
   const location = useLocation();
@@ -202,16 +197,24 @@ export default () => {
     <PageContainer>
       <Card>
         <Form
+          scrollToFirstError={{
+            behavior: 'smooth',
+            block: 'end',
+          }}
           form={form}
           colon={false}
           name="basicForm"
           layout={'vertical'}
           preserve={false}
           className={'scene-save'}
+          initialValues={{
+            actions: [undefined],
+          }}
           onValuesChange={(changeValue, allValues) => {
             if (changeValue.trigger) {
               if (changeValue.trigger.device) {
                 if (
+                  changeValue.trigger.device.productId ||
                   changeValue.trigger.device.selectorValues ||
                   (changeValue.trigger.device.operation &&
                     hasKeyInObject(
@@ -258,7 +261,6 @@ export default () => {
                 }),
               },
             ]}
-            required
           >
             <Input placeholder={'请输入名称'} />
           </Form.Item>
@@ -270,72 +272,9 @@ export default () => {
               <TriggerWay onSelect={setTriggerType} disabled={isEdit} />
             </Form.Item>
             {triggerType === TriggerWayType.timing && (
-              <Form.Item
-                name={['trigger', 'timer']}
-                rules={[
-                  {
-                    validator: async (_: any, value: any) => {
-                      if (value) {
-                        if (value.trigger === 'cron') {
-                          if (!value.cron) {
-                            return Promise.reject(new Error('请输入cron表达式'));
-                          } else if (value.cron.length > 64) {
-                            return Promise.reject(new Error('最多可输入64个字符'));
-                          } else if (!CronRegEx.test(value.cron)) {
-                            return Promise.reject(new Error('请输入正确的cron表达式'));
-                          }
-                        } else {
-                          if (!value.when.length) {
-                            return Promise.reject(new Error('请选择时间'));
-                          }
-                          if (value.period) {
-                            if (!value.period.from || !value.period.to) {
-                              return Promise.reject(new Error('请选择时间周期'));
-                            }
-                            if (!value.period.every) {
-                              return Promise.reject(new Error('请输入周期频率'));
-                            }
-                          } else if (value.once) {
-                            if (!value.once.time) {
-                              return Promise.reject(new Error('请选择时间周期'));
-                            }
-                          }
-                        }
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-                initialValue={{
-                  trigger: 'week',
-                  mod: 'period',
-                  when: [],
-                  period: {
-                    unit: 'seconds',
-                    from: moment(new Date()).format('HH:mm:ss'),
-                    to: moment(new Date()).format('HH:mm:ss'),
-                  },
-                }}
-              >
-                <TimingTrigger className={'trigger-type-content'} />
-              </Form.Item>
+              <TimingTrigger name={['trigger']} form={form} className={'trigger-type-content'} />
             )}
             {triggerType === TriggerWayType.device && (
-              // <Form.Item
-              //   name={['trigger', 'device']}
-              //   rules={[
-              //     {
-              //       validator: async (_: any, value: any) => {
-              //         if (!value) {
-              //           return Promise.reject(new Error('请选择产品'));
-              //         }
-              //         return Promise.resolve();
-              //       },
-              //     },
-              //   ]}
-              // >
-              //   <TriggerDevice className={'trigger-type-content'} />
-              // </Form.Item>
               <TriggerDevice value={triggerDatas} className={'trigger-type-content'} form={form} />
             )}
           </Form.Item>
@@ -352,15 +291,7 @@ export default () => {
           <Form.Item
             label={
               <Space>
-                <TitleComponent
-                  data={
-                    <>
-                      <span>执行动作</span>
-                      <span style={{ color: 'red', margin: '0 4px' }}>*</span>
-                    </>
-                  }
-                  style={{ margin: 0 }}
-                />
+                <TitleComponent data={<span>执行动作</span>} style={{ margin: 0 }} />
                 <Tooltip
                   title={
                     <div>
@@ -386,22 +317,10 @@ export default () => {
               </Space>
             }
           >
-            <Form.List
-              name="actions"
-              rules={[
-                {
-                  validator: async (_: any, value: any) => {
-                    if (!value) {
-                      return Promise.reject(new Error('请添加执行动作'));
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
+            <Form.List name="actions">
               {(fields, { add, remove }, { errors }) => (
                 <>
-                  <div className={'scene-actions'}>
+                  <div className={'scene-actions'} style={{ paddingBottom: 24 }}>
                     {fields.map(({ key, name, ...restField }) => (
                       <ActionItems
                         key={key}
@@ -412,6 +331,7 @@ export default () => {
                         triggerType={triggerType}
                         onRemove={() => remove(name)}
                         actionItemData={actionsData.length && actionsData[name]}
+                        parallel={parallel}
                       />
                     ))}
                     <Form.Item noStyle>
@@ -441,15 +361,16 @@ export default () => {
           <Form.Item hidden name={'id'}>
             <Input />
           </Form.Item>
+          <PermissionButton
+            isPermission={getOtherPermission(['add', 'update'])}
+            onClick={saveData}
+            type={'primary'}
+            loading={loading}
+            htmlType="submit"
+          >
+            保存
+          </PermissionButton>
         </Form>
-        <PermissionButton
-          isPermission={getOtherPermission(['add', 'update'])}
-          onClick={saveData}
-          type={'primary'}
-          loading={loading}
-        >
-          保存
-        </PermissionButton>
       </Card>
     </PageContainer>
   );
