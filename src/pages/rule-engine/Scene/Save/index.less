@@ -3,18 +3,22 @@
 .scene-save {
   .trigger-type-content,
   & .scene-actions {
-    padding: 24px;
+    padding: 24px 24px 0 24px;
     background-color: @bgColor;
   }
 
-  .trigger-type-content {
-    > .ant-row {
-      margin-bottom: 24px;
-
-      &:last-child,
-      &:first-child {
-        margin-bottom: 0;
-      }
-    }
+  .ant-form-item-with-help .ant-form-item-explain {
+    height: 0 !important;
   }
+
+  //.trigger-type-content {
+  //  > .ant-row {
+  //    margin-bottom: 24px;
+  //
+  //    &:last-child,
+  //    &:first-child {
+  //      margin-bottom: 0;
+  //    }
+  //  }
+  //}
 }

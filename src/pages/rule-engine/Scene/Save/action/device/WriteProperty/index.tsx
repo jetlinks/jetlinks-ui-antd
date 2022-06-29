@@ -47,20 +47,35 @@ export default (props: WritePropertyProps) => {
     return [];
   };
 
+  const onChange = (key?: string, value?: any, _source: string = 'fixed') => {
+    if (props.onChange) {
+      props.onChange({
+        [key || 0]: {
+          value,
+          source: _source,
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     if (source === 'upper') {
+      onChange(propertiesKey, undefined, source);
       if (props.parallel === false) {
-        const data = props.form.getFieldsValue();
+        // 串行
         const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+        const data = props.form.getFieldsValue();
         queryBuiltInParams(data, params).then((res: any) => {
           if (res.status === 200) {
             const actionParams = res.result.filter(
               (item: any) => item.id === `action_${props.name}`,
             );
-            setBuiltInList(handleTreeData(actionParams));
+            const _data = props.name === 0 ? res.result : handleTreeData(actionParams);
+            setBuiltInList(_data);
           }
         });
       } else {
+        // 并行
         queryBuiltInParams({
           trigger: { type: props.type },
         }).then((res: any) => {
@@ -73,14 +88,14 @@ export default (props: WritePropertyProps) => {
   }, [source, props.type, props.parallel]);
 
   useEffect(() => {
-    console.log('writeProperty', props.value);
     if (props.value && props.properties && props.properties.length) {
       if (0 in props.value) {
         setPropertiesValue(props.value[0]);
       } else {
         Object.keys(props.value).forEach((key: string) => {
           setPropertiesKey(key);
-          setPropertiesValue(props.value[key]);
+          setPropertiesValue(props.value[key].value);
+          setSource(props.value[key].source);
           const propertiesItem = props.properties.find((item: any) => item.id === key);
           if (propertiesItem) {
             setPropertiesType(propertiesItem.valueType.type);
@@ -89,14 +104,6 @@ export default (props: WritePropertyProps) => {
       }
     }
   }, [props.value, props.properties]);
-
-  const onChange = (key?: string, value?: any) => {
-    if (props.onChange) {
-      props.onChange({
-        [key || 0]: value,
-      });
-    }
-  };
 
   const inputNodeByType = useCallback(
     (type: string) => {
@@ -112,7 +119,7 @@ export default (props: WritePropertyProps) => {
               ]}
               placeholder={'请选择'}
               onChange={(value) => {
-                onChange(propertiesKey, value);
+                onChange(propertiesKey, value, source);
               }}
             />
           );
@@ -126,7 +133,7 @@ export default (props: WritePropertyProps) => {
               value={propertiesValue}
               placeholder={'请输入'}
               onChange={(value) => {
-                onChange(propertiesKey, value);
+                onChange(propertiesKey, value, source);
               }}
             />
           );
@@ -137,7 +144,11 @@ export default (props: WritePropertyProps) => {
               style={{ width: '100%' }}
               value={propertiesValue ? moment(propertiesValue, 'YYYY-MM-DD HH:mm:ss') : undefined}
               onChange={(date) => {
-                onChange(propertiesKey, date ? date.format('YYYY-MM-DD HH:mm:ss') : undefined);
+                onChange(
+                  propertiesKey,
+                  date ? date.format('YYYY-MM-DD HH:mm:ss') : undefined,
+                  source,
+                );
               }}
             />
           );
@@ -147,12 +158,12 @@ export default (props: WritePropertyProps) => {
               style={{ width: '100%' }}
               value={propertiesValue}
               placeholder={'请输入'}
-              onChange={(e) => onChange(propertiesKey, e.target.value)}
+              onChange={(e) => onChange(propertiesKey, e.target.value, source)}
             />
           );
       }
     },
-    [propertiesKey, propertiesValue],
+    [propertiesKey, propertiesValue, source],
   );
 
   return (
@@ -169,7 +180,7 @@ export default (props: WritePropertyProps) => {
           fieldNames={{ label: 'name', value: 'id' }}
           style={{ width: '100%' }}
           onSelect={(key: any) => {
-            onChange(key, undefined);
+            onChange(key, undefined, source);
           }}
           placeholder={'请选择属性'}
         ></Select>
@@ -185,6 +196,7 @@ export default (props: WritePropertyProps) => {
             style={{ width: 120 }}
             onChange={(key) => {
               setSource(key);
+              onChange(propertiesKey, propertiesValue, key);
             }}
           />
           {source === 'upper' ? (
@@ -197,7 +209,7 @@ export default (props: WritePropertyProps) => {
               value={propertiesValue}
               treeData={builtInList}
               onSelect={(value: any) => {
-                onChange(propertiesKey, value);
+                onChange(propertiesKey, value, source);
               }}
             />
           ) : (

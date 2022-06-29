@@ -9,11 +9,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           persist-credentials: false
-      - name: Cache npm Repository
-        uses: actions/cache@v1
-        with:
-          path: ./node_modules
-          key: jetlinks-ui-pro-repository
+#      - name: Cache npm Repository
+#        uses: actions/cache@v1
+#        with:
+#          path: ./node_modules
+#          key: jetlinks-ui-pro-repository
       - name: Install 🔧
         run: |
           yarn install
