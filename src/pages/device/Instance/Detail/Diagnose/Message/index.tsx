@@ -1,8 +1,8 @@
 import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
-import { Button, Col, DatePicker, Empty, Input, InputNumber, Row, Select } from 'antd';
-import { useEffect, useState } from 'react';
+import { Badge, Button, Col, DatePicker, Empty, Input, InputNumber, Row, Select } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
@@ -20,19 +20,13 @@ import {
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
 import Log from './Log';
-import { Store } from 'jetlinks-store';
-
-interface Props {
-  onChange: (type: string) => void;
-}
+import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Status/model';
+import { observer } from '@formily/reactive-react';
 
 const DatePicker1: any = DatePicker;
 
-const Message = (props: Props) => {
+const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const [dialogList, setDialogList] = useState<any[]>([]);
-  const [tempList, setTempList] = useState<any[]>([]);
-  const [logList, setLogList] = useState<any[]>([]);
   const [type, setType] = useState<'property' | 'function'>('function');
   const [input, setInput] = useState<any>({});
   const [inputs, setInputs] = useState<any[]>([]);
@@ -50,17 +44,19 @@ const Message = (props: Props) => {
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
         if (payload.type === 'log') {
-          logList.push({
-            key: randomString(),
-            ...payload,
-          });
-          setLogList([...logList]);
+          DiagnoseStatusModel.logList = [
+            ...DiagnoseStatusModel.logList,
+            {
+              key: randomString(),
+              ...payload,
+            },
+          ];
         } else {
-          tempList.push({
-            key: randomString(),
-            ...payload,
-          });
-          const flag = [...tempList]
+          DiagnoseStatusModel.allDialogList = [
+            ...DiagnoseStatusModel.logList,
+            { key: randomString(), ...payload },
+          ];
+          const flag = [...DiagnoseStatusModel.allDialogList]
             .filter(
               (i) =>
                 i.traceId === payload.traceId &&
@@ -69,21 +65,26 @@ const Message = (props: Props) => {
             .every((item) => {
               return !item.error;
             });
-          if (!flag) {
-            props.onChange(!payload.upstream ? 'down-error' : 'up-error');
+          if (!payload.upstream) {
+            DiagnoseStatusModel.message.down = {
+              text: !flag ? '下行消息通信异常' : '下行消息通信正常',
+              status: !flag ? 'error' : 'success',
+            };
           } else {
-            props.onChange(!payload.upstream ? 'down-success' : 'up-success');
+            DiagnoseStatusModel.message.up = {
+              text: !flag ? '上行消息通信异常' : '上行消息通信正常',
+              status: !flag ? 'error' : 'success',
+            };
           }
-          setTempList([...tempList]);
-          Store.set('temp', tempList);
-          const t = dialogList.find(
+          const list = [...DiagnoseStatusModel.dialogList];
+          const t = list.find(
             (item) =>
               item.traceId === payload.traceId &&
               payload.downstream === item.downstream &&
               payload.upstream === item.upstream,
           );
           if (t) {
-            dialogList.map((item) => {
+            list.map((item) => {
               if (item.key === payload.traceId) {
                 item.list.push({
                   key: randomString(),
@@ -92,7 +93,7 @@ const Message = (props: Props) => {
               }
             });
           } else {
-            dialogList.push({
+            list.push({
               key: randomString(),
               traceId: payload.traceId,
               downstream: payload.downstream,
@@ -105,8 +106,7 @@ const Message = (props: Props) => {
               ],
             });
           }
-          setDialogList([...dialogList]);
-          Store.set('diagnose', dialogList);
+          DiagnoseStatusModel.dialogList = [...list];
         }
         const chatBox = document.getElementById('dialog');
         if (chatBox) {
@@ -166,44 +166,46 @@ const Message = (props: Props) => {
     }
   };
   useEffect(() => {
-    subscribeLog();
-    const arr = Store.get('diagnose') || [];
-    setDialogList(arr);
-    const temp = Store.get('temp') || [];
-    setTempList(temp);
-  }, []);
+    if (DiagnoseStatusModel.state === 'success') {
+      subscribeLog();
+    }
+  }, [DiagnoseStatusModel.state]);
 
-  const form = createForm({
-    initialValues: {
-      data: [...inputs],
-    },
-    effects() {
-      onFieldReact('data.*.valueType.type', (field) => {
-        const value = (field as Field).value;
-        const format = field.query('..value').take() as any;
-        if (format) {
-          switch (value) {
-            case 'date':
-              format.setComponent(FDatePicker);
-              break;
-            case 'boolean':
-              format.setComponent(FSelect);
-              format.setDataSource([
-                { label: '是', value: true },
-                { label: '否', value: false },
-              ]);
-              break;
-            case 'int':
-              format.setComponent(NumberPicker);
-              break;
-            default:
-              format.setComponent(FInput);
-              break;
-          }
-        }
-      });
-    },
-  });
+  const form = useMemo(
+    () =>
+      createForm({
+        initialValues: {
+          data: [...inputs],
+        },
+        effects() {
+          onFieldReact('data.*.valueType.type', (field) => {
+            const value = (field as Field).value;
+            const format = field.query('..value').take() as any;
+            if (format) {
+              switch (value) {
+                case 'date':
+                  format.setComponent(FDatePicker);
+                  break;
+                case 'boolean':
+                  format.setComponent(FSelect);
+                  format.setDataSource([
+                    { label: '是', value: true },
+                    { label: '否', value: false },
+                  ]);
+                  break;
+                case 'int':
+                  format.setComponent(NumberPicker);
+                  break;
+                default:
+                  format.setComponent(FInput);
+                  break;
+              }
+            }
+          });
+        },
+      }),
+    [],
+  );
 
   const dataRender = () => {
     switch (type) {
@@ -352,69 +354,87 @@ const Message = (props: Props) => {
   return (
     <Row gutter={24}>
       <Col span={16}>
-        <TitleComponent data="调试" />
-        <div className="content">
-          <div className="dialog" id="dialog">
-            {dialogList.map((item) => (
-              <Dialog data={item} key={item.key} />
-            ))}
+        <div>
+          <div style={{ marginBottom: 20 }}>
+            <Row gutter={24}>
+              {Object.keys(DiagnoseStatusModel.message).map((key) => {
+                const obj = DiagnoseStatusModel.message[key];
+                return (
+                  <Col key={key} span={12}>
+                    <div style={messageStyleMap.get(obj.status)} className="message-status">
+                      <Badge status={messageStatusMap.get(obj.status)} />
+                      {obj.text}
+                    </div>
+                  </Col>
+                );
+              })}
+            </Row>
           </div>
-        </div>
-        <div className="function">
-          <Row gutter={24}>
-            <Col span={5}>
-              <Select
-                value={type}
-                placeholder="请选择"
-                style={{ width: '100%' }}
-                onChange={(value) => {
-                  setType(value);
-                  setInputs([]);
-                  setInput({});
-                }}
-              >
-                <Select.Option value="function">调用功能</Select.Option>
-                <Select.Option value="property">操作属性</Select.Option>
-              </Select>
-            </Col>
-            {dataRender()}
-            <Col span={3}>
-              <Button
-                type="primary"
-                onClick={async () => {
-                  props.onChange('waiting');
-                  if (type === 'function') {
-                    const list = (form?.values?.data || []).filter((it) => !!it.value);
-                    const obj = {};
-                    list.map((it) => {
-                      obj[it.id] = it.value;
-                    });
-                    await service.executeFunctions(InstanceModel.detail?.id || '', input.id, {
-                      ...obj,
-                    });
-                  } else {
-                    if (propertyType === 'read') {
-                      await service.readProperties(InstanceModel.detail?.id || '', [property]);
-                    } else {
-                      await service.settingProperties(InstanceModel.detail?.id || '', {
-                        [property]: propertyValue,
-                      });
-                    }
-                  }
-                }}
-              >
-                发送
-              </Button>
-            </Col>
-          </Row>
-          {inputs.length > 0 && (
-            <div className="parameter">
-              <h4>功能参数</h4>
-              <FormProvider form={form}>
-                <SchemaField schema={schema} />
-              </FormProvider>
+          <div>
+            <TitleComponent data="调试" />
+            <div className="content">
+              <div className="dialog" id="dialog">
+                {DiagnoseStatusModel.dialogList.map((item) => (
+                  <Dialog data={item} key={item.key} />
+                ))}
+              </div>
             </div>
-          )}
+            <div className="function">
+              <Row gutter={24}>
+                <Col span={5}>
+                  <Select
+                    value={type}
+                    placeholder="请选择"
+                    style={{ width: '100%' }}
+                    onChange={(value) => {
+                      setType(value);
+                      setInputs([]);
+                      setInput({});
+                    }}
+                  >
+                    <Select.Option value="function">调用功能</Select.Option>
+                    <Select.Option value="property">操作属性</Select.Option>
+                  </Select>
+                </Col>
+                {dataRender()}
+                <Col span={3}>
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      if (type === 'function') {
+                        const list = (form?.values?.data || []).filter((it) => !!it.value);
+                        const obj = {};
+                        list.map((it) => {
+                          obj[it.id] = it.value;
+                        });
+                        await service.executeFunctions(InstanceModel.detail?.id || '', input.id, {
+                          ...obj,
+                        });
+                      } else {
+                        if (propertyType === 'read') {
+                          await service.readProperties(InstanceModel.detail?.id || '', [property]);
+                        } else {
+                          await service.settingProperties(InstanceModel.detail?.id || '', {
+                            [property]: propertyValue,
+                          });
+                        }
+                      }
+                    }}
+                  >
+                    发送
+                  </Button>
+                </Col>
+              </Row>
+              {inputs.length > 0 && (
+                <div className="parameter">
+                  <h4>功能参数</h4>
+                  <FormProvider form={form}>
+                    <SchemaField schema={schema} />
+                  </FormProvider>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </Col>
       <Col span={8}>
@@ -430,8 +450,8 @@ const Message = (props: Props) => {
         >
           <TitleComponent data={'日志'} />
           <div style={{ marginTop: 10 }}>
-            {logList.length > 0 ? (
-              logList.map((item) => <Log data={item} key={item.key} />)
+            {DiagnoseStatusModel.logList.length > 0 ? (
+              DiagnoseStatusModel.logList.map((item) => <Log data={item} key={item.key} />)
             ) : (
               <Empty />
             )}
@@ -440,6 +460,6 @@ const Message = (props: Props) => {
       </Col>
     </Row>
   );
-};
+});
 
 export default Message;

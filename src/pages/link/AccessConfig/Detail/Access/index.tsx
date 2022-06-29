@@ -101,13 +101,21 @@ const Access = (props: Props) => {
       if (!procotolCurrent) {
         onlyMessage('请选择消息协议！', 'error');
       } else {
-        service
-          .getConfigView(procotolCurrent, ProcotoleMapping.get(props.provider?.id))
-          .then((resp) => {
+        if (props.provider?.channel !== 'child-device') {
+          service
+            .getConfigView(procotolCurrent, ProcotoleMapping.get(props.provider?.id))
+            .then((resp) => {
+              if (resp.status === 200) {
+                setConfig(resp.result);
+              }
+            });
+        } else {
+          service.getChildConfigView(procotolCurrent).then((resp) => {
             if (resp.status === 200) {
               setConfig(resp.result);
             }
           });
+        }
         setCurrent(current + 1);
       }
     }
@@ -440,13 +448,9 @@ const Access = (props: Props) => {
                         borderColor:
                           procotolCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
                       }}
-                      hoverable={!props.data.id}
+                      hoverable
                       onClick={() => {
-                        if (!props.data.id) {
-                          setProcotolCurrent(item.id);
-                        } else {
-                          onlyMessage('消息协议不可修改', 'warning');
-                        }
+                        setProcotolCurrent(item.id);
                       }}
                     >
                       <div style={{ height: '45px' }}>

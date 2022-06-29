@@ -197,14 +197,16 @@ const Role: React.FC = observer(() => {
       CurdModel.add();
     }
     const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
-      console.log('订阅数据');
       if ((window as any).onTabSaveSuccess) {
         (window as any).onTabSaveSuccess(data);
         setTimeout(() => window.close(), 300);
+      } else {
+        history.push(`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], data.id)}`);
       }
     });
     return () => subscription.unsubscribe();
   }, []);
+
   return (
     <PageContainer>
       <BaseCrud<RoleItem>

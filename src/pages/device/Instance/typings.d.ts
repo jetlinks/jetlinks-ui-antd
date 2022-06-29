@@ -43,6 +43,7 @@ export type DeviceInstance = {
   accessProvider?: string;
   accessId?: string;
   features?: any[];
+  parentId?: string;
 };
 
 type Unit = {

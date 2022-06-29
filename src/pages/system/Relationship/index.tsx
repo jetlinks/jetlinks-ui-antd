@@ -10,6 +10,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import Save from './Save';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+import { message } from 'antd';
 
 export const service = new Service('relation');
 
@@ -85,6 +86,8 @@ const Relationship = () => {
                   }),
                 );
                 actionRef.current?.reload();
+              } else {
+                message.error(resp.message);
               }
             },
           }}
