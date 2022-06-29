@@ -822,7 +822,7 @@ const Save = observer(() => {
 
   const { getOtherPermission } = usePermissions('link/Type');
   return (
-    <PageContainer className={'page-title-show'} onBack={() => history.back()}>
+    <PageContainer>
       <Card>
         <Form form={form} layout="vertical" style={{ padding: 30 }}>
           <SchemaField

@@ -107,7 +107,7 @@ const Login: React.FC = () => {
       },
       password: {
         type: 'string',
-        'x-validator': { required: true, message: '请输入用户名！' },
+        'x-validator': { required: true, message: '请输入密码！' },
         'x-decorator': 'FormItem',
         'x-component': 'Password',
         'x-component-props': {

@@ -119,10 +119,14 @@ const BindUser = (props: Props) => {
             ],
           });
           return {
-            result: { data: response.result.data },
+            result: {
+              data: response.result.data,
+              pageSize: response.result.pageSize,
+              pageIndex: response.result.pageIndex,
+              total: response.result.total,
+            },
             success: true,
             status: 200,
-            total: response.result.total,
           } as any;
         }}
         columns={columns}

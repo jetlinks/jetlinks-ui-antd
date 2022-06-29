@@ -9,14 +9,13 @@ import {
   EditOutlined,
   PlayCircleOutlined,
   PlusOutlined,
-  SafetyOutlined,
   StopOutlined,
 } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useRef, useState } from 'react';
 import Save from './Save';
 import { observer } from '@formily/react';
-import { PermissionButton } from '@/components';
+import { AIcon, PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import ResetPassword from '@/pages/system/User/ResetPassword';
 import { useDomFullHeight } from '@/hooks';
@@ -192,7 +191,7 @@ const User = observer(() => {
           }}
           isPermission={userPermission.update}
         >
-          <SafetyOutlined />
+          <AIcon type={'icon-zhongzhimima'} />
         </PermissionButton>,
         <PermissionButton
           type="link"

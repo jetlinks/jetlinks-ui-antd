@@ -156,6 +156,7 @@ export default (props: LeftTreeType) => {
       showIcon
       showLine={{ showLeafIcon: false }}
       height={700}
+      style={{ minWidth: 145 }}
       fieldNames={{
         title: 'name',
         key: 'id',
