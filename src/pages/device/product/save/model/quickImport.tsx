@@ -16,7 +16,6 @@ import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
 import { DeviceProduct } from "@/pages/device/product/data";
 import encodeQueryParam from "@/utils/encodeParam";
-import { getAccessToken } from '@/utils/authority';
 
 interface Props extends FormComponentProps {
   close: Function;
@@ -158,26 +157,48 @@ const QuickImport: React.FC<Props> = props => {
           <Row gutter={24}>
             <Col span={6}>
               <Upload
-              action="/jetlinks/file/static"
-              headers={{
-                'X-Access-Token': getAccessToken(),
-              }}
+              // action="/jetlinks/file/static"
+              // headers={{
+              //   'X-Access-Token': getAccessToken(),
+              // }}
                 showUploadList={false} accept='.json'
                 beforeUpload={(file) => {
+                  // const reader = new FileReader();
+                  // reader.readAsText(file);
+                  // reader.onload = (result) => {
+                  //   try {
+                  //     let data = JSON.parse(result.target.result);
+                  //     if (data.tags || data.properties || data.functions || data.events) {
+                  //       setMetaData(JSON.stringify(data, null, 2));
+                  //     } else {
+                  //       message.error('文件内容格式错误');
+                  //     }
+                  //   } catch (error) {
+                  //     message.error('文件内容格式错误');
+                  //   }
+                  // }
                   const reader = new FileReader();
                   reader.readAsText(file);
-                  reader.onload = (result) => {
+                  reader.onload = async (result) => {
+                    const text = result.target?.result as string;
+                    if (!file.type.includes('json')) {
+                      message.error('请上传json格式文件');
+                      return false;
+                    }
                     try {
-                      let data = JSON.parse(result.target.result);
+                      const data = JSON.parse(text || '{}');
                       if (data.tags || data.properties || data.functions || data.events) {
                         setMetaData(JSON.stringify(data, null, 2));
                       } else {
                         message.error('文件内容格式错误');
                       }
-                    } catch (error) {
-                      message.error('文件内容格式错误');
+                      return true;
+                    } catch {
+                      message.error('请上传json格式文件');
                     }
-                  }
+                    return true;
+                  };
+                  return false;
                 }}
               >
                 <Button>

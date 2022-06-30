@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
-import { Badge, Button, message, Modal, Radio, Spin, Upload } from 'antd';
+import { Alert, Badge, Button, message, Modal, Radio, Spin, Upload } from 'antd';
 import { UploadProps } from 'antd/lib/upload';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
@@ -53,7 +53,7 @@ const Import: React.FC<Props> = props => {
 
     const uploadProps: UploadProps = {
         accept: fileType === ".xlsx" ? ".xlsx, .xls" : fileType,
-        action: '/jetlinks/file/static',
+        action: '/jetlinks/file/upload',
         headers: {
             'X-Access-Token': getAccessToken(),
         },
@@ -67,7 +67,7 @@ const Import: React.FC<Props> = props => {
             if (info.file.status === 'done') {
                 setUploading(false);
                 message.success('文件上传成功');
-                submitData(info.file.response.result);
+                submitData(info.file.response.result?.id);
             }
         },
     };
@@ -138,6 +138,7 @@ const Import: React.FC<Props> = props => {
                             </div>
                         )}
                     </Form.Item>
+                    {fileType === '.csv' && <Alert message="需要手动将文件字符集修改为utf-8" type="error" />}
                 </Form>
             </Spin>
         </Modal>

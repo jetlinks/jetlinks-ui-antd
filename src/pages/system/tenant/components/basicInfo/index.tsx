@@ -24,7 +24,7 @@ const BasicInfo = (props: Props) => {
   const service = new Service('tenant');
   const uploadProps: UploadProps = {
     // accept: ,
-    action: '/jetlinks/file/static',
+    action: '/jetlinks/file/upload',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
@@ -34,7 +34,7 @@ const BasicInfo = (props: Props) => {
         setLoading(true);
       }
       if (info.file.status === 'done') {
-        setPhoto(info.file.response.result);
+        setPhoto(info.file.response.result?.id);
         message.success('上传成功');
         setLoading(false);
       }
@@ -95,7 +95,7 @@ const BasicInfo = (props: Props) => {
             <>
               <div className={styles.avatar_title}>头像</div>
               <div className={styles.avatar}>
-                <img src={photo || data?.photo || defaultimg} alt="avatar" />
+                <img src={(photo || data?.photo) ? `/jetlinks/file/${photo || data?.photo}?:X_Access_Token=${getAccessToken()}` : defaultimg} alt="avatar" />
               </div>
               <Upload {...uploadProps} showUploadList={false}>
                 <div className={styles.button_view}>

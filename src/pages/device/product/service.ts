@@ -250,7 +250,7 @@ export async function getAggTypeList() {
 //解析文件为属性物模型
 export async function uploadProperties(fileUrl: string, productId: string) {
   return request(
-    `/jetlinks/device/product/${productId}/property-metadata/import?fileUrl=${fileUrl}`,
+    `/jetlinks/device/product/${productId}/property-metadata/import?fileId=${fileUrl}`,
     {
       method: 'POST',
     },

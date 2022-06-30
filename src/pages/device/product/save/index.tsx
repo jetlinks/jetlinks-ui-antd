@@ -376,14 +376,14 @@ const Save: React.FC<Props> = props => {
   };
 
   const uploadProps: UploadProps = {
-    action: '/jetlinks/file/static',
+    action: '/jetlinks/file/upload',
     headers: {
       'X-Access-Token': getAccessToken(),
     },
     showUploadList: false,
     onChange(info) {
       if (info.file.status === 'done') {
-        setPhotoUrl(info.file.response.result);
+        setPhotoUrl(info.file.response.result?.id);
         message.success('上传成功');
       }
     },
@@ -402,7 +402,7 @@ const Save: React.FC<Props> = props => {
           <Form.Item label="图标">
             <>
               <div className={styles.avatar}>
-                <Avatar size={80} src={photoUrl || props.data?.photoUrl || productImg} />
+                <Avatar size={80} src={(photoUrl || props.data?.photoUrl) ? `/jetlinks/file/${photoUrl || props.data?.photoUrl}?:X_Access_Token=${getAccessToken()}` : productImg} />
               </div>
               <Upload {...uploadProps} showUploadList={false}>
                 <Button>

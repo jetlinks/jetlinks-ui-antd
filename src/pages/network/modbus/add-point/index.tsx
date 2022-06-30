@@ -67,7 +67,7 @@ const AddPoint = (props: Props) => {
                             showSearch
                             filterOption={(input, option) =>
                                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                              }
+                            }
                         >
                             {
                                 metaData.map(item => (
@@ -155,6 +155,21 @@ const AddPoint = (props: Props) => {
                             initialValue: props.data.address,
                         })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
                     </Form.Item>
+                    <Form.Item key="quantity" label='寄存器数量'>
+                        {getFieldDecorator('quantity', {
+                            rules: [
+                                { required: true, message: '请输入' },
+                                {
+                                    validator: async (rule, value, callback) => {
+                                        if (!(/(^[0-9]\d*$)/.test(value))) {
+                                            callback('请输入正整数');
+                                        }
+                                    }
+                                }
+                            ],
+                            initialValue: props.data.quantity,
+                        })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
+                    </Form.Item>
                     <Form.Item key="revertBytes" label="变换器寄存器高低字节">
                         {getFieldDecorator('codecConfig.revertBytes', {
                             rules: [
@@ -190,17 +205,18 @@ const AddPoint = (props: Props) => {
                             initialValue: props.data?.codecConfig?.scaleFactor || 1,
                         })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
                     </Form.Item>
-                    <Form.Item key="unsigned" label="数据格式转换">
-                        {getFieldDecorator('codecConfig.unsigned', {
+                    <Form.Item key="format" label="数据格式">
+                        {getFieldDecorator('codecConfig.format', {
                             rules: [
                                 { required: true, message: '请选择' }
                             ],
-                            initialValue: props.data?.codecConfig?.unsigned || false,
+                            initialValue: props.data?.codecConfig?.format || false,
                         })(
-                            <Radio.Group>
-                                <Radio value={false}>无符号数字</Radio>
-                                <Radio value={true}>有符号数字</Radio>
-                            </Radio.Group>
+                            <Select placeholder="请选择">
+                                <Select.Option value={'unsigned'}>无符号数字</Select.Option>
+                                <Select.Option value={'signed'}>有符号数字</Select.Option>
+                                <Select.Option value={'ieee754'}>IEEE754</Select.Option>
+                            </Select>
                         )}
                     </Form.Item>
                     <Form.Item key="interval" label={

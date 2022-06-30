@@ -12,6 +12,7 @@ import Service from './service';
 import Save from './save';
 import { PaginationConfig } from 'antd/lib/pagination';
 import encodeQueryParam from '@/utils/encodeParam';
+import { getAccessToken } from '@/utils/authority';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -184,7 +185,7 @@ const UserTenant = () => {
                   ]}
                 >
                   <List.Item.Meta
-                    avatar={<Avatar src={item.photo || defaultImg} shape="square" size="large" />}
+                    avatar={<Avatar src={item.photo ? `/jetlinks/file/${item.photo}?:X_Access_Token=${getAccessToken()}` : defaultImg} shape="square" size="large" />}
                     title={<a>{item.name}</a>}
                     description={item.description}
                   />

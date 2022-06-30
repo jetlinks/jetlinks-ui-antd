@@ -114,7 +114,7 @@ const DeviceModel: React.FC<Props> = props => {
 
   useEffect(() => {
     apis.deviceProdcut
-      .deviceCategory({paging:false})
+      .deviceCategory({ paging: false })
       .then((response: any) => {
         if (response.status === 200) {
           setCategoryList(
@@ -127,7 +127,7 @@ const DeviceModel: React.FC<Props> = props => {
           );
         }
       })
-      .catch(() => {});
+      .catch(() => { });
 
     apis.deviceProdcut
       .protocolSupport()
@@ -136,7 +136,7 @@ const DeviceModel: React.FC<Props> = props => {
           setProtocolSupports(response.result.map((i: any) => ({ id: i.id, name: i.name })));
         }
       })
-      .catch(() => {});
+      .catch(() => { });
 
     handleSearch(searchParam);
   }, []);
@@ -266,8 +266,8 @@ const DeviceModel: React.FC<Props> = props => {
                     props: {
                       data: categoryList,
                       dropdownStyle: { maxHeight: 500 },
-                      showSearch:true,
-                      optionFilterProp:'children'
+                      showSearch: true,
+                      optionFilterProp: 'children'
                     },
                   },
                   {
@@ -308,22 +308,47 @@ const DeviceModel: React.FC<Props> = props => {
               <Divider type="vertical" />
 
               <Upload
-              action="/jetlinks/file/static"
-              headers={{
-                'X-Access-Token': getAccessToken(),
-              }}
+                // action="/jetlinks/file/static"
+                // headers={{
+                //   'X-Access-Token': getAccessToken(),
+                // }}
                 showUploadList={false}
                 accept=".json"
                 beforeUpload={file => {
+                  // const reader = new FileReader();
+                  // reader.readAsText(file);
+                  // reader.onload = result => {
+                  //   try {
+                  //     console.log(JSON.parse(result.target.result))
+                  //     // uploadProps(JSON.parse(result.target.result));
+                  //   } catch (error) {
+                  //     message.error('文件格式错误');
+                  //   }
+                  // };
                   const reader = new FileReader();
                   reader.readAsText(file);
-                  reader.onload = result => {
-                    try {
-                      uploadProps(JSON.parse(result.target.result));
-                    } catch (error) {
-                      message.error('文件格式错误');
+                  reader.onload = async (result) => {
+                    const text = result.target?.result as string;
+                    if (!file.type.includes('json')) {
+                      message.error('请上传json格式文件');
+                      return false;
                     }
+                    try {
+                      const data = JSON.parse(text || '{}');
+                      // 设置导入的产品状态为未发布
+                      // data.state = 0;
+                      // if (Array.isArray(data)) {
+                      //   message.error('请上传json格式文件');
+                      //   return false;
+                      // }
+                      uploadProps(data);
+                      return true;
+                    } catch {
+                      message.error('请上传json格式文件');
+                    }
+                    return true;
                   };
+                  return false;
                 }}
               >
                 <Button>
@@ -468,7 +493,7 @@ const DeviceModel: React.FC<Props> = props => {
                         ]}
                       >
                         <Card.Meta
-                          avatar={<Avatar size={40} src={item.photoUrl || productImg} />}
+                          avatar={<Avatar size={40} src={item.photoUrl ? `/jetlinks/file/${item.photoUrl}?:X_Access_Token=${getAccessToken()}` : productImg} />}
                           title={
                             <AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />
                           }
