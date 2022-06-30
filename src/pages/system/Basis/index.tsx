@@ -131,6 +131,7 @@ const Basis = () => {
               <Form.Item
                 label="主题色"
                 name="headerTheme"
+                initialValue="light"
                 rules={[{ required: true, message: '请选择主题色' }]}
               >
                 <Select>

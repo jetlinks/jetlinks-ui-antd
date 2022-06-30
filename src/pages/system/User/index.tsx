@@ -226,6 +226,9 @@ const User = observer(() => {
           // 重置分页数据
           actionRef.current?.reset?.();
           setParam(data);
+          // const item = data.terms.find((item:any)=>item.terms.column==='telephone')
+          // console.log(data)
+          // console.log(item)
         }}
       />
       <ProTable<UserItem>
@@ -252,9 +255,27 @@ const User = observer(() => {
             })}
           </PermissionButton>
         }
-        request={async (params) =>
-          service.queryDetailList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-        }
+        request={async (params) => {
+          // console.log(params)
+          // const item = params.terms.map((e:any) => {
+          //  return e.terms
+          // });
+          // console.log(item)
+          const res = await service.queryDetailList({
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          });
+          return {
+            code: res.message,
+            result: {
+              data: res.result.data,
+              pageIndex: res.result.pageIndex,
+              pageSize: res.result.pageSize,
+              total: res.result.total,
+            },
+            status: res.status,
+          };
+        }}
       />
       <Save
         model={model}
