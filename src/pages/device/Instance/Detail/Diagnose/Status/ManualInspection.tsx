@@ -25,7 +25,7 @@ const ManualInspection = (props: Props) => {
       onCancel={() => {
         props.close();
       }}
-      width={800}
+      width={900}
       footer={[
         <Button
           key="back"
@@ -83,7 +83,9 @@ const ManualInspection = (props: Props) => {
           </div>
         </div>
         {data?.data?.description ? (
-          <div style={{ width: '50%', border: '1px solid #f0f0f0' }}>
+          <div
+            style={{ width: '50%', border: '1px solid #f0f0f0', padding: 10, borderLeft: 'none' }}
+          >
             <h4>诊断项说明</h4>
             <p>{data?.data?.description}</p>
           </div>

@@ -693,6 +693,9 @@ const Edit = observer((props: Props) => {
             'x-component': 'ArrayItems',
             'x-decorator': 'FormItem',
             title: '指标配置',
+            'x-decorator-props': {
+              tooltip: '场景联动页面可引用指标配置作为触发条件',
+            },
             'x-visible': props.type === 'product',
             items: {
               type: 'object',
@@ -761,6 +764,16 @@ const Edit = observer((props: Props) => {
                         labelAlign: 'left',
                         layout: 'vertical',
                       },
+                      'x-validator': [
+                        {
+                          max: 64,
+                          message: '最多可输入64个字符',
+                        },
+                        {
+                          required: true,
+                          message: '请输入名称',
+                        },
+                      ],
                     },
                     space: {
                       type: 'void',
@@ -771,6 +784,12 @@ const Edit = observer((props: Props) => {
                         labelAlign: 'left',
                         layout: 'vertical',
                       },
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请输入指标值',
+                        },
+                      ],
                       'x-component-props': {
                         maxColumns: 12,
                         minColumns: 12,
@@ -782,6 +801,12 @@ const Edit = observer((props: Props) => {
                           'x-decorator-props': {
                             gridSpan: 5,
                           },
+                          'x-validator': [
+                            {
+                              required: true,
+                              message: '请输入',
+                            },
+                          ],
                           'x-reactions': {
                             dependencies: ['..range', 'valueType.type'],
                             fulfill: {
@@ -803,6 +828,12 @@ const Edit = observer((props: Props) => {
                           'x-decorator-props': {
                             gridSpan: 5,
                           },
+                          'x-validator': [
+                            {
+                              required: true,
+                              message: '请输入',
+                            },
+                          ],
                           'x-reactions': [
                             {
                               dependencies: ['..range', 'valueType.type'],
