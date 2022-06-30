@@ -32,7 +32,7 @@ interface Props {
 
 const Status = observer((props: Props) => {
   const { providerType } = props;
-  const time = 1000;
+  const time = 500;
   const device = { ...InstanceModel.detail };
   const history = useHistory();
 
@@ -1101,47 +1101,81 @@ const Status = observer((props: Props) => {
   const diagnoseNetworkOtherConfig = async () => {
     if (device.state?.value != 'online') {
       const item: ReactNode[] = [];
+      let info: any = {
+        id: device.id,
+      };
+      item.push(<Badge status="default" text="请检查设备运行状态是否正常" />);
       if (providerType === 'network') {
-        DiagnoseStatusModel.configuration.product.map((it) => {
-          item.push(
-            <Badge
-              status="default"
-              text={
-                <span>
-                  产品-{it.name}规则可能有加密处理，请认真查看
-                  <a
-                    onClick={() => {
-                      jumpAccessConfig();
-                    }}
-                  >
-                    设备接入配置
-                  </a>
-                  中【消息协议】说明
-                </span>
-              }
-            />,
-          );
-        });
-        DiagnoseStatusModel.configuration.device.map((it) => {
-          item.push(
-            <Badge
-              status="default"
-              text={
-                <span>
-                  设备-{it.name}规则可能有加密处理，请认真查看
-                  <a
-                    onClick={() => {
-                      jumpAccessConfig();
-                    }}
-                  >
-                    设备接入配置
-                  </a>
-                  中【消息协议】说明
-                </span>
-              }
-            />,
-          );
-        });
+        item.push(
+          <Badge
+            status="default"
+            text={
+              (DiagnoseStatusModel.gateway?.channelInfo?.addresses || []).length > 1 ? (
+                <>
+                  请检查设备网络是否畅通，并确保设备已连接到以下地址之一:
+                  <div className="serverItem">
+                    {(DiagnoseStatusModel.gateway?.channelInfo?.addresses || []).map((i: any) => (
+                      <span style={{ marginLeft: 15 }} key={i.address}>
+                        <Badge color={i.health === -1 ? 'red' : 'green'} />
+                        {i.address}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  请检查设备网络是否畅通，并确保设备已连接到:
+                  {(DiagnoseStatusModel.gateway?.channelInfo?.addresses || []).map((i: any) => (
+                    <span style={{ marginLeft: 15 }} key={i.address}>
+                      <Badge color={i.health === -1 ? 'red' : 'green'} />
+                      {i.address}
+                    </span>
+                  ))}
+                </>
+              )
+            }
+          />,
+        );
+        // DiagnoseStatusModel.configuration.product.map((it) => {
+        //   item.push(
+        //     <Badge
+        //       status="default"
+        //       text={
+        //         <span>
+        //           产品-{it.name}规则可能有加密处理，请认真查看
+        //           <a
+        //             onClick={() => {
+        //               jumpAccessConfig();
+        //             }}
+        //           >
+        //             设备接入配置
+        //           </a>
+        //           中【消息协议】说明
+        //         </span>
+        //       }
+        //     />,
+        //   );
+        // });
+        // DiagnoseStatusModel.configuration.device.map((it) => {
+        //   item.push(
+        //     <Badge
+        //       status="default"
+        //       text={
+        //         <span>
+        //           设备-{it.name}规则可能有加密处理，请认真查看
+        //           <a
+        //             onClick={() => {
+        //               jumpAccessConfig();
+        //             }}
+        //           >
+        //             设备接入配置
+        //           </a>
+        //           中【消息协议】说明
+        //         </span>
+        //       }
+        //     />,
+        //   );
+        // });
         if (
           device?.protocol &&
           device?.accessProvider &&
@@ -1189,13 +1223,24 @@ const Status = observer((props: Props) => {
             }
           }
         }
+        info = {
+          ...info,
+          address: DiagnoseStatusModel.gateway?.channelInfo?.addresses || [],
+          config: DiagnoseStatusModel.configuration.device || [],
+        };
       } else if (providerType === 'child-device') {
       } else if (providerType === 'media') {
       } else if (providerType === 'cloud') {
       } else if (providerType === 'channel') {
       }
-      item.push(<Badge status="default" text="请检查设备是否已开机" />);
-      setDiagnoseData(item);
+      info = {
+        ...info,
+        configValue: device?.configuration || {},
+      };
+      setDiagnoseData({
+        list: [...item],
+        info,
+      });
       setDiagnoseVisible(true);
     } else {
       DiagnoseStatusModel.state = 'success';
