@@ -91,6 +91,19 @@ const AccessConfig = (props: Props) => {
       dataIndex: 'name',
     },
     {
+      title: '网关类型',
+      dataIndex: 'provider',
+      renderText: (text) => text?.text,
+      valueType: 'select',
+      request: () =>
+        service.getProviders().then((resp: any) => {
+          return (resp?.result || []).map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        }),
+    },
+    {
       title: '状态',
       dataIndex: 'state',
       valueType: 'select',

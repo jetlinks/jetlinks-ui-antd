@@ -506,7 +506,7 @@ const Save = observer(() => {
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
-          tooltip: '对外提供访问的地址,内网环境是填写服务器的内网IP地址',
+          tooltip: '单次收发消息的最大长度,单位:字节;设置过大可能会影响性能',
           layout: 'vertical',
         },
         'x-component-props': {
