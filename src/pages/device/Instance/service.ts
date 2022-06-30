@@ -168,6 +168,10 @@ class Service extends BaseService<DeviceInstance> {
       method: 'PATCH',
       data,
     });
+  public delTags = (deviceId: string, id: string) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/tag/${id}`, {
+      method: 'DELETE',
+    });
   //产品状态
   public queryProductState = (id: string) =>
     request(`/${SystemConst.API_BASE}/device/product/${id}`, {
