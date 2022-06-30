@@ -174,10 +174,12 @@ export default (props: DeviceProps) => {
             style={{ width: '100%' }}
             listHeight={220}
             onChange={() => {
-              props.form?.resetFields([['actions', name, 'device', 'selector']]);
-              props.form?.resetFields([['actions', name, 'device', 'selectorValues']]);
-              props.form?.resetFields([['actions', name, 'device', 'message', 'functionId']]);
               // setMessageType(MessageTypeEnum.WRITE_PROPERTY)
+              props.form?.setFields([
+                { name: ['actions', name, 'device', 'selector'], value: undefined },
+                { name: ['actions', name, 'device', 'selectorValues'], value: undefined },
+                { name: ['actions', name, 'device', 'message', 'functionId'], value: undefined },
+              ]);
             }}
             fieldNames={{ label: 'name', value: 'id' }}
             filterOption={(input: string, option: any) =>

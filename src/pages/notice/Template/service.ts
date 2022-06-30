@@ -31,7 +31,7 @@ class Service extends BaseService<TemplateItem> {
       data,
     });
 
-  public debug = (id: string, templateId: string, data: Record<string, any>) =>
+  public debug = (id: string, templateId: string, data: Record<string, any> = {}) =>
     request(`${SystemConst.API_BASE}/notifier/${id}/${templateId}/_send`, {
       method: 'POST',
       data,

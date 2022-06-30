@@ -78,7 +78,7 @@ const Bind = observer((props: Props) => {
     >
       <Modal
         visible={deviceVisible}
-        width={600}
+        width={800}
         onCancel={() => {
           setDeviceVisible(false);
           props.reload();

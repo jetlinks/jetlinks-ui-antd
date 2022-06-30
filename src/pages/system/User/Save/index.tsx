@@ -422,8 +422,9 @@ const Save = (props: Props) => {
     const temp: any = {};
     temp.id = value.id;
     temp.user = value;
+    temp.user.roleList = [];
     temp.orgIdList = value.orgIdList;
-    temp.roleIdList = value.roleIdList;
+    temp.roleIdList = value.roleIdList?.length ? value.roleIdList : null;
     const response = await service.saveUser(temp, model);
     if (response.status === 200) {
       onlyMessage(

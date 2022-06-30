@@ -396,7 +396,6 @@ export default observer((props: TriggerProps) => {
           <Col span={6}>
             <Form.Item
               name={['trigger', 'device', 'operation', 'eventId']}
-              noStyle
               rules={[{ required: true, message: '请选择事件' }]}
             >
               <Select
