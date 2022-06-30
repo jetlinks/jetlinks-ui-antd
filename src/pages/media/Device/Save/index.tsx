@@ -209,6 +209,7 @@ const Save = () => {
                     >
                       <Form.Item name={'productId'} noStyle>
                         <Select
+                          showSearch
                           fieldNames={{
                             label: 'name',
                             value: 'id',
@@ -217,6 +218,11 @@ const Save = () => {
                           options={productList}
                           placeholder={'请选择所属产品'}
                           style={{ width: id ? '100%' : 'calc(100% - 36px)' }}
+                          filterOption={(input, option) =>
+                            (option!.name as unknown as string)
+                              .toLowerCase()
+                              .includes(input.toLowerCase())
+                          }
                           onSelect={(_: any, node: any) => {
                             const pwd = node.configuration ? node.configuration.access_pwd : '';
                             form.setFieldsValue({

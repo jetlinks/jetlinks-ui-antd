@@ -268,6 +268,7 @@ const DeviceBoard = () => {
         setOptions({
           xAxis: {
             type: 'category',
+            boundaryGap: false,
             data: x,
           },
           yAxis: {
@@ -339,6 +340,7 @@ const DeviceBoard = () => {
         setOptions({
           xAxis: {
             type: 'category',
+            boundaryGap: false,
             data: x,
           },
           yAxis: {

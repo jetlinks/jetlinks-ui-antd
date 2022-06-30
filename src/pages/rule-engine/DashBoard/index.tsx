@@ -10,6 +10,7 @@ import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import styles from './index.less';
 import moment from 'moment';
 import Echarts from '@/components/DashBoard/echarts';
+import encodeQuery from '@/utils/encodeQuery';
 
 const service = new Service();
 export const state = model<{
@@ -51,7 +52,7 @@ const Dashboard = observer(() => {
     dimension: 'agg',
     group: 'today',
     params: {
-      time: '1d',
+      time: '1h',
       targetType: 'device',
       format: 'HH:mm:ss',
       from: moment(new Date(new Date().setHours(0, 0, 0, 0))).format('YYYY-MM-DD HH:mm:ss'),
@@ -67,7 +68,7 @@ const Dashboard = observer(() => {
     dimension: 'agg',
     group: 'thisMonth',
     params: {
-      time: '1M',
+      time: '1d',
       targetType: 'device',
       format: 'yyyy-MM',
       limit: 1,
@@ -164,8 +165,8 @@ const Dashboard = observer(() => {
 
   const getCurrentAlarm = async () => {
     const alarmLevel = await service.getAlarmLevel();
-
-    const currentAlarm = await service.getAlarm({});
+    const sorts = { alarmTime: 'desc' };
+    const currentAlarm = await service.getAlarm(encodeQuery({ sorts }));
     if (currentAlarm.status === 200) {
       if (alarmLevel.status === 200) {
         const levels = alarmLevel.result.levels;
@@ -185,6 +186,16 @@ const Dashboard = observer(() => {
   }, []);
 
   const getEcharts = async (params: any) => {
+    let time = '1h';
+    let format = 'HH';
+    if (params.time.type === 'week' || params.time.type === 'month') {
+      time = '1d';
+      format = 'M月dd日';
+    } else if (params.time.type === 'year') {
+      time = '1M';
+      format = 'yyyy年-M月';
+    }
+
     // 告警趋势
     const chartData = {
       dashboard: 'alarm',
@@ -194,8 +205,8 @@ const Dashboard = observer(() => {
       group: 'alarmTrend',
       params: {
         targetType: 'device', // product、device、org、other
-        format: 'yyyy年-M月',
-        time: '1M',
+        format: format,
+        time: time,
         // from: 'now-1y', // now-1d、now-1w、now-1M、now-1y
         // to: 'now',
         limit: 12,
@@ -215,7 +226,7 @@ const Dashboard = observer(() => {
       group: 'alarmRank',
       params: {
         // time: '1h',
-        time: params.time.type === 'today' ? '1h' : '1d',
+        time: time,
         targetType: params.targetType,
         from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
         to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),

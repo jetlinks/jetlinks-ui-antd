@@ -135,6 +135,9 @@ const TriggerTerm = (props: Props, ref: any) => {
                   : [{ label: '手动输入', value: 'manual' }];
               state.value = 'manual';
             });
+            form1.setFieldState(field.query('.value.value[0]'), (state) => {
+              state.value = undefined;
+            });
           });
           onFieldReact('trigger.*.terms.*.value.source', (field, form1) => {
             const params = field.query('..column').value();
@@ -311,7 +314,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator': 'FormItem',
                         'x-component': 'TreeSelect',
                         'x-decorator-props': {
-                          gridSpan: 6,
+                          gridSpan: 5,
                         },
                         required: true,
                         'x-component-props': {

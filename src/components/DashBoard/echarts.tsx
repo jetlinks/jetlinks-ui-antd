@@ -87,7 +87,7 @@ export default (props: EchartsProps) => {
     if (chartsRef.current && props.options) {
       chartsRef.current.setOption(props.options);
     }
-  }, [props.options]);
+  }, [props.options, chartsRef.current]);
 
   return (
     <div
