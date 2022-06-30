@@ -41,7 +41,7 @@ const Property = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
-  const [dataValue, setDataValue] = useState<any>(null);
+  const [dataValue, setDataValue] = useState<any>(value);
 
   const renderTitle = (title: string) => {
     return (
@@ -107,7 +107,9 @@ const Property = (props: Props) => {
           <div style={{ marginTop: 10 }}>
             <div style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 12 }}>更新时间</div>
             <div style={{ marginTop: 5, fontSize: 16, color: 'black' }} className="value">
-              {value?.timestamp ? moment(value?.timestamp).format('YYYY-MM-DD HH:mm:ss') : ''}
+              {dataValue?.timestamp
+                ? moment(dataValue?.timestamp).format('YYYY-MM-DD HH:mm:ss')
+                : ''}
             </div>
           </div>
         </div>

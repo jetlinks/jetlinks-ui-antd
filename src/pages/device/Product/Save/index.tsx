@@ -275,6 +275,7 @@ const Save = (props: Props) => {
             <Form.Item label={'分类'} name={'classifiedId'}>
               <TreeSelect
                 showSearch
+                allowClear
                 onSelect={(_: any, node: any) => {
                   form.setFieldsValue({
                     classifiedName: node.name,

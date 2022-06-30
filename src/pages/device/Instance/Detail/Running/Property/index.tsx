@@ -53,6 +53,8 @@ const Property = (props: Props) => {
   const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [loading1, setLoading1] = useState<boolean>(true); // 使valueChange里面能拿到最新的propertyValue
+
   const [check, setCheck] = useState<boolean>(true);
 
   const refreshProperty = async (id: string) => {
@@ -147,19 +149,21 @@ const Property = (props: Props) => {
 
   const subRef = useRef<any>(null);
 
-  const valueChange = (payload: any) => {
-    (payload || [])
-      .sort((a: any, b: any) => a.timestamp - b.timestamp)
-      .forEach((item: any) => {
-        const { value } = item;
-        propertyValue[value?.property] = { ...item, ...value };
-      });
-    setPropertyValue({ ...propertyValue });
-    list.current = [];
-  };
+  const valueChange = useCallback(
+    (payload: any) => {
+      (payload || [])
+        .sort((a: any, b: any) => a.timestamp - b.timestamp)
+        .forEach((item: any) => {
+          const { value } = item;
+          propertyValue[value?.property] = { ...item, ...value };
+        });
+      setPropertyValue({ ...propertyValue });
+      list.current = [];
+    },
+    [propertyValue],
+  );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const throttleFn = useCallback(throttle(valueChange, 500), []);
+  const throttleFn = throttle(valueChange, 500);
 
   /**
    * 订阅属性数据
@@ -219,15 +223,21 @@ const Property = (props: Props) => {
             });
           setPropertyValue({ ...propertyValue, ...obj });
         }
+        setLoading1(false);
         setLoading(false);
       },
     });
   };
 
   useEffect(() => {
+    if (!loading1) {
+      subscribeProperty();
+    }
+  }, [loading1]);
+
+  useEffect(() => {
     if (dataSource.data.length > 0) {
       getDashboard();
-      subscribeProperty();
     } else {
       setLoading(false);
     }

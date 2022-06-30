@@ -177,7 +177,8 @@ const InstanceDetail = observer(() => {
           component: <MetadataMap type="device" />,
         });
       }
-      if (response.result.transport === 'MQTT' || response.result.transport === 'HTTP') {
+      const paring = response.result?.features?.find((item: any) => item.id === 'transparentCodec');
+      if (paring) {
         datalist.push({
           key: 'parsing',
           tab: intl.formatMessage({

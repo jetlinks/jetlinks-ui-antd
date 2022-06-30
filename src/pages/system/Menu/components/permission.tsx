@@ -3,7 +3,7 @@ import { Checkbox } from 'antd';
 import './permission.less';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import type { PermissionInfo } from '../typing';
-import { useIntl } from 'umi';
+// import { useIntl } from 'umi';
 
 type PermissionDataType = {
   action: string;
@@ -121,11 +121,11 @@ const ParentNode = (props: ParentNodeType) => {
 };
 
 export default (props: PermissionType) => {
-  const [indeterminate, setIndeterminate] = useState(false);
-  const [checkAll, setCheckAll] = useState(false);
+  // const [indeterminate, setIndeterminate] = useState(false);
+  // const [checkAll, setCheckAll] = useState(false);
   const [nodes, setNodes] = useState<React.ReactNode>([]);
   const checkListRef = useRef<CheckItem[]>([]);
-  const intl = useIntl();
+  // const intl = useIntl();
 
   const onChange = (list: CheckItem[]) => {
     if (props.onChange) {
@@ -143,22 +143,22 @@ export default (props: PermissionType) => {
    * 全选或者全部取消
    * @param e
    */
-  const onChangeAll = (e: CheckboxChangeEvent) => {
-    const _list = props.data.map((item) => {
-      return {
-        ...item,
-        actions: item.actions.map((a) => ({ ...a, checked: e.target.checked })),
-        state: false,
-        checked: e.target.checked,
-      };
-    });
-    setIndeterminate(false);
-    setCheckAll(e.target.checked);
-    // setCheckedList(_list)
-    checkListRef.current = _list;
-    onChange(_list);
-    setNodes(createContentNode(_list));
-  };
+  // const onChangeAll = (e: CheckboxChangeEvent) => {
+  //   const _list = props.data.map((item) => {
+  //     return {
+  //       ...item,
+  //       actions: item.actions.map((a) => ({ ...a, checked: e.target.checked })),
+  //       state: false,
+  //       checked: e.target.checked,
+  //     };
+  //   });
+  //   setIndeterminate(false);
+  //   setCheckAll(e.target.checked);
+  //   // setCheckedList(_list)
+  //   checkListRef.current = _list;
+  //   onChange(_list);
+  //   setNodes(createContentNode(_list));
+  // };
 
   const parentChange = (value: ParentNodeChange) => {
     let indeterminateCount = 0;
@@ -187,10 +187,10 @@ export default (props: PermissionType) => {
       };
     });
     // 如果全部选中，则取消半选状态
-    const isIndeterminate =
-      _checkAll === list.length && _checkAll !== 0 ? false : !!indeterminateCount;
-    setIndeterminate(isIndeterminate);
-    setCheckAll(_checkAll === list.length && _checkAll !== 0);
+    // const isIndeterminate =
+    //   _checkAll === list.length && _checkAll !== 0 ? false : !!indeterminateCount;
+    // setIndeterminate(isIndeterminate);
+    // setCheckAll(_checkAll === list.length && _checkAll !== 0);
     // setCheckedList(list)
     checkListRef.current = list;
     onChange(list);
@@ -258,7 +258,7 @@ export default (props: PermissionType) => {
         <span>权限操作</span>
       </div>
       <div className="permission-content">
-        <div className="permission-items">
+        {/* <div className="permission-items">
           <div className="permission-parent">
             <Checkbox
               onChange={onChangeAll}
@@ -272,7 +272,7 @@ export default (props: PermissionType) => {
               })}
             </Checkbox>
           </div>
-        </div>
+        </div> */}
         {nodes}
       </div>
     </div>

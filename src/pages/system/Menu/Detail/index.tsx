@@ -47,7 +47,6 @@ export default () => {
 
   return (
     <PageContainer
-      className={'page-title-show'}
       tabList={[
         {
           tab: intl.formatMessage({

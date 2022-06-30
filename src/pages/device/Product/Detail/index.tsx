@@ -154,7 +154,29 @@ const ProductDetail = observer(() => {
   };
 
   useEffect(() => {
-    console.log(productModel.current);
+    if (productModel.current?.messageProtocol) {
+      service.getProtocolDetail(productModel.current?.messageProtocol).then((res) => {
+        if (res.status === 200) {
+          const paring = res.result?.transports[0]?.features?.find(
+            (item: any) => item.id === 'transparentCodec',
+          );
+          // console.log(paring)
+          if (paring) {
+            setList([
+              ...initList,
+              {
+                key: 'parsing',
+                tab: intl.formatMessage({
+                  id: 'pages.device.instanceDetail.parsing',
+                  defaultMessage: '数据解析',
+                }),
+                component: <Parsing tag="product" data={productModel.current} />,
+              },
+            ]);
+          }
+        }
+      });
+    }
     if (
       productModel.current?.accessProvider &&
       pList.includes(productModel.current?.accessProvider)
@@ -169,22 +191,6 @@ const ProductDetail = observer(() => {
       ]);
     } else {
       setList([...initList]);
-    }
-    if (
-      productModel.current?.transportProtocol === 'MQTT' ||
-      productModel.current?.transportProtocol === 'HTTP'
-    ) {
-      setList([
-        ...initList,
-        {
-          key: 'parsing',
-          tab: intl.formatMessage({
-            id: 'pages.device.instanceDetail.parsing',
-            defaultMessage: '数据解析',
-          }),
-          component: <Parsing tag="product" data={productModel.current} />,
-        },
-      ]);
     }
   }, [productModel.current]);
 
@@ -276,6 +282,7 @@ const ProductDetail = observer(() => {
       extraContent={<Space size={24} />}
       onTabChange={(key) => {
         setMode(key);
+        // console.log(key)
       }}
       tabList={list}
       tabActiveKey={mode}
@@ -373,73 +380,15 @@ const ProductDetail = observer(() => {
         </PermissionButton>,
       ]}
     >
-      <Card className={'product-detail-body'} style={{ minHeight }}>
-        {list.find((k) => k.key === mode)?.component}
-        {/* <Tabs
-          defaultActiveKey={ModelEnum.base}
-          activeKey={mode}
-          onChange={(key) => {
-            setMode(key);
-          }}
-        >
-          <Tabs.TabPane
-            tab={intl.formatMessage({
-              id: 'pages.device.productDetail.base',
-              defaultMessage: '配置信息',
-            })}
-            key={ModelEnum.base}
-          >
-            <BaseInfo />
-          </Tabs.TabPane>
-          <Tabs.TabPane
-            tab={
-              <>
-                {intl.formatMessage({
-                  id: 'pages.device.productDetail.metadata',
-                  defaultMessage: '物模型',
-                })}
-                <Tooltip
-                  placement="right"
-                  title={
-                    <div>
-                      <p>
-                        属性：
-                        <br />
-                        用于描述设备运行时具体信息和状态。
-                        例如，环境监测设备所读取的当前环境温度、智能灯开关状态、电风扇风力等级等。
-                      </p>
-                      功能：
-                      <br />
-                      <p>
-                        指设备可供外部调用的指令或方法。功能调用中可设置输入和输出参数。输入参数是服务执行时的参数，输出参数是服务执行后的结果。
-                        相比于属性，功能可通过一条指令实现更复杂的业务逻辑，例如执行某项特定的任务。
-                        功能分为异步和同步两种调用方式。
-                      </p>
-                      <p> 事件：</p>
-                      <p>
-                        设备运行时，主动上报给云端的信息，一般包含需要被外部感知和处理的信息、告警和故障。事件中可包含多个输出参数。
-                        例如，某项任务完成后的通知信息；设备发生故障时的温度、时间信息；设备告警时的运行状态等。
-                      </p>
-                      <p> 标签：</p>
-                      <p>
-                        统一为设备添加拓展字段，添加后将在设备信息页显示。可用于对设备基本信息描述的补充。
-                      </p>
-                    </div>
-                  }
-                >
-                  <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
-                </Tooltip>
-              </>
-            }
-            key={ModelEnum.metadata}
-          >
-            <Metadata type="product" />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={'设备接入'} key={ModelEnum.access}>
-            <Access />
-          </Tabs.TabPane>
-        </Tabs> */}
-      </Card>
+      {mode == 'parsing' ? (
+        <>{list.find((k) => k.key === mode)?.component}</>
+      ) : (
+        <>
+          <Card className={'product-detail-body'} style={{ minHeight }}>
+            {list.find((k) => k.key === mode)?.component}
+          </Card>
+        </>
+      )}
     </PageContainer>
   );
 });

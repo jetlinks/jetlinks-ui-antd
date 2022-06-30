@@ -1,835 +1,1305 @@
 import TitleComponent from '@/components/TitleComponent';
-import { Badge, Button, Col, Popconfirm, Row } from 'antd';
-import { useEffect, useState } from 'react';
+import { Badge, Button, message, Popconfirm, Space } from 'antd';
 import styles from './index.less';
-import { InstanceModel, service } from '@/pages/device/Instance';
-import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { Store } from 'jetlinks-store';
 import { observer } from '@formily/reactive-react';
-import { DiagnoseStatusModel } from './model';
-import { PermissionButton } from '@/components';
-import DiagnosticAdvice from './DiagnosticAdvice';
+import { ListProps, urlMap } from './model';
+import { gatewayList } from './model';
+import { textColorMap } from './model';
+import {
+  DiagnoseStatusModel,
+  StatusMap,
+  networkInitList,
+  childInitList,
+  cloudInitList,
+  channelInitList,
+  mediaInitList,
+} from './model';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { InstanceModel, service } from '@/pages/device/Instance';
+import _ from 'lodash';
+import { onlyMessage, randomString } from '@/utils/util';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import PermissionButton from '@/components/PermissionButton';
 import ManualInspection from './ManualInspection';
-import { onlyMessage } from '@/utils/util';
-
+import useHistory from '@/hooks/route/useHistory';
 interface Props {
-  onChange: (type: string) => void;
-  flag: boolean;
+  providerType: 'network' | 'child-device' | 'media' | 'cloud' | 'channel';
 }
 
-const StatusMap = new Map();
-StatusMap.set('error', require('/public/images/diagnose/status/error.png'));
-StatusMap.set('success', require('/public/images/diagnose/status/success.png'));
-StatusMap.set('warning', require('/public/images/diagnose/status/warning.png'));
-StatusMap.set('loading', require('/public/images/diagnose/status/loading.png'));
-
-const statusColor = new Map();
-statusColor.set('error', '#E50012');
-statusColor.set('success', '#24B276');
-statusColor.set('warning', '#FF9000');
-statusColor.set('loading', 'rgba(0, 0, 0, .8)');
-
 const Status = observer((props: Props) => {
+  const { providerType } = props;
   const time = 1000;
-  const initlist = [
-    {
-      key: 'config',
-      name: '设备接入配置',
-      data: 'config',
-      desc: '诊断设备接入配置是否正确，配置错误将导致连接失败',
-    },
-    {
-      key: 'network',
-      name: '网络信息',
-      data: 'network',
-      desc: '诊断网络组件配置是否正确，配置错误将导致连接失败',
-    },
-    {
-      key: 'product',
-      name: '产品状态',
-      data: 'product',
-      desc: '诊断产品状态是否正常，禁用状态将导致连接失败',
-    },
-    {
-      key: 'device',
-      name: '设备状态',
-      data: 'device',
-      desc: '诊断设备状态是否正常，禁用状态将导致连接失败。',
-    },
-    {
-      key: 'device-access',
-      name: '设备接入网关状态',
-      data: 'deviceAccess',
-      desc: '诊断设备接入网关状态是否已启用，未启用的状态将导致连接失败',
-    },
-  ];
-  const gatewayList = [
-    'websocket-server',
-    'http-server-gateway',
-    'udp-device-gateway',
-    'coap-server-gateway',
-    'mqtt-client-gateway',
-    'mqtt-server-gateway',
-    'tcp-server-gateway',
-  ];
+  const device = { ...InstanceModel.detail };
+  const history = useHistory();
+
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const networkPermission = PermissionButton.usePermission('link/Type').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
   const accessPermission = PermissionButton.usePermission('link/AccessConfig').permission;
 
-  const [diagnoseVisible, setDiagnoseVisible] = useState<boolean>(false);
   const [artificialVisible, setArtificialVisible] = useState<boolean>(false);
-  const [diagnoseData, setDiagnoseData] = useState<any>({});
   const [artificiaData, setArtificiaData] = useState<any>({});
 
-  const [productTemp, setProductTemp] = useState<any[]>([]);
-  const [deviceTemp, setDeviceTemp] = useState<any[]>([]);
-  const [gatewayTemp, setGatewayTemp] = useState<any>({});
-
-  const getDetail = (id: string) => {
-    service.detail(id).then((response) => {
-      InstanceModel.detail = response?.result;
-    });
+  // 跳转到产品设备接入配置
+  const jumpAccessConfig = () => {
+    const purl = getMenuPathByCode(MENUS_CODE['device/Product/Detail']);
+    if (purl) {
+      history.push(
+        `${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], device.productId)}`,
+        {
+          tab: 'access',
+        },
+      );
+    } else {
+      message.error('规则可能有加密处理，请联系管理员');
+    }
   };
-  // 设备接入配置
-  const diagnoseConfig = () =>
-    new Promise((resolve) => {
-      let data: any = {};
-      if (InstanceModel.detail.state?.value === 'online' || !!InstanceModel.detail?.protocol) {
-        data = { status: 'success', text: '正常', info: null };
-        DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-      } else {
-        data = {
-          status: 'warning',
-          text: '异常',
-          info: (
-            <div className={styles.infoItem}>
-              <Badge
-                status="default"
-                text={
-                  !!getMenuPathByCode(MENUS_CODE['device/Product']) ? (
-                    <span>
-                      请配置
-                      <a
-                        onClick={() => {
-                          //跳转到产品设备接入配置
-                          const url = getMenuPathByParams(
-                            MENUS_CODE['device/Product/Detail'],
-                            InstanceModel.detail?.productId,
-                          );
-                          const tab: any = window.open(`${origin}/#${url}?key=access`);
-                          tab!.onTabSaveSuccess = (value: any) => {
-                            if (value) {
-                              diagnoseConfig();
-                            }
-                          };
-                        }}
-                      >
-                        设备接入数据
-                      </a>
-                    </span>
-                  ) : (
-                    '未配置设备接入数据，请联系管理员'
-                  )
-                }
-              />
-            </div>
-          ),
-        };
+
+  //跳转到实例信息页面
+  const jumpDeviceConfig = () => {
+    InstanceModel.active = 'detail';
+  };
+
+  //人工检查
+  const manualInspection = (params: any) => {
+    setArtificialVisible(true);
+    setArtificiaData({ ...params });
+  };
+
+  const modifyArrayList = (oldList: ListProps[], item: ListProps, index?: number) => {
+    let newList: ListProps[] = [];
+    if (index !== 0 && !index) {
+      for (let i = 0; i < oldList.length; i++) {
+        const dt = oldList[i];
+        if (item.key === dt.key) {
+          newList.push(item);
+        } else {
+          newList.push(dt);
+        }
       }
-      setTimeout(() => {
-        DiagnoseStatusModel.status.config = data;
-        resolve(data);
-      }, time);
-    });
-  //网络信息
+    } else {
+      oldList.splice(index, 0, item);
+      newList = [...oldList];
+    }
+    return newList;
+  };
+
+  // 网络信息
   const diagnoseNetwork = () =>
     new Promise((resolve) => {
-      let data: any = undefined;
-      if (InstanceModel.detail.state?.value === 'online') {
-        data = { status: 'success', text: '正常', info: null };
-        DiagnoseStatusModel.status.network = data;
-        DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-        setTimeout(
-          () =>
-            resolve({
-              data: data,
-              product: null,
-              gatewayDetail: null,
-            }),
-          time,
-        );
+      if (device.state?.value === 'online') {
+        setTimeout(() => {
+          DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+            key: 'network',
+            name: '网络组件',
+            desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
+            status: 'success',
+            text: '正常',
+            info: null,
+          });
+          DiagnoseStatusModel.count++;
+          resolve({});
+        }, time);
       } else {
-        service.queryProductState(InstanceModel.detail?.productId || '').then((resp) => {
-          if (resp.status === 200) {
-            if (resp.result.accessId) {
-              service.queryGatewayState(resp.result.accessId).then((response: any) => {
-                if (response.status === 200) {
-                  DiagnoseStatusModel.gateway = response.result;
-                  const product: any = resp.result;
-                  const address = response.result?.channelInfo?.addresses || [];
-                  const _label = address.some((i: any) => i.health === -1);
-                  const __label = address.every((i: any) => i.health === 1);
-                  const health = _label ? -1 : __label ? 1 : 0;
-                  const provider = response.result?.provider;
-                  if (health === 1) {
-                    data = { status: 'success', text: '正常', info: null };
-                  } else if (health === 0) {
-                    data = {
-                      status: 'error',
-                      text: '网络异常',
-                      info: (
-                        <div>
-                          <div className={styles.infoItem}>
-                            <Badge
-                              status="default"
-                              text="请检查服务器端口是否开放，如未开放，请开放后尝试重新连接"
-                            />
-                          </div>
-                          <div className={styles.infoItem}>
-                            <Badge
-                              status="default"
-                              text="请检查服务器防火策略，如有开启防火墙，请关闭防火墙或调整防火墙策略后重试"
-                            />
-                          </div>
+        if (device?.accessId) {
+          service.queryGatewayState(device.accessId).then((response: any) => {
+            if (response.status === 200) {
+              DiagnoseStatusModel.gateway = response.result;
+              const address = response.result?.channelInfo?.addresses || [];
+              const _label = address.some((i: any) => i.health === -1);
+              const __label = address.every((i: any) => i.health === 1);
+              const health = _label ? -1 : __label ? 1 : 0;
+              let item: ListProps | undefined = undefined;
+              if (health === 1) {
+                item = {
+                  key: 'network',
+                  name: '网络组件',
+                  desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
+                  status: 'success',
+                  text: '正常',
+                  info: null,
+                };
+              } else {
+                item = {
+                  key: 'network',
+                  name: '网络组件',
+                  desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
+                  status: 'error',
+                  text: '异常',
+                  info:
+                    health === -1 ? (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text={
+                              networkPermission.action ? (
+                                <span>
+                                  网络组件已禁用，请先
+                                  <Popconfirm
+                                    title="确认启用"
+                                    onConfirm={async () => {
+                                      const res = await service.startNetwork(
+                                        DiagnoseStatusModel.gateway?.channelId,
+                                      );
+                                      if (res.status === 200) {
+                                        onlyMessage('操作成功！');
+                                        DiagnoseStatusModel.list = modifyArrayList(
+                                          DiagnoseStatusModel.list,
+                                          {
+                                            key: 'network',
+                                            name: '网络组件',
+                                            desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
+                                            status: 'success',
+                                            text: '正常',
+                                            info: null,
+                                          },
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    <a>启用</a>
+                                  </Popconfirm>
+                                </span>
+                              ) : (
+                                '暂无权限，请联系管理员'
+                              )
+                            }
+                          />
                         </div>
-                      ),
-                    };
-                  } else if (health === -1) {
-                    if (gatewayList.includes(provider)) {
-                      data = {
-                        status: 'error',
-                        text: '网络异常',
-                        info: (
-                          <div>
-                            <div className={styles.infoItem}>
-                              <Badge
-                                status="default"
-                                text={
-                                  networkPermission.action ? (
-                                    <span>
-                                      网络组件已禁用， 请
-                                      <Popconfirm
-                                        title="确认启用"
-                                        onConfirm={async () => {
-                                          const res = await service.startNetwork(
-                                            DiagnoseStatusModel.gateway?.channelId,
-                                          );
-                                          if (res.status === 200) {
-                                            onlyMessage('操作成功！');
-                                            DiagnoseStatusModel.status.network = {
-                                              status: 'success',
-                                              text: '正常',
-                                              info: null,
-                                            };
-                                          }
-                                        }}
-                                      >
-                                        <a>启用</a>
-                                      </Popconfirm>
-                                      网络组件
-                                    </span>
-                                  ) : (
-                                    '网络组件已禁用，请联系管理员'
-                                  )
-                                }
-                              />
-                            </div>
-                          </div>
-                        ),
-                      };
-                    } else {
-                      data = {
-                        status: 'error',
-                        text: '网络异常',
-                        info: (
-                          <div>
-                            <div className={styles.infoItem}>
-                              <Badge status="default" text={<span>请联系开发人员排查问题</span>} />
-                            </div>
-                          </div>
-                        ),
-                      };
-                    }
-                  }
-                  DiagnoseStatusModel.status.network = data;
-                  DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-                  setTimeout(
-                    () =>
-                      resolve({
-                        data: data,
-                        product: product,
-                        gatewayDetail: response.result,
-                      }),
-                    time,
-                  );
+                      </div>
+                    ) : (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text="请检查服务器端口是否开放，如未开放，请开放后尝试重新连接"
+                          />
+                        </div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text="请检查服务器防火策略，如有开启防火墙，请关闭防火墙或调整防火墙策略后重试"
+                          />
+                        </div>
+                      </div>
+                    ),
+                };
+              }
+              setTimeout(() => {
+                if (item) {
+                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
                 }
-              });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
             } else {
-              data = {
-                status: 'warning',
-                text: '异常',
-                info: (
+              resolve({});
+            }
+          });
+        }
+      }
+    });
+
+  // 设备接入网关
+  const diagnoseGateway = () =>
+    new Promise((resolve) => {
+      if (device.state?.value === 'online') {
+        setTimeout(() => {
+          DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+            key: 'gateway',
+            name: '设备接入网关',
+            desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+            status: 'success',
+            text: '正常',
+            info: null,
+          });
+          DiagnoseStatusModel.count++;
+          resolve({});
+        }, time);
+      } else {
+        let item: ListProps | undefined = undefined;
+        if (Object.keys(DiagnoseStatusModel.gateway).length === 0) {
+          if (device.accessId) {
+            service.queryGatewayState(device.accessId).then((response: any) => {
+              if (response.status === 200) {
+                DiagnoseStatusModel.gateway = response.result;
+                if (response.result?.state?.value === 'enabled') {
+                  item = {
+                    key: 'gateway',
+                    name: '设备接入网关',
+                    desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                    status: 'success',
+                    text: '正常',
+                    info: null,
+                  };
+                } else {
+                  item = {
+                    key: 'gateway',
+                    name: '设备接入网关',
+                    desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                    status: 'error',
+                    text: '异常',
+                    info: (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text={
+                              accessPermission.action ? (
+                                <span>
+                                  设备接入网关已禁用，请先
+                                  <Popconfirm
+                                    title="确认启用"
+                                    onConfirm={async () => {
+                                      const resp = await service.startGateway(
+                                        device.accessId || '',
+                                      );
+                                      if (resp.status === 200) {
+                                        onlyMessage('操作成功！');
+                                        DiagnoseStatusModel.list = modifyArrayList(
+                                          DiagnoseStatusModel.list,
+                                          {
+                                            key: 'gateway',
+                                            name: '设备接入网关',
+                                            desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                                            status: 'success',
+                                            text: '正常',
+                                            info: null,
+                                          },
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    <a>启用</a>
+                                  </Popconfirm>
+                                </span>
+                              ) : (
+                                '暂无权限，请联系管理员处理'
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    ),
+                  };
+                }
+                setTimeout(() => {
+                  if (item) {
+                    DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
+                  }
+                  DiagnoseStatusModel.count++;
+                  resolve({});
+                }, time);
+              } else {
+                resolve({});
+              }
+            });
+          }
+        } else {
+          if (DiagnoseStatusModel.gateway?.state?.value === 'enabled') {
+            item = {
+              key: 'gateway',
+              name: '设备接入网关',
+              desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+              status: 'success',
+              text: '正常',
+              info: null,
+            };
+          } else {
+            item = {
+              key: 'gateway',
+              name: '设备接入网关',
+              desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+              status: 'error',
+              text: '异常',
+              info: (
+                <div>
                   <div className={styles.infoItem}>
                     <Badge
                       status="default"
                       text={
-                        !!getMenuPathByCode(MENUS_CODE['device/Product']) ? (
+                        accessPermission.action ? (
                           <span>
-                            请配置
-                            <a
-                              onClick={() => {
-                                //跳转到产品设备接入配置
-                                const url = getMenuPathByParams(
-                                  MENUS_CODE['device/Product/Detail'],
-                                  InstanceModel.detail?.productId,
-                                );
-                                const tab: any = window.open(`${origin}/#${url}?key=access`);
-                                tab!.onTabSaveSuccess = (value: any) => {
-                                  if (value) {
-                                    diagnoseConfig();
-                                  }
-                                };
+                            设备接入网关已禁用，请先
+                            <Popconfirm
+                              title="确认启用"
+                              onConfirm={async () => {
+                                const resp = await service.startGateway(device.accessId || '');
+                                if (resp.status === 200) {
+                                  onlyMessage('操作成功！');
+                                  DiagnoseStatusModel.list = modifyArrayList(
+                                    DiagnoseStatusModel.list,
+                                    {
+                                      key: 'gateway',
+                                      name: '设备接入网关',
+                                      desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                                      status: 'success',
+                                      text: '正常',
+                                      info: null,
+                                    },
+                                  );
+                                }
                               }}
                             >
-                              设备接入数据
-                            </a>
+                              <a>启用</a>
+                            </Popconfirm>
                           </span>
                         ) : (
-                          '未配置设备接入数据，请联系管理员'
+                          '暂无权限，请联系管理员处理'
                         )
                       }
                     />
                   </div>
-                ),
-              };
-              DiagnoseStatusModel.status.network = data;
-              setTimeout(() => resolve(data), time);
-            }
+                </div>
+              ),
+            };
           }
-        });
-      }
-    });
-
-  const diagnoseProduct = (proItem: any) =>
-    new Promise((resolve) => {
-      let data: any = {};
-      if (InstanceModel.detail.state?.value === 'online') {
-        data = { status: 'success', text: '正常', info: null };
-      } else {
-        data = {
-          status: proItem?.state === 1 ? 'success' : 'error',
-          text: proItem?.state === 1 ? '正常' : '异常',
-          info:
-            proItem?.state === 1 ? null : (
-              <div className={styles.infoItem}>
-                <Badge
-                  status="default"
-                  text={
-                    productPermission.action ? (
-                      <span>
-                        产品已禁用，请
-                        <Popconfirm
-                          title="确认启用"
-                          onConfirm={async () => {
-                            const resp = await service.deployProduct(
-                              InstanceModel.detail?.productId || '',
-                            );
-                            if (resp.status === 200) {
-                              onlyMessage('操作成功！');
-                              DiagnoseStatusModel.status.product = {
-                                status: 'success',
-                                text: '正常',
-                                info: null,
-                              };
-                              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-                            }
-                          }}
-                        >
-                          <a>启用</a>
-                        </Popconfirm>
-                        产品
-                      </span>
-                    ) : (
-                      '无产品发布权限时：产品已禁用，请联系管理员处理'
-                    )
-                  }
-                />
-              </div>
-            ),
-        };
-      }
-      DiagnoseStatusModel.status.product = data;
-      setTimeout(
-        () =>
-          resolve({
-            data: data,
-            product: proItem,
-          }),
-        time,
-      );
-    });
-
-  const diagnoseDevice = () =>
-    new Promise((resolve) => {
-      let data: any = {};
-      if (InstanceModel.detail?.state?.value === 'notActive') {
-        data = {
-          status: 'error',
-          text: '异常',
-          info: (
-            <div className={styles.infoItem}>
-              <Badge
-                status="default"
-                text={
-                  devicePermission.action ? (
-                    <span>
-                      设备已禁用，请
-                      <Popconfirm
-                        title="确认启用"
-                        onConfirm={async () => {
-                          const resp = await service.deployDevice(InstanceModel.detail?.id || '');
-                          if (resp.status === 200) {
-                            onlyMessage('操作成功！');
-                            DiagnoseStatusModel.status.device = {
-                              status: 'success',
-                              text: '正常',
-                              info: null,
-                            };
-                            getDetail(InstanceModel.detail?.id || '');
-                            DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-                          }
-                        }}
-                      >
-                        <a>启用</a>
-                      </Popconfirm>
-                      设备
-                    </span>
-                  ) : (
-                    '设备已禁用，请联系管理员处理'
-                  )
-                }
-              />
-            </div>
-          ),
-        };
-      } else {
-        data = { status: 'success', text: '正常', info: null };
-      }
-      DiagnoseStatusModel.status.device = data;
-      setTimeout(() => resolve({ data }), time);
-    });
-
-  // 产品认证配置
-  const diagnoseProductAuthConfig = (proItem: any) =>
-    new Promise((resolve) => {
-      if (InstanceModel.detail.state?.value === 'online') {
-        setTimeout(() => resolve(null), time);
-      } else {
-        service.queryProductConfig(proItem.id).then((resp) => {
-          if (resp.status === 200) {
-            setProductTemp(resp?.result);
-            if (resp.result.length > 0) {
-              resp.result.map((item: any, index: number) => {
-                let data: any = {};
-                const list = [...DiagnoseStatusModel.list];
-                if (!list.find((i) => i.key === `product-auth${index}`)) {
-                  list.splice(list.length - 1, 0, {
-                    key: `product-auth${index}`,
-                    name: `产品-${item?.name}`,
-                    data: `productAuth${index}`,
-                    desc: `诊断产品${item?.name}是否正确，错误的配置将导致连接失败`,
-                  });
-                  DiagnoseStatusModel.list = [...list];
-                }
-                data = {
-                  status: 'error',
-                  text: '可能存在异常',
-                  info: (
-                    <div className={styles.infoItem}>
-                      <Badge
-                        status="default"
-                        text={
-                          <span>
-                            进行
-                            <a
-                              onClick={() => {
-                                setArtificialVisible(true);
-                                setArtificiaData({
-                                  type: 'product',
-                                  data: item,
-                                  key: `productAuth${index}`,
-                                  check: proItem.configuration,
-                                });
-                              }}
-                            >
-                              人工检查
-                            </a>
-                            设备接入配置是否已填写正确
-                          </span>
-                        }
-                      />
-                    </div>
-                  ),
-                };
-                DiagnoseStatusModel.status[`productAuth${index}`] = data;
-              });
-              setTimeout(() => resolve(resp.result), time);
-            } else {
-              setTimeout(() => resolve(null), time);
+          setTimeout(() => {
+            if (item) {
+              DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
             }
-          }
-        });
-      }
-    });
-  // 设备认证配置
-  const diagnoseDeviceAuthConfig = () =>
-    new Promise((resolve) => {
-      if (InstanceModel.detail.state?.value === 'online') {
-        setTimeout(() => resolve(null), time);
-      } else {
-        service.queryDeviceConfig(InstanceModel.detail?.id || '').then((resp) => {
-          if (resp.status === 200) {
-            setDeviceTemp(resp.result);
-            if (resp.result.length > 0) {
-              resp.result.map((item: any, index: number) => {
-                let data: any = {};
-                const list = [...DiagnoseStatusModel.list];
-                if (!list.find((i) => i.key === `device-auth${index}`)) {
-                  list.splice(list.length - 1, 0, {
-                    key: `device-auth${index}`,
-                    name: `设备-${item?.name}`,
-                    data: `deviceAuth${index}`,
-                    desc: `诊断设备${item?.name}是否正确，错误的配置将导致连接失败`,
-                  });
-                  DiagnoseStatusModel.list = [...list];
-                }
-                data = {
-                  status: 'error',
-                  text: '可能存在异常',
-                  info: (
-                    <div className={styles.infoItem}>
-                      <Badge
-                        status="default"
-                        text={
-                          <span>
-                            进行
-                            <a
-                              onClick={() => {
-                                setArtificialVisible(true);
-                                setArtificiaData({
-                                  type: 'device',
-                                  data: item,
-                                  key: `deviceAuth${index}`,
-                                  check: InstanceModel.detail?.configuration,
-                                });
-                              }}
-                            >
-                              人工检查
-                            </a>
-                            设备接入配置是否已填写正确
-                          </span>
-                        }
-                      />
-                    </div>
-                  ),
-                };
-                DiagnoseStatusModel.status[`deviceAuth${index}`] = data;
-              });
-              setTimeout(() => resolve(resp.result), time);
-            } else {
-              resolve({ data: null });
-            }
-          }
-        });
-      }
-    });
-
-  const diagnoseDeviceAccess = (gateway: any) =>
-    new Promise((resolve) => {
-      let data: any = null;
-      if (InstanceModel.detail.state?.value === 'online') {
-        data = { status: 'success', text: '正常', info: null };
-      } else {
-        data = {
-          status: gateway?.state?.value === 'enabled' ? 'success' : 'error',
-          text: gateway?.state?.value === 'enabled' ? '正常' : '异常',
-          info:
-            gateway?.state?.value === 'enabled' ? null : (
-              <div className={styles.infoItem}>
-                <Badge
-                  status="default"
-                  text={
-                    accessPermission.action ? (
-                      <span>
-                        设备接入网关未启用，请
-                        <Popconfirm
-                          title="确认启用"
-                          onConfirm={async () => {
-                            const resp = await service.startGateway(gateway?.id || '');
-                            if (resp.status === 200) {
-                              onlyMessage('操作成功！');
-                              DiagnoseStatusModel.status.deviceAccess = {
-                                status: 'success',
-                                text: '正常',
-                                info: null,
-                              };
-                              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-                            }
-                          }}
-                        >
-                          <a>启用</a>
-                        </Popconfirm>
-                        设备接入网关
-                      </span>
-                    ) : (
-                      '设备接入网关未启用。请联系管理员处理'
-                    )
-                  }
-                />
-              </div>
-            ),
-        };
-      }
-      DiagnoseStatusModel.status.deviceAccess = data;
-      setTimeout(() => resolve(data), time);
-    });
-
-  const handleSearch = () => {
-    DiagnoseStatusModel.model = true;
-    props.onChange('loading');
-    DiagnoseStatusModel.list = [...initlist];
-    DiagnoseStatusModel.status = {
-      config: {
-        status: 'loading',
-        text: '正在诊断中...',
-        info: null,
-      },
-      network: {
-        status: 'loading',
-        text: '正在诊断中...',
-        info: null,
-      },
-      product: {
-        status: 'loading',
-        text: '正在诊断中...',
-        info: null,
-      },
-      device: {
-        status: 'loading',
-        text: '正在诊断中...',
-        info: null,
-      },
-      deviceAccess: {
-        status: 'loading',
-        text: '正在诊断中...',
-        info: null,
-      },
-    };
-
-    let product: any = null;
-    let gateway: any = null;
-    diagnoseConfig()
-      .then(() => diagnoseNetwork())
-      .then((resp: any) => {
-        product = resp?.product;
-        gateway = resp?.gatewayDetail;
-        setGatewayTemp(resp?.gatewayDetail);
-        diagnoseProduct(product)
-          .then(() => diagnoseDevice())
-          .then(() => diagnoseProductAuthConfig(product))
-          .then(() => {
-            diagnoseDeviceAuthConfig().then(() => {
-              diagnoseDeviceAccess(gateway).then(() => {
-                DiagnoseStatusModel.model = false;
-                DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-                if (InstanceModel.detail.state?.value !== 'online') {
-                  props.onChange('error');
-                } else {
-                  Store.set('diagnose-status', {
-                    list: DiagnoseStatusModel.list,
-                    status: DiagnoseStatusModel.status,
-                  });
-                  props.onChange('success');
-                }
-              });
-            });
-          });
-      });
-  };
-
-  useEffect(() => {
-    if (devicePermission.view) {
-      if (!props.flag) {
-        handleSearch();
-      } else {
-        const dt = Store.get('diagnose-status');
-        DiagnoseStatusModel.status = dt?.status;
-        DiagnoseStatusModel.list = dt?.list || [];
-        props.onChange('success');
-      }
-    }
-  }, [devicePermission]);
-
-  useEffect(() => {
-    if (!DiagnoseStatusModel.model) {
-      const data = { ...DiagnoseStatusModel.status };
-      const flag = Object.keys(data).every((item: any) => {
-        return data[item]?.status === 'success';
-      });
-      if (flag && InstanceModel.detail.state?.value !== 'online') {
-        // 展示诊断建议
-        if (
-          gatewayTemp.provider !== 'mqtt-server-gateway' &&
-          gatewayList.includes(gatewayTemp.provider)
-        ) {
-          service.queryProcotolDetail(gatewayTemp.provider, gatewayTemp.transport).then((resp1) => {
-            setDiagnoseData({
-              product: productTemp,
-              device: deviceTemp,
-              id: InstanceModel.detail?.productId,
-              provider: gatewayTemp.provider,
-              routes: resp1.result?.routes || [],
-            });
-            setDiagnoseVisible(true);
-          });
-        } else {
-          setDiagnoseData({
-            product: productTemp,
-            device: deviceTemp,
-            id: InstanceModel.detail?.productId,
-            provider: gatewayTemp?.provider,
-            routes: [],
-          });
-          setDiagnoseVisible(true);
+            resolve({});
+          }, time);
         }
       }
-    }
-  }, [DiagnoseStatusModel.status]);
+    });
 
-  return (
-    <Row gutter={24}>
-      <Col span={16}>
-        <div className={styles.statusBox}>
-          <div className={styles.statusHeader}>
-            <TitleComponent data={'连接详情'} />
-            <Button
-              onClick={() => {
-                handleSearch();
-              }}
-            >
-              重新诊断
-            </Button>
-          </div>
-          <div className={styles.statusContent}>
-            {DiagnoseStatusModel.list.map((item) => (
-              <div key={item.key} className={styles.statusItem}>
-                <div className={styles.statusLeft}>
-                  <div className={styles.statusImg}>
-                    <img
-                      style={{ height: 32 }}
-                      className={
-                        DiagnoseStatusModel.status[item.data]?.status === 'loading'
-                          ? styles.loading
-                          : {}
-                      }
-                      src={
-                        StatusMap.get(DiagnoseStatusModel.status[item.data]?.status) || 'loading'
+  // 网关父设备
+  const diagnoseParentDevice = () =>
+    new Promise((resolve) => {
+      DiagnoseStatusModel.count++;
+      if (device.state?.value === 'online') {
+        setTimeout(() => {
+          DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+            key: 'parent-device',
+            name: '网关父设备',
+            desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
+            status: 'success',
+            text: '正常',
+            info: null,
+          });
+          DiagnoseStatusModel.count++;
+          resolve({});
+        }, time);
+      } else {
+        if (!device?.parentId) {
+          setTimeout(() => {
+            DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+              key: 'parent-device',
+              name: '网关父设备',
+              desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
+              status: 'error',
+              text: '异常',
+              info: (
+                <div>
+                  <div className={styles.infoItem}>
+                    <Badge
+                      status="default"
+                      text={
+                        <span>
+                          未绑定父设备，请先<a>绑定</a>父设备后重试
+                        </span>
                       }
                     />
                   </div>
-                  <div className={styles.statusContext}>
-                    <div className={styles.statusTitle}>{item.name}</div>
-                    <div className={styles.statusDesc}>{item.desc}</div>
-                    <div className={styles.info}>{DiagnoseStatusModel.status[item.data]?.info}</div>
-                  </div>
                 </div>
-                <div
-                  className={styles.statusRight}
-                  style={{
-                    color:
-                      statusColor.get(DiagnoseStatusModel.status[item.data]?.status) || 'loading',
-                  }}
-                >
-                  {DiagnoseStatusModel.status[item.data]?.text}
+              ),
+            });
+            DiagnoseStatusModel.count++;
+            resolve({});
+          }, time);
+        } else {
+        }
+      }
+      setTimeout(() => {
+        resolve({});
+      }, time);
+    });
+
+  // 产品状态
+  const diagnoseProduct = () =>
+    new Promise((resolve) => {
+      DiagnoseStatusModel.count++;
+      if (device.state?.value === 'online') {
+        setTimeout(() => {
+          DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+            key: 'product',
+            name: '产品状态',
+            desc: '诊断产品状态是否正常，禁用状态将导致设备连接失败',
+            status: 'success',
+            text: '正常',
+            info: null,
+          });
+          DiagnoseStatusModel.count++;
+          resolve({});
+        }, time);
+      } else {
+        if (device?.productId) {
+          service.queryProductState(device.productId).then((response: any) => {
+            if (response.status === 200) {
+              DiagnoseStatusModel.product = response.result;
+              let item: ListProps | undefined = undefined;
+              const state = response.result?.state;
+              item = {
+                key: 'product',
+                name: '产品状态',
+                desc: '诊断产品状态是否正常，禁用状态将导致设备连接失败',
+                status: state === 1 ? 'success' : 'error',
+                text: state === 1 ? '正常' : '异常',
+                info:
+                  state === 1 ? null : (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={
+                            productPermission.action ? (
+                              <span>
+                                产品已禁用，请
+                                <Popconfirm
+                                  title="确认启用"
+                                  onConfirm={async () => {
+                                    const resp = await service.deployProduct(
+                                      device.productId || '',
+                                    );
+                                    if (resp.status === 200) {
+                                      onlyMessage('操作成功！');
+                                      DiagnoseStatusModel.list = modifyArrayList(
+                                        DiagnoseStatusModel.list,
+                                        {
+                                          key: 'product',
+                                          name: '产品状态',
+                                          desc: '诊断产品状态是否正常，禁用状态将导致设备连接失败',
+                                          status: 'success',
+                                          text: '正常',
+                                          info: null,
+                                        },
+                                      );
+                                    }
+                                  }}
+                                >
+                                  <a>启用</a>
+                                </Popconfirm>
+                                产品
+                              </span>
+                            ) : (
+                              '暂无权限，请联系管理员处理'
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  ),
+              };
+              setTimeout(() => {
+                if (item) {
+                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
+                }
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
+            } else {
+              resolve({});
+            }
+          });
+        }
+      }
+    });
+
+  // 设备状态
+  const diagnoseDevice = () =>
+    new Promise((resolve) => {
+      DiagnoseStatusModel.count++;
+      if (device.state?.value === 'online') {
+        setTimeout(() => {
+          DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+            key: 'device',
+            name: '设备状态',
+            desc: '诊断设备状态是否正常，禁用状态将导致设备连接失败',
+            status: 'success',
+            text: '正常',
+            info: null,
+          });
+          DiagnoseStatusModel.count++;
+          resolve({});
+        }, time);
+      } else {
+        let item: ListProps | undefined = undefined;
+        if (InstanceModel.detail?.state?.value === 'notActive') {
+          item = {
+            key: 'device',
+            name: '设备状态',
+            desc: '诊断设备状态是否正常，禁用状态将导致设备连接失败',
+            status: 'error',
+            text: '异常',
+            info: (
+              <div>
+                <div className={styles.infoItem}>
+                  <Badge
+                    status="default"
+                    text={
+                      devicePermission.action ? (
+                        <span>
+                          设备已禁用，请
+                          <Popconfirm
+                            title="确认启用"
+                            onConfirm={async () => {
+                              const resp = await service.deployDevice(device?.id || '');
+                              if (resp.status === 200) {
+                                onlyMessage('操作成功！');
+                                DiagnoseStatusModel.list = modifyArrayList(
+                                  DiagnoseStatusModel.list,
+                                  {
+                                    key: 'device',
+                                    name: '设备状态',
+                                    desc: '诊断设备状态是否正常，禁用状态将导致设备连接失败',
+                                    status: 'success',
+                                    text: '正常',
+                                    info: null,
+                                  },
+                                );
+                              }
+                            }}
+                          >
+                            <a>启用</a>
+                          </Popconfirm>
+                          设备
+                        </span>
+                      ) : (
+                        '暂无权限，请联系管理员处理'
+                      )
+                    }
+                  />
                 </div>
               </div>
-            ))}
+            ),
+          };
+        } else {
+          item = {
+            key: 'device',
+            name: '设备状态',
+            desc: '诊断设备状态是否正常，禁用状态将导致设备连接失败',
+            status: 'success',
+            text: '正常',
+            info: null,
+          };
+        }
+        setTimeout(() => {
+          if (item) {
+            DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
+          }
+          DiagnoseStatusModel.count++;
+          resolve({});
+        }, time);
+      }
+    });
+
+  // 产品认证配置
+  const diagnoseProductAuthConfig = () =>
+    new Promise(async (resolve) => {
+      if (device?.productId) {
+        const response = await service.queryDeviceConfig(device.productId);
+        if (response.status === 200 && response.result.length > 0) {
+          DiagnoseStatusModel.configuration.product = response.result;
+          const list = [...DiagnoseStatusModel.list];
+          const configuration = DiagnoseStatusModel.product?.configuration || {};
+          response.result.map((item: any, i: number) => {
+            if (!_.map(list, 'key').includes(`product-auth${i}`)) {
+              DiagnoseStatusModel.list = modifyArrayList(
+                DiagnoseStatusModel.list,
+                {
+                  key: `product-auth${i}`,
+                  name: `产品-${item?.name}`,
+                  desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'loading',
+                  text: '正在诊断中...',
+                  info: null,
+                },
+                list.length,
+              );
+            }
+            const properties = _.map(item?.properties, 'property');
+            if (device.state?.value === 'online') {
+              setTimeout(() => {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                  key: `product-auth${i}`,
+                  name: `产品-${item?.name}`,
+                  desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'success',
+                  text: '正常',
+                  info: null,
+                });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
+            } else if (properties.length > 0 && Object.keys(configuration).length > 0) {
+              if (
+                _.union(Object.keys(configuration), properties).length <
+                Object.keys(configuration).length + properties.length
+              ) {
+                setTimeout(() => {
+                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                    key: `product-auth${i}`,
+                    name: `产品-${item?.name}`,
+                    desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                    status: 'error',
+                    text: '可能存在异常',
+                    info: (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text={
+                              <span>
+                                请
+                                <a
+                                  onClick={() => {
+                                    manualInspection({
+                                      type: 'product',
+                                      key: `product-auth${i}`,
+                                      name: `产品-${item?.name}`,
+                                      desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                      data: { ...item },
+                                      configuration,
+                                      productId: device.productId,
+                                    });
+                                  }}
+                                >
+                                  人工检查
+                                </a>
+                                产品{item.name}
+                                配置是否已填写正确,若您确定该项无需诊断可
+                                <Popconfirm
+                                  title="确认忽略？"
+                                  onConfirm={() => {
+                                    DiagnoseStatusModel.list = modifyArrayList(
+                                      DiagnoseStatusModel.list,
+                                      {
+                                        key: `product-auth${i}`,
+                                        name: `产品-${item?.name}`,
+                                        desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                        status: 'success',
+                                        text: '正常',
+                                        info: null,
+                                      },
+                                    );
+                                  }}
+                                >
+                                  <a>忽略</a>
+                                </Popconfirm>
+                              </span>
+                            }
+                          />
+                        </div>
+                      </div>
+                    ),
+                  });
+                  DiagnoseStatusModel.count++;
+                  resolve({});
+                }, time);
+              } else {
+                setTimeout(() => {
+                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                    key: `product-auth${i}`,
+                    name: `产品-${item?.name}`,
+                    desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                    status: 'error',
+                    text: '异常',
+                    info: (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text={
+                              <span>
+                                请根据设备接入配置需要
+                                <a
+                                  onClick={() => {
+                                    jumpAccessConfig();
+                                  }}
+                                >
+                                  填写
+                                </a>
+                                ，若您确定该项无需诊断可
+                                <Popconfirm
+                                  title="确认忽略？"
+                                  onConfirm={() => {
+                                    DiagnoseStatusModel.list = modifyArrayList(
+                                      DiagnoseStatusModel.list,
+                                      {
+                                        key: `product-auth${i}`,
+                                        name: `产品-${item?.name}`,
+                                        desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                        status: 'success',
+                                        text: '正常',
+                                        info: null,
+                                      },
+                                    );
+                                  }}
+                                >
+                                  <a>忽略</a>
+                                </Popconfirm>
+                              </span>
+                            }
+                          />
+                        </div>
+                      </div>
+                    ),
+                  });
+                  DiagnoseStatusModel.count++;
+                  resolve({});
+                }, time);
+              }
+            } else if (properties.length > 0 && Object.keys(configuration).length === 0) {
+              setTimeout(() => {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                  key: `product-auth${i}`,
+                  name: `产品-${item?.name}`,
+                  desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'error',
+                  text: '异常',
+                  info: (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={
+                            <span>
+                              请根据设备接入配置需要
+                              <a
+                                onClick={() => {
+                                  jumpAccessConfig();
+                                }}
+                              >
+                                填写
+                              </a>
+                              ，若您确定该项无需诊断可
+                              <Popconfirm
+                                title="确认忽略？"
+                                onConfirm={() => {
+                                  DiagnoseStatusModel.list = modifyArrayList(
+                                    DiagnoseStatusModel.list,
+                                    {
+                                      key: `product-auth${i}`,
+                                      name: `产品-${item?.name}`,
+                                      desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                      status: 'success',
+                                      text: '正常',
+                                      info: null,
+                                    },
+                                  );
+                                }}
+                              >
+                                <a>忽略</a>
+                              </Popconfirm>
+                            </span>
+                          }
+                        />
+                      </div>
+                    </div>
+                  ),
+                });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
+            }
+          });
+        } else {
+          resolve({});
+        }
+      }
+    });
+
+  // 设备认证配置
+  const diagnoseDeviceAuthConfig = () =>
+    new Promise(async (resolve) => {
+      if (device?.id) {
+        const response = await service.queryDeviceConfig(device.id);
+        if (response.status === 200 && response.result.length > 0) {
+          DiagnoseStatusModel.configuration.device = response.result;
+          const list = [...DiagnoseStatusModel.list];
+          const configuration = device?.configuration || {};
+          response.result.map((item: any, i: number) => {
+            if (!_.map(list, 'key').includes(`device-auth${i}`)) {
+              DiagnoseStatusModel.list = modifyArrayList(
+                DiagnoseStatusModel.list,
+                {
+                  key: `device-auth${i}`,
+                  name: `设备-${item?.name}`,
+                  desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'loading',
+                  text: '正在诊断中...',
+                  info: null,
+                },
+                list.length,
+              );
+            }
+            const properties = _.map(item?.properties, 'property');
+            if (device.state?.value === 'online') {
+              setTimeout(() => {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                  key: `device-auth${i}`,
+                  name: `设备-${item?.name}`,
+                  desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'success',
+                  text: '正常',
+                  info: null,
+                });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
+            } else if (properties.length > 0 && Object.keys(configuration).length > 0) {
+              if (
+                _.union(Object.keys(configuration), properties).length <
+                Object.keys(configuration).length + properties.length
+              ) {
+                setTimeout(() => {
+                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                    key: `device-auth${i}`,
+                    name: `设备-${item?.name}`,
+                    desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                    status: 'error',
+                    text: '可能存在异常',
+                    info: (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text={
+                              <span>
+                                请
+                                <a
+                                  onClick={() => {
+                                    manualInspection({
+                                      type: 'device',
+                                      key: `device-auth${i}`,
+                                      name: `设备-${item?.name}`,
+                                      desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                      data: { ...item },
+                                      configuration,
+                                      productId: device.productId,
+                                    });
+                                  }}
+                                >
+                                  人工检查
+                                </a>
+                                设备{item.name}
+                                配置是否已填写正确,若您确定该项无需诊断可
+                                <Popconfirm
+                                  title="确认忽略？"
+                                  onConfirm={() => {
+                                    DiagnoseStatusModel.list = modifyArrayList(
+                                      DiagnoseStatusModel.list,
+                                      {
+                                        key: `device-auth${i}`,
+                                        name: `设备-${item?.name}`,
+                                        desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                        status: 'success',
+                                        text: '正常',
+                                        info: null,
+                                      },
+                                    );
+                                  }}
+                                >
+                                  <a>忽略</a>
+                                </Popconfirm>
+                              </span>
+                            }
+                          />
+                        </div>
+                      </div>
+                    ),
+                  });
+                  DiagnoseStatusModel.count++;
+                  resolve({});
+                }, time);
+              } else {
+                setTimeout(() => {
+                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                    key: `device-auth${i}`,
+                    name: `设备-${item?.name}`,
+                    desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                    status: 'error',
+                    text: '异常',
+                    info: (
+                      <div>
+                        <div className={styles.infoItem}>
+                          <Badge
+                            status="default"
+                            text={
+                              <span>
+                                请根据设备接入配置需要
+                                <a
+                                  onClick={() => {
+                                    jumpDeviceConfig();
+                                  }}
+                                >
+                                  填写
+                                </a>
+                                ，若您确定该项无需诊断可
+                                <Popconfirm
+                                  title="确认忽略？"
+                                  onConfirm={() => {
+                                    DiagnoseStatusModel.list = modifyArrayList(
+                                      DiagnoseStatusModel.list,
+                                      {
+                                        key: `device-auth${i}`,
+                                        name: `设备-${item?.name}`,
+                                        desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                        status: 'success',
+                                        text: '正常',
+                                        info: null,
+                                      },
+                                    );
+                                  }}
+                                >
+                                  <a>忽略</a>
+                                </Popconfirm>
+                              </span>
+                            }
+                          />
+                        </div>
+                      </div>
+                    ),
+                  });
+                  DiagnoseStatusModel.count++;
+                  resolve({});
+                }, time);
+              }
+            } else if (properties.length > 0 && Object.keys(configuration).length === 0) {
+              setTimeout(() => {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                  key: `device-auth${i}`,
+                  name: `设备-${item?.name}`,
+                  desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'error',
+                  text: '异常',
+                  info: (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={
+                            <span>
+                              请根据设备接入配置需要
+                              <a
+                                onClick={() => {
+                                  jumpDeviceConfig();
+                                }}
+                              >
+                                填写
+                              </a>
+                              ，若您确定该项无需诊断可
+                              <Popconfirm
+                                title="确认忽略？"
+                                onConfirm={() => {
+                                  DiagnoseStatusModel.list = modifyArrayList(
+                                    DiagnoseStatusModel.list,
+                                    {
+                                      key: `device-auth${i}`,
+                                      name: `设备-${item?.name}`,
+                                      desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                      status: 'success',
+                                      text: '正常',
+                                      info: null,
+                                    },
+                                  );
+                                }}
+                              >
+                                <a>忽略</a>
+                              </Popconfirm>
+                            </span>
+                          }
+                        />
+                      </div>
+                    </div>
+                  ),
+                });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
+            }
+          });
+        } else {
+          resolve({});
+        }
+      }
+    });
+
+  // // opc
+  // const diagnoseOpcua = () => new Promise(() => {
+
+  // })
+  // //modbus
+  // const diagnoseModbus = () => new Promise(() => {
+
+  // })
+
+  // 设备离线且全部诊断项都是正确的情况后
+  const diagnoseNetworkOtherConfig = () =>
+    new Promise(async (resolve) => {
+      if (device.state?.value != 'online') {
+        const item: ReactNode[] = [];
+        if (providerType === 'network') {
+          DiagnoseStatusModel.configuration.product.map((it) => {
+            item.push(
+              <Badge
+                status="default"
+                text={
+                  <span>
+                    产品-{it.name}规则可能有加密处理，请认真查看
+                    <a
+                      onClick={() => {
+                        jumpAccessConfig();
+                      }}
+                    >
+                      设备接入配置
+                    </a>
+                    中【消息协议】说明
+                  </span>
+                }
+              />,
+            );
+          });
+          DiagnoseStatusModel.configuration.device.map((it) => {
+            item.push(
+              <Badge
+                status="default"
+                text={
+                  <span>
+                    设备-{it.name}规则可能有加密处理，请认真查看
+                    <a
+                      onClick={() => {
+                        jumpAccessConfig();
+                      }}
+                    >
+                      设备接入配置
+                    </a>
+                    中【消息协议】说明
+                  </span>
+                }
+              />,
+            );
+          });
+          if (
+            device?.protocol &&
+            device?.accessProvider &&
+            gatewayList.includes(device?.accessProvider)
+          ) {
+            const response = await service.queryProcotolDetail(device.protocol, 'MQTT');
+            if (response.status === 200) {
+              if ((response.result?.routes || []).length > 0) {
+                item.push(
+                  <Badge
+                    status="default"
+                    text={
+                      accessPermission.view ? (
+                        <span>
+                          请根据
+                          <a
+                            onClick={() => {
+                              jumpAccessConfig();
+                            }}
+                          >
+                            设备接入配置
+                          </a>
+                          中${urlMap.get(device?.accessProvider) || ''}信息，任意上报一条数据
+                        </span>
+                      ) : (
+                        `请联系管理员提供${
+                          urlMap.get(device?.accessProvider) || ''
+                        }信息，并根据URL信息任意上报一条数据）`
+                      )
+                    }
+                  />,
+                );
+              } else {
+                item.push(
+                  <Badge
+                    status="default"
+                    text={
+                      <span>
+                        请联系管理员提供${urlMap.get(device?.accessProvider) || ''}
+                        信息，并根据URL信息任意上报一条数据
+                      </span>
+                    }
+                  />,
+                );
+              }
+            }
+          }
+        } else if (providerType === 'child-device') {
+        } else if (providerType === 'media') {
+        } else if (providerType === 'cloud') {
+        } else if (providerType === 'channel') {
+        }
+        item.push(<Badge status="default" text="请检查设备是否已开机" />);
+        setTimeout(() => {
+          DiagnoseStatusModel.list = modifyArrayList(
+            DiagnoseStatusModel.list,
+            {
+              key: 'other',
+              name: '其他可能异常',
+              desc: '当以上诊断均无异常时，请检查以下内容',
+              status: 'error',
+              text: '可能存在异常',
+              info: (
+                <div>
+                  {item.map((i) => (
+                    <div key={randomString()} className={styles.infoItem}>
+                      {i}
+                    </div>
+                  ))}
+                </div>
+              ),
+            },
+            DiagnoseStatusModel.list.length,
+          );
+          DiagnoseStatusModel.count++;
+          DiagnoseStatusModel.percent = 100;
+          resolve({});
+        }, time);
+      } else {
+        DiagnoseStatusModel.state = 'success';
+      }
+    });
+
+  useEffect(() => {
+    if (DiagnoseStatusModel.status === 'finish') {
+      const list = _.uniq(_.map(DiagnoseStatusModel.list, 'status'));
+      if (device.state?.value !== 'online') {
+        if (list[0] === 'success' && list.length === 1) {
+          diagnoseNetworkOtherConfig();
+        } else if (list.includes('error')) {
+          DiagnoseStatusModel.percent = 100;
+          DiagnoseStatusModel.state = 'error';
+        }
+      } else {
+        DiagnoseStatusModel.percent = 100;
+        DiagnoseStatusModel.state = 'success';
+      }
+    }
+  }, [DiagnoseStatusModel.status, DiagnoseStatusModel.list]);
+
+  const handleSearch = async () => {
+    DiagnoseStatusModel.gateway = {};
+    DiagnoseStatusModel.product = {};
+    DiagnoseStatusModel.configuration = {
+      product: [],
+      device: [],
+    };
+    DiagnoseStatusModel.count = 0;
+    DiagnoseStatusModel.status = 'loading';
+    DiagnoseStatusModel.percent = 0;
+    if (providerType === 'network') {
+      DiagnoseStatusModel.list = [...networkInitList];
+      await diagnoseNetwork();
+      DiagnoseStatusModel.percent = 20;
+      await diagnoseGateway();
+      DiagnoseStatusModel.percent = 40;
+      await diagnoseProduct();
+      await diagnoseDevice();
+      DiagnoseStatusModel.percent = 60;
+      await diagnoseProductAuthConfig();
+      await diagnoseDeviceAuthConfig();
+    } else if (providerType === 'child-device') {
+      DiagnoseStatusModel.list = [...childInitList];
+      await diagnoseNetwork();
+      await diagnoseGateway();
+      DiagnoseStatusModel.percent = 40;
+      await diagnoseParentDevice();
+      await diagnoseProduct();
+      await diagnoseDevice();
+    } else if (providerType === 'media') {
+      DiagnoseStatusModel.list = [...mediaInitList];
+      await diagnoseGateway();
+      DiagnoseStatusModel.percent = 40;
+      await diagnoseProduct();
+      await diagnoseDevice();
+    } else if (providerType === 'cloud') {
+      DiagnoseStatusModel.list = [...cloudInitList];
+      await diagnoseGateway();
+      DiagnoseStatusModel.percent = 40;
+      await diagnoseProduct();
+      await diagnoseDevice();
+    } else if (providerType === 'channel') {
+      DiagnoseStatusModel.list = [...channelInitList];
+      await diagnoseGateway();
+      DiagnoseStatusModel.percent = 40;
+      await diagnoseProduct();
+      await diagnoseDevice();
+    }
+    DiagnoseStatusModel.percent = 90;
+    DiagnoseStatusModel.status = 'finish';
+  };
+
+  useEffect(() => {
+    if (DiagnoseStatusModel.state === 'loading') {
+      handleSearch();
+    }
+  }, [DiagnoseStatusModel.state]);
+
+  return (
+    <div className={styles.statusBox}>
+      <div className={styles.statusHeader}>
+        <TitleComponent data={'连接详情'} />
+        <Space>
+          {/* <Button type='primary'>一键修复</Button> */}
+          <Button
+            onClick={() => {
+              DiagnoseStatusModel.state = 'loading';
+            }}
+          >
+            重新诊断
+          </Button>
+        </Space>
+      </div>
+      <div className={styles.statusContent}>
+        {DiagnoseStatusModel.list.map((item: ListProps) => (
+          <div key={item.key} className={styles.statusItem}>
+            <div className={styles.statusLeft}>
+              <div className={styles.statusImg}>
+                <img
+                  style={{ height: 32 }}
+                  className={item.status === 'loading' ? styles.loading : {}}
+                  src={StatusMap.get(item.status)}
+                />
+              </div>
+              <div className={styles.statusContext}>
+                <div className={styles.statusTitle}>{item.name}</div>
+                <div className={styles.statusDesc}>{item.desc}</div>
+                <div className={styles.info}>{item?.info}</div>
+              </div>
+            </div>
+            <div className={styles.statusRight} style={{ color: textColorMap.get(item.status) }}>
+              {item?.text}
+            </div>
           </div>
-        </div>
-      </Col>
-      {diagnoseVisible && (
-        <DiagnosticAdvice
-          data={diagnoseData}
-          close={() => {
-            setDiagnoseVisible(false);
-          }}
-        />
-      )}
+        ))}
+      </div>
       {artificialVisible && (
         <ManualInspection
           data={artificiaData}
           close={() => {
             setArtificialVisible(false);
           }}
-          ok={(params: any) => {
+          save={(params: any) => {
+            DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+              key: params.key,
+              name: params.name,
+              desc: params.desc,
+              status: 'success',
+              text: '正常',
+              info: null,
+            });
             setArtificialVisible(false);
-            if (params.status === 'success') {
-              DiagnoseStatusModel.status[params.data.key] = {
-                status: 'success',
-                text: '正常',
-                info: null,
-              };
-              DiagnoseStatusModel.status = { ...DiagnoseStatusModel.status };
-            } else {
-              DiagnoseStatusModel.status[params.data.key] = {
-                status: 'error',
-                text: '异常',
-                info: (
-                  <div className={styles.infoItem}>
-                    <Badge
-                      status="default"
-                      text={
-                        <span>
-                          {params.data.type === 'device' ? '设备' : '产品'}-{params.data.data.name}
-                          配置错误，请
-                          <a
-                            onClick={() => {
-                              const url = getMenuPathByParams(
-                                MENUS_CODE['device/Product/Detail'],
-                                InstanceModel.detail?.productId,
-                              );
-                              const tab: any = window.open(`${origin}/#${url}?key=access`);
-                              tab!.onTabSaveSuccess = (value: any) => {
-                                if (value) {
-                                  getDetail(InstanceModel.detail?.id || '');
-                                  handleSearch();
-                                }
-                              };
-                            }}
-                          >
-                            重新配置
-                          </a>
-                          或
-                          <a
-                            onClick={() => {
-                              setArtificialVisible(true);
-                              setArtificiaData(params.data);
-                            }}
-                          >
-                            重新比对
-                          </a>
-                        </span>
-                      }
-                    />
-                  </div>
-                ),
-              };
-            }
           }}
         />
       )}
-    </Row>
+    </div>
   );
 });
 

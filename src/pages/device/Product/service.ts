@@ -159,6 +159,11 @@ class Service extends BaseService<ProductItem> {
         paging: false,
       },
     });
+  //获取协议详情
+  public getProtocolDetail = (id: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${id}/detail`, {
+      method: 'POST',
+    });
 }
 
 export default Service;

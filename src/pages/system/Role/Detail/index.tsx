@@ -1,7 +1,6 @@
 import { observer } from '@formily/react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useState } from 'react';
-import { history } from 'umi';
 import UserManage from '@/pages/system/Role/Detail/UserManage';
 import Permission from '@/pages/system/Role/Detail/Permission';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -31,8 +30,8 @@ const RoleEdit = observer(() => {
 
   return (
     <PageContainer
-      className={'page-title-show'}
-      onBack={history.goBack}
+      // className={'page-title-show'}
+      // onBack={history.goBack}
       tabList={list}
       onTabChange={setTab}
     >
