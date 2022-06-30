@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, message, notification } from 'antd';
 import { groupBy } from 'lodash';
 import moment from 'moment';
@@ -72,6 +72,9 @@ const NoticeIconView = () => {
   // const { data } = useRequest(getNotices);
 
   const history = useHistory();
+
+  const historyRef = useRef(history);
+  historyRef.current = history;
   const [subscribeTopic] = useSendWebsocketMessage();
 
   const getUnread = () => {
@@ -92,6 +95,54 @@ const NoticeIconView = () => {
       });
   };
 
+  const changeReadState = async (item: any, type?: 'notice' | 'icon') => {
+    const resp = await service.changeNoticeReadState(item.id);
+    if (resp.status === 200) {
+      const url = getMenuPathByCode(MENUS_CODE['account/NotificationRecord']);
+      historyRef.current?.push(url, { ...item });
+      if (type === 'icon') {
+        setVisible(false);
+      } else {
+        notification.close(item.id);
+      }
+    }
+  };
+
+  const openNotification = (resp: any) => {
+    notification.warning({
+      style: { width: 320 },
+      message: resp?.payload?.topicName,
+      description: (
+        <div
+          className="ellipsis"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            changeReadState(resp?.payload, 'notice');
+          }}
+        >
+          {resp?.payload?.message}
+        </div>
+      ),
+      key: resp.payload.id,
+      btn: (
+        <Button
+          type="primary"
+          size="small"
+          onClick={() => {
+            service.changeNoticeReadState(resp.payload.id).then((response) => {
+              if (response.status === 200) {
+                notification.close(resp.payload.id);
+                getUnread();
+              }
+            });
+          }}
+        >
+          标记已读
+        </Button>
+      ),
+    });
+  };
+
   const subscribeNotice = () => {
     const id = `notification`;
     const topic = `/notifications`;
@@ -99,27 +150,7 @@ const NoticeIconView = () => {
       ?.pipe(throttleTime(2000))
       .subscribe((resp: any) => {
         getUnread();
-        notification.warning({
-          message: resp?.payload?.topicName,
-          description: resp?.payload?.message,
-          key: resp.payload.id,
-          btn: (
-            <Button
-              type="primary"
-              size="small"
-              onClick={() => {
-                service.changeNoticeReadState(resp.payload.id).then((response) => {
-                  if (response.status === 200) {
-                    notification.close(resp.payload.id);
-                    getUnread();
-                  }
-                });
-              }}
-            >
-              标记已读
-            </Button>
-          ),
-        });
+        openNotification(resp);
       });
   };
 
@@ -129,16 +160,7 @@ const NoticeIconView = () => {
   }, []);
 
   const noticeData = getNoticeData(notices);
-  // const unreadMsg = getUnreadData(noticeData || {});
-
-  const changeReadState = async (item: any) => {
-    const resp = await service.changeNoticeReadState(item.id);
-    if (resp.status === 200) {
-      const url = getMenuPathByCode(MENUS_CODE['account/NotificationRecord']);
-      history.push(url, { ...item });
-      setVisible(false);
-    }
-  };
+  // const unreadMsg = getUnreadData(noticeData || {})
 
   const clearReadState = async (title: string) => {
     const clearIds = (getNoticeData(notices).unread || []).map((item) => item.id) || [];
@@ -154,7 +176,7 @@ const NoticeIconView = () => {
       className={styles.action}
       count={unreadCount}
       onItemClick={(item) => {
-        changeReadState(item!);
+        changeReadState(item!, 'icon');
       }}
       onClear={(title: string) => clearReadState(title)}
       loading={loading}

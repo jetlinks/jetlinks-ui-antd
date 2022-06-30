@@ -6,10 +6,12 @@ import { Modal } from 'antd';
 import { useIntl } from 'umi';
 import GeoComponent from './location/GeoComponent';
 import { onlyMessage } from '@/utils/util';
+import RemoveData from './RemoveData';
 
 interface Props {
   close: () => void;
   tags: any[];
+  refresh: () => void;
 }
 
 const Edit = (props: Props) => {
@@ -27,6 +29,7 @@ const Edit = (props: Props) => {
       FormItem,
       Input,
       ArrayTable,
+      RemoveData,
       GeoComponent,
     },
   });
@@ -123,7 +126,10 @@ const Edit = (props: Props) => {
                   properties: {
                     remove: {
                       type: 'void',
-                      'x-component': 'ArrayTable.Remove',
+                      'x-component': 'RemoveData',
+                      // 'x-component-props': {
+                      //   tags: tags,
+                      // },
                     },
                   },
                 },
@@ -152,12 +158,17 @@ const Edit = (props: Props) => {
       width={1000}
       onOk={async () => {
         const values: any = (await form.submit()) as any;
-        const list = (values?.tags || []).filter((item: any) => item?.id);
-        const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
-        if (resp.status === 200) {
-          InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
-          onlyMessage('操作成功！');
+        if (values?.tags.length === 0) {
           props.close();
+        } else {
+          const list = (values?.tags || []).filter((item: any) => item?.key);
+          const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
+          if (resp.status === 200) {
+            props.refresh();
+            // InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
+            onlyMessage('操作成功！');
+            props.close();
+          }
         }
       }}
     >
