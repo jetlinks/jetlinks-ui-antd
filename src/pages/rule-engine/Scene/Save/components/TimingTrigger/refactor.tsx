@@ -36,7 +36,15 @@ export default (props: TimingTrigger) => {
 
   const onChange = useCallback(() => {
     const formData = props.form.getFieldsValue();
-    setData(formData?.trigger?.timer);
+    let _data = formData;
+    name.forEach((key) => {
+      console.log(_data, key);
+      if (key in _data) {
+        _data = _data[key];
+      }
+    });
+
+    setData(_data.timer);
   }, [props.form]);
 
   const TimeTypeAfter = (
@@ -80,7 +88,15 @@ export default (props: TimingTrigger) => {
                 { label: 'cron表达式', value: TriggerEnum.cron },
               ]}
               style={{ width: '120px' }}
-              onChange={onChange}
+              onChange={() => {
+                props.form.setFields([
+                  {
+                    name: [...name, 'timer', 'when'],
+                    value: undefined,
+                  },
+                ]);
+                onChange();
+              }}
             />
           </Form.Item>
           {data?.trigger !== TriggerEnum.cron ? (
@@ -134,7 +150,7 @@ export default (props: TimingTrigger) => {
           )}
         </ItemGroup>
       </Col>
-      <Col span={12}>
+      <Col span={11}>
         {data?.trigger !== TriggerEnum.cron && (
           <ItemGroup>
             <Form.Item
@@ -177,12 +193,12 @@ export default (props: TimingTrigger) => {
           </ItemGroup>
         )}
       </Col>
-      <Col span={6}>
+      <Col span={7}>
         {data?.trigger !== TriggerEnum.cron && (
           <ItemGroup style={{ gap: 16 }}>
             {data?.mod === PeriodModEnum.period ? (
               <>
-                <div style={{ paddingBottom: 12 }}> 每 </div>
+                <div style={{ paddingBottom: 14 }}> 每 </div>
                 <Form.Item
                   name={[...name, 'timer', 'period', 'every']}
                   rules={[{ required: true, message: '请输入时间' }]}
@@ -190,7 +206,7 @@ export default (props: TimingTrigger) => {
                   <InputNumber
                     placeholder={'请输入时间'}
                     addonAfter={TimeTypeAfter}
-                    style={{ flex: 1 }}
+                    style={{ maxWidth: 170 }}
                     min={0}
                     max={59}
                   />
@@ -204,7 +220,7 @@ export default (props: TimingTrigger) => {
                 </Form.Item>
               </>
             ) : null}
-            <div style={{ flex: 0, flexBasis: 64, paddingBottom: 12 }}> 执行一次 </div>
+            <div style={{ flex: 0, flexBasis: 64, paddingBottom: 14 }}> 执行一次 </div>
           </ItemGroup>
         )}
       </Col>

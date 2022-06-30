@@ -12,7 +12,7 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import { useIntl, useLocation } from 'umi';
+import { useHistory, useIntl, useLocation } from 'umi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';
@@ -27,6 +27,7 @@ import { model } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 import { onlyMessage } from '@/utils/util';
 import Explanation from './Explanation';
+import { getMenuPathByCode } from '@/utils/menu';
 
 type ShakeLimitType = {
   enabled: boolean;
@@ -48,6 +49,7 @@ export default () => {
   const [form] = Form.useForm();
   const intl = useIntl();
   const triggerRef = useRef<any>();
+  const history = useHistory();
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
   const [triggerType, setTriggerType] = useState('');
@@ -132,7 +134,7 @@ export default () => {
       setLoading(false);
       if (resp.status === 200) {
         onlyMessage('操作成功');
-        history.back();
+        history.push(getMenuPathByCode('rule-engine/Scene'));
       } else {
         onlyMessage(resp.message);
       }

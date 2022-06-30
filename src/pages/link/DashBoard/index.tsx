@@ -285,11 +285,11 @@ export default () => {
         {
           type: 'inside',
           start: 0,
-          end: 10,
+          end: 100,
         },
         {
           start: 0,
-          end: 10,
+          end: 100,
         },
       ],
       color: ['#60DFC7'],
@@ -342,11 +342,11 @@ export default () => {
         {
           type: 'inside',
           start: 0,
-          end: 10,
+          end: 100,
         },
         {
           start: 0,
-          end: 10,
+          end: 100,
         },
       ],
       color: ['#2CB6E0'],
@@ -648,14 +648,16 @@ export default () => {
     <PageContainer>
       <div className={'link-dash-board'}>
         {serverNode && serverNode.length ? (
-          <Select
-            value={serverId}
-            options={serverNode}
-            onChange={(value) => {
-              setServerId(value);
-            }}
-            style={{ width: 300, marginBottom: 24 }}
-          />
+          <div style={{ backgroundColor: '#fff', padding: '24px 24px 0 24px' }}>
+            <Select
+              value={serverId}
+              options={serverNode}
+              onChange={(value) => {
+                setServerId(value);
+              }}
+              style={{ width: 300 }}
+            />
+          </div>
         ) : null}
         <div className={'echarts-items'}>
           <TopEchartsItemNode title={'CPU使用率'} value={topValues.cpu} />
@@ -674,69 +676,12 @@ export default () => {
             max={topValues.systemUsageTotal}
             bottom={`系统内存  ${topValues.systemUsageTotal}G`}
           />
-          {/*<div className={'echarts-item'}>*/}
-          {/*  */}
-          {/*  <Progress*/}
-          {/*    type="circle"*/}
-          {/*    strokeWidth={8}*/}
-          {/*    width={160}*/}
-          {/*    percent={topValues.cpu}*/}
-          {/*    format={(percent) => (*/}
-          {/*      <div>*/}
-          {/*        <div className={'echarts-item-title'}>CPU使用率</div>*/}
-          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
-          {/*      </div>*/}
-          {/*    )}*/}
-          {/*  />*/}
-          {/*</div>*/}
-          {/*<div className={'echarts-item'}>*/}
-          {/*  <Progress*/}
-          {/*    type="circle"*/}
-          {/*    strokeWidth={8}*/}
-          {/*    width={160}*/}
-          {/*    percent={topValues.jvm}*/}
-          {/*    format={(percent) => (*/}
-          {/*      <div>*/}
-          {/*        <div className={'echarts-item-title'}>JVM内存</div>*/}
-          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
-          {/*      </div>*/}
-          {/*    )}*/}
-          {/*  />*/}
-          {/*</div>*/}
-          {/*<div className={'echarts-item'}>*/}
-          {/*  <Progress*/}
-          {/*    type="circle"*/}
-          {/*    strokeWidth={8}*/}
-          {/*    width={160}*/}
-          {/*    percent={topValues.usage}*/}
-          {/*    format={(percent) => (*/}
-          {/*      <div>*/}
-          {/*        <div className={'echarts-item-title'}>磁盘占用率</div>*/}
-          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
-          {/*      </div>*/}
-          {/*    )}*/}
-          {/*  />*/}
-          {/*</div>*/}
-          {/*<div className={'echarts-item'}>*/}
-          {/*  <Progress*/}
-          {/*    type="circle"*/}
-          {/*    strokeWidth={8}*/}
-          {/*    width={160}*/}
-          {/*    percent={topValues.systemUsage}*/}
-          {/*    format={(percent) => (*/}
-          {/*      <div>*/}
-          {/*        <div className={'echarts-item-title'}>系统内存</div>*/}
-          {/*        <div className={'echarts-item-value'}>{percent}%</div>*/}
-          {/*      </div>*/}
-          {/*    )}*/}
-          {/*  />*/}
-          {/*</div>*/}
         </div>
         <div style={{ marginBottom: 24 }}>
           <DashBoard
             title={'网络流量'}
             ref={NETWORKRef}
-            initialValues={{ type: 'bytesSent' }}
+            initialValues={{ type: 'bytesRead' }}
             height={400}
             closeInitialParams={true}
             showTimeTool={true}
@@ -756,6 +701,7 @@ export default () => {
         </div>
         <div style={{ display: 'flex', gap: 24 }}>
           <DashBoard
+            showTime
             title={'CPU使用率趋势'}
             closeInitialParams={true}
             ref={CPURef}
@@ -766,6 +712,7 @@ export default () => {
             onParamsChange={getCPUEcharts}
           />
           <DashBoard
+            showTime
             title={'JVM内存使用率趋势'}
             closeInitialParams={true}
             ref={JVMRef}

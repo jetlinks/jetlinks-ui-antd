@@ -88,7 +88,7 @@ class Service<T> extends BaseService<T> {
       mergeMap((result) => {
         const ids = result?.result?.data?.map((item: any) => item.id) || [];
         return from(
-          request(`${SystemConst.API_BASE}/assets/bindings/device-product/org/${parentId}/_query`, {
+          request(`${SystemConst.API_BASE}/assets/bindings/product/org/${parentId}/_query`, {
             method: 'POST',
             data: ids,
           }),

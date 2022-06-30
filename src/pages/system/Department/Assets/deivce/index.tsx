@@ -54,7 +54,7 @@ export default observer((props: { parentId: string }) => {
         .unBind('device', [
           {
             targetType: 'org',
-            targetId: props.parentId,
+            targetId: AssetsModel.parentId,
             assetType: 'device',
             assetIdList: Models.unBindKeys,
           },

@@ -1,4 +1,4 @@
-import { DatePicker, Input, InputNumber, Select } from 'antd';
+import { DatePicker, Input, InputNumber, Select, TreeSelect } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import type { FormInstance } from 'antd';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
@@ -33,7 +33,7 @@ export default (props: BuiltInProps) => {
   const [builtInList, setBuiltInList] = useState<any[]>([]);
 
   useEffect(() => {
-    console.log(props.trigger);
+    console.log(props.parallel);
     // if (source === 'upper' && props.trigger) {
     //   getBuiltInList({ ...props.trigger });
     // }
@@ -103,9 +103,9 @@ export default (props: BuiltInProps) => {
         }}
       ></Select>
       {source === 'upper' ? (
-        <Select
+        <TreeSelect
           value={upperKey}
-          options={builtInList}
+          treeData={builtInList}
           onChange={(key) => {
             onChange(source, undefined, key);
           }}
