@@ -11,5 +11,9 @@ export default () => {
   const location = useLocation<LocationType>();
   const params: any = new URLSearchParams(location.search);
 
-  return <PageContainer>{params.get('type') === 'assets' ? <Assets /> : <Member />}</PageContainer>;
+  return (
+    <PageContainer>
+      {params.get('type') === 'assets' ? <Assets parentId={''} /> : <Member parentId={''} />}
+    </PageContainer>
+  );
 };

@@ -61,7 +61,7 @@ const Save = () => {
     return _productTypes?.find((item: any) => item.id === _id);
   };
 
-  const getProduct = (f: Field) => {
+  const getProduct = (f?: Field) => {
     return service.getProduct(f?.value).then((resp) => {
       const _temp = resp.result.map((item: any) => ({ label: item.name, value: item.id }));
       Store.set('product-list', _temp);
