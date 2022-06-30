@@ -545,17 +545,18 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     }
 
     if (type) {
-      setUrl({ q: JSON.stringify(value) });
+      setUrl({ q: JSON.stringify(value), target: props.target });
     }
     onSearch({ terms: _temp });
   };
 
   useEffect(() => {
-    if (url.q) {
+    // 防止页面下多个TabsTabPane中的查询组件共享路由中的参数
+    if (url.q && url.target && props.target && url.target === props.target) {
       form.setValues(JSON.parse(url.q));
       handleSearch(false);
     }
-  }, [url]);
+  }, [url, props.target]);
 
   useEffect(() => {
     if (defaultParam) {
@@ -579,7 +580,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   };
 
   const resetForm = async (type: boolean) => {
-    console.log('resetForm', type);
     const value = form.values;
     if (!expand) {
       value.terms1 = [defaultTerms(0), defaultTerms(1), defaultTerms(2)];

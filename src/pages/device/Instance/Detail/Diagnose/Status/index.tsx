@@ -2,7 +2,8 @@ import TitleComponent from '@/components/TitleComponent';
 import { Badge, Button, message, Popconfirm, Space } from 'antd';
 import styles from './index.less';
 import { observer } from '@formily/reactive-react';
-import { ListProps, urlMap } from './model';
+import type { ListProps } from './model';
+import { urlMap } from './model';
 import { gatewayList } from './model';
 import { textColorMap } from './model';
 import {
@@ -21,7 +22,7 @@ import { InstanceModel, service } from '@/pages/device/Instance';
 import _ from 'lodash';
 import { onlyMessage, randomString } from '@/utils/util';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import PermissionButton from '@/components/PermissionButton';
+// import PermissionButton from '@/components/PermissionButton';
 import ManualInspection from './ManualInspection';
 import useHistory from '@/hooks/route/useHistory';
 interface Props {
@@ -34,10 +35,10 @@ const Status = observer((props: Props) => {
   const device = { ...InstanceModel.detail };
   const history = useHistory();
 
-  const productPermission = PermissionButton.usePermission('device/Product').permission;
-  const networkPermission = PermissionButton.usePermission('link/Type').permission;
-  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
-  const accessPermission = PermissionButton.usePermission('link/AccessConfig').permission;
+  // const productPermission = PermissionButton.usePermission('device/Product').permission;
+  // const networkPermission = PermissionButton.usePermission('link/Type').permission;
+  // const devicePermission = PermissionButton.usePermission('device/Instance').permission;
+  // const accessPermission = PermissionButton.usePermission('link/AccessConfig').permission;
 
   const [artificialVisible, setArtificialVisible] = useState<boolean>(false);
   const [artificiaData, setArtificiaData] = useState<any>({});
@@ -135,37 +136,37 @@ const Status = observer((props: Props) => {
                           <Badge
                             status="default"
                             text={
-                              networkPermission.action ? (
-                                <span>
-                                  网络组件已禁用，请先
-                                  <Popconfirm
-                                    title="确认启用"
-                                    onConfirm={async () => {
-                                      const res = await service.startNetwork(
-                                        DiagnoseStatusModel.gateway?.channelId,
+                              // networkPermission.action ? (
+                              <span>
+                                网络组件已禁用，请先
+                                <Popconfirm
+                                  title="确认启用"
+                                  onConfirm={async () => {
+                                    const res = await service.startNetwork(
+                                      DiagnoseStatusModel.gateway?.channelId,
+                                    );
+                                    if (res.status === 200) {
+                                      onlyMessage('操作成功！');
+                                      DiagnoseStatusModel.list = modifyArrayList(
+                                        DiagnoseStatusModel.list,
+                                        {
+                                          key: 'network',
+                                          name: '网络组件',
+                                          desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
+                                          status: 'success',
+                                          text: '正常',
+                                          info: null,
+                                        },
                                       );
-                                      if (res.status === 200) {
-                                        onlyMessage('操作成功！');
-                                        DiagnoseStatusModel.list = modifyArrayList(
-                                          DiagnoseStatusModel.list,
-                                          {
-                                            key: 'network',
-                                            name: '网络组件',
-                                            desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
-                                            status: 'success',
-                                            text: '正常',
-                                            info: null,
-                                          },
-                                        );
-                                      }
-                                    }}
-                                  >
-                                    <a>启用</a>
-                                  </Popconfirm>
-                                </span>
-                              ) : (
-                                '暂无权限，请联系管理员'
-                              )
+                                    }
+                                  }}
+                                >
+                                  <a>启用</a>
+                                </Popconfirm>
+                              </span>
+                              // ) : (
+                              //   '暂无权限，请联系管理员'
+                              // )
                             }
                           />
                         </div>
@@ -248,37 +249,35 @@ const Status = observer((props: Props) => {
                           <Badge
                             status="default"
                             text={
-                              accessPermission.action ? (
-                                <span>
-                                  设备接入网关已禁用，请先
-                                  <Popconfirm
-                                    title="确认启用"
-                                    onConfirm={async () => {
-                                      const resp = await service.startGateway(
-                                        device.accessId || '',
+                              // accessPermission.action ? (
+                              <span>
+                                设备接入网关已禁用，请先
+                                <Popconfirm
+                                  title="确认启用"
+                                  onConfirm={async () => {
+                                    const resp = await service.startGateway(device.accessId || '');
+                                    if (resp.status === 200) {
+                                      onlyMessage('操作成功！');
+                                      DiagnoseStatusModel.list = modifyArrayList(
+                                        DiagnoseStatusModel.list,
+                                        {
+                                          key: 'gateway',
+                                          name: '设备接入网关',
+                                          desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                                          status: 'success',
+                                          text: '正常',
+                                          info: null,
+                                        },
                                       );
-                                      if (resp.status === 200) {
-                                        onlyMessage('操作成功！');
-                                        DiagnoseStatusModel.list = modifyArrayList(
-                                          DiagnoseStatusModel.list,
-                                          {
-                                            key: 'gateway',
-                                            name: '设备接入网关',
-                                            desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
-                                            status: 'success',
-                                            text: '正常',
-                                            info: null,
-                                          },
-                                        );
-                                      }
-                                    }}
-                                  >
-                                    <a>启用</a>
-                                  </Popconfirm>
-                                </span>
-                              ) : (
-                                '暂无权限，请联系管理员处理'
-                              )
+                                    }
+                                  }}
+                                >
+                                  <a>启用</a>
+                                </Popconfirm>
+                              </span>
+                              // ) : (
+                              //   '暂无权限，请联系管理员处理'
+                              // )
                             }
                           />
                         </div>
@@ -321,35 +320,35 @@ const Status = observer((props: Props) => {
                     <Badge
                       status="default"
                       text={
-                        accessPermission.action ? (
-                          <span>
-                            设备接入网关已禁用，请先
-                            <Popconfirm
-                              title="确认启用"
-                              onConfirm={async () => {
-                                const resp = await service.startGateway(device.accessId || '');
-                                if (resp.status === 200) {
-                                  onlyMessage('操作成功！');
-                                  DiagnoseStatusModel.list = modifyArrayList(
-                                    DiagnoseStatusModel.list,
-                                    {
-                                      key: 'gateway',
-                                      name: '设备接入网关',
-                                      desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
-                                      status: 'success',
-                                      text: '正常',
-                                      info: null,
-                                    },
-                                  );
-                                }
-                              }}
-                            >
-                              <a>启用</a>
-                            </Popconfirm>
-                          </span>
-                        ) : (
-                          '暂无权限，请联系管理员处理'
-                        )
+                        // accessPermission.action ? (
+                        <span>
+                          设备接入网关已禁用，请先
+                          <Popconfirm
+                            title="确认启用"
+                            onConfirm={async () => {
+                              const resp = await service.startGateway(device.accessId || '');
+                              if (resp.status === 200) {
+                                onlyMessage('操作成功！');
+                                DiagnoseStatusModel.list = modifyArrayList(
+                                  DiagnoseStatusModel.list,
+                                  {
+                                    key: 'gateway',
+                                    name: '设备接入网关',
+                                    desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                                    status: 'success',
+                                    text: '正常',
+                                    info: null,
+                                  },
+                                );
+                              }
+                            }}
+                          >
+                            <a>启用</a>
+                          </Popconfirm>
+                        </span>
+                        // ) : (
+                        //   '暂无权限，请联系管理员处理'
+                        // )
                       }
                     />
                   </div>
@@ -456,38 +455,36 @@ const Status = observer((props: Props) => {
                         <Badge
                           status="default"
                           text={
-                            productPermission.action ? (
-                              <span>
-                                产品已禁用，请
-                                <Popconfirm
-                                  title="确认启用"
-                                  onConfirm={async () => {
-                                    const resp = await service.deployProduct(
-                                      device.productId || '',
+                            // productPermission.action ? (
+                            <span>
+                              产品已禁用，请
+                              <Popconfirm
+                                title="确认启用"
+                                onConfirm={async () => {
+                                  const resp = await service.deployProduct(device.productId || '');
+                                  if (resp.status === 200) {
+                                    onlyMessage('操作成功！');
+                                    DiagnoseStatusModel.list = modifyArrayList(
+                                      DiagnoseStatusModel.list,
+                                      {
+                                        key: 'product',
+                                        name: '产品状态',
+                                        desc: '诊断产品状态是否正常，禁用状态将导致设备连接失败',
+                                        status: 'success',
+                                        text: '正常',
+                                        info: null,
+                                      },
                                     );
-                                    if (resp.status === 200) {
-                                      onlyMessage('操作成功！');
-                                      DiagnoseStatusModel.list = modifyArrayList(
-                                        DiagnoseStatusModel.list,
-                                        {
-                                          key: 'product',
-                                          name: '产品状态',
-                                          desc: '诊断产品状态是否正常，禁用状态将导致设备连接失败',
-                                          status: 'success',
-                                          text: '正常',
-                                          info: null,
-                                        },
-                                      );
-                                    }
-                                  }}
-                                >
-                                  <a>启用</a>
-                                </Popconfirm>
-                                产品
-                              </span>
-                            ) : (
-                              '暂无权限，请联系管理员处理'
-                            )
+                                  }
+                                }}
+                              >
+                                <a>启用</a>
+                              </Popconfirm>
+                              产品
+                            </span>
+                            // ) : (
+                            //   '暂无权限，请联系管理员处理'
+                            // )
                           }
                         />
                       </div>
@@ -541,36 +538,33 @@ const Status = observer((props: Props) => {
                   <Badge
                     status="default"
                     text={
-                      devicePermission.action ? (
-                        <span>
-                          设备已禁用，请
-                          <Popconfirm
-                            title="确认启用"
-                            onConfirm={async () => {
-                              const resp = await service.deployDevice(device?.id || '');
-                              if (resp.status === 200) {
-                                onlyMessage('操作成功！');
-                                DiagnoseStatusModel.list = modifyArrayList(
-                                  DiagnoseStatusModel.list,
-                                  {
-                                    key: 'device',
-                                    name: '设备状态',
-                                    desc: '诊断设备状态是否正常，禁用状态将导致设备连接失败',
-                                    status: 'success',
-                                    text: '正常',
-                                    info: null,
-                                  },
-                                );
-                              }
-                            }}
-                          >
-                            <a>启用</a>
-                          </Popconfirm>
-                          设备
-                        </span>
-                      ) : (
-                        '暂无权限，请联系管理员处理'
-                      )
+                      // devicePermission.action ? (
+                      <span>
+                        设备已禁用，请
+                        <Popconfirm
+                          title="确认启用"
+                          onConfirm={async () => {
+                            const resp = await service.deployDevice(device?.id || '');
+                            if (resp.status === 200) {
+                              onlyMessage('操作成功！');
+                              DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                                key: 'device',
+                                name: '设备状态',
+                                desc: '诊断设备状态是否正常，禁用状态将导致设备连接失败',
+                                status: 'success',
+                                text: '正常',
+                                info: null,
+                              });
+                            }
+                          }}
+                        >
+                          <a>启用</a>
+                        </Popconfirm>
+                        设备
+                      </span>
+                      // ) : (
+                      //   '暂无权限，请联系管理员处理'
+                      // )
                     }
                   />
                 </div>
@@ -1096,23 +1090,23 @@ const Status = observer((props: Props) => {
                   <Badge
                     status="default"
                     text={
-                      accessPermission.view ? (
-                        <span>
-                          请根据
-                          <a
-                            onClick={() => {
-                              jumpAccessConfig();
-                            }}
-                          >
-                            设备接入配置
-                          </a>
-                          中${urlMap.get(device?.accessProvider) || ''}信息，任意上报一条数据
-                        </span>
-                      ) : (
-                        `请联系管理员提供${
-                          urlMap.get(device?.accessProvider) || ''
-                        }信息，并根据URL信息任意上报一条数据）`
-                      )
+                      // accessPermission.view ? (
+                      <span>
+                        请根据
+                        <a
+                          onClick={() => {
+                            jumpAccessConfig();
+                          }}
+                        >
+                          设备接入配置
+                        </a>
+                        中${urlMap.get(device?.accessProvider) || ''}信息，任意上报一条数据
+                      </span>
+                      // ) : (
+                      //   `请联系管理员提供${
+                      //     urlMap.get(device?.accessProvider) || ''
+                      //   }信息，并根据URL信息任意上报一条数据）`
+                      // )
                     }
                   />,
                 );

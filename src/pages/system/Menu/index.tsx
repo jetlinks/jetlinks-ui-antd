@@ -21,6 +21,7 @@ import moment from 'moment';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('menu');
 

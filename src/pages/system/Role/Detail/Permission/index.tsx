@@ -5,6 +5,7 @@ import { history, useParams } from 'umi';
 import { service } from '@/pages/system/Role';
 import { flattenArray, onlyMessage } from '@/utils/util';
 import TitleComponent from '@/components/TitleComponent';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 
 const Permission = () => {
   const params = useParams<{ id: string }>();
@@ -84,7 +85,7 @@ const Permission = () => {
             .subscribe((resp) => {
               if (resp.status === 200) {
                 onlyMessage('操作成功');
-                history.goBack();
+                history.replace(`${getMenuPathByCode(MENUS_CODE['system/Role'])}`);
               }
             });
         }}

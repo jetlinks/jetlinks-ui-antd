@@ -1,6 +1,6 @@
 import { Button, Descriptions, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { InstanceModel } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
 import { EditOutlined } from '@ant-design/icons';
 import Edit from './Edit';
@@ -11,6 +11,13 @@ const Tags = () => {
   const [visible, setVisible] = useState<boolean>(false);
 
   const tag = InstanceModel.detail?.tags;
+
+  const getDetail = async () => {
+    const response = await service.detail(InstanceModel.detail?.id || '');
+    if (response.status === 200) {
+      InstanceModel.detail = { ...InstanceModel.detail, ...response?.result };
+    }
+  };
 
   useEffect(() => {
     if (tag) {
@@ -55,6 +62,9 @@ const Tags = () => {
       </Descriptions>
       {visible && (
         <Edit
+          refresh={() => {
+            getDetail();
+          }}
           close={() => {
             setVisible(false);
           }}

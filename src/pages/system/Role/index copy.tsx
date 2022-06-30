@@ -1,18 +1,18 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef, useState } from 'react';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { useEffect, useRef } from 'react';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import BaseCrud from '@/components/BaseCrud';
 import Service from './service';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { observer } from '@formily/react';
-import { history } from 'umi';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { history, useLocation } from 'umi';
+import { Store } from 'jetlinks-store';
+import SystemConst from '@/utils/const';
+import { CurdModel } from '@/components/BaseCrud/model';
+import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
-import ProTable from '@jetlinks/pro-table';
-import SearchComponent from '@/components/SearchComponent';
-import { useDomFullHeight } from '@/hooks';
-import Save from './Save';
 
 export const service = new Service('role');
 
@@ -21,10 +21,13 @@ const Role: React.FC = observer(() => {
   const actionRef = useRef<ActionType>();
   const permissionCode = 'system/Role';
   const { permission } = PermissionButton.usePermission(permissionCode);
-  const { minHeight } = useDomFullHeight(`.role`, 24);
-  const [model, setMode] = useState<'add' | 'edit' | 'query'>('query');
 
   const columns: ProColumns<RoleItem>[] = [
+    // {
+    //   dataIndex: 'index',
+    //   valueType: 'indexBorder',
+    //   width: 48,
+    // },
     {
       title: intl.formatMessage({
         id: 'pages.system.role.id',
@@ -33,7 +36,6 @@ const Role: React.FC = observer(() => {
       dataIndex: 'id',
       // copyable: true,
       ellipsis: true,
-      fixed: 'left',
       // sorter: true,
       // defaultSortOrder: 'ascend',
       formItemProps: {
@@ -83,7 +85,6 @@ const Role: React.FC = observer(() => {
       }),
       valueType: 'option',
       width: 200,
-      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           key="editable"
@@ -136,53 +137,90 @@ const Role: React.FC = observer(() => {
     },
   ];
 
-  const [param, setParam] = useState({});
+  const schema = {
+    type: 'object',
+    properties: {
+      name: {
+        title: intl.formatMessage({
+          id: 'pages.table.name',
+          defaultMessage: '角色名称',
+        }),
+        type: 'string',
+        'x-decorator': 'FormItem',
+        'x-component': 'Input',
+        'x-decorator-props': {},
+        name: 'name',
+        required: true,
+        'x-component-props': {
+          placeholder: '请输入角色名称',
+        },
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
+      },
+      description: {
+        type: 'string',
+        title: intl.formatMessage({
+          id: 'pages.table.describe',
+          defaultMessage: '描述',
+        }),
+        'x-decorator': 'FormItem',
+        'x-component': 'Input.TextArea',
+        'x-component-props': {
+          checkStrength: true,
+          placeholder: '请输入说明',
+        },
+        'x-decorator-props': {},
+        name: 'password',
+        required: false,
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
+      },
+    },
+  };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      CurdModel.add();
+    }
+    const subscription = Store.subscribe(SystemConst.BASE_UPDATE_DATA, (data) => {
+      if ((window as any).onTabSaveSuccess) {
+        (window as any).onTabSaveSuccess(data);
+        setTimeout(() => window.close(), 300);
+      } else {
+        history.push(`${getMenuPathByParams(MENUS_CODE['system/Role/Detail'], data.id)}`);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <PageContainer>
-      <SearchComponent<RoleItem>
-        field={columns}
-        target="role"
-        onSearch={(data) => {
-          // 重置分页数据
-          actionRef.current?.reset?.();
-          setParam(data);
-        }}
-      />
-      <ProTable<RoleItem>
+      <BaseCrud<RoleItem>
+        disableAdd={getButtonPermission('system/Role', ['add'])}
         actionRef={actionRef}
-        params={param}
+        moduleName="role"
         columns={columns}
-        scroll={{ x: 1366 }}
-        tableClassName={'role'}
-        tableStyle={{ minHeight }}
+        service={service}
         search={false}
-        headerTitle={
-          <PermissionButton
-            onClick={() => {
-              setMode('add');
-            }}
-            isPermission={permission.add}
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </PermissionButton>
-        }
-        request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-        }
-      />
-      <Save
-        model={model}
-        close={() => {
-          setMode('query');
-          actionRef.current?.reload();
-        }}
+        title={intl.formatMessage({
+          id: 'pages.system.role',
+          defaultMessage: '角色列表',
+        })}
+        schema={schema}
       />
     </PageContainer>
   );

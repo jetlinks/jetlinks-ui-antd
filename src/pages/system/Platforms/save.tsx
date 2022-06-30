@@ -25,6 +25,7 @@ import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import { service } from '@/pages/system/Platforms/index';
 import { onlyMessage, randomString } from '@/utils/util';
+import { getMenuPathByCode } from '@/utils/menu';
 
 interface SaveProps {
   visible: boolean;
@@ -36,7 +37,7 @@ interface SaveProps {
 
 export default (props: SaveProps) => {
   const [loading, setLoading] = useState(false);
-  const { permission: deptPermission } = usePermissions('system/Department');
+  const { permission: RolePermission } = usePermissions('system/Role');
 
   const SchemaField = createSchemaField({
     components: {
@@ -320,9 +321,10 @@ export default (props: SaveProps) => {
                 <PermissionButton
                   type="link"
                   style={{ padding: 0 }}
-                  isPermission={deptPermission.add}
+                  isPermission={RolePermission.add}
                   onClick={() => {
-                    const tab: any = window.open(`${origin}/#/system/role?save=true`);
+                    const router = getMenuPathByCode('system/Role');
+                    const tab: any = window.open(`${origin}/#${router}?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
                       form.setFieldState('roleIdList', async (state) => {
                         state.dataSource = await getRole().then((resp: any) =>

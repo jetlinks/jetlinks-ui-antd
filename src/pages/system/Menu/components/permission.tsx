@@ -161,8 +161,8 @@ export default (props: PermissionType) => {
   // };
 
   const parentChange = (value: ParentNodeChange) => {
-    let indeterminateCount = 0;
-    let _checkAll = 0;
+    // let indeterminateCount = 0;
+    // let _checkAll = 0;
     const list = checkListRef.current.map((item) => {
       const _checked = item.id === value.id ? value.checkedAll : item.checked;
       const _state = item.id === value.id ? value.state : item.state;
@@ -172,11 +172,11 @@ export default (props: PermissionType) => {
           : item.actions;
       if (_checked) {
         // 父checkbox为全选或者有子节点被选中
-        _checkAll += 1;
-        indeterminateCount += 1;
+        // _checkAll += 1;
+        // indeterminateCount += 1;
       } else if (_state) {
         // 父checkbox下
-        indeterminateCount += 1;
+        // indeterminateCount += 1;
       }
 
       return {
