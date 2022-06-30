@@ -162,6 +162,7 @@ const ProTableCard = <
         request={async (param, sort, filter) => {
           if (request) {
             const resp = await request(param, sort, filter);
+            setLoading(false);
             setTotal(resp.result ? resp.result.total : 0);
             return {
               code: resp.message,
