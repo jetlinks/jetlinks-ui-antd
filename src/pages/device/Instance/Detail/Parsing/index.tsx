@@ -16,7 +16,7 @@ const Parsing = (props: Props) => {
   const service = new Service('device-instance');
   const { minHeight } = useDomFullHeight(`.parsing`);
   const [value, setValue] = useState(
-    '//解码函数\r\nfunction decode(context) {\r\n    var json = context.json();\r\n    return json;\r\n}\r\n',
+    '//解码函数\r\nfunction decode(context) {\r\n    //原始报文\r\n    var buffer = context.payload();\r\n    // 转为json\r\n    // var json = context.json();\r\n    //mqtt 时通过此方法获取topic\r\n    // var topic = context.topic();\r\n\r\n    // 提取变量\r\n    // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n    //温度属性\r\n    var temperature = buffer.getShort(3) * 10;\r\n    //湿度属性\r\n    var humidity = buffer.getShort(6) * 10;\r\n    return {\r\n        "temperature": temperature,\r\n        "humidity": humidity\r\n    };\r\n}\r\n',
   );
   const ref = useRef(null);
   const size = useSize(ref);
@@ -148,144 +148,155 @@ const Parsing = (props: Props) => {
 
   return (
     <Card className="parsing" style={{ minHeight }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div>
-            {props.tag === 'device' ? (
-              <>
-                <ExclamationCircleOutlined style={{ marginRight: 5 }} />
-                {data?.deviceId ? (
-                  <>
-                    当前数据解析内容已脱离产品影响，
-                    <a
-                      onClick={() => {
-                        rest(props.data.productId, props.data.id);
-                      }}
-                    >
-                      重置
-                    </a>
-                    后将继承产品数据解析内容
-                  </>
-                ) : (
-                  <>
-                    当前数据解析内容继承自产品，
-                    <a
-                      onClick={() => {
-                        setReadOnly(false);
-                      }}
-                    >
-                      修改
-                    </a>
-                    后将脱离产品影响。
-                  </>
-                )}
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
-        </div>
-        <div>
-          脚本语言:
-          <Select defaultValue="JavaScript" style={{ width: 200, marginLeft: 5 }}>
-            <Select.Option value="JavaScript">JavaScript(ECMAScript 5)</Select.Option>
-          </Select>
-          <ExpandOutlined style={{ marginLeft: 20 }} onClick={setFull} />
-        </div>
-      </div>
-      <div ref={ref} style={{ height: 550, border: '1px solid #dcdcdc' }}>
-        {readOnly && (
-          <div
-            onClick={() => {
-              message.warning({
-                content: '请点击上方修改字样,用以编辑脚本',
-                key: 1,
-                style: {
-                  marginTop: 260,
-                },
-              });
-            }}
-            style={{
-              height: 766,
-              width: '100%',
-              position: 'absolute',
-              zIndex: 1,
-              backgroundColor: '#eeeeee38',
-              cursor: 'not-allowed',
-            }}
-          ></div>
-        )}
-        <MonacoEditor
-          width={'100%'}
-          height={'100%'}
-          theme="vs-dark"
-          language={'javascript'}
-          value={value}
-          onChange={(newValue) => {
-            setValue(newValue);
-          }}
-          editorDidMount={editorDidMountHandle}
-        />
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
-        <div style={{ width: '49%' }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>模拟输入</div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {type === 'MQTT' ? (
-                  <>
-                    <div style={{ marginRight: 5 }}>Topic:</div>
-                    <AutoComplete
-                      options={topicList}
-                      style={{ width: 300 }}
-                      allowClear
-                      placeholder="请输入Topic"
-                      value={topic}
-                      filterOption={(inputValue, option: any) =>
-                        option!.value.indexOf(inputValue) !== -1
-                      }
-                      onChange={(e) => {
-                        setTopic(e);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div style={{ marginRight: 5 }}>URL:</div>
-                    <Input
-                      placeholder="请输入URL"
-                      style={{ width: 300 }}
-                      value={url}
-                      onChange={(e) => {
-                        //    console.log(e.target.value)
-                        setUrl(e.target.value);
-                      }}
-                    />
-                  </>
-                )}
-              </div>
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div>
+              {props.tag === 'device' ? (
+                <>
+                  <ExclamationCircleOutlined style={{ marginRight: 5 }} />
+                  {data?.deviceId ? (
+                    <>
+                      当前数据解析内容已脱离产品影响，
+                      <a
+                        onClick={() => {
+                          rest(props.data.productId, props.data.id);
+                        }}
+                      >
+                        重置
+                      </a>
+                      后将继承产品数据解析内容
+                    </>
+                  ) : (
+                    <>
+                      当前数据解析内容继承自产品，
+                      <a
+                        onClick={() => {
+                          setReadOnly(false);
+                        }}
+                      >
+                        修改
+                      </a>
+                      后将脱离产品影响。
+                    </>
+                  )}
+                </>
+              ) : (
+                <></>
+              )}
             </div>
-            <Input.TextArea
-              autoSize={{ minRows: 5 }}
-              placeholder="// 二进制数据以0x开头的十六进制输入，字符串数据输入原始字符串"
-              style={{ marginTop: 10 }}
-              onChange={(e) => {
-                setSimulation(e.target.value);
-              }}
-            />
+          </div>
+          <div>
+            脚本语言:
+            <Select defaultValue="JavaScript" style={{ width: 200, marginLeft: 5 }}>
+              <Select.Option value="JavaScript">JavaScript(ECMAScript 5)</Select.Option>
+            </Select>
+            <ExpandOutlined style={{ marginLeft: 20 }} onClick={setFull} />
           </div>
         </div>
-        <div style={{ width: '49%' }}>
-          <div>
-            <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>运行结果</div>
-            <Input.TextArea
-              autoSize={{ minRows: 5 }}
-              style={{ marginTop: 10 }}
-              value={
-                resultValue.success ? JSON.stringify(resultValue.outputs?.[0]) : resultValue.reason
-              }
-            />
+        <div ref={ref} style={{ height: 550, border: '1px solid #dcdcdc' }}>
+          {readOnly && (
+            <div
+              onClick={() => {
+                message.warning({
+                  content: '请点击上方修改字样,用以编辑脚本',
+                  key: 1,
+                  style: {
+                    marginTop: 260,
+                  },
+                });
+              }}
+              style={{
+                height: 550,
+                width: '97%',
+                position: 'absolute',
+                zIndex: 1,
+                backgroundColor: '#eeeeee38',
+                cursor: 'not-allowed',
+              }}
+            ></div>
+          )}
+          <MonacoEditor
+            width={'100%'}
+            height={'100%'}
+            theme="vs"
+            language={'javascript'}
+            value={value}
+            onChange={(newValue) => {
+              setValue(newValue);
+            }}
+            editorDidMount={editorDidMountHandle}
+          />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: 10,
+            backgroundColor: '#f7f7f7',
+          }}
+        >
+          <div style={{ width: '49%' }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>模拟输入</div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {type === 'MQTT' ? (
+                    <>
+                      <div style={{ marginRight: 5 }}>Topic:</div>
+                      <AutoComplete
+                        options={topicList}
+                        style={{ width: 300 }}
+                        allowClear
+                        placeholder="请输入Topic"
+                        value={topic}
+                        filterOption={(inputValue, option: any) =>
+                          option!.value.indexOf(inputValue) !== -1
+                        }
+                        onChange={(e) => {
+                          setTopic(e);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ marginRight: 5 }}>URL:</div>
+                      <Input
+                        placeholder="请输入URL"
+                        style={{ width: 300 }}
+                        value={url}
+                        onChange={(e) => {
+                          //    console.log(e.target.value)
+                          setUrl(e.target.value);
+                        }}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+              <Input.TextArea
+                autoSize={{ minRows: 5 }}
+                placeholder="// 二进制数据以0x开头的十六进制输入，字符串数据输入原始字符串"
+                style={{ marginTop: 10 }}
+                onChange={(e) => {
+                  setSimulation(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+          <div style={{ width: '49%' }}>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>运行结果</div>
+              <Input.TextArea
+                autoSize={{ minRows: 5 }}
+                style={{ marginTop: 10 }}
+                value={
+                  resultValue.success
+                    ? JSON.stringify(resultValue.outputs?.[0])
+                    : resultValue.reason
+                }
+              />
+            </div>
           </div>
         </div>
       </div>
