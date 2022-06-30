@@ -85,13 +85,13 @@ const Home = () => {
             <div className="h3-text">{`{status:200,result:[ ]}`}</div>
           </div>
         </div>
-        <div style={{ width: 400 }}>
+        <div style={{ width: '50%' }}>
           <h3>示例数据</h3>
           <div>
             <Table
               dataSource={data}
               pagination={false}
-              size="small"
+              // size="small"
               columns={[
                 {
                   title: '示例数据类型',
@@ -121,15 +121,15 @@ const Home = () => {
             <img src={require('/public/images/apiHome.png')} style={{ width: '80%' }} />
           </div>
         </div>
-        <div style={{ width: 400 }}>
+        <div style={{ width: '50%' }}>
           <h3>验签说明</h3>
           <div>
             <p>使用和签名相同的算法(不需要对响应结果排序)</p>
             <div>
               <MonacoEditor
                 width={'100%'}
-                height={744}
-                theme="vs"
+                height={620}
+                theme="vs-dark"
                 language={'java'}
                 value={`String secureKey = ...; //密钥\r\nString responseBody = ...;//服务端响应结果\r\nString timestampHeader = ...;//响应头: X-Timestamp\r\nString signHeader = ...; //响应头: X-Sign\r\n\r\nString sign = DigestUtils.md5Hex(responseBody+timestampHeader+secureKey);\r\nif(sign.equalsIgnoreCase(signHeader)){\r\n //验签通过\r\n}
                                     \r\n\r\n`}
@@ -150,7 +150,7 @@ const Home = () => {
           <MonacoEditor
             width={'100%'}
             height={100}
-            theme="vs"
+            theme="vs-dark"
             value={
               '<dependency>\r\n    <groupId>org.jetlinks.sdk</groupId>\r\n    <artifactId>api-sdk</artifactId>\r\n    <version>1.0.0</version>\r\n</dependency>'
             }
@@ -161,8 +161,8 @@ const Home = () => {
         <div>
           <MonacoEditor
             width={'100%'}
-            height={500}
-            theme="vs"
+            height={370}
+            theme="vs-dark"
             value={
               '\r\n        //服务器的baseUrl\r\n        String baseUrl = "http://localhost:9000/jetlinks";\r\n  //客户端Id\r\n        String clientId = "aSoq98aAxzP";\r\n  //访问秘钥\r\n        String secureKey = "DaYsxpiWSfdTAPJyKW8rP2WAGyWErnsR";\r\n\r\n        ClientConfig clientConfig = new ClientConfig(baseUrl, clientId, secureKey);\r\n\r\n        ApiClient client = new WebApiClient(clientConfig);\r\n\r\nApiResponse < PagerResult < DeviceInfo >> response = client\r\n    .request(QueryDeviceRequest\r\n        .of(query -> query\r\n            .where("productId", "demo-device")\r\n            .doPaging(0, 100)));'
             }

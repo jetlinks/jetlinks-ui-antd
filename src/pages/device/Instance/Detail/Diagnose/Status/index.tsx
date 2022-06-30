@@ -2,7 +2,8 @@ import TitleComponent from '@/components/TitleComponent';
 import { Badge, Button, message, Popconfirm, Space } from 'antd';
 import styles from './index.less';
 import { observer } from '@formily/reactive-react';
-import { ListProps, urlMap } from './model';
+import type { ListProps } from './model';
+import { urlMap } from './model';
 import { gatewayList } from './model';
 import { textColorMap } from './model';
 import {
@@ -1185,6 +1186,7 @@ const Status = observer((props: Props) => {
   }, [DiagnoseStatusModel.status, DiagnoseStatusModel.list]);
 
   const handleSearch = async () => {
+    console.log(devicePermission);
     DiagnoseStatusModel.gateway = {};
     DiagnoseStatusModel.product = {};
     DiagnoseStatusModel.configuration = {
