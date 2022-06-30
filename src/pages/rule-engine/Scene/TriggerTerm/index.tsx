@@ -142,16 +142,15 @@ const TriggerTerm = (props: Props, ref: any) => {
               }
             });
           });
-          onFieldReact('trigger.*.terms.*.value', (field) => {
-            console.log(field);
-          });
-          onFieldReact('trigger.*.terms.*.value.source', (field, form1) => {
+          onFieldReact('trigger.*.terms.*.value.source', async (field, form1) => {
             const params = field.query('..column').value();
             const modified = (field as Field).modified;
 
             // 找到选中的
-            const _data = Store.get('trigger-parse-term');
-            if (!_data) return;
+            let _data = Store.get('trigger-parse-term');
+            if (!_data) {
+              _data = await service.getParseTerm(props.params);
+            }
             // 树形搜索
             const treeValue = treeFilter(_data, params, 'column');
             // 找到
@@ -206,7 +205,6 @@ const TriggerTerm = (props: Props, ref: any) => {
               } else if (source === 'metrics') {
                 const termType = field.query('..termType').value();
                 const tag = ['nbtw', 'btw'].includes(termType);
-                console.log(target);
                 // 指标
                 form1.setFieldState(value, (state) => {
                   state.componentType = Select;
@@ -238,7 +236,7 @@ const TriggerTerm = (props: Props, ref: any) => {
         return j;
       }),
     );
-    form.setInitialValues(data);
+    form.setValues(data);
   }, [props.value]);
 
   useImperativeHandle(ref, () => ({
