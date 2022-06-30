@@ -68,8 +68,9 @@ export default observer((props: { parentId: string }) => {
     {
       dataIndex: 'id',
       title: 'ID',
-      width: 220,
+      width: 180,
       fixed: 'left',
+      ellipsis: true,
     },
     {
       dataIndex: 'name',
@@ -80,7 +81,8 @@ export default observer((props: { parentId: string }) => {
       search: {
         transform: (value) => ({ name$LIKE: value }),
       },
-      width: 200,
+      width: 180,
+      ellipsis: true,
     },
     {
       title: '资产权限',
@@ -98,6 +100,7 @@ export default observer((props: { parentId: string }) => {
       }),
       dataIndex: 'describe',
       hideInSearch: true,
+      ellipsis: true,
       width: 200,
     },
     {
@@ -107,7 +110,7 @@ export default observer((props: { parentId: string }) => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 200,
+      width: 60,
       fixed: 'right',
       render: (text, record) => [
         <Popconfirm

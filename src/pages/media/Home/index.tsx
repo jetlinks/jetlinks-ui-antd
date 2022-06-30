@@ -108,7 +108,7 @@ export default () => {
             data={[
               {
                 name: '设备数量',
-                value: deviceTotal,
+                value: deviceTotal || 0,
                 children: require('/public/images/home/top-1.png'),
               },
               {

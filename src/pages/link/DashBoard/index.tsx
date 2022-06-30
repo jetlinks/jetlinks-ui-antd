@@ -16,7 +16,10 @@ type RefType = {
 };
 type TopEchartsItemNodeType = {
   value: any;
+  max?: any;
   title: string;
+  formatter?: string;
+  bottom?: string;
 };
 
 const service = new Service('dashboard');
@@ -27,7 +30,7 @@ const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
       {
         type: 'gauge',
         min: 0,
-        max: 100,
+        max: props.max || 100,
         startAngle: 200,
         endAngle: -20,
         center: ['50%', '65%'],
@@ -50,9 +53,10 @@ const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
           },
         },
         axisLabel: {
-          distance: -18,
+          distance: -22,
           color: 'auto',
           fontSize: 12,
+          formatter: '{value}' + (props.formatter || '%'),
         },
         pointer: {
           length: '80%',
@@ -132,7 +136,11 @@ const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
     <div className={'echarts-item'}>
       <div className={'echarts-item-left'}>
         <div className={'echarts-item-title'}>{props.title}</div>
-        <div className={'echarts-item-value'}>{props.value}%</div>
+        <div className={'echarts-item-value'}>
+          {props.value}
+          {props.formatter || '%'}
+        </div>
+        {props.bottom && <div className={'echarts-item-bottom'}>{props.bottom}</div>}
       </div>
       <div className={'echarts-item-right'}>
         <>
@@ -160,8 +168,10 @@ export default () => {
   const [topValues, setTopValues] = useState({
     cpu: 0,
     jvm: 0,
+    jvmTotal: 0,
     usage: 0,
     systemUsage: 0,
+    systemUsageTotal: 0,
   });
 
   const NETWORKRef = useRef<RefType>(); // 网络流量
@@ -187,9 +197,8 @@ export default () => {
       case 'year':
         return 'YYYY-MM-DD';
       case 'month':
-        return 'MM-DD';
       case 'week':
-        return 'MM-DD HH';
+        return 'MM-DD';
       case 'hour':
         return 'HH:mm';
       default:
@@ -201,12 +210,11 @@ export default () => {
     switch (type) {
       case 'year':
         return '30d';
+      case 'month':
       case 'week':
         return '1d';
-      case 'month':
-        return '1h';
       default:
-        return '1m';
+        return '1h';
     }
   };
 
@@ -215,6 +223,7 @@ export default () => {
       xAxis: {
         type: 'category',
         data: xAxis,
+        boundaryGap: false,
       },
       tooltip: {
         trigger: 'axis',
@@ -259,6 +268,7 @@ export default () => {
     setJvmOptions({
       xAxis: {
         type: 'category',
+        boundaryGap: false,
         data: arrayReverse(xAxis),
       },
       tooltip: {
@@ -315,6 +325,7 @@ export default () => {
     setCpuOptions({
       xAxis: {
         type: 'category',
+        boundaryGap: false,
         data: arrayReverse(xAxis),
       },
       tooltip: {
@@ -610,12 +621,15 @@ export default () => {
         const cpu = value.cpu;
         const memory = value.memory;
         const disk = value.disk;
-
         setTopValues({
           cpu: cpu.systemUsage,
-          jvm: memory.jvmHeapUsage,
+          jvm: Number(((memory.jvmHeapUsage / 100) * (memory.jvmHeapTotal / 1024)).toFixed(1)),
+          jvmTotal: Math.ceil(memory.jvmHeapTotal / 1024),
           usage: disk.usage,
-          systemUsage: memory.systemUsage,
+          systemUsage: Number(
+            ((memory.systemTotal / 1024) * (memory.systemUsage / 100)).toFixed(1),
+          ),
+          systemUsageTotal: Math.ceil(memory.systemTotal / 1024),
         });
       });
 
@@ -645,9 +659,21 @@ export default () => {
         ) : null}
         <div className={'echarts-items'}>
           <TopEchartsItemNode title={'CPU使用率'} value={topValues.cpu} />
-          <TopEchartsItemNode title={'JVM内存'} value={topValues.jvm} />
+          <TopEchartsItemNode
+            title={'JVM内存'}
+            formatter={'G'}
+            value={topValues.jvm}
+            max={topValues.jvmTotal}
+            bottom={`总JVM内存  ${topValues.jvmTotal}G`}
+          />
           <TopEchartsItemNode title={'磁盘占用率'} value={topValues.usage} />
-          <TopEchartsItemNode title={'系统内存'} value={topValues.systemUsage} />
+          <TopEchartsItemNode
+            title={'系统内存'}
+            formatter={'G'}
+            value={topValues.systemUsage}
+            max={topValues.systemUsageTotal}
+            bottom={`系统内存  ${topValues.systemUsageTotal}G`}
+          />
           {/*<div className={'echarts-item'}>*/}
           {/*  */}
           {/*  <Progress*/}

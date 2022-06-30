@@ -297,7 +297,6 @@ export default forwardRef((props: ScreenProps, ref) => {
         {props.showScreen !== false && (
           <div className={'player-screen-tool'}>
             <>
-              <div></div>
               <div>
                 <Radio.Group
                   options={[

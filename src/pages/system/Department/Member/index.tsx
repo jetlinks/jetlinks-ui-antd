@@ -122,7 +122,8 @@ const Member = observer((props: { parentId: string }) => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      width: 200,
+      width: 60,
+      ellipsis: true,
       fixed: 'right',
       render: (text, record) => [
         <Popconfirm
