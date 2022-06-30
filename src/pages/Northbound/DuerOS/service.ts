@@ -9,19 +9,22 @@ class Service extends BaseService<DuerOSItem> {
       method: 'GET',
     });
 
-  public getProduct = () =>
-    request(`/${SystemConst.API_BASE}/device-product/_query/no-paging`, {
+  public getProduct = (id?: string) => {
+    const defaultData = {
+      column: 'id$dueros-product$not',
+      value: 1,
+    };
+
+    const data = id ? [defaultData, { column: 'id', type: 'or', value: id }] : [defaultData];
+
+    return request(`/${SystemConst.API_BASE}/device-product/_query/no-paging`, {
       method: 'POST',
       data: {
         paging: false,
-        terms: [
-          {
-            column: 'id$dueros-product$not',
-            value: 1,
-          },
-        ],
+        terms: data,
       },
     });
+  };
 
   public changeState = (id: string, state: 'enable' | 'disable') =>
     request(`/${SystemConst.API_BASE}/dueros/product/${id}/_${state}`, { method: 'POST' });

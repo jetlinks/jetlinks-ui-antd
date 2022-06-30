@@ -96,6 +96,7 @@ export default () => {
       setOptions({
         xAxis: {
           type: 'category',
+          boundaryGap: false,
           data: xData,
         },
         yAxis: {

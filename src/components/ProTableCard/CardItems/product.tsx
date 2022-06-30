@@ -69,11 +69,11 @@ export const ExtraProductCard = (props: ProductCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name'}>
+            <div className={'card-item-header-name'}>
               <Tooltip title={props.name}>
-                <span className={'ellipsis'}>{props.name}</span>
+                <div className={'ellipsis'}>{props.name}</div>
               </Tooltip>
-            </span>
+            </div>
           </div>
           <div className={'card-item-content-items'} style={{ display: 'flex', gap: 12 }}>
             {props.content}
