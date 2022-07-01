@@ -53,7 +53,7 @@ const Dashboard = observer(() => {
     group: 'today',
     params: {
       time: '1h',
-      targetType: 'device',
+      // targetType: 'device',
       format: 'HH:mm:ss',
       from: moment(new Date(new Date().setHours(0, 0, 0, 0))).format('YYYY-MM-DD HH:mm:ss'),
       to: 'now',
@@ -69,7 +69,7 @@ const Dashboard = observer(() => {
     group: 'thisMonth',
     params: {
       time: '1d',
-      targetType: 'device',
+      // targetType: 'device',
       format: 'yyyy-MM',
       limit: 1,
       from: 'now-1M',
@@ -204,7 +204,7 @@ const Dashboard = observer(() => {
       dimension: 'agg',
       group: 'alarmTrend',
       params: {
-        targetType: 'device', // product、device、org、other
+        targetType: params.targetType, // product、device、org、other
         format: format,
         time: time,
         // from: 'now-1y', // now-1d、now-1w、now-1M、now-1y
