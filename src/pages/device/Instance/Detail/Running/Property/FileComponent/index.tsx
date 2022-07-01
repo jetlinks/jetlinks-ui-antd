@@ -34,7 +34,7 @@ const FileComponent = (props: Props) => {
   const renderValue = () => {
     if (value?.formatValue !== 0 && !value?.formatValue) {
       return (
-        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>{''}</div>
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>{'--'}</div>
       );
     } else if (data?.valueType?.type === 'file') {
       if (
@@ -61,7 +61,7 @@ const FileComponent = (props: Props) => {
                 message.error('该图片无法访问');
               } else {
                 const flag =
-                  ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '';
+                  ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '--';
                 setType(flag);
                 setVisible(true);
               }
@@ -90,7 +90,8 @@ const FileComponent = (props: Props) => {
                 message.error('当前仅支持播放.mp4,.flv,.m3u8格式的视频');
               } else {
                 const flag =
-                  ['.m3u8', '.flv', '.mp4'].find((item) => value?.formatValue.includes(item)) || '';
+                  ['.m3u8', '.flv', '.mp4'].find((item) => value?.formatValue.includes(item)) ||
+                  '--';
                 setType(flag);
                 setVisible(true);
               }
@@ -107,7 +108,7 @@ const FileComponent = (props: Props) => {
         const flag =
           ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].find((item) =>
             value?.formatValue.includes(item),
-          ) || '';
+          ) || '--';
         return (
           <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
             <img src={imgMap.get(flag.slice(1))} />

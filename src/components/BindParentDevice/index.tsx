@@ -4,18 +4,17 @@ import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
-import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
+import { service, statusMap } from '@/pages/device/Instance';
 import { useIntl } from 'umi';
 import moment from 'moment';
 
 interface Props {
-  visible: boolean;
   data: Partial<DeviceInstance>;
   onCancel: () => void;
+  onOk: (parentId: string) => void;
 }
 
-const BindChildDevice = (props: Props) => {
-  const { visible } = props;
+const BindParentDevice = (props: Props) => {
   const intl = useIntl();
 
   const actionRef = useRef<ActionType>();
@@ -81,19 +80,19 @@ const BindChildDevice = (props: Props) => {
   ];
 
   const submitBtn = async () => {
-    const resp = await service.bindDevice(InstanceModel.detail.id!, bindKeys);
-    if (resp.status === 200) {
-      props.onCancel();
-      setBindKeys([]);
-      actionRef.current?.reset?.();
-    }
+    // const resp = await service.bindDevice(InstanceModel.detail.id!, bindKeys);
+    // if (resp.status === 200) {
+    //   props.onCancel();
+    //   setBindKeys([]);
+    //   actionRef.current?.reset?.();
+    // }
   };
 
   return (
     <Modal
       maskClosable={false}
-      title="绑定子设备"
-      visible={visible}
+      title="绑定父设备"
+      visible
       width={1000}
       onOk={() => {
         submitBtn();
@@ -127,40 +126,45 @@ const BindChildDevice = (props: Props) => {
     >
       <SearchComponent<DeviceInstance>
         field={[...columns]}
-        target="child-device-bind"
+        target="parents-device-bind"
         enableSave={false}
-        // pattern={'simple'}
+        model={'simple'}
         defaultParam={[
           {
             terms: [
-              { column: 'parentId$isnull', value: '1' },
-              { column: 'parentId$not', value: InstanceModel.detail.id!, type: 'or' },
+              {
+                column: 'productId$product-info',
+                value: [
+                  {
+                    column: 'deviceType',
+                    termType: 'eq',
+                    value: 'gateway',
+                  },
+                ],
+              },
             ],
           },
           {
-            terms: [{ column: 'id$not', value: InstanceModel.detail.id!, type: 'and' }],
+            terms: [{ column: 'id$not', value: props.data.id!, type: 'and' }],
           },
         ]}
         onSearch={(param) => {
           actionRef.current?.reset?.();
           setSearchParams(param);
         }}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setSearchParams({});
-        // }}
       />
       <ProTable<DeviceInstance>
         search={false}
         columns={columns}
         size="small"
         rowSelection={{
+          type: 'radio',
           selectedRowKeys: bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {
             setBindKeys(selectedRows.map((item) => item.id));
           },
         }}
+        tableAlertRender={false}
         actionRef={actionRef}
         params={searchParams}
         rowKey="id"
@@ -173,4 +177,5 @@ const BindChildDevice = (props: Props) => {
     </Modal>
   );
 };
-export default BindChildDevice;
+
+export default BindParentDevice;

@@ -46,7 +46,7 @@ const DiagnosticAdvice = (props: Props) => {
           <Descriptions.Item span={1} label="设备ID">
             {data?.info?.id || ''}
           </Descriptions.Item>
-          {data?.info?.address.length > 0 && (
+          {data?.info?.address?.length > 0 && (
             <Descriptions.Item span={1} label="连接地址">
               <Tooltip
                 placement="topLeft"

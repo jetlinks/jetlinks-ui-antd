@@ -26,6 +26,7 @@ import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu
 import ManualInspection from './ManualInspection';
 import useHistory from '@/hooks/route/useHistory';
 import DiagnosticAdvice from './DiagnosticAdvice';
+import BindParentDevice from '@/components/BindParentDevice';
 interface Props {
   providerType: 'network' | 'child-device' | 'media' | 'cloud' | 'channel' | undefined;
 }
@@ -45,6 +46,9 @@ const Status = observer((props: Props) => {
   const [artificiaData, setArtificiaData] = useState<any>({});
   const [diagnoseVisible, setDiagnoseVisible] = useState<boolean>(false);
   const [diagnoseData, setDiagnoseData] = useState<any>({});
+
+  // 绑定父设备
+  const [bindParentVisible, setBindParentVisible] = useState<boolean>(false);
 
   // 跳转到产品设备接入配置
   const jumpAccessConfig = () => {
@@ -402,7 +406,15 @@ const Status = observer((props: Props) => {
                       status="default"
                       text={
                         <span>
-                          未绑定父设备，请先<a>绑定</a>父设备后重试
+                          未绑定父设备，请先
+                          <a
+                            onClick={() => {
+                              setBindParentVisible(true);
+                            }}
+                          >
+                            绑定
+                          </a>
+                          父设备后重试
                         </span>
                       }
                     />
@@ -1089,13 +1101,158 @@ const Status = observer((props: Props) => {
     });
 
   // // opc
-  // const diagnoseOpcua = () => new Promise(() => {
+  const diagnoseOpcua = () =>
+    new Promise(async (resolve) => {
+      if (device.accessProvider === 'opc-ua') {
+        let item: ListProps | undefined = undefined;
+        const response = await service.noPagingOpcua({
+          paging: false,
+          terms: [
+            {
+              column: 'id$bind-opc',
+              value: device.id,
+            },
+          ],
+        });
+        if (response.status === 200) {
+          if (response.result.length > 0) {
+            item = {
+              key: `opc-ua-config`,
+              name: `OPC UA通道配置`,
+              desc: '诊断设备是否已绑定通道，未绑定通道将导致设备连接失败',
+              status: 'success',
+              text: '正常',
+              info: null,
+            };
+          } else {
+            item = {
+              key: `opc-ua-config`,
+              name: `OPC UA通道配置`,
+              desc: '诊断设备是否已绑定通道，未绑定通道将导致设备连接失败',
+              status: 'error',
+              text: '异常',
+              info: (
+                <div>
+                  <div className={styles.infoItem}>
+                    <Badge
+                      status="default"
+                      text={
+                        <span>
+                          设备未绑定通道，请先<a>配置</a>
+                        </span>
+                      }
+                    />
+                  </div>
+                </div>
+              ),
+            };
+          }
+          setTimeout(() => {
+            if (item) {
+              DiagnoseStatusModel.list = modifyArrayList(
+                DiagnoseStatusModel.list,
+                item,
+                DiagnoseStatusModel.list.length,
+              );
+            }
+            DiagnoseStatusModel.count++;
+            resolve({});
+          }, time);
+        }
+      } else {
+        resolve({});
+      }
+    });
 
+  // opc ua 连接状态
+  // const diagnoseOpcuaState = () => new Promise(async (resolve) => {
+  //   if (device.accessProvider === 'opc-ua') {
+  //     let item: ListProps | undefined = undefined;
+  //     const response = await service.noPagingOpcua({
+  //       paging: false,
+  //       terms: [
+  //         {
+  //           column: 'id$bind-opc',
+  //           value: device.id,
+  //         },
+  //       ],
+  //     })
+  //     if (response.status === 200) {
+  //       if (response.result.length > 0) {
+  //         item = {
+  //           key: `opc-ua-state`,
+  //           name: `OPC UA通道连接状态`,
+  //           desc: '诊断通道连接状态是否已连接，未连接状态将导致设备连接失败',
+  //           status: 'success',
+  //           text: '正常',
+  //           info: null,
+  //         }
+  //       } else {
+  //         item = {
+  //           key: `opc-ua-state`,
+  //           name: `OPC UA通道连接状态`,
+  //           desc: '诊断通道连接状态是否已连接，未连接状态将导致设备连接失败',
+  //           status: 'error',
+  //           text: '异常',
+  //           info: (
+  //             <div>
+  //               <div className={styles.infoItem}>
+  //                 <Badge
+  //                   status="default"
+  //                   text={<span>通道未连接成功，请联系管理员处理</span>}
+  //                 />
+  //               </div>
+  //             </div>
+  //           ),
+  //         }
+  //       }
+  //       setTimeout(() => {
+  //         if (item) {
+  //           DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item, DiagnoseStatusModel.list.length);
+  //         }
+  //         DiagnoseStatusModel.count++;
+  //         resolve({});
+  //       }, time);
+  //     }
+  //   } else {
+  //     resolve({})
+  //   }
   // })
   // //modbus
-  // const diagnoseModbus = () => new Promise(() => {
+  const diagnoseModbus = () =>
+    new Promise((resolve) => {
+      if (device.accessProvider === 'modbus-tcp') {
+      } else {
+        resolve({});
+      }
+    });
 
-  // })
+  // 数据点绑定
+  const diagnoseDataPointBind = () =>
+    new Promise((resolve) => {
+      if (device.accessProvider === 'modbus-tcp' || device.accessProvider === 'opc-ua') {
+      } else {
+        resolve({});
+      }
+    });
+
+  // onenet
+  const diagnoseOnenet = () =>
+    new Promise((resolve) => {
+      if (device.accessProvider === 'OneNet') {
+      } else {
+        resolve({});
+      }
+    });
+
+  // ctwing
+  const diagnoseCTWing = () =>
+    new Promise((resolve) => {
+      if (device.accessProvider === 'Ctwing') {
+      } else {
+        resolve({});
+      }
+    });
 
   // 设备离线且全部诊断项都是正确的情况后
   const diagnoseNetworkOtherConfig = async () => {
@@ -1290,6 +1447,13 @@ const Status = observer((props: Props) => {
       await diagnoseParentDevice();
       await diagnoseProduct();
       await diagnoseDevice();
+      DiagnoseStatusModel.percent = 60;
+      await diagnoseProductAuthConfig();
+      await diagnoseDeviceAuthConfig();
+      DiagnoseStatusModel.percent = 80;
+      await diagnoseModbus();
+      await diagnoseOpcua();
+      await diagnoseDataPointBind();
     } else if (providerType === 'media') {
       DiagnoseStatusModel.list = [...mediaInitList];
       await diagnoseGateway();
@@ -1302,12 +1466,21 @@ const Status = observer((props: Props) => {
       DiagnoseStatusModel.percent = 40;
       await diagnoseProduct();
       await diagnoseDevice();
+      DiagnoseStatusModel.percent = 80;
+      await diagnoseCTWing();
+      await diagnoseOnenet();
     } else if (providerType === 'channel') {
       DiagnoseStatusModel.list = [...channelInitList];
       await diagnoseGateway();
-      DiagnoseStatusModel.percent = 40;
+      DiagnoseStatusModel.percent = 20;
       await diagnoseProduct();
       await diagnoseDevice();
+      DiagnoseStatusModel.percent = 40;
+      await diagnoseModbus();
+      await diagnoseOpcua();
+      // await diagnoseOpcuaState();
+      await diagnoseDataPointBind();
+      DiagnoseStatusModel.percent = 80;
     }
     DiagnoseStatusModel.percent = 100;
     DiagnoseStatusModel.status = 'finish';
@@ -1384,6 +1557,7 @@ const Status = observer((props: Props) => {
           }}
         />
       )}
+      {bindParentVisible && <BindParentDevice data={device} onCancel={() => {}} onOk={() => {}} />}
     </div>
   );
 });

@@ -44,7 +44,6 @@ const Diagnose = observer(() => {
       setProviderType('network');
     }
     DiagnoseStatusModel.state = 'loading';
-
     return () => {
       DiagnoseStatusModel.list = [];
       DiagnoseStatusModel.count = 0;
