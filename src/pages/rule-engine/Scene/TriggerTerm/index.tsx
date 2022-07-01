@@ -38,7 +38,6 @@ interface Props {
   value?: Record<string, any>;
   onChange?: (value: any) => void;
 }
-
 const TriggerTerm = (props: Props, ref: any) => {
   const parseTermRef = useRef<any>();
   const getParseTerm = () =>
@@ -104,7 +103,7 @@ const TriggerTerm = (props: Props, ref: any) => {
           onFieldReact('trigger.*.terms.*.column', async (field, form1) => {
             const operator = field.query('.termType');
             const value = (field as Field).value;
-
+            const modified = (field as Field).modified;
             // 找到选中的
             const _data = await service.getParseTerm(props.params);
             if (!_data) return;
@@ -133,18 +132,25 @@ const TriggerTerm = (props: Props, ref: any) => {
                       { label: '指标', value: 'metrics' },
                     ]
                   : [{ label: '手动输入', value: 'manual' }];
-              state.value = 'manual';
+              if (modified) {
+                state.value = 'manual';
+              }
             });
             form1.setFieldState(field.query('.value.value[0]'), (state) => {
-              state.value = undefined;
+              if (modified) {
+                state.value = undefined;
+              }
             });
           });
-          onFieldReact('trigger.*.terms.*.value.source', (field, form1) => {
+          onFieldReact('trigger.*.terms.*.value.source', async (field, form1) => {
             const params = field.query('..column').value();
+            const modified = (field as Field).modified;
 
             // 找到选中的
-            const _data = Store.get('trigger-parse-term');
-            if (!_data) return;
+            let _data = Store.get('trigger-parse-term');
+            if (!_data) {
+              _data = await service.getParseTerm(props.params);
+            }
             // 树形搜索
             const treeValue = treeFilter(_data, params, 'column');
             // 找到
@@ -152,9 +158,9 @@ const TriggerTerm = (props: Props, ref: any) => {
               treeValue && treeValue[0] && treeValue[0].children
                 ? treeValue[0]?.children.find((item) => item.column === params)
                 : treeValue[0];
-
             const source = (field as Field).value;
             const value = field.query(source === 'manual' ? '.value.0' : '.metric');
+
             if (target) {
               if (source === 'manual') {
                 // 手动输入
@@ -208,7 +214,9 @@ const TriggerTerm = (props: Props, ref: any) => {
                       label: item.name,
                       value: item.id,
                     }));
-                  state.value = undefined;
+                  if (modified) {
+                    state.value = undefined;
+                  }
                 });
               }
             }
@@ -228,7 +236,7 @@ const TriggerTerm = (props: Props, ref: any) => {
         return j;
       }),
     );
-    form.setInitialValues(data);
+    form.setValues(data);
   }, [props.value]);
 
   useImperativeHandle(ref, () => ({
@@ -239,7 +247,7 @@ const TriggerTerm = (props: Props, ref: any) => {
         if (!Array.isArray(_data.trigger)) return;
         _data.trigger?.map((item: { terms: any[] }) =>
           item.terms.map((j) => {
-            if (j.value.value.length === 1) {
+            if (j.value?.value?.length === 1) {
               j.value.value = j.value.value[0];
             }
             return j;
@@ -314,7 +322,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator': 'FormItem',
                         'x-component': 'TreeSelect',
                         'x-decorator-props': {
-                          gridSpan: 5,
+                          gridSpan: 4,
                         },
                         required: true,
                         'x-component-props': {
@@ -342,7 +350,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-component': 'FInputGroup',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          gridSpan: 4,
+                          gridSpan: 3,
                           style: {
                             width: '100%',
                           },

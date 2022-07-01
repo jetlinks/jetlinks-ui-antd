@@ -350,6 +350,17 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/device/transparent-codec/${productId}`, {
       method: 'DELETE',
     });
+  // 查询设备下点位
+  public noPagingOpcua = (data: any) =>
+    request(`/${SystemConst.API_BASE}/opc/client/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
+  public queryMetadatabyId = (data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/master/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

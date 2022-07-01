@@ -7,6 +7,7 @@ import Member from '@/pages/system/Department/Member';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
 
 interface AssetsProps {
   parentId: string;
@@ -22,9 +23,11 @@ export enum ASSETS_TABS_ENUM {
 export const AssetsModel = model<{
   tabsIndex: string;
   bindModal: boolean;
+  parentId: string;
 }>({
   tabsIndex: ASSETS_TABS_ENUM.Product,
   bindModal: false,
+  parentId: '',
 });
 
 const Assets = observer((props: AssetsProps) => {
@@ -58,7 +61,9 @@ const Assets = observer((props: AssetsProps) => {
     },
   ];
 
-  console.log(AssetsModel.tabsIndex);
+  useEffect(() => {
+    AssetsModel.parentId = props.parentId;
+  }, [props.parentId]);
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>

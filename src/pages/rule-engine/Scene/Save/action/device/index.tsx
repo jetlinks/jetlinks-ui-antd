@@ -137,13 +137,9 @@ export default (props: DeviceProps) => {
     console.log('actions-device', props.value);
     const deviceData = props.value;
     if (deviceData) {
-      if (deviceData.productId) {
-        setProductId(deviceData.productId);
-      }
+      setProductId(deviceData.productId);
 
-      if (deviceData.selector) {
-        setSelector(deviceData.selector);
-      }
+      setSelector(deviceData.selector || SourceEnum.fixed);
 
       if (deviceData.message) {
         if (deviceData.message.messageType) {
@@ -174,10 +170,12 @@ export default (props: DeviceProps) => {
             style={{ width: '100%' }}
             listHeight={220}
             onChange={() => {
-              props.form?.resetFields([['actions', name, 'device', 'selector']]);
-              props.form?.resetFields([['actions', name, 'device', 'selectorValues']]);
-              props.form?.resetFields([['actions', name, 'device', 'message', 'functionId']]);
               // setMessageType(MessageTypeEnum.WRITE_PROPERTY)
+              props.form?.setFields([
+                { name: ['actions', name, 'device', 'selector'], value: SourceEnum.fixed },
+                { name: ['actions', name, 'device', 'selectorValues'], value: undefined },
+                { name: ['actions', name, 'device', 'message', 'functionId'], value: undefined },
+              ]);
             }}
             fieldNames={{ label: 'name', value: 'id' }}
             filterOption={(input: string, option: any) =>
@@ -190,7 +188,7 @@ export default (props: DeviceProps) => {
         <ItemGroup compact>
           <Form.Item
             name={[name, 'device', 'selector']}
-            initialValue={props.value ? props.value.selector : SourceEnum.fixed}
+            initialValue={SourceEnum.fixed}
             {...props.restField}
           >
             <Select

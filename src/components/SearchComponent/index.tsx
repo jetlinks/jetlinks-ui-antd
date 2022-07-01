@@ -552,7 +552,16 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   useEffect(() => {
     // 防止页面下多个TabsTabPane中的查询组件共享路由中的参数
-    if (url.q && url.target && props.target && url.target === props.target) {
+    if (url.q) {
+      // if (url.target) {
+      //   if (props.target && url.target === props.target) {
+      //     form.setValues(JSON.parse(url.q));
+      //     handleSearch(false);
+      //   }
+      // } else {
+      //   form.setValues(JSON.parse(url.q));
+      //   handleSearch(false);
+      // }
       form.setValues(JSON.parse(url.q));
       handleSearch(false);
     }
@@ -560,7 +569,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   useEffect(() => {
     if (defaultParam) {
-      handleSearch();
+      handleSearch(!(props.model === 'simple'));
     }
   }, []);
 

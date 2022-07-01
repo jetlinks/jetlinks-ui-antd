@@ -110,7 +110,7 @@ const NoticeIconView = () => {
 
   const openNotification = (resp: any) => {
     notification.warning({
-      style: { width: 320 },
+      // style: { width: 320 },
       message: resp?.payload?.topicName,
       description: (
         <div

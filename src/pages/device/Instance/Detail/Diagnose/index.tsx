@@ -21,8 +21,8 @@ const Diagnose = observer(() => {
   const { minHeight } = useDomFullHeight(`.diagnose`, 12);
   const [current, setCurrent] = useState<string>('status');
   const [providerType, setProviderType] = useState<
-    'network' | 'child-device' | 'media' | 'cloud' | 'channel'
-  >('network');
+    undefined | 'network' | 'child-device' | 'media' | 'cloud' | 'channel'
+  >(undefined);
 
   const ViewMap = {
     status: <Status providerType={providerType} />,
@@ -44,7 +44,6 @@ const Diagnose = observer(() => {
       setProviderType('network');
     }
     DiagnoseStatusModel.state = 'loading';
-
     return () => {
       DiagnoseStatusModel.list = [];
       DiagnoseStatusModel.count = 0;

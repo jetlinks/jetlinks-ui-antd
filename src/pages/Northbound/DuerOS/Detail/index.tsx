@@ -63,7 +63,12 @@ const Save = () => {
 
   const getProduct = (f?: Field) => {
     return service.getProduct(f?.value).then((resp) => {
-      const _temp = resp.result.map((item: any) => ({ label: item.name, value: item.id }));
+      const _temp = resp.result.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+        id: item.id,
+        metadata: item.metadata,
+      }));
       Store.set('product-list', _temp);
       return _temp;
     });
@@ -273,7 +278,7 @@ const Save = () => {
               showSearch: true,
               showArrow: true,
               filterOption: (input: string, option: any) =>
-                option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
             'x-reactions': '{{useAsyncDataSource(getProduct)}}',
             required: true,

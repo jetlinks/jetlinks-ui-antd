@@ -131,18 +131,9 @@ export default observer((props: ActionProps) => {
 
       if (data.notify) {
         // 消息通知
-        if (data.notify.notifyType) {
-          setNotifyType(data.notify.notifyType);
-        }
-
-        if (data.notify.notifierId) {
-          setConfigId(data.notify.notifierId);
-        }
-
-        if (data.notify.templateId) {
-          // 通知模板
-          setTemplateId(data.notify.templateId);
-        }
+        setNotifyType(data.notify?.notifyType);
+        setConfigId(data.notify?.notifierId);
+        setTemplateId(data.notify?.templateId);
       }
     }
   }, []);
@@ -166,8 +157,10 @@ export default observer((props: ActionProps) => {
             style={{ width: '100%' }}
             onChange={async () => {
               setTemplateData(undefined);
-              props.form.resetFields([['actions', name, 'notify', 'notifierId']]);
-              props.form.resetFields([['actions', name, 'notify', 'templateId']]);
+              props.form.setFields([
+                { name: ['actions', name, 'notify', 'notifierId'], value: undefined },
+                { name: ['actions', name, 'notify', 'templateId'], value: undefined },
+              ]);
             }}
           />
         </Form.Item>
@@ -184,7 +177,9 @@ export default observer((props: ActionProps) => {
             fieldNames={{ value: 'id', label: 'name' }}
             onChange={() => {
               setTemplateData(undefined);
-              props.form.resetFields([['actions', name, 'notify', 'templateId']]);
+              props.form.setFields([
+                { name: ['actions', name, 'notify', 'templateId'], value: undefined },
+              ]);
             }}
             style={{ width: '100%' }}
             placeholder={'请选择通知配置'}
@@ -210,8 +205,8 @@ export default observer((props: ActionProps) => {
   );
 
   const parallelNode = (
-    <Col span={2}>
-      {!props.parallel ? (
+    <Col span={3}>
+      {props.parallel === false ? (
         <Checkbox
           checked={isFiltering}
           onChange={(e) => {
@@ -332,7 +327,7 @@ export default observer((props: ActionProps) => {
             </Col>
             {parallelNode}
           </Row>
-          {!props.parallel && isFiltering && (
+          {props.parallel === false && isFiltering && (
             <Row gutter={24}>
               <ConditionalFiltering
                 name={name}
@@ -358,7 +353,7 @@ export default observer((props: ActionProps) => {
             </Col>
             {parallelNode}
           </Row>
-          {!props.parallel && isFiltering && (
+          {props.parallel === false && isFiltering && (
             <Row gutter={24}>
               <ConditionalFiltering
                 name={name}
@@ -381,7 +376,13 @@ export default observer((props: ActionProps) => {
           </Form.Item>
           <Row gutter={24}>
             {parallelNode}
-            <ConditionalFiltering name={name} form={props.form} data={props.actionItemData.terms} />
+            {props.parallel === false && isFiltering && (
+              <ConditionalFiltering
+                name={name}
+                form={props.form}
+                data={props.actionItemData.terms}
+              />
+            )}
           </Row>
         </>
       ) : null}

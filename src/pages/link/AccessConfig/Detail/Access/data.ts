@@ -11,7 +11,7 @@ const ProcotoleMapping = new Map();
 ProcotoleMapping.set('websocket-server', 'WebSocket');
 ProcotoleMapping.set('http-server-gateway', 'HTTP');
 ProcotoleMapping.set('udp-device-gateway', 'UDP');
-ProcotoleMapping.set('coap-server-gateway', 'COAP');
+ProcotoleMapping.set('coap-server-gateway', 'CoAP');
 ProcotoleMapping.set('mqtt-client-gateway', 'MQTT');
 ProcotoleMapping.set('mqtt-server-gateway', 'MQTT');
 ProcotoleMapping.set('tcp-server-gateway', 'TCP');
