@@ -114,7 +114,10 @@ const Finish = (props: Props) => {
               1、创建类型为{props?.provider?.id === 'OneNet' ? 'OneNet' : 'CTWing'}的设备接入网关
             </p>
             <p>
-              2、创建产品，并选中接入方式为{props?.provider?.id === 'OneNet' ? 'OneNet' : 'CTWing'}
+              2、创建产品，并选中接入方式为
+              {props?.provider?.id === 'OneNet'
+                ? 'OneNet'
+                : 'CTWing,选中后需填写CTWing平台中的产品ID、Master-APIkey。'}
             </p>
             {props?.provider?.id === 'OneNet' ? (
               <p>
@@ -122,7 +125,7 @@ const Finish = (props: Props) => {
               </p>
             ) : (
               <p>
-                3、添加设备，为每一台设备设置唯一的IMEI、SN、PSK码（需与CTWingt平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
+                3、添加设备，为每一台设备设置唯一的IMEI、SN、IMSI、PSK码（需与CTWingt平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
               </p>
             )}
           </div>

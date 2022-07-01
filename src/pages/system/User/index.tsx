@@ -225,10 +225,38 @@ const User = observer(() => {
         onSearch={(data) => {
           // 重置分页数据
           actionRef.current?.reset?.();
-          setParam(data);
-          // const item = data.terms.find((item:any)=>item.terms.column==='telephone')
-          // console.log(data)
-          // console.log(item)
+          // setParam(data);
+          const terms1 = data.terms[0]?.terms?.map((e) => {
+            if (e.column === 'telephone' || e.column === 'email') {
+              return {
+                column: 'id$user-detail',
+                value: [e],
+              };
+            } else {
+              return e;
+            }
+          });
+          if (data.terms && data.terms.length === 2) {
+            const terms2 = data.terms[1]?.terms?.map((e) => {
+              if (e.column === 'telephone' || e.column === 'email') {
+                return {
+                  column: 'id$user-detail',
+                  value: [e],
+                };
+              } else {
+                return e;
+              }
+            });
+            setParam({
+              ...param,
+              terms: [{ terms: terms1 }, { terms: terms2, type: data.terms[1].type }],
+            });
+          } else {
+            setParam({
+              ...param,
+              terms: [{ terms: terms1 }],
+            });
+          }
         }}
       />
       <ProTable<UserItem>

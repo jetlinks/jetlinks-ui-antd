@@ -35,10 +35,25 @@ const Parsing = (props: Props) => {
   const editorDidMountHandle = (editor: any) => {
     editor.getAction('editor.action.formatDocument').run();
     monRef.current = editor;
+    console.log(editor);
     editor.onDidContentSizeChange?.(() => {
       editor.getAction('editor.action.formatDocument').run();
     });
   };
+
+  // monRef.current?.languages.registerCompletionItemProvider('javascript', {
+  //   provideCompletionItems() {
+  //     return {
+  //       suggestions: [{
+  //         label: 'test()',
+  //         kind: monRef.current?.languages.CompletionItemKind['Function'],
+  //         insertText:'test()',
+  //         detail:'sssss'
+  //       }],
+  //       triggerCharacters: [':']
+  //     };
+  //   },
+  // })
 
   const getTopic = (id: string, transport: string) => {
     service.getProtocal(id, transport).then((res) => {
@@ -226,6 +241,38 @@ const Parsing = (props: Props) => {
               setValue(newValue);
             }}
             editorDidMount={editorDidMountHandle}
+            editorWillMount={(editor) => {
+              editor.languages.registerCompletionItemProvider('javascript', {
+                triggerCharacters: ['.'],
+                provideCompletionItems(model, position) {
+                  // var textUntilPosition = model.getValueInRange({
+                  //   startLineNumber: 1,
+                  //   startColumn: 1,
+                  //   endLineNumber: position.lineNumber,
+                  //   endColumn: position.column
+                  // });
+                  const word = model.getWordUntilPosition(position);
+                  const range = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn,
+                  };
+
+                  return {
+                    suggestions: [
+                      {
+                        label: 'test()',
+                        kind: editor.languages.CompletionItemKind['Function'],
+                        insertText: 'test()',
+                        detail: '测试语法',
+                        range: range,
+                      },
+                    ],
+                  };
+                },
+              });
+            }}
           />
         </div>
         <div

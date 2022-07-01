@@ -30,7 +30,7 @@ const Tags = () => {
       <Descriptions
         style={{ marginBottom: 20 }}
         bordered
-        column={3}
+        column={2}
         size="small"
         title={
           <span>
@@ -53,7 +53,7 @@ const Tags = () => {
         {(tags || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={`${item.name}（${item.key})`} key={item.key}>
             <Tooltip title={item.value || ''} placement="topLeft">
-              <div className="ellipsis" style={{ width: 300 }}>
+              <div className="ellipsis" style={{ maxWidth: 300 }}>
                 {item.value || ''}
               </div>
             </Tooltip>
