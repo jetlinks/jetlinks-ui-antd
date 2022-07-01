@@ -109,10 +109,12 @@ export default (props: ConditionalFilteringProps) => {
 
   useEffect(() => {
     console.log('Conditional', builtInList);
-    if (props.data[0] && props.data[0].column && builtInList && builtInList.length) {
+    if (props.data && props.data[0] && props.data[0].column && builtInList && builtInList.length) {
       getBuiltItemById(props.data[0].column);
     }
   }, [props.data, builtInList]);
+
+  console.log(props.data, props.name);
   return (
     <>
       <Col span={4}>
@@ -151,7 +153,7 @@ export default (props: ConditionalFilteringProps) => {
           />
         </Form.Item>
       </Col>
-      <Col span={2}>
+      <Col span={3}>
         <Form.Item name={[props.name, 'terms', 0, 'termType']}>
           <Select
             style={{ width: '100%' }}
@@ -161,7 +163,7 @@ export default (props: ConditionalFilteringProps) => {
           />
         </Form.Item>
       </Col>
-      <Col span={7}>
+      <Col span={8}>
         <Form.Item noStyle>
           <ItemGroup>
             <Form.Item name={[props.name, 'terms', 0, 'value', 'source']} initialValue={'fixed'}>
@@ -176,7 +178,8 @@ export default (props: ConditionalFilteringProps) => {
                 }}
               />
             </Form.Item>
-            {['nbtw', 'btw'].includes(props.data[0] && props.data[0].termType) ? (
+            {['nbtw', 'btw'].includes(props.data && props.data[0] && props.data[0].termType) &&
+            source === 'fixed' ? (
               <>
                 <Form.Item name={[props.name, 'terms', 0, 'value', 'value', 0]}>
                   {source === 'fixed' ? (
