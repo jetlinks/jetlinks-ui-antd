@@ -205,8 +205,8 @@ export default observer((props: ActionProps) => {
   );
 
   const parallelNode = (
-    <Col span={2}>
-      {!props.parallel ? (
+    <Col span={3}>
+      {props.parallel === false ? (
         <Checkbox
           checked={isFiltering}
           onChange={(e) => {
@@ -327,7 +327,7 @@ export default observer((props: ActionProps) => {
             </Col>
             {parallelNode}
           </Row>
-          {!props.parallel && isFiltering && (
+          {props.parallel === false && isFiltering && (
             <Row gutter={24}>
               <ConditionalFiltering
                 name={name}
@@ -353,7 +353,7 @@ export default observer((props: ActionProps) => {
             </Col>
             {parallelNode}
           </Row>
-          {!props.parallel && isFiltering && (
+          {props.parallel === false && isFiltering && (
             <Row gutter={24}>
               <ConditionalFiltering
                 name={name}
@@ -376,7 +376,13 @@ export default observer((props: ActionProps) => {
           </Form.Item>
           <Row gutter={24}>
             {parallelNode}
-            <ConditionalFiltering name={name} form={props.form} data={props.actionItemData.terms} />
+            {props.parallel === false && isFiltering && (
+              <ConditionalFiltering
+                name={name}
+                form={props.form}
+                data={props.actionItemData.terms}
+              />
+            )}
           </Row>
         </>
       ) : null}
