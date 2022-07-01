@@ -9,7 +9,10 @@ interface Props {
 
 const CTWing = (props: Props) => {
   const [form] = Form.useForm();
-  const img = require('/public/images/network/CTWing.jpg');
+  // const img = require('/public/images/network/CTWing.jpg');
+  const img1 = require('/public/images/network/01.jpg');
+  const img2 = require('/public/images/network/02.jpg');
+  const img3 = require('/public/images/network/03.jpg');
 
   useEffect(() => {
     form.setFieldsValue({
@@ -78,16 +81,24 @@ const CTWing = (props: Props) => {
       <Col span={8}>
         <div className={styles.doc}>
           <h1>操作指引：</h1>
-          <div>1、创建类型为CTWing的设备接入网关</div>
-          <div>2、创建产品，并选中接入方式为CTWing</div>
+          <div>1、创建类型为CTWing的设备接入网关。</div>
           <div>
-            3、添加设备，为每一台设备设置唯一的IMEI、SN、PSK码（需与CTWingt平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
+            2、创建产品，并选中接入方式为CTWing,选中后需填写CTWing平台中的产品ID、Master-APIkey。
           </div>
           <div className={styles.image}>
-            <Image width="100%" src={img} />
+            <Image width="100%" src={img1} />
+          </div>
+          <div>
+            3、添加设备，为每一台设备设置唯一的IMEI、SN、IMSI、PSK码（需与CTWing平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
+          </div>
+          <div className={styles.image}>
+            <Image width="100%" src={img2} />
           </div>
           <h1>配置说明</h1>
           <div>1.请将CTWing的AEP平台-应用管理中的App Key和App Secret复制到当前页面</div>
+          <div className={styles.image}>
+            <Image width="100%" src={img3} />
+          </div>
         </div>
       </Col>
     </Row>
