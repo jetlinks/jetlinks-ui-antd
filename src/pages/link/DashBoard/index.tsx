@@ -612,7 +612,7 @@ export default () => {
     const sub = subscribeTopic!(id, topic, {
       type: 'all',
       serverNodeId: serverId,
-      interval: '5s',
+      interval: '1s',
       agg: 'avg',
     })
       ?.pipe(map((res) => res.payload))

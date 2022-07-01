@@ -569,7 +569,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   useEffect(() => {
     if (defaultParam) {
-      handleSearch();
+      handleSearch(!(props.model === 'simple'));
     }
   }, []);
 
