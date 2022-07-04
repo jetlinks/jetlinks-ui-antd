@@ -356,7 +356,7 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
-  public queryMetadatabyId = (data: any) =>
+  public queryModbusabyId = (data: any) =>
     request(`/${SystemConst.API_BASE}/modbus/master/_query/no-paging`, {
       method: 'POST',
       data,
