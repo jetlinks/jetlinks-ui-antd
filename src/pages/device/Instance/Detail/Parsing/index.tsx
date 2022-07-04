@@ -262,11 +262,11 @@ const Parsing = (props: Props) => {
                   return {
                     suggestions: [
                       {
-                        label: 'test()',
-                        kind: editor.languages.CompletionItemKind['Function'],
-                        insertText: 'test()',
-                        detail: '测试语法',
-                        range: range,
+                        label: 'test()', //提示内容
+                        kind: editor.languages.CompletionItemKind['Function'], //图标
+                        insertText: 'test()', //填充
+                        detail: '这是一个测试语法', //提示的解释
+                        range: range, //范围
                       },
                     ],
                   };
