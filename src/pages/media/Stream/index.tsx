@@ -1,10 +1,10 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Button, Card, Col, Empty, Pagination, Row } from 'antd';
+import { Card, Col, Empty, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
-import { getButtonPermission, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { model } from '@formily/reactive';
@@ -80,121 +80,106 @@ const Stream = () => {
       <Card>
         <div className="stream" style={{ position: 'relative', minHeight }}>
           <div style={{ height: '100%', paddingBottom: 48 }}>
+            <div>
+              <PermissionButton
+                isPermission={permission.add}
+                onClick={() => {
+                  history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
+                  StreamModel.current = {};
+                }}
+                key="button"
+                icon={<PlusOutlined />}
+                type="primary"
+              >
+                新增
+              </PermissionButton>
+            </div>
             {dataSource.data.length > 0 ? (
               <div>
-                <div>
-                  <PermissionButton
-                    isPermission={permission.add}
-                    onClick={() => {
-                      history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
-                      StreamModel.current = {};
-                    }}
-                    key="button"
-                    icon={<PlusOutlined />}
-                    type="primary"
-                  >
-                    新增
-                  </PermissionButton>
-                  <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
-                    {(dataSource?.data || []).map((item: any) => (
-                      <Col key={item.id} span={12}>
-                        <StreamCard
-                          {...item}
-                          actions={[
-                            <PermissionButton
-                              isPermission={permission.update}
-                              onClick={() => {
-                                history.push(
-                                  `${getMenuPathByParams(
-                                    MENUS_CODE['media/Stream/Detail'],
-                                    item.id,
-                                  )}`,
-                                );
-                                StreamModel.current = { ...item };
-                              }}
-                              key="button"
-                              type="link"
-                            >
-                              <EditOutlined />
-                              编辑
-                            </PermissionButton>,
-                            <PermissionButton
-                              isPermission={permission.delete}
-                              popConfirm={{
-                                title: '确认删除',
-                                onConfirm: () => {
-                                  service.remove(item.id).then((resp: any) => {
-                                    if (resp.status === 200) {
-                                      onlyMessage('操作成功！');
-                                      handleSearch({ pageSize: 10, terms: [] });
-                                    }
-                                  });
-                                },
-                              }}
-                              key="delete"
-                              type="link"
-                            >
-                              <DeleteOutlined />
-                            </PermissionButton>,
-                          ]}
-                        />
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
+                <Row gutter={[16, 16]} style={{ marginTop: 10 }}>
+                  {(dataSource?.data || []).map((item: any) => (
+                    <Col key={item.id} span={12}>
+                      <StreamCard
+                        {...item}
+                        actions={[
+                          <PermissionButton
+                            isPermission={permission.update}
+                            onClick={() => {
+                              history.push(
+                                `${getMenuPathByParams(
+                                  MENUS_CODE['media/Stream/Detail'],
+                                  item.id,
+                                )}`,
+                              );
+                              StreamModel.current = { ...item };
+                            }}
+                            key="button"
+                            type="link"
+                          >
+                            <EditOutlined />
+                            编辑
+                          </PermissionButton>,
+                          <PermissionButton
+                            isPermission={permission.delete}
+                            popConfirm={{
+                              title: '确认删除',
+                              onConfirm: () => {
+                                service.remove(item.id).then((resp: any) => {
+                                  if (resp.status === 200) {
+                                    onlyMessage('操作成功！');
+                                    handleSearch({ pageSize: 10, terms: [] });
+                                  }
+                                });
+                              },
+                            }}
+                            key="delete"
+                            type="link"
+                          >
+                            <DeleteOutlined />
+                          </PermissionButton>,
+                        ]}
+                      />
+                    </Col>
+                  ))}
+                </Row>
               </div>
             ) : (
-              <Empty
-                style={{ marginTop: '10%' }}
-                description={
-                  <span>
-                    暂无数据，请先
-                    <Button
-                      type="link"
-                      disabled={getButtonPermission('media/Stream', ['add'])}
-                      onClick={() => {
-                        history.push(`${getMenuPathByParams(MENUS_CODE['media/Stream/Detail'])}`);
-                        StreamModel.current = {};
-                      }}
-                    >
-                      新增流媒体服务
-                    </Button>
-                  </span>
-                }
-              />
+              <Empty style={{ marginTop: '10%' }} />
             )}
           </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              position: 'absolute',
-              bottom: 0,
-              width: '100%',
-            }}
-          >
-            <Pagination
-              showSizeChanger
-              size="small"
-              className={'pro-table-card-pagination'}
-              total={dataSource?.total || 0}
-              current={dataSource?.pageIndex + 1}
-              onChange={(page, size) => {
-                handleSearch({
-                  ...param,
-                  pageIndex: page - 1,
-                  pageSize: size,
-                });
+          {dataSource.data.length > 0 && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                position: 'absolute',
+                bottom: 0,
+                width: '100%',
               }}
-              pageSizeOptions={[10, 20, 50, 100]}
-              pageSize={dataSource?.pageSize}
-              showTotal={(num) => {
-                const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-                const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-              }}
-            />
-          </div>
+            >
+              <Pagination
+                showSizeChanger
+                size="small"
+                className={'pro-table-card-pagination'}
+                total={dataSource?.total || 0}
+                current={dataSource?.pageIndex + 1}
+                onChange={(page, size) => {
+                  handleSearch({
+                    ...param,
+                    pageIndex: page - 1,
+                    pageSize: size,
+                  });
+                }}
+                pageSizeOptions={[10, 20, 50, 100]}
+                pageSize={dataSource?.pageSize}
+                showTotal={(num) => {
+                  const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+                  const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+                  return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+                }}
+              />
+            </div>
+          )}
         </div>
       </Card>
     </PageContainer>
