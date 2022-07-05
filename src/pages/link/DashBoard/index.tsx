@@ -227,6 +227,7 @@ export default () => {
       },
       tooltip: {
         trigger: 'axis',
+        valueFormatter: (value) => `${value}M`,
       },
       yAxis: {
         type: 'value',
@@ -238,7 +239,7 @@ export default () => {
       color: ['#979AFF'],
       series: Object.keys(data).length
         ? Object.keys(data).map((key) => ({
-            data: data[key]._data,
+            data: data[key]._data.map((item: number) => Number((item / 1024 / 1024).toFixed(2))),
             name: key,
             type: 'line',
             smooth: true,
@@ -273,6 +274,7 @@ export default () => {
       },
       tooltip: {
         trigger: 'axis',
+        valueFormatter: (value) => `${value}%`,
       },
       yAxis: {
         type: 'value',
@@ -299,6 +301,7 @@ export default () => {
             name: key,
             type: 'line',
             smooth: true,
+            symbol: 'none',
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
@@ -330,6 +333,7 @@ export default () => {
       },
       tooltip: {
         trigger: 'axis',
+        valueFormatter: (value) => `${value}%`,
       },
       yAxis: {
         type: 'value',
@@ -356,6 +360,7 @@ export default () => {
             name: key,
             type: 'line',
             smooth: true,
+            symbol: 'none',
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {

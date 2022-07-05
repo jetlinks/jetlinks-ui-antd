@@ -14,7 +14,7 @@ import WriteProperty from './device/WriteProperty';
 import ReadProperty from './device/readProperty';
 import FunctionCall from './device/functionCall';
 import { InputNumber } from '../components';
-import { DeleteOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, DeleteOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import { observer } from '@formily/reactive-react';
 import ConditionalFiltering from './device/ConditionalFiltering';
 
@@ -25,6 +25,8 @@ interface ActionProps {
   title?: string;
   triggerType: string;
   onRemove: () => void;
+  onMove: (type: 'up' | 'down') => void;
+  isLast?: boolean;
   actionItemData?: any;
   trigger?: any;
   parallel?: boolean;
@@ -32,6 +34,8 @@ interface ActionProps {
 
 export default observer((props: ActionProps) => {
   const { name } = props;
+  console.log('name', name);
+  console.log('isLast', props.isLast);
   const [type1, setType1] = useState('');
   // 消息通知
   const [notifyType, setNotifyType] = useState('');
@@ -238,6 +242,30 @@ export default observer((props: ActionProps) => {
           }}
         >
           <DeleteOutlined />
+        </Button>
+        <Button
+          onClick={() => {
+            props.onMove?.('up');
+          }}
+          disabled={name === 0}
+          style={{
+            padding: '0 8px',
+            margin: '0 0 12px 12px',
+          }}
+        >
+          <ArrowUpOutlined />
+        </Button>
+        <Button
+          onClick={() => {
+            props.onMove?.('down');
+          }}
+          disabled={props.isLast}
+          style={{
+            padding: '0 8px',
+            margin: '0 0 12px 12px',
+          }}
+        >
+          <ArrowDownOutlined />
         </Button>
       </div>
       <Row gutter={24}>
