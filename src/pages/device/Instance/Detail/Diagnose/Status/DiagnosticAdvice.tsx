@@ -21,7 +21,7 @@ const DiagnosticAdvice = (props: Props) => {
       onOk={() => {
         props.close();
       }}
-      width={900}
+      width={1000}
       visible
     >
       <div>
@@ -53,7 +53,7 @@ const DiagnosticAdvice = (props: Props) => {
                 title={
                   <div className="serverItem">
                     {(data?.info?.address || []).map((i: any) => (
-                      <div key={i.address}>
+                      <div key={i.address} className="eellipsiss">
                         <Badge color={i.health === -1 ? 'red' : 'green'} />
                         {i.address}
                       </div>
@@ -63,11 +63,10 @@ const DiagnosticAdvice = (props: Props) => {
               >
                 <div className="serverItem">
                   {(data?.info?.address || []).slice(0, 1).map((i: any) => (
-                    <Badge
-                      key={i.address}
-                      color={i.health === -1 ? 'red' : 'green'}
-                      text={i.address}
-                    />
+                    <div key={i.address} className="eellipsiss">
+                      <Badge color={i.health === -1 ? 'red' : 'green'} />
+                      {i.address}
+                    </div>
                   ))}
                 </div>
               </Tooltip>

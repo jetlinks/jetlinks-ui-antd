@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Col, Form, Input, Pagination, Row, Select, Table, Tooltip } from 'antd';
+import { AutoComplete, Badge, Col, Form, Input, Pagination, Row, Table, Tooltip } from 'antd';
 import { service } from '@/pages/device/Instance';
 import './index.less';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
-// import { throttle } from 'lodash';
+// import { debounce } from 'lodash';
 
 const defaultImage = require('/public/images/metadata-map.png');
 
@@ -46,15 +46,17 @@ const EditableCell = ({
 }: EditableCellProps) => {
   const form: any = useContext(EditableContext);
   const [temp, setTemp] = useState<any>({});
+  const uuid = '使用物模型属性';
 
   const save = async () => {
     try {
       const values = await form.validateFields();
-      handleSave({
+      const dt = {
         ...record,
-        originalId: !!values?.originalId ? values?.originalId : record.metadataId,
-        customMapping: values?.originalId !== '',
-      });
+        originalId: values?.originalId === uuid ? '' : values?.originalId,
+        customMapping: values?.originalId !== uuid,
+      };
+      handleSave(dt);
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -62,7 +64,7 @@ const EditableCell = ({
 
   useEffect(() => {
     if (record) {
-      form.setFieldsValue({ [dataIndex]: record.customMapping ? record[dataIndex] : '' });
+      form.setFieldsValue({ [dataIndex]: record.customMapping ? record[dataIndex] : uuid });
       setTemp(properties.find((i) => i.id === record.originalId));
     }
   }, [record]);
@@ -72,41 +74,25 @@ const EditableCell = ({
   if (editable) {
     childNode = (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
-        {/* <AutoComplete onChange={throttle(save, 5000)}>
-          <AutoComplete.Option value={''}>使用物模型属性</AutoComplete.Option>
+        <AutoComplete
+          allowClear
+          onBlur={() => {
+            save();
+          }}
+        >
+          <AutoComplete.Option value={uuid}>使用物模型属性</AutoComplete.Option>
           {record.customMapping && temp && (
             <AutoComplete.Option value={record.originalId}>
               {temp?.name}({temp?.id})
             </AutoComplete.Option>
           )}
-          {tempList.length > 0 &&
-            tempList.map((item: any) => (
+          {list.length > 0 &&
+            list.map((item: any) => (
               <AutoComplete.Option key={item?.id} value={item?.id}>
                 {item?.name}({item?.id})
               </AutoComplete.Option>
             ))}
-        </AutoComplete> */}
-        <Select
-          onChange={save}
-          showSearch
-          optionFilterProp="children"
-          filterOption={(input: string, option: any) =>
-            (option?.children || '').toLowerCase()?.indexOf(input.toLowerCase()) >= 0
-          }
-        >
-          <Select.Option value={''}>使用物模型属性</Select.Option>
-          {record.customMapping && (
-            <Select.Option value={record.originalId}>
-              {temp?.name}({temp?.id})
-            </Select.Option>
-          )}
-          {list.length > 0 &&
-            list.map((item: any) => (
-              <Select.Option key={item?.id} value={item?.id}>
-                {item?.name}({item?.id})
-              </Select.Option>
-            ))}
-        </Select>
+        </AutoComplete>
       </Form.Item>
     );
   }
@@ -119,7 +105,7 @@ interface Props {
 }
 
 const EditableTable = (props: Props) => {
-  const baseColumns = [
+  const baseColumns: any = [
     {
       title: '物模型属性',
       dataIndex: 'name',
@@ -203,7 +189,7 @@ const EditableTable = (props: Props) => {
           const t = data.find((item: any) => item?.originalId === i?.id);
           return !t || (t && !t.customMapping);
         });
-        setPmList(arr);
+        setPmList([...arr]);
       } else {
         setPmList([]);
       }
@@ -295,7 +281,7 @@ const EditableTable = (props: Props) => {
     }
   };
 
-  const columns = baseColumns.map((col) => {
+  const columns = baseColumns.map((col: any) => {
     if (!col.editable) {
       return col;
     }

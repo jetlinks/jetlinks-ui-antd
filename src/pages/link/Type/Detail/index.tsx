@@ -70,8 +70,11 @@ const Save = observer(() => {
     field.loading = true;
     services(field).then(
       action.bound!((resp: any) => {
+        const type = location.href.split('?')?.pop()?.split('=')?.pop() || '';
         const save = location.href.split('/');
-        if (save[save.length - 1] === ':id') {
+        if (location.href.includes('type=') && !!type) {
+          field.value = type;
+        } else if (save[save.length - 1] === ':id') {
           field.value = resp[0].value;
         }
         field.dataSource = resp;

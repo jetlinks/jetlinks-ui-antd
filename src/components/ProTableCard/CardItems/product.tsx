@@ -6,7 +6,7 @@ import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { Popconfirm, Tooltip } from 'antd';
-import { DisconnectOutlined } from '@ant-design/icons';
+import { CheckOutlined, DisconnectOutlined } from '@ant-design/icons';
 
 export interface ProductCardProps extends Partial<ProductItem> {
   detail?: React.ReactNode;
@@ -122,6 +122,11 @@ export const ExtraProductCard = (props: ProductCardProps) => {
               </Popconfirm>
             )}
           </div>
+        </div>
+      </div>
+      <div className={'checked-icon'}>
+        <div>
+          <CheckOutlined />
         </div>
       </div>
     </TableCard>

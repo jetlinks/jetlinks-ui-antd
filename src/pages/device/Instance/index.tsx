@@ -519,12 +519,38 @@ const Instance = () => {
         onSearch={(data) => {
           actionRef.current?.reset?.();
           setSearchParams(data);
+          const terms1 = data.terms[0]?.terms?.map((e) => {
+            if (e.column === 'classifiedId') {
+              return {
+                column: 'productId$product-info',
+                value: [e],
+              };
+            } else {
+              return e;
+            }
+          });
+          if (data.terms && data.terms.length === 2) {
+            const terms2 = data.terms[1]?.terms?.map((e) => {
+              if (e.column === 'classifiedId') {
+                return {
+                  column: 'productId$product-info',
+                  value: [e],
+                };
+              } else {
+                return e;
+              }
+            });
+            setSearchParams({
+              ...searchParams,
+              terms: [{ terms: terms1 }, { terms: terms2, type: data.terms[1].type }],
+            });
+          } else {
+            setSearchParams({
+              ...searchParams,
+              terms: [{ terms: terms1 }],
+            });
+          }
         }}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setSearchParams({});
-        // }}
       />
       <ProTableCard<DeviceInstance>
         columns={columns}

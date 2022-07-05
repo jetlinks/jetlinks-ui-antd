@@ -80,12 +80,14 @@ const BindParentDevice = (props: Props) => {
   ];
 
   const submitBtn = async () => {
-    // const resp = await service.bindDevice(InstanceModel.detail.id!, bindKeys);
-    // if (resp.status === 200) {
-    //   props.onCancel();
-    //   setBindKeys([]);
-    //   actionRef.current?.reset?.();
-    // }
+    if (props.data?.id) {
+      const resp = await service.bindDevice(bindKeys[0], [props.data?.id]);
+      if (resp.status === 200) {
+        props.onOk(bindKeys[0]);
+        setBindKeys([]);
+        actionRef.current?.reset?.();
+      }
+    }
   };
 
   return (
