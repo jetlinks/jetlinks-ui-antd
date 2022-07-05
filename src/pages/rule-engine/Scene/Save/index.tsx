@@ -346,7 +346,7 @@ export default () => {
                 }
               >
                 <Form.List name="actions">
-                  {(fields, { add, remove }, { errors }) => (
+                  {(fields, { add, remove, move }, { errors }) => (
                     <>
                       <div className={'scene-actions'} style={{ paddingBottom: 24 }}>
                         {fields.map(({ key, name, ...restField }) => (
@@ -358,7 +358,15 @@ export default () => {
                             trigger={actionParams}
                             triggerType={triggerType}
                             onRemove={() => remove(name)}
+                            onMove={(type) => {
+                              if (type === 'up') {
+                                move(name, name - 1);
+                              } else {
+                                move(name, name + 1);
+                              }
+                            }}
                             actionItemData={actionsData.length && actionsData[name]}
+                            isLast={!actionsData.length || actionsData.length - 1 === name}
                             parallel={parallel}
                           />
                         ))}
