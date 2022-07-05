@@ -237,6 +237,7 @@ const Property = (props: Props) => {
 
   useEffect(() => {
     if (dataSource.data.length > 0) {
+      setLoading1(true);
       getDashboard();
     } else {
       setLoading(false);

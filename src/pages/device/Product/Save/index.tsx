@@ -272,7 +272,7 @@ const Save = (props: Props) => {
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item label={'分类'} name={'classifiedId'}>
+            <Form.Item label={'产品分类'} name={'classifiedId'}>
               <TreeSelect
                 showSearch
                 allowClear

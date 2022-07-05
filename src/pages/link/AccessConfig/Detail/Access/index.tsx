@@ -27,6 +27,7 @@ const Access = (props: Props) => {
   const [current, setCurrent] = useState<number>(0);
   const [networkList, setNetworkList] = useState<any[]>([]);
   const [procotolList, setProcotolList] = useState<any[]>([]);
+  const [allProcotolList, setAllProcotolList] = useState<any[]>([]);
   const [procotolCurrent, setProcotolCurrent] = useState<string>('');
   const [networkCurrent, setNetworkCurrent] = useState<string>('');
   const [config, setConfig] = useState<any>();
@@ -46,6 +47,7 @@ const Access = (props: Props) => {
     service.getProtocolList(ProcotoleMapping.get(id), params).then((resp) => {
       if (resp.status === 200) {
         setProcotolList(resp.result);
+        setAllProcotolList(resp.result);
       }
     });
   };
@@ -409,14 +411,16 @@ const Access = (props: Props) => {
                 allowClear
                 placeholder="请输入名称"
                 onSearch={(value: string) => {
-                  queryProcotolList(
-                    props.provider?.id,
-                    encodeQuery({
-                      terms: {
-                        name$LIKE: `%${value}%`,
-                      },
-                    }),
-                  );
+                  if (value) {
+                    const list = allProcotolList.filter((i) => {
+                      return (
+                        i?.name && i.name.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+                      );
+                    });
+                    setProcotolList(list);
+                  } else {
+                    setProcotolList(allProcotolList);
+                  }
                 }}
                 style={{ width: 500, margin: '20px 0' }}
               />
