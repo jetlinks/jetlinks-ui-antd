@@ -75,6 +75,7 @@ const EditableCell = ({
     childNode = (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
         <AutoComplete
+          allowClear
           onBlur={() => {
             save();
           }}

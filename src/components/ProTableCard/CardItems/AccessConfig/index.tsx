@@ -7,6 +7,7 @@ import type { AccessItem } from '@/pages/link/AccessConfig/typings';
 import './index.less';
 import classNames from 'classnames';
 import { Store } from 'jetlinks-store';
+import { CheckOutlined } from '@ant-design/icons';
 
 export interface AccessConfigCardProps extends AccessItem {
   detail?: React.ReactNode;
@@ -106,6 +107,11 @@ export default (props: AccessConfigCardProps) => {
               </Tooltip>
             )}
           </div>
+        </div>
+      </div>
+      <div className={'checked-icon'}>
+        <div>
+          <CheckOutlined />
         </div>
       </div>
     </TableCard>

@@ -35,7 +35,7 @@ const Diagnose = observer(() => {
     if (provider === 'fixed-media' || provider === 'gb28181-2016') {
       setProviderType('media');
     } else if (provider === 'OneNet' || provider === 'Ctwing') {
-      setProviderType('media');
+      setProviderType('cloud');
     } else if (provider === 'modbus-tcp' || provider === 'opc-ua') {
       setProviderType('channel');
     } else if (provider === 'child-device') {

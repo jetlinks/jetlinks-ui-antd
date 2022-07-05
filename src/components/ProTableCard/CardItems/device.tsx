@@ -4,7 +4,7 @@ import { StatusColorEnum } from '@/components/BadgeStatus';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { DisconnectOutlined } from '@ant-design/icons';
+import { CheckOutlined, DisconnectOutlined } from '@ant-design/icons';
 import { Popconfirm, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
@@ -118,6 +118,11 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
               </Popconfirm>
             )}
           </div>
+        </div>
+      </div>
+      <div className={'checked-icon'}>
+        <div>
+          <CheckOutlined />
         </div>
       </div>
     </TableCard>

@@ -1,6 +1,7 @@
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { model } from '@formily/reactive';
 import type { ReactNode } from 'react';
+import { DeviceInstance } from '../../../typings';
 
 export const StatusMap = new Map();
 StatusMap.set('error', require('/public/images/diagnose/status/error.png'));
@@ -231,6 +232,7 @@ export const DiagnoseStatusModel = model<{
   list: ListProps[];
   product: Partial<ProductItem>;
   gateway: any;
+  parent: Partial<DeviceInstance>;
   configuration: {
     product: any[];
     device: any[];
@@ -255,6 +257,7 @@ export const DiagnoseStatusModel = model<{
 }>({
   list: [],
   product: {},
+  parent: {},
   gateway: {},
   configuration: {
     product: [],

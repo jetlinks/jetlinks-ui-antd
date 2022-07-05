@@ -6,12 +6,13 @@ import encodeQuery from '@/utils/encodeQuery';
 import { useHistory } from 'umi';
 import ReactMarkdown from 'react-markdown';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { CheckOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 import { descriptionList, MetworkTypeMapping, ProcotoleMapping } from './data';
+import classNames from 'classnames';
 
 interface Props {
   change: () => void;
@@ -281,7 +282,9 @@ const Access = (props: Props) => {
                 isPermission={networkPermission.add}
                 onClick={() => {
                   const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
-                  const tab: any = window.open(`${origin}/#${url}`);
+                  const tab: any = window.open(
+                    `${origin}/#${url}?type=${MetworkTypeMapping.get(props.provider?.id) || ''}`,
+                  );
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value.status === 200) {
                       queryNetworkList(props.provider?.id, {
@@ -301,12 +304,10 @@ const Access = (props: Props) => {
                 {networkList.map((item) => (
                   <Col key={item.id} span={8}>
                     <Card
-                      className={styles.cardRender}
-                      style={{
-                        width: '100%',
-                        borderColor:
-                          networkCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
-                      }}
+                      className={classNames(
+                        styles.cardRender,
+                        networkCurrent === item.id ? styles.checked : '',
+                      )}
                       hoverable
                       onClick={() => {
                         setNetworkCurrent(item.id);
@@ -360,6 +361,11 @@ const Access = (props: Props) => {
                           >
                             {item?.description || descriptionList[props.provider?.id]}
                           </Tooltip>
+                        </div>
+                      </div>
+                      <div className={styles.checkedIcon}>
+                        <div>
+                          <CheckOutlined />
                         </div>
                       </div>
                     </Card>
@@ -446,12 +452,16 @@ const Access = (props: Props) => {
                 {procotolList.map((item) => (
                   <Col key={item.id} span={8}>
                     <Card
-                      className={styles.cardRender}
-                      style={{
-                        width: '100%',
-                        borderColor:
-                          procotolCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
-                      }}
+                      // className={styles.cardRender}
+                      className={classNames(
+                        styles.cardRender,
+                        procotolCurrent === item.id ? styles.checked : '',
+                      )}
+                      // style={{
+                      //   width: '100%',
+                      //   borderColor:
+                      //     procotolCurrent === item.id ? 'var(--ant-primary-color-active)' : '',
+                      // }}
                       hoverable
                       onClick={() => {
                         setProcotolCurrent(item.id);
@@ -465,6 +475,11 @@ const Access = (props: Props) => {
                           <Tooltip placement="topLeft" title={item.description}>
                             {item.description}
                           </Tooltip>
+                        </div>
+                      </div>
+                      <div className={styles.checkedIcon}>
+                        <div>
+                          <CheckOutlined />
                         </div>
                       </div>
                     </Card>
