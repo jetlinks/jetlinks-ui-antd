@@ -124,7 +124,7 @@ const Detail = observer(() => {
               field.setComponent(FBraftEditor, {
                 placeholder:
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
-                height: '100px',
+                // height: '100px',
               });
             }
             const _provider = field.query('provider').value();

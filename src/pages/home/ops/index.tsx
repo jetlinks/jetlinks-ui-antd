@@ -1,5 +1,5 @@
 import { Col, message, Row, Tooltip } from 'antd';
-import Guide from '../components/Guide';
+// import Guide from '../components/Guide';
 import Statistics from '../components/Statistics';
 import Pie from '@/pages/home/components/Pie';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
@@ -15,9 +15,9 @@ const Ops = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const history = useHistory();
 
-  const accessPermission = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
-  const logPermission = getMenuPathByCode(MENUS_CODE['Log']);
-  const linkPermission = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
+  // const accessPermission = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
+  // const logPermission = getMenuPathByCode(MENUS_CODE['Log']);
+  // const linkPermission = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
 
   const [cpuValue, setCpuValue] = useState<number>(0);
   const [jvmValue, setJvmValue] = useState<number>(0);
@@ -57,76 +57,37 @@ const Ops = () => {
     };
   }, []);
 
-  const guideOpsList = [
-    {
-      key: 'access',
-      name: '设备接入配置',
-      english: 'DEVICE ACCESS CONFIGURATION',
-      auth: !!accessPermission,
-      url: accessPermission,
-    },
-    {
-      key: 'logger',
-      name: '日志排查',
-      english: 'LOG SCREEN',
-      auth: !!logPermission,
-      url: logPermission,
-      param: {
-        key: 'system',
-      },
-    },
-    {
-      key: 'realtime',
-      name: '实时监控',
-      english: 'REAL-TIME MONITORING',
-      auth: !!linkPermission,
-      url: linkPermission,
-      param: {
-        save: true,
-      },
-    },
-  ];
+  // const guideOpsList = [
+  //   {
+  //     key: 'access',
+  //     name: '设备接入配置',
+  //     english: 'DEVICE ACCESS CONFIGURATION',
+  //     auth: !!accessPermission,
+  //     url: accessPermission,
+  //   },
+  //   {
+  //     key: 'logger',
+  //     name: '日志排查',
+  //     english: 'LOG SCREEN',
+  //     auth: !!logPermission,
+  //     url: logPermission,
+  //     param: {
+  //       key: 'system',
+  //     },
+  //   },
+  //   {
+  //     key: 'realtime',
+  //     name: '实时监控',
+  //     english: 'REAL-TIME MONITORING',
+  //     auth: !!linkPermission,
+  //     url: linkPermission,
+  //     param: {
+  //       save: true,
+  //     },
+  //   },
+  // ];
   return (
     <Row gutter={24}>
-      <Col span={14}>
-        <Guide title="运维引导" data={guideOpsList} />
-      </Col>
-      <Col span={10}>
-        <Statistics
-          data={[
-            {
-              name: 'CPU使用率',
-              value: String(cpuValue) + '%',
-              children: <Pie value={cpuValue} />,
-            },
-            {
-              name: 'JVM内存',
-              value: String(jvmValue) + '%',
-              children: <Pie value={jvmValue} />,
-            },
-          ]}
-          title="基础统计"
-          extra={
-            <div style={{ fontSize: 14, fontWeight: 400 }}>
-              <a
-                onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
-                  if (!!url) {
-                    history.push(`${url}`);
-                  } else {
-                    message.warning('暂无权限，请联系管理员');
-                  }
-                }}
-              >
-                详情
-              </a>
-            </div>
-          }
-        />
-      </Col>
-      <Col span={24}>
-        <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
-      </Col>
       <Col span={24}>
         <Steps
           title={
@@ -208,6 +169,51 @@ const Ops = () => {
           ]}
         />
       </Col>
+      <Col span={18} style={{ marginTop: 24 }}>
+        <Body
+          title={'平台架构图'}
+          english={'PLATFORM ARCHITECTURE DIAGRAM'}
+          url={require('/public/images/home/content1.png')}
+        />
+      </Col>
+      <Col span={6} style={{ marginTop: 24 }}>
+        <Statistics
+          style={{ gridTemplateColumns: 'repeat(1, 1fr)' }}
+          height={448}
+          data={[
+            {
+              name: 'CPU使用率',
+              value: String(cpuValue) + '%',
+              children: <Pie value={cpuValue} />,
+            },
+            {
+              name: 'JVM内存',
+              value: String(jvmValue) + '%',
+              children: <Pie value={jvmValue} />,
+            },
+          ]}
+          title="基础统计"
+          extra={
+            <div style={{ fontSize: 14, fontWeight: 400 }}>
+              <a
+                onClick={() => {
+                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
+                  if (!!url) {
+                    history.push(`${url}`);
+                  } else {
+                    message.warning('暂无权限，请联系管理员');
+                  }
+                }}
+              >
+                详情
+              </a>
+            </div>
+          }
+        />
+      </Col>
+      {/* <Col span={24}>
+        <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
+      </Col> */}
     </Row>
   );
 };

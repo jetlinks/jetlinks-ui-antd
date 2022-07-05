@@ -44,14 +44,14 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   /** 此方法会跳转到 redirect 参数所在的位置 */
-  const goto = () => {
-    setTimeout(() => {
-      // history.push(redirect || '/');
-      // 用于触发app中的render，生成路由
-      window.location.href = '/';
-      setLoading(false);
-    }, 10);
-  };
+  // const goto = () => {
+  //   setTimeout(() => {
+  //     // history.push(redirect || '/');
+  //     // 用于触发app中的render，生成路由
+  //     window.location.href = '/';
+  //     setLoading(false);
+  //   }, 10);
+  // };
 
   const getCode = () => {
     delete loginForm.values?.verifyCode;
@@ -62,7 +62,10 @@ const Login: React.FC = () => {
         mergeMap(Service.getCaptcha),
         catchError(() => message.error('系统开小差，请稍后重试')),
       )
-      .subscribe(setCaptcha);
+      .subscribe((res) => {
+        setCaptcha(res);
+        setLoading(false);
+      });
   };
 
   useEffect(getCode, []);
@@ -141,7 +144,9 @@ const Login: React.FC = () => {
         next: async (userInfo) => {
           Token.set(userInfo.token);
           await fetchUserInfo();
-          goto();
+          // goto();
+          window.location.href = '/';
+          setLoading(false);
         },
         error: () => {
           message.error(
@@ -151,17 +156,17 @@ const Login: React.FC = () => {
             }),
           );
           getCode();
-          setLoading(false);
+          // setLoading(false);
         },
         complete: () => {
           getCode();
-          setLoading(false);
+          // setLoading(false);
         },
       },
     );
   };
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={loading} delay={500}>
       <div className={styles.container}>
         <div className={styles.left}>
           <div className={styles.lang} data-lang="">

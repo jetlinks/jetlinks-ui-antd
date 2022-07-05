@@ -19,7 +19,8 @@ const FBraftEditor = connect((props: Props) => {
       {
         // @ts-ignore
         <BraftEditor
-          style={{ height: 350 }}
+          style={{ border: '1px solid #dbd8d8' }}
+          contentStyle={{ height: 300 }}
           placeholder={props.placeholder}
           value={editorState}
           onChange={(state) => {

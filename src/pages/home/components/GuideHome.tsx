@@ -47,7 +47,7 @@ const GuideItem = (props: GuideItemProps) => {
           <img src={props.img} />
         </div>
         <div>
-          <div className={'item-english'}>{`STP${props.index}`}</div>
+          <div className={'item-english'}>{`STEP${props.index}`}</div>
           <div
             className={'item-title'}
             style={{

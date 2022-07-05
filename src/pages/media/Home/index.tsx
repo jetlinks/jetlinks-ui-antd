@@ -68,7 +68,7 @@ export default () => {
     {
       key: 'EQUIPMENT',
       name: '添加视频设备',
-      english: 'STP 1',
+      english: 'STEP1',
       auth: !!devicePermission.add,
       url: deviceUrl,
       param: { save: true },
@@ -76,14 +76,14 @@ export default () => {
     {
       key: 'SCREEN',
       name: '分屏展示',
-      english: 'STP 2',
+      english: 'STEP2',
       auth: !!splitScreenUrl,
       url: splitScreenUrl,
     },
     {
       key: 'CASCADE',
       name: '国标级联',
-      english: 'STP 3',
+      english: 'STEP3',
       auth: !!cascadeUrl,
       url: cascadeUrl,
     },
