@@ -131,6 +131,9 @@ const Save = observer(() => {
                 state.value = '0.0.0.0';
                 state.disabled = true;
               });
+              f.setFieldState('grid.configuration.panel1.layout2.secure', (state) => {
+                state.value = false;
+              });
             }
             const _host = filterConfigByType(_.cloneDeep(configRef.current), value);
             f.setFieldState('grid.configuration.panel1.layout2.host', (state) => {

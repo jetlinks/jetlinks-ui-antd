@@ -13,11 +13,13 @@ type PermissionDataType = {
   actions: PermissionDataType[];
 };
 
+type PermissionValueType = {
+  permission: string;
+  actions: string[];
+};
+
 type PermissionType = {
-  value?: {
-    permission: string;
-    actions: string[];
-  }[];
+  value?: PermissionValueType[];
   data: PermissionDataType[];
   title?: React.ReactNode | string;
   onChange?: (data: PermissionInfo[]) => void;
@@ -120,6 +122,8 @@ const ParentNode = (props: ParentNodeType) => {
   );
 };
 
+const checkKeysRef = new Map<string, PermissionValueType>();
+
 export default (props: PermissionType) => {
   // const [indeterminate, setIndeterminate] = useState(false);
   // const [checkAll, setCheckAll] = useState(false);
@@ -127,17 +131,25 @@ export default (props: PermissionType) => {
   const checkListRef = useRef<CheckItem[]>([]);
   // const intl = useIntl();
 
-  const onChange = (list: CheckItem[]) => {
+  const onChange = () => {
     if (props.onChange) {
-      const _list = list
-        .filter((a) => a.checked || a.actions.filter((b) => b.checked).length)
-        .map((item) => ({
-          permission: item.id,
-          actions: item.actions.filter((b) => b.checked).map((b) => b.action),
-        }));
-      props.onChange(_list);
+      // list
+      //   .filter((a) => a.checked || a.actions.filter((b) => b.checked).length)
+      //   .map((item) => {
+      //     const value = {
+      //       permission: item.id,
+      //       actions: item.actions.filter((b) => b.checked).map((b) => b.action),
+      //     }
+      //     checkKeysRef.current?.set(item.id, value)
+      //     console.log([...checkKeysRef.current!.values()])
+      //   });
+      props.onChange([...checkKeysRef.values()]);
     }
   };
+
+  useEffect(() => {
+    checkKeysRef.clear();
+  }, []);
 
   /**
    * 全选或者全部取消
@@ -163,37 +175,46 @@ export default (props: PermissionType) => {
   const parentChange = (value: ParentNodeChange) => {
     // let indeterminateCount = 0;
     // let _checkAll = 0;
-    const list = checkListRef.current.map((item) => {
-      const _checked = item.id === value.id ? value.checkedAll : item.checked;
-      const _state = item.id === value.id ? value.state : item.state;
-      const actions =
-        item.id === value.id
-          ? item.actions.map((a) => ({ ...a, checked: value.list.includes(a.action) }))
-          : item.actions;
-      if (_checked) {
-        // 父checkbox为全选或者有子节点被选中
-        // _checkAll += 1;
-        // indeterminateCount += 1;
-      } else if (_state) {
-        // 父checkbox下
-        // indeterminateCount += 1;
-      }
-
-      return {
-        ...item,
-        actions,
-        state: _state,
-        checked: _checked,
+    if (value.list.length) {
+      const _value = {
+        permission: value.id,
+        actions: value.list,
       };
-    });
+      checkKeysRef.set(value.id, _value);
+    } else if (checkKeysRef.has(value.id)) {
+      checkKeysRef.delete(value.id);
+    }
+    // const list = checkListRef.current.map((item) => {
+    //   const _checked = item.id === value.id ? value.checkedAll : item.checked;
+    //   const _state = item.id === value.id ? value.state : item.state;
+    //   const actions =
+    //     item.id === value.id
+    //       ? item.actions.map((a) => ({ ...a, checked: value.list.includes(a.action) }))
+    //       : item.actions;
+    //   if (_checked) {
+    //     // 父checkbox为全选或者有子节点被选中
+    //     // _checkAll += 1;
+    //     // indeterminateCount += 1;
+    //   } else if (_state) {
+    //     // 父checkbox下
+    //     // indeterminateCount += 1;
+    //   }
+    //
+    //   return {
+    //     ...item,
+    //     actions,
+    //     state: _state,
+    //     checked: _checked,
+    //   };
+    // });
     // 如果全部选中，则取消半选状态
     // const isIndeterminate =
     //   _checkAll === list.length && _checkAll !== 0 ? false : !!indeterminateCount;
     // setIndeterminate(isIndeterminate);
     // setCheckAll(_checkAll === list.length && _checkAll !== 0);
     // setCheckedList(list)
-    checkListRef.current = list;
-    onChange(list);
+    // checkListRef.current = list;
+    onChange();
   };
 
   /**
@@ -224,12 +245,14 @@ export default (props: PermissionType) => {
    * @param data
    */
   const initialState = (data: PermissionDataType[]) => {
+    props.value?.forEach((item) => {
+      checkKeysRef.set(item.permission, item);
+    });
     const _list = data.map((item) => {
-      const propsPermission =
-        props.value && props.value.length
-          ? props.value.find((p) => p.permission === item.id)
-          : undefined;
+      let propsPermission = checkKeysRef.get(item.id);
+
       const propsActions = propsPermission ? propsPermission.actions : [];
+
       return {
         ...item,
         actions: item.actions

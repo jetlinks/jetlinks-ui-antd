@@ -106,8 +106,8 @@ const BindDevice = (props: Props) => {
         save();
       }}
       width={1300}
-      permissionCode={'link/Channel/Opcua'}
-      permission={['add', 'edit', 'view']}
+      permissionCode={'device/Instance'}
+      permission={['edit', 'view']}
     >
       <SearchComponent
         field={columns}

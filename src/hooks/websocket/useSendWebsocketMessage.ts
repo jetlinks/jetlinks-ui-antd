@@ -16,6 +16,7 @@ enum MsgType {
 }
 
 const subscribeList: Record<string, { next: any; complete: any }[]> = {};
+const messageCache: Record<string, string> = {};
 
 export const useSendWebsocketMessage = () => {
   const messageHistory = useRef<any>([]);
@@ -41,12 +42,20 @@ export const useSendWebsocketMessage = () => {
       }
     }
   };
+
   const { sendMessage, latestMessage } = useWebSocket(url, {
-    reconnectInterval: 1000,
-    reconnectLimit: 1,
+    // reconnectInterval: 1000,
+    // reconnectLimit: 1,
     onClose: () => console.error('websocket 链接关闭'),
     onOpen: (event) => console.log('打开链接', event),
     onError: (event) => console.log('报错了', event),
+    onReconnect: () => {
+      if (Object.keys(messageCache).length && sendMessage) {
+        Object.values(messageCache).forEach((item) => {
+          sendMessage(item);
+        });
+      }
+    },
     onMessage: dispenseMessage,
   });
 
@@ -69,6 +78,7 @@ export const useSendWebsocketMessage = () => {
         complete: () => subscriber.complete(),
       });
       const message = JSON.stringify({ id, topic, parameter, type: MsgType.sub });
+      messageCache[id] = message;
       if (sendMessage) {
         sendMessage(message);
       } else {
@@ -77,6 +87,7 @@ export const useSendWebsocketMessage = () => {
       return () => {
         const unsub = JSON.stringify({ id, type: MsgType.unsub });
         delete subscribeList[id];
+        delete messageCache[id];
         sendMessage?.(unsub);
       };
     });
