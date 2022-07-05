@@ -328,6 +328,9 @@ const Message = observer(() => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'PreviewText.Input',
+                  // 'x-decorator-props': {
+                  //   tooltip: '使用固定的通知配置来发送此通知模版',
+                  // },
                 },
               },
             },

@@ -2,7 +2,13 @@
 
 .access-config-card-item {
   &.active {
+    position: relative;
+    color: @primary-color-active;
     border: 1px solid @primary-color-active;
+
+    .checked-icon {
+      display: block;
+    }
   }
 
   .tableCardDisabled {
@@ -92,6 +98,33 @@
         margin-bottom: 10px;
         color: #666;
         font-weight: 400;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .checked-icon {
+    position: absolute;
+    right: -22px;
+    bottom: -22px;
+    z-index: 2;
+    display: none;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    background-color: red;
+    background-color: @primary-color-active;
+    transform: rotate(-45deg);
+
+    > div {
+      position: relative;
+      height: 100%;
+      transform: rotate(45deg);
+
+      > span {
+        position: absolute;
+        top: 6px;
+        left: 6px;
         font-size: 12px;
       }
     }

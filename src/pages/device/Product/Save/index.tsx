@@ -282,7 +282,7 @@ const Save = (props: Props) => {
                   });
                 }}
                 filterTreeNode={(input, treeNode) => treeNode.name.includes(input)}
-                placeholder={`${intlFormat('pages.form.tip.select', '请选择')}分类`}
+                placeholder={`${intlFormat('pages.form.tip.select', '请选择')}产品分类`}
                 fieldNames={{
                   label: 'name',
                   value: 'id',

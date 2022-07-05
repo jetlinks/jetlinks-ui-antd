@@ -1,3 +1,4 @@
+@import '~antd/es/style/themes/default.less';
 .box {
   display: flex;
   flex-direction: column;
@@ -103,6 +104,43 @@
 
 .cardRender {
   width: 100%;
+  overflow: hidden;
   background: url('/images/access.png') no-repeat;
   background-size: 100% 100%;
+
+  .checkedIcon {
+    position: absolute;
+    right: -22px;
+    bottom: -22px;
+    z-index: 2;
+    display: none;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    background-color: red;
+    background-color: @primary-color-active;
+    transform: rotate(-45deg);
+
+    > div {
+      position: relative;
+      height: 100%;
+      transform: rotate(45deg);
+
+      > span {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        font-size: 12px;
+      }
+    }
+  }
+  &.checked {
+    position: relative;
+    color: @primary-color-active;
+    border-color: @primary-color-active;
+
+    .checkedIcon {
+      display: block;
+    }
+  }
 }
