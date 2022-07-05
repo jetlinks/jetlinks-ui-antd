@@ -10,6 +10,8 @@ type StatisticsItem = {
 
 interface StatisticsProps {
   extra?: React.ReactNode | string;
+  style?: any;
+  height?: any;
   data: StatisticsItem[];
   title: string;
 }
@@ -18,9 +20,9 @@ const defaultImage = require('/public/images/home/top-1.png');
 
 const Statistics = (props: StatisticsProps) => {
   return (
-    <div className={'home-statistics'}>
+    <div className={'home-statistics'} style={{ height: props.height }}>
       <Title title={props.title} extra={props.extra} />
-      <div className={'home-statistics-body'}>
+      <div className={'home-statistics-body'} style={props.style}>
         {props.data.map((item) => (
           <div className={'home-guide-item'} key={item.name}>
             <div className={'item-english'}>{item.name}</div>

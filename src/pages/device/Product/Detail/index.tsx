@@ -140,7 +140,7 @@ const ProductDetail = observer(() => {
   };
 
   const initMetadata = () => {
-    service.getProductDetail(param?.id).subscribe((data) => {
+    service.getProductDetail(param?.id).subscribe((data: any) => {
       if (data.metadata) {
         const metadata: DeviceMetadata = JSON.parse(data.metadata);
         MetadataAction.insert(metadata);

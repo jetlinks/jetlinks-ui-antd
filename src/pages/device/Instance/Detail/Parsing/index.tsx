@@ -166,7 +166,7 @@ const Parsing = (props: Props) => {
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div>
+            <div style={{ color: '#a6a6a6' }}>
               {props.tag === 'device' ? (
                 <>
                   <ExclamationCircleOutlined style={{ marginRight: 5 }} />
@@ -283,7 +283,7 @@ const Parsing = (props: Props) => {
             backgroundColor: '#f7f7f7',
           }}
         >
-          <div style={{ width: '49%' }}>
+          <div style={{ width: '49.5%' }}>
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>模拟输入</div>
@@ -331,7 +331,7 @@ const Parsing = (props: Props) => {
               />
             </div>
           </div>
-          <div style={{ width: '49%' }}>
+          <div style={{ width: '49.5%' }}>
             <div>
               <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>运行结果</div>
               <Input.TextArea
