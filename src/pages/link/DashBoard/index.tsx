@@ -25,6 +25,7 @@ type TopEchartsItemNodeType = {
 const service = new Service('dashboard');
 
 const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
+  let formatterCount = 0;
   const options = {
     series: [
       {
@@ -56,7 +57,15 @@ const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
           distance: -22,
           color: 'auto',
           fontSize: 12,
-          formatter: '{value}' + (props.formatter || '%'),
+          width: 30,
+          padding: [6, -4, 0, -4],
+          formatter: (value: number) => {
+            formatterCount += 1;
+            if ([1, 3, 6, 9, 11].includes(formatterCount)) {
+              return value + (props.formatter || '%');
+            }
+            return '';
+          },
         },
         pointer: {
           length: '80%',
@@ -161,7 +170,7 @@ export default () => {
   const [serverId, setServerId] = useState(undefined);
   const [timeToolOptions] = useState([
     { label: '最近1小时', value: 'hour' },
-    { label: '当天', value: 'today' },
+    { label: '今日', value: 'today' },
     { label: '近一周', value: 'week' },
   ]);
 
@@ -170,6 +179,7 @@ export default () => {
     jvm: 0,
     jvmTotal: 0,
     usage: 0,
+    usageTotal: 0,
     systemUsage: 0,
     systemUsageTotal: 0,
   });
@@ -213,6 +223,8 @@ export default () => {
       case 'month':
       case 'week':
         return '1d';
+      case 'hour':
+        return '1m';
       default:
         return '1h';
     }
@@ -626,11 +638,13 @@ export default () => {
         const cpu = value.cpu;
         const memory = value.memory;
         const disk = value.disk;
+        console.log(value);
         setTopValues({
           cpu: cpu.systemUsage,
           jvm: Number(((memory.jvmHeapUsage / 100) * (memory.jvmHeapTotal / 1024)).toFixed(1)),
           jvmTotal: Math.ceil(memory.jvmHeapTotal / 1024),
-          usage: disk.usage,
+          usage: Number(((disk.total / 1024) * (disk.usage / 100)).toFixed(1)),
+          usageTotal: Math.ceil(disk.total / 1024),
           systemUsage: Number(
             ((memory.systemTotal / 1024) * (memory.systemUsage / 100)).toFixed(1),
           ),
@@ -673,7 +687,13 @@ export default () => {
             max={topValues.jvmTotal}
             bottom={`总JVM内存  ${topValues.jvmTotal}G`}
           />
-          <TopEchartsItemNode title={'磁盘占用率'} value={topValues.usage} />
+          <TopEchartsItemNode
+            title={'磁盘占用'}
+            formatter={'G'}
+            value={topValues.usage}
+            max={topValues.usageTotal}
+            bottom={`总磁盘大小  ${topValues.usageTotal}G`}
+          />
           <TopEchartsItemNode
             title={'系统内存'}
             formatter={'G'}
@@ -687,6 +707,8 @@ export default () => {
             title={'网络流量'}
             ref={NETWORKRef}
             initialValues={{ type: 'bytesRead' }}
+            defaultTime={'hour'}
+            timeToolOptions={timeToolOptions}
             height={400}
             closeInitialParams={true}
             showTimeTool={true}
@@ -699,7 +721,6 @@ export default () => {
                 </Radio.Group>
               ),
             }}
-            defaultTime={'week'}
             options={networkOptions}
             onParamsChange={getNetworkEcharts}
           />

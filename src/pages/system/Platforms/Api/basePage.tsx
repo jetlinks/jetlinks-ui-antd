@@ -7,13 +7,13 @@ import { onlyMessage } from '@/utils/util';
 
 interface TableProps {
   data: any;
-  operations: string[];
+  operations: string[] | undefined;
   // 是否只展示已授权的接口
   isShowGranted?: boolean;
   //
   isOpenGranted?: boolean;
   //
-  grantKeys: string[];
+  grantKeys: string[] | undefined;
 }
 
 export default (props: TableProps) => {
@@ -36,8 +36,8 @@ export default (props: TableProps) => {
    * 获取已授权的接口ID
    */
   useEffect(() => {
-    grantCache.current = props.grantKeys;
-    setSelectKeys(props.grantKeys);
+    grantCache.current = props.grantKeys || [];
+    setSelectKeys(props.grantKeys || []);
   }, [props.grantKeys]);
 
   useEffect(() => {

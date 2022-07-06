@@ -1,7 +1,7 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Button, Modal, Popconfirm, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
@@ -25,6 +25,7 @@ export default observer((props: { parentId: string }) => {
   const actionRef = useRef<ActionType>();
 
   const [searchParam, setSearchParam] = useState({});
+  const [deviceVisible, setDeviceVisible] = useState(false);
 
   useEffect(() => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Product && actionRef.current) {
@@ -181,9 +182,29 @@ export default observer((props: { parentId: string }) => {
         <Bind
           visible={Models.bind}
           onCancel={closeModal}
-          reload={() => actionRef.current?.reload()}
+          reload={() => {
+            setDeviceVisible(true);
+            actionRef.current?.reload();
+          }}
           parentId={props.parentId}
         />
+      )}
+      {deviceVisible && (
+        <Modal
+          visible={deviceVisible}
+          width={600}
+          onCancel={() => {
+            setDeviceVisible(false);
+          }}
+          onOk={() => {
+            setDeviceVisible(false);
+            AssetsModel.tabsIndex = ASSETS_TABS_ENUM.Device;
+            AssetsModel.bindModal = true;
+          }}
+          title={'绑定'}
+        >
+          是否继续分配产品下的具体设备
+        </Modal>
       )}
       <SearchComponent<ProductItem>
         field={columns}
