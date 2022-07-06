@@ -95,7 +95,7 @@ export default forwardRef((props: HeaderProps, ref) => {
                       ))
                     ) : (
                       <>
-                        <Radio.Button value={TimeKey.today}>当天</Radio.Button>
+                        <Radio.Button value={TimeKey.today}>今日</Radio.Button>
                         <Radio.Button value={TimeKey.week}>近一周</Radio.Button>
                         <Radio.Button value={TimeKey.month}>近一月</Radio.Button>
                         <Radio.Button value={TimeKey.year}>近一年</Radio.Button>
