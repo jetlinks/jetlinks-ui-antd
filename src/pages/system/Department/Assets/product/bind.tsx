@@ -11,7 +11,6 @@ import type { ProductItem } from '@/pages/system/Department/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { ExtraProductCard } from '@/components/ProTableCard/CardItems/product';
 import { ProTableCard } from '@/components';
-import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 
 interface Props {
   reload: () => void;
@@ -25,7 +24,6 @@ const Bind = observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
   const saveRef = useRef<{ saveData: Function }>();
-  const [deviceVisible, setDeviceVisible] = useState(false);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -69,91 +67,80 @@ const Bind = observer((props: Props) => {
   }, [props.visible]);
 
   return (
-    <Modal
-      visible={props.visible}
-      onOk={handleBind}
-      onCancel={props.onCancel}
-      width={800}
-      title="绑定"
-    >
+    <>
       <Modal
-        visible={deviceVisible}
-        width={800}
-        onCancel={() => {
-          setDeviceVisible(false);
-          props.reload();
-          props.onCancel();
+        visible={props.visible}
+        onOk={handleBind}
+        onCancel={props.onCancel}
+        width={'75vw'}
+        bodyStyle={{
+          height: 'calc(100vh - 240px);',
+          overflowY: 'auto',
         }}
-        onOk={() => {
-          setDeviceVisible(false);
-          AssetsModel.tabsIndex = ASSETS_TABS_ENUM.Device;
-          AssetsModel.bindModal = true;
-          props.onCancel();
-        }}
-        title={'绑定'}
+        title="绑定"
       >
-        是否继续分配产品下的具体设备
-      </Modal>
-      <PermissionModal
-        type="product"
-        parentId={props.parentId}
-        bindKeys={Models.bindKeys}
-        ref={saveRef}
-        onCancel={(type) => {
-          if (type) {
-            setDeviceVisible(true);
-          }
-        }}
-      />
-      <SearchComponent<ProductItem>
-        field={columns}
-        model={'simple'}
-        enableSave={false}
-        defaultParam={[
-          {
-            column: 'id',
-            termType: 'dim-assets$not',
-            value: {
-              assetType: 'product',
-              targets: [
-                {
-                  type: 'org',
-                  id: props.parentId,
-                },
-              ],
+        <PermissionModal
+          type="product"
+          parentId={props.parentId}
+          bindKeys={Models.bindKeys}
+          ref={saveRef}
+          onCancel={(type) => {
+            if (type) {
+              props.reload();
+              props.onCancel();
+            }
+          }}
+        />
+        <SearchComponent<ProductItem>
+          field={columns}
+          model={'simple'}
+          enableSave={false}
+          defaultParam={[
+            {
+              column: 'id',
+              termType: 'dim-assets$not',
+              value: {
+                assetType: 'product',
+                targets: [
+                  {
+                    type: 'org',
+                    id: props.parentId,
+                  },
+                ],
+              },
             },
-          },
-        ]}
-        onSearch={async (data) => {
-          actionRef.current?.reset?.();
-          setSearchParam(data);
-        }}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setSearchParam({});
-        // }}
-        target="department-assets-product"
-      />
-      <ProTableCard<ProductItem>
-        actionRef={actionRef}
-        columns={columns}
-        rowKey="id"
-        search={false}
-        gridColumn={2}
-        rowSelection={{
-          selectedRowKeys: Models.bindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            Models.bindKeys = selectedRows.map((item) => item.id);
-          },
-        }}
-        request={(params) => service.queryProductList(params)}
-        params={searchParam}
-        cardRender={(record) => (
-          <ExtraProductCard showBindBtn={false} {...record} cardType={'bind'} />
-        )}
-      />
-    </Modal>
+          ]}
+          onSearch={async (data) => {
+            actionRef.current?.reset?.();
+            setSearchParam(data);
+          }}
+          // onReset={() => {
+          //   // 重置分页及搜索参数
+          //   actionRef.current?.reset?.();
+          //   setSearchParam({});
+          // }}
+          target="department-assets-product"
+        />
+        <ProTableCard<ProductItem>
+          actionRef={actionRef}
+          columns={columns}
+          rowKey="id"
+          search={false}
+          gridColumn={2}
+          rowSelection={{
+            selectedRowKeys: Models.bindKeys,
+            onChange: (selectedRowKeys, selectedRows) => {
+              Models.bindKeys = selectedRows.map((item) => item.id);
+            },
+          }}
+          request={(params) => service.queryProductList(params)}
+          params={searchParam}
+          cardRender={(record) => (
+            <ExtraProductCard showBindBtn={false} {...record} cardType={'bind'} />
+          )}
+        />
+      </Modal>
+    </>
   );
 });
 export default Bind;

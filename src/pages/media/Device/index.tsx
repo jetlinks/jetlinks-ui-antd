@@ -352,18 +352,19 @@ const Device = () => {
         cardRender={(record) => (
           <MediaDevice
             {...record}
-            detail={
-              <div
-                style={{ fontSize: 18, padding: 8 }}
-                onClick={() => {
-                  history.push(
-                    `${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id)}`,
-                  );
-                }}
-              >
-                <EyeOutlined />
-              </div>
-            }
+            // detail={
+            //   <div
+            //     style={{ fontSize: 18, padding: 8 }}
+            //     onClick={() => {
+            //       history.push(
+            //         `${getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id)}`,
+            //       );
+            //     }}
+            //   >
+            //     <EyeOutlined />
+            //   </div>
+            // }
+            showMask={false}
             actions={[
               <PermissionButton
                 key="edit"

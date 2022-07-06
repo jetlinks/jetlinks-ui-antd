@@ -544,8 +544,15 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       handleForm(true);
     }
 
-    if (type) {
-      setUrl({ q: JSON.stringify(value), target: props.target });
+    if (
+      (value.terms1 && value.terms1.length && value.terms1?.some((item) => item.value)) ||
+      (value.terms2 && value.terms2.length && value.terms2?.some((item) => item.value))
+    ) {
+      if (type) {
+        setUrl({ q: JSON.stringify(value), target: props.target });
+      }
+    } else {
+      setUrl({ q: undefined, target: undefined });
     }
     onSearch({ terms: _temp });
   };
@@ -553,15 +560,13 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   useEffect(() => {
     // 防止页面下多个TabsTabPane中的查询组件共享路由中的参数
     if (url.q) {
-      // if (url.target) {
-      //   if (props.target && url.target === props.target) {
-      //     form.setValues(JSON.parse(url.q));
-      //     handleSearch(false);
-      //   }
-      // } else {
-      //   form.setValues(JSON.parse(url.q));
-      //   handleSearch(false);
-      // }
+      if (url.target) {
+        if (props.target && url.target === props.target) {
+          form.setValues(JSON.parse(url.q));
+          handleSearch(false);
+        }
+        return;
+      }
       form.setValues(JSON.parse(url.q));
       handleSearch(false);
     }
