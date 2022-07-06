@@ -24,6 +24,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
 import usePermissions from '@/hooks/permission';
 import { onlyMessage } from '@/utils/util';
+import Driver from 'driver.js';
+import 'driver.js/dist/driver.min.css';
+import './index.less';
 
 const componentMap = {
   string: 'Input',
@@ -37,6 +40,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const { permission } = usePermissions('device/Product');
   const [dataSource, setDataSource] = useState<any[]>([]);
+
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -52,6 +56,77 @@ const Access = () => {
   const [configVisible, setConfigVisible] = useState<boolean>(false);
 
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
+
+  const steps = [
+    {
+      element: '#metadata-driver',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>配置物模型</div><div id='guide'>1/3</div>`,
+        description: `配置产品物模型，实现设备在云端的功能描述。`,
+        position: 'bottom',
+
+      }
+    },
+    {
+      element: '.ant-switch',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>启用产品</div><div id='guide'>2/3</div>`,
+        description: '启用产品后，可在产品下新增设备。',
+        position: 'bottom'
+      }
+    },
+    {
+      element: '.ant-descriptions-item-label',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>添加设备</div><div id='guide'>3/3</div>`,
+        description: '添加设备，并连接到平台。',
+        position: 'bottom'
+      }
+    }
+  ]
+  const steps1 = [
+    {
+      element: '#driver-config',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>填写配置</div><div id='guide'>1/4</div>`,
+        description: `填写设备接入所需的配置参数。`,
+        position: 'right',
+
+      }
+    },
+    {
+      element: '#metadata-driver',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>配置物模型</div><div id='guide'>2/4</div>`,
+        description: `配置产品物模型，实现设备在云端的功能描述。`,
+        position: 'bottom',
+
+      }
+    },
+    {
+      element: '.ant-switch',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>启用产品</div><div id='guide'>3/4</div>`,
+        description: '启用产品后，可在产品下新增设备。',
+        position: 'bottom'
+      }
+    },
+    {
+      element: '.ant-descriptions-item-label',
+      popover: {
+        className: 'driver',
+        title: `<div id='title'>添加设备</div><div id='guide'>4/4</div>`,
+        description: '添加设备，并连接到平台。',
+        position: 'bottom'
+      }
+    }
+  ]
 
   const queryAccessDetail = (id: string) => {
     service
@@ -202,15 +277,45 @@ const Access = () => {
   const id = productModel.current?.id;
 
   useEffect(() => {
-    if (id) {
-      productService
-        .getConfigMetadata(id)
-        .then((resp: { result: SetStateAction<ConfigMetadata[]> }) => {
-          setMetadata(resp.result);
-        });
-    }
+    const driver = new Driver({
+      allowClose: false,
+      doneBtnText: '我知道了',
+      closeBtnText: '不在提示',
+      nextBtnText: '下一步',
+      prevBtnText: '上一步',
+      // onDeselected:(e)=>{
+      //   console.log(e)
+      // },
+      onNext:()=>{
+        console.log('下一步')
+      },
+      onPrevious:()=>{
+        console.log('上一步')
+      },
+      onReset:()=>{
+        console.log('关闭')
+      },
+      // onDeselected:()=>{
+      //   console.log('oncolse')
+      // }
+    
+    });
     setVisible(!!productModel.current?.accessId);
     if (productModel.current?.accessId) {
+      if (id) {
+        productService
+          .getConfigMetadata(id)
+          .then((resp: { result: SetStateAction<ConfigMetadata[]> }) => {
+            setMetadata(resp.result);
+            if (resp.result && resp.result.length > 0) {
+              driver.defineSteps(steps1)
+              driver.start();
+            } else {
+              driver.defineSteps(steps)
+              driver.start();
+            }
+          });
+      }
       queryAccessDetail(productModel.current?.accessId);
       getConfigDetail(
         productModel.current?.messageProtocol || '',
@@ -221,8 +326,34 @@ const Access = () => {
           setDataSource(resp.result);
         }
       });
+    } else {
+      if (id) {
+        productService
+          .getConfigMetadata(id)
+          .then((resp: { result: SetStateAction<ConfigMetadata[]> }) => {
+            setMetadata(resp.result);
+          });
+      }
     }
   }, [productModel.current]);
+
+  // useEffect(() => {
+  //   console.log(productModel.current)
+  //   console.log(productModel.current?.accessId)
+  //   const driver = new Driver({
+  //     allowClose: false,
+  //     doneBtnText: '我知道了',
+  //     closeBtnText: '不在提示',
+  //     nextBtnText: '下一步',
+  //     prevBtnText: '上一步'
+  //   });
+  //   if (productModel.current?.accessId) {
+  //     setTimeout(() => {
+  //       driver.defineSteps(steps)
+  //       driver.start();
+  //     }, 1000)
+  //   }
+  // }, [])
 
   const form = createForm({
     validateFirst: true,
@@ -257,11 +388,11 @@ const Access = () => {
         enum:
           item?.type?.type === 'enum' && item?.type?.elements
             ? (item?.type?.elements || []).map((t: { value: string; text: string }) => {
-                return {
-                  label: t.text,
-                  value: t.value,
-                };
-              })
+              return {
+                label: t.text,
+                value: t.value,
+              };
+            })
             : [],
       };
     });
@@ -298,12 +429,12 @@ const Access = () => {
               title: (
                 <TitleComponent
                   data={
-                    <span>
+                    <div className='config'>
                       {item.name}
                       <Tooltip title="此配置来自于该产品接入方式所选择的协议">
                         <QuestionCircleOutlined />
                       </Tooltip>
-                    </span>
+                    </div>
                   }
                 />
               ),
@@ -353,6 +484,10 @@ const Access = () => {
       })
     );
   };
+
+  // useEffect(() => {
+
+  // }, [])
 
   return (
     <div>
@@ -447,14 +582,14 @@ const Access = () => {
                 <TitleComponent data={'连接信息'} />
                 {(access?.channelInfo?.addresses || []).length > 0
                   ? (access?.channelInfo?.addresses || []).map((item: any) => (
-                      <div key={item.address}>
-                        <Badge color={item.health === -1 ? 'red' : 'green'} text={item.address} />
-                      </div>
-                    ))
+                    <div key={item.address}>
+                      <Badge color={item.health === -1 ? 'red' : 'green'} text={item.address} />
+                    </div>
+                  ))
                   : '暂无连接信息'}
               </div>
 
-              <div className={styles.item}>{renderConfigCard()}</div>
+              <div className={styles.item} id='driver-config'>{renderConfigCard()}</div>
             </div>
           </Col>
           {config?.routes && config?.routes?.length > 0 && (
@@ -463,7 +598,7 @@ const Access = () => {
                 <div>
                   <div style={{ fontWeight: '600', marginBottom: 10 }}>
                     {access?.provider === 'mqtt-server-gateway' ||
-                    access?.provider === 'mqtt-client-gateway'
+                      access?.provider === 'mqtt-client-gateway'
                       ? 'topic'
                       : 'URL信息'}
                   </div>
