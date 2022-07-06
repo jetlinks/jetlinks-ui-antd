@@ -1,5 +1,5 @@
 // Modal 弹窗，用于新增、修改数据
-import React from 'react';
+import React, { useState } from 'react';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
@@ -42,6 +42,7 @@ export interface SaveModalProps<T> extends Omit<ModalProps, 'onOk' | 'onCancel'>
 const Save = <T extends object>(props: SaveModalProps<T>) => {
   const { data, schema, onCancel, service } = props;
   const intl = useIntl();
+  const [loading, setLoading] = useState(false);
 
   const SchemaField = createSchemaField({
     components: {
@@ -88,10 +89,10 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
    */
   const saveData = async () => {
     const formData: T = await form.submit();
-
+    setLoading(true);
     const response =
       data && 'id' in data ? await service.update(formData) : await service.save(formData);
-
+    setLoading(false);
     if (response.status === 200) {
       onlyMessage('操作成功！');
       modalClose(true, response.result.parentId);
@@ -120,6 +121,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
       maskClosable={false}
       visible={props.visible}
       onOk={saveData}
+      confirmLoading={loading}
       onCancel={() => {
         modalClose(false);
       }}

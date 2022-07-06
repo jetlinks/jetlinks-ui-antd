@@ -42,8 +42,8 @@ interface ApiPageProps {
 
 export default observer((props: ApiPageProps) => {
   const location = useLocation();
-  const [operations, setOperations] = useState<string[]>([]);
-  const [GrantKeys, setGrantKeys] = useState<string[]>([]);
+  const [operations, setOperations] = useState<string[] | undefined>(undefined);
+  const [GrantKeys, setGrantKeys] = useState<string[] | undefined>(undefined);
   const { minHeight } = useDomFullHeight(`.platforms-api`);
 
   const initModel = () => {
