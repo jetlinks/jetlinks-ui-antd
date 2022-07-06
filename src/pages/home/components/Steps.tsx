@@ -39,8 +39,8 @@ const Steps = (props: StepsProps) => {
         className={'home-step-items'}
         style={{
           gridTemplateColumns: `repeat(${props.data ? props.data.length : 1}, 1fr)`,
-          minHeight: props.style.height,
-          gridColumnGap:props.style.gridColumnGap
+          minHeight: props.style?.height,
+          gridColumnGap:props?.style?.gridColumnGap
         }}
       >
         {props.data && props.data.map((item) => <StepsItem {...item} after={props.style ? true : false} />)}
