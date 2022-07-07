@@ -9,7 +9,7 @@ import { AlarmLogModel } from '../model';
 import { observer } from '@formily/reactive-react';
 import { SearchOutlined } from '@ant-design/icons';
 import Info from './Info';
-import { Button, Card } from 'antd';
+import { Button } from 'antd';
 import moment from 'moment';
 import useLocation from '@/hooks/route/useLocation';
 import { useDomFullHeight } from '@/hooks';
@@ -19,8 +19,8 @@ const Detail = observer(() => {
   const location = useLocation();
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<AlarmLogHistoryItem>>({});
-  const { minHeight } = useDomFullHeight(`.alarm-log`,24);
-  const [detail, setDetail] = useState<any>({})
+  const { minHeight } = useDomFullHeight(`.alarm-log`, 24);
+  const [detail, setDetail] = useState<any>({});
 
   const [param, setParam] = useState<any>({
     terms: [
@@ -97,9 +97,9 @@ const Detail = observer(() => {
 
   useEffect(() => {
     const { state } = location;
-    setCurrent(detail)
+    setCurrent(detail);
     if (state?.param.detail && detail) {
-      setVisible(true)
+      setVisible(true);
     }
   }, [location, detail]);
 
@@ -126,46 +126,46 @@ const Detail = observer(() => {
         }}
       />
       <ProTable<AlarmLogHistoryItem>
-          actionRef={actionRef}
-          params={param}
-          columns={AlarmLogModel.columns}
-          search={false}
-          tableClassName={'alarm-log'}
-          tableStyle={{ minHeight }}
-          scroll={{ x: 1366 }}
-          // headerTitle={'记录列表'}
-          request={async (data) => {
-            const res = await service.queryHistoryList({
-              ...data,
-              sorts: [{ name: 'alarmTime', order: 'desc' }],
-            });
-            if (res.status === 200) {
-              setDetail(res.result.data[0])
-              return {
-                code: res.message,
-                result: {
-                  data: res.result.data,
-                  pageIndex: res.result.pageIndex,
-                  pageSize: res.result.pageSize,
-                  total: res.result.total,
-                },
-                status: res.status,
-              };
-            } else {
-              return {
-                code: 200,
-                result: {
-                  data: [],
-                  pageIndex: 0,
-                  pageSize: 0,
-                  total: 0,
-                },
-                status: 200,
-              };
-            }
-          }}
-          rowKey="id"
-        />
+        actionRef={actionRef}
+        params={param}
+        columns={AlarmLogModel.columns}
+        search={false}
+        tableClassName={'alarm-log'}
+        tableStyle={{ minHeight }}
+        scroll={{ x: 1366 }}
+        // headerTitle={'记录列表'}
+        request={async (data) => {
+          const res = await service.queryHistoryList({
+            ...data,
+            sorts: [{ name: 'alarmTime', order: 'desc' }],
+          });
+          if (res.status === 200) {
+            setDetail(res.result.data[0]);
+            return {
+              code: res.message,
+              result: {
+                data: res.result.data,
+                pageIndex: res.result.pageIndex,
+                pageSize: res.result.pageSize,
+                total: res.result.total,
+              },
+              status: res.status,
+            };
+          } else {
+            return {
+              code: 200,
+              result: {
+                data: [],
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: 200,
+            };
+          }
+        }}
+        rowKey="id"
+      />
       {visible && (
         <Info
           close={() => {

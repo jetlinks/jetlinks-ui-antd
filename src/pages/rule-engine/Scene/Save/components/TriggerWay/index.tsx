@@ -40,6 +40,20 @@ export default (props: TriggerWayProps) => {
     <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
       <div
         className={classNames('trigger-way-item', {
+          active: type === TriggerWayType.device,
+        })}
+        onClick={() => {
+          onSelect(TriggerWayType.device);
+        }}
+      >
+        <div className={'way-item-title'}>
+          <p>设备触发</p>
+          <span>DEVICE TRIGGER</span>
+        </div>
+        <img className={'way-item-image'} src={'/images/device-trigger.png'} />
+      </div>
+      <div
+        className={classNames('trigger-way-item', {
           active: type === TriggerWayType.manual,
         })}
         onClick={() => {
@@ -65,20 +79,6 @@ export default (props: TriggerWayProps) => {
           <span>TIMING TRIGGER</span>
         </div>
         <img className={'way-item-image'} src={'/images/timing-trigger.png'} />
-      </div>
-      <div
-        className={classNames('trigger-way-item', {
-          active: type === TriggerWayType.device,
-        })}
-        onClick={() => {
-          onSelect(TriggerWayType.device);
-        }}
-      >
-        <div className={'way-item-title'}>
-          <p>设备触发</p>
-          <span>DEVICE TRIGGER</span>
-        </div>
-        <img className={'way-item-image'} src={'/images/device-trigger.png'} />
       </div>
     </div>
   );

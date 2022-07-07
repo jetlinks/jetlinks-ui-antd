@@ -5,7 +5,7 @@ import { Button, Modal, Popconfirm, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
-import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Service from '@/pages/system/Department/Assets/service';
 import Models from './model';
 import Bind from './bind';
@@ -14,9 +14,10 @@ import {
   ExtraProductCard,
   handlePermissionsMap,
 } from '@/components/ProTableCard/CardItems/product';
-import { ProTableCard } from '@/components';
+import { ProTableCard, PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
+import UpdateModal from '../updateModal';
 
 export const service = new Service<ProductItem>('assets');
 
@@ -26,6 +27,9 @@ export default observer((props: { parentId: string }) => {
 
   const [searchParam, setSearchParam] = useState({});
   const [deviceVisible, setDeviceVisible] = useState(false);
+  const [updateVisible, setUpdateVisible] = useState(false);
+  const [updateId, setUpdateId] = useState('');
+  const [permissions, setPermissions] = useState<string[]>([]);
 
   useEffect(() => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Product && actionRef.current) {
@@ -114,6 +118,23 @@ export default observer((props: { parentId: string }) => {
       width: 60,
       fixed: 'right',
       render: (text, record) => [
+        <PermissionButton
+          key="update"
+          type={'link'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: '编辑',
+          }}
+          onClick={(e) => {
+            e?.stopPropagation();
+            setUpdateId(record.id);
+            setPermissions(record.grantedPermissions!);
+            setUpdateVisible(true);
+          }}
+          isPermission={true}
+        >
+          <EditOutlined />
+        </PermissionButton>,
         <Popconfirm
           title={intl.formatMessage({
             id: 'pages.system.role.option.unBindUser',
@@ -206,6 +227,21 @@ export default observer((props: { parentId: string }) => {
           是否继续分配产品下的具体设备
         </Modal>
       )}
+      {updateVisible && (
+        <UpdateModal
+          permissions={permissions}
+          visible={updateVisible}
+          id={updateId}
+          type="product"
+          targetId={props.parentId}
+          onCancel={() => {
+            setUpdateVisible(false);
+          }}
+          onReload={() => {
+            actionRef.current?.reload();
+          }}
+        />
+      )}
       <SearchComponent<ProductItem>
         field={columns}
         defaultParam={[
@@ -272,9 +308,42 @@ export default observer((props: { parentId: string }) => {
         cardRender={(record) => (
           <ExtraProductCard
             {...record}
-            onUnBind={() => {
-              singleUnBind(record.id);
-            }}
+            actions={[
+              <PermissionButton
+                key="update"
+                onClick={(e) => {
+                  e?.stopPropagation();
+                  setUpdateId(record.id);
+                  setPermissions(record.grantedPermissions!);
+                  setUpdateVisible(true);
+                }}
+                isPermission={true}
+              >
+                <EditOutlined />
+              </PermissionButton>,
+              <PermissionButton
+                key="unbind"
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id: 'pages.system.role.option.unBindUser',
+                    defaultMessage: '是否解除绑定',
+                  }),
+                  onConfirm: (e) => {
+                    e?.stopPropagation();
+                    singleUnBind(record.id);
+                  },
+                  onCancel: (e) => {
+                    e?.stopPropagation();
+                  },
+                }}
+                onClick={(e) => {
+                  e?.stopPropagation();
+                }}
+                isPermission={true}
+              >
+                <DisconnectOutlined />
+              </PermissionButton>,
+            ]}
           />
         )}
         toolBarRender={() => [

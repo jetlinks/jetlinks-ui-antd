@@ -11,6 +11,7 @@ import PermissionModal from '@/pages/system/Department/Assets/permissionModal';
 import SearchComponent from '@/components/SearchComponent';
 import { ExtraDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { ProTableCard } from '@/components';
+import { AssetsModel } from '@/pages/system/Department/Assets';
 
 interface Props {
   reload: () => void;
@@ -101,6 +102,7 @@ const Bind = observer((props: Props) => {
   ];
 
   const handleBind = () => {
+    AssetsModel.params = {};
     if (Models.bindKeys.length) {
       saveRef.current?.saveData();
     } else {
@@ -115,16 +117,41 @@ const Bind = observer((props: Props) => {
     }
   }, [props.visible]);
 
+  console.log(AssetsModel);
+
+  const getParams = (params: any) => {
+    console.log(params);
+    const _params: any = [
+      {
+        column: 'id',
+        termType: 'dim-assets$not',
+        value: {
+          assetType: 'device',
+          targets: [
+            {
+              type: 'org',
+              id: props.parentId,
+            },
+          ],
+        },
+      },
+    ];
+    if (Object.keys(params).length) {
+      _params.push({
+        column: 'parentId$product-info',
+        termType: 'eq',
+        value: 'accessId is ' + params.productId[0],
+      });
+    }
+    return _params;
+  };
+
   return (
     <Modal
       visible={props.visible}
       onOk={handleBind}
       onCancel={props.onCancel}
       width={'75vw'}
-      bodyStyle={{
-        height: 'calc(100vh - 240px);',
-        overflowY: 'auto',
-      }}
       title="绑定"
     >
       <PermissionModal
@@ -143,21 +170,7 @@ const Bind = observer((props: Props) => {
         field={columns}
         enableSave={false}
         model={'simple'}
-        defaultParam={[
-          {
-            column: 'id',
-            termType: 'dim-assets$not',
-            value: {
-              assetType: 'device',
-              targets: [
-                {
-                  type: 'org',
-                  id: props.parentId,
-                },
-              ],
-            },
-          },
-        ]}
+        defaultParam={getParams(AssetsModel.bindModal ? AssetsModel.params : {})}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);
@@ -169,24 +182,32 @@ const Bind = observer((props: Props) => {
         // }}
         target="department-assets-device"
       />
-      <ProTableCard<DeviceItem>
-        actionRef={actionRef}
-        columns={columns}
-        rowKey="id"
-        search={false}
-        gridColumn={2}
-        cardRender={(record) => (
-          <ExtraDeviceCard showBindBtn={false} {...record} cardType={'bind'} />
-        )}
-        rowSelection={{
-          selectedRowKeys: Models.bindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            Models.bindKeys = selectedRows.map((item) => item.id);
-          },
+      <div
+        style={{
+          height: 'calc(100vh - 440px)',
+          overflowY: 'auto',
         }}
-        request={(params) => service.queryDeviceList(params)}
-        params={searchParam}
-      />
+      >
+        <ProTableCard<DeviceItem>
+          actionRef={actionRef}
+          columns={columns}
+          rowKey="id"
+          search={false}
+          gridColumn={2}
+          cardRender={(record) => (
+            <ExtraDeviceCard showBindBtn={false} showTool={false} {...record} cardType={'bind'} />
+          )}
+          rowSelection={{
+            selectedRowKeys: Models.bindKeys,
+            onChange: (selectedRowKeys, selectedRows) => {
+              Models.bindKeys = selectedRows.map((item) => item.id);
+            },
+          }}
+          request={(params) => service.queryDeviceList(params)}
+          params={searchParam}
+          height={'none'}
+        />
+      </div>
     </Modal>
   );
 });

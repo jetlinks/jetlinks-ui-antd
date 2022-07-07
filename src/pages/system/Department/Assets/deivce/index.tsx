@@ -5,15 +5,16 @@ import { Badge, Button, Popconfirm, Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { DeviceItem } from '@/pages/system/Department/typings';
-import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Models from './model';
 import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import { ExtraDeviceCard, handlePermissionsMap } from '@/components/ProTableCard/CardItems/device';
-import { ProTableCard } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
+import UpdateModal from '@/pages/system/Department/Assets/updateModal';
 
 export const service = new Service<DeviceItem>('assets');
 
@@ -35,6 +36,10 @@ export default observer((props: { parentId: string }) => {
   const actionRef = useRef<ActionType>();
 
   const [searchParam, setSearchParam] = useState({});
+
+  const [updateVisible, setUpdateVisible] = useState(false);
+  const [updateId, setUpdateId] = useState('');
+  const [permissions, setPermissions] = useState<string[]>([]);
 
   useEffect(() => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Device && actionRef.current) {
@@ -170,6 +175,23 @@ export default observer((props: { parentId: string }) => {
       width: 60,
       fixed: 'right',
       render: (text, record) => [
+        <PermissionButton
+          key="update"
+          type={'link'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: '编辑',
+          }}
+          onClick={(e) => {
+            e?.stopPropagation();
+            setUpdateId(record.id);
+            setPermissions(record.grantedPermissions!);
+            setUpdateVisible(true);
+          }}
+          isPermission={true}
+        >
+          <EditOutlined />
+        </PermissionButton>,
         <Popconfirm
           title={intl.formatMessage({
             id: 'pages.system.role.option.unBindUser',
@@ -199,6 +221,7 @@ export default observer((props: { parentId: string }) => {
     Models.bind = false;
     Models.bindKeys = [];
     if (AssetsModel.bindModal) {
+      AssetsModel.params = {};
       AssetsModel.bindModal = false;
     }
   };
@@ -243,6 +266,21 @@ export default observer((props: { parentId: string }) => {
           onCancel={closeModal}
           reload={() => actionRef.current?.reload()}
           parentId={props.parentId}
+        />
+      )}
+      {updateVisible && (
+        <UpdateModal
+          permissions={permissions}
+          visible={updateVisible}
+          id={updateId}
+          type="device"
+          targetId={props.parentId}
+          onCancel={() => {
+            setUpdateVisible(false);
+          }}
+          onReload={() => {
+            actionRef.current?.reload();
+          }}
         />
       )}
       <SearchComponent<DeviceItem>
@@ -310,10 +348,42 @@ export default observer((props: { parentId: string }) => {
         cardRender={(record) => (
           <ExtraDeviceCard
             {...record}
-            onUnBind={(e) => {
-              e.stopPropagation();
-              singleUnBind(record.id);
-            }}
+            actions={[
+              <PermissionButton
+                key="update"
+                onClick={(e) => {
+                  e?.stopPropagation();
+                  setUpdateId(record.id);
+                  setPermissions(record.grantedPermissions!);
+                  setUpdateVisible(true);
+                }}
+                isPermission={true}
+              >
+                <EditOutlined />
+              </PermissionButton>,
+              <PermissionButton
+                key="unbind"
+                popConfirm={{
+                  title: intl.formatMessage({
+                    id: 'pages.system.role.option.unBindUser',
+                    defaultMessage: '是否解除绑定',
+                  }),
+                  onConfirm: (e) => {
+                    e?.stopPropagation();
+                    singleUnBind(record.id);
+                  },
+                  onCancel: (e) => {
+                    e?.stopPropagation();
+                  },
+                }}
+                onClick={(e) => {
+                  e?.stopPropagation();
+                }}
+                isPermission={true}
+              >
+                <DisconnectOutlined />
+              </PermissionButton>,
+            ]}
           />
         )}
         toolBarRender={() => [

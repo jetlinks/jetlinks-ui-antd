@@ -4,9 +4,8 @@ import { StatusColorEnum } from '@/components/BadgeStatus';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { CheckOutlined, DisconnectOutlined } from '@ant-design/icons';
-import { Popconfirm, Tooltip } from 'antd';
-import { useIntl } from '@@/plugin-locale/localeExports';
+import { CheckOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
 export interface DeviceCardProps extends Partial<DeviceInstance> {
   detail?: React.ReactNode;
@@ -19,6 +18,7 @@ export interface DeviceCardProps extends Partial<DeviceInstance> {
   onUnBind?: (e: any) => void;
   showBindBtn?: boolean;
   cardType?: 'bind' | 'unbind';
+  showTool?: boolean;
 }
 
 const defaultImage = require('/public/images/device-type-3-big.png');
@@ -36,14 +36,14 @@ export const handlePermissionsMap = (permissions?: string[]) => {
 };
 
 export const ExtraDeviceCard = (props: DeviceCardProps) => {
-  const intl = useIntl();
   const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
 
   return (
     <TableCard
-      showTool={false}
+      showTool={props.showTool}
       showMask={false}
       status={props.state?.value}
+      actions={props.actions}
       statusText={props.state?.text}
       statusNames={{
         online: StatusColorEnum.processing,
@@ -96,26 +96,6 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
                   </Tooltip>
                 </div>
               </div>
-            )}
-
-            {props.showBindBtn !== false && (
-              <Popconfirm
-                title={intl.formatMessage({
-                  id: 'pages.system.role.option.unBindUser',
-                  defaultMessage: '是否解除绑定',
-                })}
-                key="unBind"
-                onConfirm={(e) => {
-                  e?.stopPropagation();
-                  if (props.onUnBind) {
-                    props.onUnBind(e);
-                  }
-                }}
-              >
-                <div className={'flex-button'}>
-                  <DisconnectOutlined />
-                </div>
-              </Popconfirm>
             )}
           </div>
         </div>

@@ -106,6 +106,12 @@ class Service<T> extends BaseService<T> {
         );
       }),
     );
+
+  updatePermission = (type: string, id: string, targetId: string, permission: string[]) =>
+    request(`${SystemConst.API_BASE}/assets/permission/${type}/${id}/org/${targetId}`, {
+      method: 'PUT',
+      data: permission,
+    });
 }
 
 export default Service;

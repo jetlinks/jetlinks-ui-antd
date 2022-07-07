@@ -559,7 +559,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   useEffect(() => {
     // 防止页面下多个TabsTabPane中的查询组件共享路由中的参数
-    if (url.q) {
+    if (url.q && props.model !== 'simple') {
       if (url.target) {
         if (props.target && url.target === props.target) {
           form.setValues(JSON.parse(url.q));

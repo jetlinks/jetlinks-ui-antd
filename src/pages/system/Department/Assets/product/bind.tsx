@@ -11,6 +11,7 @@ import type { ProductItem } from '@/pages/system/Department/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { ExtraProductCard } from '@/components/ProTableCard/CardItems/product';
 import { ProTableCard } from '@/components';
+import { AssetsModel } from '@/pages/system/Department/Assets';
 
 interface Props {
   reload: () => void;
@@ -73,10 +74,6 @@ const Bind = observer((props: Props) => {
         onOk={handleBind}
         onCancel={props.onCancel}
         width={'75vw'}
-        bodyStyle={{
-          height: 'calc(100vh - 240px);',
-          overflowY: 'auto',
-        }}
         title="绑定"
       >
         <PermissionModal
@@ -121,24 +118,40 @@ const Bind = observer((props: Props) => {
           // }}
           target="department-assets-product"
         />
-        <ProTableCard<ProductItem>
-          actionRef={actionRef}
-          columns={columns}
-          rowKey="id"
-          search={false}
-          gridColumn={2}
-          rowSelection={{
-            selectedRowKeys: Models.bindKeys,
-            onChange: (selectedRowKeys, selectedRows) => {
-              Models.bindKeys = selectedRows.map((item) => item.id);
-            },
+        <div
+          style={{
+            height: 'calc(100vh - 440px)',
+            overflowY: 'auto',
           }}
-          request={(params) => service.queryProductList(params)}
-          params={searchParam}
-          cardRender={(record) => (
-            <ExtraProductCard showBindBtn={false} {...record} cardType={'bind'} />
-          )}
-        />
+        >
+          <ProTableCard<ProductItem>
+            actionRef={actionRef}
+            columns={columns}
+            rowKey="id"
+            search={false}
+            gridColumn={2}
+            rowSelection={{
+              selectedRowKeys: Models.bindKeys,
+              onChange: (selectedRowKeys, selectedRows) => {
+                Models.bindKeys = selectedRows.map((item) => item.id);
+                AssetsModel.params = {
+                  productId: selectedRows.map((item) => item.id),
+                };
+              },
+            }}
+            request={(params) => service.queryProductList(params)}
+            params={searchParam}
+            cardRender={(record) => (
+              <ExtraProductCard
+                showBindBtn={false}
+                showTool={false}
+                {...record}
+                cardType={'bind'}
+              />
+            )}
+            height={'none'}
+          />
+        </div>
       </Modal>
     </>
   );

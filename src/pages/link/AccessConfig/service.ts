@@ -55,16 +55,16 @@ class Service extends BaseService<AccessItem> {
   public productGuide = () =>
     request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
       method: 'GET',
-    })
+    });
   public productGuideSave = (data: any) =>
     request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
       method: 'PATCH',
-      data
-    })
-    public productGuideDetail = () =>
+      data,
+    });
+  public productGuideDetail = () =>
     request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
       method: 'DELETE',
-    })
+    });
   public getResourcesCurrent = () =>
     request(`${SystemConst.API_BASE}/network/resources/alive/_current`, {
       method: 'GET',

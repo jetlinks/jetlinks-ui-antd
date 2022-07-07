@@ -5,8 +5,8 @@ import { useIntl } from 'umi';
 import { TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { Popconfirm, Tooltip } from 'antd';
-import { CheckOutlined, DisconnectOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
 
 export interface ProductCardProps extends Partial<ProductItem> {
   detail?: React.ReactNode;
@@ -19,6 +19,7 @@ export interface ProductCardProps extends Partial<ProductItem> {
   onUnBind?: (e: any) => void;
   showBindBtn?: boolean;
   cardType?: 'bind' | 'unbind';
+  showTool?: boolean;
 }
 
 const defaultImage = require('/public/images/device-product.png');
@@ -41,9 +42,10 @@ export const ExtraProductCard = (props: ProductCardProps) => {
 
   return (
     <TableCard
-      showTool={false}
       showMask={false}
       status={props.state}
+      showTool={props.showTool}
+      actions={props.actions}
       statusText={intl.formatMessage({
         id: `pages.system.tenant.assetInformation.${props.state ? 'published' : 'unpublished'}`,
         defaultMessage: '已发布',
@@ -101,25 +103,6 @@ export const ExtraProductCard = (props: ProductCardProps) => {
                   </Tooltip>
                 </div>
               </div>
-            )}
-            {props.showBindBtn !== false && (
-              <Popconfirm
-                title={intl.formatMessage({
-                  id: 'pages.system.role.option.unBindUser',
-                  defaultMessage: '是否解除绑定',
-                })}
-                key="unBind"
-                onConfirm={(e) => {
-                  e?.stopPropagation();
-                  if (props.onUnBind) {
-                    props.onUnBind(e);
-                  }
-                }}
-              >
-                <div className={'flex-button'}>
-                  <DisconnectOutlined />
-                </div>
-              </Popconfirm>
             )}
           </div>
         </div>

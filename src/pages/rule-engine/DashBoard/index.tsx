@@ -335,16 +335,18 @@ const Dashboard = observer(() => {
                             {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
                           </div>
                           <div className={'new-alarm-item-content ellipsis'}>
-                            <Tooltip title={item.alarmName} placement='topLeft'>
-                              <a onClick={() => {
-                                console.log(item)
-                                const url = getMenuPathByCode('rule-engine/Alarm/Log');
-                                history.push(`${url}/detail/${item.id}`,{
-                                  param: {
-                                    detail: true,
-                                  },
-                                });
-                              }}>
+                            <Tooltip title={item.alarmName} placement="topLeft">
+                              <a
+                                onClick={() => {
+                                  console.log(item);
+                                  const url = getMenuPathByCode('rule-engine/Alarm/Log');
+                                  history.push(`${url}/detail/${item.id}`, {
+                                    param: {
+                                      detail: true,
+                                    },
+                                  });
+                                }}
+                              >
                                 {item.alarmName}
                               </a>
                             </Tooltip>

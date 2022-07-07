@@ -56,7 +56,7 @@ const Access = () => {
   const [configVisible, setConfigVisible] = useState<boolean>(false);
 
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
-  const ref = useRef(0)
+  const ref = useRef(0);
 
   const steps = [
     {
@@ -274,9 +274,9 @@ const Access = () => {
 
   const id = productModel.current?.id;
 
-  const guide = (data:any) =>{
-    service.productGuideSave(data)
-  }
+  const guide = (data: any) => {
+    service.productGuideSave(data);
+  };
 
   useEffect(() => {
     const driver = new Driver({
@@ -285,20 +285,20 @@ const Access = () => {
       closeBtnText: '不在提示',
       nextBtnText: '下一步',
       prevBtnText: '上一步',
-      onNext:()=>{
-        ref.current=ref.current+1
+      onNext: () => {
+        ref.current = ref.current + 1;
       },
-      onPrevious:()=>{
-        ref.current=ref.current-1
+      onPrevious: () => {
+        ref.current = ref.current - 1;
       },
-      onReset:()=>{ 
-        if(ref.current!==3){
+      onReset: () => {
+        if (ref.current !== 3) {
           guide({
-            name:'guide',
-            content:'skip'
-          })
+            name: 'guide',
+            content: 'skip',
+          });
         }
-        ref.current=0
+        ref.current = 0;
       },
     });
     const driver1 = new Driver({
@@ -307,20 +307,20 @@ const Access = () => {
       closeBtnText: '不在提示',
       nextBtnText: '下一步',
       prevBtnText: '上一步',
-      onNext:()=>{
-        ref.current=ref.current+1
+      onNext: () => {
+        ref.current = ref.current + 1;
       },
-      onPrevious:()=>{
-        ref.current=ref.current-1
+      onPrevious: () => {
+        ref.current = ref.current - 1;
       },
-      onReset:()=>{
-        if(ref.current!==4){
+      onReset: () => {
+        if (ref.current !== 4) {
           guide({
-            name:'guide',
-            content:'skip'
-          })
+            name: 'guide',
+            content: 'skip',
+          });
         }
-        ref.current=0
+        ref.current = 0;
       },
     });
     setVisible(!!productModel.current?.accessId);
@@ -331,15 +331,15 @@ const Access = () => {
           .then(async (resp: { result: SetStateAction<ConfigMetadata[]> }) => {
             setMetadata(resp.result);
             //判断引导页是否跳过
-            const res = await service.productGuide()
-            if(res.result && res.result?.content==='skip'){
+            const res = await service.productGuide();
+            if (res.result && res.result?.content === 'skip') {
               return;
-            }else{
+            } else {
               if (resp.result && resp.result.length > 0) {
-                driver1.defineSteps(steps1)
+                driver1.defineSteps(steps1);
                 driver1.start();
               } else {
-                driver.defineSteps(steps)
+                driver.defineSteps(steps);
                 driver.start();
               }
             }
@@ -375,7 +375,6 @@ const Access = () => {
       }
     });
   }, [productModel.current]);
-
 
   const form = createForm({
     validateFirst: true,
@@ -591,7 +590,7 @@ const Access = () => {
                           更换
                         </Button>
                       </Tooltip>
-                        {/* <Button onClick={async()=>{
+                      {/* <Button onClick={async()=>{
                           await service.productGuideDetail()
                         }}>删除</Button> */}
                     </span>
