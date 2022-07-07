@@ -40,6 +40,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const { permission } = usePermissions('device/Product');
   const [dataSource, setDataSource] = useState<any[]>([]);
+  const [storageList, setStorageList] = useState<any[]>([]);
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -330,6 +331,16 @@ const Access = () => {
           });
       }
     }
+    productService.getStoragList().then((resp) => {
+      if (resp.status === 200) {
+        setStorageList(
+          resp.result.map((i: any) => ({
+            label: i.name,
+            value: i.id,
+          })),
+        );
+      }
+    });
   }, [productModel.current]);
 
   // useEffect(() => {
@@ -352,7 +363,10 @@ const Access = () => {
 
   const form = createForm({
     validateFirst: true,
-    initialValues: productModel.current?.configuration,
+    initialValues: {
+      ...productModel.current?.configuration,
+      storePolicy: productModel.current?.storePolicy,
+    },
   });
 
   const SchemaField = createSchemaField({
@@ -367,13 +381,16 @@ const Access = () => {
   });
 
   const configToSchema = (data: ConfigProperty[]) => {
-    const obj = {};
+    const obj: any = {};
     data.forEach((item) => {
       obj[item?.property] = {
         type: 'string',
         title: item.name,
         'x-decorator': 'FormItem',
         'x-component': componentMap[item.type.type],
+        'x-component-props': {
+          placeholder: item.type.type === 'enum' ? '请选择' : '请输入',
+        },
         'x-decorator-props': {
           tooltip: item.description,
           gridSpan: 1,
@@ -391,6 +408,7 @@ const Access = () => {
             : [],
       };
     });
+
     return obj;
   };
 
@@ -406,83 +424,100 @@ const Access = () => {
   };
 
   const renderConfigCard = () => {
-    return (
-      metadata &&
-      metadata.length > 0 &&
-      metadata?.map((item: any) => {
-        const itemSchema: ISchema = {
-          type: 'object',
-          properties: {
-            grid: {
-              type: 'void',
-              'x-component': 'FormGrid',
-              'x-component-props': {
-                maxColumns: 1,
-                minColumns: 1,
-                columnGap: 48,
-              },
-              title: (
-                <TitleComponent
-                  data={
-                    <div className="config">
-                      {item.name}
-                      <Tooltip title="此配置来自于该产品接入方式所选择的协议">
-                        <QuestionCircleOutlined />
-                      </Tooltip>
-                    </div>
-                  }
-                />
-              ),
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                gridSpan: 1,
-                labelAlign: 'left',
-                layout: 'vertical',
-              },
-              properties: configToSchema(item.properties),
+    const itemSchema: any = (metadata || []).map((item: any) => {
+      return {
+        type: 'object',
+        properties: {
+          grid: {
+            type: 'void',
+            'x-component': 'FormGrid',
+            'x-component-props': {
+              maxColumns: 1,
+              minColumns: 1,
+              columnGap: 48,
             },
+            title: (
+              <TitleComponent
+                data={
+                  <div className="config">
+                    {item.name}
+                    <Tooltip title="此配置来自于该产品接入方式所选择的协议">
+                      <QuestionCircleOutlined />
+                    </Tooltip>
+                  </div>
+                }
+              />
+            ),
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 1,
+              labelAlign: 'left',
+              layout: 'vertical',
+            },
+            properties: configToSchema(item.properties),
           },
-        };
-
-        return (
-          <PreviewText.Placeholder value="-" key={'config'}>
-            <Form form={form} layout="vertical">
-              <FormLayout>
-                <SchemaField schema={itemSchema} />
-              </FormLayout>
-              <Button
-                type="primary"
-                onClick={async () => {
-                  const values = (await form.submit()) as any;
-                  const resp = await productService.modify(id || '', {
-                    id,
-                    configuration: { ...values },
-                  });
-                  if (resp.status === 200) {
-                    onlyMessage('操作成功！');
-                    if ((window as any).onTabSaveSuccess) {
-                      if (resp.result) {
-                        (window as any).onTabSaveSuccess(resp);
-                        setTimeout(() => window.close(), 300);
-                      }
-                    } else {
-                      getDetailInfo();
-                    }
+        },
+      };
+    });
+    const schema: ISchema = {
+      type: 'object',
+      properties: {
+        ...itemSchema,
+        storePolicy: {
+          type: 'string',
+          title: <TitleComponent data={'存储策略'} />,
+          'x-decorator': 'FormItem',
+          'x-component': 'Select',
+          'x-component-props': {
+            placeholder: '请选择存储策略',
+          },
+          // required: true,
+          default: 'default-column',
+          'x-decorator-props': {
+            // tooltip: '使用指定的存储策略来存储设备数据',
+            gridSpan: 1,
+            labelAlign: 'left',
+            layout: 'vertical',
+          },
+          enum: storageList,
+        },
+      },
+    };
+    return (
+      <PreviewText.Placeholder value="-" key={'config'}>
+        <Form form={form} layout="vertical">
+          <FormLayout>
+            <SchemaField schema={schema} />
+          </FormLayout>
+          <Button
+            type="primary"
+            onClick={async () => {
+              const values = (await form.submit()) as any;
+              const { storePolicy, ...extra } = values;
+              const resp = await productService.modify(id || '', {
+                id,
+                configuration: { ...extra },
+                storePolicy: storePolicy,
+              });
+              if (resp.status === 200) {
+                onlyMessage('操作成功！');
+                if ((window as any).onTabSaveSuccess) {
+                  if (resp.result) {
+                    (window as any).onTabSaveSuccess(resp);
+                    setTimeout(() => window.close(), 300);
                   }
-                }}
-              >
-                保存
-              </Button>
-            </Form>
-          </PreviewText.Placeholder>
-        );
-      })
+                } else {
+                  getDetailInfo();
+                }
+              }
+            }}
+          >
+            保存
+          </Button>
+        </Form>
+      </PreviewText.Placeholder>
     );
   };
-
-  // useEffect(() => {
-
-  // }, [])
 
   return (
     <div>

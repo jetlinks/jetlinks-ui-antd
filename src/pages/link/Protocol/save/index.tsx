@@ -20,30 +20,30 @@ interface Props {
 const Save = (props: Props) => {
   const [data, setData] = useState<ProtocolItem | undefined>(props.data);
   const { permission } = PermissionButton.usePermission('link/Protocol');
-  const [count, setCount] = useState<number>(0);
+  // const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
     setData(props.data);
-    if (props.data?.id) {
-      service
-        .productCount({
-          terms: [
-            {
-              terms: [
-                {
-                  column: 'message_protocol',
-                  value: props.data.id,
-                },
-              ],
-            },
-          ],
-        })
-        .then((resp) => {
-          if (resp.status === 200) {
-            setCount(resp.result);
-          }
-        });
-    }
+    // if (props.data?.id) {
+    //   service
+    //     .productCount({
+    //       terms: [
+    //         {
+    //           terms: [
+    //             {
+    //               column: 'message_protocol',
+    //               value: props.data.id,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     })
+    //     .then((resp) => {
+    //       if (resp.status === 200) {
+    //         setCount(resp.result);
+    //       }
+    //     });
+    // }
   }, [props.data]);
 
   const form = createForm({
@@ -200,7 +200,7 @@ const Save = (props: Props) => {
                 'x-decorator-props': {
                   gridSpan: 2,
                 },
-                'x-disabled': !!count,
+                // 'x-disabled': !!count,
                 'x-validator': [
                   {
                     required: true,

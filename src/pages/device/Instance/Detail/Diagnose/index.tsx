@@ -47,8 +47,11 @@ const Diagnose = observer(() => {
     return () => {
       DiagnoseStatusModel.list = [];
       DiagnoseStatusModel.count = 0;
+      DiagnoseStatusModel.percent = 0;
+      DiagnoseStatusModel.status = 'loading';
+      DiagnoseStatusModel.state = 'loading';
     };
-  }, []);
+  }, [InstanceModel.active]);
 
   const activeStyle = {
     background: '#FFFFFF',
