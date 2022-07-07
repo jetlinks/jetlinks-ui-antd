@@ -37,7 +37,7 @@ export default {
   'pages.data.option.invoke': '执行',
   'pages.data.option.cancel': '取消',
   'pages.data.option.view': '查看',
-  'pages.searchTable.new': '新建',
+  'pages.searchTable.new': '新增',
   'pages.searchTable.titleStatus': '状态',
   'pages.searchTable.titleStatus.all': '全部',
   'pages.searchTable.titleStatus.normal': '正常',

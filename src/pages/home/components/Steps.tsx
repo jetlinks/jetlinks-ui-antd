@@ -7,13 +7,13 @@ interface StepItemProps {
   content: string | React.ReactNode;
   onClick: () => void;
   url?: string;
-  after?: any
+  after?: any;
 }
 
 interface StepsProps {
   title: string | React.ReactNode;
   data: StepItemProps[];
-  style?: any
+  style?: any;
 }
 
 const ItemDefaultImg = require('/public/images/home/bottom-1.png');
@@ -40,10 +40,11 @@ const Steps = (props: StepsProps) => {
         style={{
           gridTemplateColumns: `repeat(${props.data ? props.data.length : 1}, 1fr)`,
           minHeight: props.style?.height,
-          gridColumnGap:props?.style?.gridColumnGap
+          gridColumnGap: props?.style?.gridColumnGap,
         }}
       >
-        {props.data && props.data.map((item) => <StepsItem {...item} after={props.style ? true : false} />)}
+        {props.data &&
+          props.data.map((item) => <StepsItem {...item} after={props.style ? true : false} />)}
       </div>
     </div>
   );

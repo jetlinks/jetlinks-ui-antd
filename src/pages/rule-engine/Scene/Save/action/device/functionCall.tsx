@@ -17,6 +17,7 @@ interface FunctionCallProps {
   value?: any;
   onChange?: (data: any) => void;
   name?: string;
+  productId?: string;
 }
 
 export default (props: FunctionCallProps) => {
@@ -44,8 +45,18 @@ export default (props: FunctionCallProps) => {
           return item;
         }),
       });
+    } else {
+      formRef.current?.setFieldsValue({
+        table: [],
+      });
     }
   }, [props.value, props.functionData]);
+
+  useEffect(() => {
+    if (props.productId && props.onChange) {
+      props.onChange([]);
+    }
+  }, [props.productId]);
 
   const getItemNode = (record: any) => {
     const type = record.type;

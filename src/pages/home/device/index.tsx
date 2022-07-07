@@ -82,8 +82,8 @@ const Device = () => {
       <Col span={18}>
         <Steps
           style={{
-            height:275,
-            gridColumnGap:20
+            height: 275,
+            gridColumnGap: 20,
           }}
           title={
             <span>
@@ -100,6 +100,8 @@ const Device = () => {
                 '产品是设备的集合，通常指一组具有相同功能的设备。物联设备必须通过产品进行接入方式配置。',
               onClick: () => {
                 const path = getMenuPathByCode('device/Product');
+                console.log(path);
+
                 if (path && !!productPermission.add) {
                   history.push(`${path}`, {
                     save: true,
@@ -198,7 +200,7 @@ const Device = () => {
           }
         />
       </Col>
-      <Col span={24} style={{marginTop:24}}>
+      <Col span={24} style={{ marginTop: 24 }}>
         <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
       </Col>
 

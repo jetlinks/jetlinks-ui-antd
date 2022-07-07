@@ -54,7 +54,7 @@ const ProductDetail = observer(() => {
     {
       key: 'metadata',
       tab: (
-        <div id='metadata-driver'>
+        <div id="metadata-driver">
           {intl.formatMessage({
             id: 'pages.device.instanceDetail.metadata',
             defaultMessage: '物模型',

@@ -34,8 +34,6 @@ interface ActionProps {
 
 export default observer((props: ActionProps) => {
   const { name } = props;
-  console.log('name', name);
-  console.log('isLast', props.isLast);
   const [type1, setType1] = useState('');
   // 消息通知
   const [notifyType, setNotifyType] = useState('');
@@ -46,6 +44,8 @@ export default observer((props: ActionProps) => {
   const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
   const [properties, setProperties] = useState([]); // 物模型-属性
   const [functionList, setFunctionList] = useState([]); // 物模型-功能
+
+  const [productId, setProductId] = useState('');
 
   const [isFiltering, setIsFiltering] = useState(false);
 
@@ -123,11 +123,10 @@ export default observer((props: ActionProps) => {
 
   const handleInit = useCallback(async (data: any) => {
     if (data) {
-      console.log('actions ', data);
       if (data.executor) {
         setType1(data.executor);
       }
-      console.log(data.terms);
+
       if (data.terms) {
         // 显示过滤条件
         setIsFiltering(true);
@@ -145,6 +144,26 @@ export default observer((props: ActionProps) => {
   useEffect(() => {
     handleInit(props.actionItemData);
   }, [props.actionItemData]);
+
+  useEffect(() => {
+    if (
+      props.actionItemData?.executor &&
+      props.actionItemData?.executor === 'delay' &&
+      props.parallel === true
+    ) {
+      props.onRemove();
+    }
+  }, [props.parallel]);
+
+  useEffect(() => {
+    if (productId) {
+      const actions = props.form.getFieldValue('actions');
+      if (actions[name].device?.message?.properties) {
+        actions[name].device.message.properties = undefined;
+        props.form.setFieldsValue({ actions });
+      }
+    }
+  }, [productId]);
 
   const MessageNodes = (
     <>
@@ -276,11 +295,18 @@ export default observer((props: ActionProps) => {
             rules={[{ required: true, message: '请选择执行条件' }]}
           >
             <Select
-              options={[
-                { label: '消息通知', value: 'notify' },
-                { label: '设备输出', value: 'device' },
-                { label: '延迟执行', value: 'delay' },
-              ]}
+              options={
+                !props.parallel
+                  ? [
+                      { label: '消息通知', value: 'notify' },
+                      { label: '设备输出', value: 'device' },
+                      { label: '延迟执行', value: 'delay' },
+                    ]
+                  : [
+                      { label: '消息通知', value: 'notify' },
+                      { label: '设备输出', value: 'device' },
+                    ]
+              }
               placeholder={'请选择执行条件'}
               style={{ width: '100%' }}
             />
@@ -298,6 +324,7 @@ export default observer((props: ActionProps) => {
             onFunctionChange={setFunctionList}
             restField={props.restField}
             parallel={props.parallel}
+            onProductIdChange={setProductId}
           />
         )}
         {type1 === 'delay' && (
@@ -348,8 +375,10 @@ export default observer((props: ActionProps) => {
                   name={name}
                   properties={properties}
                   type={props.triggerType}
+                  trigger={props.trigger}
                   form={props.form}
                   parallel={props.parallel}
+                  productId={productId}
                 />
               </Form.Item>
             </Col>
@@ -361,6 +390,7 @@ export default observer((props: ActionProps) => {
                 name={name}
                 form={props.form}
                 data={props.actionItemData.terms}
+                productId={productId}
               />
             </Row>
           )}
@@ -387,6 +417,7 @@ export default observer((props: ActionProps) => {
                 name={name}
                 form={props.form}
                 data={props.actionItemData.terms}
+                productId={productId}
               />
             </Row>
           )}
@@ -400,7 +431,7 @@ export default observer((props: ActionProps) => {
             name={[name, 'device', 'message', 'inputs']}
             rules={[{ required: true, message: '请输入功能值' }]}
           >
-            <FunctionCall functionData={functionList} />
+            <FunctionCall functionData={functionList} productId={productId} />
           </Form.Item>
           <Row gutter={24}>
             {parallelNode}
@@ -409,6 +440,7 @@ export default observer((props: ActionProps) => {
                 name={name}
                 form={props.form}
                 data={props.actionItemData.terms}
+                productId={productId}
               />
             )}
           </Row>
