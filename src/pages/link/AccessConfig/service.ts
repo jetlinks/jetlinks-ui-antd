@@ -65,6 +65,10 @@ class Service extends BaseService<AccessItem> {
     request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
       method: 'DELETE',
     })
+  public getResourcesCurrent = () =>
+    request(`${SystemConst.API_BASE}/network/resources/alive/_current`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

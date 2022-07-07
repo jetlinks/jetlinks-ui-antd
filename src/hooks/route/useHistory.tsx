@@ -1,9 +1,9 @@
 import { useHistory } from 'umi';
 import { useEffect, useState } from 'react';
 import type { LocationState, Path } from 'history';
-import { model } from '@formily/reactive';
+import { observable } from '@formily/reactive';
 
-export const historyStateModel = model<{ state: any }>({ state: {} });
+export const historyStateModel = observable<{ state: any }>({ state: {} });
 
 const useHistories = () => {
   const umiHistory = useHistory();
@@ -14,6 +14,7 @@ const useHistories = () => {
     if (state) {
       historyStateModel.state[location] = state;
     }
+
     umiHistory.push(location, state);
   };
 

@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, Space, Tooltip } from 'antd';
+import { Badge, Card, Descriptions, Divider, message, Space, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -24,7 +24,7 @@ import SystemConst from '@/utils/const';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
-import {  QuestionCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
@@ -408,21 +408,33 @@ const InstanceDetail = observer(() => {
           </Space>
         </div>
       }
-    // extra={[
-    //   statusMap[0],
-    //   <Button key="2">
-    //     {intl.formatMessage({
-    //       id: 'pages.device.productDetail.disable',
-    //       defaultMessage: '停用',
-    //     })}
-    //   </Button>,
-    //   <Button key="1" type="primary">
-    //     {intl.formatMessage({
-    //       id: 'pages.device.productDetail.setting',
-    //       defaultMessage: '应用配置',
-    //     })}
-    //   </Button>,
-    // ]}
+      extra={[
+        // <Button key="2">
+        //   {intl.formatMessage({
+        //     id: 'pages.device.productDetail.disable',
+        //     defaultMessage: '停用',
+        //   })}
+        // </Button>,
+        // <Button key="1" type="primary">
+        //   {intl.formatMessage({
+        //     id: 'pages.device.productDetail.setting',
+        //     defaultMessage: '应用配置',
+        //   })}
+        // </Button>,
+        <SyncOutlined
+          onClick={() => {
+            getDetail(params.id);
+            service.getConfigMetadata(params.id).then((config) => {
+              if (config.status === 200) {
+                InstanceModel.config = config?.result || [];
+                message.success('操作成功！');
+              }
+            });
+          }}
+          style={{ fontSize: 20, marginRight: 20 }}
+          key="1"
+        />,
+      ]}
     >
       {list.find((k) => k.key === InstanceModel.active)?.component}
     </PageContainer>

@@ -52,7 +52,7 @@ export default () => {
   const history = useHistory();
 
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
-  const [triggerType, setTriggerType] = useState('');
+  const [triggerType, setTriggerType] = useState('device');
 
   const [loading, setLoading] = useState(false);
   const [parallel, setParallel] = useState(true); // 是否并行
@@ -62,6 +62,7 @@ export default () => {
   const [triggerValue, setTriggerValue] = useState<any>([]);
   const [triggerDatas, setTriggerDatas] = useState<any>({});
   const [actionParams, setActionParams] = useState<any>(undefined);
+  const [actionDataCount, setActionDataCount] = useState(0);
 
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -224,9 +225,6 @@ export default () => {
               layout={'vertical'}
               preserve={false}
               className={'scene-save'}
-              initialValues={{
-                actions: [undefined],
-              }}
               onValuesChange={(changeValue, allValues) => {
                 if (changeValue.trigger) {
                   if (changeValue.trigger.device) {
@@ -258,7 +256,7 @@ export default () => {
                     setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
                   }
                 }
-
+                console.log('scene save', allValues);
                 if (allValues.actions) {
                   setActionsData(allValues.actions);
                 }
@@ -288,6 +286,7 @@ export default () => {
                 <Form.Item
                   name={['trigger', 'type']}
                   rules={[{ required: true, message: '请选择触发方式' }]}
+                  initialValue={'device'}
                 >
                   <TriggerWay onSelect={setTriggerType} disabled={isEdit} />
                 </Form.Item>
@@ -357,7 +356,10 @@ export default () => {
                             name={name}
                             trigger={actionParams}
                             triggerType={triggerType}
-                            onRemove={() => remove(name)}
+                            onRemove={() => {
+                              remove(name);
+                              setActionDataCount(actionDataCount - 1);
+                            }}
                             onMove={(type) => {
                               if (type === 'up') {
                                 move(name, name - 1);
@@ -365,13 +367,21 @@ export default () => {
                                 move(name, name + 1);
                               }
                             }}
-                            actionItemData={actionsData.length && actionsData[name]}
-                            isLast={!actionsData.length || actionsData.length - 1 === name}
+                            actionItemData={actionDataCount && actionsData[name]}
+                            isLast={!actionDataCount || actionDataCount - 1 === name}
                             parallel={parallel}
                           />
                         ))}
                         <Form.Item noStyle>
-                          <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                          <Button
+                            type="dashed"
+                            onClick={() => {
+                              add();
+                              setActionDataCount(actionDataCount + 1);
+                            }}
+                            block
+                            icon={<PlusOutlined />}
+                          >
                             新增
                           </Button>
                         </Form.Item>
@@ -409,7 +419,7 @@ export default () => {
             </Form>
           </Col>
           <Col span={8}>
-            <Explanation />
+            <Explanation type={triggerType} />
           </Col>
         </Row>
       </Card>

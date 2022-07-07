@@ -27,6 +27,7 @@ export type ProductItem = {
   accessId?: string;
   accessName?: string;
   photoUrl?: string;
+  storePolicy?: string;
   accessProvider?: string;
 };
 

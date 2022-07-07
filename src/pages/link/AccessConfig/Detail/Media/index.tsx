@@ -22,6 +22,7 @@ import TitleComponent from '@/components/TitleComponent';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { onlyMessage, testIP } from '@/utils/util';
 import { getButtonPermission } from '@/utils/menu';
+import SipSelectComponent from './SipSelectComponent';
 
 type LocationType = {
   id?: string;
@@ -38,6 +39,7 @@ const Media = (props: Props) => {
   const [form] = Form.useForm();
   const [configuration, setConfiguration] = useState<any>({});
   const [clusters, setClusters] = useState<any[]>([]);
+  const [alist, setAList] = useState<any[]>([]);
 
   const location = useLocation<LocationType>();
 
@@ -88,6 +90,16 @@ const Media = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (props.provider?.id === 'gb28181-2016') {
+      service.getResourcesCurrent().then((resp) => {
+        if (resp.status === 200) {
+          setAList(resp.result);
+        }
+      });
+    }
+  }, [props.provider]);
+
   const BasicRender = () => {
     const SchemaField = createSchemaField({
       components: {
@@ -96,6 +108,7 @@ const Media = (props: Props) => {
         Select,
         Radio,
         SipComponent,
+        SipSelectComponent,
         FormGrid,
         FormCollapse,
         ArrayCollapse,
@@ -146,6 +159,7 @@ const Media = (props: Props) => {
       },
       properties: {
         clusterNodeId: {
+          type: 'string',
           title: '节点名称',
           'x-component': 'Select',
           'x-decorator': 'FormItem',
@@ -159,12 +173,16 @@ const Media = (props: Props) => {
         sip: {
           title: 'SIP 地址',
           'x-decorator': 'FormItem',
-          'x-component': 'SipComponent',
+          'x-component': 'SipSelectComponent',
           'x-decorator-props': {
             gridSpan: 1,
             labelAlign: 'left',
             layout: 'vertical',
             tooltip: '绑定到服务器上的网卡地址,绑定到所有网卡:0.0.0.0',
+          },
+          'x-component-props': {
+            data: alist,
+            type: true,
           },
           'x-validator': [
             {
@@ -185,7 +203,6 @@ const Media = (props: Props) => {
             layout: 'vertical',
           },
           required: true,
-          type: 'number',
           'x-decorator': 'FormItem',
           'x-component': 'SipComponent',
           'x-validator': [
@@ -297,9 +314,13 @@ const Media = (props: Props) => {
                   properties: {
                     sip: {
                       title: 'SIP 地址',
-                      'x-component': 'SipComponent',
+                      'x-component': 'SipSelectComponent',
                       'x-decorator': 'FormItem',
                       required: true,
+                      'x-component-props': {
+                        data: alist,
+                        type: false,
+                      },
                       'x-decorator-props': {
                         gridSpan: 1,
                         labelAlign: 'left',
@@ -405,6 +426,7 @@ const Media = (props: Props) => {
               <Button
                 onClick={async () => {
                   const value = await aform.submit<any>();
+                  console.log(value);
                   let param: any = {};
                   if (value.configuration.shareCluster) {
                     const hostPort = { ...value.configuration.hostPort };

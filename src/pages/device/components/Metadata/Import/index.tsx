@@ -12,6 +12,9 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { onlyMessage } from '@/utils/util';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { InstanceModel } from '@/pages/device/Instance';
+import _ from 'lodash';
+import { DeviceMetadata } from '@/pages/device/Product/typings';
 
 interface Props {
   visible: boolean;
@@ -181,6 +184,19 @@ const Import = (props: Props) => {
     },
   };
 
+  const operateLimits = (mdata: DeviceMetadata) => {
+    const obj: DeviceMetadata = { ...mdata };
+    const old = JSON.parse(InstanceModel.detail?.metadata || '{}');
+    const fid = _.map(InstanceModel.detail?.features || [], 'id');
+    if (fid.includes('eventNotModifiable')) {
+      obj.events = old?.event || [];
+    }
+    if (fid.includes('propertyNotModifiable')) {
+      obj.properties = old?.properties || {};
+    }
+    return obj;
+  };
+
   const handleImport = async () => {
     const data = (await form.submit()) as any;
 
@@ -188,14 +204,16 @@ const Import = (props: Props) => {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
           onlyMessage('导入成功');
-          await service.modify(param.id, { metadata: JSON.stringify(meta) });
+          await service.modify(param.id, { metadata: JSON.stringify(operateLimits(meta)) });
         },
         error: () => {
           onlyMessage('发生错误!', 'error');
         },
       });
     } else {
-      const resp = await service.modify(param.id, { metadata: data[data.type] });
+      const resp = await service.modify(param.id, {
+        metadata: JSON.stringify(operateLimits(JSON.parse(data[data?.type] || '{}'))),
+      });
       if (resp.status === '200') {
         onlyMessage('导入成功');
       }

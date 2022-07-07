@@ -95,7 +95,7 @@ const Comprehensive = () => {
       img: require('/public/images/home/guide-home1.png'),
       english: 'CREATE PRODUCT',
       auth: !!productPermission.add,
-      url: 'device/Product',
+      url: getMenuPathByCode('device/Product'),
       param: {
         save: true,
       },
@@ -106,7 +106,7 @@ const Comprehensive = () => {
       english: 'CREATE DEVICE',
       img: require('/public/images/home/guide-home2.png'),
       auth: !!devicePermission.add,
-      url: 'device/Instance',
+      url: getMenuPathByCode('device/Instance'),
       param: {
         save: true,
       },
@@ -117,7 +117,7 @@ const Comprehensive = () => {
       english: 'RULE ENGINE',
       img: require('/public/images/home/guide-home3.png'),
       auth: !!rulePermission.add,
-      url: 'rule-engine/Instance',
+      url: getMenuPathByCode('rule-engine/Instance'),
       param: {
         save: true,
       },
@@ -171,7 +171,7 @@ const Comprehensive = () => {
                 {
                   name: '产品数量',
                   value: productCount,
-                  children:require('/public/images/home/top-2.png'),
+                  children: require('/public/images/home/top-2.png'),
                 },
                 {
                   name: '设备数量',

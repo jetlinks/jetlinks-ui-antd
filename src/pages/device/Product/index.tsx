@@ -84,6 +84,8 @@ const Product = observer(() => {
 
   useEffect(() => {
     const { state } = location;
+    console.log(state);
+
     if (state && state.save) {
       setCurrent(undefined);
       setVisible(true);
