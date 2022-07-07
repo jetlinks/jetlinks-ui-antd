@@ -44,6 +44,7 @@ export type DeviceInstance = {
   accessId?: string;
   features?: any[];
   parentId?: string;
+  classifiedName?: string;
 };
 
 type Unit = {

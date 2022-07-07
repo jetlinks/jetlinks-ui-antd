@@ -164,6 +164,11 @@ class Service extends BaseService<ProductItem> {
     request(`/${SystemConst.API_BASE}/protocol/${id}/detail`, {
       method: 'POST',
     });
+  // 存储策略
+  public getStoragList = () =>
+    request(`/${SystemConst.API_BASE}/device/product/storage/policies`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

@@ -65,6 +65,9 @@ const Info = observer(() => {
               </div>
             </Tooltip>
           </Descriptions.Item>
+          <Descriptions.Item label={'产品分类'}>
+            {InstanceModel.detail?.classifiedName}
+          </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
               id: 'pages.device.instanceDetail.deviceType',

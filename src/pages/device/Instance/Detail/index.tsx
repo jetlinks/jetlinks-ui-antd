@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, Space, Tooltip } from 'antd';
+import { Badge, Card, Descriptions, Divider, message, Space, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -421,7 +421,10 @@ const InstanceDetail = observer(() => {
           onClick={() => {
             getDetail(params.id);
             service.getConfigMetadata(params.id).then((config) => {
-              InstanceModel.config = config?.result || [];
+              if (config.status === 200) {
+                InstanceModel.config = config?.result || [];
+                message.success('操作成功！');
+              }
             });
           }}
           style={{ fontSize: 20, marginRight: 20 }}
