@@ -2,7 +2,7 @@ import { Badge, Button, Col, Empty, Row, Table, Tooltip } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel, service as productService } from '@/pages/device/Product';
 import styles from './index.less';
-import type { SetStateAction } from 'react';
+import { SetStateAction, useRef } from 'react';
 import { useEffect, useState } from 'react';
 import AccessConfig from './AccessConfig';
 import ReactMarkdown from 'react-markdown';
@@ -56,6 +56,7 @@ const Access = () => {
   const [configVisible, setConfigVisible] = useState<boolean>(false);
 
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
+  const ref = useRef(0)
 
   const steps = [
     {
@@ -89,7 +90,7 @@ const Access = () => {
   ]
   const steps1 = [
     {
-      element: '#driver-config',
+      element: '.config',
       popover: {
         className: 'driver',
         title: `<div id='title'>填写配置</div><div id='guide'>1/4</div>`,
@@ -276,6 +277,10 @@ const Access = () => {
 
   const id = productModel.current?.id;
 
+  const guide = (data:any) =>{
+    service.productGuideSave(data)
+  }
+
   useEffect(() => {
     const driver = new Driver({
       allowClose: false,
@@ -283,36 +288,63 @@ const Access = () => {
       closeBtnText: '不在提示',
       nextBtnText: '下一步',
       prevBtnText: '上一步',
-      // onDeselected:(e)=>{
-      //   console.log(e)
-      // },
       onNext:()=>{
-        console.log('下一步')
+        ref.current=ref.current+1
       },
       onPrevious:()=>{
-        console.log('上一步')
+        ref.current=ref.current-1
+      },
+      onReset:()=>{ 
+        if(ref.current!==3){
+          guide({
+            name:'guide',
+            content:'skip'
+          })
+        }
+        ref.current=0
+      },
+    });
+    const driver1 = new Driver({
+      allowClose: false,
+      doneBtnText: '我知道了',
+      closeBtnText: '不在提示',
+      nextBtnText: '下一步',
+      prevBtnText: '上一步',
+      onNext:()=>{
+        ref.current=ref.current+1
+      },
+      onPrevious:()=>{
+        ref.current=ref.current-1
       },
       onReset:()=>{
-        console.log('关闭')
+        if(ref.current!==4){
+          guide({
+            name:'guide',
+            content:'skip'
+          })
+        }
+        ref.current=0
       },
-      // onDeselected:()=>{
-      //   console.log('oncolse')
-      // }
-    
     });
     setVisible(!!productModel.current?.accessId);
     if (productModel.current?.accessId) {
       if (id) {
         productService
           .getConfigMetadata(id)
-          .then((resp: { result: SetStateAction<ConfigMetadata[]> }) => {
+          .then(async (resp: { result: SetStateAction<ConfigMetadata[]> }) => {
             setMetadata(resp.result);
-            if (resp.result && resp.result.length > 0) {
-              driver.defineSteps(steps1)
-              driver.start();
-            } else {
-              driver.defineSteps(steps)
-              driver.start();
+            //判断引导页是否跳过
+            const res = await service.productGuide()
+            if(res.result && res.result?.content==='skip'){
+              return;
+            }else{
+              if (resp.result && resp.result.length > 0) {
+                driver1.defineSteps(steps1)
+                driver1.start();
+              } else {
+                driver.defineSteps(steps)
+                driver.start();
+              }
             }
           });
       }
@@ -337,23 +369,6 @@ const Access = () => {
     }
   }, [productModel.current]);
 
-  // useEffect(() => {
-  //   console.log(productModel.current)
-  //   console.log(productModel.current?.accessId)
-  //   const driver = new Driver({
-  //     allowClose: false,
-  //     doneBtnText: '我知道了',
-  //     closeBtnText: '不在提示',
-  //     nextBtnText: '下一步',
-  //     prevBtnText: '上一步'
-  //   });
-  //   if (productModel.current?.accessId) {
-  //     setTimeout(() => {
-  //       driver.defineSteps(steps)
-  //       driver.start();
-  //     }, 1000)
-  //   }
-  // }, [])
 
   const form = createForm({
     validateFirst: true,
@@ -485,9 +500,6 @@ const Access = () => {
     );
   };
 
-  // useEffect(() => {
-
-  // }, [])
 
   return (
     <div>
@@ -545,6 +557,9 @@ const Access = () => {
                           更换
                         </Button>
                       </Tooltip>
+                        {/* <Button onClick={async()=>{
+                          await service.productGuideDetail()
+                        }}>删除</Button> */}
                     </span>
                   }
                 />
