@@ -107,21 +107,21 @@ const InstanceDetail = observer(() => {
         <Card>
           <Metadata
             type="device"
-            // tabAction={
-            //   <PermissionButton
-            //     isPermission={permission.update}
-            //     popConfirm={{
-            //       title: '确认重置？',
-            //       onConfirm: resetMetadata,
-            //     }}
-            //     tooltip={{
-            //       title: '重置后将使用产品的物模型配置',
-            //     }}
-            //     key={'reload'}
-            //   >
-            //     重置操作1
-            //   </PermissionButton>
-            // }
+          // tabAction={
+          //   <PermissionButton
+          //     isPermission={permission.update}
+          //     popConfirm={{
+          //       title: '确认重置？',
+          //       onConfirm: resetMetadata,
+          //     }}
+          //     tooltip={{
+          //       title: '重置后将使用产品的物模型配置',
+          //     }}
+          //     key={'reload'}
+          //   >
+          //     重置操作1
+          //   </PermissionButton>
+          // }
           />
         </Card>
       ),
@@ -250,6 +250,7 @@ const InstanceDetail = observer(() => {
   }, []);
 
   useEffect(() => {
+    // console.log(InstanceModel.current)
     if (!InstanceModel.current && !params.id) {
       history.goBack();
     } else {
@@ -308,6 +309,7 @@ const InstanceDetail = observer(() => {
               size={'small'}
               tooltip={{
                 title: InstanceModel.detail?.productName,
+                placement: 'topLeft'
               }}
               isPermission={!!getMenuPathByCode(MENUS_CODE['device/Product'])}
               onClick={() => {
@@ -391,12 +393,14 @@ const InstanceDetail = observer(() => {
                 断开连接
               </PermissionButton>
             )}
-            {InstanceModel.detail?.accessProvider === 'child-device' ? (
-              <div style={{ fontSize: 14, marginLeft: 10, fontWeight: 400 }}>
-                <ExclamationCircleOutlined style={{ fontSize: 14, marginRight: 5 }} />
-                {InstanceModel.detail?.features?.find((item) => item.id === 'selfManageState')
-                  ? '该设备的在线状态与父设备(网关设备)保持一致'
-                  : '该设备在线状态由设备自身运行状态决定，不继承父设备（网关设备）的在线状态'}
+            {InstanceModel.detail?.accessProvider === 'child-device' && InstanceModel.detail?.state?.value === "offline" ? (
+              <div>
+                <Tooltip placement='bottom'
+                  title={InstanceModel.detail?.features?.find((item) => item.id === 'selfManageState')
+                    ? '该设备的在线状态与父设备(网关设备)保持一致'
+                    : '该设备在线状态由设备自身运行状态决定，不继承父设备（网关设备）的在线状态'}>
+                  <QuestionCircleOutlined style={{ fontSize: 14, marginRight: 5 }} />
+                </Tooltip>
               </div>
             ) : (
               ''
