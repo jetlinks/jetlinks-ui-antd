@@ -32,40 +32,6 @@ export default (props: BuiltInProps) => {
 
   const [builtInList, setBuiltInList] = useState<any[]>([]);
 
-  useEffect(() => {
-    console.log(props.parallel);
-    // if (source === 'upper' && props.trigger) {
-    //   getBuiltInList({ ...props.trigger });
-    // }
-    if (source === 'upper') {
-      if (props.parallel === false) {
-        const data = props.form.getFieldsValue();
-        const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
-        queryBuiltInParams(data, params).then((res: any) => {
-          if (res.status === 200) {
-            const actionParams = res.result.filter(
-              (item: any) => item.id === `action_${props.name}`,
-            );
-            const _data = props.name === 0 ? res.result : BuiltInParamsHandleTreeData(actionParams);
-            setBuiltInList(_data);
-          }
-        });
-      } else {
-        queryBuiltInParams({ ...props.trigger }).then((res: any) => {
-          if (res.status === 200) {
-            setBuiltInList(BuiltInParamsHandleTreeData(res.result));
-          }
-        });
-      }
-    }
-  }, [source, props.trigger, props.parallel]);
-
-  useEffect(() => {
-    setSource(props.value?.source);
-    setValue(props.value?.value);
-    setUpperKey(props.value?.upperKey);
-  }, [props.value]);
-
   const onChange = (_source: string = 'fixed', _value?: any, _upperKey?: string) => {
     const obj: ChangeType = {
       source: _source,
@@ -80,6 +46,37 @@ export default (props: BuiltInProps) => {
       props.onChange(obj);
     }
   };
+
+  const sourceChangeEvent = () => {
+    onChange(source, undefined);
+    const data = props.form.getFieldsValue();
+    const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+    queryBuiltInParams(data, params).then((res: any) => {
+      if (res.status === 200) {
+        const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+        const _data = props.name === 0 ? res.result : BuiltInParamsHandleTreeData(actionParams);
+        setBuiltInList(_data);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (source === 'upper') {
+      sourceChangeEvent();
+    }
+  }, [source, props.trigger, props.parallel]);
+
+  useEffect(() => {
+    if (props.trigger?.trigger?.device?.productId && source === 'upper') {
+      sourceChangeEvent();
+    }
+  }, [props.trigger?.trigger?.device?.productId, source]);
+
+  useEffect(() => {
+    setSource(props.value?.source);
+    setValue(props.value?.value);
+    setUpperKey(props.value?.upperKey);
+  }, [props.value]);
 
   const itemOnChange = useCallback(
     (_value: any) => {
