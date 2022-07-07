@@ -15,9 +15,9 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
-import { Field, FieldDataSource } from '@formily/core';
+import type { Field, FieldDataSource } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
-import { Card } from 'antd';
+import { Card, Col, Row } from 'antd';
 import styles from './index.less';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
@@ -27,6 +27,7 @@ import { Store } from 'jetlinks-store';
 import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
+import FMonacoEditor from '@/components/FMonacoEditor';
 
 /**
  *  根据类型过滤配置信息
@@ -187,6 +188,16 @@ const Save = observer(() => {
               state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
             });
           });
+          // onFieldValueChange('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
+          //   const host = (field as Field).value;
+          //   const value = (field.query('.serverId').take() as Field).value;
+          //   const type = (field.query('type').take() as Field).value;
+          //   const response = await getResourceById(value, type);
+          //   const _ports = response.find((item) => item.host === host);
+          //   f4.setFieldState(field.query('.port').take(), async (state) => {
+          //     state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
+          //   });
+          // });
         },
       }),
     [],
@@ -221,6 +232,7 @@ const Save = observer(() => {
       FormCollapse,
       ArrayCollapse,
       FAutoComplete,
+      FMonacoEditor,
     },
   });
 
@@ -233,12 +245,11 @@ const Save = observer(() => {
         value: item.id,
       })),
     );
-
   const clusterConfig: ISchema = {
     type: 'void',
     'x-component': 'FormGrid',
     'x-component-props': {
-      maxColumns: 3,
+      maxColumns: 2,
       minColumns: 1,
       columnGap: 48,
     },
@@ -528,44 +539,12 @@ const Save = observer(() => {
           },
         },
       },
-      parserType: {
-        // TCP
-        required: true,
-        title: '粘拆包规则',
-        'x-decorator-props': {
-          gridSpan: 1,
-          tooltip: '处理TCP粘拆包的方式',
-          layout: 'vertical',
-          labelAlign: 'left',
-        },
-        'x-visible': false,
-        'x-decorator': 'FormItem',
-        'x-component': 'Select',
-        'x-component-props': {
-          placeholder: '请选择粘拆包规则',
-        },
-        enum: [
-          { value: 'DIRECT', label: '不处理' },
-          { value: 'delimited', label: '分隔符' },
-          { value: 'script', label: '自定义脚本' },
-          { value: 'fixed_length', label: '固定长度' },
-        ],
-        'x-reactions': {
-          dependencies: ['type'],
-          fulfill: {
-            state: {
-              // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["TCP_SERVER"].includes($deps[0])}}',
-            },
-          },
-        },
-      },
       secure: {
         title: '开启DTLS',
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         'x-decorator-props': {
-          gridSpan: 1,
+          gridSpan: 2,
           labelAlign: 'left',
           layout: 'vertical',
         },
@@ -633,6 +612,190 @@ const Save = observer(() => {
           },
         },
       },
+      parserType: {
+        // TCP
+        required: true,
+        title: '粘拆包规则',
+        'x-decorator-props': {
+          gridSpan: 2,
+          tooltip: '处理TCP粘拆包的方式',
+          layout: 'vertical',
+          labelAlign: 'left',
+        },
+        'x-visible': false,
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-component-props': {
+          placeholder: '请选择粘拆包规则',
+          style: { width: 'calc(50% - 24px)' },
+        },
+        enum: [
+          { value: 'DIRECT', label: '不处理' },
+          { value: 'delimited', label: '分隔符' },
+          { value: 'script', label: '自定义脚本' },
+          { value: 'fixed_length', label: '固定长度' },
+        ],
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              // visible: '{{$deps[0]==="UDP"}}',
+              visible: '{{["TCP_SERVER"].includes($deps[0])}}',
+            },
+          },
+        },
+      },
+      parserConfiguration: {
+        type: 'object',
+        'x-component': 'FormGrid',
+        'x-decorator': 'FormItem',
+        'x-component-props': {
+          maxColumns: 2,
+          minColumns: 1,
+          className: styles.parser,
+        },
+        'x-decorator-props': {
+          gridSpan: 2,
+        },
+        'x-reactions': [
+          {
+            dependencies: ['.parserType'],
+            fulfill: {
+              state: {
+                visible: '{{["delimited", "script", "fixed_length"].includes($deps[0])}}',
+              },
+            },
+          },
+        ],
+        properties: {
+          delimited: {
+            title: '分隔符',
+            'x-component': 'Input',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入分隔符',
+              },
+            ],
+            'x-component-props': {
+              style: { width: '50%' },
+              placeholder: '请输入分隔符',
+            },
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "delimited"}}',
+                  },
+                },
+              },
+            ],
+          },
+          lang: {
+            title: '脚本语言',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-disabled': true,
+            'x-hidden': true,
+            'x-value': 'javascript',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 2,
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    // visible: '{{$deps[0] === "script"}}',
+                    value: '{{$deps[0] === "script" ? "javascript" : ""}}',
+                  },
+                },
+              },
+            ],
+            enum: [{ label: 'JavaScript', value: 'javascript' }],
+          },
+          script: {
+            title: '脚本解析',
+            'x-component': 'FMonacoEditor',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              language: 'javascript',
+              height: 200,
+              editorDidMount: (editor1: any) => {
+                editor1.onDidScrollChange?.(() => {
+                  editor1.getAction('editor.action.formatDocument').run();
+                });
+              },
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入脚本',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "script"}}',
+                  },
+                },
+              },
+            ],
+          },
+          size: {
+            title: '长度值',
+            'x-component': 'NumberPicker',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入长度值',
+              },
+            ],
+            'x-component-props': {
+              style: { width: '50%' },
+              placeholder: '请输入长度值',
+            },
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "fixed_length"}}',
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
     },
   };
   const schema: ISchema = {
@@ -642,7 +805,7 @@ const Save = observer(() => {
         type: 'void',
         'x-component': 'FormGrid',
         'x-component-props': {
-          maxColumns: 3,
+          maxColumns: 2,
           minColumns: 1,
           columnGap: 48,
         },
@@ -698,8 +861,12 @@ const Save = observer(() => {
               { label: '共享配置', value: true },
               { label: '独立配置', value: false },
             ],
+            'x-component-props': {
+              buttonStyle: 'solid',
+              optionType: 'button',
+            },
             'x-decorator-props': {
-              gridSpan: 3,
+              gridSpan: 2,
               tooltip:
                 '共享配置:集群下所有节点共用同一配置\r\n' + '独立配置:集群下不同节点使用不同配置',
             },
@@ -724,7 +891,7 @@ const Save = observer(() => {
               },
             ],
             'x-decorator-props': {
-              gridSpan: 3,
+              gridSpan: 2,
             },
             properties: {
               panel1: {
@@ -740,7 +907,7 @@ const Save = observer(() => {
             type: 'void',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              gridSpan: 3,
+              gridSpan: 2,
             },
             'x-reactions': {
               dependencies: ['.shareCluster', 'type'],
@@ -789,7 +956,7 @@ const Save = observer(() => {
             'x-component': 'Input.TextArea',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
-              gridSpan: 3,
+              gridSpan: 2,
             },
             'x-component-props': {
               placeholder: '请输入说明',
@@ -830,30 +997,34 @@ const Save = observer(() => {
   return (
     <PageContainer>
       <Card>
-        <Form form={form} layout="vertical" style={{ padding: 30 }}>
-          <SchemaField
-            schema={schema}
-            scope={{
-              formCollapse,
-              useAsyncDataSource,
-              useAsyncData,
-              getSupports,
-              getResourcesClusters,
-              getCertificates,
-            }}
-          />
-          <FormButtonGroup.Sticky>
-            <FormButtonGroup.FormItem>
-              <PermissionButton
-                type="primary"
-                isPermission={getOtherPermission(['add', 'update'])}
-                onClick={() => handleSave()}
-              >
-                保存
-              </PermissionButton>
-            </FormButtonGroup.FormItem>
-          </FormButtonGroup.Sticky>
-        </Form>
+        <Row gutter={24}>
+          <Col span={16}>
+            <Form form={form} layout="vertical" style={{ padding: 30 }}>
+              <SchemaField
+                schema={schema}
+                scope={{
+                  formCollapse,
+                  useAsyncDataSource,
+                  useAsyncData,
+                  getSupports,
+                  getResourcesClusters,
+                  getCertificates,
+                }}
+              />
+              <FormButtonGroup.Sticky>
+                <FormButtonGroup.FormItem>
+                  <PermissionButton
+                    type="primary"
+                    isPermission={getOtherPermission(['add', 'update'])}
+                    onClick={() => handleSave()}
+                  >
+                    保存
+                  </PermissionButton>
+                </FormButtonGroup.FormItem>
+              </FormButtonGroup.Sticky>
+            </Form>
+          </Col>
+        </Row>
       </Card>
     </PageContainer>
   );
