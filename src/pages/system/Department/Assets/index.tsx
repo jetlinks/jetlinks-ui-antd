@@ -24,10 +24,12 @@ export const AssetsModel = model<{
   tabsIndex: string;
   bindModal: boolean;
   parentId: string;
+  params: any;
 }>({
   tabsIndex: ASSETS_TABS_ENUM.Product,
   bindModal: false,
   parentId: '',
+  params: {},
 });
 
 const Assets = observer((props: AssetsProps) => {

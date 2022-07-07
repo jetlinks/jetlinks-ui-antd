@@ -22,6 +22,7 @@ type ModelType = keyof typeof ModelEnum;
 interface ProTableCardProps<T> {
   cardRender?: (data: T) => JSX.Element | React.ReactNode;
   gridColumn?: number;
+  height?: 'none';
 }
 
 const ProTableCard = <
@@ -108,7 +109,7 @@ const ProTableCard = <
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                minHeight: minHeight - 150,
+                minHeight: props.height === 'none' ? 'auto' : minHeight - 150,
               }}
             >
               <Empty />
@@ -146,7 +147,11 @@ const ProTableCard = <
   }, [props.params]);
 
   return (
-    <div className={'pro-table-card'} style={{ minHeight: minHeight }} ref={domRef}>
+    <div
+      className={'pro-table-card'}
+      style={{ minHeight: props.height === 'none' ? 'auto' : minHeight }}
+      ref={domRef}
+    >
       <ProTable<T, U, ValueType>
         {...extraProps}
         params={
