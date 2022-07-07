@@ -231,7 +231,7 @@ const Save = (props: Props) => {
                     productName: node.label,
                   });
                 }}
-                placeholder={'请选择所属产品'}
+                placeholder={'请选择状态为正常的产品'}
                 filterOption={(input, option) => option.label.includes(input)}
               />
             </Form.Item>
