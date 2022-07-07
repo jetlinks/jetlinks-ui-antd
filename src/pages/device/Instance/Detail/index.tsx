@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { InstanceModel } from '@/pages/device/Instance';
 import { history, useParams } from 'umi';
-import { Badge, Card, Descriptions, Divider, Space, Tooltip } from 'antd';
+import { Badge, Card, Descriptions, Divider, message, Space, Tooltip } from 'antd';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
@@ -24,7 +24,7 @@ import SystemConst from '@/utils/const';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
-import { ExclamationCircleOutlined, QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
@@ -250,6 +250,7 @@ const InstanceDetail = observer(() => {
   }, []);
 
   useEffect(() => {
+    // console.log(InstanceModel.current)
     if (!InstanceModel.current && !params.id) {
       history.goBack();
     } else {
@@ -308,6 +309,7 @@ const InstanceDetail = observer(() => {
               size={'small'}
               tooltip={{
                 title: InstanceModel.detail?.productName,
+                placement: 'topLeft',
               }}
               isPermission={!!getMenuPathByCode(MENUS_CODE['device/Product'])}
               onClick={() => {
@@ -391,12 +393,19 @@ const InstanceDetail = observer(() => {
                 断开连接
               </PermissionButton>
             )}
-            {InstanceModel.detail?.accessProvider === 'child-device' ? (
-              <div style={{ fontSize: 14, marginLeft: 10, fontWeight: 400 }}>
-                <ExclamationCircleOutlined style={{ fontSize: 14, marginRight: 5 }} />
-                {InstanceModel.detail?.features?.find((item) => item.id === 'selfManageState')
-                  ? '该设备的在线状态与父设备(网关设备)保持一致'
-                  : '该设备在线状态由设备自身运行状态决定，不继承父设备（网关设备）的在线状态'}
+            {InstanceModel.detail?.accessProvider === 'child-device' &&
+            InstanceModel.detail?.state?.value === 'offline' ? (
+              <div>
+                <Tooltip
+                  placement="bottom"
+                  title={
+                    InstanceModel.detail?.features?.find((item) => item.id === 'selfManageState')
+                      ? '该设备的在线状态与父设备(网关设备)保持一致'
+                      : '该设备在线状态由设备自身运行状态决定，不继承父设备（网关设备）的在线状态'
+                  }
+                >
+                  <QuestionCircleOutlined style={{ fontSize: 14, marginRight: 5 }} />
+                </Tooltip>
               </div>
             ) : (
               ''
@@ -421,7 +430,10 @@ const InstanceDetail = observer(() => {
           onClick={() => {
             getDetail(params.id);
             service.getConfigMetadata(params.id).then((config) => {
-              InstanceModel.config = config?.result || [];
+              if (config.status === 200) {
+                InstanceModel.config = config?.result || [];
+                message.success('操作成功！');
+              }
             });
           }}
           style={{ fontSize: 20, marginRight: 20 }}

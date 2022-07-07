@@ -12,6 +12,8 @@ import { getMenuPathByCode } from '@/utils/menu';
 import PermissionButton from '@/components/PermissionButton';
 import { onlyMessage } from '@/utils/util';
 import Empty from '@/components/Empty';
+import _ from 'lodash';
+import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 
 interface Props {
   close: () => void;
@@ -128,6 +130,15 @@ const AccessConfig = (props: Props) => {
     handleSearch(param);
   }, []);
 
+  const modifyArray = (oldData: any[], newData: any[]) => {
+    newData.map((item) => {
+      if (!_.map(oldData, 'id').includes(item.id)) {
+        oldData.push(item);
+      }
+    });
+    return oldData;
+  };
+
   return (
     <Modal
       onCancel={() => {
@@ -138,7 +149,7 @@ const AccessConfig = (props: Props) => {
       title={'设备接入配置'}
       onOk={async () => {
         if (!!currrent) {
-          const resp: any = await service1.update({
+          const obj: any = {
             ...productModel.current,
             transportProtocol: currrent.transport,
             protocolName: currrent.protocolDetail.name,
@@ -146,7 +157,26 @@ const AccessConfig = (props: Props) => {
             accessName: currrent.name,
             accessProvider: currrent.provider,
             messageProtocol: currrent.protocol,
-          });
+          };
+          const metatdata = JSON.parse(productModel.current?.metadata || '{}');
+          if (obj.accessProvider === 'gb28181-2016') {
+            const response = await service.getConfigView(
+              obj?.messageProtocol || '',
+              obj?.transportProtocol || '',
+            );
+            if (response.status === 200) {
+              const ndata = JSON.parse(response.result?.metadata || '{}');
+              const mdata = {
+                events: modifyArray(metatdata?.events || [], ndata?.events || []),
+                properties: modifyArray(metatdata?.properties || [], ndata?.properties || []),
+                functions: modifyArray(metatdata?.functions || [], ndata?.functions || []),
+                tags: modifyArray(metatdata?.tags || [], ndata?.tags || []),
+              };
+              MetadataAction.insert(mdata);
+              obj.metadata = JSON.stringify(mdata);
+            }
+          }
+          const resp: any = await service1.update(obj);
           if (resp.status === 200) {
             service1.detail(productModel.current?.id || '').then((res) => {
               if (res.status === 200) {
@@ -155,19 +185,6 @@ const AccessConfig = (props: Props) => {
               }
               close();
             });
-            // service1
-            //   .changeDeploy(productModel.current?.id || '', 'deploy')
-            //   .subscribe((response) => {
-            //     if (response) {
-            //       service1.detail(productModel.current?.id || '').then((res) => {
-            //         if (res.status === 200) {
-            //           productModel.current = { ...res.result };
-            //           message.success('操作成功！');
-            //         }
-            //         close();
-            //       });
-            //     }
-            //   });
           }
         } else {
           onlyMessage('请选择接入方式', 'error');

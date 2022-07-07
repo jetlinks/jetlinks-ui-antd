@@ -11,6 +11,8 @@ import styles from './index.less';
 import moment from 'moment';
 import Echarts from '@/components/DashBoard/echarts';
 import encodeQuery from '@/utils/encodeQuery';
+import useHistory from '@/hooks/route/useHistory';
+import { getMenuPathByCode } from '@/utils/menu';
 
 const service = new Service();
 export const state = model<{
@@ -43,6 +45,7 @@ type RefType = {
 };
 const Dashboard = observer(() => {
   const [options, setOptions] = useState<EChartsOption>({});
+  const history = useHistory();
 
   // 今日告警
   const today = {
@@ -253,9 +256,10 @@ const Dashboard = observer(() => {
           },
         },
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
+          left: 0,
+          right: '1%',
+          bottom: 0,
+          top: '2%',
           containLabel: true,
         },
         xAxis: [
@@ -276,7 +280,10 @@ const Dashboard = observer(() => {
           {
             name: 'Direct',
             type: 'bar',
-            barWidth: '60%',
+            barWidth: '30%',
+            itemStyle: {
+              color: '#2F54EB',
+            },
             data: sData.reverse(),
           },
         ],
@@ -325,10 +332,24 @@ const Dashboard = observer(() => {
                         <div className={'new-alarm-item'}>
                           <div className={'new-alarm-item-time'}>
                             <img src={require('/public/images/alarm/bashboard.png')} alt="" />
-                            {moment(item.alarmTime).format('YYYY-MM-DD hh:mm:ss')}
+                            {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
                           </div>
                           <div className={'new-alarm-item-content ellipsis'}>
-                            <Tooltip title={item.alarmName}>{item.alarmName}</Tooltip>
+                            <Tooltip title={item.alarmName} placement="topLeft">
+                              <a
+                                onClick={() => {
+                                  console.log(item);
+                                  const url = getMenuPathByCode('rule-engine/Alarm/Log');
+                                  history.push(`${url}/detail/${item.id}`, {
+                                    param: {
+                                      detail: true,
+                                    },
+                                  });
+                                }}
+                              >
+                                {item.alarmName}
+                              </a>
+                            </Tooltip>
                           </div>
                           <div className={'new-alarm-item-state'}>
                             <Badge

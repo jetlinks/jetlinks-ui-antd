@@ -1,6 +1,6 @@
 import { Col, message, Row, Tooltip } from 'antd';
 import { PermissionButton } from '@/components';
-import { Body } from '../components';
+import { Body, Guide } from '../components';
 import Statistics from '../components/Statistics';
 import Steps from '../components/Steps';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
@@ -14,7 +14,7 @@ import DeviceChoose from '../components/DeviceChoose';
 const Device = () => {
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
-  // const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
+  const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
 
   const [productCount, setProductCount] = useState<number>(0);
   const [deviceCount, setDeviceCount] = useState<number>(0);
@@ -44,47 +44,88 @@ const Device = () => {
   const history = useHistory();
   // // 跳转
 
-  // const guideList = [
-  //   {
-  //     key: 'product',
-  //     name: '创建产品',
-  //     english: 'STEP1',
-  //     auth: !!productPermission.add,
-  //     url: 'device/Product',
-  //     param: {
-  //       save: true,
-  //     },
-  //   },
-  //   {
-  //     key: 'device',
-  //     name: '创建设备',
-  //     english: 'STEP2',
-  //     auth: !!devicePermission.add,
-  //     url: 'device/Instance',
-  //     param: {
-  //       save: true,
-  //     },
-  //   },
-  //   {
-  //     key: 'rule-engine',
-  //     name: '规则引擎',
-  //     english: 'STEP3',
-  //     auth: !!rulePermission.add,
-  //     url: 'rule-engine/Instance',
-  //     param: {
-  //       save: true,
-  //     },
-  //   },
-  // ];
+  const guideList = [
+    {
+      key: 'product',
+      name: '创建产品',
+      english: 'STEP1',
+      auth: !!productPermission.add,
+      url: 'device/Product',
+      param: {
+        save: true,
+      },
+    },
+    {
+      key: 'device',
+      name: '创建设备',
+      english: 'STEP2',
+      auth: !!devicePermission.add,
+      url: 'device/Instance',
+      param: {
+        save: true,
+      },
+    },
+    {
+      key: 'rule-engine',
+      name: '规则引擎',
+      english: 'STEP3',
+      auth: !!rulePermission.add,
+      url: 'rule-engine/Instance',
+      param: {
+        save: true,
+      },
+    },
+  ];
 
   return (
     <Row gutter={24}>
-      <Col span={18}>
+      <Col span={14}>
+        <Guide
+          title="物联网引导"
+          data={guideList}
+          // jump={(auth: boolean, url: string, param: string) => {
+          //   pageJump(auth, url, param);
+          // }}
+        />
+      </Col>
+      <Col span={10}>
+        <Statistics
+          data={[
+            {
+              name: '产品数量',
+              value: productCount,
+              children: require('/public/images/home/top-2.png'),
+            },
+            {
+              name: '设备数量',
+              value: deviceCount,
+              children: '',
+            },
+          ]}
+          title="设备统计"
+          extra={
+            <div style={{ fontSize: 14, fontWeight: 400 }}>
+              <a
+                onClick={() => {
+                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
+                  if (!!url) {
+                    history.push(`${url}`);
+                  } else {
+                    message.warning('暂无权限，请联系管理员');
+                  }
+                }}
+              >
+                详情
+              </a>
+            </div>
+          }
+        />
+      </Col>
+      <Col span={24}>
+        <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
+      </Col>
+      <Col span={24}>
         <Steps
-          style={{
-            height: 275,
-            gridColumnGap: 20,
-          }}
           title={
             <span>
               设备接入推荐步骤

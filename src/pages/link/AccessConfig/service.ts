@@ -51,6 +51,24 @@ class Service extends BaseService<AccessItem> {
     request(`/${SystemConst.API_BASE}/network/resources/clusters`, {
       method: 'GET',
     });
+  //引导页-不在提示
+  public productGuide = () =>
+    request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
+      method: 'GET',
+    });
+  public productGuideSave = (data: any) =>
+    request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
+      method: 'PATCH',
+      data,
+    });
+  public productGuideDetail = () =>
+    request(`/${SystemConst.API_BASE}/user/settings/product/guide`, {
+      method: 'DELETE',
+    });
+  public getResourcesCurrent = () =>
+    request(`${SystemConst.API_BASE}/network/resources/alive/_current`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

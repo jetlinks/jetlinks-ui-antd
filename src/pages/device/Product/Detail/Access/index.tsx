@@ -2,7 +2,7 @@ import { Badge, Button, Col, Empty, Row, Table, Tooltip } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel, service as productService } from '@/pages/device/Product';
 import styles from './index.less';
-import type { SetStateAction } from 'react';
+import { SetStateAction, useRef } from 'react';
 import { useEffect, useState } from 'react';
 import AccessConfig from './AccessConfig';
 import ReactMarkdown from 'react-markdown';
@@ -40,6 +40,7 @@ const Access = () => {
   const [access, setAccess] = useState<any>();
   const { permission } = usePermissions('device/Product');
   const [dataSource, setDataSource] = useState<any[]>([]);
+  const [storageList, setStorageList] = useState<any[]>([]);
 
   const MetworkTypeMapping = new Map();
   MetworkTypeMapping.set('websocket-server', 'WEB_SOCKET_SERVER');
@@ -55,6 +56,7 @@ const Access = () => {
   const [configVisible, setConfigVisible] = useState<boolean>(false);
 
   const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
+  const ref = useRef(0);
 
   const steps = [
     {
@@ -87,7 +89,7 @@ const Access = () => {
   ];
   const steps1 = [
     {
-      element: '#driver-config',
+      element: '.config',
       popover: {
         className: 'driver',
         title: `<div id='title'>填写配置</div><div id='guide'>1/4</div>`,
@@ -272,6 +274,10 @@ const Access = () => {
 
   const id = productModel.current?.id;
 
+  const guide = (data: any) => {
+    service.productGuideSave(data);
+  };
+
   useEffect(() => {
     const driver = new Driver({
       allowClose: false,
@@ -279,35 +285,63 @@ const Access = () => {
       closeBtnText: '不在提示',
       nextBtnText: '下一步',
       prevBtnText: '上一步',
-      // onDeselected:(e)=>{
-      //   console.log(e)
-      // },
       onNext: () => {
-        console.log('下一步');
+        ref.current = ref.current + 1;
       },
       onPrevious: () => {
-        console.log('上一步');
+        ref.current = ref.current - 1;
       },
       onReset: () => {
-        console.log('关闭');
+        if (ref.current !== 3) {
+          guide({
+            name: 'guide',
+            content: 'skip',
+          });
+        }
+        ref.current = 0;
       },
-      // onDeselected:()=>{
-      //   console.log('oncolse')
-      // }
+    });
+    const driver1 = new Driver({
+      allowClose: false,
+      doneBtnText: '我知道了',
+      closeBtnText: '不在提示',
+      nextBtnText: '下一步',
+      prevBtnText: '上一步',
+      onNext: () => {
+        ref.current = ref.current + 1;
+      },
+      onPrevious: () => {
+        ref.current = ref.current - 1;
+      },
+      onReset: () => {
+        if (ref.current !== 4) {
+          guide({
+            name: 'guide',
+            content: 'skip',
+          });
+        }
+        ref.current = 0;
+      },
     });
     setVisible(!!productModel.current?.accessId);
     if (productModel.current?.accessId) {
       if (id) {
         productService
           .getConfigMetadata(id)
-          .then((resp: { result: SetStateAction<ConfigMetadata[]> }) => {
+          .then(async (resp: { result: SetStateAction<ConfigMetadata[]> }) => {
             setMetadata(resp.result);
-            if (resp.result && resp.result.length > 0) {
-              driver.defineSteps(steps1);
-              driver.start();
+            //判断引导页是否跳过
+            const res = await service.productGuide();
+            if (res.result && res.result?.content === 'skip') {
+              return;
             } else {
-              driver.defineSteps(steps);
-              driver.start();
+              if (resp.result && resp.result.length > 0) {
+                driver1.defineSteps(steps1);
+                driver1.start();
+              } else {
+                driver.defineSteps(steps);
+                driver.start();
+              }
             }
           });
       }
@@ -330,29 +364,24 @@ const Access = () => {
           });
       }
     }
+    productService.getStoragList().then((resp) => {
+      if (resp.status === 200) {
+        setStorageList(
+          resp.result.map((i: any) => ({
+            label: i.name,
+            value: i.id,
+          })),
+        );
+      }
+    });
   }, [productModel.current]);
-
-  // useEffect(() => {
-  //   console.log(productModel.current)
-  //   console.log(productModel.current?.accessId)
-  //   const driver = new Driver({
-  //     allowClose: false,
-  //     doneBtnText: '我知道了',
-  //     closeBtnText: '不在提示',
-  //     nextBtnText: '下一步',
-  //     prevBtnText: '上一步'
-  //   });
-  //   if (productModel.current?.accessId) {
-  //     setTimeout(() => {
-  //       driver.defineSteps(steps)
-  //       driver.start();
-  //     }, 1000)
-  //   }
-  // }, [])
 
   const form = createForm({
     validateFirst: true,
-    initialValues: productModel.current?.configuration,
+    initialValues: {
+      ...productModel.current?.configuration,
+      storePolicy: productModel.current?.storePolicy,
+    },
   });
 
   const SchemaField = createSchemaField({
@@ -367,13 +396,16 @@ const Access = () => {
   });
 
   const configToSchema = (data: ConfigProperty[]) => {
-    const obj = {};
+    const obj: any = {};
     data.forEach((item) => {
       obj[item?.property] = {
         type: 'string',
         title: item.name,
         'x-decorator': 'FormItem',
         'x-component': componentMap[item.type.type],
+        'x-component-props': {
+          placeholder: item.type.type === 'enum' ? '请选择' : '请输入',
+        },
         'x-decorator-props': {
           tooltip: item.description,
           gridSpan: 1,
@@ -391,6 +423,7 @@ const Access = () => {
             : [],
       };
     });
+
     return obj;
   };
 
@@ -406,83 +439,100 @@ const Access = () => {
   };
 
   const renderConfigCard = () => {
-    return (
-      metadata &&
-      metadata.length > 0 &&
-      metadata?.map((item: any) => {
-        const itemSchema: ISchema = {
-          type: 'object',
-          properties: {
-            grid: {
-              type: 'void',
-              'x-component': 'FormGrid',
-              'x-component-props': {
-                maxColumns: 1,
-                minColumns: 1,
-                columnGap: 48,
-              },
-              title: (
-                <TitleComponent
-                  data={
-                    <div className="config">
-                      {item.name}
-                      <Tooltip title="此配置来自于该产品接入方式所选择的协议">
-                        <QuestionCircleOutlined />
-                      </Tooltip>
-                    </div>
-                  }
-                />
-              ),
-              'x-decorator': 'FormItem',
-              'x-decorator-props': {
-                gridSpan: 1,
-                labelAlign: 'left',
-                layout: 'vertical',
-              },
-              properties: configToSchema(item.properties),
+    const itemSchema: any = (metadata || []).map((item: any) => {
+      return {
+        type: 'object',
+        properties: {
+          grid: {
+            type: 'void',
+            'x-component': 'FormGrid',
+            'x-component-props': {
+              maxColumns: 1,
+              minColumns: 1,
+              columnGap: 48,
             },
+            title: (
+              <TitleComponent
+                data={
+                  <div className="config">
+                    {item.name}
+                    <Tooltip title="此配置来自于该产品接入方式所选择的协议">
+                      <QuestionCircleOutlined />
+                    </Tooltip>
+                  </div>
+                }
+              />
+            ),
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 1,
+              labelAlign: 'left',
+              layout: 'vertical',
+            },
+            properties: configToSchema(item.properties),
           },
-        };
-
-        return (
-          <PreviewText.Placeholder value="-" key={'config'}>
-            <Form form={form} layout="vertical">
-              <FormLayout>
-                <SchemaField schema={itemSchema} />
-              </FormLayout>
-              <Button
-                type="primary"
-                onClick={async () => {
-                  const values = (await form.submit()) as any;
-                  const resp = await productService.modify(id || '', {
-                    id,
-                    configuration: { ...values },
-                  });
-                  if (resp.status === 200) {
-                    onlyMessage('操作成功！');
-                    if ((window as any).onTabSaveSuccess) {
-                      if (resp.result) {
-                        (window as any).onTabSaveSuccess(resp);
-                        setTimeout(() => window.close(), 300);
-                      }
-                    } else {
-                      getDetailInfo();
-                    }
+        },
+      };
+    });
+    const schema: ISchema = {
+      type: 'object',
+      properties: {
+        ...itemSchema,
+        storePolicy: {
+          type: 'string',
+          title: <TitleComponent data={'存储策略'} />,
+          'x-decorator': 'FormItem',
+          'x-component': 'Select',
+          'x-component-props': {
+            placeholder: '请选择存储策略',
+          },
+          // required: true,
+          default: 'default-column',
+          'x-decorator-props': {
+            // tooltip: '使用指定的存储策略来存储设备数据',
+            gridSpan: 1,
+            labelAlign: 'left',
+            layout: 'vertical',
+          },
+          enum: storageList,
+        },
+      },
+    };
+    return (
+      <PreviewText.Placeholder value="-" key={'config'}>
+        <Form form={form} layout="vertical">
+          <FormLayout>
+            <SchemaField schema={schema} />
+          </FormLayout>
+          <Button
+            type="primary"
+            onClick={async () => {
+              const values = (await form.submit()) as any;
+              const { storePolicy, ...extra } = values;
+              const resp = await productService.modify(id || '', {
+                id,
+                configuration: { ...extra },
+                storePolicy: storePolicy,
+              });
+              if (resp.status === 200) {
+                onlyMessage('操作成功！');
+                if ((window as any).onTabSaveSuccess) {
+                  if (resp.result) {
+                    (window as any).onTabSaveSuccess(resp);
+                    setTimeout(() => window.close(), 300);
                   }
-                }}
-              >
-                保存
-              </Button>
-            </Form>
-          </PreviewText.Placeholder>
-        );
-      })
+                } else {
+                  getDetailInfo();
+                }
+              }
+            }}
+          >
+            保存
+          </Button>
+        </Form>
+      </PreviewText.Placeholder>
     );
   };
-
-  // useEffect(() => {
-
-  // }, [])
 
   return (
     <div>
@@ -540,6 +590,9 @@ const Access = () => {
                           更换
                         </Button>
                       </Tooltip>
+                      {/* <Button onClick={async()=>{
+                          await service.productGuideDetail()
+                        }}>删除</Button> */}
                     </span>
                   }
                 />
