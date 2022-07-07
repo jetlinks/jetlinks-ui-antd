@@ -139,11 +139,18 @@ const EditableTable = (props: Props) => {
       render: (text: any, record: any) => <span>{record.valueType?.type}</span>,
     },
     {
-      title: '映射状态',
+      title: (
+        <span>
+          映射状态
+          <Tooltip title="默认映射：当前属性不做映射，使用物模型属性进行数据处理。">
+            <QuestionCircleOutlined />
+          </Tooltip>
+        </span>
+      ),
       dataIndex: 'customMapping',
       render: (text: any) => (
         <span>
-          <Badge status={text ? 'success' : 'error'} text={text ? '已映射' : '未映射'} />
+          <Badge status={'success'} text={text ? '已映射' : '默认映射'} />
         </span>
       ),
     },

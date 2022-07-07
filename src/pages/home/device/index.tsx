@@ -79,8 +79,12 @@ const Device = () => {
 
   return (
     <Row gutter={24}>
-      <Col span={24}>
+      <Col span={18}>
         <Steps
+          style={{
+            height: 275,
+            gridColumnGap: 20,
+          }}
           title={
             <span>
               设备接入推荐步骤
@@ -161,24 +165,10 @@ const Device = () => {
           ]}
         />
       </Col>
-      <Col span={18} style={{ marginTop: 24 }}>
-        <Body
-          title={'平台架构图'}
-          english={'PLATFORM ARCHITECTURE DIAGRAM'}
-          url={require('/public/images/home/content1.png')}
-        />
-        {/* <Guide
-          title="物联网引导"
-          data={guideList}
-        // jump={(auth: boolean, url: string, param: string) => {
-        //   pageJump(auth, url, param);
-        // }}
-        /> */}
-      </Col>
-      <Col span={6} style={{ marginTop: 24 }}>
+      <Col span={6}>
         <Statistics
           style={{ gridTemplateColumns: 'repeat(1, 1fr)' }}
-          height={448}
+          // height={448}
           data={[
             {
               name: '产品数量',
@@ -210,9 +200,9 @@ const Device = () => {
           }
         />
       </Col>
-      {/* <Col span={24}>
+      <Col span={24} style={{ marginTop: 24 }}>
         <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
-      </Col> */}
+      </Col>
 
       <ProductChoose
         visible={productVisible}

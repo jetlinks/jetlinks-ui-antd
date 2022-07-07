@@ -22,7 +22,7 @@ const Config = () => {
     }
   }, []);
 
-  const [metadata, setMetadata] = useState<ConfigMetadata[]>([]);
+  const [metadata, setMetadata] = useState<ConfigMetadata[]>(InstanceModel.config);
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
 
