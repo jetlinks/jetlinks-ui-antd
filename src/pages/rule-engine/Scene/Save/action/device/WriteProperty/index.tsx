@@ -14,6 +14,8 @@ interface WritePropertyProps {
   onChange?: (value?: any) => void;
   parallel?: boolean;
   name: number;
+  trigger?: any;
+  productId: string;
 }
 
 export default (props: WritePropertyProps) => {
@@ -51,57 +53,80 @@ export default (props: WritePropertyProps) => {
     if (props.onChange) {
       props.onChange({
         [key || 0]: {
-          value,
+          value: value,
           source: _source,
         },
       });
     }
   };
 
+  const sourceChangeEvent = () => {
+    onChange(propertiesKey, undefined, source);
+    const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+    const data = props.form.getFieldsValue();
+    queryBuiltInParams(data, params).then((res: any) => {
+      if (res.status === 200) {
+        const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+        const _data = props.name === 0 ? res.result : handleTreeData(actionParams);
+        setBuiltInList(_data);
+      }
+    });
+    // if (props.parallel === false) {
+    //   // 串行
+    // } else {
+    //   // 并行
+    //   queryBuiltInParams({
+    //     trigger: { type: props.type },
+    //   }).then((res: any) => {
+    //     if (res.status === 200) {
+    //       setBuiltInList(handleTreeData(res.result));
+    //     }
+    //   });
+    // }
+  };
+
   useEffect(() => {
     if (source === 'upper') {
-      onChange(propertiesKey, undefined, source);
-      if (props.parallel === false) {
-        // 串行
-        const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
-        const data = props.form.getFieldsValue();
-        queryBuiltInParams(data, params).then((res: any) => {
-          if (res.status === 200) {
-            const actionParams = res.result.filter(
-              (item: any) => item.id === `action_${props.name}`,
-            );
-            const _data = props.name === 0 ? res.result : handleTreeData(actionParams);
-            setBuiltInList(_data);
-          }
-        });
-      } else {
-        // 并行
-        queryBuiltInParams({
-          trigger: { type: props.type },
-        }).then((res: any) => {
-          if (res.status === 200) {
-            setBuiltInList(handleTreeData(res.result));
-          }
-        });
-      }
+      sourceChangeEvent();
     }
   }, [source, props.type, props.parallel]);
 
   useEffect(() => {
-    if (props.value && props.properties && props.properties.length) {
-      if (0 in props.value) {
-        setPropertiesValue(props.value[0]);
-      } else {
-        Object.keys(props.value).forEach((key: string) => {
-          setPropertiesKey(key);
-          setPropertiesValue(props.value[key].value);
-          setSource(props.value[key].source);
-          const propertiesItem = props.properties.find((item: any) => item.id === key);
-          if (propertiesItem) {
-            setPropertiesType(propertiesItem.valueType.type);
-          }
-        });
+    if (props.trigger?.trigger?.device?.productId && source === 'upper') {
+      sourceChangeEvent();
+    }
+  }, [props.trigger?.trigger?.device?.productId, source]);
+
+  useEffect(() => {
+    if (props.productId) {
+      setPropertiesKey(undefined);
+      onChange('undefined', undefined, source);
+    }
+  }, [props.productId]);
+
+  useEffect(() => {
+    if (props.value) {
+      if (props.properties && props.properties.length) {
+        if (0 in props.value) {
+          setPropertiesValue(props.value[0]);
+        } else if ('undefined' in props.value) {
+          setPropertiesKey(undefined);
+          setPropertiesValue(undefined);
+        } else {
+          Object.keys(props.value).forEach((key: string) => {
+            setPropertiesKey(key);
+            setPropertiesValue(props.value[key].value);
+            setSource(props.value[key].source);
+            const propertiesItem = props.properties.find((item: any) => item.id === key);
+            if (propertiesItem) {
+              setPropertiesType(propertiesItem.valueType.type);
+            }
+          });
+        }
       }
+    } else {
+      setPropertiesKey(undefined);
+      setPropertiesValue(undefined);
     }
   }, [props.value, props.properties]);
 

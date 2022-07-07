@@ -17,6 +17,7 @@ interface DeviceProps {
   onMessageTypeChange: (type: string) => void;
   onFunctionChange: (functionItem: any) => void;
   parallel?: boolean;
+  onProductIdChange: (id: string) => void;
 }
 
 enum SourceEnum {
@@ -87,12 +88,20 @@ export default (props: DeviceProps) => {
     } else {
       setSourceList(DefaultSourceOptions);
     }
-    props.form?.setFields([
-      {
-        name: ['actions', name, 'device', 'selector'],
-        value: SourceEnum.fixed,
-      },
-    ]);
+    const actions = props.form?.getFieldValue('actions');
+
+    if (actions[name] && actions[name].device) {
+      if (actions[name].device.selector) {
+        actions[name].device.selector = SourceEnum.fixed;
+      }
+      if (actions[name].device.selectorValues) {
+        actions[name].device.selectorValues = undefined;
+      }
+    }
+    props.form?.setFieldsValue({
+      actions,
+    });
+    setSelector(SourceEnum.fixed);
   }, [props.triggerType]);
 
   useEffect(() => {
@@ -102,6 +111,8 @@ export default (props: DeviceProps) => {
         handleMetadata(productItem.metadata);
       }
     }
+
+    props.onProductIdChange(productId);
   }, [productId]);
 
   useEffect(() => {
@@ -134,7 +145,6 @@ export default (props: DeviceProps) => {
   }, []);
 
   useEffect(() => {
-    console.log('actions-device', props.value);
     const deviceData = props.value;
     if (deviceData) {
       setProductId(deviceData.productId);

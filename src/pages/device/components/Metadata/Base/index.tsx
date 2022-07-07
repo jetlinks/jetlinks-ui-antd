@@ -208,7 +208,7 @@ const BaseMetadata = observer((props: Props) => {
           >
             {intl.formatMessage({
               id: 'pages.searchTable.new',
-              defaultMessage: '新建',
+              defaultMessage: '新增',
             })}
           </PermissionButton>,
         ]}

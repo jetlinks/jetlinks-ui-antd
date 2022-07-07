@@ -8,6 +8,7 @@ interface ConditionalFilteringProps {
   name: number;
   form: FormInstance;
   data?: any;
+  productId: string;
 }
 
 export default (props: ConditionalFilteringProps) => {
@@ -85,7 +86,6 @@ export default (props: ConditionalFilteringProps) => {
   const getBuiltItemById = useCallback(
     (id: string) => {
       const builtItem: any = getItemByChildren(id, builtInList);
-      console.log(builtItem, id);
       if (builtItem) {
         setType(builtItem.type);
         setTermTypes(builtItem.termTypes);
@@ -95,7 +95,7 @@ export default (props: ConditionalFilteringProps) => {
     [builtInList],
   );
 
-  useEffect(() => {
+  const getBuiltInParamsData = () => {
     const data = props.form.getFieldsValue();
     queryBuiltInParams(data, { action: props.name }).then((res: any) => {
       if (res.status === 200) {
@@ -105,16 +105,32 @@ export default (props: ConditionalFilteringProps) => {
         setBuiltInList(handleTreeData(actionParams));
       }
     });
-  }, []);
+  };
 
   useEffect(() => {
-    console.log('Conditional', builtInList);
     if (props.data && props.data[0] && props.data[0].column && builtInList && builtInList.length) {
       getBuiltItemById(props.data[0].column);
     }
   }, [props.data, builtInList]);
 
-  console.log(props.data, props.name);
+  useEffect(() => {
+    if (props.productId) {
+      getBuiltInParamsData();
+      const actions = props.form.getFieldValue('actions');
+      if (actions?.[props.name].terms?.[0]) {
+        actions[props.name].terms[0] = {
+          column: undefined,
+          termType: undefined,
+          value: {
+            source: 'fixed',
+            value: undefined,
+          },
+        };
+      }
+      setSource('fixed');
+    }
+  }, [props.productId]);
+
   return (
     <>
       <Col span={4}>
@@ -175,6 +191,30 @@ export default (props: ConditionalFilteringProps) => {
                 style={{ width: 120 }}
                 onSelect={(v: any) => {
                   setSource(v);
+                  if (
+                    ['nbtw', 'btw'].includes(
+                      props.data && props.data[0] && props.data[0].termType,
+                    ) &&
+                    source === 'fixed'
+                  ) {
+                    props.form.setFields([
+                      {
+                        name: [props.name, 'terms', 0, 'value', 'value', 0],
+                        value: undefined,
+                      },
+                      {
+                        name: [props.name, 'terms', 0, 'value', 'value', 1],
+                        value: undefined,
+                      },
+                    ]);
+                  } else {
+                    props.form.setFields([
+                      {
+                        name: [props.name, 'terms', 0, 'value', 'value'],
+                        value: undefined,
+                      },
+                    ]);
+                  }
                 }}
               />
             </Form.Item>
