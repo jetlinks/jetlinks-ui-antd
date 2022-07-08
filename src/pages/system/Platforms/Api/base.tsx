@@ -103,7 +103,7 @@ export default observer((props: ApiPageProps) => {
           showHome={props.showHome}
           type={props.type}
           onSelect={(data) => {
-            console.log(data);
+            // console.log(data);
             ApiModel.data = data;
             ApiModel.showTable = true;
           }}

@@ -135,6 +135,9 @@ const Save = observer(() => {
               f.setFieldState('grid.configuration.panel1.layout2.secure', (state) => {
                 state.value = false;
               });
+              f.setFieldState('shareCluster', (state) => {
+                state.value = true;
+              });
             }
             const _host = filterConfigByType(_.cloneDeep(configRef.current), value);
             f.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
@@ -157,17 +160,19 @@ const Save = observer(() => {
           });
           onFieldValueChange('shareCluster', (field, f5) => {
             const value = (field as Field).value;
-            if (value) {
-              // 共享配置
-              f5.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
-                state.value = '0.0.0.0';
-                state.disabled = true;
-              });
-            } else {
-              // 独立配置
-              f5.setFieldState('grid.cluster.cluster', (state) => {
-                state.value = [{}];
-              });
+            if (f5.modified) {
+              if (value) {
+                // 共享配置
+                f5.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
+                  state.value = '0.0.0.0';
+                  state.disabled = true;
+                });
+              } else {
+                // 独立配置
+                f5.setFieldState('grid.cluster.cluster', (state) => {
+                  state.value = [{}];
+                });
+              }
             }
           });
           onFieldValueChange('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
@@ -180,8 +185,8 @@ const Save = observer(() => {
           });
           onFieldValueChange('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
             const host = (field as Field).value;
-            const value = (field.query('.serverId').take() as Field).value;
-            const type = (field.query('type').take() as Field).value;
+            const value = (field.query('.serverId').take() as Field)?.value;
+            const type = (field.query('type').take() as Field)?.value;
             const response = await getResourceById(value, type);
             const _ports = response.find((item) => item.host === host);
             f4.setFieldState(field.query('.port').take(), async (state) => {
@@ -212,7 +217,7 @@ const Save = observer(() => {
       if (!_data.shareCluster) {
         _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
       }
-      form.setValues(_data);
+      form.setValues({ ..._data });
     });
     return () => {
       subscription.unsubscribe();

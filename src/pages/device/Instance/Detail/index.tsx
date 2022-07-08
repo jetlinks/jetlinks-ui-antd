@@ -24,7 +24,7 @@ import SystemConst from '@/utils/const';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { PermissionButton } from '@/components';
-import { QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
@@ -426,7 +426,9 @@ const InstanceDetail = observer(() => {
         //     defaultMessage: '应用配置',
         //   })}
         // </Button>,
-        <SyncOutlined
+        <img
+          style={{ marginRight: 20, cursor: 'pointer' }}
+          src={require('/public/images/device/button.png')}
           onClick={() => {
             getDetail(params.id);
             service.getConfigMetadata(params.id).then((config) => {
@@ -436,9 +438,20 @@ const InstanceDetail = observer(() => {
               }
             });
           }}
-          style={{ fontSize: 20, marginRight: 20 }}
-          key="1"
         />,
+        // <SyncOutlined
+        //   onClick={() => {
+        //     getDetail(params.id);
+        //     service.getConfigMetadata(params.id).then((config) => {
+        //       if (config.status === 200) {
+        //         InstanceModel.config = config?.result || [];
+        //         message.success('操作成功！');
+        //       }
+        //     });
+        //   }}
+        //   style={{ fontSize: 20, marginRight: 20 }}
+        //   key="1"
+        // />,
       ]}
     >
       {list.find((k) => k.key === InstanceModel.active)?.component}

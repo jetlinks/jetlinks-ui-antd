@@ -22,10 +22,10 @@ const BindUser = (props: Props) => {
 
   const getUsers = async (id: string) => {
     const resp = await service.syncUser.noBindUser({
-      pagign: false,
+      paging: false,
       terms: [
         {
-          column: `id$user-third${state.current?.type}_${state.current?.provider}$not`,
+          column: `id$user-third$${state.current?.type}_${state.current?.provider}$not`,
           value: id,
         },
       ],
