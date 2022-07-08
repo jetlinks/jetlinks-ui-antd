@@ -143,16 +143,6 @@
   width: 100%;
   background-color: #fff;
 
-  &.item-active {
-    position: relative;
-    color: #2f54eb;
-    border: 1px solid #2f54eb;
-
-    .checked-icon {
-      display: block;
-    }
-  }
-
   .checked-icon {
     position: absolute;
     right: -22px;
@@ -265,6 +255,19 @@
         background-color: rgba(#000, 0.5);
         visibility: visible;
       }
+    }
+  }
+
+  &.item-active {
+    position: relative;
+    color: #2f54eb;
+
+    .checked-icon {
+      display: block;
+    }
+
+    .card-warp {
+      border: 1px solid #2f54eb;
     }
   }
 

@@ -207,7 +207,6 @@ const Device = () => {
         />
       </Col>
 
-
       <ProductChoose
         visible={productVisible}
         close={() => {
