@@ -206,44 +206,6 @@ const Device = () => {
           ]}
         />
       </Col>
-      <Col span={6}>
-        <Statistics
-          style={{ gridTemplateColumns: 'repeat(1, 1fr)' }}
-          // height={448}
-          data={[
-            {
-              name: '产品数量',
-              value: productCount,
-              children: '',
-            },
-            {
-              name: '设备数量',
-              value: deviceCount,
-              children: '',
-            },
-          ]}
-          title="设备统计"
-          extra={
-            <div style={{ fontSize: 14, fontWeight: 400 }}>
-              <a
-                onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['device/DashBoard']);
-                  if (!!url) {
-                    history.push(`${url}`);
-                  } else {
-                    message.warning('暂无权限，请联系管理员');
-                  }
-                }}
-              >
-                详情
-              </a>
-            </div>
-          }
-        />
-      </Col>
-      <Col span={24} style={{ marginTop: 24 }}>
-        <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
-      </Col>
 
       <ProductChoose
         visible={productVisible}

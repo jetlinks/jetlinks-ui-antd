@@ -181,10 +181,14 @@ const BaseInfo = (props: BaseInfoProps) => {
         <Descriptions.Item
           label={intl.formatMessage({
             id: 'pages.device.productDetail.classifiedName',
-            defaultMessage: '所属品类',
+            defaultMessage: '产品分类',
           })}
         >
-          {productModel.current?.classifiedName}
+          <Tooltip placement="topLeft" title={productModel.current?.classifiedName}>
+            <div className="ellipsis-70" style={{ width: 300 }}>
+              {productModel.current?.classifiedName}
+            </div>
+          </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
