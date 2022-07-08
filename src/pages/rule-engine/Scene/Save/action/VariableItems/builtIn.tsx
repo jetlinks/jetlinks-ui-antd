@@ -64,7 +64,7 @@ export default (props: BuiltInProps) => {
     if (source === 'upper') {
       sourceChangeEvent();
     }
-  }, [source, props.trigger, props.parallel]);
+  }, [source, props.trigger, props.parallel, props.type]);
 
   useEffect(() => {
     if (props.trigger?.trigger?.device?.productId && source === 'upper') {

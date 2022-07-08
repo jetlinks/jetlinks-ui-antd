@@ -581,10 +581,10 @@ const Detail = observer(() => {
                         title: '收信部门',
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          tooltip: '如果不填写该字段,将在使用此模版发送通知时进行指定。',
-                          gridSpan: 1,
-                        },
+                        // 'x-decorator-props': {
+                        //   tooltip: '如果不填写该字段,将在使用此模版发送通知时进行指定。',
+                        //   gridSpan: 1,
+                        // },
                         'x-component-props': {
                           placeholder: '请选择收信部门',
                         },
@@ -788,10 +788,10 @@ const Detail = observer(() => {
                         required: true,
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
-                        'x-decorator-props': {
-                          tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
-                          gridSpan: 1,
-                        },
+                        // 'x-decorator-props': {
+                        //   tooltip: '如果不填写该字段，将在使用此模板发送通知时进行指定',
+                        //   gridSpan: 1,
+                        // },
                         'x-component-props': {
                           placeholder: '请选择收信部门',
                         },
