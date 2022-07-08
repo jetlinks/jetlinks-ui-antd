@@ -66,7 +66,11 @@ const Info = observer(() => {
             </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item label={'产品分类'}>
-            {InstanceModel.detail?.classifiedName}
+          <Tooltip placement="topLeft" title= {InstanceModel.detail?.classifiedName}>
+              <div className="ellipsis" style={{ maxWidth: 250 }}>
+              {InstanceModel.detail?.classifiedName}
+              </div>
+            </Tooltip>
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({

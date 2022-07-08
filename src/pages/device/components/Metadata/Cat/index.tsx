@@ -62,6 +62,7 @@ const Cat = observer((props: Props) => {
     <Drawer
       maskClosable={false}
       title="查看物模型"
+      width={'40%'}
       onClose={() => props.close()}
       visible={props.visible}
       extra={
@@ -81,8 +82,8 @@ const Cat = observer((props: Props) => {
         </Space>
       }
     >
-      <div style={{ background: 'rgb(236, 237, 238)' }}>
-        <p style={{ padding: 10 }}>
+      <div style={{ background: '#F6F6F6' }}>
+        <p style={{ padding: 10 ,color:'rgba(0, 0, 0, 0.55)'}}>
           物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为
           TSL（即 Thing Specification Language），采用 JSON 格式，您可以根据 TSL
           组装上报设备的数据。您可以导出完整物模型，用于云端应用开发。
@@ -93,7 +94,7 @@ const Cat = observer((props: Props) => {
           <Tabs.TabPane tab={item.name} tabKey={item.id} key={item.id}>
             <div style={{ border: '1px solid #eee' }}>
               <MonacoEditor
-                height={350}
+                height={670}
                 theme="vs"
                 language="json"
                 value={value}
