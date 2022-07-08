@@ -4,6 +4,7 @@ import Comprehensive from './comprehensive';
 import Device from './device';
 import Init from './init';
 import Ops from './ops';
+import Api from './Api'
 import Service from './service';
 import { Skeleton } from 'antd';
 
@@ -12,6 +13,7 @@ const Home = () => {
   type ViewType = keyof typeof ViewMap;
   const [current, setCurrent] = useState<ViewType>('init'); // 默认为初始化
   const [loading, setLoading] = useState(true);
+  const [detail, setDetail] = useState<any>({})
 
   const ViewMap = {
     init: <Init changeView={(value: ViewType) => setCurrent(value)} />,
@@ -31,11 +33,35 @@ const Home = () => {
         }
       }
     });
+
   }, []);
+  useEffect(() => {
+    service.userDetail().then(res => {
+      if (res.status === 200) {
+        service.apiDetail(
+          {
+            "terms": [
+              {
+                "column": "userId",
+                "value": res.result.id
+              }
+            ]
+          }
+        ).then(response => {
+          if (response.status === 200) {
+            setDetail(response.result?.data)
+          }
+        })
+      }
+    })
+  }, [])
+
   return (
     <PageContainer>
       <Skeleton loading={loading} active>
-        {ViewMap[current]}
+        {
+          detail && detail.length > 0 ? <Api /> : <>{ViewMap[current]}</>
+        }
       </Skeleton>
     </PageContainer>
   );

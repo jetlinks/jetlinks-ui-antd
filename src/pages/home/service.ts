@@ -21,6 +21,15 @@ class Service {
       method: 'POST',
       data,
     });
+  userDetail = () =>
+    request(`/${SystemConst.API_BASE}/user/detail`, {
+      method: 'GET',
+    })
+  apiDetail = (data:any) =>
+    request(`/${SystemConst.API_BASE}/api-client/_query`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

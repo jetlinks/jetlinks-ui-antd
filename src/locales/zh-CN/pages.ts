@@ -197,7 +197,7 @@ export default {
   'pages.device.product.status.all': '全部',
   'pages.device.productDetail': '产品详情',
   'pages.device.productDetail.id': '产品ID',
-  'pages.device.productDetail.classifiedName': '所属品类',
+  'pages.device.productDetail.classifiedName': '产品分类',
   'pages.device.productDetail.protocolName': '消息协议',
   'pages.device.productDetail.transportProtocol': '接入方式',
   'pages.device.productDetail.createTime': '创建时间',

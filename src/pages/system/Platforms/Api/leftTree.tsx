@@ -33,7 +33,7 @@ export default (props: LeftTreeType) => {
   const updateTreeData = useCallback(
     (list: DataNode[], parentItem: any): DataNode[] => {
       let newArray: any[] = list;
-      console.log(list, props.grantKeys);
+      // console.log(list, props.grantKeys);
       if (props.type === 'empowerment') {
         newArray = list.filter(
           (item: any) =>
@@ -101,7 +101,7 @@ export default (props: LeftTreeType) => {
     });
 
     forkJoin(ofArray).subscribe((res) => {
-      console.log(res);
+      // console.log(res);
       setLoading(false);
       setTreeData(extraData ? [extraData, ...res] : res);
     });
@@ -168,7 +168,7 @@ export default (props: LeftTreeType) => {
     }
   }, [props.operations, props.grantKeys, props.type]);
 
-  console.log(treeData);
+  // console.log(treeData);
   return (
     <div
       style={{
