@@ -208,16 +208,19 @@ const Status = observer((props: Props) => {
         }
       }
     });
-
   // 设备接入网关
   const diagnoseGateway = () =>
     new Promise((resolve) => {
+      const desc =
+        providerType && ['child-device', 'cloud'].includes(providerType)
+          ? '诊断设备接入网关状态是否正常，网关配置是否正确'
+          : '诊断设备接入网关状态是否正常，禁用状态将导致连接失败';
       if (device.state?.value === 'online') {
         setTimeout(() => {
           DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
             key: 'gateway',
             name: '设备接入网关',
-            desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+            desc: desc,
             status: 'success',
             text: '正常',
             info: null,
@@ -233,19 +236,81 @@ const Status = observer((props: Props) => {
               if (response.status === 200) {
                 DiagnoseStatusModel.gateway = response.result;
                 if (response.result?.state?.value === 'enabled') {
-                  item = {
-                    key: 'gateway',
-                    name: '设备接入网关',
-                    desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
-                    status: 'success',
-                    text: '正常',
-                    info: null,
-                  };
+                  if (providerType === 'cloud' || device?.accessProvider === 'gb28181-2016') {
+                    item = {
+                      key: 'gateway',
+                      name: '设备接入网关',
+                      desc: desc,
+                      status: 'error',
+                      text: '可能存在异常',
+                      info: (
+                        <div>
+                          <div className={styles.infoItem}>
+                            <Badge
+                              status="default"
+                              text={
+                                <span>
+                                  请
+                                  <a
+                                    onClick={async () => {
+                                      const config = await service.getGatewayDetail(
+                                        response.result?.id || '',
+                                      );
+                                      if (config.status === 200) {
+                                        manualInspection({
+                                          type: providerType,
+                                          key: `gateway`,
+                                          name: `设备接入网关`,
+                                          desc: desc,
+                                          data: { name: `${device?.accessProvider}配置` },
+                                          configuration: { ...config.result },
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    人工检查
+                                  </a>
+                                  网关配置是否已填写正确，若您确定该项无需诊断可
+                                  <Popconfirm
+                                    title="确认忽略？"
+                                    onConfirm={() => {
+                                      DiagnoseStatusModel.list = modifyArrayList(
+                                        DiagnoseStatusModel.list,
+                                        {
+                                          key: 'gateway',
+                                          name: '设备接入网关',
+                                          desc: desc,
+                                          status: 'success',
+                                          text: '正常',
+                                          info: null,
+                                        },
+                                      );
+                                    }}
+                                  >
+                                    <a>忽略</a>
+                                  </Popconfirm>
+                                </span>
+                              }
+                            />
+                          </div>
+                        </div>
+                      ),
+                    };
+                  } else {
+                    item = {
+                      key: 'gateway',
+                      name: '设备接入网关',
+                      desc: desc,
+                      status: 'success',
+                      text: '正常',
+                      info: null,
+                    };
+                  }
                 } else {
                   item = {
                     key: 'gateway',
                     name: '设备接入网关',
-                    desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                    desc: desc,
                     status: 'error',
                     text: '异常',
                     info: (
@@ -270,7 +335,7 @@ const Status = observer((props: Props) => {
                                           {
                                             key: 'gateway',
                                             name: '设备接入网关',
-                                            desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                                            desc: desc,
                                             status: 'success',
                                             text: '正常',
                                             info: null,
@@ -306,19 +371,81 @@ const Status = observer((props: Props) => {
           }
         } else {
           if (DiagnoseStatusModel.gateway?.state?.value === 'enabled') {
-            item = {
-              key: 'gateway',
-              name: '设备接入网关',
-              desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
-              status: 'success',
-              text: '正常',
-              info: null,
-            };
+            if (providerType === 'cloud' || device?.accessProvider === 'gb28181-2016') {
+              item = {
+                key: 'gateway',
+                name: '设备接入网关',
+                desc: desc,
+                status: 'error',
+                text: '可能存在异常',
+                info: (
+                  <div>
+                    <div className={styles.infoItem}>
+                      <Badge
+                        status="default"
+                        text={
+                          <span>
+                            请
+                            <a
+                              onClick={async () => {
+                                const config = await service.getGatewayDetail(
+                                  DiagnoseStatusModel.gateway?.id || '',
+                                );
+                                if (config.status === 200) {
+                                  manualInspection({
+                                    type: providerType,
+                                    key: `gateway`,
+                                    name: `设备接入网关`,
+                                    desc: desc,
+                                    data: { name: `${device?.accessProvider}配置` },
+                                    configuration: { ...config.result },
+                                  });
+                                }
+                              }}
+                            >
+                              人工检查
+                            </a>
+                            网关配置是否已填写正确，若您确定该项无需诊断可
+                            <Popconfirm
+                              title="确认忽略？"
+                              onConfirm={() => {
+                                DiagnoseStatusModel.list = modifyArrayList(
+                                  DiagnoseStatusModel.list,
+                                  {
+                                    key: 'gateway',
+                                    name: '设备接入网关',
+                                    desc: desc,
+                                    status: 'success',
+                                    text: '正常',
+                                    info: null,
+                                  },
+                                );
+                              }}
+                            >
+                              <a>忽略</a>
+                            </Popconfirm>
+                          </span>
+                        }
+                      />
+                    </div>
+                  </div>
+                ),
+              };
+            } else {
+              item = {
+                key: 'gateway',
+                name: '设备接入网关',
+                desc: desc,
+                status: 'success',
+                text: '正常',
+                info: null,
+              };
+            }
           } else {
             item = {
               key: 'gateway',
               name: '设备接入网关',
-              desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+              desc: desc,
               status: 'error',
               text: '异常',
               info: (
@@ -341,7 +468,7 @@ const Status = observer((props: Props) => {
                                     {
                                       key: 'gateway',
                                       name: '设备接入网关',
-                                      desc: '诊断设备接入网关状态是否正常，禁用状态将导致连接失败',
+                                      desc: desc,
                                       status: 'success',
                                       text: '正常',
                                       info: null,
@@ -428,7 +555,7 @@ const Status = observer((props: Props) => {
         } else {
           let item: ListProps | undefined = undefined;
           const response = await service.detail(device?.parentId);
-          DiagnoseStatusModel.parent = resp.result;
+          DiagnoseStatusModel.parent = response.result;
           if (response.status === 200) {
             if (response?.result?.state?.value === 'notActive') {
               item = {
@@ -704,7 +831,7 @@ const Status = observer((props: Props) => {
   const diagnoseProductAuthConfig = () =>
     new Promise(async (resolve) => {
       if (device?.productId) {
-        const response = await service.queryDeviceConfig(device.productId);
+        const response = await service.queryProductConfig(device.productId);
         if (response.status === 200 && response.result.length > 0) {
           DiagnoseStatusModel.configuration.product = response.result;
           const list = [...DiagnoseStatusModel.list];
@@ -1758,21 +1885,15 @@ const Status = observer((props: Props) => {
       await diagnoseDeviceAuthConfig();
     } else if (providerType === 'child-device') {
       DiagnoseStatusModel.list = [...childInitList];
-      await diagnoseNetwork();
       await diagnoseGateway();
       DiagnoseStatusModel.percent = 20;
       await diagnoseParentDevice();
       await diagnoseProduct();
-      await diagnoseDevice();
       DiagnoseStatusModel.percent = 40;
+      await diagnoseDevice();
+      DiagnoseStatusModel.percent = 60;
       await diagnoseProductAuthConfig();
       await diagnoseDeviceAuthConfig();
-      DiagnoseStatusModel.percent = 60;
-      // await diagnoseModbus();
-      // await diagnoseOpcua();
-      // await diagnoseModbusState();
-      // await diagnoseOpcuaState();
-      // await diagnoseDataPointBind();
       DiagnoseStatusModel.percent = 80;
     } else if (providerType === 'media') {
       DiagnoseStatusModel.list = [...mediaInitList];

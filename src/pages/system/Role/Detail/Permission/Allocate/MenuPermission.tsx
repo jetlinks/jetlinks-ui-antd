@@ -27,10 +27,14 @@ const MenuPermission = (props: Props) => {
     setIndeterminate(props.value?.check === 2);
     const val =
       (props.value?.assetAccesses || []).filter((i: any) => i?.granted)[0]?.supportId || '';
+    // if (!val && props.value?.check === 1) {
+    //   setCheckValue('creator');
+    // } else {
     setCheckValue(val);
+    // }
   }, [props.value]);
 
-  const checkAllData: any = (data: any[], check: boolean) => {
+  const checkAllData: any = (data: any[], check: boolean, cvalue?: any) => {
     if (Array.isArray(data) && data.length > 0) {
       return data.map((item) => {
         const buttons = (item?.buttons || []).map((i: any) => {
@@ -41,9 +45,15 @@ const MenuPermission = (props: Props) => {
         });
         return {
           ...item,
+          assetAccesses: (item?.assetAccesses || []).map((i: any) => {
+            return {
+              ...i,
+              granted: !cvalue ? false : !i.granted ? i.supportId === cvalue : i.granted,
+            };
+          }),
           check: check ? 1 : 3, // 1: 全选 2: 只选了部分 3: 一个都没选
           buttons: [...buttons],
-          children: item?.children ? checkAllData(item?.children || [], check) : [],
+          children: item?.children ? checkAllData(item?.children || [], check, cvalue) : [],
         };
       });
     }
@@ -100,8 +110,10 @@ const MenuPermission = (props: Props) => {
               }}
               onChange={(e) => {
                 let access: any[] = [];
+                let cvalue: any = checkValue;
                 if (e.target.checked && !checkValue) {
                   setCheckValue('creator');
+                  cvalue = 'creator';
                   access = (value?.assetAccesses || []).map((i: any) => {
                     return {
                       ...i,
@@ -110,6 +122,7 @@ const MenuPermission = (props: Props) => {
                   });
                 } else if (!e.target.checked) {
                   setCheckValue('');
+                  cvalue = '';
                   access = (value?.assetAccesses || []).map((i: any) => {
                     return {
                       ...i,
@@ -117,6 +130,7 @@ const MenuPermission = (props: Props) => {
                     };
                   });
                 } else {
+                  cvalue = checkValue;
                   access = value?.assetAccesses || [];
                 }
                 setCheckAll(e.target.checked);
@@ -132,7 +146,7 @@ const MenuPermission = (props: Props) => {
                   assetAccesses: [...access],
                   check: e.target.checked ? 1 : 3, // 1: 全选 2: 只选了部分 3: 一个都没选
                   buttons: [...buttons],
-                  children: checkAllData(value.children || [], e.target.checked),
+                  children: checkAllData(value.children || [], e.target.checked, cvalue),
                 });
               }}
             >

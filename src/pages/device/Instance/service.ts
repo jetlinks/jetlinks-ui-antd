@@ -361,6 +361,10 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+  public getGatewayDetail = (id: string) =>
+    request(`/${SystemConst.API_BASE}/gateway/device/${id}`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
