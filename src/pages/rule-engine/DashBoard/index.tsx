@@ -55,7 +55,7 @@ const Dashboard = observer(() => {
     dimension: 'agg',
     group: 'today',
     params: {
-      time: '1h',
+      time: '1d',
       // targetType: 'device',
       format: 'HH:mm:ss',
       from: moment(new Date(new Date().setHours(0, 0, 0, 0))).format('YYYY-MM-DD HH:mm:ss'),
