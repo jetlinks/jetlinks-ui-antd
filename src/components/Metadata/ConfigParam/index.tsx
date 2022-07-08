@@ -29,7 +29,7 @@ const ConfigParam = (props: Props) => {
             'x-decorator': 'FormItem',
             // 判断type 类型
             'x-component': 'Select',
-            enum: i.type.elements.map((e) => ({
+            enum: i.type.elements?.map((e) => ({
               label: e.text,
               value: e.value,
             })),
