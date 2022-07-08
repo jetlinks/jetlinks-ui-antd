@@ -245,8 +245,8 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '80px',
-        right: '2%',
+        left: '50px',
+        right: '50px',
       },
       color: ['#979AFF'],
       series: Object.keys(data).length
@@ -293,7 +293,7 @@ export default () => {
       },
       grid: {
         left: '50px',
-        right: '2%',
+        right: '30px',
       },
       dataZoom: [
         {
@@ -352,7 +352,7 @@ export default () => {
       },
       grid: {
         left: '50px',
-        right: '2%',
+        right: '30px',
       },
       dataZoom: [
         {
@@ -638,7 +638,6 @@ export default () => {
         const cpu = value.cpu;
         const memory = value.memory;
         const disk = value.disk;
-        console.log(value);
         setTopValues({
           cpu: cpu.systemUsage,
           jvm: Number(((memory.jvmHeapUsage / 100) * (memory.jvmHeapTotal / 1024)).toFixed(1)),

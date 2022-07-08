@@ -32,7 +32,10 @@ export const PermissionsMap = {
 
 export const handlePermissionsMap = (permissions?: string[]) => {
   return permissions && permissions.length
-    ? permissions.map((item) => PermissionsMap[item]).toString()
+    ? permissions
+        .filter((item) => item in PermissionsMap)
+        .map((item) => PermissionsMap[item])
+        .toString()
     : '';
 };
 
@@ -47,12 +50,12 @@ export const ExtraProductCard = (props: ProductCardProps) => {
       showTool={props.showTool}
       actions={props.actions}
       statusText={intl.formatMessage({
-        id: `pages.system.tenant.assetInformation.${props.state ? 'published' : 'unpublished'}`,
-        defaultMessage: '已发布',
+        id: `pages.device.product.status.${props.state ? 'enabled' : 'disabled'}`,
+        defaultMessage: '正常',
       })}
       statusNames={{
         0: StatusColorEnum.error,
-        1: StatusColorEnum.processing,
+        1: StatusColorEnum.success,
       }}
       className={props.className}
       onClick={props.onClick}

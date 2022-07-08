@@ -277,6 +277,7 @@ const Save = () => {
               // },
               showSearch: true,
               showArrow: true,
+              disabled: id !== ':id',
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },

@@ -66,7 +66,7 @@ const Log = observer(() => {
       dataIndex: 'action',
       title: '操作',
       valueType: 'option',
-      hideInSearch:true,
+      hideInSearch: true,
       render: (text, record) => [
         <a
           onClick={() => {

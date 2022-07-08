@@ -283,8 +283,8 @@ const DeviceBoard = () => {
           grid: {
             top: '2%',
             bottom: '5%',
-            left: '4%',
-            right: '2%',
+            left: '50px',
+            right: '50px',
           },
           series: [
             {
