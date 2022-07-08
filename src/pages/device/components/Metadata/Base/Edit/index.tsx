@@ -1078,6 +1078,15 @@ const Edit = observer((props: Props) => {
           return;
       }
     };
+    if (params?.id) {
+      const result1 = await DB.getDB().table(`${type}`).where('id').equals(params.id).toArray();
+
+      if (result1.length > 0) {
+        message.error('标识已存在');
+        setLoading(false);
+        return;
+      }
+    }
 
     const _data = updateMetadata(type, [params], typeMap.get(props.type), updateDB);
 

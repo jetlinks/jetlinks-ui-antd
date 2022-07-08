@@ -302,7 +302,6 @@ const Message = observer(() => {
       FSelect,
       FDatePicker,
       NumberPicker,
-      DataTypeComponent,
     },
   });
 
