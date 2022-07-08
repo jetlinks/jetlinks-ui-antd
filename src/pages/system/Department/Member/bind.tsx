@@ -108,7 +108,9 @@ const Bind = observer((props: Props) => {
             MemberModel.bindUsers = selectedRows.map((item) => item.id);
           },
         }}
-        request={(params) => service.queryUser(params)}
+        request={(params) =>
+          service.queryUser({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
       />
     </Modal>
   );
