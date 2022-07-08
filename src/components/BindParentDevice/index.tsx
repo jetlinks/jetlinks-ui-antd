@@ -4,7 +4,7 @@ import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
-import { service, statusMap } from '@/pages/device/Instance';
+import { service } from '@/pages/device/Instance';
 import { useIntl } from 'umi';
 import moment from 'moment';
 
@@ -13,6 +13,11 @@ interface Props {
   onCancel: () => void;
   onOk: (parentId: string) => void;
 }
+
+const statusMap = new Map();
+statusMap.set('online', 'success');
+statusMap.set('offline', 'error');
+statusMap.set('notActive', 'warning');
 
 const BindParentDevice = (props: Props) => {
   const intl = useIntl();
@@ -42,6 +47,7 @@ const BindParentDevice = (props: Props) => {
       dataIndex: 'registryTime',
       ellipsis: true,
       width: '200px',
+      valueType: 'dateTime',
       render: (text: any) => (!!text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
       sorter: true,
     },
@@ -59,21 +65,21 @@ const BindParentDevice = (props: Props) => {
             id: 'pages.device.instance.status.notActive',
             defaultMessage: '未启用',
           }),
-          value: 'notActive',
+          status: 'notActive',
         },
         offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
             defaultMessage: '离线',
           }),
-          value: 'offline',
+          status: 'offline',
         },
         online: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
             defaultMessage: '在线',
           }),
-          value: 'online',
+          status: 'online',
         },
       },
     },
@@ -122,7 +128,7 @@ const BindParentDevice = (props: Props) => {
             submitBtn();
           }}
         >
-          确认
+          确定
         </Button>,
       ]}
     >

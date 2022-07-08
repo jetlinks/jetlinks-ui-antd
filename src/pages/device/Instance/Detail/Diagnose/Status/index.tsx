@@ -2102,6 +2102,7 @@ const Status = observer((props: Props) => {
               info: null,
             });
             InstanceModel.detail.parentId = parentId;
+            setBindParentVisible(false);
           }}
         />
       )}

@@ -198,6 +198,8 @@ const ManualInspection = (props: Props) => {
           )}
         </>
       );
+    } else {
+      return null;
     }
   };
 

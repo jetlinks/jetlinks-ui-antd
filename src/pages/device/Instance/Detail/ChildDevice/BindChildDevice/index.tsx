@@ -4,18 +4,21 @@ import SearchComponent from '@/components/SearchComponent';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
-import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { useIntl } from 'umi';
 import moment from 'moment';
 
 interface Props {
-  visible: boolean;
   data: Partial<DeviceInstance>;
   onCancel: () => void;
 }
 
+const statusMap = new Map();
+statusMap.set('online', 'success');
+statusMap.set('offline', 'error');
+statusMap.set('notActive', 'warning');
+
 const BindChildDevice = (props: Props) => {
-  const { visible } = props;
   const intl = useIntl();
 
   const actionRef = useRef<ActionType>();
@@ -42,8 +45,13 @@ const BindChildDevice = (props: Props) => {
       title: '注册时间',
       dataIndex: 'registryTime',
       ellipsis: true,
+      valueType: 'dateTime',
       width: '200px',
-      render: (text: any) => (!!text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      render: (text: any, record: any) => {
+        return !record?.registryTime
+          ? ''
+          : moment(record?.registryTime).format('YYYY-MM-DD HH:mm:ss');
+      },
       sorter: true,
     },
     {
@@ -60,21 +68,21 @@ const BindChildDevice = (props: Props) => {
             id: 'pages.device.instance.status.notActive',
             defaultMessage: '未启用',
           }),
-          value: 'notActive',
+          status: 'notActive',
         },
         offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
             defaultMessage: '离线',
           }),
-          value: 'offline',
+          status: 'offline',
         },
         online: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
             defaultMessage: '在线',
           }),
-          value: 'online',
+          status: 'online',
         },
       },
     },
@@ -93,7 +101,7 @@ const BindChildDevice = (props: Props) => {
     <Modal
       maskClosable={false}
       title="绑定子设备"
-      visible={visible}
+      visible
       width={1000}
       onOk={() => {
         submitBtn();
@@ -129,6 +137,7 @@ const BindChildDevice = (props: Props) => {
         field={[...columns]}
         target="child-device-bind"
         enableSave={false}
+        model="simple"
         // pattern={'simple'}
         defaultParam={[
           {

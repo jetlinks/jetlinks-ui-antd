@@ -192,7 +192,7 @@ const Import = (props: Props) => {
       obj.events = old?.event || [];
     }
     if (fid.includes('propertyNotModifiable')) {
-      obj.properties = old?.properties || {};
+      obj.properties = old?.properties || [];
     }
     return obj;
   };
