@@ -196,6 +196,7 @@ const Member = observer((props: { parentId: string }) => {
         search={false}
         rowKey="id"
         request={(params) => {
+          params.sorts = [{ name: 'createTime', order: 'desc' }];
           if (!props.parentId) {
             return {
               code: 200,

@@ -219,7 +219,9 @@ const Bind = observer((props: Props) => {
               Models.bindKeys = selectedRows.map((item) => item.id);
             },
           }}
-          request={(params) => service.queryDeviceList(params)}
+          request={(params) =>
+            service.queryDeviceList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          }
           params={searchParam}
           height={'none'}
         />

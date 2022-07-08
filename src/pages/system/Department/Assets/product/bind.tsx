@@ -142,7 +142,12 @@ const Bind = observer((props: Props) => {
                 };
               },
             }}
-            request={(params) => service.queryProductList(params)}
+            request={(params) =>
+              service.queryProductList({
+                ...params,
+                sorts: [{ name: 'createTime', order: 'desc' }],
+              })
+            }
             params={searchParam}
             cardRender={(record) => (
               <ExtraProductCard

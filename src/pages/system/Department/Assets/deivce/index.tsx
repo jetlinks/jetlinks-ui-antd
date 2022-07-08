@@ -320,6 +320,7 @@ export default observer((props: { parentId: string }) => {
         gridColumn={2}
         scroll={{ x: 1366 }}
         request={async (params) => {
+          params.sorts = [{ name: 'createTime', order: 'desc' }];
           if (!props.parentId) {
             return {
               code: 200,
