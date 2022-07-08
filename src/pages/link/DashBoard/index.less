@@ -1,62 +1,71 @@
-.link-dash-board {
-  .echarts-items {
-    position: relative;
-    display: flex;
-    gap: 24px;
-    margin-bottom: 24px;
-    padding: 24px;
-    background-color: #fff;
-
-    .echarts-item {
-      display: flex;
-      flex-grow: 1;
-      width: 0;
-      height: 160px;
-      padding: 16px;
+@media screen {
+  .link-dash-board {
+    .echarts-items {
+      position: relative;
+      display: grid;
+      grid-row-gap: 24px;
+      grid-column-gap: 24px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      margin-bottom: 24px;
+      padding: 24px;
       background-color: #fff;
-      border: 1px solid #e0e4e8;
 
-      .echarts-item-left {
+      .echarts-item {
         display: flex;
-        flex-direction: column;
-        width: 45%;
-      }
+        height: 150px;
+        padding: 16px;
+        background-color: #fff;
+        border: 1px solid #e0e4e8;
 
-      .echarts-item-right {
-        width: 55%;
-      }
+        .echarts-item-left {
+          display: flex;
+          flex-direction: column;
+          width: 45%;
+        }
 
-      .echarts-item-title {
-        margin-bottom: 8px;
-        color: rgba(#000, 0.6);
-        font-size: 16px;
-      }
+        .echarts-item-right {
+          width: 55%;
+        }
 
-      .echarts-item-value {
-        font-weight: bold;
-        font-size: 36px;
-      }
+        .echarts-item-title {
+          margin-bottom: 8px;
+          color: rgba(#000, 0.6);
+          font-size: 16px;
+        }
 
-      .echarts-item-bottom {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        justify-content: center;
-        height: 0;
-        padding-left: 12px;
+        .echarts-item-value {
+          font-weight: bold;
+          font-size: 36px;
+        }
 
-        &::before {
-          position: absolute;
-          top: 50%;
-          left: 0;
-          width: 4px;
-          height: 12px;
-          background-color: #ff595e;
-          transform: translateY(-50%);
-          content: ' ';
+        .echarts-item-bottom {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+          justify-content: center;
+          height: 0;
+          padding-left: 12px;
+
+          &::before {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 4px;
+            height: 12px;
+            background-color: #ff595e;
+            transform: translateY(-50%);
+            content: ' ';
+          }
         }
       }
+    }
+  }
+
+  @media (max-width: 1400px) {
+    .echarts-items {
+      grid-template-rows: 1fr 1fr;
+      grid-template-columns: 1fr 1fr !important;
     }
   }
 }

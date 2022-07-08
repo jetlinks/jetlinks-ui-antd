@@ -34,7 +34,7 @@ import _ from 'lodash';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
 import { onlyMessage, randomString } from '@/utils/util';
-import useUrlState from '@ahooksjs/use-url-state';
+import { useHistory, useLocation } from 'umi';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -151,11 +151,14 @@ const sortField = (field: ProColumns[]) => {
 const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const { field, target, onSearch, defaultParam, enableSave = true, initParam, model } = props;
 
+  const _history = useHistory();
+  const _location = useLocation();
+
   /**
    * 过滤不参与搜索的数据 ?
    * TODO Refactor 依赖透明？
    */
-  const filterSearchTerm = (): ProColumns<T>[] =>
+  const filterSearchTerm = (): ProColumns<any>[] =>
     field
       .filter((item) => item.dataIndex)
       .filter((item) => !item.hideInSearch)
@@ -524,7 +527,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       });
   };
 
-  const [url, setUrl] = useUrlState();
   const handleSearch = async (type: boolean = true) => {
     const value = form.values;
     const filterTerms = (data: Partial<Term>[] | undefined) =>
@@ -549,28 +551,38 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       (value.terms2 && value.terms2.length && value.terms2?.some((item) => item.value))
     ) {
       if (type) {
-        setUrl({ q: JSON.stringify(value), target: props.target });
+        _history.push({
+          hash: _location.hash,
+          search: `q=${JSON.stringify(value)}&target=${props.target}`,
+        });
+        // setUrl({ q: JSON.stringify(value), target: props.target });
       }
     } else {
-      setUrl({ q: undefined, target: undefined });
+      _history.push({
+        hash: _location.hash,
+        search: '?',
+      });
     }
     onSearch({ terms: _temp });
   };
 
   useEffect(() => {
     // 防止页面下多个TabsTabPane中的查询组件共享路由中的参数
-    if (url.q && props.model !== 'simple') {
-      if (url.target) {
-        if (props.target && url.target === props.target) {
-          form.setValues(JSON.parse(url.q));
+    const params = new URLSearchParams(_location.search);
+    const q = params.get('q');
+    const _target = params.get('target');
+    if (q && props.model !== 'simple') {
+      if (_target) {
+        if (props.target && _target === props.target) {
+          form.setValues(JSON.parse(q));
           handleSearch(false);
         }
         return;
       }
-      form.setValues(JSON.parse(url.q));
+      form.setValues(JSON.parse(q));
       handleSearch(false);
     }
-  }, [url, props.target]);
+  }, [_location, props.target]);
 
   useEffect(() => {
     if (defaultParam) {

@@ -117,8 +117,6 @@ const Bind = observer((props: Props) => {
     }
   }, [props.visible]);
 
-  console.log(AssetsModel);
-
   const getParams = (params: any) => {
     console.log(params);
     const _params: any = [
@@ -170,7 +168,25 @@ const Bind = observer((props: Props) => {
         field={columns}
         enableSave={false}
         model={'simple'}
-        defaultParam={getParams(AssetsModel.bindModal ? AssetsModel.params : {})}
+        defaultParam={getParams(
+          AssetsModel.bindModal
+            ? AssetsModel.params
+            : [
+                {
+                  column: 'id',
+                  termType: 'dim-assets$not',
+                  value: {
+                    assetType: 'device',
+                    targets: [
+                      {
+                        type: 'org',
+                        id: props.parentId,
+                      },
+                    ],
+                  },
+                },
+              ],
+        )}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);

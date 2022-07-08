@@ -638,7 +638,6 @@ export default () => {
         const cpu = value.cpu;
         const memory = value.memory;
         const disk = value.disk;
-        console.log(value);
         setTopValues({
           cpu: cpu.systemUsage,
           jvm: Number(((memory.jvmHeapUsage / 100) * (memory.jvmHeapTotal / 1024)).toFixed(1)),
