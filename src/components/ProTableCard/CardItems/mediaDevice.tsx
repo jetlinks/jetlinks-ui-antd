@@ -42,7 +42,7 @@ export default (props: ProductCardProps) => {
             </div>
             <div>
               <label>通道数量</label>
-              <div className={'ellipsis'}>{props.channelNumber || ''}</div>
+              <div className={'ellipsis'}>{props.channelNumber || 0}</div>
             </div>
             <div>
               <label>型号</label>

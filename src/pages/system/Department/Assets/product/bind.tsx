@@ -25,6 +25,7 @@ const Bind = observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
   const saveRef = useRef<{ saveData: Function }>();
+  const [loading, setLoading] = useState(false);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -54,6 +55,7 @@ const Bind = observer((props: Props) => {
 
   const handleBind = () => {
     if (Models.bindKeys.length && saveRef.current) {
+      setLoading(true);
       saveRef.current?.saveData();
     } else {
       message.warn('请先勾选数据');
@@ -75,6 +77,7 @@ const Bind = observer((props: Props) => {
         onCancel={props.onCancel}
         width={'75vw'}
         title="绑定"
+        confirmLoading={loading}
       >
         <PermissionModal
           type="product"
@@ -88,7 +91,7 @@ const Bind = observer((props: Props) => {
             }
           }}
         />
-        <SearchComponent<ProductItem>
+        <SearchComponent
           field={columns}
           model={'simple'}
           enableSave={false}

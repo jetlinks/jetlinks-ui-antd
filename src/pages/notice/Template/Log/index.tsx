@@ -65,7 +65,7 @@ const Log = observer(() => {
     {
       dataIndex: 'action',
       title: '操作',
-      hideInSearch:true,
+      hideInSearch: true,
       render: (text, record) => [
         <a
           key="info"

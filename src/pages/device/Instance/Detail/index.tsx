@@ -426,9 +426,9 @@ const InstanceDetail = observer(() => {
         //     defaultMessage: '应用配置',
         //   })}
         // </Button>,
-        <img 
-        style={{marginRight:20,cursor: 'pointer'}}
-        src={require('/public/images/device/button.png')} 
+        <img
+          style={{ marginRight: 20, cursor: 'pointer' }}
+          src={require('/public/images/device/button.png')}
           onClick={() => {
             getDetail(params.id);
             service.getConfigMetadata(params.id).then((config) => {
@@ -437,7 +437,8 @@ const InstanceDetail = observer(() => {
                 message.success('操作成功！');
               }
             });
-          }}/>
+          }}
+        />,
         // <SyncOutlined
         //   onClick={() => {
         //     getDetail(params.id);
