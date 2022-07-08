@@ -367,7 +367,7 @@ export default () => {
                                 move(name, name + 1);
                               }
                             }}
-                            actionItemData={actionDataCount && actionsData[name]}
+                            actionItemData={actionsData[name]}
                             isLast={!actionDataCount || actionDataCount - 1 === name}
                             parallel={parallel}
                           />

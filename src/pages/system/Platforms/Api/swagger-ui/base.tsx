@@ -77,7 +77,7 @@ export default observer(() => {
         const entityName = refUrl.split('/').pop();
         const entityType = ObjectFindValue('type', ApiModel.swagger.requestBody.content);
         const entityRequired = ApiModel.swagger.requestBody.required;
-        console.log(entityName);
+        console.log(entityName, ApiModel.components);
         const entity: any = ApiModel.components[entityName];
         const file = ObjectFindValue('file', ApiModel.swagger.requestBody.content);
         // 是否为文件上传

@@ -186,7 +186,7 @@ const BaseInfo = (props: BaseInfoProps) => {
         >
           <Tooltip placement="topLeft" title={productModel.current?.classifiedName}>
             <div className="ellipsis-70" style={{ width: 300 }}>
-            {productModel.current?.classifiedName}
+              {productModel.current?.classifiedName}
             </div>
           </Tooltip>
         </Descriptions.Item>

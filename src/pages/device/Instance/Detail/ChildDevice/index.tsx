@@ -4,7 +4,7 @@ import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
 import { Badge, Button, Card, Popconfirm, Tooltip } from 'antd';
 import { DisconnectOutlined, SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import { useRef, useState } from 'react';
 import SearchComponent from '@/components/SearchComponent';
 import BindChildDevice from './BindChildDevice';
@@ -13,6 +13,11 @@ import { Link } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+
+const statusMap = new Map();
+statusMap.set('online', 'success');
+statusMap.set('offline', 'error');
+statusMap.set('notActive', 'warning');
 
 const ChildDevice = () => {
   const intl = useIntl();
@@ -53,7 +58,12 @@ const ChildDevice = () => {
       title: '注册时间',
       dataIndex: 'registryTime',
       width: '200px',
-      render: (text: any) => (!!text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      valueType: 'dateTime',
+      render: (text: any, record: any) => {
+        return !record?.registryTime
+          ? ''
+          : moment(record?.registryTime).format('YYYY-MM-DD HH:mm:ss');
+      },
       sorter: true,
     },
     {
@@ -68,21 +78,21 @@ const ChildDevice = () => {
             id: 'pages.device.instance.status.notActive',
             defaultMessage: '未启用',
           }),
-          value: 'notActive',
+          status: 'notActive',
         },
         offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
             defaultMessage: '离线',
           }),
-          value: 'offline',
+          status: 'offline',
         },
         online: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
             defaultMessage: '在线',
           }),
-          value: 'online',
+          status: 'online',
         },
       },
     },
@@ -189,14 +199,15 @@ const ChildDevice = () => {
         }}
         request={(params) => service.query(params)}
       />
-      <BindChildDevice
-        visible={visible}
-        data={{}}
-        onCancel={() => {
-          setVisible(false);
-          actionRef.current?.reload?.();
-        }}
-      />
+      {visible && (
+        <BindChildDevice
+          data={{}}
+          onCancel={() => {
+            setVisible(false);
+            actionRef.current?.reload?.();
+          }}
+        />
+      )}
     </Card>
   );
 };

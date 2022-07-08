@@ -81,14 +81,14 @@ export const childInitList: ListProps[] = [
   //   text: '正在诊断中...',
   //   info: null,
   // },
-  {
-    key: 'network',
-    name: '网络组件',
-    desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
-    status: 'loading',
-    text: '正在诊断中...',
-    info: null,
-  },
+  // {
+  //   key: 'network',
+  //   name: '网络组件',
+  //   desc: '诊断网络组件配置是否正确，配置错误将导致设备连接失败',
+  //   status: 'loading',
+  //   text: '正在诊断中...',
+  //   info: null,
+  // },
   {
     key: 'gateway',
     name: '设备接入网关',

@@ -23,6 +23,21 @@ import Log from './Log';
 import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Status/model';
 import { observer } from '@formily/reactive-react';
 
+// const DataTypeComponent = (value: string) => {
+//   switch (value) {
+//     case 'array':
+//       return <div>{value}array</div>
+//     // case 'enum':
+//     //   return <div>{value}</div>
+//     case 'geo':
+//       return <div>{value}geo</div>
+//     case 'file':
+//       return <div>{value}file</div>
+//     default:
+//       return <div>{value}</div>
+//   }
+// }
+
 const DatePicker1: any = DatePicker;
 
 const Message = observer(() => {
@@ -287,6 +302,7 @@ const Message = observer(() => {
       FSelect,
       FDatePicker,
       NumberPicker,
+      DataTypeComponent,
     },
   });
 
@@ -328,9 +344,6 @@ const Message = observer(() => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'PreviewText.Input',
-                  // 'x-decorator-props': {
-                  //   tooltip: '使用固定的通知配置来发送此通知模版',
-                  // },
                 },
               },
             },

@@ -111,8 +111,6 @@ export default (props: DeviceProps) => {
         handleMetadata(productItem.metadata);
       }
     }
-
-    props.onProductIdChange(productId);
   }, [productId]);
 
   useEffect(() => {
@@ -179,13 +177,14 @@ export default (props: DeviceProps) => {
             placeholder={'请选择产品'}
             style={{ width: '100%' }}
             listHeight={220}
-            onChange={() => {
+            onChange={(value) => {
               // setMessageType(MessageTypeEnum.WRITE_PROPERTY)
               props.form?.setFields([
                 { name: ['actions', name, 'device', 'selector'], value: SourceEnum.fixed },
                 { name: ['actions', name, 'device', 'selectorValues'], value: undefined },
                 { name: ['actions', name, 'device', 'message', 'functionId'], value: undefined },
               ]);
+              props.onProductIdChange(value);
             }}
             fieldNames={{ label: 'name', value: 'id' }}
             filterOption={(input: string, option: any) =>

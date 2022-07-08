@@ -90,6 +90,7 @@ export default (props: LeftTreeType) => {
           from(service.getApiNextLevel(item.name)).pipe(
             map((resp: any) => {
               if (resp && resp.components) {
+                ApiModel.components = { ...ApiModel.components, ...resp.components.schemas };
                 return handleTreeData(resp);
               }
               return undefined;

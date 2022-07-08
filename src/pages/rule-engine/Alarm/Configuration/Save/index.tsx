@@ -129,7 +129,7 @@ const Save = (props: Props) => {
 
     const resp: any = await service.update({
       ...data,
-      state: 'disabled',
+      // state: 'disabled',
       sceneTriggerType: scene.triggerType,
       sceneName: scene.name,
     });

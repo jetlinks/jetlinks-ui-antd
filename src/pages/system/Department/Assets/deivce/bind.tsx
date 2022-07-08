@@ -138,9 +138,9 @@ const Bind = observer((props: Props) => {
     ];
     if (Object.keys(params).length) {
       _params.push({
-        column: 'parentId$product-info',
-        termType: 'eq',
-        value: 'accessId is ' + params.productId[0],
+        type: 'and',
+        column: 'productId$product-info',
+        value: 'id is ' + params.productId[0],
       });
     }
     return _params;

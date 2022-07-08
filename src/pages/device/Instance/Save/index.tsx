@@ -220,6 +220,7 @@ const Save = (props: Props) => {
                   ),
                 },
               ]}
+              tooltip={'只能选择“正常”状态的产品'}
               required
             >
               <Select
@@ -231,7 +232,7 @@ const Save = (props: Props) => {
                     productName: node.label,
                   });
                 }}
-                placeholder={'请选择状态为正常的产品'}
+                placeholder={'请选择状态为“正常”的产品'}
                 filterOption={(input, option) => option.label.includes(input)}
               />
             </Form.Item>

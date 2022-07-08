@@ -83,7 +83,7 @@ const Cat = observer((props: Props) => {
       }
     >
       <div style={{ background: '#F6F6F6' }}>
-        <p style={{ padding: 10 ,color:'rgba(0, 0, 0, 0.55)'}}>
+        <p style={{ padding: 10, color: 'rgba(0, 0, 0, 0.55)' }}>
           物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为
           TSL（即 Thing Specification Language），采用 JSON 格式，您可以根据 TSL
           组装上报设备的数据。您可以导出完整物模型，用于云端应用开发。
