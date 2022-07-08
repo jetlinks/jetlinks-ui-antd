@@ -164,7 +164,7 @@ export default (props: UserProps) => {
   };
 
   useEffect(() => {
-    if (props.type) {
+    if (props.type && source === 'relation') {
       const newTree = [...treeData];
       if (props.type === 'device') {
         queryRelationUsers().then((relationResp) => {
@@ -184,9 +184,10 @@ export default (props: UserProps) => {
           setTreeData(newTree);
         }
       }
+
       onchange(props.value?.source, '');
     }
-  }, [props.type]);
+  }, [props.type, source]);
 
   const filterOption = (input: string, option: any) => {
     return option.name ? option.name.toLowerCase().includes(input.toLowerCase()) : false;

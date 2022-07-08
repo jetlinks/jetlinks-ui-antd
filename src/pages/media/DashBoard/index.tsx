@@ -68,6 +68,20 @@ export default () => {
     }
   };
 
+  const getInterval = (type: string) => {
+    switch (type) {
+      case 'year':
+        return '30d';
+      case 'month':
+      case 'week':
+        return '1d';
+      case 'hour':
+        return '1m';
+      default:
+        return '1h';
+    }
+  };
+
   const getEcharts = async (params: any) => {
     const resp = await service.getMulti([
       {
@@ -77,7 +91,7 @@ export default () => {
         dimension: 'agg',
         group: 'playCount',
         params: {
-          time: params.time.type === 'today' ? '1h' : '1d',
+          time: getInterval(params.time.type),
           from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
           to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
           limit: 30,
@@ -88,16 +102,20 @@ export default () => {
     if (resp.status === 200) {
       const xData: string[] = [];
       const sData: number[] = [];
-      resp.result.forEach((item: any) => {
-        xData.push(item.data.timeString);
-        sData.push(item.data.value);
-      });
+      resp.result
+        .sort((a: any, b: any) => b.data.timestamp - a.data.timestamp)
+        .forEach((item: any) => {
+          xData.push(item.data.timeString);
+          sData.push(item.data.value);
+        });
 
       setOptions({
         xAxis: {
           type: 'category',
-          boundaryGap: false,
           data: xData,
+        },
+        tooltip: {
+          trigger: 'axis',
         },
         yAxis: {
           type: 'value',
@@ -106,12 +124,13 @@ export default () => {
           left: '4%',
           right: '2%',
           top: '2%',
-          bottom: '4%',
         },
+        color: ['#2F54EB'],
         series: [
           {
             data: sData,
             type: 'bar',
+            barWidth: 16,
           },
         ],
       });
@@ -125,15 +144,15 @@ export default () => {
     const timeStr = 'hh小时mm分钟ss秒';
 
     if (time) {
-      if (time >= 6000) {
-        hour = Math.trunc(time / (60 * 60));
+      if (time >= 60 * 60 * 1000) {
+        hour = Math.trunc(time / (60 * 60 * 1000));
       }
 
-      if (time >= 60) {
-        min = Math.trunc((time - hour * 60 * 60) / 60);
+      if (time >= 60 * 1000) {
+        min = Math.trunc((time - hour * 60 * 60 * 1000) / (60 * 1000));
       }
 
-      sec = time - hour * (60 * 60) - min * 60;
+      sec = Math.trunc((time - hour * (60 * 60 * 1000) - min * 60 * 1000) / 1000);
     }
 
     return timeStr

@@ -67,6 +67,10 @@ export default () => {
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
 
+  useEffect(() => {
+    FormModel = {};
+  }, []);
+
   const getDetail = useCallback(
     async (id: string) => {
       const resp = await service.detail(id);

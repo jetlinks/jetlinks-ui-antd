@@ -71,7 +71,7 @@ const Dashboard = observer(() => {
     dimension: 'agg',
     group: 'thisMonth',
     params: {
-      time: '1d',
+      time: '1M',
       // targetType: 'device',
       format: 'yyyy-MM',
       limit: 1,
