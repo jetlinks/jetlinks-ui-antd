@@ -56,9 +56,15 @@ const Login: React.FC = () => {
   const getCode = () => {
     delete loginForm.values?.verifyCode;
     loginRef.current = loginForm.values;
+    // setLoading(false);
     Service.captchaConfig()
       .pipe(
-        filter((r) => r.enabled),
+        filter((r) => {
+          if(!r.enabled){
+            setLoading(false)
+          }
+          return r.enabled
+        }),
         mergeMap(Service.getCaptcha),
         catchError(() => message.error('系统开小差，请稍后重试')),
       )
