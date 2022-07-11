@@ -208,6 +208,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               });
               f.setFieldState(typeFiled.query('.value'), async (state) => {
                 state.componentType = 'Input';
+                state.componentProps = { allowClear: true };
               });
             } else {
               switch (_field?.valueType) {
@@ -228,6 +229,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     console.log(state.value);
                     state.componentType = 'Select';
                     state.dataSource = __option;
+                    state.componentProps = { allowClear: true };
                   });
                   break;
                 case 'treeSelect':
@@ -248,6 +250,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.dataSource = _option;
                     state.componentProps = {
                       ..._field.fieldProps,
+                      allowClear: true,
                       treeNodeFilterProp: 'name',
                     };
                   });
@@ -255,6 +258,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 case 'digit':
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
                     state.componentType = 'NumberPicker';
+                    state.componentProps = { allowClear: true };
                   });
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
                     state.value = 'eq';
@@ -263,7 +267,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 case 'dateTime':
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
                     state.componentType = 'DatePicker';
-                    state.componentProps = { showTime: true };
+                    state.componentProps = { showTime: true, allowClear: true };
                   });
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
                     state.value = 'gte';
@@ -275,6 +279,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   });
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
                     state.componentType = 'Input';
+                    state.componentProps = { allowClear: true };
                   });
                   break;
               }

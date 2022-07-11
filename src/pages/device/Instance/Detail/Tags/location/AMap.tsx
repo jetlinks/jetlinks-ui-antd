@@ -57,6 +57,7 @@ export default (props: Props) => {
         >
           <Select
             showSearch
+            allowClear
             options={data}
             filterOption={false}
             onSearch={debounce(onSearch, 300)}

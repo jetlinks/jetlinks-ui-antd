@@ -28,6 +28,7 @@ const SipSelectComponent = (props: SipSelectComponentProps) => {
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <Select
         showSearch
+        allowClear
         value={data?.host}
         style={{ marginRight: 10 }}
         placeholder="请选择IP地址"
@@ -56,6 +57,7 @@ const SipSelectComponent = (props: SipSelectComponentProps) => {
       </Select>
       <Select
         showSearch
+        allowClear
         style={{ maxWidth: 100 }}
         value={data?.port}
         placeholder="请选择端口"

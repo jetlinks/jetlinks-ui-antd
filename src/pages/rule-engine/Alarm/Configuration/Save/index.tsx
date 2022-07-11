@@ -226,6 +226,7 @@ const Save = (props: Props) => {
         'x-component-props': {
           placeholder: '请选择关联触发场景',
           showSearch: true,
+          allowClear: true,
           showArrow: true,
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,

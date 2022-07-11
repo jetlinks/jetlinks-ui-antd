@@ -145,6 +145,7 @@ export default observer((props: TriggerProps) => {
           >
             <Select
               showSearch
+              allowClear
               options={productList}
               placeholder={'请选择产品'}
               style={{ width: '100%' }}
@@ -302,6 +303,7 @@ export default observer((props: TriggerProps) => {
               >
                 <Select
                   showSearch
+                  allowClear
                   options={functions}
                   fieldNames={{
                     label: 'name',

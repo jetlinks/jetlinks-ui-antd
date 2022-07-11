@@ -222,6 +222,7 @@ export default (props: UserProps) => {
     source === 'relation' ? (
       <TreeSelect
         showSearch
+        allowClear
         value={value}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         placeholder={'请选择收信人'}
@@ -236,6 +237,7 @@ export default (props: UserProps) => {
     ) : (
       <Select
         showSearch
+        allowClear
         value={value}
         options={relationList}
         listHeight={200}
@@ -255,6 +257,7 @@ export default (props: UserProps) => {
     source === 'relation' ? (
       <TreeSelect
         showSearch
+        allowClear
         value={value}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         placeholder={'请选择收信人'}
@@ -280,6 +283,7 @@ export default (props: UserProps) => {
     source === 'relation' ? (
       <TreeSelect
         showSearch
+        allowClear
         value={value}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         placeholder={'请选择收信人'}

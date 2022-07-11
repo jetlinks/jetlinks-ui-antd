@@ -69,6 +69,7 @@ const Edit = (props: Props) => {
         'x-component-props': {
           placeholder: `请选择${item.relationName}`,
           showSearch: true,
+          allowClear: true,
           showArrow: true,
           mode: 'multiple',
           filterOption: (input: string, option: any) =>

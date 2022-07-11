@@ -160,7 +160,7 @@ const Detail = observer(() => {
         required: true,
         'x-visible': typeList[id]?.length > 0,
         'x-hidden': id === 'email' || id === 'webhook',
-        'x-value': typeList[id][0]?.value,
+        'x-value': typeList[id]?.[0]?.value,
         enum: typeList[id] || [],
       },
       configuration: {
@@ -602,7 +602,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            {docMap[id][provider]}
+            {docMap?.[id]?.[provider]}
           </Col>
         </Row>
       </Card>

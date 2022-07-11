@@ -225,6 +225,7 @@ const Save = (props: Props) => {
             >
               <Select
                 showSearch
+                allowClear
                 options={productList}
                 disabled={props.model === 'edit'}
                 onSelect={(_: any, node: any) => {
