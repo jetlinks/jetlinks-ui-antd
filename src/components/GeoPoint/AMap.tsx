@@ -55,6 +55,7 @@ export default (props: Props) => {
         <div className={'map-search-select'}>
           <Select
             showSearch
+            allowClear
             options={data}
             filterOption={false}
             onSearch={debounce(onSearch, 300)}

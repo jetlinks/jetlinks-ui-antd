@@ -60,10 +60,10 @@ const Login: React.FC = () => {
     Service.captchaConfig()
       .pipe(
         filter((r) => {
-          if(!r.enabled){
-            setLoading(false)
+          if (!r.enabled) {
+            setLoading(false);
           }
-          return r.enabled
+          return r.enabled;
         }),
         mergeMap(Service.getCaptcha),
         catchError(() => message.error('系统开小差，请稍后重试')),

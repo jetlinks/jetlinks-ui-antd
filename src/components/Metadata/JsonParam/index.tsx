@@ -116,6 +116,7 @@ const JsonParam = (props: Props) => {
                       'x-visible': false,
                       'x-component-props': {
                         showSearch: true,
+                        allowClear: true,
                         showArrow: true,
                         filterOption: (input: string, option: any) =>
                           option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,

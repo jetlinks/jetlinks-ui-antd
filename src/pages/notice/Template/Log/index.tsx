@@ -118,7 +118,12 @@ const Log = observer(() => {
         }
         params={param}
         columns={columns}
-        request={async (params) => service.getHistoryLog(state.current?.id || '', { ...params, sorts: [{ name: 'notifyTime', order: 'desc' }] })}
+        request={async (params) =>
+          service.getHistoryLog(state.current?.id || '', {
+            ...params,
+            sorts: [{ name: 'notifyTime', order: 'desc' }],
+          })
+        }
       />
     </Modal>
   );

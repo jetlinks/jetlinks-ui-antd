@@ -518,7 +518,7 @@ const Detail = observer(() => {
         required: true,
         'x-visible': typeList[id]?.length > 0,
         'x-hidden': id === 'email' || id === 'webhook',
-        'x-value': typeList[id][0]?.value,
+        'x-value': typeList[id]?.[0]?.value,
         enum: typeList[id] || [],
       },
       configId: {

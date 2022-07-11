@@ -249,6 +249,7 @@ const MenuPermission = (props: Props) => {
               {checkbox && (
                 <Select
                   showSearch
+                  allowClear
                   placeholder="请选择"
                   optionFilterProp="children"
                   style={{ width: 200 }}

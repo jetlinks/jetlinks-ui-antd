@@ -173,6 +173,7 @@ export default (props: DeviceProps) => {
         >
           <Select
             showSearch
+            allowClear
             options={productList}
             placeholder={'请选择产品'}
             style={{ width: '100%' }}
@@ -266,6 +267,7 @@ export default (props: DeviceProps) => {
           >
             <Select
               showSearch
+              allowClear
               options={functionList}
               fieldNames={{ label: 'name', value: 'id' }}
               style={{ width: '100%' }}

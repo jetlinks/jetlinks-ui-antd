@@ -238,6 +238,7 @@ const Import = (props: Props) => {
             enum: [...productList],
             'x-component-props': {
               showSearch: true,
+              allowClear: true,
               showArrow: true,
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,

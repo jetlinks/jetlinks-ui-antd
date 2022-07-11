@@ -173,6 +173,7 @@ const BaseMetadata = observer((props: Props) => {
         toolbar={{
           search: {
             placeholder: '请输入标识',
+            allowClear: true,
             onSearch: handleSearch,
           },
         }}

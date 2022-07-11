@@ -453,7 +453,7 @@ export default () => {
               if (item.group === 'network') {
                 const _data: any[] = [];
                 value.forEach((networkItem: any) => {
-                  _data.push(Number(networkItem.value).toFixed(2));
+                  _data.push(networkItem.value);
                   _networkXAxis.add(networkItem.timeString);
                 });
                 _networkOptions[nodeID] = {
@@ -519,7 +519,7 @@ export default () => {
                 const _data: any[] = [];
                 const nodeID = item.data.clusterNodeId;
                 value.forEach((networkItem: any) => {
-                  _data.push(Number(networkItem.value).toFixed(2));
+                  _data.push(networkItem.value);
                   _networkXAxis.add(networkItem.timeString);
                 });
 

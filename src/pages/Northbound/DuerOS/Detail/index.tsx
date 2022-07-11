@@ -277,6 +277,7 @@ const Save = () => {
               // },
               showSearch: true,
               showArrow: true,
+              allowClear: true,
               disabled: id !== ':id',
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
@@ -300,6 +301,7 @@ const Save = () => {
                 value: 'id',
               },
               showSearch: true,
+              allowClear: true,
               showArrow: true,
               filterOption: (input: string, option: any) =>
                 option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,

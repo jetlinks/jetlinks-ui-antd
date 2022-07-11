@@ -91,6 +91,7 @@ export default () => {
       <div style={{ position: 'absolute', top: 0 }}>
         <Select
           showSearch
+          allowClear
           options={data}
           filterOption={false}
           onSearch={debounce(onSearch, 300)}

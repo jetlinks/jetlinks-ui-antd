@@ -241,6 +241,7 @@ const Save = () => {
                       <Form.Item name={'productId'} noStyle>
                         <Select
                           showSearch
+                          allowClear
                           fieldNames={{
                             label: 'name',
                             value: 'id',

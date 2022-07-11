@@ -75,6 +75,7 @@ const Import = (props: Props) => {
         'x-component-props': {
           showSearch: true,
           showArrow: true,
+          allowClear: true,
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
         },
