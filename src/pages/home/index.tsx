@@ -22,18 +22,18 @@ const Home = () => {
     comprehensive: <Comprehensive />,
   };
 
-  useEffect(() => {
-    service.queryView().then((resp) => {
-      setLoading(false);
-      if (resp.status === 200) {
-        if (resp.result.length == 0) {
-          setCurrent('init');
-        } else {
-          setCurrent(resp.result[0]?.content);
-        }
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   service.queryView().then((resp) => {
+  //     // setLoading(false);
+  //     if (resp.status === 200) {
+  //       if (resp.result.length == 0) {
+  //         setCurrent('init');
+  //       } else {
+  //         setCurrent(resp.result[0]?.content);
+  //       }
+  //     }
+  //   });
+  // }, []);
   useEffect(() => {
     service.userDetail().then((res) => {
       if (res.status === 200) {
@@ -49,6 +49,16 @@ const Home = () => {
           .then((response) => {
             if (response.status === 200) {
               setDetail(response.result?.data);
+              service.queryView().then((resp) => {
+                setLoading(false);
+                if (resp.status === 200) {
+                  if (resp.result.length == 0) {
+                    setCurrent('init');
+                  } else {
+                    setCurrent(resp.result[0]?.content);
+                  }
+                }
+              });
             }
           });
       }

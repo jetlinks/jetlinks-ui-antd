@@ -7,6 +7,7 @@ import type { ISchema } from '@formily/json-schema';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import FUpload from '@/components/Upload';
 import { service } from '@/pages/device/Product';
+import { service as deviceService } from '@/pages/device/Instance';
 import { useParams } from 'umi';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
@@ -19,6 +20,7 @@ import { DeviceMetadata } from '@/pages/device/Product/typings';
 interface Props {
   visible: boolean;
   close: () => void;
+  type: 'product' | 'device';
 }
 
 const Import = (props: Props) => {
@@ -190,7 +192,7 @@ const Import = (props: Props) => {
     const old = JSON.parse(InstanceModel.detail?.metadata || '{}');
     const fid = _.map(InstanceModel.detail?.features || [], 'id');
     if (fid.includes('eventNotModifiable')) {
-      obj.events = old?.event || [];
+      obj.events = old?.events || [];
     }
     if (fid.includes('propertyNotModifiable')) {
       obj.properties = old?.properties || [];
@@ -205,16 +207,27 @@ const Import = (props: Props) => {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
           onlyMessage('导入成功');
-          await service.modify(param.id, { metadata: JSON.stringify(operateLimits(meta)) });
+          if (props?.type === 'device') {
+            await deviceService.modify(param.id, { metadata: JSON.stringify(operateLimits(meta)) });
+          } else {
+            await service.modify(param.id, { metadata: JSON.stringify(operateLimits(meta)) });
+          }
         },
         error: () => {
           onlyMessage('发生错误!', 'error');
         },
       });
     } else {
-      const resp = await service.modify(param.id, {
+      const params = {
+        id: param.id,
         metadata: JSON.stringify(operateLimits(JSON.parse(data[data?.type] || '{}'))),
-      });
+      };
+      let resp: any = undefined;
+      if (props?.type === 'device') {
+        resp = await deviceService.modify(param.id, params);
+      } else {
+        resp = await service.modify(param.id, params);
+      }
       if (resp.status === '200') {
         onlyMessage('导入成功');
       }
