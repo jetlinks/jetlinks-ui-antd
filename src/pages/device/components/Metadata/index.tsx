@@ -138,7 +138,7 @@ const Metadata = observer((props: Props) => {
           <BaseMetadata target={props.type} type={'tags'} permission={permission} />
         </Tabs.TabPane>
       </Tabs>
-      <Import visible={visible} close={() => setVisible(false)} />
+      <Import visible={visible} type={props.type} close={() => setVisible(false)} />
       <Cat visible={cat} close={() => setCat(false)} type={props.type} />
     </div>
   );
