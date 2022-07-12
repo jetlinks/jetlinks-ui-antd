@@ -413,6 +413,14 @@ const Access = () => {
           labelAlign: 'left',
           layout: 'vertical',
         },
+        'x-validator': [
+          {
+            required: !!item?.type?.expands?.required,
+            message: `${item.type.type === 'enum' ? '请选择' : '请输入'}${item.name}`,
+          },
+        ],
+        required: !!item?.type?.expands?.required,
+        default: item?.type?.expands?.defaultValue,
         enum:
           item?.type?.type === 'enum' && item?.type?.elements
             ? (item?.type?.elements || []).map((t: { value: string; text: string }) => {

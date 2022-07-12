@@ -40,6 +40,7 @@ export type ConfigProperty = {
     id: string;
     type: string;
     elements?: any[];
+    expands?: any;
   };
   scopes: any[];
 };
