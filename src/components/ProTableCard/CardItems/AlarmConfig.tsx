@@ -1,9 +1,8 @@
 import React from 'react';
-import { PermissionButton, TableCard } from '@/components';
+import { Ellipsis, PermissionButton, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { Tooltip } from 'antd';
 import { Store } from 'jetlinks-store';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
@@ -36,9 +35,10 @@ export default (props: AlarmConfigProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>
-              <Tooltip title={props?.name}>{props?.name}</Tooltip>
-            </span>
+            {/*<span className={'card-item-header-name ellipsis'}>*/}
+            {/*  <Tooltip title={props?.name}>{props?.name}</Tooltip>*/}
+            {/*</span>*/}
+            <Ellipsis title={props?.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content'}>
             <div>
@@ -64,19 +64,26 @@ export default (props: AlarmConfigProps) => {
             </div>
             <div>
               <label>告警级别</label>
-              <div className={'ellipsis'}>
-                <Tooltip
-                  title={
-                    (Store.get('default-level') || []).find(
-                      (item: any) => item?.level === props?.level,
-                    )?.title || props?.level
-                  }
-                >
-                  {(Store.get('default-level') || []).find(
+              <Ellipsis
+                title={
+                  (Store.get('default-level') || []).find(
                     (item: any) => item?.level === props?.level,
-                  )?.title || props?.level}
-                </Tooltip>
-              </div>
+                  )?.title || props?.level
+                }
+              />
+              {/*<div className={'ellipsis'}>*/}
+              {/*  <Tooltip*/}
+              {/*    title={*/}
+              {/*      (Store.get('default-level') || []).find(*/}
+              {/*        (item: any) => item?.level === props?.level,*/}
+              {/*      )?.title || props?.level*/}
+              {/*    }*/}
+              {/*  >*/}
+              {/*    {(Store.get('default-level') || []).find(*/}
+              {/*      (item: any) => item?.level === props?.level,*/}
+              {/*    )?.title || props?.level}*/}
+              {/*  </Tooltip>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import { Badge, Tooltip } from 'antd';
 import type { AccessItem } from '@/pages/link/AccessConfig/typings';
@@ -40,10 +40,13 @@ export default (props: AccessConfigCardProps) => {
         </div>
         <div className="card">
           <div className="header">
-            <div className="access-title ellipsis">
-              <Tooltip placement="topLeft" title={props.name}>
-                {props.name}
-              </Tooltip>
+            {/*<div className="access-title ellipsis">*/}
+            {/*  <Tooltip placement="topLeft" title={props.name}>*/}
+            {/*    {props.name}*/}
+            {/*  </Tooltip>*/}
+            {/*</div>*/}
+            <div style={{ width: 'calc(100% - 70px)' }} className={'access-title'}>
+              <Ellipsis title={props.name} />
             </div>
           </div>
           {(props.protocolDetail?.name || props?.channelInfo?.name) && (
@@ -79,34 +82,50 @@ export default (props: AccessConfigCardProps) => {
                 <div className="procotol">
                   <div className="subTitle">协议</div>
                   <div className="desc">
-                    <Tooltip placement="topLeft" title={props.protocolDetail?.name}>
-                      {props.protocolDetail?.name}
-                    </Tooltip>
+                    <Ellipsis
+                      title={props.protocolDetail?.name}
+                      tooltip={{ placement: 'topLeft' }}
+                    />
+                    {/*<Tooltip placement="topLeft" title={props.protocolDetail?.name}>*/}
+                    {/*  {props.protocolDetail?.name}*/}
+                    {/*</Tooltip>*/}
                   </div>
                 </div>
               )}
             </div>
           )}
-          <div className="desc ellipsis">
-            {!!props?.description ? (
-              <Tooltip placement="topLeft" title={props?.description}>
-                {props?.description}
-              </Tooltip>
-            ) : (
-              <Tooltip
-                placement="topLeft"
-                title={
-                  (Store.get('access-providers') || []).find((i: any) => i?.id === props?.provider)
+          <Ellipsis
+            title={
+              !!props?.description
+                ? props?.description
+                : (Store.get('access-providers') || []).find((i: any) => i?.id === props?.provider)
                     ?.description
-                }
-              >
-                {
-                  (Store.get('access-providers') || []).find((i: any) => i?.id === props?.provider)
-                    ?.description
-                }
-              </Tooltip>
-            )}
-          </div>
+            }
+            tooltip={{
+              placement: 'topLeft',
+            }}
+            titleClassName={'desc'}
+          />
+          {/*<div className="desc ellipsis">*/}
+          {/*  {!!props?.description ? (*/}
+          {/*    <Tooltip placement="topLeft" title={props?.description}>*/}
+          {/*      {props?.description}*/}
+          {/*    </Tooltip>*/}
+          {/*  ) : (*/}
+          {/*    <Tooltip*/}
+          {/*      placement="topLeft"*/}
+          {/*      title={*/}
+          {/*        (Store.get('access-providers') || []).find((i: any) => i?.id === props?.provider)*/}
+          {/*          ?.description*/}
+          {/*      }*/}
+          {/*    >*/}
+          {/*      {*/}
+          {/*        (Store.get('access-providers') || []).find((i: any) => i?.id === props?.provider)*/}
+          {/*          ?.description*/}
+          {/*      }*/}
+          {/*    </Tooltip>*/}
+          {/*  )}*/}
+          {/*</div>*/}
         </div>
       </div>
       <div className={'checked-icon'}>

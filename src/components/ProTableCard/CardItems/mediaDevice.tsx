@@ -1,7 +1,7 @@
 import React from 'react';
 import type { DeviceItem } from '@/pages/media/Device/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 
@@ -33,24 +33,29 @@ export default (props: ProductCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            {/*<span className={'card-item-header-name ellipsis'}>{props.name}</span>*/}
+            <Ellipsis title={props?.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content'}>
             <div>
               <label>厂商</label>
-              <div className={'ellipsis'}>{props.manufacturer || ''}</div>
+              <Ellipsis title={props?.manufacturer} titleClassName={'ellipsis'} />
+              {/*<div className={'ellipsis'}>{props.manufacturer || ''}</div>*/}
             </div>
             <div>
               <label>通道数量</label>
-              <div className={'ellipsis'}>{props.channelNumber || 0}</div>
+              <Ellipsis title={props?.channelNumber} titleClassName={'ellipsis'} />
+              {/*<div className={'ellipsis'}>{props.channelNumber || 0}</div>*/}
             </div>
             <div>
               <label>型号</label>
-              <div className={'ellipsis'}>{props.model || ''}</div>
+              <Ellipsis title={props?.model} titleClassName={'ellipsis'} />
+              {/*<div className={'ellipsis'}>{props.model || ''}</div>*/}
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.provider || ''}</div>
+              <Ellipsis title={props?.provider} titleClassName={'ellipsis'} />
+              {/*<div className={'ellipsis'}>{props.provider || ''}</div>*/}
             </div>
           </div>
         </div>

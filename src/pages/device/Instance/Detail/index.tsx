@@ -23,7 +23,7 @@ import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
@@ -297,11 +297,17 @@ const InstanceDetail = observer(() => {
       content={
         <Descriptions size="small" column={4}>
           <Descriptions.Item label={'ID'}>
-            <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
-              <div className="ellipsis" style={{ maxWidth: 250 }}>
-                {InstanceModel.detail?.id}
-              </div>
-            </Tooltip>
+            <Ellipsis
+              title={InstanceModel.detail?.id}
+              tooltip={{ placement: 'topLeft' }}
+              style={{ maxWidth: 250 }}
+              limitWidth={250}
+            />
+            {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.id}>*/}
+            {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
+            {/*    {InstanceModel.detail?.id}*/}
+            {/*  </div>*/}
+            {/*</Tooltip>*/}
           </Descriptions.Item>
           <Descriptions.Item label={'所属产品'}>
             <PermissionButton
@@ -322,20 +328,32 @@ const InstanceDetail = observer(() => {
                 }
               }}
             >
-              <div className="ellipsis" style={{ width: 250 }}>
-                {InstanceModel.detail?.productName}
-              </div>
+              <Ellipsis
+                title={InstanceModel.detail?.productName}
+                tooltip={{ placement: 'topLeft' }}
+                style={{ maxWidth: 250 }}
+                limitWidth={250}
+              />
+              {/*<div className="ellipsis" style={{ width: 250 }}>*/}
+              {/*  {InstanceModel.detail?.productName}*/}
+              {/*</div>*/}
             </PermissionButton>
           </Descriptions.Item>
         </Descriptions>
       }
       title={
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip placement="topLeft" title={InstanceModel.detail?.name}>
-            <div className="ellipsis" style={{ maxWidth: 250 }}>
-              {InstanceModel.detail?.name}
-            </div>
-          </Tooltip>
+          {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.name}>*/}
+          {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
+          {/*    {InstanceModel.detail?.name}*/}
+          {/*  </div>*/}
+          {/*</Tooltip>*/}
+          <Ellipsis
+            title={InstanceModel.detail?.name}
+            tooltip={{ placement: 'topLeft' }}
+            style={{ maxWidth: 250 }}
+            limitWidth={250}
+          />
           <Divider type="vertical" />
           <Space>
             {deviceStatus.get(InstanceModel.detail?.state?.value)}
