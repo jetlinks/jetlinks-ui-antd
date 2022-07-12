@@ -23,7 +23,7 @@ export default (props: EllipsisProps) => {
   const parentSize = useSize(parentNode.current);
   const extraSize = useSize(extraNode.current);
   const [isEllipsis, setIsEllipsis] = useState(false);
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (extraSize.width && parentSize.width) {
@@ -37,7 +37,6 @@ export default (props: EllipsisProps) => {
         extraNode.current.innerHTML = '';
         extraNode.current.setAttribute('style', 'display: none');
       }
-      setShow(true);
     }
   }, [props.title, extraSize]);
 
@@ -61,13 +60,11 @@ export default (props: EllipsisProps) => {
 
   return (
     <div className={Style['ellipsis-warp']} ref={parentNode}>
-      {show ? (
-        isEllipsis && props.showToolTip !== false ? (
-          <Tooltip title={props.title}>{ellipsisNode}</Tooltip>
-        ) : (
-          ellipsisNode
-        )
-      ) : null}
+      {isEllipsis && props.showToolTip !== false ? (
+        <Tooltip title={props.title}>{ellipsisNode}</Tooltip>
+      ) : (
+        ellipsisNode
+      )}
       <div className={Style['ellipsis-max']} ref={extraNode}>
         {props.title}
       </div>

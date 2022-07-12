@@ -1,4 +1,4 @@
-import { Button, Input, Tooltip, Tree } from 'antd';
+import { Button, Input, Tree } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/system/Department';
-import { Empty, PermissionButton } from '@/components';
+import { Ellipsis, Empty, PermissionButton } from '@/components';
 import { useIntl, useLocation } from 'umi';
 import { debounce } from 'lodash';
 import Save from '../save';
@@ -234,9 +234,7 @@ export default (props: TreeProps) => {
                   }}
                 >
                   <span className={'tree-node-name--title'}>
-                    <Tooltip title={nodeData.name}>
-                      <span className={'ellipsis'}>{nodeData.name}</span>
-                    </Tooltip>
+                    <Ellipsis title={nodeData.name} />
                   </span>
                   <span
                     className={classnames('tree-node-name--btn', {
