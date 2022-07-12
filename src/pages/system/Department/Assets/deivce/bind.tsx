@@ -134,7 +134,7 @@ const Bind = observer((props: Props) => {
         },
       },
     ];
-    if (Object.keys(params).length) {
+    if (Object.keys(params).length && params.productId) {
       _params.push({
         type: 'and',
         column: 'productId$product-info',

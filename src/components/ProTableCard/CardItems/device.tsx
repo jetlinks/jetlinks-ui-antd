@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import { TableCard, Ellipsis } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { CheckOutlined } from '@ant-design/icons';
@@ -67,11 +67,7 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <div className={'card-item-header-name'}>
-              <Tooltip title={props.name}>
-                <div className={'ellipsis'}>{props.name}</div>
-              </Tooltip>
-            </div>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content-flex'}>
             <div className={'flex-auto'}>
@@ -128,7 +124,7 @@ export default (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content'}>
             <div>
