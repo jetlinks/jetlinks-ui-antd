@@ -1,10 +1,10 @@
 import React from 'react';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { Col, Row, Tooltip } from 'antd';
+import { Col, Row } from 'antd';
 
 export interface ProcotolCardProps extends ProtocolItem {
   detail?: React.ReactNode;
@@ -32,24 +32,26 @@ export default (props: ProcotolCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <Tooltip title={props.name}>
-              <span className={'card-item-header-name ellipsis'}>{props.name}</span>
-            </Tooltip>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
+            {/*<Tooltip title={props.name}>*/}
+            {/*  <span className={'card-item-header-name ellipsis'}>{props.name}</span>*/}
+            {/*</Tooltip>*/}
           </div>
           <Row gutter={24}>
             <Col span={12}>
               <div>
                 <div style={{ color: 'rgba(0, 0, 0, 0.75)', fontSize: 12 }}>ID</div>
-                <div
-                  style={{
-                    width: '100%',
-                    overflow: 'hidden',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  <Tooltip title={props.id}>{props.id}</Tooltip>
-                </div>
+                {/*<div*/}
+                {/*  style={{*/}
+                {/*    width: '100%',*/}
+                {/*    overflow: 'hidden',*/}
+                {/*    whiteSpace: 'nowrap',*/}
+                {/*    textOverflow: 'ellipsis',*/}
+                {/*  }}*/}
+                {/*>*/}
+                {/*  <Tooltip title={props.id}>{props.id}</Tooltip>*/}
+                {/*</div>*/}
+                <Ellipsis title={props.id} />
               </div>
             </Col>
             <Col span={12}>
