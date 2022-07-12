@@ -20,6 +20,7 @@ interface EllipsisProps {
 export default (props: EllipsisProps) => {
   const parentNode = useRef<HTMLDivElement | null>(null);
   const extraNode = useRef<HTMLDivElement | null>(null);
+  const titleNode = useRef<HTMLDivElement | null>(null);
   const parentSize = useSize(parentNode.current);
   const extraSize = useSize(extraNode.current);
   const [isEllipsis, setIsEllipsis] = useState(false);
@@ -27,7 +28,7 @@ export default (props: EllipsisProps) => {
 
   useEffect(() => {
     if (extraSize.width && parentSize.width) {
-      if (extraSize.width >= parentSize.width * (props.row || 1) - 12) {
+      if (extraSize.width > parentSize.width * (props.row || 1)) {
         setIsEllipsis(true);
       } else {
         setIsEllipsis(false);
@@ -44,12 +45,11 @@ export default (props: EllipsisProps) => {
 
   const ellipsisNode = (
     <div
+      ref={titleNode}
       className={classnames(
         'ellipsis-title',
-        {
-          [Style.ellipsis]: isEllipsis,
-          [Style[ellipsisTitleClass]]: isEllipsis,
-        },
+        Style.ellipsis,
+        Style[ellipsisTitleClass],
         props.titleClassName,
       )}
       style={{ ...props.titleStyle, width: props.maxWidth || '100%' }}
@@ -65,7 +65,11 @@ export default (props: EllipsisProps) => {
       ) : (
         ellipsisNode
       )}
-      <div className={Style['ellipsis-max']} ref={extraNode}>
+      <div
+        className={classnames(props.titleClassName, Style['ellipsis-max'])}
+        style={{ ...props.titleStyle, width: 'max-content !important' }}
+        ref={extraNode}
+      >
         {props.title}
       </div>
     </div>
