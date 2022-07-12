@@ -8,6 +8,7 @@ import GaugeColor from './Charts/GaugeColor/index';
 import apis from '@/services';
 import moment from 'moment';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
+import encodeQueryParam from '@/utils/encodeParam';
 
 
 const { ChartCard, MiniArea, MiniBar, Field } = Charts;
@@ -137,45 +138,61 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
   const deviceStatus = () => {
     const list = [
       // 设备状态信息-在线
+      // {
+      //   'dashboard': 'device',
+      //   'object': 'status',
+      //   'measurement': 'record',
+      //   'dimension': 'current',
+      //   'group': 'deviceOnline',
+      //   'params': {
+      //     'state': 'online',
+      //   },
+      // },
+      // 设备状态信息-历史在线
       {
-        'dashboard': 'device',
-        'object': 'status',
-        'measurement': 'record',
-        'dimension': 'current',
-        'group': 'deviceOnline',
-        'params': {
-          'state': 'online',
-        },
-      },// 设备状态信息-总数
-      {
-        'dashboard': 'device',
-        'object': 'status',
-        'measurement': 'record',
-        'dimension': 'current',
-        'group': 'deviceCount',
-      },// 设备状态信息-未激活
-      {
-        'dashboard': 'device',
-        'object': 'status',
-        'measurement': 'record',
-        'dimension': 'current',
-        'group': 'deviceNotActive',
-        'params': {
-          'state': 'notActive',
-        },
-      },// 设备状态信息-历史在线
-      {
-        'dashboard': 'device',
-        'object': 'status',
-        'measurement': 'record',
-        'dimension': 'aggOnline',
-        'group': 'aggOnline',
-        'params': {
-          'limit': 20,
-          'time': '1d',
-          'format': 'yyyy-MM-dd',
+        dashboard: 'device',
+        object: 'session',
+        measurement: 'online',
+        dimension: 'agg',
+        group: 'aggOnline',
+        params: {
+          state: 'online',
+          limit: 15,
+          from: 'now-15d',
+          time: '1d',
+          format: 'yyyy-MM-dd',
         },
       },
+      // 设备状态信息-总数
+      // {
+      //   'dashboard': 'device',
+      //   'object': 'status',
+      //   'measurement': 'record',
+      //   'dimension': 'current',
+      //   'group': 'deviceCount',
+      // },// 设备状态信息-未激活
+      // {
+      //   'dashboard': 'device',
+      //   'object': 'status',
+      //   'measurement': 'record',
+      //   'dimension': 'current',
+      //   'group': 'deviceNotActive',
+      //   'params': {
+      //     'state': 'notActive',
+      //   },
+      // },// 设备状态信息-历史在线
+      // {
+      //   'dashboard': 'device',
+      //   'object': 'status',
+      //   'measurement': 'record',
+      //   'dimension': 'aggOnline',
+      //   'group': 'aggOnline',
+      //   'params': {
+      //     'limit': 20,
+      //     'time': '1d',
+      //     'format': 'yyyy-MM-dd',
+      //   },
+      // },
     ];
     apis.analysis.getMulti(list)
       .then((response: any) => {
@@ -190,15 +207,15 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
                     'y': Number(item.data.value),
                   });
                 break;
-              case 'deviceOnline':
-                setDeviceOnline(item.data.value);
-                break;
-              case 'deviceCount':
-                setDeviceCount(item.data.value);
-                break;
-              case 'deviceNotActive':
-                setDeviceNotActive(item.data.value);
-                break;
+              // case 'deviceOnline':
+              //   setDeviceOnline(item.data.value);
+              //   break;
+              // case 'deviceCount':
+              //   setDeviceCount(item.data.value);
+              //   break;
+              // case 'deviceNotActive':
+              //   setDeviceNotActive(item.data.value);
+              //   break;
               default:
                 break;
             }
@@ -207,6 +224,45 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
         }
         setDeviceCountSpinning(false);
       });
+
+    apis.deviceInstance
+      .count(
+        encodeQueryParam({
+          terms: {
+            state: 'notActive'
+          },
+        }),
+      )
+      .then(res => {
+        if (res.status === 200) {
+          setDeviceNotActive(res.result);
+        }
+      })
+      .catch();
+
+    apis.deviceInstance
+      .count({})
+      .then(res => {
+        if (res.status === 200) {
+          setDeviceCount(res.result);
+        }
+      })
+      .catch();
+    // 设备在线
+    apis.deviceInstance
+      .count(
+        encodeQueryParam({
+          terms: {
+            state: 'online'
+          },
+        }),
+      )
+      .then(res => {
+        if (res.status === 200) {
+          setDeviceOnline(res.result);
+        }
+      })
+      .catch();
   };
 
   useEffect(() => {

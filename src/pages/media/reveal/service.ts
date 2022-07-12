@@ -30,13 +30,18 @@ class Service extends BaseService<any> {
       filter(resp => resp.status === 200),
       map(resp => resp.result)
     ));
-  public getPlay = (deviceId: string, channelId: string) => defer(
-    () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_start`, {
-      method: 'POST'
-    })).pipe(
-      filter(resp => resp.status === 200),
-      map(resp => resp.result)
-    ));
+  // public getPlay = (deviceId: string, channelId: string) => defer(
+  //   () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_start`, {
+  //     method: 'POST'
+  //   })).pipe(
+  //     filter(resp => resp.status === 200),
+  //     map(resp => resp.result)
+  //   ));
+  // public getPlay = (deviceId: string, channelId: string, type: string, ) => defer(
+  //   () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/live.${type}?:X_Access_Token=${getAccessToken()}`, {
+  //     method: 'GET'
+  //   })));
+
   public getStop = (deviceId: string, channelId: string) => defer(
     () => from(request(`/jetlinks/media/device/${deviceId}/${channelId}/_stop`, {
       method: 'POST'

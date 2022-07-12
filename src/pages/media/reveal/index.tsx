@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import styles from './index.less';
 import Service from "./service";
 import { DataNode } from './data';
+import { getAccessToken } from "@/utils/authority";
 
 interface Props {
 
@@ -155,45 +156,45 @@ const Reveal: React.FC<Props> = props => {
     setDeviceId(deviceId);
     setChannelId(channelId);
     if (isLeaf) {
-      service.getPlay(deviceId, channelId).subscribe(res => {
-        let data = players || [];
-        data.forEach((item, index) => {
-          if (index === setting) {
-            item.url = getPlayer(res).url;
-            item.protocol = getPlayer(res).protocol;
-            item.deviceId = deviceId;
-            item.channelId = channelId
-          }
-        });
-        let i = 0;
-        if (players.length - 1 > setting) {
-          i = setting + 1;
-        } else if (players.length - 1 === setting) {
-          i = 0
+      // service.getPlay(deviceId, channelId, 'mp4').subscribe(res => {
+      let data = players || [];
+      data.forEach((item, index) => {
+        if (index === setting) {
+          item.url = `/jetlinks/media/device/${deviceId}/${channelId}/live.mp4?:X_Access_Token=${getAccessToken()}`;
+          item.protocol = 'mp4';
+          item.deviceId = deviceId;
+          item.channelId = channelId
         }
-        setSetting(i);
-        setPlayers([...data])
-      })
+      });
+      let i = 0;
+      if (players.length - 1 > setting) {
+        i = setting + 1;
+      } else if (players.length - 1 === setting) {
+        i = 0
+      }
+      setSetting(i);
+      setPlayers([...data])
+      // })
     }
   };
 
-  const getPlayer = (res: any) => {
-    if (res.mp4) {
-      return { url: res.mp4, protocol: 'mp4' }
-    } else if (res.flv) {
-      return { url: res.flv, protocol: 'flv' }
-    } else if (res.hls) {
-      return { url: res.hls, protocol: 'hls' }
-    } else if (res.rtmp) {
-      return { url: res.rtmp, protocol: 'rtmp' }
-    } else if (res.rtsp) {
-      return { url: res.rtsp, protocol: 'rtsp' }
-    } else if (res.rtc) {
-      return { url: res.rtc, protocol: 'rtc' }
-    } else {
-      return { url: '', protocol: '' }
-    }
-  };
+  // const getPlayer = (res: any) => {
+  //   if (res.mp4) {
+  //     return { url: res.mp4, protocol: 'mp4' }
+  //   } else if (res.flv) {
+  //     return { url: res.flv, protocol: 'flv' }
+  //   } else if (res.hls) {
+  //     return { url: res.hls, protocol: 'hls' }
+  //   } else if (res.rtmp) {
+  //     return { url: res.rtmp, protocol: 'rtmp' }
+  //   } else if (res.rtsp) {
+  //     return { url: res.rtsp, protocol: 'rtsp' }
+  //   } else if (res.rtc) {
+  //     return { url: res.rtc, protocol: 'rtc' }
+  //   } else {
+  //     return { url: '', protocol: '' }
+  //   }
+  // };
 
   const controlStart = (deviceId: string, channelId: string, direct: string) => {
     if (playing && deviceId !== '' && channelId !== '' && deviceId !== undefined && channelId !== undefined) {
@@ -220,19 +221,19 @@ const Reveal: React.FC<Props> = props => {
     //关闭流
     service.getStop(deviceId, channelId).subscribe(() => {
       //开启流
-      service.getPlay(deviceId, channelId).subscribe(res => {
-        let data = players || [];
-        data.forEach((item, index) => {
-          if (index === setting) {
-            item.url = getPlayer(res).url;
-            item.protocol = getPlayer(res).protocol;
-            item.deviceId = deviceId;
-            item.channelId = channelId
-          }
-        });
-        setPlayers([...data])
-      })
-    });
+      // service.getPlay(deviceId, channelId).subscribe(res => {
+      let data = players || [];
+      data.forEach((item, index) => {
+        if (index === setting) {
+          item.url = `/jetlinks/media/device/${deviceId}/${channelId}/live.mp4?:X_Access_Token=${getAccessToken()}`;
+          item.protocol = 'mp4';
+          item.deviceId = deviceId;
+          item.channelId = channelId
+        }
+      });
+      setPlayers([...data])
+    })
+    // });
   };
 
   return (

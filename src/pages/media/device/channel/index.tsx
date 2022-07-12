@@ -120,7 +120,7 @@ const MediaDevice: React.FC<Props> = props => {
     },
     {
       title: '经纬度',
-      width: 200,
+      // width: 200,
       ellipsis: true,
       render: (record: any) => (
         <span>{record.longitude ? `${record.longitude ? record.longitude : ''},${record.latitude ? record.latitude : ''}` : ''}</span>
@@ -141,6 +141,7 @@ const MediaDevice: React.FC<Props> = props => {
       title: '操作',
       align: 'center',
       // fixed: 'right',
+      width: 200,
       render: (record: any) => (
         <Fragment>
           <a
