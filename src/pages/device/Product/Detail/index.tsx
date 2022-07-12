@@ -15,7 +15,7 @@ import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
 import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import Parsing from '../../Instance/Detail/Parsing';
@@ -308,8 +308,9 @@ const ProductDetail = observer(() => {
                     type: 'and',
                   };
                   if (url) {
-                    console.log(`${url}?q=${JSON.stringify(searchParams)}`);
-                    history.push(`${url}?q=${JSON.stringify(searchParams)}`);
+                    const params = new URLSearchParams();
+                    params.append('q', JSON.stringify(searchParams));
+                    history.push(`${url}?${params.toString()}`);
                   }
                 }}
               >
@@ -320,11 +321,17 @@ const ProductDetail = observer(() => {
         </Spin>
       }
       title={
-        <Tooltip placement="topLeft" title={productModel.current?.name}>
-          <div className="ellipsis" style={{ maxWidth: 250 }}>
-            {productModel.current?.name}
-          </div>
-        </Tooltip>
+        <Ellipsis
+          title={productModel.current?.name}
+          tooltip={{ placement: 'topLeft' }}
+          style={{ maxWidth: 250 }}
+          limitWidth={250}
+        />
+        // <Tooltip placement="topLeft" title={productModel.current?.name}>
+        //   <div className="ellipsis" style={{ maxWidth: 250 }}>
+        //     {productModel.current?.name}
+        //   </div>
+        // </Tooltip>
       }
       subTitle={
         permission.update ? (

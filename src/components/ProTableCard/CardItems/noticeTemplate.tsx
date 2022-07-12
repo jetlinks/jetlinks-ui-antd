@@ -1,8 +1,7 @@
 import React from 'react';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { Tooltip } from 'antd';
 
 export interface NoticeCardProps extends TemplateItem {
   detail?: React.ReactNode;
@@ -65,24 +64,27 @@ export default (props: NoticeCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>
-              <Tooltip placement="topLeft" title={props.name}>
-                {props.name}
-              </Tooltip>
-            </span>
+            {/*<span className={'card-item-header-name ellipsis'}>*/}
+            {/*  <Tooltip placement="topLeft" title={props.name}>*/}
+            {/*    {props.name}*/}
+            {/*  </Tooltip>*/}
+            {/*</span>*/}
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content'}>
             <div>
               <label>通知方式</label>
-              <div className={'ellipsis'}>{typeList[props.type][props.provider] || '暂无'}</div>
+              <Ellipsis title={typeList[props.type][props.provider] || '暂无'} />
+              {/*<div className={'ellipsis'}>{typeList[props.type][props.provider] || '暂无'}</div>*/}
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>
-                <Tooltip placement="topLeft" title={props.description}>
-                  {props.description}
-                </Tooltip>
-              </div>
+              <Ellipsis tooltip={{ placement: 'topLeft' }} title={props.description} />
+              {/*<div className={'ellipsis'}>*/}
+              {/*  <Tooltip placement="topLeft" title={props.description}>*/}
+              {/*    {props.description}*/}
+              {/*  </Tooltip>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

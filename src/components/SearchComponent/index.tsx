@@ -550,22 +550,28 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       setExpand(false);
       handleForm(true);
     }
-
+    const params = new URLSearchParams(_location.search);
+    params.delete('q');
+    params.delete('target');
     if (
       (value.terms1 && value.terms1.length && value.terms1?.some((item) => item.value)) ||
       (value.terms2 && value.terms2.length && value.terms2?.some((item) => item.value))
     ) {
       if (type) {
+        params.append('q', JSON.stringify(value));
+        if (props.target) {
+          params.append('target', props.target);
+        }
         _history.push({
           hash: _location.hash,
-          search: `q=${JSON.stringify(value)}&target=${props.target}`,
+          search: '?' + params.toString(),
         });
         // setUrl({ q: JSON.stringify(value), target: props.target });
       }
     } else {
       _history.push({
         hash: _location.hash,
-        search: '?',
+        search: '?' + params.toString(),
       });
     }
     onSearch({ terms: _temp });

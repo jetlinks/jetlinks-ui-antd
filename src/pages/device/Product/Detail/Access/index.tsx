@@ -27,6 +27,7 @@ import { onlyMessage } from '@/utils/util';
 import Driver from 'driver.js';
 import 'driver.js/dist/driver.min.css';
 import './index.less';
+import { Ellipsis } from '@/components';
 
 const componentMap = {
   string: 'Input',
@@ -605,23 +606,36 @@ const Access = () => {
                   }
                 />
                 <div className={styles.context}>
-                  <Tooltip placement="topLeft" title={access?.name}>
-                    <div className="ellipsis-70">{access?.name}</div>
-                  </Tooltip>
+                  {/*<Tooltip placement="topLeft" title={access?.name}>*/}
+                  {/*  <div className="ellipsis-70">{access?.name}</div>*/}
+                  {/*</Tooltip>*/}
+                  <Ellipsis
+                    title={access?.name}
+                    tooltip={{ placement: 'topLeft' }}
+                    maxWidth={'70%'}
+                  />
                 </div>
                 <div className={styles.context}>
-                  <Tooltip
-                    placement="topLeft"
+                  {/*<Tooltip*/}
+                  {/*  placement="topLeft"*/}
+                  {/*  title={*/}
+                  {/*    access?.description ||*/}
+                  {/*    dataSource.find((item) => item?.id === access?.provider)?.description*/}
+                  {/*  }*/}
+                  {/*>*/}
+                  {/*  <div className="ellipsis-70">*/}
+                  {/*    {access?.description ||*/}
+                  {/*      dataSource.find((item) => item?.id === access?.provider)?.description}*/}
+                  {/*  </div>*/}
+                  {/*</Tooltip>*/}
+                  <Ellipsis
                     title={
                       access?.description ||
                       dataSource.find((item) => item?.id === access?.provider)?.description
                     }
-                  >
-                    <div className="ellipsis-70">
-                      {access?.description ||
-                        dataSource.find((item) => item?.id === access?.provider)?.description}
-                    </div>
-                  </Tooltip>
+                    tooltip={{ placement: 'topLeft' }}
+                    maxWidth={'70%'}
+                  />
                 </div>
               </div>
 

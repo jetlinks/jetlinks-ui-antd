@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { CheckOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import TitleComponent from '@/components/TitleComponent';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 import { descriptionList, MetworkTypeMapping, ProcotoleMapping } from './data';
@@ -314,9 +314,10 @@ const Access = (props: Props) => {
                       }}
                     >
                       <div className={styles.title}>
-                        <Tooltip placement="topLeft" title={item.name}>
-                          {item.name}
-                        </Tooltip>
+                        <Ellipsis title={item.name} tooltip={{ placement: 'topLeft' }} />
+                        {/*<Tooltip placement="topLeft" title={item.name}>*/}
+                        {/*  {item.name}*/}
+                        {/*</Tooltip>*/}
                       </div>
                       <div className={styles.cardContent}>
                         <Tooltip
@@ -354,14 +355,20 @@ const Access = (props: Props) => {
                             ))}
                           </div>
                         </Tooltip>
-                        <div className={styles.desc}>
-                          <Tooltip
-                            placement="topLeft"
-                            title={item?.description || descriptionList[props.provider?.id]}
-                          >
-                            {item?.description || descriptionList[props.provider?.id]}
-                          </Tooltip>
-                        </div>
+                        <Ellipsis
+                          title={item?.description || descriptionList[props.provider?.id]}
+                          tooltip={{ placement: 'topLeft' }}
+                          titleClassName={styles.desc}
+                        />
+                        {/*<div className={styles.desc}>*/}
+                        {/*  <Tooltip*/}
+                        {/*    placement="topLeft"*/}
+                        {/*    title={item?.description || descriptionList[props.provider?.id]}*/}
+                        {/*  >*/}
+                        {/*    {item?.description || descriptionList[props.provider?.id]}*/}
+                        {/*  </Tooltip>*/}
+                        {/*  */}
+                        {/*</div>*/}
                       </div>
                       <div className={styles.checkedIcon}>
                         <div>

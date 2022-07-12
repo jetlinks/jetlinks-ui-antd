@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { StatusColorEnum } from '@/components/BadgeStatus';
@@ -31,16 +31,19 @@ export default (props: AliyunCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props?.name}</span>
+            <Ellipsis title={props?.name} titleClassName={'card-item-header-name'} />
+            {/*<span className={'card-item-header-name ellipsis'}>{props?.name}</span>*/}
           </div>
           <div className={'card-item-content'}>
             <div>
               <label>网桥产品</label>
-              <div className={'ellipsis'}>{props?.bridgeProductName || ''}</div>
+              <Ellipsis title={props?.bridgeProductName || ''} />
+              {/*<div className={'ellipsis'}>{props?.bridgeProductName || ''}</div>*/}
             </div>
             <div>
               <label>说明</label>
-              <div className={'ellipsis'}>{props?.description || ''}</div>
+              <Ellipsis title={props?.description || ''} />
+              {/*<div className={'ellipsis'}>{props?.description || ''}</div>*/}
             </div>
           </div>
         </div>

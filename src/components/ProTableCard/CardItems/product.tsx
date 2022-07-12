@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { useIntl } from 'umi';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { Tooltip } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 
 export interface ProductCardProps extends Partial<ProductItem> {
@@ -74,11 +73,7 @@ export const ExtraProductCard = (props: ProductCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <div className={'card-item-header-name'}>
-              <Tooltip title={props.name}>
-                <div className={'ellipsis'}>{props.name}</div>
-              </Tooltip>
-            </div>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content-items'} style={{ display: 'flex', gap: 12 }}>
             {props.content}
@@ -86,25 +81,20 @@ export const ExtraProductCard = (props: ProductCardProps) => {
           <div className={'card-item-content-flex'}>
             <div className={'flex-auto'}>
               <label>ID</label>
-              <div className={'ellipsis'}>
-                <Tooltip title={props.id}>{props.id || ''}</Tooltip>
-              </div>
+              <Ellipsis title={props.id || ''} titleClassName={'ellipsis'} />
             </div>
             {props.cardType === 'bind' ? (
               <div className={'flex-auto'}>
                 <label>说明</label>
-                <Tooltip title={props.describe}>
-                  <div className={'ellipsis'}>{props.describe}</div>
-                </Tooltip>
+                <Ellipsis title={props.describe} titleClassName={'ellipsis'} />
               </div>
             ) : (
               <div className={'flex-auto'}>
                 <label>资产权限</label>
-                <div className={'ellipsis'}>
-                  <Tooltip title={handlePermissionsMap(props.grantedPermissions)}>
-                    {handlePermissionsMap(props.grantedPermissions)}
-                  </Tooltip>
-                </div>
+                <Ellipsis
+                  title={handlePermissionsMap(props.grantedPermissions)}
+                  titleClassName={'ellipsis'}
+                />
               </div>
             )}
           </div>
@@ -141,16 +131,16 @@ export default (props: ProductCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <div className={'ellipsis'}>{props?.deviceType?.text}</div>
+              <Ellipsis title={props?.deviceType?.text} titleClassName={'ellipsis'} />
             </div>
             <div>
               <label>接入方式</label>
-              <div className={'ellipsis'}>{props.protocolName || '未接入'}</div>
+              <Ellipsis title={props.protocolName || '未接入'} titleClassName={'ellipsis'} />
             </div>
           </div>
         </div>
