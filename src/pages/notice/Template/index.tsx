@@ -104,7 +104,7 @@ const Template = observer(() => {
       dataIndex: 'provider',
       title: '通知方式',
       renderText: (text, record) => {
-        return typeList[record.type][record.provider];
+        return typeList[record?.type][record?.provider];
       },
       valueType: 'select',
       valueEnum: list[id],

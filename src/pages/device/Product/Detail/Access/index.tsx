@@ -447,10 +447,20 @@ const Access = () => {
     });
   };
 
+  const flatObj = (obj: any, result: any) => {
+    Object.keys(obj).forEach((key: string) => {
+      if (typeof obj[key] === 'string') {
+        result[key] = obj[key];
+      } else {
+        flatObj(obj[key], result);
+      }
+    });
+  };
+
   const renderConfigCard = () => {
     const itemSchema: any = (metadata || []).map((item: any) => {
       return {
-        type: 'object',
+        type: 'void',
         properties: {
           grid: {
             type: 'void',
@@ -517,7 +527,9 @@ const Access = () => {
             type="primary"
             onClick={async () => {
               const values = (await form.submit()) as any;
-              const { storePolicy, ...extra } = values;
+              const result: any = {};
+              flatObj(values, result);
+              const { storePolicy, ...extra } = result;
               const resp = await productService.modify(id || '', {
                 id,
                 configuration: { ...extra },

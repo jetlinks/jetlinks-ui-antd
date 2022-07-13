@@ -735,7 +735,7 @@ const Save = observer(() => {
             enum: [{ label: 'JavaScript', value: 'javascript' }],
           },
           script: {
-            title: '脚本解析',
+            title: '解析脚本',
             'x-component': 'FMonacoEditor',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
