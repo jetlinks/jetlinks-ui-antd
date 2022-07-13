@@ -1,4 +1,4 @@
-import { Card, Descriptions, Tooltip } from 'antd';
+import { Card, Descriptions } from 'antd';
 import { InstanceModel } from '@/pages/device/Instance';
 import moment from 'moment';
 import { observer } from '@formily/react';
@@ -10,7 +10,7 @@ import { useState } from 'react';
 import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 
 const Info = observer(() => {
@@ -47,11 +47,17 @@ const Info = observer(() => {
               defaultMessage: '设备ID',
             })}
           >
-            <Tooltip placement="topLeft" title={InstanceModel.detail?.id}>
-              <div className="ellipsis" style={{ maxWidth: 250 }}>
-                {InstanceModel.detail?.id}
-              </div>
-            </Tooltip>
+            <Ellipsis
+              title={InstanceModel.detail?.id}
+              tooltip={{ placement: 'topLeft' }}
+              style={{ maxWidth: 250 }}
+              limitWidth={250}
+            />
+            {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.id}>*/}
+            {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
+            {/*    {InstanceModel.detail?.id}*/}
+            {/*  </div>*/}
+            {/*</Tooltip>*/}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -59,18 +65,30 @@ const Info = observer(() => {
               defaultMessage: '产品名称',
             })}
           >
-            <Tooltip placement="topLeft" title={InstanceModel.detail?.productName}>
-              <div className="ellipsis" style={{ maxWidth: 250 }}>
-                {InstanceModel.detail?.productName}
-              </div>
-            </Tooltip>
+            <Ellipsis
+              title={InstanceModel.detail?.productName}
+              tooltip={{ placement: 'topLeft' }}
+              style={{ maxWidth: 250 }}
+              limitWidth={250}
+            />
+            {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.productName}>*/}
+            {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
+            {/*    {InstanceModel.detail?.productName}*/}
+            {/*  </div>*/}
+            {/*</Tooltip>*/}
           </Descriptions.Item>
           <Descriptions.Item label={'产品分类'}>
-            <Tooltip placement="topLeft" title={InstanceModel.detail?.classifiedName}>
-              <div className="ellipsis" style={{ maxWidth: 250 }}>
-                {InstanceModel.detail?.classifiedName}
-              </div>
-            </Tooltip>
+            <Ellipsis
+              title={InstanceModel.detail?.classifiedName}
+              tooltip={{ placement: 'topLeft' }}
+              style={{ maxWidth: 250 }}
+              limitWidth={250}
+            />
+            {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.classifiedName}>*/}
+            {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
+            {/*    {InstanceModel.detail?.classifiedName}*/}
+            {/*  </div>*/}
+            {/*</Tooltip>*/}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -129,11 +147,17 @@ const Info = observer(() => {
               defaultMessage: '说明',
             })}
           >
-            <Tooltip placement="topLeft" title={InstanceModel.detail?.description}>
-              <div className="ellipsis" style={{ maxWidth: 250 }}>
-                {InstanceModel.detail?.description}
-              </div>
-            </Tooltip>
+            <Ellipsis
+              title={InstanceModel.detail?.description}
+              tooltip={{ placement: 'topLeft' }}
+              style={{ maxWidth: 250 }}
+              limitWidth={250}
+            />
+            {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.description}>*/}
+            {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
+            {/*    {InstanceModel.detail?.description}*/}
+            {/*  </div>*/}
+            {/*</Tooltip>*/}
           </Descriptions.Item>
         </Descriptions>
         <Config />

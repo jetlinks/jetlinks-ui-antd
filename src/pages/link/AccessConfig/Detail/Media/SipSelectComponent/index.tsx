@@ -21,15 +21,14 @@ const SipSelectComponent = (props: SipSelectComponentProps) => {
   }, [value]);
 
   useEffect(() => {
-    if (!props.type) {
-      setData(value || { host: '0.0.0.0' });
-      if (!value) {
-        const dt: any = props.data.find((i) => i.host === '0.0.0.0');
-        setList(dt?.portList || []);
-      } else {
-        const dt: any = props.data.find((i) => i.host === value.host);
-        setList(dt?.portList || []);
-      }
+    if (!props.type && !value) {
+      setData({ host: '0.0.0.0' });
+      const dt: any = props.data.find((i) => i.host === '0.0.0.0');
+      setList(dt?.portList || []);
+    }
+    if (value) {
+      const dt: any = props.data.find((i) => i.host === value.host);
+      setList(dt?.portList || []);
     }
   }, [props.type]);
 

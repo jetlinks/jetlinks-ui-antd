@@ -1,11 +1,11 @@
 import { productModel, service } from '@/pages/device/Product';
-import { Button, Descriptions, Tooltip } from 'antd';
+import { Button, Descriptions } from 'antd';
 import { useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined } from '@ant-design/icons';
 import { getDateFormat } from '@/utils/util';
 import Save from '@/pages/device/Product/Save';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 
 // const componentMap = {
 //   string: 'Input',
@@ -172,11 +172,17 @@ const BaseInfo = (props: BaseInfoProps) => {
         bordered
       >
         <Descriptions.Item label={'ID'}>
-          <Tooltip placement="topLeft" title={productModel.current?.id}>
-            <div className="ellipsis-70" style={{ width: 300 }}>
-              {productModel.current?.id}
-            </div>
-          </Tooltip>
+          <Ellipsis
+            title={productModel.current?.id}
+            tooltip={{ placement: 'topLeft' }}
+            maxWidth={'90%'}
+            style={{ width: 300 }}
+          />
+          {/*<Tooltip placement="topLeft" title={productModel.current?.id}>*/}
+          {/*  <div className="ellipsis-70" style={{ width: 300 }}>*/}
+          {/*    {productModel.current?.id}*/}
+          {/*  </div>*/}
+          {/*</Tooltip>*/}
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
@@ -184,11 +190,17 @@ const BaseInfo = (props: BaseInfoProps) => {
             defaultMessage: '产品分类',
           })}
         >
-          <Tooltip placement="topLeft" title={productModel.current?.classifiedName}>
-            <div className="ellipsis-70" style={{ width: 300 }}>
-              {productModel.current?.classifiedName}
-            </div>
-          </Tooltip>
+          <Ellipsis
+            title={productModel.current?.classifiedName}
+            tooltip={{ placement: 'topLeft' }}
+            maxWidth={'90%'}
+            style={{ width: 300 }}
+          />
+          {/*<Tooltip placement="topLeft" title={productModel.current?.classifiedName}>*/}
+          {/*  <div className="ellipsis-70" style={{ width: 300 }}>*/}
+          {/*    {productModel.current?.classifiedName}*/}
+          {/*  </div>*/}
+          {/*</Tooltip>*/}
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({

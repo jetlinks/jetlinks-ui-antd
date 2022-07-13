@@ -1371,7 +1371,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            {docMap[id][provider]}
+            {docMap?.[id]?.[provider]}
           </Col>
         </Row>
       </Card>

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { TableCard } from '@/components';
+import { TableCard, Ellipsis } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { CheckOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
 
 export interface DeviceCardProps extends Partial<DeviceInstance> {
   detail?: React.ReactNode;
@@ -67,34 +66,36 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <div className={'card-item-header-name'}>
-              <Tooltip title={props.name}>
-                <div className={'ellipsis'}>{props.name}</div>
-              </Tooltip>
-            </div>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content-flex'}>
             <div className={'flex-auto'}>
               <label>ID</label>
-              <div className={'ellipsis'}>
-                <Tooltip title={props.id}>{props.id || ''}</Tooltip>
-              </div>
+              <Ellipsis title={props.id || ''} titleClassName={'ellipsis'} />
+              {/*<div className={'ellipsis'}>*/}
+              {/*  <Tooltip title={props.id}>{props.id || ''}</Tooltip>*/}
+              {/*</div>*/}
             </div>
             {props.cardType === 'bind' ? (
               <div className={'flex-auto'}>
                 <label>说明</label>
-                <Tooltip title={props.describe}>
-                  <div className={'ellipsis'}>{props.describe}</div>
-                </Tooltip>
+                <Ellipsis title={props.describe || ''} titleClassName={'ellipsis'} />
+                {/*<Tooltip title={props.describe}>*/}
+                {/*  <div className={'ellipsis'}>{props.describe}</div>*/}
+                {/*</Tooltip>*/}
               </div>
             ) : (
               <div className={'flex-auto'}>
                 <label>资产权限</label>
-                <div className={'ellipsis'}>
-                  <Tooltip title={handlePermissionsMap(props.grantedPermissions)}>
-                    {handlePermissionsMap(props.grantedPermissions)}
-                  </Tooltip>
-                </div>
+                <Ellipsis
+                  title={handlePermissionsMap(props.grantedPermissions)}
+                  titleClassName={'ellipsis'}
+                />
+                {/*<div className={'ellipsis'}>*/}
+                {/*  <Tooltip title={handlePermissionsMap(props.grantedPermissions)}>*/}
+                {/*    {handlePermissionsMap(props.grantedPermissions)}*/}
+                {/*  </Tooltip>*/}
+                {/*</div>*/}
               </div>
             )}
           </div>
@@ -128,16 +129,21 @@ export default (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : ''}</div>
+              <Ellipsis
+                title={props.deviceType ? props.deviceType.text : ''}
+                titleClassName={'ellipsis'}
+              />
+              {/*<div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : ''}</div>*/}
             </div>
             <div>
               <label>产品名称</label>
-              <div className={'ellipsis'}>{props.productName || ''}</div>
+              <Ellipsis title={props.productName} titleClassName={'ellipsis'} />
+              {/*<div className={'ellipsis'}>{props.productName || ''}</div>*/}
             </div>
           </div>
         </div>

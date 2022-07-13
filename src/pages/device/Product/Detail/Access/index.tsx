@@ -27,6 +27,7 @@ import { onlyMessage } from '@/utils/util';
 import Driver from 'driver.js';
 import 'driver.js/dist/driver.min.css';
 import './index.less';
+import { Ellipsis } from '@/components';
 
 const componentMap = {
   string: 'Input',
@@ -412,6 +413,14 @@ const Access = () => {
           labelAlign: 'left',
           layout: 'vertical',
         },
+        'x-validator': [
+          {
+            required: !!item?.type?.expands?.required,
+            message: `${item.type.type === 'enum' ? '请选择' : '请输入'}${item.name}`,
+          },
+        ],
+        required: !!item?.type?.expands?.required,
+        default: item?.type?.expands?.defaultValue,
         enum:
           item?.type?.type === 'enum' && item?.type?.elements
             ? (item?.type?.elements || []).map((t: { value: string; text: string }) => {
@@ -597,23 +606,36 @@ const Access = () => {
                   }
                 />
                 <div className={styles.context}>
-                  <Tooltip placement="topLeft" title={access?.name}>
-                    <div className="ellipsis-70">{access?.name}</div>
-                  </Tooltip>
+                  {/*<Tooltip placement="topLeft" title={access?.name}>*/}
+                  {/*  <div className="ellipsis-70">{access?.name}</div>*/}
+                  {/*</Tooltip>*/}
+                  <Ellipsis
+                    title={access?.name}
+                    tooltip={{ placement: 'topLeft' }}
+                    maxWidth={'70%'}
+                  />
                 </div>
                 <div className={styles.context}>
-                  <Tooltip
-                    placement="topLeft"
+                  {/*<Tooltip*/}
+                  {/*  placement="topLeft"*/}
+                  {/*  title={*/}
+                  {/*    access?.description ||*/}
+                  {/*    dataSource.find((item) => item?.id === access?.provider)?.description*/}
+                  {/*  }*/}
+                  {/*>*/}
+                  {/*  <div className="ellipsis-70">*/}
+                  {/*    {access?.description ||*/}
+                  {/*      dataSource.find((item) => item?.id === access?.provider)?.description}*/}
+                  {/*  </div>*/}
+                  {/*</Tooltip>*/}
+                  <Ellipsis
                     title={
                       access?.description ||
                       dataSource.find((item) => item?.id === access?.provider)?.description
                     }
-                  >
-                    <div className="ellipsis-70">
-                      {access?.description ||
-                        dataSource.find((item) => item?.id === access?.provider)?.description}
-                    </div>
-                  </Tooltip>
+                    tooltip={{ placement: 'topLeft' }}
+                    maxWidth={'70%'}
+                  />
                 </div>
               </div>
 

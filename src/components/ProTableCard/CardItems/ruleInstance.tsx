@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import '@/style/common.less';
 import type { InstanceItem } from '@/pages/rule-engine/Instance/typings';
@@ -30,7 +30,8 @@ export default (props: RuleInstanceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            <span className={'card-item-header-name ellipsis'}>{props.name}</span>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
+            {/*<span className={'card-item-header-name ellipsis'}>{props.name}</span>*/}
           </div>
           <div className={'card-item-content'}>{props.description}</div>
         </div>

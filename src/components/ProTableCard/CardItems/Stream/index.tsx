@@ -1,8 +1,7 @@
 import React from 'react';
-import { TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import './index.less';
-import { Tooltip } from 'antd';
 
 export interface StreamCardProps extends StreamItem {
   detail?: React.ReactNode;
@@ -27,30 +26,34 @@ export default (props: StreamCardProps) => {
         </div>
         <div className="card">
           <div className="header">
-            <div className="stream-title ellipsis">
-              <Tooltip title={props.name}>{props.name}</Tooltip>
-            </div>
+            {/*<div className="stream-title ellipsis">*/}
+            {/*  <Tooltip title={props.name}>{props.name}</Tooltip>*/}
+            {/*</div>*/}
+            <Ellipsis title={props?.name} titleClassName={'stream-title'} />
           </div>
           <div className="container">
             <div>
               <label>服务商</label>
-              <div className={'ellipsis'}>
-                <Tooltip title={props?.provider}>{props?.provider}</Tooltip>
-              </div>
+              {/*<div className={'ellipsis'}>*/}
+              {/*  <Tooltip title={props?.provider}>{props?.provider}</Tooltip>*/}
+              {/*</div>*/}
+              <Ellipsis title={props?.provider} titleClassName={'stream-title'} />
             </div>
             <div>
               <label>RTP IP</label>
-              <div className={'ellipsis'}>
-                <Tooltip title={props?.configuration?.rtpIp}>{props?.configuration?.rtpIp}</Tooltip>
-              </div>
+              <Ellipsis title={props?.configuration?.rtpIp} />
+              {/*<div className={'ellipsis'}>*/}
+              {/*  <Tooltip title={props?.configuration?.rtpIp}>{props?.configuration?.rtpIp}</Tooltip>*/}
+              {/*</div>*/}
             </div>
             <div>
               <label>API HOST</label>
-              <div className={'ellipsis'}>
-                <Tooltip title={props?.configuration?.apiHost}>
-                  {props?.configuration?.apiHost}
-                </Tooltip>
-              </div>
+              <Ellipsis title={props?.configuration?.apiHost} />
+              {/*<div className={'ellipsis'}>*/}
+              {/*  <Tooltip title={props?.configuration?.apiHost}>*/}
+              {/*    {props?.configuration?.apiHost}*/}
+              {/*  </Tooltip>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

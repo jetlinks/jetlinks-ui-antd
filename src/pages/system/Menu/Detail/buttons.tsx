@@ -340,6 +340,7 @@ export default (props: ButtonsProps) => {
             required={true}
           >
             <Input
+              allowClear
               onChange={debounce(filterThree, 500)}
               style={{ width: 300, marginBottom: 12 }}
               placeholder={'请输入权限名称'}
