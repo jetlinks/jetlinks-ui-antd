@@ -174,6 +174,7 @@ export default observer((props: ActionProps) => {
           rules={[{ required: true, message: '请选择通知方式' }]}
         >
           <Select
+            allowClear
             options={messageType}
             fieldNames={{ value: 'id', label: 'name' }}
             placeholder={'请选择通知方式'}
@@ -195,6 +196,7 @@ export default observer((props: ActionProps) => {
           rules={[{ required: true, message: '请选择通知配置' }]}
         >
           <Select
+            allowClear
             options={messageConfig}
             loading={messageConfigLoading}
             fieldNames={{ value: 'id', label: 'name' }}
@@ -216,6 +218,7 @@ export default observer((props: ActionProps) => {
           rules={[{ required: true, message: '请选择通知模板' }]}
         >
           <Select
+            allowClear
             options={messageTemplate}
             loading={messageTemplateLoading}
             fieldNames={{ value: 'id', label: 'name' }}
@@ -295,6 +298,7 @@ export default observer((props: ActionProps) => {
             rules={[{ required: true, message: '请选择执行条件' }]}
           >
             <Select
+              allowClear
               options={
                 !props.parallel
                   ? [

@@ -306,6 +306,9 @@ const TriggerTerm = (props: Props, ref: any) => {
                     type: 'string',
                     // "x-decorator": 'FormItem',
                     'x-component': 'FTermTypeSelect',
+                    'x-component-props': {
+                      allowClear: true,
+                    },
                     'x-value': 'and',
                   },
                   layout: {
