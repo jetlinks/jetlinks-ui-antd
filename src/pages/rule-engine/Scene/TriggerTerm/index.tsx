@@ -331,6 +331,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-component-props': {
                           placeholder: '请选择参数',
                           fieldNames: { value: 'column', label: 'name', options: 'children' },
+                          allowClear: true,
                           // treeNodeLabelProp: 'name',
                         },
                         'x-reactions': '{{useAsyncDataSource(getParseTerm)}}',
