@@ -51,7 +51,6 @@ export default (props: EllipsisProps) => {
         const _width = props.limitWidth
           ? props.limitWidth * (props.row || 1)
           : parentWidthNumber * (props.row || 1);
-        console.log(extraSize.width, _width, props.title);
         if (extraWidthNumber >= _width) {
           setIsEllipsis(true);
         } else {

@@ -3,8 +3,31 @@
 .scene-save {
   .trigger-type-content,
   & .scene-actions {
-    padding: 24px 24px 0 24px;
-    background-color: @bgColor;
+    .actions-item {
+      padding: 24px 24px 0 24px;
+      background-color: @bgColor;
+
+      &:not(:first-child) {
+        margin-top: 16px;
+      }
+
+      .actions-item-title {
+        margin-bottom: 16px;
+      }
+
+      .actions-item-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 16px;
+        border-top: 1px solid #2f54eb;
+      }
+
+      .template-variable {
+        margin-bottom: 16px;
+        padding: 16px;
+        border: 1px solid #e6e6e6;
+      }
+    }
   }
 
   .ant-form-item-with-help .ant-form-item-explain {

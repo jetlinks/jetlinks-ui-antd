@@ -160,6 +160,7 @@ export default () => {
           };
           setShakeLimit(newShake);
         }}
+        style={{ marginRight: 16 }}
       />
       {shakeLimit.enabled && (
         <>
@@ -175,7 +176,7 @@ export default () => {
               setShakeLimit(newShake);
             }}
           />
-          <span> 秒内发生 </span>
+          <span style={{ padding: '0 16px' }}> 秒内发生 </span>
           <InputNumber
             value={shakeLimit.threshold}
             min={1}
@@ -188,7 +189,7 @@ export default () => {
               setShakeLimit(newShake);
             }}
           />
-          <span>次及以上时，处理</span>
+          <span style={{ padding: '0 16px' }}>次及以上时，处理</span>
           <Radio.Group
             value={shakeLimit.alarmFirst}
             options={[
@@ -260,7 +261,6 @@ export default () => {
                     setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
                   }
                 }
-                console.log('scene save', allValues);
                 if (allValues.actions) {
                   setActionsData(allValues.actions);
                 }
@@ -378,12 +378,16 @@ export default () => {
                         ))}
                         <Form.Item noStyle>
                           <Button
-                            type="dashed"
+                            type="primary"
+                            ghost
+                            style={{
+                              width: '100%',
+                              marginTop: 16,
+                            }}
                             onClick={() => {
                               add();
                               setActionDataCount(actionDataCount + 1);
                             }}
-                            block
                             icon={<PlusOutlined />}
                           >
                             新增
