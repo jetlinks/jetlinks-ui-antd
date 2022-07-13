@@ -7,19 +7,20 @@ import {
   NumberPicker,
   Select,
 } from '@formily/antd';
-import { createSchemaField } from '@formily/react';
+import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import { DataTypeList, DateTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/device/components/Metadata';
+import MetadataModel from '@/pages/device/components/Metadata/Base/model';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
   keys?: string;
 }
 
-const JsonParam = (props: Props) => {
+const JsonParam = observer((props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -107,7 +108,10 @@ const JsonParam = (props: Props) => {
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
-                      enum: DataTypeList,
+                      enum:
+                        MetadataModel.type === 'functions'
+                          ? DataTypeList.filter((item) => item.value !== 'file')
+                          : DataTypeList,
                     },
                     unit: {
                       title: '单位',
@@ -220,5 +224,5 @@ const JsonParam = (props: Props) => {
     },
   };
   return <SchemaField schema={schema} scope={{ useAsyncDataSource, getUnit }} />;
-};
+});
 export default JsonParam;

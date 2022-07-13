@@ -14,7 +14,7 @@ import WriteProperty from './device/WriteProperty';
 import ReadProperty from './device/readProperty';
 import FunctionCall from './device/functionCall';
 import { InputNumber } from '../components';
-import { ArrowUpOutlined, DeleteOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import { observer } from '@formily/reactive-react';
 import ConditionalFiltering from './device/ConditionalFiltering';
 
@@ -253,43 +253,7 @@ export default observer((props: ActionProps) => {
 
   return (
     <div className={'actions-item'}>
-      <div className={'actions-item-title'}>
-        执行动作 {props.name + 1}
-        <Button
-          onClick={props.onRemove}
-          danger
-          style={{
-            padding: '0 8px',
-            margin: '0 0 12px 12px',
-          }}
-        >
-          <DeleteOutlined />
-        </Button>
-        <Button
-          onClick={() => {
-            props.onMove?.('up');
-          }}
-          disabled={name === 0}
-          style={{
-            padding: '0 8px',
-            margin: '0 0 12px 12px',
-          }}
-        >
-          <ArrowUpOutlined />
-        </Button>
-        <Button
-          onClick={() => {
-            props.onMove?.('down');
-          }}
-          disabled={props.isLast}
-          style={{
-            padding: '0 8px',
-            margin: '0 0 12px 12px',
-          }}
-        >
-          <ArrowDownOutlined />
-        </Button>
-      </div>
+      <div className={'actions-item-title'}>执行动作: {props.name + 1}</div>
       <Row gutter={24}>
         <Col span={4}>
           <Form.Item
@@ -450,6 +414,43 @@ export default observer((props: ActionProps) => {
           </Row>
         </>
       ) : null}
+      <div className={'actions-item-footer'}>
+        <Button
+          onClick={() => {
+            props.onMove?.('up');
+          }}
+          disabled={name === 0}
+          style={{
+            padding: '0 8px',
+            margin: '0 0 12px 12px',
+          }}
+        >
+          <ArrowUpOutlined />
+        </Button>
+        <Button
+          onClick={() => {
+            props.onMove?.('down');
+          }}
+          disabled={props.isLast}
+          style={{
+            padding: '0 8px',
+            margin: '0 0 12px 12px',
+          }}
+        >
+          <ArrowDownOutlined />
+        </Button>
+        <Button
+          onClick={props.onRemove}
+          danger
+          style={{
+            width: 80,
+            marginLeft: 24,
+          }}
+        >
+          {/*<DeleteOutlined />*/}
+          删除
+        </Button>
+      </div>
     </div>
   );
 });

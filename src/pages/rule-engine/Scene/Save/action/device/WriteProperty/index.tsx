@@ -1,10 +1,11 @@
 import { Col, DatePicker, Input, InputNumber, Row, Select, TreeSelect } from 'antd';
 import type { FormInstance } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import moment from 'moment';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 import { Space } from '@formily/antd';
+import { cloneDeep } from 'lodash';
 
 interface WritePropertyProps {
   properties: any[];
@@ -24,6 +25,7 @@ export default (props: WritePropertyProps) => {
   const [propertiesKey, setPropertiesKey] = useState<string | undefined>(undefined);
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
+  const paramsListRef = useRef<any[]>();
 
   const handleName = (data: any) => {
     return (
@@ -60,30 +62,47 @@ export default (props: WritePropertyProps) => {
     }
   };
 
-  const sourceChangeEvent = () => {
+  const filterParamsData = (type?: string, data?: any[]): any[] => {
+    if (type && data) {
+      return data.filter((item) => {
+        if (item.children) {
+          const _children = filterParamsData(type, item.children);
+          item.children = _children;
+          return _children.length ? true : false;
+        } else if (item.type === type) {
+          return true;
+        }
+        return false;
+      });
+    }
+    return data || [];
+  };
+
+  const sourceChangeEvent = useCallback(() => {
     onChange(propertiesKey, undefined, source);
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
     const data = props.form.getFieldsValue();
     queryBuiltInParams(data, params).then((res: any) => {
       if (res.status === 200) {
         const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
-        const _data = props.name === 0 ? res.result : handleTreeData(actionParams);
+        // 获取当前属性类型，过滤不同类型的数据
+        const propertiesItem = props.properties
+          .filter((item) => {
+            if (item.expands && item.expands.type) {
+              return item.expands.type.includes('write');
+            }
+            return false;
+          })
+          .find((item) => item.id === propertiesKey);
+        const type = propertiesItem?.valueType?.type;
+        const _params = props.name === 0 ? res.result : actionParams;
+        paramsListRef.current = cloneDeep(_params);
+        const _filterData = filterParamsData(type, _params);
+        const _data = handleTreeData(_filterData);
         setBuiltInList(_data);
       }
     });
-    // if (props.parallel === false) {
-    //   // 串行
-    // } else {
-    //   // 并行
-    //   queryBuiltInParams({
-    //     trigger: { type: props.type },
-    //   }).then((res: any) => {
-    //     if (res.status === 200) {
-    //       setBuiltInList(handleTreeData(res.result));
-    //     }
-    //   });
-    // }
-  };
+  }, [props.properties, propertiesKey, source]);
 
   useEffect(() => {
     if (source === 'upper') {
@@ -204,8 +223,14 @@ export default (props: WritePropertyProps) => {
           })}
           fieldNames={{ label: 'name', value: 'id' }}
           style={{ width: '100%' }}
-          onSelect={(key: any) => {
+          onSelect={(key: any, node: any) => {
             onChange(key, undefined, source);
+            if (source === 'upper') {
+              const newArr = cloneDeep(paramsListRef.current);
+              const _filterData = filterParamsData(node?.valueType?.type, newArr);
+              const _data = handleTreeData(_filterData);
+              setBuiltInList(_data);
+            }
           }}
           placeholder={'请选择属性'}
         ></Select>

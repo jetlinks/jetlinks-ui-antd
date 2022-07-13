@@ -314,8 +314,8 @@ const TriggerTerm = (props: Props, ref: any) => {
                   layout: {
                     type: 'void',
                     'x-component': 'FormGrid',
-                    'x-decorator-props': {
-                      columns: 12,
+                    'x-component-props': {
+                      minColumns: 24,
                     },
                     properties: {
                       // columns
@@ -325,7 +325,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator': 'FormItem',
                         'x-component': 'TreeSelect',
                         'x-decorator-props': {
-                          gridSpan: 4,
+                          gridSpan: 10,
                         },
                         required: true,
                         'x-component-props': {
@@ -342,7 +342,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-decorator': 'FormItem',
                         'x-component': 'Select',
                         'x-decorator-props': {
-                          gridSpan: 1,
+                          gridSpan: 4,
                         },
                         'x-component-props': {
                           placeholder: '操作符',
@@ -354,7 +354,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                         'x-component': 'FInputGroup',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
-                          gridSpan: 3,
+                          gridSpan: 9,
                           style: {
                             width: '100%',
                           },
@@ -473,6 +473,14 @@ const TriggerTerm = (props: Props, ref: any) => {
                         type: 'void',
                         'x-decorator': 'FormItem',
                         'x-component': 'ArrayItems.Remove',
+                        'x-component-props': {
+                          style: {
+                            padding: '6px 8px',
+                            color: '#ff4d4f',
+                            border: '1px solid #ff4d4f',
+                            borderRadius: '2px',
+                          },
+                        },
                         'x-decorator-props': {
                           gridSpan: 1,
                         },
@@ -486,12 +494,24 @@ const TriggerTerm = (props: Props, ref: any) => {
                   type: 'void',
                   title: '添加条件',
                   'x-component': 'ArrayItems.Addition',
+                  'x-component-props': {
+                    type: 'primary',
+                    ghost: true,
+                  },
                 },
               },
             },
             remove: {
               type: 'void',
               'x-component': 'FTermArrayCards.Remove',
+              'x-component-props': {
+                style: {
+                  padding: '6px 8px',
+                  color: '#ff4d4f',
+                  border: '1px solid #ff4d4f',
+                  borderRadius: '2px',
+                },
+              },
             },
           },
         },
@@ -500,6 +520,10 @@ const TriggerTerm = (props: Props, ref: any) => {
             type: 'void',
             title: '添加分组',
             'x-component': 'FTermArrayCards.Addition',
+            'x-component-props': {
+              type: 'primary',
+              ghost: true,
+            },
           },
         },
       },

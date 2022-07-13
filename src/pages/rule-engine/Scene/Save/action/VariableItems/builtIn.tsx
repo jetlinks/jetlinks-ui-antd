@@ -54,7 +54,7 @@ export default (props: BuiltInProps) => {
     queryBuiltInParams(data, params).then((res: any) => {
       if (res.status === 200) {
         const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
-        const _data = props.name === 0 ? res.result : BuiltInParamsHandleTreeData(actionParams);
+        const _data = BuiltInParamsHandleTreeData(props.name === 0 ? res.result : actionParams);
         setBuiltInList(_data);
       }
     });

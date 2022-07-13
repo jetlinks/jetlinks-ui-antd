@@ -1,10 +1,11 @@
 import { Badge, Button, Input, message, Modal } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { DeviceItem } from '@/pages/system/Department/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import { queryDevice } from '@/pages/rule-engine/Scene/Save/action/device/service';
+import { AIcon } from '@/components';
 
 interface DeviceModelProps {
   value?: ChangeValueType[];
@@ -107,6 +108,15 @@ export default (props: DeviceModelProps) => {
     },
   ];
 
+  const onClick = useCallback(() => {
+    if (!props.productId) {
+      message.warning('请选择产品');
+    } else {
+      setVisible(true);
+      setSelectKeys(value ? [...value] : []);
+    }
+  }, [props.productId, value]);
+
   return (
     <>
       {visible && (
@@ -189,14 +199,8 @@ export default (props: DeviceModelProps) => {
       )}
       <Input
         placeholder={'请选择设备'}
-        onClick={() => {
-          if (!props.productId) {
-            message.warning('请选择产品');
-          } else {
-            setVisible(true);
-            setSelectKeys(value ? [...value] : []);
-          }
-        }}
+        onClick={onClick}
+        addonAfter={<AIcon type={'icon-shebei'} onClick={onClick} />}
         style={{ width: '100%' }}
         value={value && value.map((item) => item.name).toString()}
         readOnly
