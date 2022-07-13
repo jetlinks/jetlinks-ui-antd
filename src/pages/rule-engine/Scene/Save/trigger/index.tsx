@@ -67,7 +67,7 @@ export default observer((props: TriggerProps) => {
         newOperator = [...newOperator, { label: '功能调用', value: OperatorEnum.invokeFunction }];
         setFunctions(metadataObj.functions);
       }
-      setOperatorOptions(newOperator);
+      setOperatorOptions(Object.keys(metadataObj).length ? newOperator : undefined);
     } catch (err) {
       console.warn('handleMetadata === ', err);
     }
@@ -154,7 +154,7 @@ export default observer((props: TriggerProps) => {
                 props.form?.resetFields([['trigger', 'device', 'selector']]);
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                 props.form?.resetFields([['trigger', 'device', 'operation']]);
-                productIdChange(key, node.metadata);
+                productIdChange(key, node?.metadata);
                 setSelector('fixed');
                 props.form?.setFieldsValue({
                   trigger: {
