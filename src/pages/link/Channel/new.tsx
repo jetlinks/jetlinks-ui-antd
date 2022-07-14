@@ -1,10 +1,10 @@
-import { Card, Input } from 'antd';
+import { Button, Card, Divider, Dropdown, Input, Menu } from 'antd';
 import { useDomFullHeight } from '@/hooks';
 import './index.less'
 import SearchComponent from '@/components/SearchComponent';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import PermissionButton from '@/components/PermissionButton';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, ExportOutlined, ImportOutlined, PlayCircleOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import ChannelCard from './channelCard'
@@ -19,11 +19,19 @@ const NewModbus = () => {
     const data = [
         {
             id: 1,
-            status: 'connect'
+            status: 'connect',
+            state: {
+                text: '正常',
+                value: 'enabled'
+            }
         },
         {
             id: 2,
-            status: 'disconnect'
+            status: 'disconnect',
+            state: {
+                text: '禁用',
+                value: 'disabled'
+            }
         },
     ]
 
@@ -205,6 +213,35 @@ const NewModbus = () => {
         //   ],
         // },
     ];
+
+    const menu = (
+        <Menu>
+            <Menu.Item key="1">
+                <PermissionButton
+                    isPermission={permission.export}
+                    icon={<ExportOutlined />}
+                    type="default"
+                    onClick={() => {
+                        // setExportVisible(true);
+                    }}
+                >
+                    批量导出设备
+                </PermissionButton>
+            </Menu.Item>
+            <Menu.Item key="2">
+                <PermissionButton
+                    isPermission={permission.import}
+                    icon={<ImportOutlined />}
+                    onClick={() => {
+                        // setImportVisible(true);
+                    }}
+                >
+                    批量导入设备
+                </PermissionButton>
+            </Menu.Item>
+        </Menu>
+    );
+
     return (
         <Card className='modbus' style={{ minHeight }}>
             <div className='item'>
@@ -225,7 +262,7 @@ const NewModbus = () => {
                             key="add"
                             icon={<PlusOutlined />}
                             type="default"
-                            style={{ width: '100%', marginTop: 16 }}
+                            style={{ width: '100%', marginTop: 16}}
                         >
                             新增
                         </PermissionButton>
@@ -236,7 +273,6 @@ const NewModbus = () => {
                                     data={item}
                                     onClick={() => {
                                         setActiveKey(item.id)
-                                        // console.log(item.id)
                                     }}
                                     actions={
                                         <>
@@ -249,44 +285,45 @@ const NewModbus = () => {
                                                 }}
                                                 type={'link'}
                                                 style={{ padding: 0 }}
-                                                tooltip={{
-                                                    title: intl.formatMessage({
-                                                        id: 'pages.data.option.edit',
-                                                        defaultMessage: '编辑',
-                                                    }),
-                                                }}
                                             >
                                                 <EditOutlined />编辑
                                             </PermissionButton>
+                                            <Divider type="vertical" />
                                             <PermissionButton
                                                 isPermission={permission.update}
                                                 key="enbale"
-                                                onClick={() => {
-                                                    // setVisible(true);
-                                                    // setCurrent(record);
-                                                }}
                                                 type={'link'}
                                                 style={{ padding: 0 }}
-                                            >
-                                                <EditOutlined />禁用
-                                            </PermissionButton>
-                                            <PermissionButton
-                                                isPermission={permission.update}
-                                                key="delete"
-                                                onClick={() => {
-                                                    // setVisible(true);
-                                                    // setCurrent(record);
-                                                }}
-                                                type={'link'}
-                                                style={{ padding: 0 }}
-                                                tooltip={{
+                                                popConfirm={{
                                                     title: intl.formatMessage({
-                                                        id: 'pages.data.option.edit',
-                                                        defaultMessage: '编辑',
+                                                        id: `pages.data.option.${item.state.value !== 'disabled' ? 'disabled' : 'enabled'
+                                                            }.tips`,
+                                                        defaultMessage: '确认禁用？',
                                                     }),
+                                                    onConfirm: async () => {
+
+                                                    },
                                                 }}
                                             >
-                                                <EditOutlined />
+                                                {item.state.value === 'enabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+                                                {item.state.value === 'enabled' ? '禁用' : '启用'}
+                                            </PermissionButton>
+                                            <Divider type="vertical" />
+                                            <PermissionButton
+                                                isPermission={permission.delete}
+                                                style={{ padding: 0 }}
+                                                disabled={item.state.value === 'enabled'}
+                                                popConfirm={{
+                                                    title: '确认删除',
+                                                    disabled: item.state.value === 'enabled',
+                                                    onConfirm: async () => {
+
+                                                    },
+                                                }}
+                                                key="delete"
+                                                type="link"
+                                            >
+                                                <DeleteOutlined />
                                             </PermissionButton>
                                         </>} />)
                             }
@@ -308,25 +345,31 @@ const NewModbus = () => {
                         params={param}
                         columns={columns}
                         rowKey="id"
-                        // scroll={{ x: 1366 }}
+                        scroll={{ x: '60%' }}
                         search={false}
                         headerTitle={
-                            <PermissionButton
-                                onClick={() => {
-                                    // setMode('add');
-                                    // setVisible(true);
-                                    // setCurrent({});
-                                }}
-                                isPermission={permission.add}
-                                key="add"
-                                icon={<PlusOutlined />}
-                                type="primary"
-                            >
-                                {intl.formatMessage({
-                                    id: 'pages.data.option.add',
-                                    defaultMessage: '新增',
-                                })}
-                            </PermissionButton>
+                            <>
+                                <PermissionButton
+                                    onClick={() => {
+                                        // setMode('add');
+                                        // setVisible(true);
+                                        // setCurrent({});
+                                    }}
+                                    isPermission={permission.add}
+                                    key="add"
+                                    icon={<PlusOutlined />}
+                                    type="primary"
+                                    style={{marginRight: 10 }}
+                                >
+                                    {intl.formatMessage({
+                                        id: 'pages.data.option.add',
+                                        defaultMessage: '新增',
+                                    })}
+                                </PermissionButton>
+                                <Dropdown key={'more'} overlay={menu} placement="bottom" >
+                                    <Button>批量操作</Button>
+                                </Dropdown>
+                            </>
                         }
                     // request={async (params) =>
                     //     service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
