@@ -214,7 +214,7 @@ const PropertyImport = (props: Props) => {
             MetadataModel.importMetadata = false;
           }}
         >
-          确认
+          确定
         </Button>,
       ]}
     >
