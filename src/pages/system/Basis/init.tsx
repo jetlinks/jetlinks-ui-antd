@@ -1,15 +1,21 @@
 import { UploadImage } from '@/components';
 import { Card, Col, Form, Input, Row, Select, } from 'antd';
+import { useEffect} from 'react';
 
 interface Props{
-
+    getData:Function
 }
 
 const Init = (props:Props) => {
     const [form] = Form.useForm();
+
+    useEffect(()=>{
+        props.getData(form)
+    },[])
+
     return (
         <Card>
-            <Form layout="vertical" form={form}>
+            <Form layout="vertical" form={form} >
                 <Row gutter={[24, 24]}>
                     <Col span={10}>
                         <Form.Item

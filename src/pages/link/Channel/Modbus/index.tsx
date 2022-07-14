@@ -19,6 +19,7 @@ import Save from './Save';
 import { getMenuPathByCode } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+// import NewModbus from '../new'
 
 export const service = new Service('modbus/master');
 
@@ -210,6 +211,7 @@ const Modbus = () => {
   ];
   return (
     <PageContainer>
+      {/* <NewModbus/> */}
       <Card style={{ marginBottom: 10 }}>
         <Row gutter={[24, 24]}>
           {topCard.map((item) => (
