@@ -104,7 +104,18 @@ export default observer((props: { parentId: string }) => {
         id: 'pages.device.firmware.productName',
         defaultMessage: '所属产品',
       }),
-      dataIndex: 'configuration',
+      valueType: 'select',
+      dataIndex: 'productId$product-info',
+      request: async () => {
+        const res = await service.getProductList();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
+      search: {
+        transform: (value) => `id is ${value}`,
+      },
       render: (_, row) => {
         return row.productName;
       },

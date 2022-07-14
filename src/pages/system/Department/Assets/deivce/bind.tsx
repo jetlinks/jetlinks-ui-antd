@@ -44,7 +44,7 @@ const Bind = observer((props: Props) => {
         id: 'pages.device.firmware.productName',
         defaultMessage: '所属产品',
       }),
-      dataIndex: 'configuration',
+      dataIndex: 'productId$product-info',
       valueType: 'select',
       filterMultiple: true,
       request: async () => {
@@ -56,6 +56,9 @@ const Bind = observer((props: Props) => {
       },
       render: (_, row) => {
         return row.productName;
+      },
+      search: {
+        transform: (value) => `id is ${value}`,
       },
     },
     {
