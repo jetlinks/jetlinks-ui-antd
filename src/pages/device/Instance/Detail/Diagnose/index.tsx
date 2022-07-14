@@ -50,6 +50,7 @@ const Diagnose = observer(() => {
       DiagnoseStatusModel.percent = 0;
       DiagnoseStatusModel.status = 'loading';
       DiagnoseStatusModel.state = 'loading';
+      DiagnoseStatusModel.flag = false;
     };
   }, [InstanceModel.active]);
 

@@ -260,7 +260,7 @@ export default (props: ConditionalFilteringProps) => {
           </ItemGroup>
         </Form.Item>
       </Col>
-      <Col>不执行后续动作</Col>
+      <Col>执行后续动作</Col>
     </>
   );
 };

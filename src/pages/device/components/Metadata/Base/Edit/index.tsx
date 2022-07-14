@@ -216,6 +216,8 @@ const Edit = observer((props: Props) => {
                   label: 'object(结构体)',
                 },
               ]
+            : MetadataModel.type === 'functions'
+            ? DataTypeList.filter((item) => item.value !== 'file')
             : DataTypeList,
       },
       unit: {

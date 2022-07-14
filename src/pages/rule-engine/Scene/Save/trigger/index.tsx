@@ -177,7 +177,7 @@ export default observer((props: TriggerProps) => {
         {!!productId && (
           <Col span={12}>
             <Form.Item noStyle>
-              <ItemGroup>
+              <ItemGroup compact>
                 <Form.Item name={['trigger', 'device', 'selector']} initialValue={'fixed'}>
                   <Select
                     options={[

@@ -74,6 +74,10 @@ const Status = observer((props: Props) => {
     setArtificiaData({ ...params });
   };
 
+  const isExit = (arr1: any[], arr2: any[]) => {
+    return arr1.find((item) => arr2.includes(item));
+  };
+
   const modifyArrayList = (oldList: ListProps[], item: ListProps, index?: number) => {
     let newList: ListProps[] = [];
     if (index !== 0 && !index) {
@@ -95,6 +99,9 @@ const Status = observer((props: Props) => {
   // 网络信息
   const diagnoseNetwork = () =>
     new Promise((resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device.state?.value === 'online') {
         setTimeout(() => {
           DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
@@ -211,6 +218,9 @@ const Status = observer((props: Props) => {
   // 设备接入网关
   const diagnoseGateway = () =>
     new Promise((resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       const desc =
         providerType && ['child-device', 'cloud'].includes(providerType)
           ? '诊断设备接入网关状态是否正常，网关配置是否正确'
@@ -504,6 +514,9 @@ const Status = observer((props: Props) => {
   // 网关父设备
   const diagnoseParentDevice = () =>
     new Promise(async (resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device.state?.value === 'online') {
         setTimeout(() => {
           DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
@@ -653,6 +666,9 @@ const Status = observer((props: Props) => {
   // 产品状态
   const diagnoseProduct = () =>
     new Promise((resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device.state?.value === 'online') {
         setTimeout(() => {
           DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
@@ -742,6 +758,9 @@ const Status = observer((props: Props) => {
   // 设备状态
   const diagnoseDevice = () =>
     new Promise((resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device.state?.value === 'online') {
         setTimeout(() => {
           DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
@@ -830,6 +849,9 @@ const Status = observer((props: Props) => {
   // 产品认证配置
   const diagnoseProductAuthConfig = () =>
     new Promise(async (resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device?.productId) {
         const response = await service.queryProductConfig(device.productId);
         if (response.status === 200 && response.result.length > 0) {
@@ -865,125 +887,12 @@ const Status = observer((props: Props) => {
                 DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
-            } else if (properties.length > 0 && Object.keys(configuration).length > 0) {
-              if (
-                _.union(Object.keys(configuration), properties).length <
-                Object.keys(configuration).length + properties.length
-              ) {
-                setTimeout(() => {
-                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
-                    key: `product-auth${i}`,
-                    name: `产品-${item?.name}`,
-                    desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
-                    status: 'error',
-                    text: '可能存在异常',
-                    info: (
-                      <div>
-                        <div className={styles.infoItem}>
-                          <Badge
-                            status="default"
-                            text={
-                              <span>
-                                请
-                                <a
-                                  onClick={() => {
-                                    manualInspection({
-                                      type: 'product',
-                                      key: `product-auth${i}`,
-                                      name: `产品-${item?.name}`,
-                                      desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
-                                      data: { ...item },
-                                      configuration,
-                                      productId: device.productId,
-                                    });
-                                  }}
-                                >
-                                  人工检查
-                                </a>
-                                产品{item.name}
-                                配置是否已填写正确,若您确定该项无需诊断可
-                                <Popconfirm
-                                  title="确认忽略？"
-                                  onConfirm={() => {
-                                    DiagnoseStatusModel.list = modifyArrayList(
-                                      DiagnoseStatusModel.list,
-                                      {
-                                        key: `product-auth${i}`,
-                                        name: `产品-${item?.name}`,
-                                        desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
-                                        status: 'success',
-                                        text: '正常',
-                                        info: null,
-                                      },
-                                    );
-                                  }}
-                                >
-                                  <a>忽略</a>
-                                </Popconfirm>
-                              </span>
-                            }
-                          />
-                        </div>
-                      </div>
-                    ),
-                  });
-                  DiagnoseStatusModel.count++;
-                  resolve({});
-                }, time);
-              } else {
-                setTimeout(() => {
-                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
-                    key: `product-auth${i}`,
-                    name: `产品-${item?.name}`,
-                    desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
-                    status: 'error',
-                    text: '异常',
-                    info: (
-                      <div>
-                        <div className={styles.infoItem}>
-                          <Badge
-                            status="default"
-                            text={
-                              <span>
-                                请根据设备接入配置需要
-                                <a
-                                  onClick={() => {
-                                    jumpAccessConfig();
-                                  }}
-                                >
-                                  填写
-                                </a>
-                                ，若您确定该项无需诊断可
-                                <Popconfirm
-                                  title="确认忽略？"
-                                  onConfirm={() => {
-                                    DiagnoseStatusModel.list = modifyArrayList(
-                                      DiagnoseStatusModel.list,
-                                      {
-                                        key: `product-auth${i}`,
-                                        name: `产品-${item?.name}`,
-                                        desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
-                                        status: 'success',
-                                        text: '正常',
-                                        info: null,
-                                      },
-                                    );
-                                  }}
-                                >
-                                  <a>忽略</a>
-                                </Popconfirm>
-                              </span>
-                            }
-                          />
-                        </div>
-                      </div>
-                    ),
-                  });
-                  DiagnoseStatusModel.count++;
-                  resolve({});
-                }, time);
-              }
-            } else if (properties.length > 0 && Object.keys(configuration).length === 0) {
+            } else if (
+              !isExit(
+                properties,
+                Object.keys(configuration).filter((k: string) => !!configuration[k]),
+              )
+            ) {
               setTimeout(() => {
                 DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
                   key: `product-auth${i}`,
@@ -1035,6 +944,67 @@ const Status = observer((props: Props) => {
                 DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
+            } else {
+              setTimeout(() => {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                  key: `product-auth${i}`,
+                  name: `产品-${item?.name}`,
+                  desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'error',
+                  text: '可能存在异常',
+                  info: (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={
+                            <span>
+                              请
+                              <a
+                                onClick={() => {
+                                  manualInspection({
+                                    type: 'product',
+                                    key: `product-auth${i}`,
+                                    name: `产品-${item?.name}`,
+                                    desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                    data: { ...item },
+                                    configuration,
+                                    productId: device.productId,
+                                  });
+                                }}
+                              >
+                                人工检查
+                              </a>
+                              产品{item.name}
+                              配置是否已填写正确,若您确定该项无需诊断可
+                              <Popconfirm
+                                title="确认忽略？"
+                                onConfirm={() => {
+                                  DiagnoseStatusModel.list = modifyArrayList(
+                                    DiagnoseStatusModel.list,
+                                    {
+                                      key: `product-auth${i}`,
+                                      name: `产品-${item?.name}`,
+                                      desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                      status: 'success',
+                                      text: '正常',
+                                      info: null,
+                                    },
+                                  );
+                                }}
+                              >
+                                <a>忽略</a>
+                              </Popconfirm>
+                            </span>
+                          }
+                        />
+                      </div>
+                    </div>
+                  ),
+                });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
             }
           });
         } else {
@@ -1046,6 +1016,9 @@ const Status = observer((props: Props) => {
   // 设备认证配置
   const diagnoseDeviceAuthConfig = () =>
     new Promise(async (resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device?.id) {
         const response = await service.queryDeviceConfig(device.id);
         if (response.status === 200 && response.result.length > 0) {
@@ -1081,125 +1054,12 @@ const Status = observer((props: Props) => {
                 DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
-            } else if (properties.length > 0 && Object.keys(configuration).length > 0) {
-              if (
-                _.union(Object.keys(configuration), properties).length <
-                Object.keys(configuration).length + properties.length
-              ) {
-                setTimeout(() => {
-                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
-                    key: `device-auth${i}`,
-                    name: `设备-${item?.name}`,
-                    desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
-                    status: 'error',
-                    text: '可能存在异常',
-                    info: (
-                      <div>
-                        <div className={styles.infoItem}>
-                          <Badge
-                            status="default"
-                            text={
-                              <span>
-                                请
-                                <a
-                                  onClick={() => {
-                                    manualInspection({
-                                      type: 'device',
-                                      key: `device-auth${i}`,
-                                      name: `设备-${item?.name}`,
-                                      desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
-                                      data: { ...item },
-                                      configuration,
-                                      productId: device.productId,
-                                    });
-                                  }}
-                                >
-                                  人工检查
-                                </a>
-                                设备{item.name}
-                                配置是否已填写正确,若您确定该项无需诊断可
-                                <Popconfirm
-                                  title="确认忽略？"
-                                  onConfirm={() => {
-                                    DiagnoseStatusModel.list = modifyArrayList(
-                                      DiagnoseStatusModel.list,
-                                      {
-                                        key: `device-auth${i}`,
-                                        name: `设备-${item?.name}`,
-                                        desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
-                                        status: 'success',
-                                        text: '正常',
-                                        info: null,
-                                      },
-                                    );
-                                  }}
-                                >
-                                  <a>忽略</a>
-                                </Popconfirm>
-                              </span>
-                            }
-                          />
-                        </div>
-                      </div>
-                    ),
-                  });
-                  DiagnoseStatusModel.count++;
-                  resolve({});
-                }, time);
-              } else {
-                setTimeout(() => {
-                  DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
-                    key: `device-auth${i}`,
-                    name: `设备-${item?.name}`,
-                    desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
-                    status: 'error',
-                    text: '异常',
-                    info: (
-                      <div>
-                        <div className={styles.infoItem}>
-                          <Badge
-                            status="default"
-                            text={
-                              <span>
-                                请根据设备接入配置需要
-                                <a
-                                  onClick={() => {
-                                    jumpDeviceConfig();
-                                  }}
-                                >
-                                  填写
-                                </a>
-                                ，若您确定该项无需诊断可
-                                <Popconfirm
-                                  title="确认忽略？"
-                                  onConfirm={() => {
-                                    DiagnoseStatusModel.list = modifyArrayList(
-                                      DiagnoseStatusModel.list,
-                                      {
-                                        key: `device-auth${i}`,
-                                        name: `设备-${item?.name}`,
-                                        desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
-                                        status: 'success',
-                                        text: '正常',
-                                        info: null,
-                                      },
-                                    );
-                                  }}
-                                >
-                                  <a>忽略</a>
-                                </Popconfirm>
-                              </span>
-                            }
-                          />
-                        </div>
-                      </div>
-                    ),
-                  });
-                  DiagnoseStatusModel.count++;
-                  resolve({});
-                }, time);
-              }
-            } else if (properties.length > 0 && Object.keys(configuration).length === 0) {
+            } else if (
+              !isExit(
+                properties,
+                Object.keys(configuration).filter((k: string) => !!configuration[k]),
+              )
+            ) {
               setTimeout(() => {
                 DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
                   key: `device-auth${i}`,
@@ -1223,6 +1083,67 @@ const Status = observer((props: Props) => {
                                 填写
                               </a>
                               ，若您确定该项无需诊断可
+                              <Popconfirm
+                                title="确认忽略？"
+                                onConfirm={() => {
+                                  DiagnoseStatusModel.list = modifyArrayList(
+                                    DiagnoseStatusModel.list,
+                                    {
+                                      key: `device-auth${i}`,
+                                      name: `设备-${item?.name}`,
+                                      desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                      status: 'success',
+                                      text: '正常',
+                                      info: null,
+                                    },
+                                  );
+                                }}
+                              >
+                                <a>忽略</a>
+                              </Popconfirm>
+                            </span>
+                          }
+                        />
+                      </div>
+                    </div>
+                  ),
+                });
+                DiagnoseStatusModel.count++;
+                resolve({});
+              }, time);
+            } else {
+              setTimeout(() => {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
+                  key: `device-auth${i}`,
+                  name: `设备-${item?.name}`,
+                  desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                  status: 'error',
+                  text: '可能存在异常',
+                  info: (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={
+                            <span>
+                              请
+                              <a
+                                onClick={() => {
+                                  manualInspection({
+                                    type: 'device',
+                                    key: `device-auth${i}`,
+                                    name: `设备-${item?.name}`,
+                                    desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
+                                    data: { ...item },
+                                    configuration,
+                                    productId: device.productId,
+                                  });
+                                }}
+                              >
+                                人工检查
+                              </a>
+                              设备{item.name}
+                              配置是否已填写正确,若您确定该项无需诊断可
                               <Popconfirm
                                 title="确认忽略？"
                                 onConfirm={() => {
@@ -1462,6 +1383,9 @@ const Status = observer((props: Props) => {
   // onenet
   const diagnoseOnenet = () =>
     new Promise(async (resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device.accessProvider === 'OneNet') {
         const response = await service.queryDeviceConfig(device?.id || '');
         DiagnoseStatusModel.configuration.device = response.result;
@@ -1575,6 +1499,9 @@ const Status = observer((props: Props) => {
   // ctwing
   const diagnoseCTWing = () =>
     new Promise(async (resolve) => {
+      if (!DiagnoseStatusModel.flag) {
+        resolve({});
+      }
       if (device.accessProvider === 'Ctwing') {
         const response = await service.queryDeviceConfig(device?.id || '');
         DiagnoseStatusModel.configuration.device = response.result;
@@ -1862,6 +1789,12 @@ const Status = observer((props: Props) => {
     }
   }, [DiagnoseStatusModel.status, DiagnoseStatusModel.list]);
 
+  const percentChange = () => {
+    if (DiagnoseStatusModel.percent < 100) {
+      DiagnoseStatusModel.percent += 20;
+    }
+  };
+
   const handleSearch = async () => {
     DiagnoseStatusModel.gateway = {};
     DiagnoseStatusModel.product = {};
@@ -1872,46 +1805,36 @@ const Status = observer((props: Props) => {
     DiagnoseStatusModel.count = 0;
     DiagnoseStatusModel.status = 'loading';
     DiagnoseStatusModel.percent = 0;
+    let arr: any[] = [];
     if (providerType === 'network') {
       DiagnoseStatusModel.list = [...networkInitList];
-      await diagnoseNetwork();
-      DiagnoseStatusModel.percent = 20;
-      await diagnoseGateway();
-      DiagnoseStatusModel.percent = 40;
-      await diagnoseProduct();
-      await diagnoseDevice();
-      DiagnoseStatusModel.percent = 60;
-      await diagnoseProductAuthConfig();
-      await diagnoseDeviceAuthConfig();
+      arr = [
+        diagnoseNetwork,
+        diagnoseGateway,
+        diagnoseProduct,
+        diagnoseDevice,
+        diagnoseProductAuthConfig,
+        diagnoseDeviceAuthConfig,
+      ];
     } else if (providerType === 'child-device') {
       DiagnoseStatusModel.list = [...childInitList];
-      await diagnoseGateway();
-      DiagnoseStatusModel.percent = 20;
-      await diagnoseParentDevice();
-      await diagnoseProduct();
-      DiagnoseStatusModel.percent = 40;
-      await diagnoseDevice();
-      DiagnoseStatusModel.percent = 60;
-      await diagnoseProductAuthConfig();
-      await diagnoseDeviceAuthConfig();
-      DiagnoseStatusModel.percent = 80;
+      arr = [
+        diagnoseGateway,
+        diagnoseParentDevice,
+        diagnoseProduct,
+        diagnoseDevice,
+        diagnoseProductAuthConfig,
+        diagnoseDeviceAuthConfig,
+      ];
     } else if (providerType === 'media') {
       DiagnoseStatusModel.list = [...mediaInitList];
-      await diagnoseGateway();
-      DiagnoseStatusModel.percent = 40;
-      await diagnoseProduct();
-      await diagnoseDevice();
+      arr = [diagnoseGateway, diagnoseProduct, diagnoseDevice];
     } else if (providerType === 'cloud') {
       DiagnoseStatusModel.list = [...cloudInitList];
-      await diagnoseGateway();
-      DiagnoseStatusModel.percent = 40;
-      await diagnoseProduct();
-      await diagnoseDevice();
-      DiagnoseStatusModel.percent = 80;
-      await diagnoseCTWing();
-      await diagnoseOnenet();
+      arr = [diagnoseGateway, diagnoseProduct, diagnoseDevice, diagnoseCTWing, diagnoseOnenet];
     } else if (providerType === 'channel') {
       message.error('未开发');
+      return;
       // DiagnoseStatusModel.list = [...channelInitList];
       // await diagnoseGateway();
       // DiagnoseStatusModel.percent = 20;
@@ -1925,11 +1848,18 @@ const Status = observer((props: Props) => {
       // await diagnoseDataPointBind();
       // DiagnoseStatusModel.percent = 80;
     }
-    DiagnoseStatusModel.percent = 100;
-    DiagnoseStatusModel.status = 'finish';
+    if (arr.length > 0) {
+      for (let i = 0; i < arr.length; i++) {
+        await arr[i]();
+        percentChange();
+      }
+      DiagnoseStatusModel.percent = 100;
+      DiagnoseStatusModel.status = 'finish';
+    }
   };
 
   useEffect(() => {
+    DiagnoseStatusModel.flag = true;
     if (DiagnoseStatusModel.state === 'loading' && providerType) {
       handleSearch();
     }
@@ -1940,7 +1870,7 @@ const Status = observer((props: Props) => {
       <div className={styles.statusHeader}>
         <TitleComponent data={'连接详情'} />
         <Space>
-          {DiagnoseStatusModel.status === 'finish' && (
+          {DiagnoseStatusModel.status === 'finish' && device.state?.value !== 'online' && (
             <Button
               type="primary"
               onClick={async () => {
