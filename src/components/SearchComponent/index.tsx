@@ -605,7 +605,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     const q = params.get('q');
     const _target = params.get('target');
     if (q && props.model !== 'simple') {
-      console.log(JSON.parse(q));
       if (_target) {
         if (props.target && _target === props.target) {
           form.setValues(JSON.parse(q));

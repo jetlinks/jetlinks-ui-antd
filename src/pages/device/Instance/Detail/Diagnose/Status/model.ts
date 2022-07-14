@@ -1,7 +1,7 @@
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { model } from '@formily/reactive';
 import type { ReactNode } from 'react';
-import { DeviceInstance } from '../../../typings';
+import type { DeviceInstance } from '../../../typings';
 
 export const StatusMap = new Map();
 StatusMap.set('error', require('/public/images/diagnose/status/error.png'));
@@ -254,6 +254,7 @@ export const DiagnoseStatusModel = model<{
       status: 'loading' | 'success' | 'error';
     };
   };
+  flag: boolean; // 离开页面后让还未执行的方法停止
 }>({
   list: [],
   product: {},
@@ -280,6 +281,7 @@ export const DiagnoseStatusModel = model<{
       status: 'loading',
     },
   },
+  flag: true,
 });
 
 export const gatewayList = [
