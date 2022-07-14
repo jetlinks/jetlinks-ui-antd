@@ -199,6 +199,7 @@ const Protocol = () => {
         actionRef={actionRef}
         scroll={{ x: 1366 }}
         params={searchParams}
+        columnEmptyText={''}
         options={{ fullScreen: true }}
         request={(params) =>
           service.query({

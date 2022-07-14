@@ -20,7 +20,7 @@ interface UploadImageProps {
    */
   size?: number;
   style?: React.CSSProperties;
-  backgroundSize?:string;
+  backgroundSize?: string;
 }
 
 export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
@@ -77,7 +77,13 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
             {values ? (
               <>
                 {/*<img width={120} height={120} src={values} />*/}
-                <div className={'upload-image'} style={{ backgroundImage: `url(${values})`,backgroundSize:extraProps.backgroundSize }} />
+                <div
+                  className={'upload-image'}
+                  style={{
+                    backgroundImage: `url(${values})`,
+                    backgroundSize: extraProps.backgroundSize,
+                  }}
+                />
                 <div className={'upload-image-mask'}>点击修改</div>
               </>
             ) : (

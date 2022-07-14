@@ -48,7 +48,9 @@ const BindParentDevice = (props: Props) => {
       ellipsis: true,
       width: '200px',
       valueType: 'dateTime',
-      render: (text: any) => (!!text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      renderText: (text: any) => {
+        return !!text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '';
+      },
       sorter: true,
     },
     {

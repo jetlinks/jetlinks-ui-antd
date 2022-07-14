@@ -277,6 +277,7 @@ export default observer((props: { parentId: string }) => {
         search={false}
         gridColumn={2}
         params={searchParam}
+        columnEmptyText={''}
         height={'none'}
         request={async (params) => {
           params.sorts = [{ name: 'createTime', order: 'desc' }];

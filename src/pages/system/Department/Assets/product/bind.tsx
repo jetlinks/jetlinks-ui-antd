@@ -133,6 +133,7 @@ const Bind = observer((props: Props) => {
             rowKey="id"
             search={false}
             gridColumn={2}
+            columnEmptyText={''}
             rowSelection={{
               selectedRowKeys: Models.bindKeys,
               onChange: (selectedRowKeys, selectedRows) => {

@@ -558,6 +558,7 @@ const Instance = () => {
         actionRef={actionRef}
         params={searchParams}
         options={{ fullScreen: true }}
+        columnEmptyText={''}
         request={(params) =>
           service.query({
             ...params,

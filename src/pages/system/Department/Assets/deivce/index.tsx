@@ -328,6 +328,7 @@ export default observer((props: { parentId: string }) => {
         rowKey="id"
         search={false}
         params={searchParam}
+        columnEmptyText={''}
         gridColumn={2}
         height={'none'}
         scroll={{ x: 1366 }}
