@@ -263,6 +263,7 @@ const Config = observer(() => {
         actionRef={actionRef}
         search={false}
         params={param}
+        columnEmptyText={''}
         columns={columns}
         scroll={{ x: 1366 }}
         headerTitle={

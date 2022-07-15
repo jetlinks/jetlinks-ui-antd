@@ -241,10 +241,15 @@ const MenuItemIcon = (
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   // console.log({ ...initialState });
-  // let ico:any = document.querySelector('link[rel="icon"]')
-  // if(ico!==null){
-  //   ico.href='https://t9.baidu.com/it/u=2615841454,1925018474&fm=218&app=126&size=f242,150&n=0&f=JPEG&fmt=auto?s=A0B46032495267E15A7D35CE000070A2&sec=1657645200&t=b98ebc7ac3073c248e57894e899d7ac1'
-  // }
+  const ico: any = document.querySelector('link[rel="icon"]');
+  if (ico !== null) {
+    Service.settingDetail('basis').then((res) => {
+      if (res.status === 200) {
+        // console.log(res.result.ico)
+        ico.href = res.result.ico;
+      }
+    });
+  }
   return {
     navTheme: 'light',
     headerTheme: 'light',

@@ -278,6 +278,7 @@ const Instance = () => {
         actionRef={actionRef}
         params={searchParams}
         scroll={{ x: 1366 }}
+        columnEmptyText={''}
         options={{ fullScreen: true }}
         request={(params) =>
           service.query({

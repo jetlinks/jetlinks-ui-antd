@@ -1,23 +1,29 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Col, Divider, Image, Row, Table, Tooltip } from 'antd';
+import { Badge, Button, Card, Col, Descriptions, Divider, Image, Row, Table, Tooltip } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createForm, onFormInit } from '@formily/core';
 import FLevelInput from '@/components/FLevelInput';
-import type { IOConfigItem } from '@/pages/rule-engine/Alarm/Config/typing';
 import Service from '@/pages/rule-engine/Alarm/Config/service';
 import styles from './index.less';
 import ReactMarkdown from 'react-markdown';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { EditOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
+import OutputSave from './Save/output';
+import InputSave from './Save/input';
 
 export const service = new Service('alarm/config');
 const ioImg = require('/public/images/alarm/io.png');
 const Config = () => {
   const [tab, setTab] = useState<'io' | 'config' | string>('config');
+  const [inputVisible, setInputVisible] = useState<boolean>(false);
+  const [outputVisible, setOutputVisible] = useState<boolean>(false);
+  const [input, setInput] = useState<any>({});
+  const [output, setOutput] = useState<any>({});
+
   const outputData = [
     {
       key: 'alarmName',
@@ -183,39 +189,6 @@ const Config = () => {
     [],
   );
 
-  const inputForm = useMemo(
-    () =>
-      createForm({
-        validateFirst: true,
-        effects() {
-          onFormInit(async (f) => {
-            const resp = await service.getDataExchange('consume');
-            if (resp.status === 200) {
-              f.setInitialValues(resp.result?.config.config);
-              f.setValuesIn('id', resp.result?.id);
-            }
-          });
-        },
-      }),
-    [],
-  );
-  const outputForm = useMemo(
-    () =>
-      createForm({
-        validateFirst: true,
-        effects() {
-          onFormInit(async (f) => {
-            const resp = await service.getDataExchange('producer');
-            if (resp.status === 200) {
-              f.setInitialValues(resp.result?.config.config);
-              f.setValuesIn('id', resp.result?.id);
-            }
-          });
-        },
-      }),
-    [],
-  );
-
   const levelSchema: ISchema = {
     type: 'object',
     properties: {
@@ -266,131 +239,6 @@ const Config = () => {
     },
   };
 
-  const outputSchema: ISchema = {
-    type: 'object',
-    properties: {
-      id: {
-        'x-component': 'Input',
-        'x-hidden': true,
-      },
-      address: {
-        title: 'kafka地址',
-        type: 'string',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          placeholder: '请输入kafka地址',
-        },
-      },
-      topic: {
-        title: 'topic',
-        type: 'string',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          placeholder: '请输入topic',
-        },
-      },
-      // layout2: {
-      //   type: 'void',
-      //   'x-decorator': 'FormGrid',
-      //   'x-decorator-props': {
-      //     maxColumns: 2,
-      //     minColumns: 2,
-      //     columnGap: 24,
-      //   },
-      //   properties: {
-      //     username: {
-      //       title: '用户名',
-      //       type: 'string',
-      //       // required: true,
-      //       'x-decorator': 'FormItem',
-      //       'x-component': 'Input',
-      //       'x-component-props': {
-      //         placeholder: '请输入用户名',
-      //       },
-      //       'x-decorator-props': {
-      //         gridSpan: 1,
-      //       },
-      //     },
-      //     password: {
-      //       title: '密码',
-      //       type: 'string',
-      //       // required: true,
-      //       'x-decorator': 'FormItem',
-      //       'x-component': 'Input',
-      //       'x-decorator-props': {
-      //         gridSpan: 1,
-      //       },
-      //       'x-component-props': {
-      //         placeholder: '请输入密码',
-      //       },
-      //     },
-      //   },
-      // },
-    },
-  };
-
-  const inputSchema: ISchema = {
-    type: 'object',
-    properties: {
-      id: {
-        'x-component': 'Input',
-        'x-hidden': true,
-      },
-      address: {
-        title: 'kafka地址',
-        type: 'string',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          placeholder: '请输入kafka地址',
-        },
-      },
-      topic: {
-        title: 'topic',
-        type: 'string',
-        required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Input',
-        'x-component-props': {
-          placeholder: '请输入topic',
-        },
-      },
-    },
-  };
-
-  const handleSaveIO = async () => {
-    outputForm.validate();
-    inputForm.validate();
-    const inputConfig: IOConfigItem = await inputForm.submit();
-    const outputConfig: IOConfigItem = await outputForm.submit();
-    const inputResp = await service.saveOutputData({
-      config: {
-        config: outputConfig,
-      },
-      id: outputConfig.id,
-      sourceType: 'kafka',
-      exchangeType: 'producer',
-    });
-    const outputResp = await service.saveOutputData({
-      config: {
-        sourceType: 'kafka',
-        config: inputConfig,
-      },
-      id: inputConfig.id,
-      sourceType: 'kafka',
-      exchangeType: 'consume',
-    });
-
-    if (inputResp.status === 200 && outputResp.status === 200) {
-      onlyMessage('操作成功');
-    }
-  };
-
   const handleSaveLevel = async () => {
     const values: { level: string[] } = await levelForm.submit();
     const _level = values?.level.map((l: string, i: number) => ({ level: i + 1, title: l }));
@@ -399,6 +247,19 @@ const Config = () => {
       onlyMessage('操作成功');
     }
   };
+
+  useEffect(() => {
+    service.getDataExchange('consume').then((resp) => {
+      if (resp.status === 200) {
+        setInput(resp.result);
+      }
+    });
+    service.getDataExchange('producer').then((resp) => {
+      if (resp.status === 200) {
+        setOutput(resp.result);
+      }
+    });
+  }, []);
 
   const outputText = `
   ~~~json
@@ -469,12 +330,29 @@ const Config = () => {
                   <Tooltip title={'将告警数据输出到其他第三方系统'}>
                     <QuestionCircleOutlined style={{ marginLeft: 5 }} />
                   </Tooltip>
+                  <a
+                    style={{ marginLeft: 10 }}
+                    onClick={() => {
+                      setOutputVisible(true);
+                    }}
+                  >
+                    <EditOutlined />
+                  </a>
                 </span>
               }
             />
-            <Form form={outputForm} layout="vertical">
-              <SchemaField schema={outputSchema} />
-            </Form>
+            <Descriptions bordered column={2}>
+              <Descriptions.Item label="kafka地址">
+                {output?.config?.config?.kafka || ''}
+              </Descriptions.Item>
+              <Descriptions.Item label="topic">
+                {output?.config?.config?.topic || ''}
+              </Descriptions.Item>
+              <Descriptions.Item label="状态" span={2}>
+                <Badge status={output?.state?.value === 'enabled' ? 'success' : 'error'} />
+                {output?.state?.text || ''}
+              </Descriptions.Item>
+            </Descriptions>
             <Divider />
             <TitleComponent
               data={
@@ -483,19 +361,29 @@ const Config = () => {
                   <Tooltip title={'接收第三方系统处理的告警结果'}>
                     <QuestionCircleOutlined style={{ marginLeft: 5 }} />
                   </Tooltip>
+                  <a
+                    style={{ marginLeft: 10 }}
+                    onClick={() => {
+                      setInputVisible(true);
+                    }}
+                  >
+                    <EditOutlined />
+                  </a>
                 </span>
               }
             />
-            <Form form={inputForm} layout="vertical">
-              <SchemaField schema={inputSchema} />
-              <FormButtonGroup.Sticky>
-                <FormButtonGroup.FormItem>
-                  <Button type="primary" onClick={handleSaveIO}>
-                    保存
-                  </Button>
-                </FormButtonGroup.FormItem>
-              </FormButtonGroup.Sticky>
-            </Form>
+            <Descriptions bordered column={2}>
+              <Descriptions.Item label="kafka地址">
+                {input?.config?.config?.kafka || ''}
+              </Descriptions.Item>
+              <Descriptions.Item label="topic">
+                {input?.config?.config?.topic || ''}
+              </Descriptions.Item>
+              <Descriptions.Item label="状态" span={2}>
+                <Badge status={input?.state?.value === 'enabled' ? 'success' : 'error'} />
+                {input?.state?.text || ''}
+              </Descriptions.Item>
+            </Descriptions>
           </Card>
         </div>
       </Col>
@@ -541,6 +429,20 @@ const Config = () => {
   return (
     <PageContainer onTabChange={setTab} tabActiveKey={tab} tabList={list}>
       {list.find((k) => k.key === tab)?.component}
+      {inputVisible && (
+        <InputSave
+          close={() => {
+            setInputVisible(false);
+          }}
+        />
+      )}
+      {outputVisible && (
+        <OutputSave
+          close={() => {
+            setOutputVisible(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

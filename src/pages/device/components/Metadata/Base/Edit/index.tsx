@@ -50,6 +50,7 @@ import DB from '@/db';
 import _ from 'lodash';
 import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
+import FIndicators from '@/components/FIndicators';
 import { action } from '@formily/reactive';
 import { asyncUpdateMedata, updateMetadata } from '../../metadata';
 import { onlyMessage } from '@/utils/util';
@@ -160,6 +161,7 @@ const Edit = observer((props: Props) => {
       Checkbox,
       FormGrid,
       DatePicker,
+      FIndicators,
     },
     scope: {
       async asyncOtherConfig(field: Field) {
@@ -778,121 +780,160 @@ const Edit = observer((props: Props) => {
                         },
                       ],
                     },
-                    space: {
-                      type: 'void',
+                    '{value, range}': {
                       title: '指标值',
                       'x-decorator': 'FormItem',
-                      'x-component': 'FormGrid',
+                      'x-component': 'FIndicators',
                       'x-decorator-props': {
                         labelAlign: 'left',
                         layout: 'vertical',
+                      },
+                      'x-reactions': {
+                        dependencies: ['valueType.type'],
+                        fulfill: {
+                          state: {
+                            componentProps: {
+                              type: '{{$deps[0]}}',
+                            },
+                          },
+                        },
                       },
                       'x-validator': [
                         {
                           required: true,
                           message: '请输入指标值',
                         },
+                        {
+                          validator: (value: any) => {
+                            if (value?.range) {
+                              if (!value?.value || !value?.value[0] || !value?.value[1]) {
+                                return Promise.reject(new Error('请输入指标值'));
+                              }
+                            } else {
+                              if (value?.value && !value?.value[0]) {
+                                return Promise.reject(new Error('请输入指标值'));
+                              }
+                            }
+                            return Promise.resolve();
+                          },
+                        },
                       ],
-                      'x-component-props': {
-                        maxColumns: 12,
-                        minColumns: 12,
-                      },
-                      properties: {
-                        'value[0]': {
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Input',
-                          'x-decorator-props': {
-                            gridSpan: 5,
-                          },
-                          'x-validator': [
-                            {
-                              required: true,
-                              message: '请输入',
-                            },
-                          ],
-                          'x-reactions': {
-                            dependencies: ['..range', 'valueType.type'],
-                            fulfill: {
-                              state: {
-                                decoratorProps: {
-                                  gridSpan: '{{!!$deps[0]?5:$deps[1]==="boolean"?12:10}}',
-                                },
-                                componentType:
-                                  '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
-                              },
-                            },
-                          },
-                          // 根据数据类型来渲染不同的组件
-                        },
-                        'value[1]': {
-                          title: '~',
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Input',
-                          'x-decorator-props': {
-                            gridSpan: 5,
-                          },
-                          'x-validator': [
-                            {
-                              required: true,
-                              message: '请输入',
-                            },
-                          ],
-                          'x-reactions': [
-                            {
-                              dependencies: ['..range', 'valueType.type'],
-                              fulfill: {
-                                state: {
-                                  visible: '{{!!$deps[0]}}',
-                                  componentType:
-                                    '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
-                                },
-                              },
-                            },
-                            {
-                              dependencies: ['valueType.type'],
-                              fulfill: {
-                                state: {
-                                  visible: '{{!$deps[0]==="boolean"}}',
-                                },
-                              },
-                            },
-                          ],
-                        },
-                        // 根据数据类型来渲染不同的组件
-                        range: {
-                          type: 'boolean',
-                          default: false,
-                          'x-decorator': 'FormItem',
-                          'x-component': 'Checkbox',
-                          'x-component-props': {
-                            children: '范围',
-                          },
-                          'x-decorator-props': {
-                            gridSpan: 2,
-                          },
-                          'x-reactions': {
-                            dependencies: ['valueType.type'],
-                            when: '{{$deps[0]==="boolean"}}',
-                            fulfill: {
-                              state: {
-                                visible: false,
-                                decoratorProps: {
-                                  gridSpan: 0,
-                                },
-                              },
-                            },
-                            otherwise: {
-                              state: {
-                                visible: true,
-                                decoratorProps: {
-                                  gridSpan: 2,
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
                     },
+                    // space: {
+                    //   type: 'void',
+                    //   title: '指标值',
+                    //   'x-decorator': 'FormItem',
+                    //   'x-component': 'FormGrid',
+                    //   'x-decorator-props': {
+                    //     labelAlign: 'left',
+                    //     layout: 'vertical',
+                    //   },
+                    //   'x-validator': [
+                    //     {
+                    //       required: true,
+                    //       message: '请输入指标值',
+                    //     },
+                    //   ],
+                    //   'x-component-props': {
+                    //     maxColumns: 12,
+                    //     minColumns: 12,
+                    //   },
+                    //   properties: {
+                    //     'value[0]': {
+                    //       'x-decorator': 'FormItem',
+                    //       'x-component': 'Input',
+                    //       'x-decorator-props': {
+                    //         gridSpan: 5,
+                    //       },
+                    //       'x-validator': [
+                    //         {
+                    //           required: true,
+                    //           message: '请输入',
+                    //         },
+                    //       ],
+                    //       'x-reactions': {
+                    //         dependencies: ['..range', 'valueType.type'],
+                    //         fulfill: {
+                    //           state: {
+                    //             decoratorProps: {
+                    //               gridSpan: '{{!!$deps[0]?5:$deps[1]==="boolean"?12:10}}',
+                    //             },
+                    //             componentType:
+                    //               '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
+                    //           },
+                    //         },
+                    //       },
+                    //       // 根据数据类型来渲染不同的组件
+                    //     },
+                    //     'value[1]': {
+                    //       title: '~',
+                    //       'x-decorator': 'FormItem',
+                    //       'x-component': 'Input',
+                    //       'x-decorator-props': {
+                    //         gridSpan: 5,
+                    //       },
+                    //       'x-validator': [
+                    //         {
+                    //           required: true,
+                    //           message: '请输入',
+                    //         },
+                    //       ],
+                    //       'x-reactions': [
+                    //         {
+                    //           dependencies: ['..range', 'valueType.type'],
+                    //           fulfill: {
+                    //             state: {
+                    //               visible: '{{!!$deps[0]}}',
+                    //               componentType:
+                    //                 '{{["int","long","double","float"].includes($deps[1])?"NumberPicker":["date"].includes($deps[1])?"DatePicker":"Input"}}',
+                    //             },
+                    //           },
+                    //         },
+                    //         {
+                    //           dependencies: ['valueType.type'],
+                    //           fulfill: {
+                    //             state: {
+                    //               visible: '{{!$deps[0]==="boolean"}}',
+                    //             },
+                    //           },
+                    //         },
+                    //       ],
+                    //     },
+                    //     // 根据数据类型来渲染不同的组件
+                    //     range: {
+                    //       type: 'boolean',
+                    //       default: false,
+                    //       'x-decorator': 'FormItem',
+                    //       'x-component': 'Checkbox',
+                    //       'x-component-props': {
+                    //         children: '范围',
+                    //       },
+                    //       'x-decorator-props': {
+                    //         gridSpan: 2,
+                    //       },
+                    //       'x-reactions': {
+                    //         dependencies: ['valueType.type'],
+                    //         when: '{{$deps[0]==="boolean"}}',
+                    //         fulfill: {
+                    //           state: {
+                    //             visible: false,
+                    //             decoratorProps: {
+                    //               gridSpan: 0,
+                    //             },
+                    //           },
+                    //         },
+                    //         otherwise: {
+                    //           state: {
+                    //             visible: true,
+                    //             decoratorProps: {
+                    //               gridSpan: 2,
+                    //             },
+                    //           },
+                    //         },
+                    //       },
+                    //     },
+                    //   },
+                    // },
                   },
                 },
                 right: {
@@ -1084,7 +1125,7 @@ const Edit = observer((props: Props) => {
     if (params?.id) {
       const result1 = await DB.getDB().table(`${type}`).where('id').equals(params.id).toArray();
 
-      if (result1.length > 0) {
+      if (result1.length > 0 && MetadataModel.action === 'add') {
         message.error('标识已存在');
         setLoading(false);
         return;

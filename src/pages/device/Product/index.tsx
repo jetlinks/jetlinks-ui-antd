@@ -422,6 +422,7 @@ const Product = observer(() => {
       <ProTableCard<ProductItem>
         columns={columns}
         actionRef={actionRef}
+        columnEmptyText={''}
         options={{ fullScreen: true }}
         scroll={{ x: 1366 }}
         // request={async (params = {}) => {

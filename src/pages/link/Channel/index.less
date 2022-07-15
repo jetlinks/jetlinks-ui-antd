@@ -1,0 +1,81 @@
+.item {
+  display: flex;
+
+  .item-left {
+    margin-right: 20px;
+    padding-right: 10px;
+    border-right: 1px #eee solid;
+    .item-left-list {
+      height: 628px;
+      overflow: overlay;
+    }
+    ::-webkit-scrollbar {
+      // display:none
+      width: 2px;
+      height: 2px;
+      scrollbar-arrow-color: #eee;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgb(136, 136, 136);
+      border-radius: 5px;
+    }
+  }
+
+  .item-right {
+    .ant-card-body {
+      padding-top: 0;
+      padding-left: 0;
+    }
+  }
+}
+
+.channel-card {
+  width: 220px;
+  height: 112px;
+  margin-top: 16px;
+  border: 1px #e0e0e0 solid;
+
+  &.active {
+    &.connect {
+      background-color: #24b27614;
+      border: 1px solid #24b276;
+      border-radius: 2px;
+    }
+
+    &.disconnect {
+      background-color: rgba(255, 144, 0, 0.08);
+      border: 1px solid #ff9000;
+      border-radius: 2px;
+    }
+  }
+
+  .channel-card-top {
+    .card-top-img {
+      text-align: end;
+    }
+
+    .card-top-name {
+      position: relative;
+      bottom: 8px;
+      margin-left: 16px;
+      color: #323130;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    .card-top-status {
+      margin-bottom: 8px;
+      margin-left: 16px;
+    }
+  }
+
+  .channel-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    // height: 40px;
+    background-color: #f6f6f6;
+    border-top: 1px #eee solid;
+  }
+}

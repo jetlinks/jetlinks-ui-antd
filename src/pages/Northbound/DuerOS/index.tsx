@@ -241,6 +241,7 @@ export default () => {
         columns={columns}
         actionRef={actionRef}
         params={searchParams}
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         options={{ fullScreen: true }}
         request={(params) =>

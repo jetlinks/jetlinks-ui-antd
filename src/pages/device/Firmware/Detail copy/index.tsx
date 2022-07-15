@@ -5,7 +5,7 @@ import { service, state } from '@/pages/device/Firmware';
 import History from './History';
 import { useEffect, useState } from 'react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
-import Task from '@/pages/device/Firmware/Detail/Task';
+import Task from './Task';
 import { observer } from '@formily/react';
 
 const Detail = observer(() => {

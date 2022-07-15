@@ -2,95 +2,46 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Button, Popconfirm, Tooltip } from 'antd';
-import moment from 'moment';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined, EyeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Link, useHistory } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import type { FirmwareItem, TaskItem } from '@/pages/device/Firmware/typings';
-import Service from '@/pages/device/Firmware/service';
-import Save from '@/pages/device/Firmware/Save';
+import type { FirmwareItem } from '@/pages/device/Firmware/typings';
+import Save from './Save';
 import { onlyMessage } from '@/utils/util';
 import { PermissionButton } from '@/components';
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-
-export const service = new Service('firmware');
+import { service } from '@/pages/device/Firmware';
 
 export const state = model<{
   current?: FirmwareItem;
   visible: boolean;
-  task: boolean;
-  release: boolean;
-  taskItem?: TaskItem;
-  taskDetail: boolean;
-  tab: 'task' | 'history';
-  historyParams?: Record<string, unknown>;
 }>({
   visible: false,
-  task: false,
-  release: false,
-  taskDetail: false,
-  tab: 'task',
 });
-const Firmware = observer(() => {
+const Task = observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const { minHeight } = useDomFullHeight(`.firmware`, 24);
+  const { minHeight } = useDomFullHeight(`.firmware-task`, 24);
   const { permission } = usePermissions('device/Firmware');
   const [param, setParam] = useState({});
   const history = useHistory<Record<string, string>>();
 
   const columns: ProColumns<FirmwareItem>[] = [
     {
-      title: intl.formatMessage({
-        id: 'pages.device.firmware.name',
-        defaultMessage: '固件名称',
-      }),
+      title: '任务名称',
       ellipsis: true,
       dataIndex: 'name',
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.device.firmware.version',
-        defaultMessage: '固件版本',
-      }),
+      title: '推送方式',
       ellipsis: true,
       dataIndex: 'version',
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.device.firmware.productName',
-        defaultMessage: '所属产品',
-      }),
-      ellipsis: true,
-      dataIndex: 'productName',
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.device.firmware.signMethod',
-        defaultMessage: '签名方式',
-      }),
-      ellipsis: true,
-      dataIndex: 'signMethod',
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.device.firmware.createTime',
-        defaultMessage: '创建时间',
-      }),
-      dataIndex: 'createTime',
-      width: '200px',
-      align: 'center',
-      ellipsis: true,
-      valueType: 'dateTime',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
-      // sorter: true,
-      // defaultSortOrder: 'descend',
     },
     {
       title: intl.formatMessage({
@@ -100,6 +51,11 @@ const Firmware = observer(() => {
       ellipsis: true,
       align: 'center',
       dataIndex: 'description',
+    },
+    {
+      title: '完成比例',
+      ellipsis: true,
+      dataIndex: 'signMethod',
     },
     {
       title: intl.formatMessage({
@@ -178,7 +134,7 @@ const Firmware = observer(() => {
     <PageContainer>
       <SearchComponent<FirmwareItem>
         field={columns}
-        target="firmware"
+        target="firmware-task"
         onSearch={(data) => {
           // 重置分页数据
           actionRef.current?.reset?.();
@@ -187,7 +143,7 @@ const Firmware = observer(() => {
       />
       <ProTable<FirmwareItem>
         scroll={{ x: 1366 }}
-        tableClassName={'firmware'}
+        tableClassName={'firmware-task'}
         tableStyle={{ minHeight }}
         search={false}
         params={param}
@@ -209,11 +165,11 @@ const Firmware = observer(() => {
             </PermissionButton>
             <Button
               onClick={() => {
-                const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task'], '123');
+                const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], '123');
                 history.push(url);
               }}
             >
-              升级任务
+              详情
             </Button>
           </div>
         }
@@ -233,4 +189,4 @@ const Firmware = observer(() => {
     </PageContainer>
   );
 });
-export default Firmware;
+export default Task;

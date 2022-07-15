@@ -102,6 +102,7 @@ const DuerOS = () => {
         search={false}
         params={param}
         columns={columns}
+        columnEmptyText={''}
         request={(params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
