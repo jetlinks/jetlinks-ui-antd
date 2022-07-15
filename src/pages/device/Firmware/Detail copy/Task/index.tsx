@@ -11,10 +11,10 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useIntl, useParams } from 'umi';
-import Save from '@/pages/device/Firmware/Detail/Task/Save';
+import Save from './Save';
 import { observer } from '@formily/react';
-import Release from '@/pages/device/Firmware/Detail/Task/Release';
-import Detail from '@/pages/device/Firmware/Detail/Task/Detail';
+import Release from './Release';
+import Detail from './Detail';
 
 const Task = observer(() => {
   const intl = useIntl();

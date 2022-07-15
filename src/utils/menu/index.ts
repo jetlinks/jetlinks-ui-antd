@@ -37,6 +37,9 @@ const extraRouteObj = {
       { code: 'Save2', name: '测试详情' },
     ],
   },
+  'device/Firmware': {
+    children: [{ code: 'Task', name: '升级任务' }],
+  },
   'link/Channel': {
     children: [
       {

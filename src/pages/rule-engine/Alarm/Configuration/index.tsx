@@ -276,6 +276,7 @@ const Configuration = () => {
         scroll={{ x: 1366 }}
         params={param}
         columns={columns}
+        columnEmptyText={''}
         request={(params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
