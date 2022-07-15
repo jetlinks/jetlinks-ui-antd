@@ -1,7 +1,7 @@
 .init {
   width: 100%;
   height: 100vh;
-  padding: 64px 128px;
+  padding: 32px 128px 64px 128px;
   overflow: hidden;
   background-image: url('/images/init-home/background.png');
   background-repeat: no-repeat;
@@ -10,6 +10,33 @@
   .box {
     width: 100%;
     height: 100%;
+    padding: 24px;
     background: white;
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+
+      .left {
+        width: 30px;
+        height: 100%;
+      }
+
+      .right {
+        width: calc(100% - 50px);
+        height: 1200px;
+
+        // .collapseTitle {
+
+        // }
+
+        // .collapseDesc {
+
+        // }
+      }
+    }
   }
 }
