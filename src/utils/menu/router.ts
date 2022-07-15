@@ -84,6 +84,7 @@ export enum MENUS_CODE {
   'system/Department/Member' = 'system/Department/Member',
   'system/Department' = 'system/Department',
   'system/Menu' = 'system/Menu',
+  'system/Menu/Setting' = 'system/Menu/Setting',
   'system/OpenAPI' = 'system/OpenAPI',
   'system/Permission' = 'system/Permission',
   'system/Role/Detail' = 'system/Role/Detail',

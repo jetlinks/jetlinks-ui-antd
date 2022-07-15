@@ -73,6 +73,9 @@ const extraRouteObj = {
   'system/DataSource': {
     children: [{ code: 'Management', name: '管理' }],
   },
+  'system/Menu': {
+    children: [{ code: 'Setting', name: '菜单配置' }],
+  },
 };
 //额外路由
 export const extraRouteArr = [
@@ -183,7 +186,6 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
     ? routes.map((item) => {
         // 判断当前是否有额外子路由
         const extraRoutes = extraRouteObj[item.code];
-
         if (extraRoutes) {
           if (extraRoutes.children) {
             const eRoutes = findExtraRoutes(item.code, extraRoutes.children, item.url);
