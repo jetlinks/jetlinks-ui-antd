@@ -18,7 +18,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
 import moment from 'moment';
-import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
@@ -272,7 +272,7 @@ export default observer(() => {
             status: response.status,
           };
         }}
-        headerTitle={
+        headerTitle={[
           <PermissionButton
             isPermission={permission.add}
             onClick={() => {
@@ -286,56 +286,18 @@ export default observer(() => {
               id: 'pages.data.option.add',
               defaultMessage: '新增',
             })}
-          </PermissionButton>
-        }
+          </PermissionButton>,
+          <Button
+            style={{ marginLeft: 12 }}
+            onClick={() => {
+              console.log(getMenuPathByCode('system/Menu/Setting'));
+              history.push(getMenuPathByCode('system/Menu/Setting'));
+            }}
+          >
+            菜单配置
+          </Button>,
+        ]}
       />
-      {/*<Modal*/}
-      {/*  title={intl.formatMessage({*/}
-      {/*    id: State.current.parentId*/}
-      {/*      ? 'pages.system.menu.option.addChildren'*/}
-      {/*      : 'pages.data.option.add',*/}
-      {/*    defaultMessage: '新增',*/}
-      {/*  })}*/}
-      {/*  visible={State.visible}*/}
-      {/*  width={660}*/}
-      {/*  onOk={saveData}*/}
-      {/*  onCancel={modalCancel}*/}
-      {/*>*/}
-      {/*  <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>*/}
-      {/*    <Form.Item*/}
-      {/*      name="code"*/}
-      {/*      label={intl.formatMessage({*/}
-      {/*        id: 'page.system.menu.encoding',*/}
-      {/*        defaultMessage: '编码',*/}
-      {/*      })}*/}
-      {/*      required={true}*/}
-      {/*      rules={[*/}
-      {/*        { required: true, message: '请输入编码' },*/}
-      {/*        { max: 64, message: '最多可输入64个字符' },*/}
-      {/*        {*/}
-      {/*          pattern: /^[a-zA-Z0-9`!@#$%^&*()_+\-={}|\\\]\[;':",.\/<>?]+$/,*/}
-      {/*          message: '请输入英文+数字+特殊字符（`!@#$%^&*()_+-={}|\\][;\':",./<>?）',*/}
-      {/*        },*/}
-      {/*      ]}*/}
-      {/*    >*/}
-      {/*      <Input />*/}
-      {/*    </Form.Item>*/}
-      {/*    <Form.Item*/}
-      {/*      name="name"*/}
-      {/*      label={intl.formatMessage({*/}
-      {/*        id: 'pages.table.name',*/}
-      {/*        defaultMessage: '名称',*/}
-      {/*      })}*/}
-      {/*      required={true}*/}
-      {/*      rules={[*/}
-      {/*        { required: true, message: '请输入名称' },*/}
-      {/*        { max: 64, message: '最多可输入64个字符' },*/}
-      {/*      ]}*/}
-      {/*    >*/}
-      {/*      <Input />*/}
-      {/*    </Form.Item>*/}
-      {/*  </Form>*/}
-      {/*</Modal>*/}
     </PageContainer>
   );
 });

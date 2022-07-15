@@ -1,5 +1,5 @@
 class SystemConst {
-  static API_BASE = 'jetlinks';
+  static API_BASE = 'api';
 
   static SYSTEM_NAME = 'Jetlinks';
 

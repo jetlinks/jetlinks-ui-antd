@@ -8,7 +8,7 @@
  */
 export default {
   dev: {
-    '/jetlinks': {
+    '/api': {
       // target: 'http://192.168.32.8:8844/',
       // ws: 'ws://192.168.32.8:8844/',
       // 开发环境
@@ -22,7 +22,7 @@ export default {
       // ws: 'ws://demo.jetlinks.cn/jetlinks',
       // target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,
-      pathRewrite: { '^/jetlinks': '' },
+      pathRewrite: { '^/api': '' },
     },
   },
   test: {
