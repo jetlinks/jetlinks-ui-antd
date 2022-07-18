@@ -18,6 +18,7 @@ import Footer from '@/components/Footer';
 const Login: React.FC = () => {
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
   const [bindings, setBindings] = useState<any>([]);
+  const [basis, setBasis] = useState<any>({});
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
 
@@ -77,17 +78,17 @@ const Login: React.FC = () => {
   useEffect(getCode, []);
 
   useEffect(() => {
-    Service.settingDetail('basis').then(res=>{
-      if(res.status===200){
-        console.log(res.result)
-      }
-    })
-  }, [])
-  useEffect(() => {
     localStorage.clear();
     Service.bindInfo().then((res) => {
       if (res.status === 200) {
         setBindings(res.result);
+      }
+    });
+    Service.settingDetail('basis').then((res) => {
+      if (res.status === 200) {
+        console.log(res.result);
+        const ico: any = document.querySelector('link[rel="icon"]');
+        ico.href = res.result.ico + setBasis(res.result);
       }
     });
   }, []);
@@ -251,7 +252,10 @@ const Login: React.FC = () => {
           </div>
         </div>
         <div className={styles.right}>
-          <img src={require('/public/images/login.png')} style={{width:'100%',height:'100%'}}/>
+          <img
+            src={basis.backgroud || require('/public/images/login.png')}
+            style={{ width: '100%', height: '100%' }}
+          />
           {/*<div className={styles.systemName}>{SystemConst.SYSTEM_NAME}</div>*/}
           {/*<div className={styles.systemDesc}>OPEN SOURCE INTERNET OF THINGS BASIC PLATFORM</div>*/}
         </div>
