@@ -326,6 +326,7 @@ const Cascade = () => {
         actionRef={actionRef}
         params={searchParams}
         scroll={{ x: 1366 }}
+        columnEmptyText={''}
         options={{ fullScreen: true }}
         request={async (params = {}) => {
           return await lastValueFrom(

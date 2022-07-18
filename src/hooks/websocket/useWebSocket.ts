@@ -144,11 +144,13 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
     setReadyState(ws?.readyState);
     if (readyState === ReadyState.Open) {
       ws.send(message);
-    } else {
+    } else if (ws) {
       connectWs();
       // todo 考虑重写
       setTimeout(() => {
-        ws.send(message);
+        if (readyState === ReadyState.Open) {
+          ws.send(message);
+        }
       }, 3000);
       // throw new Error('WebSocket disconnected');
     }

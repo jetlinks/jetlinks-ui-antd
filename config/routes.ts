@@ -31,6 +31,17 @@
       },
     ],
   },
+  {
+    path: '/init-home',
+    layout: false,
+    routes: [
+      {
+        name: '初始化',
+        path: '/init-home',
+        component: './init-home',
+      },
+    ],
+  },
   // {
   //   path: '/analysis',
   //   name: 'analysis',

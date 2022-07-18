@@ -558,6 +558,7 @@ const Instance = () => {
         actionRef={actionRef}
         params={searchParams}
         options={{ fullScreen: true }}
+        columnEmptyText={''}
         request={(params) =>
           service.query({
             ...params,
@@ -644,17 +645,30 @@ const Instance = () => {
                   }),
                   onConfirm: async () => {
                     if (record.state.value !== 'notActive') {
-                      await service.undeployDevice(record.id);
+                      await service.undeployDevice(record.id).then((res) => {
+                        if (res.status === 200) {
+                          onlyMessage(
+                            intl.formatMessage({
+                              id: 'pages.data.option.success',
+                              defaultMessage: '操作成功!',
+                            }),
+                          );
+                          actionRef.current?.reload();
+                        }
+                      });
                     } else {
-                      await service.deployDevice(record.id);
+                      await service.deployDevice(record.id).then((res) => {
+                        if (res.status === 200) {
+                          onlyMessage(
+                            intl.formatMessage({
+                              id: 'pages.data.option.success',
+                              defaultMessage: '操作成功!',
+                            }),
+                          );
+                          actionRef.current?.reload();
+                        }
+                      });
                     }
-                    onlyMessage(
-                      intl.formatMessage({
-                        id: 'pages.data.option.success',
-                        defaultMessage: '操作成功!',
-                      }),
-                    );
-                    actionRef.current?.reload();
                   },
                 }}
               >

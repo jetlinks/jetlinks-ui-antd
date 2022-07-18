@@ -206,6 +206,7 @@ const AliCloud = () => {
         search={false}
         scroll={{ x: 1366 }}
         columns={columns}
+        columnEmptyText={''}
         actionRef={actionRef}
         params={searchParams}
         options={{ fullScreen: true }}

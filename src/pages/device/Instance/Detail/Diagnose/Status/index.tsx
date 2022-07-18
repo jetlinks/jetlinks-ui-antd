@@ -112,7 +112,6 @@ const Status = observer((props: Props) => {
             text: '正常',
             info: null,
           });
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -205,7 +204,6 @@ const Status = observer((props: Props) => {
                 if (item) {
                   DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
                 }
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             } else {
@@ -235,7 +233,6 @@ const Status = observer((props: Props) => {
             text: '正常',
             info: null,
           });
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -371,7 +368,6 @@ const Status = observer((props: Props) => {
                   if (item) {
                     DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
                   }
-                  DiagnoseStatusModel.count++;
                   resolve({});
                 }, time);
               } else {
@@ -503,7 +499,6 @@ const Status = observer((props: Props) => {
           setTimeout(() => {
             if (item) {
               DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
-              DiagnoseStatusModel.count++;
             }
             resolve({});
           }, time);
@@ -527,7 +522,6 @@ const Status = observer((props: Props) => {
             text: '正常',
             info: null,
           });
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -562,7 +556,6 @@ const Status = observer((props: Props) => {
                 </div>
               ),
             });
-            DiagnoseStatusModel.count++;
             resolve({});
           }, time);
         } else {
@@ -651,7 +644,6 @@ const Status = observer((props: Props) => {
             setTimeout(() => {
               if (item) {
                 DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
-                DiagnoseStatusModel.count++;
               }
               resolve({});
             }, time);
@@ -679,7 +671,6 @@ const Status = observer((props: Props) => {
             text: '正常',
             info: null,
           });
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -744,7 +735,6 @@ const Status = observer((props: Props) => {
                 if (item) {
                   DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
                 }
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             } else {
@@ -771,7 +761,6 @@ const Status = observer((props: Props) => {
             text: '正常',
             info: null,
           });
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -840,7 +829,6 @@ const Status = observer((props: Props) => {
           if (item) {
             DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
           }
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       }
@@ -884,7 +872,6 @@ const Status = observer((props: Props) => {
                   text: '正常',
                   info: null,
                 });
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             } else if (
@@ -941,7 +928,6 @@ const Status = observer((props: Props) => {
                     </div>
                   ),
                 });
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             } else {
@@ -1002,7 +988,6 @@ const Status = observer((props: Props) => {
                     </div>
                   ),
                 });
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             }
@@ -1051,7 +1036,6 @@ const Status = observer((props: Props) => {
                   text: '正常',
                   info: null,
                 });
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             } else if (
@@ -1108,7 +1092,6 @@ const Status = observer((props: Props) => {
                     </div>
                   ),
                 });
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             } else {
@@ -1169,7 +1152,6 @@ const Status = observer((props: Props) => {
                     </div>
                   ),
                 });
-                DiagnoseStatusModel.count++;
                 resolve({});
               }, time);
             }
@@ -1235,7 +1217,6 @@ const Status = observer((props: Props) => {
   //               DiagnoseStatusModel.list.length,
   //             );
   //           }
-  //           DiagnoseStatusModel.count++;
   //           resolve({});
   //         }, time);
   //       }
@@ -1291,7 +1272,6 @@ const Status = observer((props: Props) => {
   //       //     if (item) {
   //       //       DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item, DiagnoseStatusModel.list.length);
   //       //     }
-  //       //     DiagnoseStatusModel.count++;
   //       //     resolve({});
   //       //   }, time);
   //       // }
@@ -1354,7 +1334,6 @@ const Status = observer((props: Props) => {
   //               DiagnoseStatusModel.list.length,
   //             );
   //           }
-  //           DiagnoseStatusModel.count++;
   //           resolve({});
   //         }, time);
   //       }
@@ -1488,7 +1467,6 @@ const Status = observer((props: Props) => {
               DiagnoseStatusModel.list.length,
             );
           }
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -1604,7 +1582,6 @@ const Status = observer((props: Props) => {
               DiagnoseStatusModel.list.length,
             );
           }
-          DiagnoseStatusModel.count++;
           resolve({});
         }, time);
       } else {
@@ -1777,6 +1754,7 @@ const Status = observer((props: Props) => {
 
   useEffect(() => {
     if (DiagnoseStatusModel.status === 'finish') {
+      DiagnoseStatusModel.count = 0;
       const list = _.uniq(_.map(DiagnoseStatusModel.list, 'status'));
       if (device.state?.value !== 'online') {
         DiagnoseStatusModel.state = 'error';
@@ -1786,6 +1764,9 @@ const Status = observer((props: Props) => {
       } else {
         DiagnoseStatusModel.state = 'success';
       }
+    } else if (DiagnoseStatusModel.status === 'loading') {
+      const arr = _.map(DiagnoseStatusModel.list, 'status').filter((i) => i !== 'loading');
+      DiagnoseStatusModel.count = arr.length;
     }
   }, [DiagnoseStatusModel.status, DiagnoseStatusModel.list]);
 
@@ -1802,7 +1783,6 @@ const Status = observer((props: Props) => {
       product: [],
       device: [],
     };
-    DiagnoseStatusModel.count = 0;
     DiagnoseStatusModel.status = 'loading';
     DiagnoseStatusModel.percent = 0;
     let arr: any[] = [];
@@ -2022,17 +2002,94 @@ const Status = observer((props: Props) => {
           onCancel={() => {
             setBindParentVisible(false);
           }}
-          onOk={(parentId: string) => {
-            DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, {
-              key: 'parent-device',
-              name: '网关父设备',
-              desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
-              status: 'success',
-              text: '正常',
-              info: null,
-            });
-            InstanceModel.detail.parentId = parentId;
-            setBindParentVisible(false);
+          onOk={async (parentId: string) => {
+            let item: ListProps | undefined = undefined;
+            const response = await service.detail(parentId);
+            if (response.status === 200) {
+              if (response?.result?.state?.value === 'notActive') {
+                item = {
+                  key: 'parent-device',
+                  name: '网关父设备',
+                  desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
+                  status: 'error',
+                  text: '异常',
+                  info: (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={
+                            productPermission.action ? (
+                              <span>
+                                网关父设备已禁用，请先
+                                <Popconfirm
+                                  title="确认启用"
+                                  onConfirm={async () => {
+                                    const resp = await service.deployDevice(
+                                      response?.result?.id || '',
+                                    );
+                                    if (resp.status === 200) {
+                                      onlyMessage('操作成功！');
+                                      DiagnoseStatusModel.list = modifyArrayList(
+                                        DiagnoseStatusModel.list,
+                                        {
+                                          key: 'parent-device',
+                                          name: '网关父设备',
+                                          desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
+                                          status: 'success',
+                                          text: '正常',
+                                          info: null,
+                                        },
+                                      );
+                                    }
+                                  }}
+                                >
+                                  <a>启用</a>
+                                </Popconfirm>
+                              </span>
+                            ) : (
+                              '暂无权限，请联系管理员处理'
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  ),
+                };
+              } else if (response?.state?.value === 'online') {
+                item = {
+                  key: 'parent-device',
+                  name: '网关父设备',
+                  desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
+                  status: 'success',
+                  text: '正常',
+                  info: null,
+                };
+              } else {
+                item = {
+                  key: 'parent-device',
+                  name: '网关父设备',
+                  desc: '诊断网关父设备状态是否正常，禁用或离线将导致连接失败',
+                  status: 'error',
+                  text: '异常',
+                  info: (
+                    <div>
+                      <div className={styles.infoItem}>
+                        <Badge
+                          status="default"
+                          text={<span>网关父设备已离线，请先排查网关设备故障</span>}
+                        />
+                      </div>
+                    </div>
+                  ),
+                };
+              }
+              if (item) {
+                DiagnoseStatusModel.list = modifyArrayList(DiagnoseStatusModel.list, item);
+              }
+              InstanceModel.detail.parentId = parentId;
+              setBindParentVisible(false);
+            }
           }}
         />
       )}

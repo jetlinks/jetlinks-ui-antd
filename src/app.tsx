@@ -241,14 +241,14 @@ const MenuItemIcon = (
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   // console.log({ ...initialState });
-  let ico:any = document.querySelector('link[rel="icon"]')
-  if(ico!==null){
-    Service.settingDetail('basis').then(res=>{
-      if(res.status===200){
+  const ico: any = document.querySelector('link[rel="icon"]');
+  if (ico !== null) {
+    Service.settingDetail('basis').then((res) => {
+      if (res.status === 200) {
         // console.log(res.result.ico)
-        ico.href=res.result.ico
+        ico.href = res.result.ico;
       }
-    })
+    });
   }
   return {
     navTheme: 'light',

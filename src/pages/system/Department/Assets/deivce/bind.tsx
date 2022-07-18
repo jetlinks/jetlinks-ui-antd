@@ -213,6 +213,7 @@ const Bind = observer((props: Props) => {
           rowKey="id"
           search={false}
           gridColumn={2}
+          columnEmptyText={''}
           cardRender={(record) => (
             <ExtraDeviceCard showBindBtn={false} showTool={false} {...record} cardType={'bind'} />
           )}

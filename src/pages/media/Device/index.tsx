@@ -318,6 +318,7 @@ const Device = () => {
         actionRef={actionRef}
         options={{ fullScreen: true }}
         params={queryParam}
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         request={(params = {}) =>
           service.query({

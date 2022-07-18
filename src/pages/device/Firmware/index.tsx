@@ -1,52 +1,46 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm } from 'antd';
 import moment from 'moment';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { EditOutlined, EyeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Link } from 'umi';
+import { DeleteOutlined, EditOutlined, NodeExpandOutlined, PlusOutlined } from '@ant-design/icons';
+import { useHistory } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import type { FirmwareItem, TaskItem } from '@/pages/device/Firmware/typings';
+import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import Service from '@/pages/device/Firmware/service';
 import Save from '@/pages/device/Firmware/Save';
-import { onlyMessage } from '@/utils/util';
+import { PermissionButton } from '@/components';
+import useDomFullHeight from '@/hooks/document/useDomFullHeight';
+import usePermissions from '@/hooks/permission';
+import SearchComponent from '@/components/SearchComponent';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 
 export const service = new Service('firmware');
 
 export const state = model<{
   current?: FirmwareItem;
   visible: boolean;
-  task: boolean;
-  release: boolean;
-  taskItem?: TaskItem;
-  taskDetail: boolean;
-  tab: 'task' | 'history';
-  historyParams?: Record<string, unknown>;
 }>({
   visible: false,
-  task: false,
-  release: false,
-  taskDetail: false,
-  tab: 'task',
 });
 const Firmware = observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
+  const { minHeight } = useDomFullHeight(`.firmware`, 24);
+  const { permission } = usePermissions('device/Firmware');
+  const [param, setParam] = useState({});
+  const history = useHistory<Record<string, string>>();
 
   const columns: ProColumns<FirmwareItem>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
     {
       title: intl.formatMessage({
         id: 'pages.device.firmware.name',
         defaultMessage: '固件名称',
       }),
+      ellipsis: true,
       dataIndex: 'name',
     },
     {
@@ -54,6 +48,7 @@ const Firmware = observer(() => {
         id: 'pages.device.firmware.version',
         defaultMessage: '固件版本',
       }),
+      ellipsis: true,
       dataIndex: 'version',
     },
     {
@@ -61,6 +56,7 @@ const Firmware = observer(() => {
         id: 'pages.device.firmware.productName',
         defaultMessage: '所属产品',
       }),
+      ellipsis: true,
       dataIndex: 'productName',
     },
     {
@@ -68,6 +64,7 @@ const Firmware = observer(() => {
         id: 'pages.device.firmware.signMethod',
         defaultMessage: '签名方式',
       }),
+      ellipsis: true,
       dataIndex: 'signMethod',
     },
     {
@@ -78,9 +75,20 @@ const Firmware = observer(() => {
       dataIndex: 'createTime',
       width: '200px',
       align: 'center',
+      ellipsis: true,
+      valueType: 'dateTime',
       render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
-      sorter: true,
-      defaultSortOrder: 'descend',
+      // sorter: true,
+      // defaultSortOrder: 'descend',
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
+      ellipsis: true,
+      align: 'center',
+      dataIndex: 'description',
     },
     {
       title: intl.formatMessage({
@@ -90,87 +98,100 @@ const Firmware = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
-
       render: (text, record) => [
-        <Link
+        <PermissionButton
+          style={{ padding: 0 }}
+          type="link"
+          isPermission={permission.action}
+          key="upgrade"
           onClick={() => {
-            state.current = record;
+            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task'], record?.id);
+            history.push(url);
           }}
-          to={`/device/firmware/detail/${record.id}`}
-          key="link"
+          tooltip={{
+            title: '升级任务',
+          }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.detail',
-              defaultMessage: '查看',
-            })}
-            key={'detail'}
-          >
-            <EyeOutlined />
-          </Tooltip>
-        </Link>,
-        <a
+          <NodeExpandOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          style={{ padding: 0 }}
+          type="link"
+          isPermission={permission.update}
           key="editable"
           onClick={() => {
             state.visible = true;
+            state.current = record;
           }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
+          tooltip={{
+            title: intl.formatMessage({
               id: 'pages.data.option.edit',
               defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
-        </a>,
-        <a key="delete">
+            }),
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          key="delete"
+          style={{ padding: 0 }}
+          isPermission={permission.delete}
+        >
           <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
             onConfirm={async () => {
               await service.remove(record.id);
-              onlyMessage(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
               actionRef.current?.reload();
             }}
+            title="确认删除?"
           >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <MinusOutlined />
-            </Tooltip>
+            <DeleteOutlined />
           </Popconfirm>
-        </a>,
+        </PermissionButton>,
       ],
     },
   ];
 
   return (
     <PageContainer>
+      <SearchComponent<FirmwareItem>
+        field={columns}
+        target="firmware"
+        onSearch={(data) => {
+          // 重置分页数据
+          actionRef.current?.reset?.();
+          setParam(data);
+        }}
+      />
       <ProTable<FirmwareItem>
-        toolBarRender={() => [
-          <Button
-            onClick={() => {
-              state.visible = true;
-            }}
-            key="button"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            新增
-          </Button>,
-        ]}
-        request={async (params) => service.query(params)}
+        scroll={{ x: 1366 }}
+        tableClassName={'firmware'}
+        tableStyle={{ minHeight }}
+        search={false}
+        params={param}
+        columnEmptyText={''}
+        headerTitle={
+          <div>
+            <PermissionButton
+              onClick={() => {
+                state.visible = true;
+                state.current = undefined;
+              }}
+              isPermission={permission.add}
+              key="button"
+              icon={<PlusOutlined />}
+              type="primary"
+            >
+              {intl.formatMessage({
+                id: 'pages.data.option.add',
+                defaultMessage: '新增',
+              })}
+            </PermissionButton>
+          </div>
+        }
+        request={async (params) =>
+          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
         columns={columns}
         actionRef={actionRef}
       />
@@ -179,6 +200,7 @@ const Firmware = observer(() => {
         visible={state.visible}
         close={() => {
           state.visible = false;
+          actionRef.current?.reload();
         }}
       />
     </PageContainer>

@@ -229,6 +229,7 @@ const Template = observer(() => {
         search={false}
         params={param}
         columns={columns}
+        columnEmptyText={''}
         headerTitle={
           <Space>
             <PermissionButton

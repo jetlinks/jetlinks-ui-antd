@@ -254,6 +254,7 @@ const Network = () => {
         columns={columns}
         scroll={{ x: 1366 }}
         search={false}
+        columnEmptyText={''}
         headerTitle={
           <PermissionButton
             isPermission={networkPermission.add}
