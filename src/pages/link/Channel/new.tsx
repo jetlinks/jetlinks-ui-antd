@@ -1,4 +1,4 @@
-import { Button, Card, Divider, Dropdown, Input, Menu } from 'antd';
+import { Badge, Button, Card, Divider, Dropdown, Input, Menu } from 'antd';
 import { useDomFullHeight } from '@/hooks';
 import './index.less';
 import SearchComponent from '@/components/SearchComponent';
@@ -48,6 +48,7 @@ const NewModbus = () => {
       title: '名称',
       dataIndex: 'name',
       ellipsis: true,
+      width: 200,
       fixed: 'left',
     },
     {
@@ -86,140 +87,120 @@ const NewModbus = () => {
     },
     {
       title: '状态',
-      dataIndex: 'port',
-      search: false,
-      valueType: 'digit',
+      dataIndex: 'state',
+      renderText: (state) => (
+        <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
+      ),
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: intl.formatMessage({
+            id: 'pages.data.option.disabled',
+            defaultMessage: '禁用',
+          }),
+          status: 'disabled',
+        },
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
+      },
+      filterMultiple: false,
     },
-    // {
-    //   title: '状态',
-    //   dataIndex: 'state',
-    //   renderText: (state) => (
-    //     <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
-    //   ),
-    //   valueType: 'select',
-    //   valueEnum: {
-    //     disabled: {
-    //       text: intl.formatMessage({
-    //         id: 'pages.data.option.disabled',
-    //         defaultMessage: '禁用',
-    //       }),
-    //       status: 'disabled',
-    //     },
-    //     enabled: {
-    //       text: '正常',
-    //       status: 'enabled',
-    //     },
-    //   },
-    //   filterMultiple: false,
-    // },
-    // {
-    //   title: '操作',
-    //   valueType: 'option',
-    //   align: 'center',
-    //   width: 200,
-    //   fixed: 'right',
-    //   render: (text, record) => [
-    //     <PermissionButton
-    //       isPermission={permission.update}
-    //       key="edit"
-    //       onClick={() => {
-    //         setVisible(true);
-    //         setCurrent(record);
-    //       }}
-    //       type={'link'}
-    //       style={{ padding: 0 }}
-    //       tooltip={{
-    //         title: intl.formatMessage({
-    //           id: 'pages.data.option.edit',
-    //           defaultMessage: '编辑',
-    //         }),
-    //       }}
-    //     >
-    //       <EditOutlined />
-    //     </PermissionButton>,
-    //     <PermissionButton
-    //       type="link"
-    //       key={'action'}
-    //       style={{ padding: 0 }}
-    //       popConfirm={{
-    //         title: intl.formatMessage({
-    //           id: `pages.data.option.${
-    //             record.state.value !== 'disabled' ? 'disabled' : 'enabled'
-    //           }.tips`,
-    //           defaultMessage: '确认禁用？',
-    //         }),
-    //         onConfirm: async () => {
-    //           if (record.state.value === 'disabled') {
-    //             await service.edit({
-    //               ...record,
-    //               state: 'enabled',
-    //             });
-    //           } else {
-    //             await service.edit({
-    //               ...record,
-    //               state: 'disabled',
-    //             });
-    //           }
-    //           onlyMessage(
-    //             intl.formatMessage({
-    //               id: 'pages.data.option.success',
-    //               defaultMessage: '操作成功!',
-    //             }),
-    //           );
-    //           actionRef.current?.reload();
-    //         },
-    //       }}
-    //       isPermission={permission.action}
-    //       tooltip={{
-    //         title: intl.formatMessage({
-    //           id: `pages.data.option.${record.state.value !== 'disabled' ? 'disabled' : 'enabled'}`,
-    //           defaultMessage: record.state.value !== 'disabled' ? '禁用' : '启用',
-    //         }),
-    //       }}
-    //     >
-    //       {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
-    //     </PermissionButton>,
-    //     <PermissionButton
-    //       isPermission={permission.view}
-    //       style={{ padding: 0 }}
-    //       key="link"
-    //       type="link"
-    //       tooltip={{
-    //         title: '数据点绑定',
-    //       }}
-    //       onClick={() => {
-    //         history.push(`${getMenuPathByCode('link/Channel/Modbus/Access')}?id=${record.id}`);
-    //       }}
-    //     >
-    //       <ControlOutlined />
-    //     </PermissionButton>,
-    //     <PermissionButton
-    //       isPermission={permission.delete}
-    //       style={{ padding: 0 }}
-    //       disabled={record.state.value === 'enabled'}
-    //       popConfirm={{
-    //         title: '确认删除',
-    //         disabled: record.state.value === 'enabled',
-    //         onConfirm: async () => {
-    //           const resp: any = await service.remove(record.id);
-    //           if (resp.status === 200) {
-    //             onlyMessage(
-    //               intl.formatMessage({
-    //                 id: 'pages.data.option.success',
-    //                 defaultMessage: '操作成功!',
-    //               }),
-    //             );
-    //             actionRef.current?.reload();
-    //           }
-    //         },
-    //       }}
-    //       key="delete"
-    //       type="link"
-    //     >
-    //       <DeleteOutlined />
-    //     </PermissionButton>,
-    //   ],
-    // },
+    {
+      title: '操作',
+      valueType: 'option',
+      align: 'center',
+      width: 120,
+      fixed: 'right',
+      render: (text, record) => [
+        <PermissionButton
+          isPermission={permission.update}
+          key="edit"
+          onClick={() => {
+            // setVisible(true);
+            // setCurrent(record);
+          }}
+          type={'link'}
+          style={{ padding: 0 }}
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            }),
+          }}
+        >
+          <EditOutlined />
+        </PermissionButton>,
+        <PermissionButton
+          type="link"
+          key={'action'}
+          style={{ padding: 0 }}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${
+                record.state.value !== 'disabled' ? 'disabled' : 'enabled'
+              }.tips`,
+              defaultMessage: '确认禁用？',
+            }),
+            onConfirm: async () => {
+              //   if (record.state.value === 'disabled') {
+              //     await service.edit({
+              //       ...record,
+              //       state: 'enabled',
+              //     });
+              //   } else {
+              //     await service.edit({
+              //       ...record,
+              //       state: 'disabled',
+              //     });
+              //   }
+              //   onlyMessage(
+              //     intl.formatMessage({
+              //       id: 'pages.data.option.success',
+              //       defaultMessage: '操作成功!',
+              //     }),
+              //   );
+              //   actionRef.current?.reload();
+            },
+          }}
+          isPermission={permission.action}
+          tooltip={{
+            title: intl.formatMessage({
+              id: `pages.data.option.${record.state.value !== 'disabled' ? 'disabled' : 'enabled'}`,
+              defaultMessage: record.state.value !== 'disabled' ? '禁用' : '启用',
+            }),
+          }}
+        >
+          {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+        </PermissionButton>,
+        <PermissionButton
+          isPermission={permission.delete}
+          style={{ padding: 0 }}
+          disabled={record.state.value === 'enabled'}
+          popConfirm={{
+            title: '确认删除',
+            disabled: record.state.value === 'enabled',
+            onConfirm: async () => {
+              //   const resp: any = await service.remove(record.id);
+              //   if (resp.status === 200) {
+              //     onlyMessage(
+              //       intl.formatMessage({
+              //         id: 'pages.data.option.success',
+              //         defaultMessage: '操作成功!',
+              //       }),
+              //     );
+              //     actionRef.current?.reload();
+              //   }
+            },
+          }}
+          key="delete"
+          type="link"
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
+      ],
+    },
   ];
 
   const menu = (
@@ -342,9 +323,9 @@ const NewModbus = () => {
           <SearchComponent<any>
             field={columns}
             target="modbus"
-            onSearch={(data1) => {
+            onSearch={(parms) => {
               actionRef.current?.reset?.();
-              setParam(data1);
+              setParam(parms);
             }}
           />
           <ProTable
@@ -352,7 +333,7 @@ const NewModbus = () => {
             params={param}
             columns={columns}
             rowKey="id"
-            scroll={{ x: '60%' }}
+            // scroll={{ x: 1000 }}
             search={false}
             headerTitle={
               <>
