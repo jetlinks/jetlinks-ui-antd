@@ -1,7 +1,6 @@
 import { Input, Tree } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import DragItem from '@/pages/system/Menu/Setting/dragItem';
-import { Droppable } from 'react-beautiful-dnd';
 
 interface TreeBodyProps {
   treeData: any[];
@@ -33,25 +32,9 @@ export default (props: TreeBodyProps) => {
         />
       </div>
       <div className={'tree-body'}>
-        <Droppable
-          droppableId={props.droppableId}
-          direction="horizontal"
-          type="COLUMN"
-          isCombineEnabled={true}
-        >
-          {(provided) => (
-            <div
-              className="columns"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              style={{ height: '100%' }}
-            >
-              <Tree draggable={props.droppableId === 'menu'}>
-                {createTreeNode(props.treeData, props.droppableId)}
-              </Tree>
-            </div>
-          )}
-        </Droppable>
+        <Tree draggable={props.droppableId === 'menu'}>
+          {createTreeNode(props.treeData, props.droppableId)}
+        </Tree>
       </div>
     </div>
   );

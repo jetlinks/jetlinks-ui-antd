@@ -91,5 +91,6 @@ export default defineConfig({
         languages: ['json', 'javascript', 'typescript', 'sql'],
       }),
     );
+    memo.module.rule('mjs-rule').test(/.m?js/).resolve.set('fullySpecified', false);
   },
 });
