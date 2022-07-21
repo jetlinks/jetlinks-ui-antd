@@ -3,12 +3,12 @@ import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select, ArrayTable } from '@formily/antd';
 import type { Field } from '@formily/core';
+import { onFieldValueChange, onFormInit } from '@formily/core';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
-import FUpload from '@/components/Upload';
+import FUpload from '@/components/FUpload';
 import { action } from '@formily/reactive';
 import { service } from '@/pages/device/Firmware';
-import type { Response } from '@/utils/typings';
 import { useRef } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { onlyMessage } from '@/utils/util';
@@ -21,13 +21,30 @@ interface Props {
 
 const Save = (props: Props) => {
   const { data, close, visible } = props;
+  const fileInfo = useRef<any>({});
+  const signMethod = useRef<'md5' | 'sha256'>('md5');
 
   const form = createForm({
     validateFirst: true,
     initialValues: data,
+    effects: () => {
+      onFormInit(async (form1) => {
+        if (!data?.id) return;
+        form1.setInitialValues({ ...data, upload: { url: data?.url } });
+      });
+      onFieldValueChange('signMethod', (field) => {
+        const value = (field as Field).value;
+        signMethod.current = value;
+      });
+      onFieldValueChange('upload', (field) => {
+        const value = (field as Field).value;
+        fileInfo.current = value;
+      });
+    },
   });
 
   const products = useRef<ProductItem[]>([]);
+
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
     field.loading = true;
     services(field).then(
@@ -51,14 +68,19 @@ const Save = (props: Props) => {
   });
 
   const save = async () => {
-    const values: FirmwareItem = await form.submit();
+    const values: any = await form.submit();
     const product = products.current?.find((item) => item.id === values.productId);
     values.productName = product?.name || '';
-    const resp = (await service.save(values)) as Response<FirmwareItem>;
+    const { upload, ...extra } = values;
+    const params = {
+      ...extra,
+      url: upload.url || data?.url,
+      size: upload.length || data?.size,
+    };
+    const resp = (await service.update(params)) as any;
     if (resp.status === 200) {
       onlyMessage('保存成功！');
-    } else {
-      onlyMessage('保存失败！', 'error');
+      close();
     }
   };
   const schema: ISchema = {
@@ -162,8 +184,8 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: [
-              { label: 'MD5', value: 'MD5' },
-              { label: 'SHA256', value: 'SHA256' },
+              { label: 'MD5', value: 'md5' },
+              { label: 'SHA256', value: 'sha256' },
             ],
             'x-component-props': {
               placeholder: '请选择签名方式',
@@ -196,14 +218,38 @@ const Save = (props: Props) => {
                 required: true,
                 message: '请输入签名',
               },
+              // {
+              //   validator: (value: string) => {
+              //     return new Promise((resolve, reject) => {
+              //       if (value !== '' && signMethod.current && fileInfo.current[signMethod.current]) {
+              //         if (value !== fileInfo.current[signMethod.current]) {
+              //           return reject(new Error('签名不一致，请检查文件是否上传正确'));
+              //         }
+              //       }
+              //       return resolve('');
+              //     });
+              //   },
+              // },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.upload', 'signMethod'],
+                fulfill: {
+                  state: {
+                    selfErrors:
+                      '{{$deps[0] && $deps[1] && $deps[0][$deps[1]] && $self.value && $self.value !== $deps[0][$deps[1]] ? "签名不一致，请检查文件是否上传正确" : ""}}',
+                  },
+                },
+              },
             ],
           },
-          '{url,size}': {
+          upload: {
             title: '文件上传',
             'x-decorator': 'FormItem',
             'x-component': 'FUpload',
             'x-component-props': {
               type: 'file',
+              placeholder: '请上传文件',
             },
             'x-decorator-props': {
               gridSpan: 2,
@@ -216,7 +262,7 @@ const Save = (props: Props) => {
               },
             ],
           },
-          array: {
+          properties: {
             type: 'array',
             'x-decorator': 'FormItem',
             'x-component': 'ArrayTable',
@@ -236,7 +282,7 @@ const Save = (props: Props) => {
                   'x-component': 'ArrayTable.Column',
                   'x-component-props': { title: 'KEY' },
                   properties: {
-                    a1: {
+                    id: {
                       type: 'string',
                       'x-decorator': 'Editable',
                       'x-component': 'Input',
@@ -248,7 +294,7 @@ const Save = (props: Props) => {
                   'x-component': 'ArrayTable.Column',
                   'x-component-props': { title: 'VALUE' },
                   properties: {
-                    a2: {
+                    value: {
                       type: 'string',
                       'x-decorator': 'FormItem',
                       'x-component': 'Input',
@@ -285,16 +331,19 @@ const Save = (props: Props) => {
               },
             },
           },
-        },
-        description: {
-          title: '说明',
-          'x-decorator': 'FormItem',
-          'x-component': 'Input.TextArea',
-          'x-component-props': {
-            rows: 3,
-            showCount: true,
-            maxLength: 200,
-            placeholder: '请输入说明',
+          description: {
+            title: '说明',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              rows: 3,
+              showCount: true,
+              maxLength: 200,
+              placeholder: '请输入说明',
+            },
           },
         },
       },
@@ -305,7 +354,7 @@ const Save = (props: Props) => {
     <Modal
       maskClosable={false}
       width="50vw"
-      title="新增"
+      title={data?.id ? '编辑' : '新增'}
       onCancel={() => close()}
       onOk={() => save()}
       visible={visible}

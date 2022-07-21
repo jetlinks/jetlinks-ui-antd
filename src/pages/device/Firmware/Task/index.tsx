@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Popconfirm, Tooltip } from 'antd';
+import { Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { EditOutlined, EyeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
@@ -69,7 +69,8 @@ const Task = observer(() => {
       render: (text, record) => [
         <Link
           onClick={() => {
-            state.current = record;
+            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], '123');
+            history.push(url);
           }}
           to={`/device/firmware/detail/${record.id}`}
           key="link"
@@ -163,14 +164,6 @@ const Task = observer(() => {
                 defaultMessage: '新增',
               })}
             </PermissionButton>
-            <Button
-              onClick={() => {
-                const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], '123');
-                history.push(url);
-              }}
-            >
-              详情
-            </Button>
           </div>
         }
         request={async (params) =>
