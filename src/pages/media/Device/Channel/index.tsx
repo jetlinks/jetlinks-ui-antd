@@ -139,7 +139,7 @@ export default () => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 120,
+      width: 200,
       render: (_, record) => [
         <Tooltip
           key="edit"

@@ -81,19 +81,18 @@ export const ExtraProductCard = (props: ProductCardProps) => {
           <div className={'card-item-content-flex'}>
             <div className={'flex-auto'}>
               <label>ID</label>
-              <Ellipsis title={props.id || ''} titleClassName={'ellipsis'} />
+              <Ellipsis title={props.id || ''} />
             </div>
             {props.cardType === 'bind' ? (
               <div className={'flex-auto'}>
                 <label>说明</label>
-                <Ellipsis title={props.describe} titleClassName={'ellipsis'} />
+                <Ellipsis title={props.describe} />
               </div>
             ) : (
               <div className={'flex-auto'}>
                 <label>资产权限</label>
                 <Ellipsis
                   title={handlePermissionsMap(props.grantedPermissions)}
-                  titleClassName={'ellipsis'}
                 />
               </div>
             )}
@@ -136,11 +135,11 @@ export default (props: ProductCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <Ellipsis title={props?.deviceType?.text} titleClassName={'ellipsis'} />
+              <Ellipsis title={props?.deviceType?.text} />
             </div>
             <div>
               <label>接入方式</label>
-              <Ellipsis title={props.protocolName || '未接入'} titleClassName={'ellipsis'} />
+              <Ellipsis title={props.protocolName || '未接入'} />
             </div>
           </div>
         </div>

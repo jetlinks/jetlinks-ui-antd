@@ -72,7 +72,7 @@ export default (props: NoticeCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>类型</label>
-              <Ellipsis title={props?.type} titleClassName={'ellipsis'} />
+              <Ellipsis title={props?.type} />
               {/*<div className={'ellipsis'}>*/}
               {/*  <Tooltip title={props?.type}>{props.type}</Tooltip>*/}
               {/*</div>*/}
