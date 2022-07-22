@@ -71,7 +71,7 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
           <div className={'card-item-content-flex'}>
             <div className={'flex-auto'}>
               <label>ID</label>
-              <Ellipsis title={props.id || ''} titleClassName={'ellipsis'} />
+              <Ellipsis title={props.id || ''} />
               {/*<div className={'ellipsis'}>*/}
               {/*  <Tooltip title={props.id}>{props.id || ''}</Tooltip>*/}
               {/*</div>*/}
@@ -79,7 +79,7 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
             {props.cardType === 'bind' ? (
               <div className={'flex-auto'}>
                 <label>说明</label>
-                <Ellipsis title={props.describe || ''} titleClassName={'ellipsis'} />
+                <Ellipsis title={props.describe || ''} />
                 {/*<Tooltip title={props.describe}>*/}
                 {/*  <div className={'ellipsis'}>{props.describe}</div>*/}
                 {/*</Tooltip>*/}
@@ -89,7 +89,6 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
                 <label>资产权限</label>
                 <Ellipsis
                   title={handlePermissionsMap(props.grantedPermissions)}
-                  titleClassName={'ellipsis'}
                 />
                 {/*<div className={'ellipsis'}>*/}
                 {/*  <Tooltip title={handlePermissionsMap(props.grantedPermissions)}>*/}
@@ -136,13 +135,12 @@ export default (props: DeviceCardProps) => {
               <label>设备类型</label>
               <Ellipsis
                 title={props.deviceType ? props.deviceType.text : ''}
-                titleClassName={'ellipsis'}
               />
               {/*<div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : ''}</div>*/}
             </div>
             <div>
               <label>产品名称</label>
-              <Ellipsis title={props.productName} titleClassName={'ellipsis'} />
+              <Ellipsis title={props.productName} />
               {/*<div className={'ellipsis'}>{props.productName || ''}</div>*/}
             </div>
           </div>

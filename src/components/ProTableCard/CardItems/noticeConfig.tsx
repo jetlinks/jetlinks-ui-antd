@@ -31,13 +31,12 @@ export default (props: NoticeCardProps) => {
               <label>通知方式</label>
               <Ellipsis
                 title={typeList[props.type][props.provider] || '暂无'}
-                titleClassName={'ellipsis'}
               />
               {/*<div className={'ellipsis'}>{typeList[props.type][props.provider] || '暂无'}</div>*/}
             </div>
             <div>
               <label>说明</label>
-              <Ellipsis title={props.description} titleClassName={'ellipsis'} />
+              <Ellipsis title={props.description} />
               {/*<div className={'ellipsis'}>*/}
               {/*  <Tooltip placement="topLeft" title={props.description}>*/}
               {/*    {props.description}*/}
