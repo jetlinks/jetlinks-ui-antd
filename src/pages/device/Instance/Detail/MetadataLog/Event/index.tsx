@@ -47,6 +47,7 @@ const EventLog = (props: Props) => {
       <ProTable
         size="small"
         rowKey="id"
+        columnEmptyText={''}
         toolBarRender={false}
         request={async (param) =>
           service.getEventCount(params.id, data.id!, {

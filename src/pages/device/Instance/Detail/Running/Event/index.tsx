@@ -132,6 +132,7 @@ const EventLog = (props: Props) => {
         rowKey="id"
         actionRef={actionRef}
         search={false}
+        columnEmptyText={''}
         params={searchParams}
         request={async (param) => {
           param.pageIndex = param.current - 1;

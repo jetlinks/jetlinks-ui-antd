@@ -1,13 +1,15 @@
 import { TitleComponent } from '@/components';
-import { Collapse, Steps } from 'antd';
+import { Button, Collapse, Steps } from 'antd';
 import styles from './index.less';
+import Basis from './components/basis';
+import Menu from './components/menu';
+import Role from './components/role';
+import Data from './components/data';
+import Service from './service';
+
+export const service = new Service();
 
 const InitHome = () => {
-  const text = `
-        A dog is a type of domesticated animal.
-        Known for its loyalty and faithfulness,
-        it can be found as a welcome guest in many households across the world.
-    `;
   return (
     <div className={styles.init}>
       <TitleComponent data={'系统初始化'} />
@@ -23,19 +25,51 @@ const InitHome = () => {
           </div>
           <div className={styles.right}>
             <Collapse defaultActiveKey={['1', '2', '3', '4']}>
-              <Collapse.Panel header={<div>基本信息</div>} key="1">
-                <p>{text}</p>
+              <Collapse.Panel
+                header={
+                  <div className={styles.collapseTitle}>
+                    基本信息
+                    <div className={styles.collapseDesc}>
+                      配置平台名称、登录背景图、主题色等基本信息
+                    </div>
+                  </div>
+                }
+                key="1"
+              >
+                <Basis getData={() => {}} />
               </Collapse.Panel>
-              <Collapse.Panel header="This is panel header 2" key="2">
-                <p>{text}</p>
+              <Collapse.Panel
+                header={
+                  <div className={styles.collapseTitle}>
+                    菜单初始化<div className={styles.collapseDesc}>初始化菜单数据</div>
+                  </div>
+                }
+                key="2"
+              >
+                <Menu />
               </Collapse.Panel>
-              <Collapse.Panel header="This is panel header 3" key="3">
-                <p>{text}</p>
+              <Collapse.Panel
+                header={
+                  <div className={styles.collapseTitle}>
+                    角色初始化<div className={styles.collapseDesc}>初始化内置角色与权限数据</div>
+                  </div>
+                }
+                key="3"
+              >
+                <Role />
               </Collapse.Panel>
-              <Collapse.Panel header="This is panel header 3" key="4">
-                <p>{text}</p>
+              <Collapse.Panel
+                header={
+                  <div className={styles.collapseTitle}>
+                    初始数据<div className={styles.collapseDesc}>初始化设备接入示例数据</div>
+                  </div>
+                }
+                key="4"
+              >
+                <Data />
               </Collapse.Panel>
             </Collapse>
+            <Button type="primary">确认</Button>
           </div>
         </div>
       </div>

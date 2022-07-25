@@ -243,7 +243,7 @@ const Permission: React.FC = observer(() => {
                     );
                     actionRef.current?.reload();
                   }
-                })
+                });
               }
             },
           }}
@@ -270,6 +270,7 @@ const Permission: React.FC = observer(() => {
         params={param}
         columns={columns}
         search={false}
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'permission'}
         tableStyle={{ minHeight }}

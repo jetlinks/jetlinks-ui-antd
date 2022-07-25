@@ -29,9 +29,7 @@ export default (props: NoticeCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>通知方式</label>
-              <Ellipsis
-                title={typeList[props.type][props.provider] || '暂无'}
-              />
+              <Ellipsis title={typeList[props.type][props.provider] || '暂无'} />
               {/*<div className={'ellipsis'}>{typeList[props.type][props.provider] || '暂无'}</div>*/}
             </div>
             <div>

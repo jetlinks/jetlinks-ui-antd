@@ -345,6 +345,7 @@ const Modbus = () => {
             params={param}
             columns={columns}
             rowKey="id"
+            columnEmptyText={''}
             search={false}
             headerTitle={
               <>

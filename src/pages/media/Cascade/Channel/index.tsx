@@ -208,6 +208,7 @@ const Channel = () => {
         columns={columns}
         scroll={{ x: 1366 }}
         search={false}
+        columnEmptyText={''}
         tableClassName={'cascadeDevice'}
         tableStyle={{ minHeight }}
         headerTitle={'通道列表'}

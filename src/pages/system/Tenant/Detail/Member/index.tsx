@@ -88,6 +88,7 @@ const Member = observer(() => {
                 </span>
               </Space>
             )}
+            columnEmptyText={''}
             tableAlertOptionRender={() => (
               <Space size={16}>
                 <a onClick={handleUnBind}>批量解绑</a>

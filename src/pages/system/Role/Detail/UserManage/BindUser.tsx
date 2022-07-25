@@ -102,6 +102,7 @@ const BindUser = (props: Props) => {
         pagination={{
           pageSize: 10,
         }}
+        columnEmptyText={''}
         request={async (params: any) => {
           const response = await service.query({
             pageSize: params.pageSize,

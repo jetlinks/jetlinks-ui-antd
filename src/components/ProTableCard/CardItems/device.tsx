@@ -87,9 +87,7 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
             ) : (
               <div className={'flex-auto'}>
                 <label>资产权限</label>
-                <Ellipsis
-                  title={handlePermissionsMap(props.grantedPermissions)}
-                />
+                <Ellipsis title={handlePermissionsMap(props.grantedPermissions)} />
                 {/*<div className={'ellipsis'}>*/}
                 {/*  <Tooltip title={handlePermissionsMap(props.grantedPermissions)}>*/}
                 {/*    {handlePermissionsMap(props.grantedPermissions)}*/}
@@ -133,9 +131,7 @@ export default (props: DeviceCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>设备类型</label>
-              <Ellipsis
-                title={props.deviceType ? props.deviceType.text : ''}
-              />
+              <Ellipsis title={props.deviceType ? props.deviceType.text : ''} />
               {/*<div className={'ellipsis'}>{props.deviceType ? props.deviceType.text : ''}</div>*/}
             </div>
             <div>

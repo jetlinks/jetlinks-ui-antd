@@ -6,8 +6,8 @@ import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 class Service extends BaseService<FirmwareItem> {
   task = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/firmware/upgrade/task/_query`, {
-      method: 'GET',
-      params,
+      method: 'POST',
+      data: params,
     });
 
   saveTask = (data: Record<string, unknown>) =>
@@ -39,6 +39,9 @@ class Service extends BaseService<FirmwareItem> {
 
   queryProduct = () =>
     request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`);
+
+  queryDevice = () =>
+    request(`/${SystemConst.API_BASE}/device/instance/_query/no-paging?paging=false`);
 }
 
 export default Service;

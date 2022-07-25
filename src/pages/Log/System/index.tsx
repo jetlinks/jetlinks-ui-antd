@@ -123,6 +123,7 @@ const System = () => {
       <ProTable<SystemLogItem>
         columns={columns}
         params={param}
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'systemLog'}
         tableStyle={{ minHeight }}

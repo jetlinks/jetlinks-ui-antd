@@ -126,6 +126,7 @@ const BindChannel = (props: Props) => {
         params={param}
         columns={columns}
         search={false}
+        columnEmptyText={''}
         headerTitle={'通道列表'}
         request={async (params) => {
           return service.queryChannel({ ...params, sorts: [{ name: 'name', order: 'desc' }] });

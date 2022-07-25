@@ -157,6 +157,7 @@ const Detail = observer(() => {
         tableClassName={'firmware-task-detail'}
         tableStyle={{ minHeight }}
         search={false}
+        columnEmptyText={''}
         params={param}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })

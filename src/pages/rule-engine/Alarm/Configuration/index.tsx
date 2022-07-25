@@ -51,6 +51,25 @@ const Configuration = () => {
         };
         return map[text];
       },
+      valueType: 'select',
+      valueEnum: {
+        product: {
+          text: '产品',
+          status: 'product',
+        },
+        device: {
+          text: '设备',
+          status: 'device',
+        },
+        org: {
+          text: '部门',
+          status: 'org',
+        },
+        other: {
+          text: '其他',
+          status: 'other',
+        },
+      },
     },
     {
       title: '告警级别',
@@ -69,6 +88,17 @@ const Configuration = () => {
           </div>
         </Tooltip>
       ),
+      valueType: 'select',
+      request: async () => {
+        const res = await service.queryDefaultLevel();
+        if (res.status === 200) {
+          return (res?.result?.levels || []).map((item: any) => ({
+            label: item.title,
+            value: item.level,
+          }));
+        }
+        return [];
+      },
     },
     {
       title: '关联场景联动',

@@ -116,6 +116,7 @@ const UserManage = () => {
             </a>
           </Space>
         )}
+        columnEmptyText={''}
         toolBarRender={() => [
           <Button
             onClick={() => {

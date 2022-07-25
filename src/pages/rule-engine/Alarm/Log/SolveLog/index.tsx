@@ -107,6 +107,7 @@ const SolveLog = (props: Props) => {
         params={param}
         columns={columns}
         search={false}
+        columnEmptyText={''}
         headerTitle={'记录列表'}
         request={async (params) => {
           return service.queryHandleHistory({

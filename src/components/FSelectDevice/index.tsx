@@ -105,6 +105,7 @@ const FSelectDevice = connect((props: Props) => {
             pagination={{
               pageSize: 10,
             }}
+            columnEmptyText={''}
             columns={columns}
             actionRef={actionRef}
             request={(params) => service.query(params)}

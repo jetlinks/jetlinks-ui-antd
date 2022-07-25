@@ -132,6 +132,7 @@ const Access = () => {
       <ProTable<AccessLogItem>
         columns={columns}
         params={param}
+        columnEmptyText={''}
         tableClassName={'accessLog'}
         tableStyle={{ minHeight }}
         scroll={{ x: 1366 }}

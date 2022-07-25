@@ -157,6 +157,7 @@ export default (props: DeviceModelProps) => {
             columns={columns}
             rowKey="id"
             search={false}
+            columnEmptyText={''}
             rowSelection={{
               selectedRowKeys: selectKeys.map((item) => item.value),
               onSelect: (selectedRow: any, selected: any) => {

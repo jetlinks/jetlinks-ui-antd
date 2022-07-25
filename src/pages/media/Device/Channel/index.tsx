@@ -251,6 +251,7 @@ export default () => {
             columns={columns}
             actionRef={actionRef}
             // scroll={{x:1366}}
+            columnEmptyText={''}
             tableClassName={'channelDevice'}
             tableStyle={{ minHeight }}
             options={{ fullScreen: true }}

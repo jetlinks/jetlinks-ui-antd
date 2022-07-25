@@ -116,6 +116,7 @@ const Relationship = () => {
         columns={columns}
         search={false}
         rowKey="id"
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'relation'}
         tableStyle={{ minHeight }}

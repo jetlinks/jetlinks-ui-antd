@@ -349,6 +349,7 @@ const NewModbus = () => {
               params={param}
               columns={columns}
               rowKey="id"
+              columnEmptyText={''}
               // scroll={{ x: 1000 }}
               search={false}
               headerTitle={

@@ -255,6 +255,7 @@ const Opcua = () => {
         columns={columns}
         rowKey="id"
         search={false}
+        columnEmptyText={''}
         tableClassName={'opcua'}
         tableStyle={{ minHeight }}
         headerTitle={

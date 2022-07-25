@@ -99,6 +99,7 @@ const Log = () => {
         search={false}
         columns={columns}
         size="small"
+        columnEmptyText={''}
         actionRef={actionRef}
         params={searchParams}
         toolBarRender={false}

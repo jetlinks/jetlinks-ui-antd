@@ -185,6 +185,7 @@ const NotificationSubscription = observer(() => {
         columns={columns}
         scroll={{ x: 1366 }}
         search={false}
+        columnEmptyText={''}
         tableClassName={'subscription'}
         tableStyle={{ minHeight }}
         rowKey="id"

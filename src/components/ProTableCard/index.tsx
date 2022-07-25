@@ -162,6 +162,7 @@ const ProTableCard = <
             pageSize,
           } as any
         }
+        columnEmptyText={''}
         className={'pro-table-card-body'}
         options={model === ModelEnum.CARD ? false : props.options}
         request={async (param, sort, filter) => {

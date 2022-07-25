@@ -118,6 +118,7 @@ const BindDevice = (props: Props) => {
         params={param}
         columns={columns}
         rowKey="id"
+        columnEmptyText={''}
         search={false}
         request={async (params) =>
           service.getDevice({

@@ -58,6 +58,14 @@ const Firmware = observer(() => {
       }),
       ellipsis: true,
       dataIndex: 'productName',
+      valueType: 'select',
+      request: () =>
+        service.queryProduct().then((resp: any) =>
+          (resp?.result || []).map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          })),
+        ),
     },
     {
       title: intl.formatMessage({
@@ -65,7 +73,18 @@ const Firmware = observer(() => {
         defaultMessage: '签名方式',
       }),
       ellipsis: true,
+      valueType: 'select',
       dataIndex: 'signMethod',
+      valueEnum: {
+        md5: {
+          text: 'MD5',
+          status: 'md5',
+        },
+        sha256: {
+          text: 'SHA256',
+          status: 'sha256',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -105,8 +124,8 @@ const Firmware = observer(() => {
           isPermission={permission.action}
           key="upgrade"
           onClick={() => {
-            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task'], record?.id);
-            history.push(url);
+            const url = `${getMenuPathByParams(MENUS_CODE['device/Firmware/Task'])}`;
+            history.push(`${url}?id=${record?.id}&productId=${record?.productId}`);
           }}
           tooltip={{
             title: '升级任务',

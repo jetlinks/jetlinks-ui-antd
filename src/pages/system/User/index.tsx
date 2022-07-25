@@ -267,6 +267,7 @@ const User = observer(() => {
         tableClassName={'user'}
         tableStyle={{ minHeight }}
         search={false}
+        columnEmptyText={''}
         headerTitle={
           <PermissionButton
             onClick={() => {

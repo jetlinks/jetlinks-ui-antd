@@ -100,6 +100,7 @@ const Bind = observer((props: Props) => {
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
+        columnEmptyText={''}
         search={false}
         params={searchParam}
         rowSelection={{
