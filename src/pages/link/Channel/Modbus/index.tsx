@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Divider, Dropdown, Input, Menu } from 'antd';
+import { Badge, Button, Card, Divider, Dropdown, Input, Menu, Modal } from 'antd';
 import { useDomFullHeight } from '@/hooks';
 import './index.less';
 import SearchComponent from '@/components/SearchComponent';
@@ -11,15 +11,18 @@ import {
   ImportOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import ChannelCard from '../channelCard';
 import { PageContainer } from '@ant-design/pro-layout';
 import Service from './service';
 import SaveChannel from './saveChannel';
 import SavePoint from './savePoint';
+import Import from './import';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('');
 
@@ -34,24 +37,43 @@ const NewModbus = () => {
   const [visiblePoint, setVisiblePoint] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
   const [pointDetail, setPointDetail] = useState<any>({});
-  const data = [
-    {
-      id: 1,
-      status: 'connect',
-      state: {
-        text: '正常',
-        value: 'enabled',
-      },
-    },
-    {
-      id: 2,
-      status: 'disconnect',
-      state: {
-        text: '禁用',
-        value: 'disabled',
-      },
-    },
-  ];
+  const [importVisible, setImportVisible] = useState<boolean>(false);
+  const [masterList, setMasterList] = useState<any>([]);
+  const [filterList, setFilterList] = useState([]);
+  const masterId = useRef<string>('');
+
+  const collectMap = new Map();
+  collectMap.set('running', 'success');
+  collectMap.set('error', 'error');
+  collectMap.set('stopped', 'warning');
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <PermissionButton
+          isPermission={permission.export}
+          icon={<ExportOutlined />}
+          type="default"
+          onClick={() => {
+            // setExportVisible(true);
+          }}
+        >
+          批量导出设备
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <PermissionButton
+          isPermission={permission.import || true}
+          icon={<ImportOutlined />}
+          onClick={() => {
+            setImportVisible(true);
+          }}
+        >
+          批量导入设备
+        </PermissionButton>
+      </Menu.Item>
+    </Menu>
+  );
 
   const columns: ProColumns<any>[] = [
     {
@@ -63,37 +85,73 @@ const NewModbus = () => {
     },
     {
       title: '功能码',
-      dataIndex: 'host',
+      render: (record: any) => <>{record.function?.text}</>,
     },
     {
       title: '从站ID',
-      dataIndex: 'port',
+      dataIndex: 'unitId',
       search: false,
-      valueType: 'digit',
     },
     {
       title: '寄存器数量',
-      dataIndex: 'port',
       search: false,
-      valueType: 'digit',
+      render: (record: any) => <>{record.parameter?.quantity}</>,
     },
     {
       title: '地址',
-      dataIndex: 'port',
+      dataIndex: 'address',
       search: false,
-      valueType: 'digit',
     },
     {
       title: '当前数据',
-      dataIndex: 'port',
       search: false,
-      valueType: 'digit',
+      render: (record: any) => (
+        <a
+          onClick={() => {
+            console.log(record.number);
+            Modal.info({
+              title: '当前数据',
+              content: (
+                <div>
+                  <div>寄存器1:{record.number}</div>
+                  <div>寄存器2:{record.number}</div>
+                </div>
+              ),
+              onOk() {},
+            });
+          }}
+        >
+          {record.number}
+        </a>
+      ),
     },
     {
       title: '采集状态',
-      dataIndex: 'port',
       search: false,
-      valueType: 'digit',
+      render: (record: any) => (
+        <>
+          {record.state.value === 'disabled' ? (
+            '-'
+          ) : (
+            <>
+              <Badge
+                status={collectMap.get(record.collectState?.value)}
+                text={record.collectState?.text}
+              />
+              <SearchOutlined
+                style={{ color: '#1d39c4', marginLeft: 3 }}
+                onClick={() => {
+                  Modal.error({
+                    title: '失败原因',
+                    content: <div>111111</div>,
+                    onOk() {},
+                  });
+                }}
+              />
+            </>
+          )}
+        </>
+      ),
     },
     {
       title: '状态',
@@ -128,8 +186,8 @@ const NewModbus = () => {
           isPermission={permission.update}
           key="edit"
           onClick={() => {
-            // setVisible(true);
-            // setCurrent(record);
+            setPointDetail(record);
+            setVisiblePoint(true);
           }}
           type={'link'}
           style={{ padding: 0 }}
@@ -154,24 +212,24 @@ const NewModbus = () => {
               defaultMessage: '确认禁用？',
             }),
             onConfirm: async () => {
-              //   if (record.state.value === 'disabled') {
-              //     await service.edit({
-              //       ...record,
-              //       state: 'enabled',
-              //     });
-              //   } else {
-              //     await service.edit({
-              //       ...record,
-              //       state: 'disabled',
-              //     });
-              //   }
-              //   onlyMessage(
-              //     intl.formatMessage({
-              //       id: 'pages.data.option.success',
-              //       defaultMessage: '操作成功!',
-              //     }),
-              //   );
-              //   actionRef.current?.reload();
+              if (record.state.value === 'disabled') {
+                await service.editPoint(record.id, {
+                  ...record,
+                  state: 'enabled',
+                });
+              } else {
+                await service.editPoint(record.id, {
+                  ...record,
+                  state: 'disabled',
+                });
+              }
+              onlyMessage(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
             },
           }}
           isPermission={permission.action}
@@ -192,16 +250,16 @@ const NewModbus = () => {
             title: '确认删除',
             disabled: record.state.value === 'enabled',
             onConfirm: async () => {
-              //   const resp: any = await service.remove(record.id);
-              //   if (resp.status === 200) {
-              //     onlyMessage(
-              //       intl.formatMessage({
-              //         id: 'pages.data.option.success',
-              //         defaultMessage: '操作成功!',
-              //       }),
-              //     );
-              //     actionRef.current?.reload();
-              //   }
+              const resp: any = await service.deletePoint(record.id);
+              if (resp.status === 200) {
+                onlyMessage(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
             },
           }}
           key="delete"
@@ -213,33 +271,56 @@ const NewModbus = () => {
     },
   ];
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        <PermissionButton
-          isPermission={permission.export}
-          icon={<ExportOutlined />}
-          type="default"
-          onClick={() => {
-            // setExportVisible(true);
-          }}
-        >
-          批量导出设备
-        </PermissionButton>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <PermissionButton
-          isPermission={permission.import}
-          icon={<ImportOutlined />}
-          onClick={() => {
-            // setImportVisible(true);
-          }}
-        >
-          批量导入设备
-        </PermissionButton>
-      </Menu.Item>
-    </Menu>
-  );
+  const getMaster = () => {
+    service
+      .queryMaster({
+        paging: false,
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
+          },
+        ],
+      })
+      .then((res: any) => {
+        if (res.status === 200) {
+          setMasterList(res.result);
+          setFilterList(res.result);
+          setActiveKey(res.result?.[0].id);
+          masterId.current = res.result?.[0].id;
+          console.log(masterId.current);
+        }
+      });
+  };
+
+  //启用禁用
+  const actions = (id: string, data: any) => {
+    service.editMaster(id, data).then((res) => {
+      if (res.status === 200) {
+        onlyMessage('操作成功');
+        getMaster();
+      }
+    });
+  };
+
+  const deteleMaster = (id: string) => {
+    service.deleteMaster(id).then((res) => {
+      if (res.status === 200) {
+        onlyMessage('删除成功');
+        getMaster();
+      }
+    });
+  };
+
+  useEffect(() => {
+    masterId.current = activeKey;
+    actionRef.current?.reload();
+    // console.log(activeKey)
+  }, [activeKey]);
+
+  useEffect(() => {
+    getMaster();
+  }, []);
 
   return (
     <PageContainer>
@@ -251,7 +332,14 @@ const NewModbus = () => {
                 placeholder="请输入名称"
                 allowClear
                 onSearch={(value) => {
-                  console.log(value);
+                  const items = masterList.filter((item: any) => item.name.match(value));
+                  if (value) {
+                    setFilterList(items);
+                    setActiveKey(items?.[0].id);
+                  } else {
+                    setFilterList(masterList);
+                    setActiveKey(masterList?.[0].id);
+                  }
                 }}
               />
               <PermissionButton
@@ -263,12 +351,12 @@ const NewModbus = () => {
                 key="add"
                 icon={<PlusOutlined />}
                 type="default"
-                style={{ width: '100%', marginTop: 16 }}
+                style={{ width: '100%', marginTop: 16, marginBottom: 16 }}
               >
                 新增
               </PermissionButton>
               <div className="item-left-list">
-                {data.map((item) => (
+                {filterList.map((item: any) => (
                   <ChannelCard
                     active={activeKey === item.id}
                     data={item}
@@ -281,8 +369,8 @@ const NewModbus = () => {
                           isPermission={permission.update}
                           key="edit"
                           onClick={() => {
-                            // setVisible(true);
-                            // setCurrent(record);
+                            setVisible(true);
+                            setCurrent(item);
                           }}
                           type={'link'}
                           style={{ padding: 0 }}
@@ -303,7 +391,13 @@ const NewModbus = () => {
                               }.tips`,
                               defaultMessage: '确认禁用？',
                             }),
-                            onConfirm: async () => {},
+                            onConfirm: async () => {
+                              if (item.state.value === 'disabled') {
+                                actions(item.id, { state: 'enabled' });
+                              } else {
+                                actions(item.id, { state: 'disabled' });
+                              }
+                            },
                           }}
                         >
                           {item.state.value === 'enabled' ? (
@@ -318,10 +412,15 @@ const NewModbus = () => {
                           isPermission={permission.delete}
                           style={{ padding: 0 }}
                           disabled={item.state.value === 'enabled'}
+                          tooltip={{
+                            title: item.state.value === 'enabled' ? '请先禁用该通道，再删除。' : '',
+                          }}
                           popConfirm={{
                             title: '确认删除',
                             disabled: item.state.value === 'enabled',
-                            onConfirm: async () => {},
+                            onConfirm: async () => {
+                              deteleMaster(item.id);
+                            },
                           }}
                           key="delete"
                           type="link"
@@ -349,6 +448,7 @@ const NewModbus = () => {
               params={param}
               columns={columns}
               rowKey="id"
+              // dataSource={dataSoure}
               // scroll={{ x: 1000 }}
               search={false}
               headerTitle={
@@ -374,8 +474,39 @@ const NewModbus = () => {
                   </Dropdown>
                 </>
               }
+              request={async (params) => {
+                if (masterId.current) {
+                  const res = await service.queryPoint(masterId.current, {
+                    ...params,
+                    sorts: [{ name: 'createTime', order: 'desc' }],
+                  });
+                  return {
+                    code: res.message,
+                    result: {
+                      data: res.result.data,
+                      pageIndex: res.result.pageIndex,
+                      pageSize: res.result.pageSize,
+                      total: res.result.total,
+                    },
+                    status: res.status,
+                  };
+                } else {
+                  return {
+                    code: 200,
+                    result: {
+                      data: [],
+                      pageIndex: 0,
+                      pageSize: 0,
+                      total: 0,
+                    },
+                    status: 200,
+                  };
+                }
+              }}
               // request={async (params) =>
-              //     service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+              //   service.queryPoint(masterId.current,{
+              // ...params,
+              // sorts: [{ name: 'createTime', order: 'desc' }] })
               // }
             />
           </div>
@@ -386,19 +517,29 @@ const NewModbus = () => {
           data={current}
           close={() => {
             setVisible(false);
-            actionRef.current?.reload();
+            getMaster();
+            // actionRef.current?.reload();
           }}
         />
       )}
       {visiblePoint && (
         <SavePoint
           data={pointDetail}
+          masterId={activeKey}
           close={() => {
             setVisiblePoint(false);
             actionRef.current?.reload();
           }}
         />
       )}
+      <Import
+        data={current}
+        close={() => {
+          setImportVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={importVisible}
+      />
     </PageContainer>
   );
 };

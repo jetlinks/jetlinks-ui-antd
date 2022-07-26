@@ -29,7 +29,6 @@ import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
 import Parsing from './Parsing';
-// import Editable from './Modbus/editTable';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -193,8 +192,7 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'modbus',
           tab: 'Modbus',
-          component: <Modbus />,
-          // component: <Editable />,
+          component: <Modbus data={InstanceModel.detail} />,
         });
       }
       if (response.result.protocol === 'opc-ua') {
