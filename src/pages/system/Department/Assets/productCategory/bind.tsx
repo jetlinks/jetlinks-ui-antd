@@ -121,6 +121,7 @@ const Bind = observer((props: Props) => {
         rowKey="id"
         search={false}
         pagination={false}
+        columnEmptyText={''}
         rowSelection={{
           selectedRowKeys: Models.bindKeys,
           onSelect: (record, selected, selectedRows) => {

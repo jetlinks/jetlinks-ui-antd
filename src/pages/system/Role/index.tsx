@@ -122,7 +122,7 @@ const Role: React.FC = observer(() => {
                   );
                   actionRef.current?.reload();
                 }
-              })
+              });
             },
           }}
           tooltip={{
@@ -160,6 +160,7 @@ const Role: React.FC = observer(() => {
         tableClassName={'role'}
         tableStyle={{ minHeight }}
         search={false}
+        columnEmptyText={''}
         headerTitle={
           <PermissionButton
             onClick={() => {

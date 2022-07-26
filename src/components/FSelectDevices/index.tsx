@@ -9,6 +9,7 @@ import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import moment from 'moment';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Instance/service';
+import SearchComponent from '../SearchComponent';
 
 interface Props {
   value: Partial<DeviceInstance>[];
@@ -21,12 +22,13 @@ const FSelectDevices = connect((props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const [searchParam, setSearchParam] = useState({});
   const columns: ProColumns<DeviceInstance>[] = [
-    {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: 48,
-    },
+    // {
+    //   dataIndex: 'index',
+    //   valueType: 'indexBorder',
+    //   width: 48,
+    // },
     {
       title: 'ID',
       dataIndex: 'id',
@@ -54,18 +56,18 @@ const FSelectDevices = connect((props: Props) => {
       }),
       dataIndex: 'registryTime',
       width: '200px',
-      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''),
       sorter: true,
     },
-    {
-      title: intl.formatMessage({
-        id: 'pages.table.description',
-        defaultMessage: '说明',
-      }),
-      dataIndex: 'description',
-      width: '15%',
-      ellipsis: true,
-    },
+    // {
+    //   title: intl.formatMessage({
+    //     id: 'pages.table.description',
+    //     defaultMessage: '说明',
+    //   }),
+    //   dataIndex: 'description',
+    //   width: '15%',
+    //   ellipsis: true,
+    // },
   ];
 
   const [data, setData] = useState<Partial<DeviceInstance>[]>(props.value);
@@ -95,17 +97,29 @@ const FSelectDevices = connect((props: Props) => {
             props.onChange(data);
           }}
         >
+          <SearchComponent<DeviceInstance>
+            field={columns}
+            enableSave={false}
+            model="simple"
+            onSearch={async (data1) => {
+              setSearchParam(data1);
+            }}
+            target="choose-device"
+          />
           <ProTable<DeviceInstance>
             tableAlertRender={false}
             rowSelection={{
               type: 'checkbox',
               ...rowSelection,
             }}
+            search={false}
+            columnEmptyText={''}
             toolBarRender={false}
             rowKey="id"
             pagination={{
               pageSize: 10,
             }}
+            params={searchParam}
             columns={columns}
             actionRef={actionRef}
             request={(params) => service.query(params)}

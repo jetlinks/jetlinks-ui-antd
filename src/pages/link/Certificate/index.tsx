@@ -123,6 +123,7 @@ const Certificate = () => {
         search={false}
         rowKey="id"
         tableClassName={'link-certificate'}
+        columnEmptyText={''}
         tableStyle={{ minHeight }}
         headerTitle={
           <PermissionButton

@@ -196,6 +196,7 @@ const SyncUser = observer(() => {
                 actionRef={actionRef}
                 search={false}
                 columns={columns}
+                columnEmptyText={''}
                 params={{ dept: dept }}
                 request={(params) =>
                   service

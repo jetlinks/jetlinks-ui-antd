@@ -116,6 +116,7 @@ const Log = observer(() => {
             // pageSize: 5,
           }
         }
+        columnEmptyText={''}
         params={param}
         columns={columns}
         request={async (params) =>

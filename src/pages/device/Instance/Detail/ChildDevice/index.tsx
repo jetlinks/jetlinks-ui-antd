@@ -164,6 +164,7 @@ const ChildDevice = () => {
         actionRef={actionRef}
         params={searchParams}
         rowKey="id"
+        columnEmptyText={''}
         rowSelection={{
           selectedRowKeys: bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

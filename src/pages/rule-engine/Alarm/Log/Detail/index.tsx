@@ -130,6 +130,7 @@ const Detail = observer(() => {
         params={param}
         columns={AlarmLogModel.columns}
         search={false}
+        columnEmptyText={''}
         tableClassName={'alarm-log'}
         tableStyle={{ minHeight }}
         scroll={{ x: 1366 }}

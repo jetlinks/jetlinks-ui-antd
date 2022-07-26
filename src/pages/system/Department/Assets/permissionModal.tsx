@@ -34,7 +34,7 @@ const Permission = forwardRef((props: PerModalProps, ref) => {
   const form = createForm({
     validateFirst: true,
     initialValues: {
-      permission: ['read']
+      permission: ['read'],
     },
   });
 
@@ -50,7 +50,7 @@ const Permission = forwardRef((props: PerModalProps, ref) => {
 
   const saveData = async () => {
     const formData: any = await form.submit();
-    console.log(formData)
+    console.log(formData);
     service
       .bind(props.type, [
         {

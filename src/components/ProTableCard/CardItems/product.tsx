@@ -91,9 +91,7 @@ export const ExtraProductCard = (props: ProductCardProps) => {
             ) : (
               <div className={'flex-auto'}>
                 <label>资产权限</label>
-                <Ellipsis
-                  title={handlePermissionsMap(props.grantedPermissions)}
-                />
+                <Ellipsis title={handlePermissionsMap(props.grantedPermissions)} />
               </div>
             )}
           </div>

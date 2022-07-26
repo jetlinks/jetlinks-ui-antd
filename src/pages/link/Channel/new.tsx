@@ -335,6 +335,7 @@ const NewModbus = () => {
             rowKey="id"
             // scroll={{ x: 1000 }}
             search={false}
+            columnEmptyText={''}
             headerTitle={
               <>
                 <PermissionButton

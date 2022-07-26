@@ -4,8 +4,8 @@ import ProTable from '@jetlinks/pro-table';
 import { Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { EditOutlined, EyeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Link, useHistory } from 'umi';
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { Link, useHistory, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
@@ -31,6 +31,9 @@ const Task = observer(() => {
   const { permission } = usePermissions('device/Firmware');
   const [param, setParam] = useState({});
   const history = useHistory<Record<string, string>>();
+  const location = useLocation<{ id: string }>();
+  const id = (location as any).query?.id || '';
+  const productId = (location as any).query?.productId || '';
 
   const columns: ProColumns<FirmwareItem>[] = [
     {
@@ -89,6 +92,7 @@ const Task = observer(() => {
           key="editable"
           onClick={() => {
             state.visible = true;
+            state.current = record;
           }}
         >
           <Tooltip
@@ -123,7 +127,7 @@ const Task = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -141,6 +145,7 @@ const Task = observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
+        defaultParam={[{ column: 'firmwareId', value: id }]}
       />
       <ProTable<FirmwareItem>
         scroll={{ x: 1366 }}
@@ -148,6 +153,8 @@ const Task = observer(() => {
         tableStyle={{ minHeight }}
         search={false}
         params={param}
+        rowKey="id"
+        columnEmptyText={''}
         headerTitle={
           <div>
             <PermissionButton
@@ -167,14 +174,22 @@ const Task = observer(() => {
           </div>
         }
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.task({
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          })
         }
         columns={columns}
         actionRef={actionRef}
       />
       <Save
         data={state.current}
+        ids={{ id: id, productId: productId }}
         visible={state.visible}
+        save={() => {
+          state.visible = false;
+          actionRef.current?.reload?.();
+        }}
         close={() => {
           state.visible = false;
         }}

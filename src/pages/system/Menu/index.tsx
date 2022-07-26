@@ -253,6 +253,7 @@ export default observer(() => {
         columns={columns}
         actionRef={actionRef}
         rowKey="id"
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'menu'}
         tableStyle={{ minHeight }}

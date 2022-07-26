@@ -113,6 +113,7 @@ const Log = observer(() => {
         pagination={{
           pageSize: 5,
         }}
+        columnEmptyText={''}
         columns={columns}
         request={async (params) =>
           service.getHistoryLog(state.current?.id || '', {

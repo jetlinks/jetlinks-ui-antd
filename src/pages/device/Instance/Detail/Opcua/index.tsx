@@ -362,6 +362,7 @@ const Opcua = () => {
             params={param}
             columns={columns}
             rowKey="id"
+            columnEmptyText={''}
             search={false}
             headerTitle={
               <>

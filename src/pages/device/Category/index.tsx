@@ -179,6 +179,7 @@ const Category = observer(() => {
       <ProTable
         params={param}
         search={false}
+        columnEmptyText={''}
         request={async (params) => {
           const response = await service.queryTree({
             paging: false,

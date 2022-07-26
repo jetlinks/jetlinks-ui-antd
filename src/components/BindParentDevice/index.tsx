@@ -178,6 +178,7 @@ const BindParentDevice = (props: Props) => {
         actionRef={actionRef}
         params={searchParams}
         rowKey="id"
+        columnEmptyText={''}
         toolBarRender={false}
         pagination={{
           pageSize: 10,

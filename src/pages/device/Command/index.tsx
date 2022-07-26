@@ -198,6 +198,7 @@ const Command = observer(() => {
         columns={columns}
         actionRef={actionRef}
         rowKey="id"
+        columnEmptyText={''}
       />
       <Create
         visible={state.visible}

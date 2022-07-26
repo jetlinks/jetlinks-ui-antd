@@ -127,6 +127,7 @@ export default (props: DeviceModalProps) => {
         columns={columns}
         rowKey={'id'}
         search={false}
+        columnEmptyText={''}
         request={(params) =>
           service.query({
             ...params,

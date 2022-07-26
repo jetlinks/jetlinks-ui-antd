@@ -112,6 +112,7 @@ const Unbound = observer(() => {
             }));
           },
         }}
+        columnEmptyText={''}
         tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
           <Space size={24}>
             <span>
