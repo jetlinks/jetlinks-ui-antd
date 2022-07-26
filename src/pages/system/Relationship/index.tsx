@@ -74,6 +74,9 @@ const Relationship = () => {
         <PermissionButton
           isPermission={permission.delete}
           style={{ padding: 0 }}
+          tooltip={{
+            title: '删除'
+          }}
           popConfirm={{
             title: '确认删除',
             onConfirm: async () => {

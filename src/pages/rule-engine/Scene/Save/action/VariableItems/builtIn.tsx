@@ -23,6 +23,7 @@ interface BuiltInProps {
   parallel?: boolean;
   form: FormInstance;
   name: number;
+  isEdit?: boolean
 }
 
 export default (props: BuiltInProps) => {
@@ -31,6 +32,8 @@ export default (props: BuiltInProps) => {
   const [upperKey, setUpperKey] = useState(props.value?.upperKey);
 
   const [builtInList, setBuiltInList] = useState<any[]>([]);
+
+  const [isEdit, setIsEdit] = useState(false)
 
   const onChange = (_source: string = 'fixed', _value?: any, _upperKey?: string) => {
     const obj: ChangeType = {
@@ -61,13 +64,31 @@ export default (props: BuiltInProps) => {
   };
 
   useEffect(() => {
-    if (source === 'upper') {
+    if (props.isEdit) {
+      setIsEdit(false)
+      const data = props.form.getFieldsValue();
+      const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+      queryBuiltInParams(data, params).then((res: any) => {
+        if (res.status === 200) {
+          const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+          const _data = BuiltInParamsHandleTreeData(props.name === 0 ? res.result : actionParams);
+          setBuiltInList(_data);
+        }
+      });
+    }
+    setTimeout(() => {
+      setIsEdit(true)
+    }, 300)
+  }, [ props.isEdit ])
+
+  useEffect(() => {
+    if (source === 'upper' && isEdit) {
       sourceChangeEvent();
     }
   }, [source, props.trigger, props.parallel, props.type]);
 
   useEffect(() => {
-    if (props.trigger?.trigger?.device?.productId && source === 'upper') {
+    if (props.trigger?.trigger?.device?.productId && source === 'upper' && isEdit) {
       sourceChangeEvent();
     }
   }, [props.trigger?.trigger?.device?.productId, source]);

@@ -25,9 +25,9 @@ type ChangeValueType = {
 
 const DeviceBadge = (props: DeviceBadgeProps) => {
   const STATUS = {
-    notActive: 'processing',
+    notActive: 'warning',
     offline: 'error',
-    online: 'success',
+    online: 'processing',
   };
   return <Badge status={STATUS[props.type]} text={props.text} />;
 };
@@ -43,6 +43,7 @@ export default (props: DeviceModelProps) => {
   useEffect(() => {
     setValue(props.value || []);
     setSelectKeys(props.value || []);
+    console.log(props.value)
   }, [props.value]);
 
   const columns: ProColumns<DeviceItem>[] = [

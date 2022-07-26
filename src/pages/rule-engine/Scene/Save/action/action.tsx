@@ -30,6 +30,7 @@ interface ActionProps {
   actionItemData?: any;
   trigger?: any;
   parallel?: boolean;
+  isEdit?: boolean;
 }
 
 export default observer((props: ActionProps) => {
@@ -127,7 +128,7 @@ export default observer((props: ActionProps) => {
         setType1(data.executor);
       }
 
-      if (data.terms) {
+      if (data.terms && data.terms.length) {
         // 显示过滤条件
         setIsFiltering(true);
       }
@@ -155,15 +156,15 @@ export default observer((props: ActionProps) => {
     }
   }, [props.parallel]);
 
-  useEffect(() => {
-    if (productId) {
-      const actions = props.form.getFieldValue('actions');
-      if (actions[name].device?.message?.properties) {
-        actions[name].device.message.properties = undefined;
-        props.form.setFieldsValue({ actions });
-      }
-    }
-  }, [productId]);
+  // useEffect(() => {
+  //   if (productId) {
+  //     const actions = props.form.getFieldValue('actions');
+  //     if (actions[name].device?.message?.properties) {
+  //       actions[name].device.message.properties = undefined;
+  //       props.form.setFieldsValue({ actions });
+  //     }
+  //   }
+  // }, [productId]);
 
   const MessageNodes = (
     <>
@@ -237,6 +238,13 @@ export default observer((props: ActionProps) => {
           checked={isFiltering}
           onChange={(e) => {
             setIsFiltering(e.target.checked);
+            if (!e.target.checked) {
+              const actions = props.form?.getFieldValue('actions');
+              delete actions[name].terms
+              props.form?.setFieldsValue({
+                actions,
+              });
+            }
           }}
         >
           条件过滤
@@ -292,7 +300,15 @@ export default observer((props: ActionProps) => {
             onFunctionChange={setFunctionList}
             restField={props.restField}
             parallel={props.parallel}
-            onProductIdChange={setProductId}
+            onProductIdChange={(_id) => {
+              setProductId(_id)
+              const actions = props.form.getFieldValue('actions');
+              if (actions[name].device?.message?.properties) {
+                actions[name].device.message.properties = undefined;
+                props.form.setFieldsValue({ actions });
+              }
+            }}
+            isEdit={props.isEdit}
           />
         )}
         {type1 === 'delay' && (
@@ -314,6 +330,7 @@ export default observer((props: ActionProps) => {
           triggerType={props.triggerType}
           configId={configId}
           parallel={props.parallel}
+          isEdit={props.isEdit}
         />
       ) : null}
       {type1 === 'device' &&
@@ -347,6 +364,7 @@ export default observer((props: ActionProps) => {
                   form={props.form}
                   parallel={props.parallel}
                   productId={productId}
+                  isEdit={props.isEdit}
                 />
               </Form.Item>
             </Col>

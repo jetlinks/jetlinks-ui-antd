@@ -200,13 +200,17 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         initialValues: initParams,
         effects() {
           onFieldReact('*.*.column', async (typeFiled, f) => {
-            if ((typeFiled as Field).modified) {
+            // if ((typeFiled as Field).modified) {
+              const isModified = (typeFiled as Field).modified
               const _column = (typeFiled as Field).value;
               const _field = field.find((item) => item.dataIndex === _column);
               if (_column === 'id') {
-                f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                  state.value = 'eq';
-                });
+                if (isModified) {
+                  f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                    state.value = 'eq';
+                  });
+
+                }
                 f.setFieldState(typeFiled.query('.value'), async (state) => {
                   state.componentType = 'Input';
                   state.componentProps = { allowClear: true };
@@ -223,14 +227,22 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     } else if (_field?.request) {
                       __option = await _field.request();
                     }
-                    f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'eq';
-                    });
+                    if (isModified) {
+                      f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                        state.value = 'eq';
+                      });
+                    }
+
                     f.setFieldState(typeFiled.query('.value'), async (state) => {
                       console.log(state.value);
                       state.componentType = 'Select';
                       state.dataSource = __option;
-                      state.componentProps = { allowClear: true };
+                      state.componentProps = {
+                        allowClear: true,
+                        showSearch: true,
+                        filterOption: (input: string, option: any) =>
+                          option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                      };
                     });
                     break;
                   case 'treeSelect':
@@ -243,16 +255,22 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     } else if (_field?.request) {
                       _option = await _field.request();
                     }
-                    f.setFieldState(typeFiled.query('.termType'), (_state) => {
-                      _state.value = 'eq';
-                    });
+                    if (isModified) {
+                      f.setFieldState(typeFiled.query('.termType'), (_state) => {
+                        _state.value = 'eq';
+                      });
+                    }
+
                     f.setFieldState(typeFiled.query('.value'), (state) => {
                       state.componentType = 'TreeSelect';
                       state.dataSource = _option;
                       state.componentProps = {
                         ..._field.fieldProps,
                         allowClear: true,
+                        showSearch: true,
                         treeNodeFilterProp: 'name',
+                        filterOption: (input: string, option: any) =>
+                          option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                       };
                     });
                     break;
@@ -261,23 +279,32 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                       state.componentType = 'NumberPicker';
                       state.componentProps = { allowClear: true };
                     });
-                    f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'eq';
-                    });
+                    if (isModified) {
+                      f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                        state.value = 'eq';
+                      });
+                    }
+
                     break;
                   case 'dateTime':
                     f.setFieldState(typeFiled.query('.value'), async (state) => {
                       state.componentType = 'DatePicker';
                       state.componentProps = { showTime: true, allowClear: true };
                     });
-                    f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'gte';
-                    });
+                    if (isModified) {
+                      f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                        state.value = 'gte';
+                      });
+                    }
+
                     break;
                   default:
-                    f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'like';
-                    });
+                    if (isModified) {
+                      f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                        state.value = 'like';
+                      });
+                    }
+
                     f.setFieldState(typeFiled.query('.value'), async (state) => {
                       state.componentType = 'Input';
                       state.componentProps = { allowClear: true };
@@ -285,7 +312,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     break;
                 }
               }
-            }
+            // }
           });
           onFieldValueChange('*.*.column', (field1, form1) => {
             form1.setFieldState(field1.query('.value'), (state1) => {

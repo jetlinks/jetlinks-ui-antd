@@ -127,7 +127,9 @@ const ChildDevice = () => {
             }}
             title={'确认解绑吗？'}
           >
+            <Tooltip title={'解绑'}>
             <DisconnectOutlined />
+            </Tooltip>
           </Popconfirm>
         </a>,
       ],

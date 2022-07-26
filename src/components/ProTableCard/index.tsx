@@ -22,6 +22,13 @@ type ModelType = keyof typeof ModelEnum;
 interface ProTableCardProps<T> {
   cardRender?: (data: T) => JSX.Element | React.ReactNode;
   gridColumn?: number;
+  /**
+   * 用于不同分辨率
+   * gridColumns[0] 1366 ~ 1440 分辨率；
+   * gridColumns[1] 1440 ~  1600 分辨率；
+   * gridColumns[2] > 1600 分辨率；
+   */
+  gridColumns?: [number, number, number]
   height?: 'none';
 }
 
@@ -69,7 +76,7 @@ const ProTableCard = <
             'item-active': selectedRowKeys && selectedRowKeys.includes(id),
           }),
           key: id,
-          onClick: (e) => {
+          onClick: (e: any) => {
             e.stopPropagation();
             if (onChange) {
               const isSelect = selectedRowKeys.includes(id);
@@ -123,11 +130,14 @@ const ProTableCard = <
 
   const windowChange = () => {
     if (window.innerWidth <= 1440) {
-      setColumn(props.gridColumn && props.gridColumn < 2 ? props.gridColumn : 2);
+      const _column = props.gridColumn && props.gridColumn < 2 ? props.gridColumn : 2
+      setColumn(props.gridColumns ? props.gridColumns[0] : _column);
     } else if (window.innerWidth > 1440 && window.innerWidth <= 1600) {
-      setColumn(props.gridColumn && props.gridColumn < 3 ? props.gridColumn : 3);
+      const _column = props.gridColumn && props.gridColumn < 3 ? props.gridColumn : 3
+      setColumn(props.gridColumns ? props.gridColumns[1] : _column);
     } else if (window.innerWidth > 1600) {
-      setColumn(props.gridColumn && props.gridColumn < 4 ? props.gridColumn : 4);
+      const _column = props.gridColumn && props.gridColumn < 4 ? props.gridColumn : 4
+      setColumn(props.gridColumns ? props.gridColumns[2] : _column);
     }
   };
 
@@ -137,7 +147,7 @@ const ProTableCard = <
     return () => {
       window.removeEventListener('resize', windowChange);
     };
-  }, []);
+  }, [props.gridColumns]);
 
   const pageSizeOptions = [Default_Size * 2, Default_Size * 4, Default_Size * 8, Default_Size * 16];
 

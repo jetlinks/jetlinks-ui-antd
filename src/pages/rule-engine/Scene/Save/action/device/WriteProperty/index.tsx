@@ -17,6 +17,7 @@ interface WritePropertyProps {
   name: number;
   trigger?: any;
   productId: string;
+  isEdit?: boolean;
 }
 
 export default (props: WritePropertyProps) => {
@@ -25,6 +26,7 @@ export default (props: WritePropertyProps) => {
   const [propertiesKey, setPropertiesKey] = useState<string | undefined>(undefined);
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
+  const [isEdit, setIsEdit] = useState(false)
   const paramsListRef = useRef<any[]>();
 
   const handleName = (data: any) => {
@@ -105,25 +107,57 @@ export default (props: WritePropertyProps) => {
   }, [props.properties, propertiesKey, source]);
 
   useEffect(() => {
-    if (source === 'upper') {
+    if (source === 'upper' && isEdit) {
       sourceChangeEvent();
     }
   }, [source, props.type, props.parallel]);
 
   useEffect(() => {
-    if (props.trigger?.trigger?.device?.productId && source === 'upper') {
+    if (props.isEdit) {
+      setIsEdit(false)
+      const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+      const data = props.form.getFieldsValue();
+      queryBuiltInParams(data, params).then((res: any) => {
+        if (res.status === 200) {
+          const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+          // 获取当前属性类型，过滤不同类型的数据
+          const propertiesItem = props.properties
+            .filter((item) => {
+              if (item.expands && item.expands.type) {
+                return item.expands.type.includes('write');
+              }
+              return false;
+            })
+            .find((item) => item.id === propertiesKey);
+          const type = propertiesItem?.valueType?.type;
+          const _params = props.name === 0 ? res.result : actionParams;
+          paramsListRef.current = cloneDeep(_params);
+          const _filterData = filterParamsData(type, _params);
+          const _data = handleTreeData(_filterData);
+          setBuiltInList(_data);
+        }
+      });
+    }
+    setTimeout(() => {
+      setIsEdit(true)
+    }, 300)
+  }, [props.isEdit])
+
+  useEffect(() => {
+    if (props.trigger?.trigger?.device?.productId && source === 'upper' && isEdit) {
       sourceChangeEvent();
     }
   }, [props.trigger?.trigger?.device?.productId, source]);
 
-  useEffect(() => {
-    if (props.productId) {
-      setPropertiesKey(undefined);
-      onChange('undefined', undefined, source);
-    }
-  }, [props.productId]);
+  // useEffect(() => {
+  //   if (props.productId) {
+  //     setPropertiesKey(undefined);
+  //     onChange('undefined', undefined, source);
+  //   }
+  // }, [props.productId]);
 
   useEffect(() => {
+    console.log(props.value)
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -246,7 +280,7 @@ export default (props: WritePropertyProps) => {
             style={{ width: 120 }}
             onChange={(key) => {
               setSource(key);
-              onChange(propertiesKey, propertiesValue, key);
+              onChange(propertiesKey, undefined, key);
             }}
           />
           {source === 'upper' ? (
