@@ -4,8 +4,8 @@ import ProTable from '@jetlinks/pro-table';
 import { Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import { Link, useHistory, useLocation } from 'umi';
+import { DeleteOutlined, EyeOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
+import { useHistory, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
@@ -44,7 +44,19 @@ const Task = observer(() => {
     {
       title: '推送方式',
       ellipsis: true,
-      dataIndex: 'version',
+      dataIndex: 'mode',
+      render: (text: any, record: any) => record?.mode?.text || '',
+      valueType: 'select',
+      valueEnum: {
+        pull: {
+          text: '设备拉取',
+          status: 'pull',
+        },
+        push: {
+          text: '平台推送',
+          status: 'push',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -58,6 +70,7 @@ const Task = observer(() => {
     {
       title: '完成比例',
       ellipsis: true,
+      hideInSearch: true,
       dataIndex: 'signMethod',
     },
     {
@@ -68,14 +81,13 @@ const Task = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
-
+      fixed: 'right',
       render: (text, record) => [
-        <Link
+        <a
           onClick={() => {
-            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], '123');
+            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], record?.id);
             history.push(url);
           }}
-          to={`/device/firmware/detail/${record.id}`}
           key="link"
         >
           <Tooltip
@@ -87,21 +99,16 @@ const Task = observer(() => {
           >
             <EyeOutlined />
           </Tooltip>
-        </Link>,
+        </a>,
         <a
           key="editable"
           onClick={() => {
-            state.visible = true;
-            state.current = record;
+            // state.visible = true;
+            // state.current = record;
           }}
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
+          <Tooltip title={'停止'}>
+            <StopOutlined />
           </Tooltip>
         </a>,
         <a key="delete">
@@ -111,7 +118,7 @@ const Task = observer(() => {
               defaultMessage: '确认删除？',
             })}
             onConfirm={async () => {
-              await service.remove(record.id);
+              await service.deleteTask(record.id);
               onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',

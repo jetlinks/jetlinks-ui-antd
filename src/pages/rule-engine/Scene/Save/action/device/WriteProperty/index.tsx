@@ -26,7 +26,7 @@ export default (props: WritePropertyProps) => {
   const [propertiesKey, setPropertiesKey] = useState<string | undefined>(undefined);
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState(false);
   const paramsListRef = useRef<any[]>();
 
   const handleName = (data: any) => {
@@ -114,7 +114,7 @@ export default (props: WritePropertyProps) => {
 
   useEffect(() => {
     if (props.isEdit) {
-      setIsEdit(false)
+      setIsEdit(false);
       const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
       const data = props.form.getFieldsValue();
       queryBuiltInParams(data, params).then((res: any) => {
@@ -139,9 +139,9 @@ export default (props: WritePropertyProps) => {
       });
     }
     setTimeout(() => {
-      setIsEdit(true)
-    }, 300)
-  }, [props.isEdit])
+      setIsEdit(true);
+    }, 300);
+  }, [props.isEdit]);
 
   useEffect(() => {
     if (props.trigger?.trigger?.device?.productId && source === 'upper' && isEdit) {
@@ -157,7 +157,7 @@ export default (props: WritePropertyProps) => {
   // }, [props.productId]);
 
   useEffect(() => {
-    console.log(props.value)
+    console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {

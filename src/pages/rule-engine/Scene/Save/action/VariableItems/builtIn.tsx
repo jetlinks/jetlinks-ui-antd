@@ -23,7 +23,7 @@ interface BuiltInProps {
   parallel?: boolean;
   form: FormInstance;
   name: number;
-  isEdit?: boolean
+  isEdit?: boolean;
 }
 
 export default (props: BuiltInProps) => {
@@ -33,7 +33,7 @@ export default (props: BuiltInProps) => {
 
   const [builtInList, setBuiltInList] = useState<any[]>([]);
 
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState(false);
 
   const onChange = (_source: string = 'fixed', _value?: any, _upperKey?: string) => {
     const obj: ChangeType = {
@@ -65,7 +65,7 @@ export default (props: BuiltInProps) => {
 
   useEffect(() => {
     if (props.isEdit) {
-      setIsEdit(false)
+      setIsEdit(false);
       const data = props.form.getFieldsValue();
       const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
       queryBuiltInParams(data, params).then((res: any) => {
@@ -77,9 +77,9 @@ export default (props: BuiltInProps) => {
       });
     }
     setTimeout(() => {
-      setIsEdit(true)
-    }, 300)
-  }, [ props.isEdit ])
+      setIsEdit(true);
+    }, 300);
+  }, [props.isEdit]);
 
   useEffect(() => {
     if (source === 'upper' && isEdit) {

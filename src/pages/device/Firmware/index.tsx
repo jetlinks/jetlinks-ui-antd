@@ -117,6 +117,7 @@ const Firmware = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           style={{ padding: 0 }}

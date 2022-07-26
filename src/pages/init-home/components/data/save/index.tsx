@@ -6,18 +6,20 @@ import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '../../../index';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data?: any;
   close: () => void;
-  save: () => void;
+  save: (values: any) => void;
 }
 
 const Save = (props: Props) => {
-  const { close } = props;
+  const { close, data } = props;
 
   const form = createForm({
     validateFirst: true,
+    initialValues: data,
     effects: () => {
       onFormInit(async (form1) => {
         const resp = await service.getResourcesCurrent();
@@ -42,55 +44,8 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const values: any = await form.submit();
-    // 新增网络组件
-    const network = await service.saveNetwork({
-      type: 'MQTT_SERVER',
-      shareCluster: true,
-      name: 'MQTT网络组件',
-      configuration: {
-        host: '0.0.0.0',
-        secure: false,
-        port: values.port,
-        publicHost: values.publicHost,
-        publicPort: values.publicPort,
-      },
-    });
-    // 保存协议
-    const protocol = await service.saveProtocol();
-    let protocolItem: any = undefined;
-    if (protocol.status === 200) {
-      const proid = await service.getProtocol();
-      if (proid.status === 200) {
-        protocolItem = (proid?.result || []).find((it: any) => it.name === 'Jetlinks官方协议');
-      }
-    }
-    // 新增设备接入网关
-    const accessConfig = await service.saveAccessConfig({
-      name: 'MQTT类型设备接入网关',
-      provider: 'mqtt-server-gateway',
-      protocol: protocolItem?.id,
-      transport: 'MQTT',
-      channel: 'network',
-      channelId: network?.result?.id,
-    });
-    if (accessConfig) {
-    }
-    // 新增产品
-
-    // 新增设备
-
-    // values.productName = product?.name || '';
-    // const { upload, ...extra } = values;
-    // const params = {
-    //   ...extra,
-    //   url: upload.url || data?.url,
-    //   size: upload.length || data?.size,
-    // };
-    // const resp = (await service.update(params)) as any;
-    // if (resp.status === 200) {
-    //   onlyMessage('保存成功！');
-    //   close();
-    // }
+    onlyMessage('保存成功！');
+    props.save(values);
   };
   const schema: ISchema = {
     type: 'object',

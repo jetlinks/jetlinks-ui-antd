@@ -28,7 +28,7 @@ export const DeviceBadge = (props: DeviceBadgeProps) => {
     offline: 'error',
     online: 'processing',
   };
-  console.log(STATUS[props.type], props)
+  console.log(STATUS[props.type], props);
   return <Badge status={STATUS[props.type]} text={props.text} />;
 };
 

@@ -37,13 +37,13 @@ export default (props: StreamCardProps) => {
               {/*<div className={'ellipsis'}>*/}
               {/*  <Tooltip title={props?.provider}>{props?.provider}</Tooltip>*/}
               {/*</div>*/}
-              <div style={{width: '100%'}}>
+              <div style={{ width: '100%' }}>
                 <Ellipsis title={props?.provider} titleClassName={'stream-title'} />
               </div>
             </div>
             <div>
               <label>RTP IP</label>
-              <div style={{width: '100%'}}>
+              <div style={{ width: '100%' }}>
                 <Ellipsis title={props?.configuration?.rtpIp} />
               </div>
               {/*<div className={'ellipsis'}>*/}
@@ -52,7 +52,7 @@ export default (props: StreamCardProps) => {
             </div>
             <div>
               <label>API HOST</label>
-              <div style={{width: '100%'}}>
+              <div style={{ width: '100%' }}>
                 <Ellipsis title={props?.configuration?.apiHost} />
               </div>
               {/*<div className={'ellipsis'}>*/}
