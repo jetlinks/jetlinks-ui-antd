@@ -288,7 +288,7 @@ const Cascade = () => {
           isPermission={permission.delete}
           disabled={record.status.value !== 'disabled'}
           tooltip={{
-            title: record.status.value !== 'disabled' ? '请先禁用，再删除' : '',
+            title: record.status.value !== 'disabled' ? '请先禁用，再删除' : '删除',
           }}
           popConfirm={{
             title: '确认删除',

@@ -86,7 +86,7 @@ const Instance = () => {
       isPermission={permission.delete}
       disabled={record.state.value !== 'disable'}
       tooltip={{
-        title: record.state.value !== 'disable' ? '请先禁用，再删除' : '',
+        title: record.state.value !== 'disable' ? '请先禁用，再删除' : '删除',
       }}
       popConfirm={{
         title: '确认删除',

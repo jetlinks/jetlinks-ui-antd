@@ -18,6 +18,7 @@ interface DeviceProps {
   onFunctionChange: (functionItem: any) => void;
   parallel?: boolean;
   onProductIdChange: (id: string) => void;
+  isEdit?: boolean
 }
 
 enum SourceEnum {
@@ -90,11 +91,12 @@ export default (props: DeviceProps) => {
     }
     const actions = props.form?.getFieldValue('actions');
 
-    if (actions[name] && actions[name].device) {
+    if (actions[name] && actions[name].device && !props.isEdit) {
       if (actions[name].device.selector) {
         actions[name].device.selector = SourceEnum.fixed;
       }
       if (actions[name].device.selectorValues) {
+        console.log('useEffect')
         actions[name].device.selectorValues = undefined;
       }
     }

@@ -1,7 +1,7 @@
-import { Modal, Spin } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
-import { createSchemaField, observer } from '@formily/react';
+import {Modal, Spin} from 'antd';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {createForm, Field, onFieldReact, onFieldValueChange} from '@formily/core';
+import {createSchemaField, observer} from '@formily/react';
 import {
   ArrayTable,
   DatePicker,
@@ -12,11 +12,11 @@ import {
   PreviewText,
   Select,
 } from '@formily/antd';
-import { ISchema } from '@formily/json-schema';
-import { configService, service, state } from '@/pages/notice/Template';
-import { useLocation } from 'umi';
-import { onlyMessage, useAsyncDataSource } from '@/utils/util';
-import { Store } from 'jetlinks-store';
+import {ISchema} from '@formily/json-schema';
+import {configService, service, state} from '@/pages/notice/Template';
+import {useLocation} from 'umi';
+import {onlyMessage, useAsyncDataSource} from '@/utils/util';
+import {Store} from 'jetlinks-store';
 import FUpload from '@/components/Upload';
 
 const Debug = observer(() => {
@@ -89,8 +89,14 @@ const Debug = observer(() => {
                       format.setComponent(Select);
                       format.setDataSource(userList);
                       break;
+                    case 'tag':
+                      // 获取user
+                      const tagList = await service[id].getTags(_configId);
+                      format.setComponent(Select);
+                      format.setDataSource(tagList);
+                      break;
                   }
-                } else if (businessType === 'org' || businessType === 'user') {
+                } else if (['tag', 'org', 'user'].includes(businessType)) {
                   format.setComponent(Select);
                   format.setDataSource([]);
                 }
@@ -136,8 +142,8 @@ const Debug = observer(() => {
     configService
       .queryNoPagingPost({
         terms: [
-          { column: 'type$IN', value: id },
-          { column: 'provider', value: state.current?.provider },
+          {column: 'type$IN', value: id},
+          {column: 'provider', value: state.current?.provider},
         ],
       })
       .then((resp: any) => {
@@ -168,8 +174,8 @@ const Debug = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
         'x-component-props': {
-          pagination: { pageSize: 9999 },
-          scroll: { x: '100%' },
+          pagination: {pageSize: 9999},
+          scroll: {x: '100%'},
         },
         'x-visible': false,
         items: {
@@ -178,7 +184,7 @@ const Debug = observer(() => {
             column0: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '类型', width: '120px' },
+              'x-component-props': {title: '类型', width: '120px'},
               'x-hidden': true,
               properties: {
                 type: {
@@ -192,7 +198,7 @@ const Debug = observer(() => {
             column1: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '变量', width: '120px' },
+              'x-component-props': {title: '变量', width: '120px'},
               properties: {
                 id: {
                   type: 'string',
@@ -205,7 +211,7 @@ const Debug = observer(() => {
             column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '名称', width: '120px' },
+              'x-component-props': {title: '名称', width: '120px'},
               properties: {
                 name: {
                   type: 'string',
@@ -218,7 +224,7 @@ const Debug = observer(() => {
             column3: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '值', width: '120px' },
+              'x-component-props': {title: '值', width: '120px'},
               properties: {
                 value: {
                   required: true,
@@ -286,7 +292,7 @@ const Debug = observer(() => {
     >
       <Spin spinning={spinning}>
         <Form form={form} layout={'vertical'}>
-          <SchemaField schema={schema} scope={{ getConfig, useAsyncDataSource }} />
+          <SchemaField schema={schema} scope={{getConfig, useAsyncDataSource}}/>
         </Form>
       </Spin>
     </Modal>

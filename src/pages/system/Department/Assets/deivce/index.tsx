@@ -24,10 +24,11 @@ type DeviceBadgeProps = {
 };
 export const DeviceBadge = (props: DeviceBadgeProps) => {
   const STATUS = {
-    notActive: 'processing',
+    notActive: 'warning',
     offline: 'error',
-    online: 'success',
+    online: 'processing',
   };
+  console.log(STATUS[props.type], props)
   return <Badge status={STATUS[props.type]} text={props.text} />;
 };
 
@@ -217,7 +218,7 @@ export default observer((props: { parentId: string }) => {
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '解除绑定',
+                defaultMessage: '删除',
               })}
             >
               <DisconnectOutlined />

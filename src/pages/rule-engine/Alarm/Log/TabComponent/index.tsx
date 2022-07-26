@@ -15,6 +15,7 @@ import { useHistory } from 'umi';
 import classNames from 'classnames';
 import { useDomFullHeight } from '@/hooks';
 import PermissionButton from '@/components/PermissionButton';
+import {Ellipsis} from "@/components";
 
 interface Props {
   type: string;
@@ -203,12 +204,15 @@ const TabComponent = observer((props: Props) => {
                       <div className={'card-warp'}>
                         <div className={classNames('card-content')}>
                           <div
-                            style={{ fontSize: 20, fontWeight: 700, marginBottom: 20 }}
-                            className="ellipsis"
+                            style={{ width: 'calc(100% - 90px)' }}
                           >
-                            <Tooltip title={item.alarmName}>
-                              <a style={{ cursor: 'default' }}>{item.alarmName}</a>
-                            </Tooltip>
+                            <Ellipsis
+                              title={item.alarmName}
+                              titleStyle={{color: '#2F54EB'}}
+                            />
+                            {/*<Tooltip title={item.alarmName}>*/}
+                            {/*  <a style={{ cursor: 'default' }}>{item.alarmName}</a>*/}
+                            {/*</Tooltip>*/}
                           </div>
                           <div className="alarm-log-context">
                             <div className="context-left">
