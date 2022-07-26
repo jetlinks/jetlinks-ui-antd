@@ -160,6 +160,7 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               gridSpan: 2,
             },
+            default: 'jar',
             'x-component-props': {
               model: 'singular',
               itemStyle: {

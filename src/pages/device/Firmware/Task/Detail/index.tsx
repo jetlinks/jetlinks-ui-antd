@@ -14,7 +14,6 @@ import { service } from '@/pages/device/Firmware';
 import styles from './index.less';
 import { model } from '@formily/reactive';
 import { useParams } from 'umi';
-import moment from 'moment';
 import Details from './Details/index';
 
 const colorMap = new Map();
@@ -176,14 +175,14 @@ const Detail = observer(() => {
       ellipsis: true,
       dataIndex: 'createTime',
       valueType: 'dateTime',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '完成时间',
       ellipsis: true,
       dataIndex: 'completeTime',
       valueType: 'dateTime',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '进度',

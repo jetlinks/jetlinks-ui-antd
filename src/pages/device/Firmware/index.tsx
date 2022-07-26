@@ -2,7 +2,6 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Popconfirm } from 'antd';
-import moment from 'moment';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { DeleteOutlined, EditOutlined, NodeExpandOutlined, PlusOutlined } from '@ant-design/icons';
@@ -63,7 +62,7 @@ const Firmware = observer(() => {
         service.queryProduct().then((resp: any) =>
           (resp?.result || []).map((item: any) => ({
             label: item.name,
-            value: item.id,
+            value: item.name,
           })),
         ),
     },
@@ -96,7 +95,7 @@ const Firmware = observer(() => {
       align: 'center',
       ellipsis: true,
       valueType: 'dateTime',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       // sorter: true,
       // defaultSortOrder: 'descend',
     },
@@ -189,6 +188,7 @@ const Firmware = observer(() => {
         tableStyle={{ minHeight }}
         search={false}
         params={param}
+        rowKey="id"
         columnEmptyText={''}
         headerTitle={
           <div>

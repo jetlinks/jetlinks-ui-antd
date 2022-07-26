@@ -122,7 +122,6 @@ const Save = observer(() => {
         effects() {
           onFieldValueChange('type', (field, f) => {
             const value = (field as Field).value;
-            // console.log(field)
             if (f.modified) {
               f.deleteValuesIn('configuration');
               f.deleteValuesIn('cluster');

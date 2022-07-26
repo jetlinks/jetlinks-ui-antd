@@ -71,22 +71,34 @@ const OutputSave = (props: Props) => {
       address: {
         title: 'kafka地址',
         type: 'string',
-        required: true,
+        // required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
           placeholder: '请输入kafka地址',
         },
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+        ],
       },
       topic: {
         title: 'topic',
         type: 'string',
-        required: true,
+        // required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
           placeholder: '请输入topic',
         },
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+        ],
       },
       state: {
         title: '状态',
