@@ -115,6 +115,7 @@ const Progress = forwardRef((props: Props, ref) => {
         onChange(data[0].startTime, data[0].endTime, data[0].deviceId, data[0].channelId);
       } else if (type === 'cloud') {
         // 是否从本地跳转到云端播放
+
         if (localToServer && Object.keys(localToServer).length > 0) {
           // 获取跳转播放段
           const playItem = data.find((item) => {

@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Calendar, Empty, List, Tooltip } from 'antd';
+import {Calendar, Empty, List, Spin, Tooltip} from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
 import './index.less';
@@ -62,6 +62,7 @@ const IconNode = (props: IconNodeType) => {
   return (
     <a
       onClick={() => {
+        console.log(props,status)
         if (props.type === 'local') {
           if (status === 2) {
             // 已下载，进行跳转
@@ -85,7 +86,7 @@ export default () => {
   const [type, setType] = useState('local');
   const [historyList, setHistoryList] = useState<recordsItemType[]>([]);
   const [time, setTime] = useState<Moment | undefined>(undefined);
-  // const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [cloudTime, setCloudTime] = useState<any>();
   const location = useLocation();
   const player = useRef<any>();
@@ -103,6 +104,7 @@ export default () => {
     setPlayStatus(0);
     setUrl('');
     if (deviceId && channelId && date) {
+      setLoading(true)
       const params = {
         startTime: date.format('YYYY-MM-DD 00:00:00'),
         endTime: date.format('YYYY-MM-DD 23:59:59'),
@@ -113,6 +115,7 @@ export default () => {
           ...params,
           includeFiles: false,
         });
+        setLoading(false)
         let newList: recordsItemType[] = serviceResp.result;
 
         if (serviceResp.status === 200 && serviceResp.result) {
@@ -120,11 +123,11 @@ export default () => {
           newList = localResp.result.map((item: recordsItemType) => {
             return {
               ...item,
-              isServer: serviceResp.result.some(
+              isServer: serviceResp.result.length ? serviceResp.result.some(
                 (serverFile: any) =>
                   item.startTime >= serverFile.streamStartTime &&
                   serverFile.streamEndTime <= item.endTime,
-              ),
+              ) : false,
             };
           });
           setHistoryList(newList);
@@ -132,15 +135,21 @@ export default () => {
           setHistoryList(newList);
         }
       } else {
+        setLoading(false)
         setHistoryList([]);
       }
     }
   };
 
-  const queryServiceRecords = async (date: Moment) => {
+  /**
+   * 查询云端视频
+   * @param date
+   */
+  const queryServiceRecords = useCallback(async (date: Moment) => {
     setPlayStatus(0);
     setUrl('');
     if (deviceId && channelId && date) {
+      setLoading(true)
       const params = {
         startTime: date.format('YYYY-MM-DD 00:00:00'),
         endTime: date.format('YYYY-MM-DD 23:59:59'),
@@ -148,12 +157,12 @@ export default () => {
       };
 
       const resp = await service.recordsInServerFiles(deviceId, channelId, params);
-
+      setLoading(false)
       if (resp.status === 200) {
         setHistoryList(resp.result);
       }
     }
-  };
+  }, [deviceId, channelId])
 
   const cloudView = useCallback((startTime: number, endTime: number) => {
     setType('cloud');
@@ -162,7 +171,7 @@ export default () => {
       endTime,
     });
     queryServiceRecords(time!);
-  }, []);
+  }, [time]);
 
   const downloadClick = async (item: recordsItemType) => {
     const downloadUrl = service.downLoadFile(item.id);
@@ -240,6 +249,9 @@ export default () => {
           />
         </div>
         <div className={'playback-right'}>
+          <Spin spinning={loading}>
+
+
           <Tooltip
             // title={<>云端：存储在服务器中 本地：存储在设备本地</>}
             title={
@@ -391,6 +403,7 @@ export default () => {
               <Empty />
             )}
           </div>
+          </Spin>
         </div>
       </div>
     </PageContainer>
