@@ -5,7 +5,7 @@ import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 
 class Service extends BaseService<FirmwareItem> {
   task = (params: Record<string, unknown>) =>
-    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/_query`, {
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/detail/_query`, {
       method: 'POST',
       data: params,
     });
@@ -37,6 +37,11 @@ class Service extends BaseService<FirmwareItem> {
     request(`/${SystemConst.API_BASE}/firmware/upgrade/task/${id}/_start`, {
       method: 'POST',
       data: params,
+    });
+
+  stopTask = (id: string) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/${id}/_stop`, {
+      method: 'POST',
     });
 
   startOneTask = (params: string[]) =>
