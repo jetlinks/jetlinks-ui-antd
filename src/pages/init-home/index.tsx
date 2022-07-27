@@ -31,7 +31,7 @@ const InitHome = () => {
   useEffect(() => {
     service.getInit().then(res => {
       if (res.status === 200 && res.result.length) {
-        jump()
+        // jump()
       }
     })
   }, [])
