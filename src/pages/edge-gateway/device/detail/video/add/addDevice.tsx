@@ -39,11 +39,11 @@ const AddDevice: React.FC<Props> = props => {
                             )}
                         </Form.Item>
                         <Form.Item label="IP地址">
-                            {getFieldDecorator('url', {
+                            {getFieldDecorator('onvifUrl', {
                                 rules: [{ required: true }],
-                                initialValue: data?.others?.url
+                                initialValue: data?.others?.onvifUrl
                             })(
-                                <IPInput readOnly={!!data?.others?.url} />
+                                <IPInput readOnly={!!data?.others?.onvifUrl} />
                             )}
                         </Form.Item>
                         <Form.Item key="username" label="用户名">
@@ -85,7 +85,7 @@ const AddDevice: React.FC<Props> = props => {
                     } else {
                         let params = {
                             id: data.id,
-                            url: data.others.url,
+                            onvifUrl: data.others.onvifUrl,
                             port: data.port,
                             name: fileValue.name || data.name,
                             username: fileValue.username,

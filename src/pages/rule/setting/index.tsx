@@ -323,7 +323,7 @@ const Setting: React.FC<Props> = props => {
   const onEdit = (item: any) => {
 
     if (item.modelType === 'node-red') {
-      window.open(`/jetlinks/rule-editor/index.html#flow/${item.id}`)
+      window.open(`/jetlinks/rule-editor/index.html?edgeDeviceId=${deviceId}#flow/${item.id}`)
     } else if (item.modelType === 'sql_rule') {
       try {
         setSaveSqlRuleVisible(true);
