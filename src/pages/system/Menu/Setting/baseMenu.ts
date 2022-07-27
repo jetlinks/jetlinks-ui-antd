@@ -588,36 +588,46 @@ export default [
                 url: '/iot/link/Channel/Modbus',
                 icon: 'icon-changjingliandong',
                 permissions: [],
-                buttons: [
-                  {
-                    id: 'update',
-                    name: '编辑',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                  {
-                    id: 'action',
-                    name: '启/禁用',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                  {
-                    id: 'view',
-                    name: '设备接入',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                  {
-                    id: 'delete',
-                    name: '删除',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'delete'] }],
-                  },
-                  {
-                    id: 'add',
-                    name: '新增',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                ],
               },
             ],
           },
+          {
+            code: 'device/Firmware',
+            name: '远程升级',
+            parentId: '1-4',
+            id: '1-4-9',
+            url: '/iot/link/firmware',
+            icon: 'icon-wangluozujian',
+            permissions: [
+              {permission: "firmware-manager", actions: ["query", "save", "delete"]},
+              {permission: "firmware-upgrade-task-manager", actions: ["query", "save", "delete", "deploy"]},
+              {permission: "device-product", actions: ["query"]},
+              {permission: "device-api", actions: ["query"]},
+            ],
+            buttons: [
+              {
+                id: 'update',
+                name: '编辑',
+                permissions: [{ permission: 'firmware-upgrade-task-manager', actions: ['save'] }],
+              },
+              {
+                id: 'action',
+                name: '启/禁用',
+                permissions: [{ permission: 'firmware-upgrade-task-manager', actions: ['deploy'] }],
+              },
+              {
+                id: 'delete',
+                name: '删除',
+                permissions: [{ permission: 'firmware-upgrade-task-manager', actions: ['delete'] }],
+              },
+              {
+                id: 'add',
+                name: '新增',
+                permissions: [{ permission: 'firmware-upgrade-task-manager', actions: ['save'] }],
+              },
+            ],
+          },
+
         ],
       },
 

@@ -60,6 +60,7 @@ const Service = {
     request(`/${SystemConst.API_BASE}/user/detail`, {
       method: 'GET',
     }),
+  initPage: () => request(`/${SystemConst.API_BASE}/user/settings/init`, { method: 'GET' })
 };
 
 export default Service;
