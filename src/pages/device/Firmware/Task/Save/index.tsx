@@ -89,6 +89,7 @@ const Save = (props: Props) => {
     });
     if (resp.status === 200) {
       onlyMessage('保存成功！');
+      props.save();
     } else {
       onlyMessage('保存失败！', 'error');
     }

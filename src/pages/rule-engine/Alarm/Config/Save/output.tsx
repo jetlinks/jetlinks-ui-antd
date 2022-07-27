@@ -103,7 +103,7 @@ const OutputSave = (props: Props) => {
       state: {
         title: '状态',
         type: 'string',
-        required: true,
+        // required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Switch',
         default: false,

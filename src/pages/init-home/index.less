@@ -22,12 +22,12 @@
 
       .left {
         width: 30px;
-        height: 100%;
+        height: 1000px;
       }
 
       .right {
-        width: calc(100% - 50px);
-        height: 1200px;
+        width: calc(100% - 70px);
+        // height: 1200px;
 
         .collapseTitle {
           display: flex;
@@ -43,6 +43,22 @@
           }
         }
       }
+    }
+
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    /* 滚动槽 */
+    ::-webkit-scrollbar-track {
+      background: #f2f2f2;
+      border-radius: 8px;
+    }
+
+    /* 滚动条滑块 */
+    ::-webkit-scrollbar-thumb {
+      background: #cecece;
+      border-radius: 8px;
     }
   }
 }
