@@ -62,3 +62,66 @@
     }
   }
 }
+
+.init-home-role {
+  .init-home-role-content {
+    display: flex;
+    gap: 24px;
+
+    .role-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      padding: 24px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 370px;
+      border: 1px solid rgba(245, 245, 245, 1);
+
+      .role-item-title {
+        display: flex;
+
+        > div {
+          flex: 1 1 auto;
+          padding-left: 90px;
+          font-weight: bold;
+          font-size: 16px;
+        }
+      }
+
+      .role-item-content {
+        width: 320px;
+        height: 260px;
+        margin-top: 24px;
+      }
+
+      &.role-image-1 {
+        background-image: url('/images/init-home/role1.png');
+      }
+
+      &.role-image-2 {
+        background-image: url('/images/init-home/role2.png');
+      }
+
+      &.role-image-3 {
+        background-image: url('/images/init-home/role3.png');
+      }
+
+      .role-item-footer {
+        position: absolute;
+        bottom: -30px;
+        left: 0;
+        width: 100%;
+        color: #999;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      &.active {
+        background-color: #f5f5f5;
+      }
+    }
+  }
+}

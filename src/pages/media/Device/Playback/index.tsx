@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Calendar, Empty, List, Tooltip } from 'antd';
+import { Calendar, Empty, List, Spin, Tooltip } from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
 import './index.less';
@@ -62,6 +62,7 @@ const IconNode = (props: IconNodeType) => {
   return (
     <a
       onClick={() => {
+        console.log(props, status);
         if (props.type === 'local') {
           if (status === 2) {
             // 已下载，进行跳转
@@ -85,7 +86,7 @@ export default () => {
   const [type, setType] = useState('local');
   const [historyList, setHistoryList] = useState<recordsItemType[]>([]);
   const [time, setTime] = useState<Moment | undefined>(undefined);
-  // const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [cloudTime, setCloudTime] = useState<any>();
   const location = useLocation();
   const player = useRef<any>();
@@ -103,6 +104,7 @@ export default () => {
     setPlayStatus(0);
     setUrl('');
     if (deviceId && channelId && date) {
+      setLoading(true);
       const params = {
         startTime: date.format('YYYY-MM-DD 00:00:00'),
         endTime: date.format('YYYY-MM-DD 23:59:59'),
@@ -113,6 +115,7 @@ export default () => {
           ...params,
           includeFiles: false,
         });
+        setLoading(false);
         let newList: recordsItemType[] = serviceResp.result;
 
         if (serviceResp.status === 200 && serviceResp.result) {
@@ -120,11 +123,13 @@ export default () => {
           newList = localResp.result.map((item: recordsItemType) => {
             return {
               ...item,
-              isServer: serviceResp.result.some(
-                (serverFile: any) =>
-                  item.startTime >= serverFile.streamStartTime &&
-                  serverFile.streamEndTime <= item.endTime,
-              ),
+              isServer: serviceResp.result.length
+                ? serviceResp.result.some(
+                    (serverFile: any) =>
+                      item.startTime >= serverFile.streamStartTime &&
+                      serverFile.streamEndTime <= item.endTime,
+                  )
+                : false,
             };
           });
           setHistoryList(newList);
@@ -132,37 +137,49 @@ export default () => {
           setHistoryList(newList);
         }
       } else {
+        setLoading(false);
         setHistoryList([]);
       }
     }
   };
 
-  const queryServiceRecords = async (date: Moment) => {
-    setPlayStatus(0);
-    setUrl('');
-    if (deviceId && channelId && date) {
-      const params = {
-        startTime: date.format('YYYY-MM-DD 00:00:00'),
-        endTime: date.format('YYYY-MM-DD 23:59:59'),
-        includeFiles: true,
-      };
+  /**
+   * 查询云端视频
+   * @param date
+   */
+  const queryServiceRecords = useCallback(
+    async (date: Moment) => {
+      setPlayStatus(0);
+      setUrl('');
+      if (deviceId && channelId && date) {
+        setLoading(true);
+        const params = {
+          startTime: date.format('YYYY-MM-DD 00:00:00'),
+          endTime: date.format('YYYY-MM-DD 23:59:59'),
+          includeFiles: true,
+        };
 
-      const resp = await service.recordsInServerFiles(deviceId, channelId, params);
-
-      if (resp.status === 200) {
-        setHistoryList(resp.result);
+        const resp = await service.recordsInServerFiles(deviceId, channelId, params);
+        setLoading(false);
+        if (resp.status === 200) {
+          setHistoryList(resp.result);
+        }
       }
-    }
-  };
+    },
+    [deviceId, channelId],
+  );
 
-  const cloudView = useCallback((startTime: number, endTime: number) => {
-    setType('cloud');
-    setCloudTime({
-      startTime,
-      endTime,
-    });
-    queryServiceRecords(time!);
-  }, []);
+  const cloudView = useCallback(
+    (startTime: number, endTime: number) => {
+      setType('cloud');
+      setCloudTime({
+        startTime,
+        endTime,
+      });
+      queryServiceRecords(time!);
+    },
+    [time],
+  );
 
   const downloadClick = async (item: recordsItemType) => {
     const downloadUrl = service.downLoadFile(item.id);
@@ -240,47 +257,48 @@ export default () => {
           />
         </div>
         <div className={'playback-right'}>
-          <Tooltip
-            // title={<>云端：存储在服务器中 本地：存储在设备本地</>}
-            title={
-              <>
-                <div>云端：存储在服务器中</div>
-                <div>本地：存储在设备本地</div>
-              </>
-            }
-            placement="topLeft"
-          >
-            <div>
-              类型: <QuestionCircleOutlined />
-            </div>
-          </Tooltip>
-          <RadioCard
-            model={'singular'}
-            value={type}
-            itemStyle={{ minWidth: 0, width: '100%' }}
-            onSelect={(key: string) => {
-              setType(key);
-              console.log(key);
-              if (key === 'cloud') {
-                queryServiceRecords(time!);
-              } else {
-                queryLocalRecords(time!);
+          <Spin spinning={loading}>
+            <Tooltip
+              // title={<>云端：存储在服务器中 本地：存储在设备本地</>}
+              title={
+                <>
+                  <div>云端：存储在服务器中</div>
+                  <div>本地：存储在设备本地</div>
+                </>
               }
-            }}
-            options={[
-              {
-                label: '云端',
-                value: 'cloud',
-                imgUrl: require('/public/images/media/cloud.png'),
-              },
-              {
-                label: '本地',
-                value: 'local',
-                imgUrl: require('/public/images/local.png'),
-              },
-            ]}
-          />
-          {/* <Select
+              placement="topLeft"
+            >
+              <div>
+                类型: <QuestionCircleOutlined />
+              </div>
+            </Tooltip>
+            <RadioCard
+              model={'singular'}
+              value={type}
+              itemStyle={{ minWidth: 0, width: '100%' }}
+              onSelect={(key: string) => {
+                setType(key);
+                console.log(key);
+                if (key === 'cloud') {
+                  queryServiceRecords(time!);
+                } else {
+                  queryLocalRecords(time!);
+                }
+              }}
+              options={[
+                {
+                  label: '云端',
+                  value: 'cloud',
+                  imgUrl: require('/public/images/media/cloud.png'),
+                },
+                {
+                  label: '本地',
+                  value: 'local',
+                  imgUrl: require('/public/images/local.png'),
+                },
+              ]}
+            />
+            {/* <Select
             value={type}
             options={[
               { label: '云端', value: 'cloud' },
@@ -296,101 +314,104 @@ export default () => {
               }
             }}
           /> */}
-          <div className={'playback-calendar'}>
-            <Calendar
-              value={time}
-              onChange={(date) => {
-                setTime(date);
-                if (type === 'cloud') {
-                  queryServiceRecords(date);
-                } else {
-                  queryLocalRecords(date);
-                }
-              }}
-              disabledDate={(currentDate) => currentDate > moment(new Date())}
-              fullscreen={false}
-            />
-          </div>
-          <div className={classNames('playback-list', { 'no-list': !historyList.length })}>
-            {historyList && historyList.length ? (
-              <List
-                className={'playback-list-items'}
-                itemLayout="horizontal"
-                dataSource={historyList}
-                renderItem={(item) => {
-                  const _startTime = item.startTime || item.mediaStartTime;
-                  const startTime = moment(item.startTime || item.mediaStartTime).format(
-                    'HH:mm:ss',
-                  );
-                  const endTime = moment(item.endTime || item.mediaEndTime).format('HH:mm:ss');
-                  let title = '下载到云端';
-
-                  if (type === 'local') {
-                    if (item.isServer) {
-                      title = '查看';
-                    }
+            <div className={'playback-calendar'}>
+              <Calendar
+                value={time}
+                onChange={(date) => {
+                  setTime(date);
+                  if (type === 'cloud') {
+                    queryServiceRecords(date);
                   } else {
-                    title = '下载录像文件';
+                    queryLocalRecords(date);
                   }
-                  return (
-                    <List.Item
-                      actions={[
-                        <Tooltip
-                          key="play-btn"
-                          title={
-                            _startTime === playNowTime.current && playStatus === 1 ? '暂停' : '播放'
-                          }
-                        >
-                          <a
-                            onClick={() => {
-                              if (playStatus === 0 || _startTime !== playNowTime.current) {
-                                if (playTimeNode.current) {
-                                  playTimeNode.current.playByStartTime(_startTime);
-                                }
-                              } else if (playStatus == 1 && _startTime === playNowTime.current) {
-                                if (player.current.getVueInstance) {
-                                  player.current.getVueInstance().pause();
-                                }
-                              } else if (playStatus == 2 && _startTime === playNowTime.current) {
-                                if (player.current.getVueInstance) {
-                                  player.current.getVueInstance().play();
-                                }
-                              }
-                            }}
-                          >
-                            {_startTime === playNowTime.current && playStatus === 1 ? (
-                              <PauseCircleOutlined />
-                            ) : (
-                              <PlayCircleOutlined />
-                            )}
-                          </a>
-                        </Tooltip>,
-
-                        <Tooltip key={'download'} title={title}>
-                          <IconNode
-                            type={type}
-                            item={item}
-                            onCloudView={cloudView}
-                            onDownLoad={() => {
-                              downloadClick(item);
-                            }}
-                          />
-                        </Tooltip>,
-                      ]}
-                    >
-                      <div style={{ textAlign: 'center', paddingLeft: 10 }}>
-                        {`${startTime}`} ~ {`${endTime}`}
-                      </div>
-                    </List.Item>
-                  );
                 }}
-              >
-                <div></div>
-              </List>
-            ) : (
-              <Empty />
-            )}
-          </div>
+                disabledDate={(currentDate) => currentDate > moment(new Date())}
+                fullscreen={false}
+              />
+            </div>
+            <div className={classNames('playback-list', { 'no-list': !historyList.length })}>
+              {historyList && historyList.length ? (
+                <List
+                  className={'playback-list-items'}
+                  itemLayout="horizontal"
+                  dataSource={historyList}
+                  renderItem={(item) => {
+                    const _startTime = item.startTime || item.mediaStartTime;
+                    const startTime = moment(item.startTime || item.mediaStartTime).format(
+                      'HH:mm:ss',
+                    );
+                    const endTime = moment(item.endTime || item.mediaEndTime).format('HH:mm:ss');
+                    let title = '下载到云端';
+
+                    if (type === 'local') {
+                      if (item.isServer) {
+                        title = '查看';
+                      }
+                    } else {
+                      title = '下载录像文件';
+                    }
+                    return (
+                      <List.Item
+                        actions={[
+                          <Tooltip
+                            key="play-btn"
+                            title={
+                              _startTime === playNowTime.current && playStatus === 1
+                                ? '暂停'
+                                : '播放'
+                            }
+                          >
+                            <a
+                              onClick={() => {
+                                if (playStatus === 0 || _startTime !== playNowTime.current) {
+                                  if (playTimeNode.current) {
+                                    playTimeNode.current.playByStartTime(_startTime);
+                                  }
+                                } else if (playStatus == 1 && _startTime === playNowTime.current) {
+                                  if (player.current.getVueInstance) {
+                                    player.current.getVueInstance().pause();
+                                  }
+                                } else if (playStatus == 2 && _startTime === playNowTime.current) {
+                                  if (player.current.getVueInstance) {
+                                    player.current.getVueInstance().play();
+                                  }
+                                }
+                              }}
+                            >
+                              {_startTime === playNowTime.current && playStatus === 1 ? (
+                                <PauseCircleOutlined />
+                              ) : (
+                                <PlayCircleOutlined />
+                              )}
+                            </a>
+                          </Tooltip>,
+
+                          <Tooltip key={'download'} title={title}>
+                            <IconNode
+                              type={type}
+                              item={item}
+                              onCloudView={cloudView}
+                              onDownLoad={() => {
+                                downloadClick(item);
+                              }}
+                            />
+                          </Tooltip>,
+                        ]}
+                      >
+                        <div style={{ textAlign: 'center', paddingLeft: 10 }}>
+                          {`${startTime}`} ~ {`${endTime}`}
+                        </div>
+                      </List.Item>
+                    );
+                  }}
+                >
+                  <div></div>
+                </List>
+              ) : (
+                <Empty />
+              )}
+            </div>
+          </Spin>
         </div>
       </div>
     </PageContainer>

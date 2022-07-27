@@ -45,6 +45,8 @@ class Service extends BaseService<any> {
       method: 'POST',
       data,
     });
+  getPermissionAll = () =>
+    request(`${SystemConst.API_BASE}/permission/_query/no-paging?paging=false`);
 }
 
 export default Service;

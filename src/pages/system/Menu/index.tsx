@@ -288,15 +288,15 @@ export default observer(() => {
               defaultMessage: '新增',
             })}
           </PermissionButton>,
-          <Button
+          <PermissionButton
             style={{ marginLeft: 12 }}
+            isPermission={permission.action}
             onClick={() => {
-              console.log(getMenuPathByCode('system/Menu/Setting'));
               history.push(getMenuPathByCode('system/Menu/Setting'));
             }}
           >
             菜单配置
-          </Button>,
+          </PermissionButton>,
         ]}
       />
     </PageContainer>
