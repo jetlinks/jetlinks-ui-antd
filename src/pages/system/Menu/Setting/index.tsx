@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import Tree from './tree';
 import './index.less';
-import { Button, Tooltip } from 'antd';
+import {Button, message, Tooltip} from 'antd';
 import BaseTreeData from './baseMenu';
 import { useEffect, useState } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -165,11 +165,16 @@ export default observer(() => {
 
   const updateMenu = () => {
     setLoading(true);
-    service.updateMenus(MenuSettingModel.menuData).then((res) => {
-      setLoading(false);
-      if (res.status === 200) {
-      }
-    });
+    if (MenuSettingModel.menuData && MenuSettingModel.menuData.length) {
+      service.updateMenus(MenuSettingModel.menuData).then((res) => {
+        setLoading(false);
+        if (res.status === 200) {
+          message.success('操作成功')
+        }
+      });
+    } else {
+      message.warning('请配置系统菜单')
+    }
   };
 
   return (

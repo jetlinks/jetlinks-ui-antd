@@ -29,7 +29,7 @@ class Service extends BaseService<MenuItem> {
   queryAssetsType = () => request(`${SystemConst.API_BASE}/asset/types`, { method: 'GET' });
 
   // 更新全部菜单
-  updateMenus = (data: any) => request(`${this.uri}`, { method: 'PATCH', data });
+  updateMenus = (data: any) => request(`${this.uri}/_all`, { method: 'PATCH', data });
 }
 
 export default Service;
