@@ -1,10 +1,16 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Popconfirm, Tooltip } from 'antd';
+import { message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { DeleteOutlined, EyeOutlined, PlusOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  ControlOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { useHistory, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
@@ -17,6 +23,37 @@ import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { service } from '@/pages/device/Firmware';
+
+const UpgradeBtn = (props: { data: any; actions: any }) => {
+  const { data, actions } = props;
+  return (
+    <a>
+      <Tooltip title={data.waiting ? '停止' : '继续升级'}>
+        {data.waiting ? (
+          <StopOutlined
+            onClick={async () => {
+              const resp = await service.stopTask(data.id);
+              if (resp.status === 200) {
+                message.success('操作成功！');
+                actions?.reload();
+              }
+            }}
+          />
+        ) : (
+          <ControlOutlined
+            onClick={async () => {
+              const resp = await service.startTask(data.id, ['canceled']);
+              if (resp.status === 200) {
+                message.success('操作成功！');
+                actions?.reload();
+              }
+            }}
+          />
+        )}
+      </Tooltip>
+    </a>
+  );
+};
 
 export const state = model<{
   current?: FirmwareItem;
@@ -35,7 +72,7 @@ const Task = observer(() => {
   const id = (location as any).query?.id || '';
   const productId = (location as any).query?.productId || '';
 
-  const columns: ProColumns<FirmwareItem>[] = [
+  const columns: ProColumns<any>[] = [
     {
       title: '任务名称',
       ellipsis: true,
@@ -70,8 +107,8 @@ const Task = observer(() => {
     {
       title: '完成比例',
       ellipsis: true,
-      hideInSearch: true,
-      dataIndex: 'signMethod',
+      // hideInSearch: true,
+      dataIndex: 'progress',
     },
     {
       title: intl.formatMessage({
@@ -100,23 +137,17 @@ const Task = observer(() => {
             <EyeOutlined />
           </Tooltip>
         </a>,
-        <a
-          key="editable"
-          onClick={() => {
-            // state.visible = true;
-            // state.current = record;
-          }}
-        >
-          <Tooltip title={'停止'}>
-            <StopOutlined />
-          </Tooltip>
-        </a>,
+        <UpgradeBtn data={record} actions={actionRef.current} key="btn" />,
         <a key="delete">
           <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
+            title={
+              record.waiting
+                ? '删除将导致正在进行的任务终止，确定要删除吗？'
+                : intl.formatMessage({
+                    id: 'pages.data.option.remove.tips',
+                    defaultMessage: '确认删除？',
+                  })
+            }
             onConfirm={async () => {
               await service.deleteTask(record.id);
               onlyMessage(
