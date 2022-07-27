@@ -224,19 +224,17 @@ export default observer((props: TriggerProps) => {
           </Col>
         )}
         <Col span={6}>
-          {operatorOptions && (
-            <Form.Item
-              name={['trigger', 'device', 'operation', 'operator']}
-              initialValue={undefined}
-              rules={[{ required: true, message: '请选择触发类型' }]}
-            >
-              <Select
-                placeholder={'请选择触发类型'}
-                options={operatorOptions}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          )}
+          <Form.Item
+            name={['trigger', 'device', 'operation', 'operator']}
+            initialValue={undefined}
+            rules={[{ required: true, message: '请选择触发类型' }]}
+          >
+            <Select
+              placeholder={'请选择触发类型'}
+              options={operatorOptions}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
         </Col>
       </Row>
       {FormModel.trigger?.device?.operation?.operator === OperatorEnum.invokeFunction ||

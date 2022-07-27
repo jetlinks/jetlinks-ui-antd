@@ -232,15 +232,18 @@ const Permission: React.FC = observer(() => {
             title: '确认删除',
             disabled: !!record.status,
             onConfirm: async () => {
-              if (record.status) {
-                await service.remove(record.id);
-                onlyMessage(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
+              if (!record.status) {
+                await service.remove(record.id).then((res: any) => {
+                  if (res.status === 200) {
+                    onlyMessage(
+                      intl.formatMessage({
+                        id: 'pages.data.option.success',
+                        defaultMessage: '操作成功!',
+                      }),
+                    );
+                    actionRef.current?.reload();
+                  }
+                });
               }
             },
           }}
@@ -267,6 +270,7 @@ const Permission: React.FC = observer(() => {
         params={param}
         columns={columns}
         search={false}
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'permission'}
         tableStyle={{ minHeight }}

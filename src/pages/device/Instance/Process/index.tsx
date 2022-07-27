@@ -34,6 +34,8 @@ const Process = (props: Props) => {
           if (res.success) {
             dt += res.total;
             setCount(dt);
+          } else {
+            setErrMessage(res.message);
           }
           break;
         case 'sync':

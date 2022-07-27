@@ -18,6 +18,7 @@ interface MessageContentProps {
   configId: string;
   trigger?: any;
   parallel?: boolean;
+  isEdit?: boolean;
 }
 
 const rowGutter = 12;
@@ -155,6 +156,7 @@ export default (props: MessageContentProps) => {
                           type={props.triggerType}
                           trigger={props.trigger}
                           data={item}
+                          isEdit={props.isEdit}
                         />
                       )}
                     </Form.Item>

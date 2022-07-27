@@ -53,7 +53,7 @@ const FSelectDevice = connect((props: Props) => {
       }),
       dataIndex: 'registryTime',
       width: '200px',
-      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : '/'),
+      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''),
       sorter: true,
     },
     {
@@ -105,6 +105,7 @@ const FSelectDevice = connect((props: Props) => {
             pagination={{
               pageSize: 10,
             }}
+            columnEmptyText={''}
             columns={columns}
             actionRef={actionRef}
             request={(params) => service.query(params)}

@@ -36,12 +36,12 @@ import { service as categoryService } from '@/pages/device/Category';
 import { onlyMessage } from '@/utils/util';
 
 export const statusMap = new Map();
-statusMap.set('在线', 'success');
+statusMap.set('在线', 'processing');
 statusMap.set('离线', 'error');
-statusMap.set('未激活', 'processing');
-statusMap.set('online', 'success');
+statusMap.set('未激活', 'warning');
+statusMap.set('online', 'processing');
 statusMap.set('offline', 'error');
-statusMap.set('notActive', 'processing');
+statusMap.set('notActive', 'warning');
 
 export const InstanceModel = model<{
   current: Partial<DeviceInstance>;

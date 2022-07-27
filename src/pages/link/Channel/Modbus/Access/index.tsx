@@ -333,6 +333,7 @@ const Access = () => {
               params={param}
               columns={columns}
               rowKey="id"
+              columnEmptyText={''}
               search={false}
               headerTitle={
                 <>

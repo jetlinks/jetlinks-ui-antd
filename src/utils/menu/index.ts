@@ -194,11 +194,11 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
             const eRoutes = findExtraRoutes(item.code, extraRoutes.children, item.url);
             item.children = item.children ? [...eRoutes, ...item.children] : eRoutes;
           }
-        } else {
-          const detailComponent = findDetailRoute(item.code, item.url);
-          if (detailComponent) {
-            item.children = item.children ? [detailComponent, ...item.children] : [detailComponent];
-          }
+        }
+
+        const detailComponent = findDetailRoute(item.code, item.url);
+        if (detailComponent) {
+          item.children = item.children ? [detailComponent, ...item.children] : [detailComponent];
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -33,7 +33,9 @@ const Permission = forwardRef((props: PerModalProps, ref) => {
 
   const form = createForm({
     validateFirst: true,
-    initialValues: {},
+    initialValues: {
+      permission: ['read'],
+    },
   });
 
   /**
@@ -48,6 +50,7 @@ const Permission = forwardRef((props: PerModalProps, ref) => {
 
   const saveData = async () => {
     const formData: any = await form.submit();
+    console.log(formData);
     service
       .bind(props.type, [
         {
@@ -85,7 +88,6 @@ const Permission = forwardRef((props: PerModalProps, ref) => {
           { label: '删除', value: 'delete' },
         ],
         required: true,
-        'x-value': ['read'],
       },
     },
   };

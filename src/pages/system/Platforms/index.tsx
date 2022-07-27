@@ -272,6 +272,7 @@ export default () => {
         params={param}
         columns={columns}
         actionRef={actionRef}
+        columnEmptyText={''}
         tableClassName={'platform'}
         tableStyle={{ minHeight }}
         request={(params: any) =>

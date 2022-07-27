@@ -1,0 +1,14 @@
+.menu-setting-drag-tree .ant-tree-treenode.ant-tree-treenode-draggable {
+  width: 100%;
+}
+.menu-setting-drag-tree .ant-tree-node-content-wrapper {
+  flex: 1;
+}
+.menu-setting-drag-tree .tree-drag-item {
+  display: flex;
+  align-items: center;
+}
+.menu-setting-drag-tree .tree-drag-item > span:first-child {
+  flex: 1;
+  padding-right: 4px;
+}

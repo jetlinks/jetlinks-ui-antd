@@ -175,6 +175,7 @@ const Alarm = () => {
         pagination={{
           pageSize: 10,
         }}
+        columnEmptyText={''}
         actionRef={actionRef}
       />
     </PageContainer>

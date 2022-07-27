@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import {
@@ -14,6 +14,7 @@ import {
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
 import { service, state } from '@/pages/notice/Config';
+import { service as TemplateService } from '@/pages/notice/Template';
 import { useLocation } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
@@ -22,6 +23,7 @@ import FUpload from '@/components/Upload';
 const Debug = observer(() => {
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id;
+  const variableRef = useRef<any>([]);
 
   const form = useMemo(
     () =>
@@ -31,17 +33,30 @@ const Debug = observer(() => {
           onFieldValueChange('templateId', (field, form1) => {
             const value = field.value;
             // 找到模版详情；
-            const list = Store.get('notice-template-list');
+            // const list = Store.get('notice-template-list');
 
-            const _template = list.find((item: any) => item.id === value);
-            form1.setFieldState('variableDefinitions', (_state) => {
-              _state.visible = _template?.variableDefinitions?.length > 0;
-              _state.value = _template.variableDefinitions;
+            TemplateService.getVariableDefinitions(value).then((resp) => {
+              const _template = resp.result;
+              if (_template?.variableDefinitions?.length > 0) {
+                variableRef.current = _template?.variableDefinitions;
+                form1.setFieldState('variableDefinitions', (state1) => {
+                  state1.visible = true;
+                  state1.value = _template?.variableDefinitions;
+                });
+              }
             });
+
+            // const _template = list.find((item: any) => item.id === value);
+            // console.log(_template)
+            // form1.setFieldState('variableDefinitions', (_state) => {
+            //   _state.visible = _template?.variableDefinitions?.length > 0;
+            //   _state.value = _template.variableDefinitions;
+            // });
           });
-          onFieldReact('variableDefinitions.*.type', (field) => {
+          onFieldReact('variableDefinitions.*.type', async (field) => {
             const value = (field as Field).value;
             const format = field.query('.value').take() as any;
+            const _id = field.query('.id').take() as Field;
             switch (value) {
               case 'date':
                 format.setComponent(DatePicker);
@@ -60,6 +75,33 @@ const Debug = observer(() => {
               case 'other':
                 format.setComponent(Input);
                 break;
+            }
+            console.log(variableRef.current);
+            if (variableRef.current) {
+              const a = variableRef.current?.find((i: any) => i.id === _id.value);
+              const businessType = a?.expands?.businessType;
+              if (id === 'dingTalk' || id === 'weixin') {
+                switch (businessType) {
+                  case 'org':
+                    // 获取org
+                    const orgList = await TemplateService[id].getDepartments(state.current?.id);
+                    format.setComponent(Select);
+                    format.setDataSource(orgList);
+                    break;
+                  case 'user':
+                    // 获取user
+                    const userList = await TemplateService[id].getUser(state.current?.id);
+                    format.setComponent(Select);
+                    format.setDataSource(userList);
+                    break;
+                  case 'tag':
+                    // 获取user
+                    const tagList = await TemplateService[id].getTags(state.current?.id);
+                    format.setComponent(Select);
+                    format.setDataSource(tagList);
+                    break;
+                }
+              }
             }
           });
         },
@@ -148,6 +190,13 @@ const Debug = observer(() => {
               'x-component-props': { title: '值', width: '120px' },
               properties: {
                 value: {
+                  required: true,
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                },
+                type: {
+                  'x-hidden': true,
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
@@ -165,12 +214,13 @@ const Debug = observer(() => {
     // 应该取选择的配置信息
     if (!state.current) return;
     const templateId = data.templateId;
-    const list = Store.get('notice-template-list');
-    const _template = list.find((item: any) => item.id === templateId);
+    // const list = Store.get('notice-template-list');
+    // const _template = list.find((item: any) => item.id === templateId);
 
-    const resp = await service.debug(state?.current.id, templateId, {
-      template: _template,
-      context: data.variableDefinitions?.reduce(
+    const resp = await service.debug(
+      state?.current.id,
+      templateId,
+      data.variableDefinitions?.reduce(
         (previousValue: any, currentValue: { id: any; value: any }) => {
           return {
             ...previousValue,
@@ -179,9 +229,10 @@ const Debug = observer(() => {
         },
         {},
       ),
-    });
+    );
     if (resp.status === 200) {
       onlyMessage('操作成功!');
+      state.debug = false;
     }
   };
   return (

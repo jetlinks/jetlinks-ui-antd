@@ -1,48 +1,43 @@
 import { Modal } from 'antd';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import { createSchemaField } from '@formily/react';
-import {
-  Form,
-  FormGrid,
-  FormItem,
-  Input,
-  Select,
-  ArrayTable,
-  NumberPicker,
-  Radio,
-} from '@formily/antd';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Radio } from '@formily/antd';
+import { createForm, onFieldValueChange, onFormInit } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
-import FUpload from '@/components/Upload';
 import { service } from '@/pages/device/Firmware';
-import type { Response } from '@/utils/typings';
-import { useRef } from 'react';
-import type { ProductItem } from '@/pages/device/Product/typings';
+import { useEffect, useRef } from 'react';
 import { onlyMessage } from '@/utils/util';
 import FSelectDevices from '@/components/FSelectDevices';
+import type { DeviceInstance } from '@/pages/device/Instance/typings';
 
 interface Props {
+  ids: { id: string; productId: string };
   data?: FirmwareItem;
   close: () => void;
+  save: () => void;
   visible: boolean;
 }
 
 const Save = (props: Props) => {
-  const { data, close, visible } = props;
+  const { data, close, visible, ids } = props;
 
   const form = createForm({
     validateFirst: true,
     initialValues: data,
     effects() {
+      onFormInit(async (form1) => {
+        if (!data?.id) return;
+        form1.setInitialValues({ ...data, upload: { url: data?.url } });
+      });
       onFieldValueChange('mode', async (field) => {
         field
-          .query('timeoutSeconds1')
+          .query('timeoutSeconds')
           .take()
           .setDecoratorProps({
             gridSpan: field.value === 'push' ? 1 : 2,
           });
         field
-          .query('timeoutSeconds')
+          .query('responseTimeoutSeconds')
           .take()
           .setDecoratorProps({
             gridSpan: field.value === 'push' ? 1 : 2,
@@ -56,33 +51,50 @@ const Save = (props: Props) => {
     },
   });
 
-  const products = useRef<ProductItem[]>([]);
+  const devices = useRef<DeviceInstance[]>([]);
 
   const SchemaField = createSchemaField({
     components: {
       FormItem,
       FormGrid,
       Input,
-      FUpload,
       Select,
-      ArrayTable,
       NumberPicker,
       Radio,
       FSelectDevices,
     },
   });
 
+  useEffect(() => {
+    if (visible) {
+      service.queryDevice().then((resp) => {
+        if (resp.status === 200) {
+          devices.current = resp.result;
+        }
+      });
+    }
+  }, [visible]);
+
   const save = async () => {
-    const values: FirmwareItem = await form.submit();
-    const product = products.current?.find((item) => item.id === values.productId);
-    values.productName = product?.name || '';
-    const resp = (await service.save(values)) as Response<FirmwareItem>;
+    const values: any = await form.submit();
+    if (values?.releaseType !== 'all') {
+      values.deviceId = devices.current.map((item) => item.id);
+    } else {
+      values.deviceId = undefined;
+    }
+    const resp = await service.saveTask({
+      ...values,
+      firmwareId: ids?.id,
+      productId: ids?.productId,
+    });
     if (resp.status === 200) {
       onlyMessage('保存成功！');
+      props.save();
     } else {
       onlyMessage('保存失败！', 'error');
     }
   };
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -138,10 +150,10 @@ const Save = (props: Props) => {
               },
             ],
           },
-          timeoutSeconds: {
+          responseTimeoutSeconds: {
             title: '响应超时时间',
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
+            'x-component': 'NumberPicker',
             'x-component-props': {
               placeholder: '请输入响应超时时间(秒)',
             },
@@ -166,10 +178,10 @@ const Save = (props: Props) => {
               },
             },
           },
-          timeoutSeconds1: {
+          timeoutSeconds: {
             title: '升级超时时间',
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
+            'x-component': 'NumberPicker',
             'x-component-props': {
               placeholder: '请输入升级超时时间(秒)',
             },
@@ -221,7 +233,7 @@ const Save = (props: Props) => {
               },
             },
           },
-          part: {
+          deviceId: {
             title: '选择设备',
             'x-decorator': 'FormItem',
             'x-component': 'FSelectDevices',
@@ -265,7 +277,7 @@ const Save = (props: Props) => {
     <Modal
       maskClosable={false}
       width="50vw"
-      title="新增任务"
+      title={data?.id ? '编辑任务' : '新增任务'}
       onCancel={() => close()}
       onOk={() => save()}
       visible={visible}

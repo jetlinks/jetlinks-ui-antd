@@ -1,11 +1,17 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Popconfirm, Tooltip } from 'antd';
+import { message, Popconfirm, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { EditOutlined, EyeOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Link, useHistory } from 'umi';
+import {
+  ControlOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
+import { useHistory, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
@@ -17,6 +23,37 @@ import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { service } from '@/pages/device/Firmware';
+
+const UpgradeBtn = (props: { data: any; actions: any }) => {
+  const { data, actions } = props;
+  return (
+    <a>
+      <Tooltip title={data.waiting ? '停止' : '继续升级'}>
+        {data.waiting ? (
+          <StopOutlined
+            onClick={async () => {
+              const resp = await service.stopTask(data.id);
+              if (resp.status === 200) {
+                message.success('操作成功！');
+                actions?.reload();
+              }
+            }}
+          />
+        ) : (
+          <ControlOutlined
+            onClick={async () => {
+              const resp = await service.startTask(data.id, ['canceled']);
+              if (resp.status === 200) {
+                message.success('操作成功！');
+                actions?.reload();
+              }
+            }}
+          />
+        )}
+      </Tooltip>
+    </a>
+  );
+};
 
 export const state = model<{
   current?: FirmwareItem;
@@ -31,8 +68,11 @@ const Task = observer(() => {
   const { permission } = usePermissions('device/Firmware');
   const [param, setParam] = useState({});
   const history = useHistory<Record<string, string>>();
+  const location = useLocation<{ id: string }>();
+  const id = (location as any).query?.id || '';
+  const productId = (location as any).query?.productId || '';
 
-  const columns: ProColumns<FirmwareItem>[] = [
+  const columns: ProColumns<any>[] = [
     {
       title: '任务名称',
       ellipsis: true,
@@ -41,7 +81,19 @@ const Task = observer(() => {
     {
       title: '推送方式',
       ellipsis: true,
-      dataIndex: 'version',
+      dataIndex: 'mode',
+      render: (text: any, record: any) => record?.mode?.text || '',
+      valueType: 'select',
+      valueEnum: {
+        pull: {
+          text: '设备拉取',
+          status: 'pull',
+        },
+        push: {
+          text: '平台推送',
+          status: 'push',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -55,7 +107,8 @@ const Task = observer(() => {
     {
       title: '完成比例',
       ellipsis: true,
-      dataIndex: 'signMethod',
+      // hideInSearch: true,
+      dataIndex: 'progress',
     },
     {
       title: intl.formatMessage({
@@ -65,14 +118,13 @@ const Task = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
-
+      fixed: 'right',
       render: (text, record) => [
-        <Link
+        <a
           onClick={() => {
-            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], '123');
+            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], record?.id);
             history.push(url);
           }}
-          to={`/device/firmware/detail/${record.id}`}
           key="link"
         >
           <Tooltip
@@ -84,30 +136,20 @@ const Task = observer(() => {
           >
             <EyeOutlined />
           </Tooltip>
-        </Link>,
-        <a
-          key="editable"
-          onClick={() => {
-            state.visible = true;
-          }}
-        >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            })}
-          >
-            <EditOutlined />
-          </Tooltip>
         </a>,
+        <UpgradeBtn data={record} actions={actionRef.current} key="btn" />,
         <a key="delete">
           <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.data.option.remove.tips',
-              defaultMessage: '确认删除？',
-            })}
+            title={
+              record.waiting
+                ? '删除将导致正在进行的任务终止，确定要删除吗？'
+                : intl.formatMessage({
+                    id: 'pages.data.option.remove.tips',
+                    defaultMessage: '确认删除？',
+                  })
+            }
             onConfirm={async () => {
-              await service.remove(record.id);
+              await service.deleteTask(record.id);
               onlyMessage(
                 intl.formatMessage({
                   id: 'pages.data.option.success',
@@ -123,7 +165,7 @@ const Task = observer(() => {
                 defaultMessage: '删除',
               })}
             >
-              <MinusOutlined />
+              <DeleteOutlined />
             </Tooltip>
           </Popconfirm>
         </a>,
@@ -141,6 +183,7 @@ const Task = observer(() => {
           actionRef.current?.reset?.();
           setParam(data);
         }}
+        defaultParam={[{ column: 'firmwareId', value: id }]}
       />
       <ProTable<FirmwareItem>
         scroll={{ x: 1366 }}
@@ -148,6 +191,8 @@ const Task = observer(() => {
         tableStyle={{ minHeight }}
         search={false}
         params={param}
+        rowKey="id"
+        columnEmptyText={''}
         headerTitle={
           <div>
             <PermissionButton
@@ -167,14 +212,22 @@ const Task = observer(() => {
           </div>
         }
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.task({
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          })
         }
         columns={columns}
         actionRef={actionRef}
       />
       <Save
         data={state.current}
+        ids={{ id: id, productId: productId }}
         visible={state.visible}
+        save={() => {
+          state.visible = false;
+          actionRef.current?.reload?.();
+        }}
         close={() => {
           state.visible = false;
         }}

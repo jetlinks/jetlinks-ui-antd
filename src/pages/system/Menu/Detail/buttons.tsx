@@ -248,6 +248,7 @@ export default (props: ButtonsProps) => {
         columns={columns}
         dataSource={buttonItems}
         search={false}
+        columnEmptyText={''}
         pagination={false}
         toolBarRender={() => [
           <PermissionButton

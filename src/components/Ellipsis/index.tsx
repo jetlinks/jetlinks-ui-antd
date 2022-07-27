@@ -93,7 +93,11 @@ export default (props: EllipsisProps) => {
       )}
       <div
         className={classnames(props.titleClassName?.replace('ellipsis', ''), Style['ellipsis-max'])}
-        style={{ ...props.titleStyle, width: 'max-content !important' }}
+        style={
+          props.titleStyle
+            ? { ...props.titleStyle, width: 'max-content !important' }
+            : { width: 'max-content !important' }
+        }
         ref={extraNode}
       >
         {props.title}

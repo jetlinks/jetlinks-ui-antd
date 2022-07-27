@@ -212,6 +212,7 @@ export default observer((props: { parentId: string }) => {
         params={searchParam}
         search={false}
         rowKey="id"
+        columnEmptyText={''}
         request={async (params) => {
           if (!props.parentId) {
             return {

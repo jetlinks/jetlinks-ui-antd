@@ -8,7 +8,6 @@ import BindUser from './BindUser';
 import { service } from '@/pages/system/User/index';
 import { useParams } from 'umi';
 import Service from '@/pages/system/Role/service';
-import moment from 'moment';
 import SearchComponent from '@/components/SearchComponent';
 import { onlyMessage } from '@/utils/util';
 
@@ -49,7 +48,8 @@ const UserManage = () => {
       dataIndex: 'createTime',
       ellipsis: true,
       width: '200px',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      valueType: 'dateTime',
     },
     {
       title: '状态',
@@ -61,6 +61,17 @@ const UserManage = () => {
           text={record?.status === 1 ? '正常' : '禁用'}
         />
       ),
+      valueType: 'select',
+      valueEnum: {
+        1: {
+          text: '正常',
+          status: 1,
+        },
+        0: {
+          text: '禁用',
+          status: 0,
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -116,6 +127,7 @@ const UserManage = () => {
             </a>
           </Space>
         )}
+        columnEmptyText={''}
         toolBarRender={() => [
           <Button
             onClick={() => {

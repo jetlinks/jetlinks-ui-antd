@@ -230,6 +230,7 @@ const Template = observer(() => {
         params={param}
         columns={columns}
         columnEmptyText={''}
+        gridColumns={[2, 2, 3]}
         headerTitle={
           <Space>
             <PermissionButton

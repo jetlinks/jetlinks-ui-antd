@@ -139,7 +139,7 @@ export default () => {
       }),
       valueType: 'option',
       align: 'center',
-      width: 120,
+      width: 200,
       render: (_, record) => [
         <Tooltip
           key="edit"
@@ -251,6 +251,7 @@ export default () => {
             columns={columns}
             actionRef={actionRef}
             // scroll={{x:1366}}
+            columnEmptyText={''}
             tableClassName={'channelDevice'}
             tableStyle={{ minHeight }}
             options={{ fullScreen: true }}

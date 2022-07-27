@@ -78,6 +78,7 @@ const BindUser = (props: Props) => {
         target="user"
         // pattern={'simple'}
         enableSave={false}
+        model="simple"
         onSearch={(data) => {
           // console.log(data);
           // 重置分页数据
@@ -102,6 +103,7 @@ const BindUser = (props: Props) => {
         pagination={{
           pageSize: 10,
         }}
+        columnEmptyText={''}
         request={async (params: any) => {
           const response = await service.query({
             pageSize: params.pageSize,

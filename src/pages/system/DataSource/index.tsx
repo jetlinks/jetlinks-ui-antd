@@ -236,6 +236,7 @@ const DataSource = observer(() => {
         columns={columns}
         search={false}
         rowKey="id"
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'datasource'}
         tableStyle={{ minHeight }}

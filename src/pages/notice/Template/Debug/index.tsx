@@ -89,8 +89,14 @@ const Debug = observer(() => {
                       format.setComponent(Select);
                       format.setDataSource(userList);
                       break;
+                    case 'tag':
+                      // 获取user
+                      const tagList = await service[id].getTags(_configId);
+                      format.setComponent(Select);
+                      format.setDataSource(tagList);
+                      break;
                   }
-                } else if (businessType === 'org' || businessType === 'user') {
+                } else if (['tag', 'org', 'user'].includes(businessType)) {
                   format.setComponent(Select);
                   format.setDataSource([]);
                 }

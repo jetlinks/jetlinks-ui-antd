@@ -186,6 +186,7 @@ const NotificationRecord = observer(() => {
         search={false}
         tableClassName={'record'}
         tableStyle={{ minHeight }}
+        columnEmptyText={''}
         request={async (params) =>
           service.queryList(encodeQuery({ ...params, sorts: { notifyTime: 'desc' } }))
         }

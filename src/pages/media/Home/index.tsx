@@ -14,7 +14,7 @@ import Steps from '@/pages/home/components/Steps';
 
 const permissionTip = '暂无权限，请联系管理员';
 
-export const service = new Service('media/device');
+export const service = new Service('media');
 
 export default () => {
   const dashBoardUrl = getMenuPathByCode('media/DashBoard');

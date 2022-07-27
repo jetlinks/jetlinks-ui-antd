@@ -343,7 +343,7 @@ export function patchRoutes(routes: any) {
 }
 
 export function render(oldRender: any) {
-  if (history.location.pathname !== loginPath && history.location.pathname !== bindPath) {
+  if (![loginPath, bindPath].includes(history.location.pathname)) {
     // SystemConfigService.getAMapKey().then((res) => {
     //   if (res && res.status === 200 && res.result) {
     //     localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);

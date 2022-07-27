@@ -111,6 +111,7 @@ const Record = (props: Props) => {
         actionRef={actionRef}
         columns={columns}
         rowKey="id"
+        columnEmptyText={''}
         request={(param) => service.record(param)}
         pagination={{
           pageSize: 10,

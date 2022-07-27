@@ -21,6 +21,7 @@ import { Store } from 'jetlinks-store';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { onlyMessage } from '@/utils/util';
+import encodeQuery from '@/utils/encodeQuery';
 
 const service = new Service('alarm/config');
 
@@ -51,6 +52,25 @@ const Configuration = () => {
         };
         return map[text];
       },
+      valueType: 'select',
+      valueEnum: {
+        product: {
+          text: '产品',
+          status: 'product',
+        },
+        device: {
+          text: '设备',
+          status: 'device',
+        },
+        org: {
+          text: '部门',
+          status: 'org',
+        },
+        other: {
+          text: '其他',
+          status: 'other',
+        },
+      },
     },
     {
       title: '告警级别',
@@ -69,6 +89,17 @@ const Configuration = () => {
           </div>
         </Tooltip>
       ),
+      valueType: 'select',
+      request: async () => {
+        const res = await service.queryDefaultLevel();
+        if (res.status === 200) {
+          return (res?.result?.levels || []).map((item: any) => ({
+            label: item.title,
+            value: item.level,
+          }));
+        }
+        return [];
+      },
     },
     {
       title: '关联场景联动',
@@ -103,7 +134,11 @@ const Configuration = () => {
       ),
       valueType: 'select',
       request: async () => {
-        const res = await service.getScene({});
+        const res: any = await service.getScene(
+          encodeQuery({
+            sorts: { createTime: 'desc' },
+          }),
+        );
         if (res.status === 200) {
           return res.result.map((item: any) => ({ label: item.name, value: item.name }));
         }
@@ -153,7 +188,7 @@ const Configuration = () => {
             style={{ padding: 0 }}
             isPermission={permission.tigger}
             tooltip={{
-              title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '',
+              title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '手动触发',
             }}
             disabled={record.state?.value === 'disabled'}
             popConfirm={{

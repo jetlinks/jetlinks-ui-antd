@@ -127,7 +127,9 @@ const ChildDevice = () => {
             }}
             title={'确认解绑吗？'}
           >
-            <DisconnectOutlined />
+            <Tooltip title={'解绑'}>
+              <DisconnectOutlined />
+            </Tooltip>
           </Popconfirm>
         </a>,
       ],
@@ -162,6 +164,7 @@ const ChildDevice = () => {
         actionRef={actionRef}
         params={searchParams}
         rowKey="id"
+        columnEmptyText={''}
         rowSelection={{
           selectedRowKeys: bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

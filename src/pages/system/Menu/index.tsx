@@ -253,6 +253,7 @@ export default observer(() => {
         columns={columns}
         actionRef={actionRef}
         rowKey="id"
+        columnEmptyText={''}
         scroll={{ x: 1366 }}
         tableClassName={'menu'}
         tableStyle={{ minHeight }}
@@ -287,15 +288,15 @@ export default observer(() => {
               defaultMessage: '新增',
             })}
           </PermissionButton>,
-          <Button
+          <PermissionButton
             style={{ marginLeft: 12 }}
+            isPermission={permission.action}
             onClick={() => {
-              console.log(getMenuPathByCode('system/Menu/Setting'));
               history.push(getMenuPathByCode('system/Menu/Setting'));
             }}
           >
             菜单配置
-          </Button>,
+          </PermissionButton>,
         ]}
       />
     </PageContainer>

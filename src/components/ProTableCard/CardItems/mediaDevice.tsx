@@ -39,22 +39,22 @@ export default (props: ProductCardProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>厂商</label>
-              <Ellipsis title={props?.manufacturer} titleClassName={'ellipsis'} />
+              <Ellipsis title={props?.manufacturer} />
               {/*<div className={'ellipsis'}>{props.manufacturer || ''}</div>*/}
             </div>
             <div>
               <label>通道数量</label>
-              <Ellipsis title={props?.channelNumber} titleClassName={'ellipsis'} />
+              <Ellipsis title={props?.channelNumber} />
               {/*<div className={'ellipsis'}>{props.channelNumber || 0}</div>*/}
             </div>
             <div>
               <label>型号</label>
-              <Ellipsis title={props?.model} titleClassName={'ellipsis'} />
+              <Ellipsis title={props?.model} />
               {/*<div className={'ellipsis'}>{props.model || ''}</div>*/}
             </div>
             <div>
               <label>接入方式</label>
-              <Ellipsis title={props?.provider} titleClassName={'ellipsis'} />
+              <Ellipsis title={props?.provider} />
               {/*<div className={'ellipsis'}>{props.provider || ''}</div>*/}
             </div>
           </div>

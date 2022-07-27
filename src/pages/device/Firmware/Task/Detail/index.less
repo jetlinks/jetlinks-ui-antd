@@ -7,9 +7,28 @@
   border-radius: 2px;
   box-shadow: 0 4px 18px #efefef;
 
-  .firmwareDetailCardTitle {
-    color: rgba(0, 0, 0, 0.64);
-    font-size: 14px;
+  .firmwareDetailCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .firmwareDetailCardTitle {
+      color: rgba(0, 0, 0, 0.64);
+      font-size: 14px;
+    }
+
+    .firmwareDetailCardRight {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+      .firmwareDetailCardRefresh {
+        width: 25px;
+        margin-left: 5px;
+        cursor: pointer;
+      }
+    }
   }
 
   .firmwareDetailCardNum {

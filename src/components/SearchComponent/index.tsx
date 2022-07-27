@@ -200,92 +200,118 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         initialValues: initParams,
         effects() {
           onFieldReact('*.*.column', async (typeFiled, f) => {
-            if ((typeFiled as Field).modified) {
-              const _column = (typeFiled as Field).value;
-              const _field = field.find((item) => item.dataIndex === _column);
-              if (_column === 'id') {
+            // if ((typeFiled as Field).modified) {
+            const isModified = (typeFiled as Field).modified;
+            const _column = (typeFiled as Field).value;
+            const _field = field.find((item) => item.dataIndex === _column);
+            if (_column === 'id') {
+              if (isModified) {
                 f.setFieldState(typeFiled.query('.termType'), async (state) => {
                   state.value = 'eq';
                 });
-                f.setFieldState(typeFiled.query('.value'), async (state) => {
-                  state.componentType = 'Input';
-                  state.componentProps = { allowClear: true };
-                });
-              } else {
-                switch (_field?.valueType) {
-                  case 'select':
-                    let __option: { label: any; value: any }[] | FieldDataSource | undefined = [];
-                    if (_field?.valueEnum) {
-                      __option = Object.values(_field?.valueEnum || {}).map((item) => ({
-                        label: item.text,
-                        value: item.status,
-                      }));
-                    } else if (_field?.request) {
-                      __option = await _field.request();
-                    }
+              }
+              f.setFieldState(typeFiled.query('.value'), async (state) => {
+                state.componentType = 'Input';
+                state.componentProps = { allowClear: true };
+              });
+            } else {
+              switch (_field?.valueType) {
+                case 'select':
+                  let __option: { label: any; value: any }[] | FieldDataSource | undefined = [];
+                  if (_field?.valueEnum) {
+                    __option = Object.values(_field?.valueEnum || {}).map((item) => ({
+                      label: item.text,
+                      value: item.status,
+                    }));
+                  } else if (_field?.request) {
+                    __option = await _field.request();
+                  }
+                  if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'eq';
                     });
-                    f.setFieldState(typeFiled.query('.value'), async (state) => {
-                      console.log(state.value);
-                      state.componentType = 'Select';
-                      state.dataSource = __option;
-                      state.componentProps = { allowClear: true };
-                    });
-                    break;
-                  case 'treeSelect':
-                    let _option: { label: any; value: any }[] | FieldDataSource | undefined = [];
-                    if (_field?.valueEnum) {
-                      _option = Object.values(_field?.valueEnum || {}).map((item) => ({
-                        label: item.text,
-                        value: item.status,
-                      }));
-                    } else if (_field?.request) {
-                      _option = await _field.request();
-                    }
+                  }
+
+                  f.setFieldState(typeFiled.query('.value'), async (state) => {
+                    console.log(state.value);
+                    state.componentType = 'Select';
+                    state.dataSource = __option;
+                    state.componentProps = {
+                      allowClear: true,
+                      showSearch: true,
+                      filterOption: (input: string, option: any) =>
+                        option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                    };
+                  });
+                  break;
+                case 'treeSelect':
+                  let _option: { label: any; value: any }[] | FieldDataSource | undefined = [];
+                  if (_field?.valueEnum) {
+                    _option = Object.values(_field?.valueEnum || {}).map((item) => ({
+                      label: item.text,
+                      value: item.status,
+                    }));
+                  } else if (_field?.request) {
+                    _option = await _field.request();
+                  }
+                  if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), (_state) => {
                       _state.value = 'eq';
                     });
-                    f.setFieldState(typeFiled.query('.value'), (state) => {
-                      state.componentType = 'TreeSelect';
-                      state.dataSource = _option;
-                      state.componentProps = {
-                        ..._field.fieldProps,
-                        allowClear: true,
-                        treeNodeFilterProp: 'name',
-                      };
-                    });
-                    break;
-                  case 'digit':
-                    f.setFieldState(typeFiled.query('.value'), async (state) => {
-                      state.componentType = 'NumberPicker';
-                      state.componentProps = { allowClear: true };
-                    });
+                  }
+
+                  f.setFieldState(typeFiled.query('.value'), (state) => {
+                    state.componentType = 'TreeSelect';
+                    state.dataSource = _option;
+                    state.componentProps = {
+                      ..._field.fieldProps,
+                      allowClear: true,
+                      showSearch: true,
+                      treeNodeFilterProp: 'name',
+                      filterOption: (input: string, option: any) =>
+                        option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                    };
+                  });
+                  break;
+                case 'digit':
+                  f.setFieldState(typeFiled.query('.value'), async (state) => {
+                    state.componentType = 'NumberPicker';
+                    state.componentProps = { allowClear: true };
+                  });
+                  if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'eq';
                     });
-                    break;
-                  case 'dateTime':
-                    f.setFieldState(typeFiled.query('.value'), async (state) => {
-                      state.componentType = 'DatePicker';
-                      state.componentProps = { showTime: true, allowClear: true };
-                    });
+                  }
+
+                  break;
+                case 'dateTime':
+                  f.setFieldState(typeFiled.query('.value'), async (state) => {
+                    state.componentType = 'DatePicker';
+                    state.componentProps = { showTime: true, allowClear: true };
+                  });
+                  if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'gte';
                     });
-                    break;
-                  default:
+                  }
+
+                  break;
+                default:
+                  if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'like';
                     });
-                    f.setFieldState(typeFiled.query('.value'), async (state) => {
-                      state.componentType = 'Input';
-                      state.componentProps = { allowClear: true };
-                    });
-                    break;
-                }
+                  }
+
+                  f.setFieldState(typeFiled.query('.value'), async (state) => {
+                    state.componentType = 'Input';
+                    state.componentProps = { allowClear: true };
+                  });
+                  break;
               }
             }
+            // }
           });
           onFieldValueChange('*.*.column', (field1, form1) => {
             form1.setFieldState(field1.query('.value'), (state1) => {

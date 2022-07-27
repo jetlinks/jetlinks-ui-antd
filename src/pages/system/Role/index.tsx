@@ -111,15 +111,18 @@ const Role: React.FC = observer(() => {
               id: 'pages.system.role.option.delete',
               defaultMessage: '确定要删除吗',
             }),
-            onConfirm: async () => {
-              await service.remove(record.id);
-              onlyMessage(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
+            onConfirm: () => {
+              service.remove(record.id).then((res: any) => {
+                if (res.status === 200) {
+                  onlyMessage(
+                    intl.formatMessage({
+                      id: 'pages.data.option.success',
+                      defaultMessage: '操作成功!',
+                    }),
+                  );
+                  actionRef.current?.reload();
+                }
+              });
             },
           }}
           tooltip={{
@@ -157,6 +160,7 @@ const Role: React.FC = observer(() => {
         tableClassName={'role'}
         tableStyle={{ minHeight }}
         search={false}
+        columnEmptyText={''}
         headerTitle={
           <PermissionButton
             onClick={() => {

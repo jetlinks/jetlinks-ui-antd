@@ -164,6 +164,7 @@ const BindChildDevice = (props: Props) => {
         search={false}
         columns={columns}
         size="small"
+        columnEmptyText={''}
         rowSelection={{
           selectedRowKeys: bindKeys,
           onChange: (selectedRowKeys, selectedRows) => {

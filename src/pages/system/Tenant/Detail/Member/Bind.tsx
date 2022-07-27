@@ -70,6 +70,7 @@ const Bind = observer((props: Props) => {
           </span>
         </Space>
       )}
+      columnEmptyText={''}
       tableAlertOptionRender={() => (
         <Space size={16}>
           <a onClick={handleBind}>批量绑定</a>

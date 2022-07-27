@@ -128,6 +128,7 @@ const Bound = observer(() => {
         pagination={{
           pageSize: 10,
         }}
+        columnEmptyText={''}
         request={async (params) => service.query(params)}
         defaultParams={{
           [`id$in-dimension$${BindModel.dimension.type}`]: BindModel.dimension.id,

@@ -22,7 +22,7 @@ const FUpload = connect((props: Props) => {
       const result = info.file.response?.result;
       const f = {
         ...result,
-        url: `${location.protocol}://${SystemConst.API_BASE}/file/${result?.id}?accessKey=${result?.others?.accessKey}`,
+        url: `${location.protocol}//${SystemConst.API_BASE}/file/${result?.id}?accessKey=${result?.others?.accessKey}`,
       };
       setUrl(f.url);
       props.onChange(f);

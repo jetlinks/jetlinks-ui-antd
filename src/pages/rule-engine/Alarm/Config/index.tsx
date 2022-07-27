@@ -248,17 +248,25 @@ const Config = () => {
     }
   };
 
-  useEffect(() => {
+  const handleInputSearch = () => {
     service.getDataExchange('consume').then((resp) => {
       if (resp.status === 200) {
         setInput(resp.result);
       }
     });
+  };
+
+  const handleOutputSearch = () => {
     service.getDataExchange('producer').then((resp) => {
       if (resp.status === 200) {
         setOutput(resp.result);
       }
     });
+  };
+
+  useEffect(() => {
+    handleOutputSearch();
+    handleInputSearch();
   }, []);
 
   const outputText = `
@@ -343,14 +351,19 @@ const Config = () => {
             />
             <Descriptions bordered column={2}>
               <Descriptions.Item label="kafka地址">
-                {output?.config?.config?.kafka || ''}
+                {output?.data?.config?.config?.address && (
+                  <Badge status={output?.running ? 'success' : 'error'} />
+                )}
+                {output?.data?.config?.config?.address || ''}
               </Descriptions.Item>
               <Descriptions.Item label="topic">
-                {output?.config?.config?.topic || ''}
+                {output?.data?.config?.config?.topic || ''}
               </Descriptions.Item>
               <Descriptions.Item label="状态" span={2}>
-                <Badge status={output?.state?.value === 'enabled' ? 'success' : 'error'} />
-                {output?.state?.text || ''}
+                {output?.data?.state && (
+                  <Badge status={output?.data?.state?.value === 'enabled' ? 'success' : 'error'} />
+                )}
+                {output?.data?.state?.text || ''}
               </Descriptions.Item>
             </Descriptions>
             <Divider />
@@ -374,21 +387,26 @@ const Config = () => {
             />
             <Descriptions bordered column={2}>
               <Descriptions.Item label="kafka地址">
-                {input?.config?.config?.kafka || ''}
+                {input?.data?.config?.config?.address && (
+                  <Badge status={input?.running ? 'success' : 'error'} />
+                )}
+                {input?.data?.config?.config?.address || ''}
               </Descriptions.Item>
               <Descriptions.Item label="topic">
-                {input?.config?.config?.topic || ''}
+                {input?.data?.config?.config?.topic || ''}
               </Descriptions.Item>
               <Descriptions.Item label="状态" span={2}>
-                <Badge status={input?.state?.value === 'enabled' ? 'success' : 'error'} />
-                {input?.state?.text || ''}
+                {input?.data?.state && (
+                  <Badge status={input?.data?.state?.value === 'enabled' ? 'success' : 'error'} />
+                )}
+                {input?.data?.state?.text || ''}
               </Descriptions.Item>
             </Descriptions>
           </Card>
         </div>
       </Col>
       <Col span={10}>
-        <div style={{ height: 560, marginLeft: 20, paddingBottom: 24 }}>
+        <div style={{ height: 650, marginLeft: 20, paddingBottom: 24 }}>
           <div className={styles.doc}>
             <h1>功能图示</h1>
             <div className={styles.image}>
@@ -431,15 +449,25 @@ const Config = () => {
       {list.find((k) => k.key === tab)?.component}
       {inputVisible && (
         <InputSave
+          data={input}
           close={() => {
             setInputVisible(false);
+          }}
+          save={() => {
+            setInputVisible(false);
+            handleInputSearch();
           }}
         />
       )}
       {outputVisible && (
         <OutputSave
+          data={output}
           close={() => {
             setOutputVisible(false);
+          }}
+          save={() => {
+            setOutputVisible(false);
+            handleOutputSearch();
           }}
         />
       )}

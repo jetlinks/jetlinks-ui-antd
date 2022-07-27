@@ -2,7 +2,6 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Popconfirm } from 'antd';
-import moment from 'moment';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { DeleteOutlined, EditOutlined, NodeExpandOutlined, PlusOutlined } from '@ant-design/icons';
@@ -58,6 +57,14 @@ const Firmware = observer(() => {
       }),
       ellipsis: true,
       dataIndex: 'productName',
+      valueType: 'select',
+      request: () =>
+        service.queryProduct().then((resp: any) =>
+          (resp?.result || []).map((item: any) => ({
+            label: item.name,
+            value: item.name,
+          })),
+        ),
     },
     {
       title: intl.formatMessage({
@@ -65,7 +72,18 @@ const Firmware = observer(() => {
         defaultMessage: '签名方式',
       }),
       ellipsis: true,
+      valueType: 'select',
       dataIndex: 'signMethod',
+      valueEnum: {
+        md5: {
+          text: 'MD5',
+          status: 'md5',
+        },
+        sha256: {
+          text: 'SHA256',
+          status: 'sha256',
+        },
+      },
     },
     {
       title: intl.formatMessage({
@@ -77,7 +95,7 @@ const Firmware = observer(() => {
       align: 'center',
       ellipsis: true,
       valueType: 'dateTime',
-      render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
+      // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
       // sorter: true,
       // defaultSortOrder: 'descend',
     },
@@ -98,6 +116,7 @@ const Firmware = observer(() => {
       valueType: 'option',
       align: 'center',
       width: 200,
+      fixed: 'right',
       render: (text, record) => [
         <PermissionButton
           style={{ padding: 0 }}
@@ -105,8 +124,8 @@ const Firmware = observer(() => {
           isPermission={permission.action}
           key="upgrade"
           onClick={() => {
-            const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task'], record?.id);
-            history.push(url);
+            const url = `${getMenuPathByParams(MENUS_CODE['device/Firmware/Task'])}`;
+            history.push(`${url}?id=${record?.id}&productId=${record?.productId}`);
           }}
           tooltip={{
             title: '升级任务',
@@ -169,6 +188,7 @@ const Firmware = observer(() => {
         tableStyle={{ minHeight }}
         search={false}
         params={param}
+        rowKey="id"
         columnEmptyText={''}
         headerTitle={
           <div>

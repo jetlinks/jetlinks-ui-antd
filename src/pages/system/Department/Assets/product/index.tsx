@@ -83,9 +83,9 @@ export default observer((props: { parentId: string }) => {
         id: 'pages.table.name',
         defaultMessage: '名称',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
+      // search: {
+      //   transform: (value) => ({ name$LIKE: value }),
+      // },
       width: 180,
       ellipsis: true,
     },
@@ -149,7 +149,7 @@ export default observer((props: { parentId: string }) => {
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '解除绑定',
+                defaultMessage: '删除',
               })}
             >
               <DisconnectOutlined />

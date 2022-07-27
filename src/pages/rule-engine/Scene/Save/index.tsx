@@ -374,6 +374,7 @@ export default () => {
                             actionItemData={actionsData[name]}
                             isLast={!actionDataCount || actionDataCount - 1 === name}
                             parallel={parallel}
+                            isEdit={isEdit}
                           />
                         ))}
                         <Form.Item noStyle>
