@@ -21,6 +21,7 @@ import { Store } from 'jetlinks-store';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { onlyMessage } from '@/utils/util';
+import encodeQuery from '@/utils/encodeQuery';
 
 const service = new Service('alarm/config');
 
@@ -133,7 +134,11 @@ const Configuration = () => {
       ),
       valueType: 'select',
       request: async () => {
-        const res = await service.getScene({});
+        const res: any = await service.getScene(
+          encodeQuery({
+            sorts: { createTime: 'desc' },
+          }),
+        );
         if (res.status === 200) {
           return res.result.map((item: any) => ({ label: item.name, value: item.name }));
         }

@@ -240,7 +240,7 @@ export default observer((props: ActionProps) => {
             setIsFiltering(e.target.checked);
             if (!e.target.checked) {
               const actions = props.form?.getFieldValue('actions');
-              delete actions[name].terms
+              delete actions[name].terms;
               props.form?.setFieldsValue({
                 actions,
               });
@@ -301,7 +301,7 @@ export default observer((props: ActionProps) => {
             restField={props.restField}
             parallel={props.parallel}
             onProductIdChange={(_id) => {
-              setProductId(_id)
+              setProductId(_id);
               const actions = props.form.getFieldValue('actions');
               if (actions[name].device?.message?.properties) {
                 actions[name].device.message.properties = undefined;

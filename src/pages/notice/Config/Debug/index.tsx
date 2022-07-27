@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import {useMemo, useRef} from 'react';
+import { useMemo, useRef } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import {
@@ -76,7 +76,7 @@ const Debug = observer(() => {
                 format.setComponent(Input);
                 break;
             }
-            console.log(variableRef.current)
+            console.log(variableRef.current);
             if (variableRef.current) {
               const a = variableRef.current?.find((i: any) => i.id === _id.value);
               const businessType = a?.expands?.businessType;

@@ -43,7 +43,7 @@ export default (props: DeviceModelProps) => {
   useEffect(() => {
     setValue(props.value || []);
     setSelectKeys(props.value || []);
-    console.log(props.value)
+    console.log(props.value);
   }, [props.value]);
 
   const columns: ProColumns<DeviceItem>[] = [

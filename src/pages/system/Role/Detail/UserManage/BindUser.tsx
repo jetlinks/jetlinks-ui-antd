@@ -78,6 +78,7 @@ const BindUser = (props: Props) => {
         target="user"
         // pattern={'simple'}
         enableSave={false}
+        model="simple"
         onSearch={(data) => {
           // console.log(data);
           // 重置分页数据

@@ -261,7 +261,7 @@ export default (props: ConditionalFilteringProps) => {
         </Form.Item>
       </Col>
       <Col>
-        <div style={{ height: '100%', display: 'flex', alignItems: 'center', paddingBottom: 24}}>
+        <div style={{ height: '100%', display: 'flex', alignItems: 'center', paddingBottom: 24 }}>
           执行后续动作
         </div>
       </Col>

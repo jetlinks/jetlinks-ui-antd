@@ -28,7 +28,7 @@ interface ProTableCardProps<T> {
    * gridColumns[1] 1440 ~  1600 分辨率；
    * gridColumns[2] > 1600 分辨率；
    */
-  gridColumns?: [number, number, number]
+  gridColumns?: [number, number, number];
   height?: 'none';
 }
 
@@ -130,13 +130,13 @@ const ProTableCard = <
 
   const windowChange = () => {
     if (window.innerWidth <= 1440) {
-      const _column = props.gridColumn && props.gridColumn < 2 ? props.gridColumn : 2
+      const _column = props.gridColumn && props.gridColumn < 2 ? props.gridColumn : 2;
       setColumn(props.gridColumns ? props.gridColumns[0] : _column);
     } else if (window.innerWidth > 1440 && window.innerWidth <= 1600) {
-      const _column = props.gridColumn && props.gridColumn < 3 ? props.gridColumn : 3
+      const _column = props.gridColumn && props.gridColumn < 3 ? props.gridColumn : 3;
       setColumn(props.gridColumns ? props.gridColumns[1] : _column);
     } else if (window.innerWidth > 1600) {
-      const _column = props.gridColumn && props.gridColumn < 4 ? props.gridColumn : 4
+      const _column = props.gridColumn && props.gridColumn < 4 ? props.gridColumn : 4;
       setColumn(props.gridColumns ? props.gridColumns[2] : _column);
     }
   };

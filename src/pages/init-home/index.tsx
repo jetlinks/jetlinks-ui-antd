@@ -66,10 +66,12 @@ const InitHome = () => {
                 }
                 key="4"
               >
-                <Data />
+                <Data isTrigger={false} onChange={() => {}} />
               </Collapse.Panel>
             </Collapse>
-            <Button type="primary">确认</Button>
+            <Button type="primary" style={{ marginTop: 20 }}>
+              确认
+            </Button>
           </div>
         </div>
       </div>

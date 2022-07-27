@@ -77,8 +77,10 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const values: any = await form.submit();
-    if (values?.releaseType === 'all') {
+    if (values?.releaseType !== 'all') {
       values.deviceId = devices.current.map((item) => item.id);
+    } else {
+      values.deviceId = undefined;
     }
     const resp = await service.saveTask({
       ...values,

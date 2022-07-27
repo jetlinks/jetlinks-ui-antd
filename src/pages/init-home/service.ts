@@ -27,7 +27,7 @@ class Service extends BaseService<any> {
       method: 'POST',
     });
   getProtocol = () =>
-    request(`${SystemConst.API_BASE}/protocol/default-protocol/_query/no-paging?paging=false`, {
+    request(`${SystemConst.API_BASE}/protocol/_query/no-paging?paging=false`, {
       method: 'GET',
     });
   saveAccessConfig = (data: any) =>

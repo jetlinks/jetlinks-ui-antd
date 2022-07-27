@@ -16,25 +16,33 @@ class Service extends BaseService<FirmwareItem> {
       data,
     });
 
-  deploy = (id: string, type?: 'all' | 'part', deviceId?: string[]) =>
-    request(
-      `/${SystemConst.API_BASE}/firmware/upgrade/task/${id}${type === 'all' ? '/all' : ''}/_deploy`,
-      {
-        method: 'POST',
-        data: deviceId,
-      },
-    );
+  deleteTask = (id: string) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/${id}`, {
+      method: 'DELETE',
+    });
 
   history = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/firmware/upgrade/history/_query`, {
-      method: 'GET',
-      params,
+      method: 'POST',
+      data: params,
     });
 
   historyCount = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/firmware/upgrade/history/_count`, {
-      method: 'GET',
-      params,
+      method: 'POST',
+      data: params,
+    });
+
+  startTask = (id: string, params: string[]) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/${id}/_start`, {
+      method: 'POST',
+      data: params,
+    });
+
+  startOneTask = (params: string[]) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/_start`, {
+      method: 'POST',
+      data: params,
     });
 
   queryProduct = () =>

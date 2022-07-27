@@ -9,6 +9,12 @@ StatusMap.set('success', require('/public/images/diagnose/status/success.png'));
 StatusMap.set('warning', require('/public/images/diagnose/status/warning.png'));
 StatusMap.set('loading', require('/public/images/diagnose/status/loading.png'));
 
+export const textColorMap = new Map();
+textColorMap.set('loading', 'black');
+textColorMap.set('error', 'red');
+textColorMap.set('success', 'green');
+textColorMap.set('warning', 'red');
+
 export type ListProps = {
   key: string;
   name: string;
@@ -22,12 +28,6 @@ export const list = [
   { key: 'status', text: '连接状态' },
   { key: 'message', text: '消息通信' },
 ];
-
-export const textColorMap = new Map();
-textColorMap.set('loading', 'black');
-textColorMap.set('error', 'red');
-textColorMap.set('success', 'green');
-textColorMap.set('warning', 'red');
 
 export const networkInitList: ListProps[] = [
   // {
