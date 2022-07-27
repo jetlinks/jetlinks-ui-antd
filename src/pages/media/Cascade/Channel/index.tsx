@@ -4,7 +4,7 @@ import { CloseOutlined, DisconnectOutlined, EditOutlined } from '@ant-design/ico
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Button, Input, Popover, Space } from 'antd';
+import { Button, Input, message, Popover, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl, useLocation } from 'umi';
 import BindChannel from './BindChannel';
@@ -12,6 +12,7 @@ import BadgeStatus, { StatusColorEnum } from '@/components/BadgeStatus';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+import { Ellipsis } from '@/components';
 
 const Channel = () => {
   const location: any = useLocation();
@@ -55,13 +56,17 @@ const Channel = () => {
           style={{ marginTop: 10, width: '100%' }}
           onClick={async () => {
             if (!!data) {
-              const resp: any = await service.editBindInfo(record.id, {
-                gbChannelId: data,
-              });
-              if (resp.status === 200) {
-                onlyMessage('操作成功');
-                actionRef.current?.reload();
-                setPopvisible('');
+              if (data.length <= 64) {
+                const resp: any = await service.editBindInfo(record.id, {
+                  gbChannelId: data,
+                });
+                if (resp.status === 200) {
+                  onlyMessage('操作成功');
+                  actionRef.current?.reload();
+                  setPopvisible('');
+                }
+              } else {
+                message.error('最多可输入64个字符');
               }
             } else {
               onlyMessage('请输入国标ID', 'error');
@@ -92,8 +97,8 @@ const Channel = () => {
       // ellipsis:true,
       tooltip: '国标级联有18位、20位两种格式。在当前页面修改不会修改视频设备-通道页面中的国标ID',
       render: (text: any, record: any) => (
-        <span>
-          {text}
+        <div style={{ display: 'flex' }}>
+          <Ellipsis title={text || ''} />
           <Popover
             visible={popVisible === record.id}
             trigger="click"
@@ -127,7 +132,7 @@ const Channel = () => {
               <EditOutlined />
             </a>
           </Popover>
-        </span>
+        </div>
       ),
     },
     {

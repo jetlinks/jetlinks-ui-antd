@@ -92,7 +92,6 @@ const Firmware = observer(() => {
       }),
       dataIndex: 'createTime',
       width: '200px',
-      align: 'center',
       ellipsis: true,
       valueType: 'dateTime',
       // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
@@ -105,7 +104,6 @@ const Firmware = observer(() => {
         defaultMessage: '说明',
       }),
       ellipsis: true,
-      align: 'center',
       dataIndex: 'description',
     },
     {
@@ -114,7 +112,6 @@ const Firmware = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       fixed: 'right',
       render: (text, record) => [

@@ -101,7 +101,6 @@ const Task = observer(() => {
         defaultMessage: '说明',
       }),
       ellipsis: true,
-      align: 'center',
       dataIndex: 'description',
     },
     {
@@ -116,7 +115,6 @@ const Task = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       width: 200,
       fixed: 'right',
       render: (text, record) => [

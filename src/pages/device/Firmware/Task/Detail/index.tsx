@@ -229,7 +229,6 @@ const Detail = observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
       fixed: 'right',
       width: 200,
       render: (text: any, record: any) =>
