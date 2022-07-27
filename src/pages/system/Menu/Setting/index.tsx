@@ -174,6 +174,7 @@ export default observer(() => {
       });
     } else {
       message.warning('请配置系统菜单');
+      setLoading(false);
     }
   };
 

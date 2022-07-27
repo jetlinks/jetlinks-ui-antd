@@ -39,6 +39,8 @@ export default (props: SaveProps) => {
   const [loading, setLoading] = useState(false);
   const { permission: RolePermission } = usePermissions('system/Role');
 
+  console.log(RolePermission)
+
   const SchemaField = createSchemaField({
     components: {
       Checkbox,
@@ -87,7 +89,7 @@ export default (props: SaveProps) => {
           });
         },
       }),
-    [props.data],
+    [props.data, RolePermission],
   );
 
   const getDetail = async (id: string) => {
@@ -116,7 +118,7 @@ export default (props: SaveProps) => {
         form.reset();
       }
     }
-  }, [props.type, props.visible]);
+  }, [props.type, props.visible, RolePermission]);
 
   const schema: ISchema = {
     type: 'object',
