@@ -1,16 +1,56 @@
 import { UploadImage } from '@/components';
 import { Col, Form, Input, Row, Select } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, forwardRef, useImperativeHandle } from 'react';
+import { service } from '../index'
 
 interface Props {
-  getData: Function;
+  getData?: Function;
 }
 
-const Basis = (props: Props) => {
+const Basis = forwardRef((props: Props, ref) => {
   const [form] = Form.useForm();
 
+  const saveData = () => {
+    return new Promise(async resolve => {
+      const formData = await form.validateFields().catch(() => {
+        resolve(false)
+      })
+      if (formData) {
+        const item = [
+          {
+            scope: 'basis',
+            properties: {
+              ...formData,
+              apikey: '',
+            },
+          },
+          {
+            scope: 'api',
+            properties: {
+              api: formData.apikey,
+            },
+          },
+        ];
+        const res = await service.save(item)
+        if (res.status === 200) {
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      } else {
+        resolve(false)
+      }
+    })
+  }
+
+  useImperativeHandle(ref, () => ({
+    save: saveData
+  }))
+
   useEffect(() => {
-    props.getData(form);
+    if (props.getData) {
+      props.getData(form);
+    }
   }, []);
 
   return (
@@ -84,5 +124,5 @@ const Basis = (props: Props) => {
       </Row>
     </Form>
   );
-};
+});
 export default Basis;

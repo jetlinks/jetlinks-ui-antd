@@ -22,12 +22,12 @@
 
       .left {
         width: 30px;
-        height: 100%;
+        height: 1000px;
       }
 
       .right {
-        width: calc(100% - 50px);
-        height: 1200px;
+        width: calc(100% - 70px);
+        // height: 1200px;
 
         .collapseTitle {
           display: flex;
@@ -44,6 +44,22 @@
         }
       }
     }
+
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    /* 滚动槽 */
+    ::-webkit-scrollbar-track {
+      background: #f2f2f2;
+      border-radius: 8px;
+    }
+
+    /* 滚动条滑块 */
+    ::-webkit-scrollbar-thumb {
+      background: #cecece;
+      border-radius: 8px;
+    }
   }
 }
 
@@ -53,25 +69,25 @@
     gap: 24px;
 
     .role-item {
+      position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 24px;
-      border: 1px solid rgba(245, 245, 245, 1);
-      position: relative;
       margin-bottom: 30px;
+      padding: 24px;
       background-repeat: no-repeat;
       background-position: center;
       background-size: 370px;
+      border: 1px solid rgba(245, 245, 245, 1);
 
       .role-item-title {
         display: flex;
 
         > div {
           flex: 1 1 auto;
-          font-size: 16px;
-          font-weight: bold;
           padding-left: 90px;
+          font-weight: bold;
+          font-size: 16px;
         }
       }
 
@@ -82,29 +98,29 @@
       }
 
       &.role-image-1 {
-        background-image: url("/images/init-home/role1.png");
+        background-image: url('/images/init-home/role1.png');
       }
 
       &.role-image-2 {
-        background-image: url("/images/init-home/role2.png");
+        background-image: url('/images/init-home/role2.png');
       }
 
       &.role-image-3 {
-        background-image: url("/images/init-home/role3.png");
+        background-image: url('/images/init-home/role3.png');
       }
 
       .role-item-footer {
         position: absolute;
         bottom: -30px;
         left: 0;
-        text-align: center;
         width: 100%;
         color: #999;
         font-size: 12px;
+        text-align: center;
       }
 
       &.active {
-        background-color: #F5F5F5;
+        background-color: #f5f5f5;
       }
     }
   }

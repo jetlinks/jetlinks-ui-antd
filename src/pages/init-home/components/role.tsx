@@ -1,40 +1,76 @@
 import {Checkbox} from 'antd'
 import { useState, forwardRef, useImperativeHandle} from "react";
 import classNames from "classnames";
-import RoleData, {roleKeysType, ROLEKEYS} from "./data/RoleData"
+import RoleMenuData, {roleKeysType, ROLEKEYS, RoleData } from "./data/RoleData"
+import {service} from "@/pages/init-home";
 import '../index.less';
-import {MenuDataModel} from "@/pages/init-home/components/menu";
 
 const Role = forwardRef((_, ref) => {
 
   const [ keys, setKeys ] = useState<roleKeysType[]>([])
 
-  const findMenuByRole = (menu: any[], code: string): boolean => {
-    return menu.some(item => {
+  const findMenuByRole = (menu: any[], code: string): any => {
+    let _item = null
+    menu.some(item => {
       if (item.code === code) {
+        _item = item
         return true
       }
 
       if (item.children) {
-        return findMenuByRole(item.children, code)
+        const childrenItem = findMenuByRole(item.children, code)
+        if (childrenItem) {
+          _item = childrenItem
+          return true
+        }
+        return false
       }
 
-      return false
+      return null
     })
+    return _item
   }
 
   useImperativeHandle(ref, () => ({
     save: async () => {
-      console.log(keys)
-    // 获取当前选中的角色
-      const newRole = keys.map(item => {
-
-        const _roleData = (RoleData[item] as []).filter((roleItem: any) => {
-          return findMenuByRole(MenuDataModel.menuData, roleItem.code)
+      return new Promise((resolve) => {
+        if (!keys.length) {
+          return resolve(true)
+        }
+        let Count = 0
+        keys.forEach(async (item, index) => {
+          const _itemData = RoleData[item]
+          // 添加该角色
+          const res = await service.addRole(_itemData)
+          if (res.status === 200) {
+            const menuTree = await service.getRoleMenu(res.result.id)
+            if (menuTree.status === 200) {
+              const _roleData = (RoleMenuData[item] as []).filter((roleItem: any) => {
+                const _menu = findMenuByRole(menuTree.result, roleItem.code)
+                if (_menu) {
+                  roleItem.id = _menu.id
+                  roleItem.parentId = _menu.parentId
+                  roleItem.createTime = _menu.createTime
+                  return true
+                }
+                return false
+              })
+              //更新权限
+              const roleRes = await service.updateRoleMenu(res.result.id, {menus: _roleData})
+              if (roleRes.status === 200) {
+                Count += 1
+              }
+              if (index === keys.length - 1) {
+                resolve(Count === keys.length)
+              }
+            } else if (index === keys.length - 1){
+              resolve(Count === keys.length)
+            }
+          } else if (index === keys.length - 1){
+            resolve(Count === keys.length)
+          }
         })
-        return { menus: _roleData }
       })
-      console.log(newRole)
     }
   }), [keys])
 
