@@ -1,7 +1,7 @@
 import { UploadImage } from '@/components';
 import { Col, Form, Input, Row, Select } from 'antd';
 import { useEffect, forwardRef, useImperativeHandle } from 'react';
-import { service } from '../index'
+import { service } from '../index';
 
 interface Props {
   getData?: Function;
@@ -11,10 +11,10 @@ const Basis = forwardRef((props: Props, ref) => {
   const [form] = Form.useForm();
 
   const saveData = () => {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const formData = await form.validateFields().catch(() => {
-        resolve(false)
-      })
+        resolve(false);
+      });
       if (formData) {
         const item = [
           {
@@ -31,21 +31,21 @@ const Basis = forwardRef((props: Props, ref) => {
             },
           },
         ];
-        const res = await service.save(item)
+        const res = await service.save(item);
         if (res.status === 200) {
-          resolve(true)
+          resolve(true);
         } else {
-          resolve(false)
+          resolve(false);
         }
       } else {
-        resolve(false)
+        resolve(false);
       }
-    })
-  }
+    });
+  };
 
   useImperativeHandle(ref, () => ({
-    save: saveData
-  }))
+    save: saveData,
+  }));
 
   useEffect(() => {
     if (props.getData) {

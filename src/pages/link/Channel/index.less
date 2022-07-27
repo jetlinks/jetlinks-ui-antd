@@ -5,18 +5,22 @@
     margin-right: 20px;
     padding-right: 10px;
     border-right: 1px #eee solid;
+
     .item-left-list {
+      width: 230px;
       height: 628px;
       overflow: overlay;
     }
+
     ::-webkit-scrollbar {
       // display:none
-      width: 2px;
+      width: 5px;
       height: 2px;
       scrollbar-arrow-color: #eee;
     }
+
     ::-webkit-scrollbar-thumb {
-      background: rgb(136, 136, 136);
+      background: rgba(148, 144, 144, 0.473);
       border-radius: 5px;
     }
   }
@@ -32,7 +36,7 @@
 .channel-card {
   width: 220px;
   height: 112px;
-  margin-top: 16px;
+  margin-bottom: 16px;
   border: 1px #e0e0e0 solid;
 
   &.active {
@@ -57,6 +61,7 @@
     .card-top-name {
       position: relative;
       bottom: 8px;
+      width: calc(100% - 66px);
       margin-left: 16px;
       color: #323130;
       font-weight: 600;

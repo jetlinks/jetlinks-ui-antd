@@ -33,16 +33,20 @@ const Login: React.FC = () => {
         ...initialState,
         currentUser: userInfo,
       });
-      return userInfo
+      return userInfo;
     }
-    return null
+    return null;
   };
 
   const loginRef = useRef<Partial<LoginParam>>({});
-  const loginForm = useMemo(() => createForm({
-    validateFirst: true,
-    initialValues: loginRef.current,
-  }), [captcha]);
+  const loginForm = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: loginRef.current,
+      }),
+    [captcha],
+  );
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -162,11 +166,11 @@ const Login: React.FC = () => {
           Token.set(userInfo.token);
           const userRef: any = await fetchUserInfo();
           if (userRef?.user?.username === 'admin') {
-            const initRef = await Service.initPage()
+            const initRef = await Service.initPage();
             if (initRef.status === 200 && !initRef.result.length) {
               window.location.href = '/#/init-home';
               setLoading(false);
-              return
+              return;
             }
           }
           // goto();
