@@ -56,7 +56,7 @@ const Menu = forwardRef((_, ref) => {
   }
 
   useImperativeHandle(ref, () => ({
-    save: () => {
+    save: async () => {
       console.log(menuRef.current)
     }
   }))

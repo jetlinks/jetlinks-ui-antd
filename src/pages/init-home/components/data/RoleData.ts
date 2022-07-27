@@ -1,5 +1,13 @@
+export enum ROLEKEYS {
+  'device' = 'device',
+  'link' = 'link',
+  'complex' = 'complex',
+}
+
+export type roleKeysType = keyof typeof ROLEKEYS;
+
 export default {
-  device: [{
+  [ROLEKEYS.device]: [{
     "id": "1508369752477196288",
     "parentId": "1507167185484652544",
     "path": "5Lhl-pvIx-LS9j",
@@ -647,7 +655,7 @@ export default {
     "accessDescription": "此菜单不支持数据权限控制",
     "granted": true
   }],
-  link: [{
+  [ROLEKEYS.link]: [{
     "id": "1508388133506965504",
     "parentId": "1507162853817495552",
     "path": "5Lhl-ba0F",
@@ -1300,7 +1308,7 @@ export default {
     "granted": true,
     "children": []
   }],
-  complex: [{
+  [ROLEKEYS.complex]: [{
     "id": "1508369752477196288",
     "parentId": "1507167185484652544",
     "path": "5Lhl-pvIx-LS9j",
