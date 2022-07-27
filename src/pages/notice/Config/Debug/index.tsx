@@ -214,23 +214,21 @@ const Debug = observer(() => {
     // 应该取选择的配置信息
     if (!state.current) return;
     const templateId = data.templateId;
-    const list = Store.get('notice-template-list');
-    const _template = list.find((item: any) => item.id === templateId);
+    // const list = Store.get('notice-template-list');
+    // const _template = list.find((item: any) => item.id === templateId);
 
-    const resp = await service.debug(state?.current.id, templateId, {
-      template: _template,
-      context: data.variableDefinitions?.reduce(
-        (previousValue: any, currentValue: { id: any; value: any }) => {
-          return {
-            ...previousValue,
-            [currentValue.id]: currentValue.value,
-          };
-        },
-        {},
-      ),
-    });
+    const resp = await service.debug(state?.current.id, templateId, data.variableDefinitions?.reduce(
+      (previousValue: any, currentValue: { id: any; value: any }) => {
+        return {
+          ...previousValue,
+          [currentValue.id]: currentValue.value,
+        };
+      },
+      {},
+    ));
     if (resp.status === 200) {
       onlyMessage('操作成功!');
+      state.debug = false;
     }
   };
   return (

@@ -588,6 +588,13 @@ export default [
                 url: '/iot/link/Channel/Modbus',
                 icon: 'icon-changjingliandong',
                 permissions: [],
+                buttons: [
+                  {id: "update", name: "编辑", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
+                  {id: "action", name: "启/禁用", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
+                  {id: "view", name: "设备接入", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
+                  {id: "delete", name: "删除", permissions: [{permission: "modbus-master", actions: ["query", "delete"]}]},
+                  {id: "add", name: "新增", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
+                ]
               },
             ],
           },
@@ -1310,6 +1317,7 @@ export default [
         ],
         buttons: [
           { id: 'view', name: '查看', permissions: [{ permission: 'menu', actions: ['query'] }] },
+          { id: 'setting', name: '配置', permissions: [{ permission: 'menu', actions: ['query', 'save', 'grant'] }] },
           {
             id: 'update',
             name: '编辑',
