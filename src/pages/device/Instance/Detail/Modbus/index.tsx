@@ -1,5 +1,5 @@
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
-import { createForm, Field, onFieldReact, FormPath } from '@formily/core';
+import { createForm, Field, onFieldReact, FormPath, onFieldChange } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
 import { Badge, Card, Input, Tooltip } from 'antd';
 import { action } from '@formily/reactive';
@@ -23,7 +23,18 @@ export default (props: Props) => {
   const [properties, setProperties] = useState<any>([]);
   const [filterList, setFilterList] = useState<any>([]);
   const [masterList, setMasterList] = useState<any>([]);
+  const [typeList, setTypeList] = useState<any>([]);
   const [reload, setReload] = useState<string>('');
+
+  //数据类型长度
+  const lengthMap = new Map();
+  lengthMap.set('int8', 1);
+  lengthMap.set('int16', 2);
+  lengthMap.set('int32', 4);
+  lengthMap.set('int64', 8);
+  lengthMap.set('ieee754_float', 4);
+  lengthMap.set('ieee754_double', 8);
+  lengthMap.set('hex', 1);
 
   const Render = (propsText: any) => {
     const text = properties.find((item: any) => item.metadataId === propsText.value);
@@ -199,13 +210,22 @@ export default (props: Props) => {
           setMasterList(list);
         }
       });
+    service.dataType().then((res) => {
+      if (res.status === 200) {
+        console.log(res.result);
+        const items = res.result.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        setTypeList(items);
+      }
+    });
   }, []);
   useEffect(() => {
     const metadata = JSON.parse(data.metadata).properties?.map((item: any) => ({
       metadataId: item.id,
       metadataName: `${item.name}(${item.id})`,
       metadataType: 'property',
-      codec: 'number',
     }));
     service.getDevicePoint(data.id).then((res) => {
       if (res.status === 200) {
@@ -239,9 +259,6 @@ export default (props: Props) => {
   });
 
   const form = createForm({
-    // initialValues: {
-    //   array: properties
-    // },
     values: {
       array: filterList,
     },
@@ -253,7 +270,11 @@ export default (props: Props) => {
           /\d+/,
           (index) => `array.${parseInt(index)}.pointId`,
         );
-        // const path1 = FormPath.transform(field.path, /\d+/, (index) => `array.${parseInt(index)}.a4`);
+        const path1 = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `array.${parseInt(index)}.codec`,
+        );
         f.setFieldState(path, (state) => {
           if (value) {
             state.required = true;
@@ -263,15 +284,34 @@ export default (props: Props) => {
             form.validate();
           }
         });
-        // f.setFieldState(path1, (state) => {
-        //   if (value) {
-        //     state.required = true;
-        //     form.validate();
-        //   } else {
-        //     state.required = false;
-        //     form.validate();
-        //   }
-        // });
+        f.setFieldState(path1, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
+        });
+      });
+      onFieldChange('array.*.codec', (field: any) => {
+        const value = (field as Field).value;
+        const path = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `array.${parseInt(index)}.codecConfiguration.readIndex`,
+        );
+        if ((field as Field).modified) {
+          const readIndex = field.query(path).get('value');
+          const dataLength = field.query(path).get('dataSource')?.length * 2 - 1;
+          const length = lengthMap.get(value) + readIndex;
+          console.log(length, dataLength);
+          if (length > dataLength) {
+            field.selfErrors = '数据类型对应的长度和起始位置加起来不能超过数据长度';
+          } else {
+            field.selfErrors = '';
+          }
+        }
       });
     },
   });
@@ -389,7 +429,7 @@ export default (props: Props) => {
                 title: '数据类型',
               },
               properties: {
-                a4: {
+                codec: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
@@ -401,16 +441,16 @@ export default (props: Props) => {
                     filterOption: (input: string, option: any) =>
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
-                  enum: [
-                    {
-                      label: '类型1',
-                      value: 'type1',
-                    },
-                    {
-                      label: '类型2',
-                      value: 'type2',
-                    },
-                  ],
+                  enum: typeList,
+                  // 'x-reactions': {
+                  //   dependencies: ['.codecConfiguration.readIndex'],
+                  //   fulfill: {
+                  //     state: {
+                  //       selfErrors:
+                  //         "{{$deps[0]<lengthMap.get($self.value)?'数据类型对应的长度和起始位置加起来不能超过 （数据长度 - 1）的长度':''}}"
+                  //     }
+                  //   }
+                  // }
                 },
               },
             },
@@ -454,13 +494,6 @@ export default (props: Props) => {
             },
           },
         },
-        // properties: {
-        //   add: {
-        //     type: 'void',
-        //     'x-component': 'ArrayTable.Addition',
-        //     title: '添加条目',
-        //   },
-        // },
       },
     },
   };

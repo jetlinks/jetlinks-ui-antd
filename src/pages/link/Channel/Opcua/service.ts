@@ -3,6 +3,16 @@ import { request } from 'umi';
 import SystemConst from '@/utils/const';
 
 class Service extends BaseService<OpaUa> {
+  saveOpc = (data: any) =>
+    request(`${SystemConst.API_BASE}/opc/client`, {
+      method: 'POST',
+      data,
+    });
+  editOpc = (id: string, data: any) =>
+    request(`${SystemConst.API_BASE}/opc/client/${id}`, {
+      method: 'PUT',
+      data,
+    });
   enable = (id: string) =>
     request(`${SystemConst.API_BASE}/opc/client/${id}/_enable`, {
       method: 'POST',

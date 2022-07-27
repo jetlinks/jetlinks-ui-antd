@@ -2,7 +2,7 @@ import { FormItem, FormLayout, Select } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import { Badge, Button, Modal, Radio, Space, Upload } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
 import { downloadFile, onlyMessage } from '@/utils/util';
@@ -12,7 +12,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
 interface Props {
   visible: boolean;
   close: () => void;
-  data?: any;
+  masterId: any;
 }
 const FileFormat = (props: any) => {
   const [data, setData] = useState<{ autoDeploy: boolean; fileType: 'xlsx' | 'csv' }>({
@@ -46,19 +46,20 @@ const NormalUpload = (props: any) => {
   const [flag, setFlag] = useState<boolean>(true);
   const [count, setCount] = useState<number>(0);
   const [errMessage, setErrMessage] = useState<string>('');
+  const [errorUrl, setErrorUrl] = useState<string>('');
 
   const submitData = async (fileUrl: string) => {
+    setErrorUrl(fileUrl);
     if (!!fileUrl) {
       setCount(0);
       setErrMessage('');
       setFlag(true);
-      const autoDeploy = !!props?.fileType?.autoDeploy || false;
       setImportLoading(true);
       let dt = 0;
       const source = new EventSourcePolyfill(
-        `/${SystemConst.API_BASE}/device/instance/${
-          props.product
-        }/import?fileUrl=${fileUrl}&autoDeploy=${autoDeploy}&:X_Access_Token=${Token.get()}`,
+        `/${SystemConst.API_BASE}/modbus/point/${
+          props.masterId
+        }/import?fileUrl=${fileUrl}&:X_Access_Token=${Token.get()}`,
       );
       source.onmessage = (e: any) => {
         const res = JSON.parse(e.data);
@@ -104,9 +105,8 @@ const NormalUpload = (props: any) => {
           <a
             style={{ marginLeft: 10 }}
             onClick={() => {
-              const url = `/${SystemConst.API_BASE}/device-instance/${props.product}/template.xlsx`;
+              const url = `/${SystemConst.API_BASE}/modbus/point/template.xlsx`;
               downloadFile(url);
-              // downloadTemplate('xlsx', props.product);
             }}
           >
             .xlsx
@@ -114,9 +114,8 @@ const NormalUpload = (props: any) => {
           <a
             style={{ marginLeft: 10 }}
             onClick={() => {
-              const url = `/${SystemConst.API_BASE}/device-instance/${props.product}/template.csv`;
+              const url = `/${SystemConst.API_BASE}/modbus/point/template.csv`;
               downloadFile(url);
-              // downloadTemplate('csv', props.product);
             }}
           >
             .csv
@@ -131,14 +130,29 @@ const NormalUpload = (props: any) => {
             <Badge status="success" text="已完成" />
           )}
           <span style={{ marginLeft: 15 }}>总数量:{count}</span>
-          <p style={{ color: 'red' }}>{errMessage}</p>
+          <div>
+            {errMessage && (
+              <>
+                <Badge status="error" text="失败" />
+                <span style={{ marginLeft: 15 }}>{errMessage}</span>
+                <a href={errorUrl} style={{ marginLeft: 15 }}>
+                  下载
+                </a>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 };
 const Import = (props: Props) => {
-  const { visible, close } = props;
+  const { visible, close, masterId } = props;
+
+  useEffect(() => {
+    console.log(masterId);
+  }, []);
+
   const schema = {
     type: 'object',
     properties: {
@@ -164,6 +178,9 @@ const Import = (props: Props) => {
             // 'x-visible': false,
             'x-decorator': 'FormItem',
             'x-component': 'NormalUpload',
+            'x-component-props': {
+              masterId: masterId,
+            },
           },
         },
       },
@@ -179,34 +196,7 @@ const Import = (props: Props) => {
       NormalUpload,
     },
   });
-  const form = createForm({
-    // effects() {
-    //     onFieldValueChange('product', (field) => {
-    //         form.setFieldState('*(fileType, upload)', (state) => {
-    //             state.visible = !!field.value;
-    //         });
-    //         form.setFieldState('*(upload)', (state) => {
-    //             state.componentProps = {
-    //                 product: field.value,
-    //             };
-    //         });
-    //     });
-    //     onFieldValueChange('fileType', (field) => {
-    //         const product = form.getValuesIn('product') || '';
-    //         form.setFieldState('*(upload)', (state) => {
-    //             state.componentProps = {
-    //                 fileType: field.value,
-    //                 product,
-    //             };
-    //         });
-    //     });
-    //     onFieldValueChange('upload', (field) => {
-    //         if (!field.value) {
-    //             close();
-    //         }
-    //     });
-    // },
-  });
+  const form = createForm({});
   return (
     <Modal
       maskClosable={false}

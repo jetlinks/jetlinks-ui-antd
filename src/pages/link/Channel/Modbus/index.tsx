@@ -23,6 +23,9 @@ import SaveChannel from './saveChannel';
 import SavePoint from './savePoint';
 import Import from './import';
 import { onlyMessage } from '@/utils/util';
+import Export from './Export';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { map } from 'rxjs/operators';
 
 export const service = new Service('');
 
@@ -35,12 +38,17 @@ const NewModbus = () => {
   const [activeKey, setActiveKey] = useState<any>('');
   const [visible, setVisible] = useState<boolean>(false);
   const [visiblePoint, setVisiblePoint] = useState<boolean>(false);
+  const [exportVisible, setExportVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
   const [pointDetail, setPointDetail] = useState<any>({});
   const [importVisible, setImportVisible] = useState<boolean>(false);
   const [masterList, setMasterList] = useState<any>([]);
   const [filterList, setFilterList] = useState([]);
   const masterId = useRef<string>('');
+  const [subscribeTopic] = useSendWebsocketMessage();
+  const wsRef = useRef<any>();
+  const [pointList, setPointList] = useState<any>([]);
+  const [currentData, setCurrentData] = useState<any>({});
 
   const collectMap = new Map();
   collectMap.set('running', 'success');
@@ -51,14 +59,14 @@ const NewModbus = () => {
     <Menu>
       <Menu.Item key="1">
         <PermissionButton
-          isPermission={permission.export}
+          isPermission={permission.export || true}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
-            // setExportVisible(true);
+            setExportVisible(true);
           }}
         >
-          批量导出设备
+          批量导出点位
         </PermissionButton>
       </Menu.Item>
       <Menu.Item key="2">
@@ -69,7 +77,7 @@ const NewModbus = () => {
             setImportVisible(true);
           }}
         >
-          批量导入设备
+          批量导入点位
         </PermissionButton>
       </Menu.Item>
     </Menu>
@@ -108,20 +116,18 @@ const NewModbus = () => {
       render: (record: any) => (
         <a
           onClick={() => {
-            console.log(record.number);
             Modal.info({
               title: '当前数据',
               content: (
                 <div>
                   <div>寄存器1:{record.number}</div>
-                  <div>寄存器2:{record.number}</div>
                 </div>
               ),
               onOk() {},
             });
           }}
         >
-          {record.number}
+          {currentData[record?.id] || '-'}
         </a>
       ),
     },
@@ -138,16 +144,18 @@ const NewModbus = () => {
                 status={collectMap.get(record.collectState?.value)}
                 text={record.collectState?.text}
               />
-              <SearchOutlined
-                style={{ color: '#1d39c4', marginLeft: 3 }}
-                onClick={() => {
-                  Modal.error({
-                    title: '失败原因',
-                    content: <div>111111</div>,
-                    onOk() {},
-                  });
-                }}
-              />
+              {record.collectState?.value === 'error' && (
+                <SearchOutlined
+                  style={{ color: '#1d39c4', marginLeft: 3 }}
+                  onClick={() => {
+                    Modal.error({
+                      title: '失败原因',
+                      content: <div>111111</div>,
+                      onOk() {},
+                    });
+                  }}
+                />
+              )}
             </>
           )}
         </>
@@ -286,8 +294,8 @@ const NewModbus = () => {
         if (res.status === 200) {
           setMasterList(res.result);
           setFilterList(res.result);
-          setActiveKey(res.result?.[0].id);
-          masterId.current = res.result?.[0].id;
+          setActiveKey(res.result?.[0]?.id);
+          masterId.current = res.result?.[0]?.id;
           console.log(masterId.current);
         }
       });
@@ -315,12 +323,27 @@ const NewModbus = () => {
   useEffect(() => {
     masterId.current = activeKey;
     actionRef.current?.reload();
-    // console.log(activeKey)
   }, [activeKey]);
 
   useEffect(() => {
     getMaster();
   }, []);
+
+  useEffect(() => {
+    const id = `collector-data-modbus`;
+    const topic = `/collector/MODBUS_TCP/${activeKey}/data`;
+    wsRef.current = subscribeTopic?.(id, topic, {
+      pointId: pointList.map((item: any) => item.id),
+    })
+      ?.pipe(map((res: any) => res.payload))
+      .subscribe((payload: any) => {
+        const { pointId, nativeData } = payload;
+        current[pointId] = nativeData;
+        setCurrentData({ ...current });
+        console.log(current);
+      });
+    return () => wsRef.current && wsRef.current?.unsubscribe();
+  }, [pointList]);
 
   return (
     <PageContainer>
@@ -480,6 +503,7 @@ const NewModbus = () => {
                     ...params,
                     sorts: [{ name: 'createTime', order: 'desc' }],
                   });
+                  setPointList(res.result.data);
                   return {
                     code: res.message,
                     result: {
@@ -503,11 +527,6 @@ const NewModbus = () => {
                   };
                 }
               }}
-              // request={async (params) =>
-              //   service.queryPoint(masterId.current,{
-              // ...params,
-              // sorts: [{ name: 'createTime', order: 'desc' }] })
-              // }
             />
           </div>
         </div>
@@ -533,12 +552,20 @@ const NewModbus = () => {
         />
       )}
       <Import
-        data={current}
+        masterId={activeKey}
         close={() => {
           setImportVisible(false);
           actionRef.current?.reload();
         }}
         visible={importVisible}
+      />
+      <Export
+        masterId={activeKey}
+        close={() => {
+          setExportVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={exportVisible}
       />
     </PageContainer>
   );

@@ -1,24 +1,40 @@
-import { createForm } from '@formily/core';
+import { createForm, Field } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-// import { service } from '@/pages/link/Channel/Modbus';
+import { service } from '@/pages/link/Channel/Opcua';
 import { Modal } from '@/components';
-import { useEffect } from 'react';
-// import { onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
+import { action } from '@formily/reactive';
+import type { Response } from '@/utils/typings';
 
 interface Props {
   data: any;
   close: () => void;
-  device?: any;
 }
 
 const SaveChannel = (props: Props) => {
   const form = createForm({
-    validateFirst: true,
-    initialValues: props.data,
+    initialValues: {
+      ...props.data,
+    },
   });
 
+  const useAsyncDataSource = (api: any) => (field: Field) => {
+    field.loading = true;
+    api(field).then(
+      action.bound!((resp: Response<any>) => {
+        field.dataSource = resp.result?.map((item: Record<string, unknown>) => ({
+          label: item,
+          value: item,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
+
+  const getPolicies = () => service.policies();
+  const getModes = () => service.modes();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -64,7 +80,7 @@ const SaveChannel = (props: Props) => {
               },
             ],
           },
-          'clientConfigs.endpoint': {
+          'configuration.endpoint': {
             title: '服务地址',
             'x-decorator-props': {
               gridSpan: 2,
@@ -93,7 +109,7 @@ const SaveChannel = (props: Props) => {
             name: 'endpoint',
             required: true,
           },
-          'clientConfigs.securityPolicy': {
+          'configuration.securityPolicy': {
             title: '安全策略',
             'x-decorator-props': {
               gridSpan: 2,
@@ -114,9 +130,9 @@ const SaveChannel = (props: Props) => {
                 message: '请选择安全策略',
               },
             ],
-            // 'x-reactions': ['{{useAsyncDataSource(getPolicies)}}'],
+            'x-reactions': ['{{useAsyncDataSource(getPolicies)}}'],
           },
-          'clientConfigs.securityMode': {
+          'configuration.securityMode': {
             title: '安全模式',
             'x-decorator-props': {
               gridSpan: 2,
@@ -134,9 +150,9 @@ const SaveChannel = (props: Props) => {
               },
             ],
             required: true,
-            // 'x-reactions': ['{{useAsyncDataSource(getModes)}}'],
+            'x-reactions': ['{{useAsyncDataSource(getModes)}}'],
           },
-          'clientConfigs.username': {
+          'configuration.username': {
             title: '用户名',
             type: 'string',
             'x-decorator': 'FormItem',
@@ -155,7 +171,7 @@ const SaveChannel = (props: Props) => {
               },
             ],
           },
-          'clientConfigs.password': {
+          'configuration.password': {
             title: '密码',
             type: 'string',
             'x-decorator': 'FormItem',
@@ -199,12 +215,21 @@ const SaveChannel = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<any>();
-    console.log(value);
+    if (props.data.id) {
+      const res = await service.editOpc(props.data.id, value);
+      if (res.status === 200) {
+        onlyMessage('保存成功');
+        props.close();
+      }
+    } else {
+      const res = await service.saveOpc(value);
+      if (res.status === 200) {
+        onlyMessage('保存成功');
+        props.close();
+      }
+    }
   };
 
-  useEffect(() => {
-    console.log(props.data.id);
-  }, []);
   return (
     <Modal
       title={props.data.id ? '编辑通道' : '新增通道'}
@@ -217,7 +242,7 @@ const SaveChannel = (props: Props) => {
       permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} />
+        <SchemaField schema={schema} scope={{ useAsyncDataSource, getPolicies, getModes }} />
       </Form>
     </Modal>
   );

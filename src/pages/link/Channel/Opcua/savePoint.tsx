@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 interface Props {
   data: any;
   close: Function;
+  opcId: string;
 }
 
 const SavePoint = (props: Props) => {
@@ -61,16 +62,17 @@ const SavePoint = (props: Props) => {
           <Col span={24}>
             <Form.Item
               label="点位ID"
-              name="opcID"
+              name="opcPointId"
               required
               rules={[
-                { required: true, message: '点位ID' },
+                { required: true, message: '点位ID必填' },
                 ({}) => ({
                   validator(_, value) {
-                    if (value !== 0 || /(^[1-9]\d*$)/.test(value)) {
+                    const item = value.substring(0, 2);
+                    if (item === 'i=' || item === 's=' || item === 'g=' || item === 'b=') {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('请输入非0正整数'));
+                    return Promise.reject(new Error('前两个字符必须为i=、s=、g=、b=中的一个'));
                   },
                 }),
               ]}
