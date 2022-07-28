@@ -4,6 +4,11 @@ import SystemConst from '@/utils/const';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 
 class Service extends BaseService<FirmwareItem> {
+  querySystemApi = () =>
+    request(`/${SystemConst.API_BASE}/system/apis`, {
+      method: 'GET',
+    });
+
   task = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/firmware/upgrade/task/detail/_query`, {
       method: 'POST',
@@ -50,8 +55,11 @@ class Service extends BaseService<FirmwareItem> {
       data: params,
     });
 
-  queryProduct = () =>
-    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`);
+  queryProduct = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
 
   queryDevice = () =>
     request(`/${SystemConst.API_BASE}/device/instance/_query/no-paging?paging=false`);

@@ -18,13 +18,17 @@ const FIndicators = (props: Props) => {
           <InputNumber
             value={value?.value ? value?.value[0] : ''}
             onChange={(val) => {
-              onChange({
-                ...value,
-                value: [
-                  value?.range && val < value?.value[1] ? val : value?.value[0],
-                  value?.value[1],
-                ],
-              });
+              if (value?.range) {
+                onChange({
+                  ...value,
+                  value: [val > value?.value[1] ? value?.value[0] : val, value?.value[1] || ''],
+                });
+              } else {
+                onChange({
+                  ...value,
+                  value: [val],
+                });
+              }
             }}
           />
           {value.range && (
@@ -35,7 +39,7 @@ const FIndicators = (props: Props) => {
                 onChange={(val) => {
                   onChange({
                     ...value,
-                    value: [value?.value && value?.value[0], val],
+                    value: [value?.value[0], val > value?.value[0] ? val : value?.value[1]],
                   });
                 }}
               />
@@ -117,6 +121,7 @@ const FIndicators = (props: Props) => {
         onChange={(e) => {
           onChange({
             ...value,
+            value: e.target.checked ? [undefined, undefined] : [undefined],
             range: e.target.checked,
           });
         }}

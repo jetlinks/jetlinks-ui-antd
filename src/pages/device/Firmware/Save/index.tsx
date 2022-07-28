@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import { createSchemaField } from '@formily/react';
-import { Form, FormGrid, FormItem, Input, Select, ArrayTable } from '@formily/antd';
+import { Form, FormGrid, FormItem, Input, Select, ArrayTable, NumberPicker } from '@formily/antd';
 import type { Field } from '@formily/core';
 import { onFieldValueChange, onFormInit } from '@formily/core';
 import { createForm } from '@formily/core';
@@ -12,6 +12,8 @@ import { service } from '@/pages/device/Firmware';
 import { useRef } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { onlyMessage } from '@/utils/util';
+import RemoveData from './RemoveData';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
   data?: FirmwareItem;
@@ -55,7 +57,13 @@ const Save = (props: Props) => {
       }),
     );
   };
-  const loadData = async () => service.queryProduct();
+  const loadData = async () =>
+    service.queryProduct(
+      encodeQuery({
+        terms: { state: 1 },
+        sorts: { createTime: 'desc' },
+      }),
+    );
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -64,6 +72,8 @@ const Save = (props: Props) => {
       FUpload,
       Select,
       ArrayTable,
+      NumberPicker,
+      RemoveData,
     },
   });
 
@@ -83,6 +93,7 @@ const Save = (props: Props) => {
       close();
     }
   };
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -121,9 +132,6 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-reactions': ['{{useAsyncDataSource(loadData)}}'],
-            'x-component-props': {
-              placeholder: '请选择所属产品',
-            },
             'x-decorator-props': {
               gridSpan: 2,
             },
@@ -134,6 +142,13 @@ const Save = (props: Props) => {
                 message: '请选择所属产品',
               },
             ],
+            'x-component-props': {
+              placeholder: '请选择所属产品',
+              showSearch: true,
+              allowClear: true,
+              filterOption: (input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+            },
           },
           version: {
             title: '版本号',
@@ -160,7 +175,7 @@ const Save = (props: Props) => {
           versionOrder: {
             title: '版本序号',
             'x-decorator': 'FormItem',
-            'x-component': 'Input',
+            'x-component': 'NumberPicker',
             'x-component-props': {
               placeholder: '请输入版本序号',
             },
@@ -244,7 +259,7 @@ const Save = (props: Props) => {
             ],
           },
           upload: {
-            title: '文件上传',
+            title: '固件上传',
             'x-decorator': 'FormItem',
             'x-component': 'FUpload',
             'x-component-props': {
@@ -284,8 +299,14 @@ const Save = (props: Props) => {
                   properties: {
                     id: {
                       type: 'string',
-                      'x-decorator': 'Editable',
+                      'x-decorator': 'FormItem',
                       'x-component': 'Input',
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请输入KEY',
+                        },
+                      ],
                     },
                   },
                 },
@@ -298,6 +319,12 @@ const Save = (props: Props) => {
                       type: 'string',
                       'x-decorator': 'FormItem',
                       'x-component': 'Input',
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请输入VALUE',
+                        },
+                      ],
                     },
                   },
                 },
@@ -315,7 +342,7 @@ const Save = (props: Props) => {
                       properties: {
                         remove: {
                           type: 'void',
-                          'x-component': 'ArrayTable.Remove',
+                          'x-component': 'RemoveData',
                         },
                       },
                     },
@@ -327,7 +354,7 @@ const Save = (props: Props) => {
               add: {
                 type: 'void',
                 'x-component': 'ArrayTable.Addition',
-                title: '添加条目',
+                title: '添加',
               },
             },
           },
