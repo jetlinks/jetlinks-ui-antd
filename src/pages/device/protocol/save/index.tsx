@@ -117,13 +117,16 @@ const Save: React.FC<Props> = props => {
     headers: {
       'X-Access-Token': getAccessToken(),
     },
-    onChange(info: any) {
+    onChange: async (info: any) => {
       if (info.file.status === 'uploading') {
         setUploading(true);
       }
       if (info.file.status === 'done') {
-        setJarLocation(info.file.response.result?.id);
-        setFieldsValue({ 'configuration.location': info.file.response.result?.id })
+        const result = info.file.response?.result;
+        const api = await apis.protocol.querySystemApi();
+        const url = `${api?.result?.basePath}file/${result?.id}?accessKey=${result?.others?.accessKey}`;
+        setJarLocation(url);
+        setFieldsValue({ 'configuration.location': url })
         message.success(`${info.file.name} 上传成功`);
         setUploading(false);
       } else if (info.file.status === 'error') {

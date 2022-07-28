@@ -60,3 +60,9 @@ export async function providers() {
         method: 'GET'
     })
 }
+
+export async function querySystemApi() {
+    return request(`/jetlinks/system/apis`, {
+        method: 'GET'
+    })
+}
