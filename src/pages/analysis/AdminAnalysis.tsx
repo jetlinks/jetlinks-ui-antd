@@ -1,6 +1,5 @@
 import React, { Component, Suspense } from 'react';
 import { connect } from 'dva';
-import { Col, Row } from 'antd';
 import { RangePickerValue } from 'antd/es/date-picker/interface';
 import { Dispatch } from 'redux';
 import { GridContent } from '@ant-design/pro-layout';
@@ -11,8 +10,8 @@ import getFakeChartData from './mock-data';
 
 const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
 const SalesCard = React.lazy(() => import('./components/SalesCard'));
-const TopSearch = React.lazy(() => import('./components/TopSearch'));
-const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
+const Metadata = React.lazy(() => import('./components/Metadata'));
+const DeviceInfo = React.lazy(() => import('./components/DeviceInfo'));
 
 interface analysisProps {
   analysis?: IAnalysisData;
@@ -79,6 +78,12 @@ class AdminAnalysis extends Component<analysisProps, analysisState> {
         <React.Fragment>
           <Suspense fallback={<PageLoading />}>
             <IntroduceRow loading={loading} visitData={visitData} />
+          </Suspense>
+          <Suspense fallback={<PageLoading />}>
+            <DeviceInfo loading={loading} />
+          </Suspense>
+          <Suspense fallback={null}>
+            <Metadata loading={loading} />
           </Suspense>
           <Suspense fallback={null}>
             <SalesCard loading={loading} />

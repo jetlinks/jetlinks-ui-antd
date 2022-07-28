@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, Spin } from 'antd';
-import Charts from './Charts';
+import { Col, Icon, Row, Spin, Tooltip } from 'antd';
+import { FormattedMessage } from 'umi-plugin-react/locale';
+import Charts, { Gauge } from './Charts';
 import numeral from 'numeral';
 import { IVisitData } from '../data.d';
+import GaugeColor from './Charts/GaugeColor/index';
 import apis from '@/services';
 import moment from 'moment';
 import { getWebsocket } from '@/layouts/GlobalWebSocket';
 import encodeQueryParam from '@/utils/encodeParam';
-import onlineImg from '../img/online.png';
-import GaugeCharts from './Charts/GaugeCharts';
 
 
-const { MiniBar } = Charts;
+const { ChartCard, MiniArea, MiniBar, Field } = Charts;
 
 interface State {
   cpu: number;
@@ -310,76 +310,93 @@ const IntroduceRow = ({ loading, visitData }: { loading: boolean; visitData: IVi
     <Row gutter={24}>
       <Col {...topColResponsiveProps}>
         <Spin spinning={deviceCountSpinning}>
-          <Card bordered={false}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #D8D8D8', paddingBottom: 15 }}>
-              <div>
-                <div style={{ color: '#1890FF', fontSize: 38 }}>{numeral(deviceOnline).format('0,0')}</div>
-                <div style={{ color: 'rgba(0, 0, 0, 0.75)' }}>当前在线</div>
+          <ChartCard
+            bordered={false}
+            title='当前在线'
+            action={
+              <Tooltip
+                title='刷新'
+              >
+                <Icon type="sync" onClick={() => {
+                  setDeviceCountSpinning(true);
+                  deviceStatus();
+                }} />
+              </Tooltip>
+            }
+            total={numeral(deviceOnline).format('0,0')}
+            footer={
+              <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
+                <Field style={{ marginRight: 40, float: 'left' }}
+                  label={
+                    <FormattedMessage id="analysis.analysis.device-total" defaultMessage="设备总量" />
+                  }
+                  value={numeral(deviceCount).format('0,0')}
+                />
+                <Field
+                  label={
+                    <FormattedMessage id="analysis.analysis.device-activation" defaultMessage="未激活设备" />
+                  }
+                  value={numeral(deviceNotActive).format('0,0')}
+                />
               </div>
-              <div>
-                <img src={onlineImg} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden', paddingTop: 15 }}>
-              <div style={{ display: 'flex', marginRight: 20 }}>
-                <div style={{ color: '#2C3542', opacity: 0.65, marginRight: 10 }}>设备总量</div>
-                <div style={{ color: '#323130' }}>{numeral(deviceCount).format('0,0')}</div>
-              </div>
-              <div style={{ display: 'flex' }}>
-                <div style={{ color: '#2C3542', opacity: 0.65, marginRight: 10 }}>设备总量</div>
-                <div style={{ color: '#323130' }}>{numeral(deviceNotActive).format('0,0')}</div>
-              </div>
-            </div>
-          </Card>
+            }
+            contentHeight={46}
+          >
+            <MiniBar data={visitData} />
+          </ChartCard>
         </Spin>
       </Col>
 
       <Col {...topColResponsiveProps}>
         <Spin spinning={deviceMessageSpinning}>
-          <Card bordered={false}>
-            <div style={{ borderBottom: '1px solid #D8D8D8', paddingBottom: 15 }}>
-              <div style={{ color: 'rgba(0, 0, 0, 0.64)', fontSize: 16 }}>今日设备消息量</div>
-              <div style={{ display: 'flex', height: 54, justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ color: '#4BCCA6', fontSize: 28 }}>{numeral(sameDay).format('0,0')}</div>
-                <div style={{ width: '50%' }}><MiniBar color="#83D7CE" data={messageData} /></div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', whiteSpace: 'nowrap', overflow: 'hidden', paddingTop: 15 }}>
-              <div style={{ display: 'flex', marginRight: 20 }}>
-                <div style={{ color: '#2C3542', opacity: 0.65, marginRight: 10 }}>当月设备消息量</div>
-                <div style={{ color: '#323130' }}>{numeral(month).format('0,0')}</div>
-              </div>
-            </div>
-          </Card>
+          <ChartCard
+            bordered={false}
+            loading={loading}
+            title="今日设备消息量"
+            action={
+              <Tooltip
+                title='刷新'
+              >
+                <Icon type="sync" onClick={() => {
+                  setDeviceMessageSpinning(true);
+                  deviceMessage();
+                }} />
+              </Tooltip>
+            }
+            total={numeral(sameDay).format('0,0')}
+            footer={
+              <Field
+                label="当月设备消息量"
+                value={numeral(month).format('0,0')}
+              />
+            }
+            contentHeight={46}
+          >
+            <MiniArea color="#975FE4" data={messageData} />
+          </ChartCard>
         </Spin>
       </Col>
 
       <Col {...topColResponsiveProps}>
-        <Card bordered={false}>
-          <div style={{ display: 'flex' }}>
-            <div style={{ width: 120 }}>
-              <div style={{ color: 'rgba(0, 0, 0, 0.64)', fontSize: 16 }}>CPU使用率</div>
-              <div style={{ color: '#51C0DE', fontSize: 28, marginTop: 10 }}>{cpu}%</div>
-            </div>
-            <div style={{ width: 'calc(100% - 120px)', height: 130 }}>
-              <GaugeCharts value={cpu} />
-            </div>
-          </div>
-        </Card>
+        <ChartCard
+          loading={loading}
+          bordered={false}
+          title='CPU使用率'
+          contentHeight={120}
+        >
+          <GaugeColor height={169} percent={cpu} />
+        </ChartCard>
       </Col>
 
       <Col {...topColResponsiveProps}>
-        <Card bordered={false}>
-          <div style={{ display: 'flex' }}>
-            <div style={{ width: 120 }}>
-              <div style={{ color: 'rgba(0, 0, 0, 0.64)', fontSize: 16 }}>JVM内存</div>
-              <div style={{ color: '#FAB247', fontSize: 28, marginTop: 10 }}>{(memoryUsed / 1024).toFixed(2)}G</div>
-            </div>
-            <div style={{ width: 'calc(100% - 120px)', height: 130 }}>
-              <GaugeCharts value={(memoryUsed / 1024).toFixed(2)} max={Math.ceil(memoryMax / 1024)} formatter="G" />
-            </div>
-          </div>
-        </Card>
+        <ChartCard
+          loading={loading}
+          bordered={false}
+          title='JVM内存'
+          contentHeight={120}
+        >
+          <Gauge height={169} percent={memoryUsed} memoryMax={memoryMax} />
+        </ChartCard>
       </Col>
     </Row>
   );
