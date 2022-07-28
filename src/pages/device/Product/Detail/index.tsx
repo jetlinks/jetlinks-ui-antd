@@ -102,7 +102,7 @@ const ProductDetail = observer(() => {
     'mqtt-server-gateway',
     'tcp-server-gateway',
   ];
-  const [list, setList] = useState<any[]>([...initList]);
+  const [list, setList] = useState<any[]>([]);
 
   const { minHeight } = useDomFullHeight('.product-detail-body');
 
@@ -152,46 +152,40 @@ const ProductDetail = observer(() => {
       });
     });
   };
-
-  useEffect(() => {
-    if (productModel.current?.messageProtocol) {
-      service.getProtocolDetail(productModel.current?.messageProtocol).then((res) => {
-        if (res.status === 200) {
-          const paring = res.result?.transports[0]?.features?.find(
-            (item: any) => item.id === 'transparentCodec',
-          );
-          // console.log(paring)
-          if (paring) {
-            setList([
-              ...initList,
-              {
-                key: 'parsing',
-                tab: intl.formatMessage({
-                  id: 'pages.device.instanceDetail.parsing',
-                  defaultMessage: '数据解析',
-                }),
-                component: <Parsing tag="product" data={productModel.current} />,
-              },
-            ]);
-          }
-        }
-      });
-    }
+  const getDetail = async () => {
     if (
       productModel.current?.accessProvider &&
       pList.includes(productModel.current?.accessProvider)
     ) {
-      setList([
-        ...initList,
-        {
-          key: 'metadata-map',
-          tab: '物模型映射',
-          component: <MetadataMap type="product" />,
-        },
-      ]);
-    } else {
-      setList([...initList]);
+      initList.push({
+        key: 'metadata-map',
+        tab: '物模型映射',
+        component: <MetadataMap type="product" />,
+      });
     }
+    if (productModel.current?.messageProtocol) {
+      const res = await service.getProtocolDetail(productModel.current?.messageProtocol);
+      if (res.status === 200) {
+        const paring = res.result?.transports[0]?.features?.find(
+          (item: any) => item.id === 'transparentCodec',
+        );
+        // console.log(paring)
+        if (paring) {
+          initList.push({
+            key: 'parsing',
+            tab: intl.formatMessage({
+              id: 'pages.device.instanceDetail.parsing',
+              defaultMessage: '数据解析',
+            }),
+            component: <Parsing tag="product" data={productModel.current} />,
+          });
+        }
+      }
+    }
+    setList(initList);
+  };
+  useEffect(() => {
+    getDetail();
   }, [productModel.current]);
 
   useEffect(() => {

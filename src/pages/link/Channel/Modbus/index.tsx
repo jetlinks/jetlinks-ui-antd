@@ -26,6 +26,7 @@ import { onlyMessage } from '@/utils/util';
 import Export from './Export';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
+import Ellipsis from '@/components/Ellipsis';
 
 export const service = new Service('');
 
@@ -113,21 +114,29 @@ const NewModbus = () => {
     {
       title: '当前数据',
       search: false,
+      // ellipsis: true,
+      width: 150,
       render: (record: any) => (
         <a
           onClick={() => {
-            Modal.info({
-              title: '当前数据',
-              content: (
-                <div>
-                  <div>寄存器1:{record.number}</div>
-                </div>
-              ),
-              onOk() {},
-            });
+            if (currentData[record?.id]) {
+              const arr = currentData[record?.id].match(/[\S]{1,4}/g);
+              Modal.info({
+                title: '当前数据',
+                content: (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {arr.map((item: any, index: number) => (
+                      <div>
+                        寄存器{index + 1}: {item}
+                      </div>
+                    ))}
+                  </div>
+                ),
+              });
+            }
           }}
         >
-          {currentData[record?.id] || '-'}
+          <Ellipsis title={currentData[record?.id] || '-'} />
         </a>
       ),
     },
@@ -150,8 +159,7 @@ const NewModbus = () => {
                   onClick={() => {
                     Modal.error({
                       title: '失败原因',
-                      content: <div>111111</div>,
-                      onOk() {},
+                      content: <div>{record.errorReason}</div>,
                     });
                   }}
                 />
@@ -337,8 +345,8 @@ const NewModbus = () => {
     })
       ?.pipe(map((res: any) => res.payload))
       .subscribe((payload: any) => {
-        const { pointId, nativeData } = payload;
-        current[pointId] = nativeData;
+        const { pointId, hex } = payload;
+        current[pointId] = hex;
         setCurrentData({ ...current });
         console.log(current);
       });
@@ -472,7 +480,7 @@ const NewModbus = () => {
               columns={columns}
               rowKey="id"
               // dataSource={dataSoure}
-              // scroll={{ x: 1000 }}
+              scroll={{ x: 200 }}
               search={false}
               headerTitle={
                 <>
