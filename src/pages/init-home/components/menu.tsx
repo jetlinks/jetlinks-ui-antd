@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import BaseMenu from '@/pages/system/Menu/Setting/baseMenu';
 import { service } from '../index';
-import { observable } from '@formily/reactive';
 
-export const MenuDataModel = observable<{ menuData: any[] }>({
-  menuData: [],
-});
-
-const Menu = forwardRef((_, ref) => {
+const Menu = forwardRef((props: { onChange?: (menu: any) => void }, ref) => {
   const [count, setCount] = useState(0);
   const menuRef = useRef<any[]>();
 
@@ -53,14 +48,20 @@ const Menu = forwardRef((_, ref) => {
       );
       const _count = menuCount(newTree);
       menuRef.current = newTree;
-      MenuDataModel.menuData = newTree;
       setCount(_count);
     }
   };
 
   useImperativeHandle(ref, () => ({
     save: () => {
-      console.log(menuRef.current);
+      return new Promise((resolve) => {
+        if (props.onChange) {
+          props.onChange(menuRef.current);
+        }
+        service.updateMenus(menuRef.current).then((res) => {
+          resolve(res.status === 200);
+        });
+      });
     },
   }));
 

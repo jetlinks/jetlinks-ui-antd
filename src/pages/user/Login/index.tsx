@@ -1,5 +1,5 @@
 import { Button, Checkbox, Divider, message, Spin } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'umi';
 import styles from './index.less';
 import Token from '@/utils/token';
@@ -33,14 +33,20 @@ const Login: React.FC = () => {
         ...initialState,
         currentUser: userInfo,
       });
+      return userInfo;
     }
+    return null;
   };
 
   const loginRef = useRef<Partial<LoginParam>>({});
-  const loginForm = createForm({
-    validateFirst: true,
-    initialValues: loginRef.current,
-  });
+  const loginForm = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: loginRef.current,
+      }),
+    [captcha],
+  );
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -158,7 +164,15 @@ const Login: React.FC = () => {
       {
         next: async (userInfo) => {
           Token.set(userInfo.token);
-          await fetchUserInfo();
+          const userRef: any = await fetchUserInfo();
+          if (userRef?.user?.username === 'admin') {
+            const initRef = await Service.initPage();
+            if (initRef.status === 200 && !initRef.result.length) {
+              window.location.href = '/#/init-home';
+              setLoading(false);
+              return;
+            }
+          }
           // goto();
           window.location.href = '/';
           setLoading(false);
@@ -174,7 +188,7 @@ const Login: React.FC = () => {
           // setLoading(false);
         },
         complete: () => {
-          getCode();
+          // getCode();
           // setLoading(false);
         },
       },

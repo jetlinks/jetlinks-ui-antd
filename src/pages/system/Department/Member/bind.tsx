@@ -45,9 +45,9 @@ const Bind = observer((props: Props) => {
         id: 'pages.system.username',
         defaultMessage: '用户名',
       }),
-      search: {
-        transform: (value) => ({ username$LIKE: value }),
-      },
+      // search: {
+      //   transform: (value) => ({ username$LIKE: value }),
+      // },
     },
   ];
 

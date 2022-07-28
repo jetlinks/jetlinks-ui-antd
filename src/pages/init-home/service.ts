@@ -47,6 +47,30 @@ class Service extends BaseService<any> {
     });
   getPermissionAll = () =>
     request(`${SystemConst.API_BASE}/permission/_query/no-paging?paging=false`);
+
+  // 更新全部菜单
+  updateMenus = (data: any) =>
+    request(`${SystemConst.API_BASE}/menu/_all`, { method: 'PATCH', data });
+
+  // 添加角色
+  addRole = (data: any) => request(`/${SystemConst.API_BASE}/role`, { method: 'POST', data });
+
+  // 更新权限菜单
+  getRoleMenu = (id: string) =>
+    request(`/${SystemConst.API_BASE}/menu/role/${id}/_grant/tree`, { method: 'GET' });
+
+  // 更新权限菜单
+  updateRoleMenu = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/menu/role/${id}/_grant`, { method: 'PUT', data });
+
+  //  记录初始化
+  saveInit = () =>
+    request(`/${SystemConst.API_BASE}/user/settings/init`, {
+      method: 'POST',
+      data: { init: true },
+    });
+  //  获取初始化
+  getInit = () => request(`/${SystemConst.API_BASE}/user/settings/init`, { method: 'GET' });
 }
 
 export default Service;
