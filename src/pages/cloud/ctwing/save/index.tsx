@@ -52,8 +52,7 @@ const Save: React.FC<Props> = props => {
                                     rules: [{ required: true, message: '请选择' }],
                                 })(
                                     <Select disabled={!!props.data.id} placeholder="请选择" allowClear
-                                        showSearch
-                                        optionFilterProp='children'
+                                        showSearch 
                                         onChange={(value: string) => {
                                             let data = '';
                                             if(value !== '' && productList){
