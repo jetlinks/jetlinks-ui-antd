@@ -104,7 +104,7 @@ const Metadata = ({ loading }: { loading: boolean; }) => {
                                     </div>
                                 </div>
                             </div>
-                            <Button style={{ marginRight: 24 }} onClick={() => {
+                            <Button style={{ marginRight: 24, marginTop: 5 }} onClick={() => {
                                 router.push(`/network/protocol`);
                             }}>查看协议<Icon type="right" /></Button>
                         </div>
