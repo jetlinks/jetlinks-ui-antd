@@ -245,7 +245,9 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<ProtocolItem>();
-    const response: any = await service.savePatch({ ...props.data, ...value });
+    const response: any = props.data?.id
+      ? await service.savePatch({ ...props.data, ...value })
+      : await service.save({ ...props.data, ...value });
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();

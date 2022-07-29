@@ -136,21 +136,21 @@ const Save = (props: Props) => {
             title: '通知方式',
             type: 'array',
             required: true,
-            'x-disabled': true,
+            // 'x-disabled': true,
             default: [1],
             enum: [
               {
                 label: '站内通知',
                 value: 1,
               },
-              {
-                label: '邮件通知',
-                value: 2,
-              },
-              {
-                label: '短信通知',
-                value: 3,
-              },
+              // {
+              //   label: '邮件通知',
+              //   value: 2,
+              // },
+              // {
+              //   label: '短信通知',
+              //   value: 3,
+              // },
             ],
             'x-decorator': 'FormItem',
             'x-component': 'Checkbox.Group',

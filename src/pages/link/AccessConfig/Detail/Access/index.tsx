@@ -45,12 +45,20 @@ const Access = (props: Props) => {
   };
 
   const queryProcotolList = (id?: string, params?: any) => {
-    service.getProtocolList(ProcotoleMapping.get(id), params).then((resp) => {
-      if (resp.status === 200) {
-        setProcotolList(resp.result);
-        setAllProcotolList(resp.result);
-      }
-    });
+    service
+      .getProtocolList(
+        ProcotoleMapping.get(id),
+        encodeQuery({
+          ...params,
+          sorts: { createTime: 'desc' },
+        }),
+      )
+      .then((resp) => {
+        if (resp.status === 200) {
+          setProcotolList(resp.result);
+          setAllProcotolList(resp.result);
+        }
+      });
   };
 
   useEffect(() => {
@@ -287,6 +295,7 @@ const Access = (props: Props) => {
                   );
                   tab!.onTabSaveSuccess = (value: any) => {
                     if (value.status === 200) {
+                      setNetworkCurrent(value.result?.id);
                       queryNetworkList(props.provider?.id, {
                         include: networkCurrent || '',
                       });
@@ -395,6 +404,7 @@ const Access = (props: Props) => {
                           const tab: any = window.open(`${origin}/#${url}`);
                           tab!.onTabSaveSuccess = (value: any) => {
                             if (value.status === 200) {
+                              setNetworkCurrent(value.result?.id);
                               queryNetworkList(props.provider?.id, {
                                 include: networkCurrent || '',
                               });
@@ -444,6 +454,7 @@ const Access = (props: Props) => {
                   const tab: any = window.open(`${origin}/#${url}?save=true`);
                   tab!.onTabSaveSuccess = (resp: any) => {
                     if (resp.status === 200) {
+                      setProcotolCurrent(resp.result?.id);
                       queryProcotolList(props.provider?.id);
                     }
                   };
@@ -509,6 +520,7 @@ const Access = (props: Props) => {
                           const tab: any = window.open(`${origin}/#${url}?save=true`);
                           tab!.onTabSaveSuccess = (resp: any) => {
                             if (resp.status === 200) {
+                              setProcotolCurrent(resp.result?.id);
                               queryProcotolList(props.provider?.id);
                             }
                           };
