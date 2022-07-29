@@ -62,7 +62,7 @@ const SyncUser = observer(() => {
       dataIndex: 'action',
       title: '操作',
       render: (text: any, record: any) => [
-        <Tooltip title={'绑定用户'} key="bind">
+        <Tooltip title={'编辑'} key="bind">
           <Button
             type="link"
             onClick={() => {
@@ -73,7 +73,7 @@ const SyncUser = observer(() => {
             <EditOutlined />
           </Button>
         </Tooltip>,
-        <Tooltip title={'解绑用户'} key="unbind">
+        <Tooltip title={'解绑'} key="unbind">
           {record?.status === 1 && (
             <Button type="link">
               <Popconfirm

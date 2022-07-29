@@ -2,7 +2,7 @@ import { Input, Tree } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import DragItem from '@/pages/system/Menu/Setting/dragItem';
 import { useDrop } from 'react-dnd';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import type { TreeProps } from 'antd';
 import { cloneDeep, debounce } from 'lodash';
 import './DragItem.less';
@@ -21,14 +21,23 @@ export const DragType = 'DragBox';
 
 const { TreeNode } = Tree;
 
+const defaultExpandedKeys = ['iot', 'media', 'system', 'device', 'link', 'link/Channel', 'rule-engine/Alarm', 'Northbound', 'rule-engine']
+
 export default (props: TreeBodyProps) => {
   const [newData, setNewData] = useState(props.treeData);
   const [searchKeys, setSearchKeys] = useState<(string | number)[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   useEffect(() => {
     setNewData(cloneDeep(props.treeData));
   }, [props.treeData]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setExpandedKeys(defaultExpandedKeys)
+    }, 300)
+  }, [])
 
   const [, drop] = useDrop(() => ({
     accept: DragType,
@@ -91,6 +100,21 @@ export default (props: TreeBodyProps) => {
     });
   };
 
+  const getParentKey = (key: string | number, data: any): string => {
+    let parentKey: string;
+    data.forEach((item: any) => {
+      if (item.children) {
+        if (item.children.some((cItem: any) => cItem.code === key)) {
+          parentKey = item.code
+        } else if (!!getParentKey(key, item.children)) {
+          parentKey = getParentKey(key, item.children)
+        }
+      }
+    })
+    // @ts-ignore
+    return parentKey
+  }
+
   const findAllItem = (data: any[], value: string): string[] => {
     return data.reduce((pre, next) => {
       const childrenKeys = next.children ? findAllItem(next.children, value) : [];
@@ -104,12 +128,17 @@ export default (props: TreeBodyProps) => {
     const value = e.target.value;
 
     if (value) {
-      const sKeys = findAllItem(props.treeData, value);
-      setSearchKeys(sKeys);
-      setExpandedKeys(sKeys);
+
+      const newKeys = findAllItem(props.treeData, value);
+      const newExpandedKeys = newKeys.map(key => {
+        return getParentKey(key, props.treeData)
+      })
+      setSearchKeys(newKeys);
+      setExpandedKeys(newExpandedKeys);
     } else {
       setSearchKeys([]);
     }
+    setAutoExpandParent(true)
   };
 
   return (
@@ -128,7 +157,9 @@ export default (props: TreeBodyProps) => {
             expandedKeys={expandedKeys}
             onExpand={(_expandedKeys) => {
               setExpandedKeys(_expandedKeys);
+              setAutoExpandParent(false)
             }}
+            autoExpandParent={autoExpandParent}
           >
             {createTreeNode(newData, props.droppableId)}
           </Tree>
@@ -139,7 +170,9 @@ export default (props: TreeBodyProps) => {
             expandedKeys={expandedKeys}
             onExpand={(_expandedKeys) => {
               setExpandedKeys(_expandedKeys);
+              setAutoExpandParent(false)
             }}
+            autoExpandParent={autoExpandParent}
             draggable={{
               icon: false,
             }}

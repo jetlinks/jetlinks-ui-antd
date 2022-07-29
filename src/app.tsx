@@ -10,7 +10,7 @@ import Service from '@/pages/user/Login/service';
 // import { service as SystemConfigService } from '@/pages/system/Config';
 import Token from '@/utils/token';
 import type { RequestOptionsInit } from 'umi-request';
-import ReconnectingWebSocket from 'reconnecting-websocket';
+// import ReconnectingWebSocket from 'reconnecting-websocket';
 import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
 import getRoutes, {
@@ -82,16 +82,16 @@ export async function getInitialState(): Promise<{
     };
   }
   // 链接websocket
-  const url = `${document.location.protocol.replace('http', 'ws')}//${document.location.host}/${
-    SystemConst.API_BASE
-  }/messaging/${Token.get()}?:X_Access_Token=${Token.get()}`;
-
-  const ws = new ReconnectingWebSocket(url);
-
-  // ws.send('sss');
-  ws.onerror = () => {
-    console.log('链接错误。ws');
-  };
+  // const url = `${document.location.protocol.replace('http', 'ws')}//${document.location.host}/${
+  //   SystemConst.API_BASE
+  // }/messaging/${Token.get()}?:X_Access_Token=${Token.get()}`;
+  //
+  // const ws = new ReconnectingWebSocket(url);
+  //
+  // // ws.send('sss');
+  // ws.onerror = () => {
+  //   console.log('链接错误。ws');
+  // };
 
   return {
     fetchUserInfo,

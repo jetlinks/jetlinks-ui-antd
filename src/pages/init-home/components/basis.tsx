@@ -58,7 +58,7 @@ const Basis = forwardRef((props: Props, ref) => {
       <Row gutter={[24, 24]}>
         <Col span={10}>
           <Form.Item label="系统名称" name="title">
-            <Input />
+            <Input placeholder={'请输入系统名称'} />
           </Form.Item>
           <Form.Item
             label="主题色"
@@ -72,7 +72,7 @@ const Basis = forwardRef((props: Props, ref) => {
             </Select>
           </Form.Item>
           <Form.Item label="高德API Key" name="apikey" tooltip="配置后平台可调用高德地图GIS服务">
-            <Input />
+            <Input placeholder={'请输入高德API Key'} />
           </Form.Item>
           <Row gutter={[24, 24]}>
             <Col>
@@ -116,7 +116,6 @@ const Basis = forwardRef((props: Props, ref) => {
                 <div>建议尺寸1400x1080</div>
               </>
             }
-            rules={[{ required: true, message: '请上传背景图' }]}
           >
             <UploadImage size={4} style={{ width: 570, height: 415 }} />
           </Form.Item>

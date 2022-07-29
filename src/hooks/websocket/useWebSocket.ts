@@ -78,6 +78,7 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
           if (isReconnect.current && onReconnect) {
             // 是否为重连
             onReconnect();
+            return
           }
           onOpen?.(event);
           reconnectTimesRef.current = 0;

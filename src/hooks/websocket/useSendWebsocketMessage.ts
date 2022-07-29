@@ -47,7 +47,7 @@ export const useSendWebsocketMessage = () => {
     // reconnectInterval: 1000,
     // reconnectLimit: 1,
     onClose: () => console.error('websocket 链接关闭'),
-    onOpen: (event) => console.log('打开链接', event),
+    // onOpen: (event) => console.log('打开链接', event),
     onError: (event) => console.log('报错了', event),
     onReconnect: () => {
       if (Object.keys(messageCache).length && sendMessage) {

@@ -6,6 +6,7 @@ export default [
     id: '1',
     url: '/iot',
     icon: 'icon-wulianwang',
+    sortIndex: 1,
     permissions: [
       {
         actions: ['query', 'save', 'delete'],
@@ -20,6 +21,7 @@ export default [
         id: '1-1',
         url: '/iot/home',
         icon: 'icon-keshihua',
+        sortIndex: 1,
         permissions: [
           { permission: 'device-instance', actions: ['query'] },
           { permission: 'dashboard', actions: ['query'] },
@@ -33,6 +35,7 @@ export default [
         id: '1-2',
         url: '/iot/notice/Type',
         icon: 'icon-shebei',
+        sortIndex: 2,
         permissions: [
           { permission: 'template', actions: ['query', 'save', 'delete'] },
           { permission: 'user-third-party-manager', actions: ['query', 'save'] },
@@ -58,6 +61,7 @@ export default [
         id: '1-3',
         url: '/iot/device',
         icon: 'icon-shebei',
+        sortIndex: 3,
         permissions: [],
         children: [
           {
@@ -67,6 +71,7 @@ export default [
             id: '1-3-1',
             url: '/iot/device/DashBoard',
             icon: 'icon-keshihua',
+            sortIndex: 1,
             permissions: [
               { permission: 'device-product', actions: ['query'] },
               { permission: 'dashboard', actions: ['query'] },
@@ -81,6 +86,7 @@ export default [
             id: '1-3-2',
             url: '/iot/device/Product',
             icon: 'icon-chanpin',
+            sortIndex: 2,
             permissions: [
               { permission: 'device-mapping', actions: ['query', 'save'] },
               { permission: 'device-gateway', actions: ['query', 'save', 'delete'] },
@@ -153,6 +159,7 @@ export default [
             id: '1-3-3',
             url: '/iot/device/Instance',
             icon: 'icon-shebei',
+            sortIndex: 3,
             permissions: [
               { permission: 'transparent-codec', actions: ['query'] },
               { permission: 'device-api', actions: ['query-device-events'] },
@@ -224,6 +231,7 @@ export default [
             name: '产品分类',
             parentId: '1-3',
             id: '1-3-4',
+            sortIndex: 4,
             url: '/iot/device/Category',
             icon: 'icon-chanpinfenlei1',
             permissions: [{ permission: 'device-category', actions: ['query', 'save'] }],
@@ -261,12 +269,14 @@ export default [
         url: '/iot/link',
         icon: 'icon-yunweiguanli-1',
         permissions: [],
+        sortIndex: 4,
         children: [
           {
             code: 'link/DashBoard',
             name: '仪表盘',
             parentId: '1-4',
             id: '1-4-1',
+            sortIndex: 1,
             url: '/iot/link/dashboard',
             icon: 'icon-keshihua',
             permissions: [
@@ -279,6 +289,7 @@ export default [
             name: '设备接入网关',
             parentId: '1-4',
             id: '1-4-2',
+            sortIndex: 2,
             url: '/iot/link/accessConfig',
             icon: 'icon-wangguanzishebei',
             permissions: [
@@ -347,6 +358,7 @@ export default [
             name: '协议管理',
             parentId: '1-4',
             id: '1-4-3',
+            sortIndex: 3,
             url: '/iot/link/protocol',
             icon: 'icon-tongzhiguanli',
             permissions: [
@@ -400,6 +412,7 @@ export default [
             name: '日志管理',
             parentId: '1-4',
             id: '1-4-4',
+            sortIndex: 4,
             url: '/iot/link/Log',
             icon: 'icon-rizhifuwu',
             permissions: [
@@ -422,6 +435,7 @@ export default [
             name: '网络组件',
             parentId: '1-4',
             id: '1-4-5',
+            sortIndex: 5,
             url: '/iot/link/type',
             icon: 'icon-wangluozujian',
             permissions: [{ permission: 'network-config', actions: ['query', 'delete'] }],
@@ -460,6 +474,7 @@ export default [
             name: '证书管理',
             parentId: '1-4',
             id: '1-4-6',
+            sortIndex: 6,
             url: '/iot/link/Certificate',
             icon: 'icon-rizhifuwu',
             permissions: [],
@@ -486,6 +501,7 @@ export default [
             name: '流媒体服务',
             parentId: '1-4',
             id: '1-4-7',
+            sortIndex: 7,
             url: '/iot/link/Stream',
             icon: 'icon-xuanzetongdao1',
             permissions: [{ permission: 'media-server', actions: ['query', 'save', 'delete'] }],
@@ -517,6 +533,7 @@ export default [
             name: '通道配置',
             parentId: '1-4',
             id: '1-4-8',
+            sortIndex: 8,
             url: '/iot/link/Channel',
             icon: 'icon-zidingyiguize',
             permissions: [],
@@ -526,6 +543,7 @@ export default [
                 name: 'OPC UA',
                 parentId: '1-4-8',
                 id: '1-4-8-1',
+                sortIndex: 1,
                 url: '/iot/link/Channel/Opcua',
                 icon: 'icon-zhilianshebei',
                 permissions: [
@@ -585,6 +603,7 @@ export default [
                 name: 'Modbus',
                 parentId: '1-4-8',
                 id: '1-4-8-2',
+                sortIndex: 2,
                 url: '/iot/link/Channel/Modbus',
                 icon: 'icon-changjingliandong',
                 permissions: [],
@@ -623,6 +642,7 @@ export default [
             name: '远程升级',
             parentId: '1-4',
             id: '1-4-9',
+            sortIndex: 9,
             url: '/iot/link/firmware',
             icon: 'icon-wangluozujian',
             permissions: [
@@ -665,6 +685,7 @@ export default [
         name: '告警中心',
         parentId: '1',
         id: '1-5',
+        sortIndex: 1,
         url: '/iot/Alarm',
         icon: 'icon-zidingyiguize',
         permissions: [],
@@ -675,6 +696,7 @@ export default [
             name: '仪表盘',
             parentId: '1-5',
             id: '1-5-1',
+            sortIndex: 1,
             url: '/iot/Alarm/dashboard',
             icon: 'icon-shujumoni',
             permissions: [
@@ -689,6 +711,7 @@ export default [
             name: '基础配置',
             parentId: '1-5',
             id: '1-5-3',
+            sortIndex: 2,
             url: '/iot/Alarm/Config',
             icon: 'icon-chajianguanli',
             permissions: [{ permission: 'alarm-config', actions: ['query', 'save', 'delete'] }],
@@ -708,6 +731,7 @@ export default [
             name: '告警配置',
             parentId: '1-5',
             id: '1-5-2',
+            sortIndex: 3,
             url: '/iot/Alarm/Configuration',
             icon: 'icon-chajianguanli',
             permissions: [
@@ -755,6 +779,7 @@ export default [
             name: '告警记录',
             parentId: '1-5',
             id: '1-5-4',
+            sortIndex: 4,
             url: '/iot/Alarm/Log',
             icon: 'icon-changjingliandong',
             permissions: [{ permission: 'alarm-record', actions: ['query', 'save'] }],
@@ -779,6 +804,7 @@ export default [
         name: '北向输出',
         parentId: '1',
         id: '1-6',
+        sortIndex: 6,
         url: '/iot/northbound',
         icon: 'icon-yunyunjieru',
         permissions: [],
@@ -789,6 +815,7 @@ export default [
             name: 'DuerOS',
             parentId: '1-6',
             id: '1-6-1',
+            sortIndex: 1,
             url: '/iot/northbound/DuerOS',
             icon: 'icon-yunyunjieru',
             permissions: [],
@@ -822,6 +849,7 @@ export default [
             name: '阿里云',
             parentId: '1-6',
             id: '1-6-2',
+            sortIndex: 2,
             url: '/iot/northbound/AliCloud',
             icon: 'icon-yunyunjieru',
             permissions: [],
@@ -856,6 +884,7 @@ export default [
         name: '规则引擎',
         parentId: '1',
         id: '1-7',
+        sortIndex: 7,
         url: '/iot/rule-engine',
         icon: 'icon-zidingyiguize',
         permissions: [],
@@ -866,6 +895,7 @@ export default [
             name: '规则编排',
             parentId: '1-7',
             id: '1-7-1',
+            sortIndex: 1,
             url: '/iot/rule-engine/Instance',
             icon: 'icon-changjingliandong',
             permissions: [
@@ -917,6 +947,7 @@ export default [
             name: '场景联动',
             parentId: '1-7',
             id: '1-7-2',
+            sortIndex: 2,
             url: '/iot/rule-engine/scene',
             icon: 'icon-yunweiguanli-1',
             permissions: [{ permission: 'rule-scene', actions: ['query', 'save', 'delete'] }],
@@ -955,6 +986,7 @@ export default [
     id: '2',
     url: '/media',
     icon: 'icon-shipinwangguan',
+    sortIndex: 2,
     permissions: [],
     buttons: [],
     children: [
@@ -963,6 +995,7 @@ export default [
         name: '首页',
         parentId: '2',
         id: '2-1',
+        sortIndex: 1,
         url: '/media/home',
         icon: 'icon-zhihuishequ',
         permissions: [],
@@ -973,6 +1006,7 @@ export default [
         name: '仪表盘',
         parentId: '2',
         id: '2-2',
+        sortIndex: 2,
         url: '/media/dashboard',
         icon: 'icon-keshihua',
         permissions: [],
@@ -983,6 +1017,7 @@ export default [
         name: '视频设备',
         parentId: '2',
         id: '2-3',
+        sortIndex: 3,
         url: '/media/device',
         icon: 'icon-keshihua',
         permissions: [
@@ -1047,6 +1082,7 @@ export default [
         name: '分屏展示',
         parentId: '2',
         id: '2-4',
+        sortIndex: 4,
         url: '/media/SplitScreen',
         icon: 'icon-fenpingzhanshi1',
         permissions: [
@@ -1069,6 +1105,7 @@ export default [
         name: '国标级联',
         parentId: '2',
         id: '2-5',
+        sortIndex: 5,
         url: '/media/Cascade',
         icon: 'icon-guojijilian',
         permissions: [
@@ -1140,6 +1177,7 @@ export default [
     id: '3',
     url: '/system',
     icon: 'icon-xitongguanli1',
+    sortIndex: 3,
     permissions: [{ permission: 'menu', actions: ['query', 'save', 'grant', 'delete'] }],
     buttons: [],
     children: [
@@ -1148,6 +1186,7 @@ export default [
         name: '基础配置',
         parentId: '3',
         id: '3-1',
+        sortIndex: 1,
         url: '/system/Basis',
         icon: 'icon-shezhi',
         permissions: [
@@ -1167,6 +1206,7 @@ export default [
         name: '用户管理',
         parentId: '3',
         id: '3-2',
+        sortIndex: 2,
         url: '/system/user',
         icon: 'icon-yonghuguanli',
         permissions: [
@@ -1223,9 +1263,22 @@ export default [
         name: '部门管理',
         parentId: '3',
         id: '3-3',
+        sortIndex: 3,
         url: '/system/Department',
         icon: 'icon-bumenguanli',
         permissions: [
+
+          { permission: 'assets-bind', actions: ['bind', 'unbind', 'query', 'permission'] },
+          { permission: 'role', actions: ['query', 'save', 'delete'] },
+          { permission: 'device-category', actions: ['query', 'save', 'delete'] },
+          { permission: 'device-instance', actions: ['query', 'save', 'delete'] },
+          {
+            permission: 'user',
+            actions: ['query', 'save', 'update-self-info', 'update-self-pwd', 'delete'],
+          },
+          { permission: 'device-product', actions: ['query', 'save', 'delete'] },
+        ],
+        buttons: [
           {
             id: 'view',
             name: '查看',
@@ -1265,23 +1318,13 @@ export default [
             permissions: [{ permission: 'organization', actions: ['query', 'save'] }],
           },
         ],
-        buttons: [
-          { permission: 'assets-bind', actions: ['bind', 'unbind', 'query', 'permission'] },
-          { permission: 'role', actions: ['query', 'save', 'delete'] },
-          { permission: 'device-category', actions: ['query', 'save', 'delete'] },
-          { permission: 'device-instance', actions: ['query', 'save', 'delete'] },
-          {
-            permission: 'user',
-            actions: ['query', 'save', 'update-self-info', 'update-self-pwd', 'delete'],
-          },
-          { permission: 'device-product', actions: ['query', 'save', 'delete'] },
-        ],
       },
       {
         code: 'system/Role',
         name: '角色管理',
         parentId: '3',
         id: '3-4',
+        sortIndex: 4,
         url: '/system/Role',
         icon: 'icon-jiaoseguanli',
         permissions: [
@@ -1324,6 +1367,7 @@ export default [
         name: '菜单管理',
         parentId: '3',
         id: '3-5',
+        sortIndex: 5,
         url: '/system/Menu',
         icon: 'icon-caidanguanli',
         permissions: [
@@ -1376,6 +1420,7 @@ export default [
         name: '权限管理',
         parentId: '3',
         id: '3-6',
+        sortIndex: 6,
         url: '/system/Permission',
         icon: 'icon-quanxianguanli',
         permissions: [
@@ -1430,6 +1475,7 @@ export default [
         name: '第三方平台',
         parentId: '3',
         id: '3-7',
+        sortIndex: 7,
         url: '/system/platforms',
         icon: 'icon-xitongguanli1',
         permissions: [{ permission: 'open-api', actions: ['query', 'save', 'delete'] }],
@@ -1462,6 +1508,7 @@ export default [
         name: '关系配置',
         parentId: '3',
         id: '3-8',
+        sortIndex: 8,
         url: '/system/Relationship',
         icon: 'icon-renyuan',
         permissions: [{ permission: 'relation', actions: ['query', 'save', 'delete'] }],
@@ -1489,6 +1536,7 @@ export default [
         name: '数据源管理',
         parentId: '3',
         id: '3-9',
+        sortIndex: 9,
         url: '/system/DataSource',
         icon: 'icon-shebei',
         permissions: [],
@@ -1525,6 +1573,7 @@ export default [
         name: 'API配置',
         parentId: '3',
         id: '3-10',
+        sortIndex: 10,
         url: '/system/Api',
         icon: 'icon-rizhifuwu',
         permissions: [{ permission: 'open-api', actions: ['query'] }],
