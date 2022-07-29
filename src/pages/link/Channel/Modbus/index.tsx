@@ -136,7 +136,7 @@ const NewModbus = () => {
             }
           }}
         >
-          <Ellipsis title={currentData[record?.id] || '-'} />
+          <Ellipsis title={currentData[record?.id] || ''} />
         </a>
       ),
     },
@@ -146,7 +146,7 @@ const NewModbus = () => {
       render: (record: any) => (
         <>
           {record.state.value === 'disabled' ? (
-            '-'
+            ''
           ) : (
             <>
               <Badge
@@ -304,7 +304,6 @@ const NewModbus = () => {
           setFilterList(res.result);
           setActiveKey(res.result?.[0]?.id);
           masterId.current = res.result?.[0]?.id;
-          console.log(masterId.current);
         }
       });
   };
@@ -348,7 +347,6 @@ const NewModbus = () => {
         const { pointId, hex } = payload;
         current[pointId] = hex;
         setCurrentData({ ...current });
-        console.log(current);
       });
     return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [pointList]);
@@ -381,7 +379,7 @@ const NewModbus = () => {
                 isPermission={permission.add}
                 key="add"
                 icon={<PlusOutlined />}
-                type="default"
+                type="primary"
                 style={{ width: '100%', marginTop: 16, marginBottom: 16 }}
               >
                 新增
@@ -480,7 +478,7 @@ const NewModbus = () => {
               columns={columns}
               rowKey="id"
               // dataSource={dataSoure}
-              scroll={{ x: 200 }}
+              // scroll={{ x: 200 }}
               search={false}
               headerTitle={
                 <>
@@ -568,7 +566,7 @@ const NewModbus = () => {
         visible={importVisible}
       />
       <Export
-        masterId={activeKey}
+        data={masterList}
         close={() => {
           setExportVisible(false);
           actionRef.current?.reload();

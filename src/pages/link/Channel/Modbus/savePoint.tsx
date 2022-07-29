@@ -44,7 +44,7 @@ const SavePoint = (props: Props) => {
 
   return (
     <Modal
-      title={props.data.id ? '编辑点位' : '新增点位'}
+      title={props.data.id ? '编辑数据点' : '新增数据点'}
       visible
       width="40vw"
       destroyOnClose
@@ -66,7 +66,10 @@ const SavePoint = (props: Props) => {
               label="名称"
               name="name"
               required
-              rules={[{ required: true, message: '名称必填' }]}
+              rules={[
+                { required: true, message: '名称必填' },
+                { max: 64, message: '最多可输入64个字符' },
+              ]}
             >
               <Input placeholder="请输入名称" />
             </Form.Item>
@@ -93,7 +96,7 @@ const SavePoint = (props: Props) => {
               name="unitId"
               required
               rules={[
-                { required: true, message: '从站ID' },
+                { required: true, message: '从站ID必填' },
                 ({}) => ({
                   validator(_, value) {
                     if (value !== 0 || /(^[1-9]\d*$)/.test(value)) {
@@ -134,7 +137,7 @@ const SavePoint = (props: Props) => {
             <Form.Item
               label="地址"
               name="address"
-              tooltip="要获取的对象地址"
+              tooltip="范围在0x0-0xFFFF"
               rules={[
                 { required: true, message: '请输入读取长度' },
                 ({}) => ({

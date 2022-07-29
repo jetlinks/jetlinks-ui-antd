@@ -505,7 +505,7 @@ export default (props: Props) => {
   return (
     <Card className="modbus" style={{ minHeight }}>
       {empty ? (
-        <Empty description={'暂无数据，请配置物模型'} />
+        <Empty description={'暂无数据，请配置物模型'} style={{ marginTop: '10%' }} />
       ) : (
         <>
           <div className="edit-top">
