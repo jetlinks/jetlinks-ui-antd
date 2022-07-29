@@ -57,8 +57,10 @@ const Debug = observer(() => {
             const value = (field as Field).value;
             const format = field.query('.value').take() as any;
             const _id = field.query('.id').take() as Field;
+
             switch (value) {
               case 'date':
+                // const a = variableRef.current?.find((i: any) => i.id === _id.value);
                 format.setComponent(DatePicker);
                 break;
               case 'string':
@@ -76,7 +78,6 @@ const Debug = observer(() => {
                 format.setComponent(Input);
                 break;
             }
-            console.log(variableRef.current);
             if (variableRef.current) {
               const a = variableRef.current?.find((i: any) => i.id === _id.value);
               const businessType = a?.expands?.businessType;

@@ -250,7 +250,7 @@ export default (props: ButtonsProps) => {
         search={false}
         columnEmptyText={''}
         pagination={false}
-        toolBarRender={() => [
+        headerTitle={[
           <PermissionButton
             onClick={() => {
               if (!props.data) {
@@ -272,102 +272,105 @@ export default (props: ButtonsProps) => {
           </PermissionButton>,
         ]}
       />
-      <Modal
-        maskClosable={false}
-        width={660}
-        visible={visible}
-        title={handleTitle()}
-        onOk={() => {
-          if (!disabled) {
-            saveData();
-          } else {
+      {
+        visible &&
+        <Modal
+          maskClosable={false}
+          width={660}
+          visible={visible}
+          title={handleTitle()}
+          onOk={() => {
+            if (!disabled) {
+              saveData();
+            } else {
+              resetForm();
+              setVisible(false);
+            }
+          }}
+          onCancel={() => {
             resetForm();
             setVisible(false);
-          }
-        }}
-        onCancel={() => {
-          resetForm();
-          setVisible(false);
-        }}
-        confirmLoading={loading}
-      >
-        <Form form={form} layout={'vertical'}>
-          <Form.Item
-            name="id"
-            label={intl.formatMessage({
-              id: 'pages.system.org.encoding',
-              defaultMessage: '编码',
-            })}
-            required={true}
-            rules={[
-              { required: true, message: '请输入编码' },
-              { max: 64, message: '最多可输入64个字符' },
-              {
-                pattern: /^[a-zA-Z0-9`!@#$%^&*()_+\-={}|\\\]\[;':",.\/<>?]+$/,
-                message: '请输入英文+数字+特殊字符（`!@#$%^&*()_+-={}|\\][;\':",./<>?）',
-              },
-              {
-                validator: (_, value, callback) => {
-                  if (!(!disabled && id) && buttonItems.some((item) => item.id === value)) {
-                    // 判断是否为新增
-                    callback('重复编码');
-                  }
-                  callback();
+          }}
+          confirmLoading={loading}
+        >
+          <Form form={form} layout={'vertical'}>
+            <Form.Item
+              name="id"
+              label={intl.formatMessage({
+                id: 'pages.system.org.encoding',
+                defaultMessage: '编码',
+              })}
+              required={true}
+              rules={[
+                { required: true, message: '请输入编码' },
+                { max: 64, message: '最多可输入64个字符' },
+                {
+                  pattern: /^[a-zA-Z0-9`!@#$%^&*()_+\-={}|\\\]\[;':",.\/<>?]+$/,
+                  message: '请输入英文+数字+特殊字符（`!@#$%^&*()_+-={}|\\][;\':",./<>?）',
                 },
-              },
-            ]}
-          >
-            <Input disabled={!!(disabled || id)} placeholder={'请输入编码'} />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label={intl.formatMessage({
-              id: 'pages.table.name',
-              defaultMessage: '名称',
-            })}
-            required={true}
-            rules={[
-              { required: true, message: '请输入名称' },
-              { max: 64, message: '最多可输入64个字符' },
-            ]}
-          >
-            <Input disabled={disabled} placeholder={'请输入名称'} />
-          </Form.Item>
-          <Form.Item
-            label={intl.formatMessage({
-              id: 'page.system.menu.permissions',
-              defaultMessage: '权限',
-            })}
-            required={true}
-          >
-            <Input
-              allowClear
-              onChange={debounce(filterThree, 500)}
-              style={{ width: 300, marginBottom: 12 }}
-              placeholder={'请输入权限名称'}
-            />
-            <Form.Item name="permissions" rules={[{ required: true, message: '请选择权限' }]}>
-              <Permission
-                title={intl.formatMessage({
-                  id: 'page.system.menu.permissions.operate',
-                  defaultMessage: '权限操作',
-                })}
-                disabled={disabled}
-                data={permissions}
-              />
+                {
+                  validator: (_, value, callback) => {
+                    if (!(!disabled && id) && buttonItems.some((item) => item.id === value)) {
+                      // 判断是否为新增
+                      callback('重复编码');
+                    }
+                    callback();
+                  },
+                },
+              ]}
+            >
+              <Input disabled={!!(disabled || id)} placeholder={'请输入编码'} />
             </Form.Item>
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label={intl.formatMessage({
-              id: 'pages.table.describe',
-              defaultMessage: '说明',
-            })}
-          >
-            <Input.TextArea disabled={disabled} placeholder={'请输入说明'} />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item
+              name="name"
+              label={intl.formatMessage({
+                id: 'pages.table.name',
+                defaultMessage: '名称',
+              })}
+              required={true}
+              rules={[
+                { required: true, message: '请输入名称' },
+                { max: 64, message: '最多可输入64个字符' },
+              ]}
+            >
+              <Input disabled={disabled} placeholder={'请输入名称'} />
+            </Form.Item>
+            <Form.Item
+              label={intl.formatMessage({
+                id: 'page.system.menu.permissions',
+                defaultMessage: '权限',
+              })}
+              required={true}
+            >
+              <Input
+                allowClear
+                onChange={debounce(filterThree, 500)}
+                style={{ width: 300, marginBottom: 12 }}
+                placeholder={'请输入权限名称'}
+              />
+              <Form.Item name="permissions" rules={[{ required: true, message: '请选择权限' }]}>
+                <Permission
+                  title={intl.formatMessage({
+                    id: 'page.system.menu.permissions.operate',
+                    defaultMessage: '权限操作',
+                  })}
+                  disabled={disabled}
+                  data={permissions}
+                />
+              </Form.Item>
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label={intl.formatMessage({
+                id: 'pages.table.describe',
+                defaultMessage: '说明',
+              })}
+            >
+              <Input.TextArea disabled={disabled} placeholder={'请输入说明'} />
+            </Form.Item>
+          </Form>
+        </Modal>
+      }
     </>
   );
 };

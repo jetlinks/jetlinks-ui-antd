@@ -51,7 +51,7 @@ const InitHome = () => {
           {/*</div>*/}
           <div className={styles.right}>
             <Spin spinning={loadings}>
-              <Collapse defaultActiveKey={['1', '2', '3', '4']}>
+              <Collapse defaultActiveKey={['1']} accordion>
                 <Collapse.Panel
                   header={
                     <div className={styles.collapseTitle}>

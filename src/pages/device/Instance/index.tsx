@@ -117,6 +117,21 @@ const Instance = () => {
     </Button>,
     <PermissionButton
       type={'link'}
+      onClick={() => {
+        setCurrent(record);
+        setVisible(true);
+      }}
+      tooltip={{
+        title: '编辑',
+      }}
+      style={{ padding: 0 }}
+      key={'edit'}
+      isPermission={permission.update}
+    >
+      <EditOutlined />
+    </PermissionButton>,
+    <PermissionButton
+      type={'link'}
       key={'state'}
       style={{ padding: 0 }}
       popConfirm={{

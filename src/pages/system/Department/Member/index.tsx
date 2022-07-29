@@ -140,7 +140,7 @@ const Member = observer((props: { parentId: string }) => {
             <Tooltip
               title={intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '解除绑定',
+                defaultMessage: '解绑',
               })}
             >
               <DisconnectOutlined />

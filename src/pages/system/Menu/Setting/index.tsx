@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import Tree from './tree';
 import './index.less';
-import { Button, message, Tooltip } from 'antd';
+import {Button, message, Modal, Tooltip} from 'antd';
 import BaseTreeData from './baseMenu';
 import { useEffect, useState } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -32,6 +32,7 @@ export default observer(() => {
   const { minHeight } = useDomFullHeight(`.menu-setting-warp`);
   const [baseMenu, setBaseMenu] = useState<any[]>(BaseTreeData);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const finedObject = (
     data: any[],
@@ -180,6 +181,19 @@ export default observer(() => {
 
   return (
     <PageContainer>
+      <Modal
+        title={'一键拷贝'}
+        visible={visible}
+        onOk={() => {
+          MenuSettingModel.menuData = cloneDeep(baseMenu);
+          setVisible(false)
+        }}
+        onCancel={() => {
+          setVisible(false)
+        }}
+      >
+        源数据将会覆盖当前的系统菜单数据，确定要一键拷贝吗？
+      </Modal>
       <div className={'menu-setting-warp'} style={{ minHeight }}>
         <div className={'menu-setting-tip'}>
           <ExclamationCircleOutlined />
@@ -199,7 +213,7 @@ export default observer(() => {
                   type={'primary'}
                   ghost
                   onClick={() => {
-                    MenuSettingModel.menuData = cloneDeep(baseMenu);
+                    setVisible(true)
                   }}
                 >
                   一键拷贝

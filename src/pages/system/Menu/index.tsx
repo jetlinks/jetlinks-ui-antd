@@ -261,7 +261,7 @@ export default observer(() => {
         search={false}
         params={param}
         request={async (params) => {
-          const response = await service.queryMenuThree({ ...params, paging: false });
+          const response = await service.queryMenuThree({ ...params, sorts: [{ name: 'sortIndex', order: 'asc'}], paging: false });
           return {
             code: response.message,
             result: {
@@ -290,7 +290,7 @@ export default observer(() => {
           </PermissionButton>,
           <PermissionButton
             style={{ marginLeft: 12 }}
-            isPermission={permission.action}
+            isPermission={permission.add}
             onClick={() => {
               history.push(getMenuPathByCode('system/Menu/Setting'));
             }}
