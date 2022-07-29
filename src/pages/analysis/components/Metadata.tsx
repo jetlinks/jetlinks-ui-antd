@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, Empty, Icon, Row, Spin } from 'antd';
+import { Button, Card, Col, Empty, Icon, Modal, Row, Spin } from 'antd';
 import styles from '../style.less';
 import apis from '@/services';
 import metatdataImg from '../img/metadata.png';
@@ -7,6 +7,12 @@ import protocolImg from '../img/protocol.png';
 import metadataItemImg from '../img/metadata-item.png';
 import procotolItemImg from '../img/protocol-item.png';
 import { router } from 'umi';
+import AceEditor from "react-ace";
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/snippets/json';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/theme-eclipse';
 
 const Metadata = ({ loading }: { loading: boolean; }) => {
 
@@ -14,6 +20,8 @@ const Metadata = ({ loading }: { loading: boolean; }) => {
     const [list, setList] = useState<any[]>([]);
     const [spinning, setSpinning] = useState<boolean>(false);
     const [spinning1, setSpinning1] = useState<boolean>(false);
+    const [visible, setVisible] = useState<boolean>(false);
+    const [current, setCurrent] = useState<string>('');
 
     useEffect(() => {
         setSpinning1(true)
@@ -27,14 +35,7 @@ const Metadata = ({ loading }: { loading: boolean; }) => {
         setSpinning(true);
         apis.deviceProdcut.queryNoPagin({ paging: false }).then(resp => {
             if (resp.status === 200) {
-                (resp?.result || []).some((item: any) => {
-                    const metadata = item?.metadata ? JSON.parse(item.metadata || '{}') : [];
-                    if (metadata?.properties && metadata.properties.length > 4) {
-                        setList(metadata?.properties);
-                        return true
-                    }
-                    return false;
-                })
+                setList(resp?.result);
             }
             setSpinning(false);
         })
@@ -68,7 +69,10 @@ const Metadata = ({ loading }: { loading: boolean; }) => {
                                             {
 
                                                 list.map(item => (
-                                                    <div key={item} className={styles.item}>
+                                                    <div className={styles.item} key={item.id} onClick={() => {
+                                                        setVisible(true);
+                                                        setCurrent(item?.metadata || '')
+                                                    }}>
                                                         <div className={styles.img}><img src={metadataItemImg} /></div>
                                                         <div className={styles.right}>
                                                             <div className={styles.title}>{item?.name}</div>
@@ -113,7 +117,7 @@ const Metadata = ({ loading }: { loading: boolean; }) => {
                                 {
                                     protocolList.length > 0 ?
                                         protocolList.slice(0, 6).map(item => (
-                                            <div key={item} className={styles.itemPro}>
+                                            <div key={item.id} className={styles.itemPro}>
                                                 <div className={styles.img}><img src={procotolItemImg} /></div>
                                                 <div className={styles.right}>
                                                     <div className={styles.title}>{item.name}</div>
@@ -129,6 +133,43 @@ const Metadata = ({ loading }: { loading: boolean; }) => {
                     </div>
                 </Card>
             </Col>
+            {
+                visible && !!current &&
+                <Modal
+                    title="物模型"
+                    visible
+                    onOk={() => {
+                        setVisible(false);
+                        setCurrent('')
+                    }}
+                    onCancel={() => {
+                        setVisible(false);
+                        setCurrent('')
+                    }}
+                >
+                    <AceEditor
+                        readOnly={true}
+                        mode='json'
+                        theme="eclipse"
+                        name="app_code_editor"
+                        fontSize={14}
+                        value={JSON.stringify(JSON.parse(current), null, 2)}
+                        showPrintMargin
+                        showGutter={false}
+                        wrapEnabled
+                        highlightActiveLine  //突出活动线
+                        enableSnippets  //启用代码段
+                        style={{ width: '100%', height: 400 }}
+                        setOptions={{
+                            enableBasicAutocompletion: true,   //启用基本自动完成功能
+                            enableLiveAutocompletion: true,   //启用实时自动完成功能 （比如：智能代码提示）
+                            enableSnippets: true,  //启用代码段
+                            showLineNumbers: true,
+                            tabSize: 2,
+                        }}
+                    />
+                </Modal>
+            }
         </Row>
     );
 };
