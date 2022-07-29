@@ -11,7 +11,7 @@ import { downloadFile } from '@/utils/util';
 interface Props {
   visible: boolean;
   close: () => void;
-  masterId?: any;
+  data: any;
 }
 
 const Export = (props: Props) => {
@@ -94,9 +94,13 @@ const Export = (props: Props) => {
   };
   const downloadTemplate = async () => {
     const values = (await form.submit()) as any;
+    const masterName = props.data.find((item: any) => item.id === values.masterId)?.name;
     if (values) {
       downloadFile(
         `/${SystemConst.API_BASE}/modbus/point/${values.masterId}/export.${values.fileType}`,
+        {
+          masterName: masterName,
+        },
       );
       close();
     }

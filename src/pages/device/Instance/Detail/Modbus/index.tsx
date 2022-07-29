@@ -376,7 +376,7 @@ export default (props: Props) => {
                 title: (
                   <>
                     点位名称
-                    <Tooltip title="名称(从站ID/地址/功能码))">
+                    <Tooltip title="名称(从站ID/地址/功能码)">
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </>
@@ -505,7 +505,7 @@ export default (props: Props) => {
   return (
     <Card className="modbus" style={{ minHeight }}>
       {empty ? (
-        <Empty description={'暂无数据，请配置物模型'} />
+        <Empty description={'暂无数据，请配置物模型'} style={{ marginTop: '10%' }} />
       ) : (
         <>
           <div className="edit-top">
