@@ -59,12 +59,23 @@ const Firmware = observer(() => {
       dataIndex: 'productName',
       valueType: 'select',
       request: () =>
-        service.queryProduct().then((resp: any) =>
-          (resp?.result || []).map((item: any) => ({
-            label: item.name,
-            value: item.name,
-          })),
-        ),
+        service
+          .queryProduct({
+            paging: false,
+            terms: [
+              {
+                column: 'state',
+                value: 1,
+              },
+            ],
+            sorts: [{ name: 'name', order: 'desc' }],
+          })
+          .then((resp: any) =>
+            (resp?.result || []).map((item: any) => ({
+              label: item.name,
+              value: item.name,
+            })),
+          ),
     },
     {
       title: intl.formatMessage({

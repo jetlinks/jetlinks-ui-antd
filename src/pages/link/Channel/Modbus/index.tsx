@@ -1,6 +1,6 @@
 import { Badge, Button, Card, Divider, Dropdown, Input, Menu, Modal } from 'antd';
 import { useDomFullHeight } from '@/hooks';
-import './index.less';
+import '../index.less';
 import SearchComponent from '@/components/SearchComponent';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import PermissionButton from '@/components/PermissionButton';
@@ -136,7 +136,7 @@ const NewModbus = () => {
             }
           }}
         >
-          <Ellipsis title={currentData[record?.id] || '-'} />
+          <Ellipsis title={currentData[record?.id] || ''} />
         </a>
       ),
     },
@@ -146,7 +146,7 @@ const NewModbus = () => {
       render: (record: any) => (
         <>
           {record.state.value === 'disabled' ? (
-            '-'
+            ''
           ) : (
             <>
               <Badge
@@ -304,7 +304,6 @@ const NewModbus = () => {
           setFilterList(res.result);
           setActiveKey(res.result?.[0]?.id);
           masterId.current = res.result?.[0]?.id;
-          console.log(masterId.current);
         }
       });
   };
@@ -348,7 +347,6 @@ const NewModbus = () => {
         const { pointId, hex } = payload;
         current[pointId] = hex;
         setCurrentData({ ...current });
-        console.log(current);
       });
     return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [pointList]);
@@ -381,7 +379,7 @@ const NewModbus = () => {
                 isPermission={permission.add}
                 key="add"
                 icon={<PlusOutlined />}
-                type="default"
+                type="primary"
                 style={{ width: '100%', marginTop: 16, marginBottom: 16 }}
               >
                 新增
@@ -466,76 +464,77 @@ const NewModbus = () => {
             </div>
           </div>
           <div className="item-right">
-            <SearchComponent<any>
-              field={columns}
-              target="modbus"
-              onSearch={(value) => {
-                actionRef.current?.reset?.();
-                setParam(value);
-              }}
-            />
-            <ProTable
-              actionRef={actionRef}
-              params={param}
-              columns={columns}
-              rowKey="id"
-              // dataSource={dataSoure}
-              scroll={{ x: 200 }}
-              search={false}
-              headerTitle={
-                <>
-                  <PermissionButton
-                    onClick={() => {
-                      setPointDetail({});
-                      setVisiblePoint(true);
-                    }}
-                    isPermission={permission.add}
-                    key="add"
-                    icon={<PlusOutlined />}
-                    type="primary"
-                    style={{ marginRight: 10 }}
-                  >
-                    {intl.formatMessage({
-                      id: 'pages.data.option.add',
-                      defaultMessage: '新增',
-                    })}
-                  </PermissionButton>
-                  <Dropdown key={'more'} overlay={menu} placement="bottom">
-                    <Button>批量操作</Button>
-                  </Dropdown>
-                </>
-              }
-              request={async (params) => {
-                if (masterId.current) {
-                  const res = await service.queryPoint(masterId.current, {
-                    ...params,
-                    sorts: [{ name: 'createTime', order: 'desc' }],
-                  });
-                  setPointList(res.result.data);
-                  return {
-                    code: res.message,
-                    result: {
-                      data: res.result.data,
-                      pageIndex: res.result.pageIndex,
-                      pageSize: res.result.pageSize,
-                      total: res.result.total,
-                    },
-                    status: res.status,
-                  };
-                } else {
-                  return {
-                    code: 200,
-                    result: {
-                      data: [],
-                      pageIndex: 0,
-                      pageSize: 0,
-                      total: 0,
-                    },
-                    status: 200,
-                  };
+            <div style={{ width: '100%' }}>
+              <SearchComponent<any>
+                field={columns}
+                target="modbus"
+                onSearch={(value) => {
+                  actionRef.current?.reset?.();
+                  setParam(value);
+                }}
+              />
+              <ProTable
+                actionRef={actionRef}
+                params={param}
+                columns={columns}
+                rowKey="id"
+                scroll={{ x: 1000 }}
+                search={false}
+                headerTitle={
+                  <>
+                    <PermissionButton
+                      onClick={() => {
+                        setPointDetail({});
+                        setVisiblePoint(true);
+                      }}
+                      isPermission={permission.add}
+                      key="add"
+                      icon={<PlusOutlined />}
+                      type="primary"
+                      style={{ marginRight: 10 }}
+                    >
+                      {intl.formatMessage({
+                        id: 'pages.data.option.add',
+                        defaultMessage: '新增',
+                      })}
+                    </PermissionButton>
+                    <Dropdown key={'more'} overlay={menu} placement="bottom">
+                      <Button>批量操作</Button>
+                    </Dropdown>
+                  </>
                 }
-              }}
-            />
+                request={async (params) => {
+                  if (masterId.current) {
+                    const res = await service.queryPoint(masterId.current, {
+                      ...params,
+                      sorts: [{ name: 'createTime', order: 'desc' }],
+                    });
+                    setPointList(res.result.data);
+                    return {
+                      code: res.message,
+                      result: {
+                        data: res.result.data,
+                        pageIndex: res.result.pageIndex,
+                        pageSize: res.result.pageSize,
+                        total: res.result.total,
+                      },
+                      status: res.status,
+                    };
+                  } else {
+                    return {
+                      code: 200,
+                      result: {
+                        data: [],
+                        pageIndex: 0,
+                        pageSize: 0,
+                        total: 0,
+                      },
+                      status: 200,
+                    };
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
       </Card>
@@ -568,7 +567,7 @@ const NewModbus = () => {
         visible={importVisible}
       />
       <Export
-        masterId={activeKey}
+        data={masterList}
         close={() => {
           setExportVisible(false);
           actionRef.current?.reload();

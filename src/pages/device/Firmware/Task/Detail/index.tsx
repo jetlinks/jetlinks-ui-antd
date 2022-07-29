@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { observer } from '@formily/react';
-import { Badge, Card, Col, message, Popconfirm, Row } from 'antd';
+import { Badge, Card, message, Popconfirm } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
@@ -21,17 +21,20 @@ colorMap.set('waiting', '#FF9000');
 colorMap.set('loading', '#4293FF');
 colorMap.set('finish', '#24B276');
 colorMap.set('error', '#F76F5D');
+colorMap.set('canceled', '#999');
 
 const state = model<{
   waiting: number;
   loading: number;
   finish: number;
   error: number;
+  canceled: number;
 }>({
   waiting: 0,
-  loading: 2,
-  finish: 4,
+  loading: 0,
+  finish: 0,
   error: 0,
+  canceled: 0,
 });
 
 const Detail = observer(() => {
@@ -65,6 +68,11 @@ const Detail = observer(() => {
       key: 'error',
       name: '升级失败',
       img: require('/public/images/firmware/error.png'),
+    },
+    {
+      key: 'canceled',
+      name: '已停止',
+      img: require('/public/images/firmware/cancel.png'),
     },
   ];
 
@@ -140,11 +148,28 @@ const Detail = observer(() => {
     }
   };
 
+  const queryCancel = async () => {
+    const resp = await service.historyCount({
+      terms: [
+        {
+          terms: [
+            { column: 'taskId', value: params.id },
+            { column: 'state', value: 'canceled' },
+          ],
+        },
+      ],
+    });
+    if (resp.status === 200) {
+      state.canceled = resp?.result || 0;
+    }
+  };
+
   const handleSearch = () => {
     queryWaiting();
     queryProcessing();
     querySuccess();
     queryFailed();
+    queryCancel();
   };
 
   useEffect(() => {
@@ -188,6 +213,7 @@ const Detail = observer(() => {
       title: '进度',
       ellipsis: true,
       dataIndex: 'progress',
+      valueType: 'digit',
     },
     {
       title: '状态',
@@ -277,9 +303,9 @@ const Detail = observer(() => {
   return (
     <PageContainer>
       <Card style={{ marginBottom: 20 }}>
-        <Row gutter={24}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 24 }}>
           {arr.map((item) => (
-            <Col span={6} key={item.key}>
+            <div key={item.key}>
               <div className={styles.firmwareDetailCard}>
                 <div className={styles.firmwareDetailCardHeader}>
                   <div className={styles.firmwareDetailCardTitle}>
@@ -313,6 +339,8 @@ const Detail = observer(() => {
                             querySuccess();
                           } else if (item.key === 'loading') {
                             queryProcessing();
+                          } else if (item.key === 'canceled') {
+                            queryCancel();
                           } else {
                             queryFailed();
                           }
@@ -331,9 +359,9 @@ const Detail = observer(() => {
                   <img style={{ width: '100%' }} src={item.img} />
                 </div>
               </div>
-            </Col>
+            </div>
           ))}
-        </Row>
+        </div>
       </Card>
       <SearchComponent<FirmwareItem>
         field={columns}

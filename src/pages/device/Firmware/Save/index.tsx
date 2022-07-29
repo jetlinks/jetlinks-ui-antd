@@ -13,7 +13,6 @@ import { useRef } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { onlyMessage } from '@/utils/util';
 import RemoveData from './RemoveData';
-import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
   data?: FirmwareItem;
@@ -58,12 +57,17 @@ const Save = (props: Props) => {
     );
   };
   const loadData = async () =>
-    service.queryProduct(
-      encodeQuery({
-        terms: { state: 1 },
-        sorts: { createTime: 'desc' },
-      }),
-    );
+    service.queryProduct({
+      paging: false,
+      terms: [
+        {
+          column: 'state',
+          value: 1,
+        },
+      ],
+      sorts: [{ name: 'name', order: 'desc' }],
+    });
+
   const SchemaField = createSchemaField({
     components: {
       FormItem,

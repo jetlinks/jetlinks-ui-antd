@@ -93,10 +93,12 @@ const Configuration = () => {
       request: async () => {
         const res = await service.queryDefaultLevel();
         if (res.status === 200) {
-          return (res?.result?.levels || []).map((item: any) => ({
-            label: item.title,
-            value: item.level,
-          }));
+          return (res?.result?.levels || [])
+            .filter((i: any) => i?.level && i?.title)
+            .map((item: any) => ({
+              label: item.title,
+              value: item.level,
+            }));
         }
         return [];
       },

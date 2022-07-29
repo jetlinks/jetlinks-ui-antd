@@ -4,9 +4,7 @@ import { Form, FormGrid, FormItem, Input, NumberPicker, Select } from '@formily/
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/link/Channel/Modbus';
 import { Modal } from '@/components';
-import { useEffect } from 'react';
 import { onlyMessage } from '@/utils/util';
-// import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: any;
@@ -143,9 +141,6 @@ const SaveChannel = (props: Props) => {
     }
   };
 
-  useEffect(() => {
-    console.log(props.data.id);
-  }, []);
   return (
     <Modal
       title={props.data.id ? '编辑通道' : '新增通道'}

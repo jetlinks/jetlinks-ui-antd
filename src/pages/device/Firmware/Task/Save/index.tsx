@@ -5,7 +5,7 @@ import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Radio } from '@f
 import { createForm, onFieldValueChange, onFormInit } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/device/Firmware';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { onlyMessage } from '@/utils/util';
 import FSelectDevices from '@/components/FSelectDevices';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
@@ -21,35 +21,39 @@ interface Props {
 const Save = (props: Props) => {
   const { data, close, visible, ids } = props;
 
-  const form = createForm({
-    validateFirst: true,
-    initialValues: data,
-    effects() {
-      onFormInit(async (form1) => {
-        if (!data?.id) return;
-        form1.setInitialValues({ ...data, upload: { url: data?.url } });
-      });
-      onFieldValueChange('mode', async (field) => {
-        field
-          .query('timeoutSeconds')
-          .take()
-          .setDecoratorProps({
-            gridSpan: field.value === 'push' ? 1 : 2,
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: data,
+        effects() {
+          onFormInit(async (form1) => {
+            if (!data?.id) return;
+            form1.setInitialValues({ ...data, upload: { url: data?.url } });
           });
-        field
-          .query('responseTimeoutSeconds')
-          .take()
-          .setDecoratorProps({
-            gridSpan: field.value === 'push' ? 1 : 2,
+          onFieldValueChange('mode', async (field) => {
+            field
+              .query('timeoutSeconds')
+              .take()
+              .setDecoratorProps({
+                gridSpan: field.value === 'push' ? 1 : 2,
+              });
+            field
+              .query('responseTimeoutSeconds')
+              .take()
+              .setDecoratorProps({
+                gridSpan: field.value === 'push' ? 1 : 2,
+              });
           });
-      });
-      onFieldValueChange('releaseType', async (field) => {
-        field.setDecoratorProps({
-          gridSpan: field.value === 'all' ? 2 : 1,
-        });
-      });
-    },
-  });
+          onFieldValueChange('releaseType', async (field) => {
+            field.setDecoratorProps({
+              gridSpan: field.value === 'all' ? 2 : 1,
+            });
+          });
+        },
+      }),
+    [],
+  );
 
   const devices = useRef<DeviceInstance[]>([]);
 

@@ -1,6 +1,5 @@
 import { Col, message, Row, Tooltip } from 'antd';
 import Guide from '../components/Guide';
-import { PermissionButton } from '@/components';
 import Statistics from '../components/Statistics';
 import Pie from '@/pages/home/components/Pie';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
@@ -16,10 +15,9 @@ const Ops = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const history = useHistory();
 
-  const productPermission = PermissionButton.usePermission('device/Product').permission;
-  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
-  const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
-
+  const accessPermission = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
+  const logPermission = getMenuPathByCode(MENUS_CODE['Log']);
+  const linkPermission = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
   const [cpuValue, setCpuValue] = useState<number>(0);
   const [jvmValue, setJvmValue] = useState<number>(0);
 
@@ -57,30 +55,34 @@ const Ops = () => {
       jvmRealTime?.unsubscribe();
     };
   }, []);
+
   const guideOpsList: any[] = [
     {
       key: 'product',
       name: '设备接入配置',
       english: 'STEP1',
-      auth: !!productPermission.add,
-      url: 'device/Product',
-      param: '?save=true',
+      auth: !!accessPermission,
+      url: accessPermission,
     },
     {
       key: 'device',
       name: '日志排查',
       english: 'STEP2',
-      auth: !!devicePermission.add,
-      url: 'device/Instance',
-      param: '?save=true',
+      auth: !!logPermission,
+      url: logPermission,
+      param: {
+        key: 'system',
+      },
     },
     {
       key: 'rule-engine',
       name: '实时监控',
       english: 'STEP3',
-      auth: !!rulePermission.add,
-      url: 'rule-engine/Instance',
-      param: '?save=true',
+      auth: !!linkPermission,
+      url: linkPermission,
+      param: {
+        save: true,
+      },
     },
   ];
   return (

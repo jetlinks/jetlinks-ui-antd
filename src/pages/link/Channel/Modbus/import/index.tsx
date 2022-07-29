@@ -15,10 +15,10 @@ interface Props {
   masterId: any;
 }
 const FileFormat = (props: any) => {
-  const [data, setData] = useState<{ autoDeploy: boolean; fileType: 'xlsx' | 'csv' }>({
-    autoDeploy: false,
+  const [data, setData] = useState<{ fileType: 'xlsx' | 'csv' }>({
     fileType: 'xlsx',
   });
+
   return (
     <Space>
       <Radio.Group
@@ -47,6 +47,7 @@ const NormalUpload = (props: any) => {
   const [count, setCount] = useState<number>(0);
   const [errMessage, setErrMessage] = useState<string>('');
   const [errorUrl, setErrorUrl] = useState<string>('');
+  const [fileName, setFileName] = useState<any>('');
 
   const submitData = async (fileUrl: string) => {
     setErrorUrl(fileUrl);
@@ -92,6 +93,10 @@ const NormalUpload = (props: any) => {
           }}
           onChange={async (info) => {
             if (info.file.status === 'done') {
+              console.log(info.file);
+              const name = info.file.name.split('.')?.[0];
+              setFileName(name);
+              console.log(name);
               const resp: any = info.file.response || { result: '' };
               await submitData(resp?.result || '');
             }
@@ -135,7 +140,22 @@ const NormalUpload = (props: any) => {
               <>
                 <Badge status="error" text="失败" />
                 <span style={{ marginLeft: 15 }}>{errMessage}</span>
-                <a href={errorUrl} style={{ marginLeft: 15 }}>
+                <a
+                  style={{ marginLeft: 15 }}
+                  onClick={() => {
+                    const parms = new XMLHttpRequest();
+                    parms.open('GET', errorUrl, true);
+                    parms.responseType = 'blob';
+                    parms.onload = () => {
+                      const url = window.URL.createObjectURL(parms.response);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `${fileName}-${errMessage}`;
+                      a.click();
+                    };
+                    parms.send();
+                  }}
+                >
                   下载
                 </a>
               </>

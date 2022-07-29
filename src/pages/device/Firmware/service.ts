@@ -56,9 +56,9 @@ class Service extends BaseService<FirmwareItem> {
     });
 
   queryProduct = (params?: any) =>
-    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
-      method: 'GET',
-      params,
+    request(`/${SystemConst.API_BASE}/device/product/detail/_query/no-paging`, {
+      method: 'POST',
+      data: params,
     });
 
   queryDevice = () =>
