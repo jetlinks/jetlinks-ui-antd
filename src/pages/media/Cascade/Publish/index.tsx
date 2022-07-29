@@ -21,21 +21,21 @@ const Publish = (props: Props) => {
 
   const getData = () => {
     let dt = 0;
+    let et = 0;
     const source = new EventSourcePolyfill(activeAPI);
     source.onmessage = (e: any) => {
       const res = JSON.parse(e.data);
-      if (res.success) {
-        const temp = res.result.total;
-        dt += temp;
+      if (res.successful) {
+        dt += 1;
         setCount(dt);
-        // setCountErr(0);
       } else {
-        setCountErr(0);
+        et += 1;
+        setCountErr(et);
+        setFlag(false);
         setErrMessage(res.message);
       }
     };
     source.onerror = () => {
-      setFlag(false);
       source.close();
     };
     source.onopen = () => {};
@@ -72,7 +72,7 @@ const Publish = (props: Props) => {
         <Col span={8}>推送通道数量: {props.data?.count || 0}</Col>
         <Col span={8}>已推送通道数量: {countErr + count}</Col>
       </Row>
-      {flag && (
+      {!flag && (
         <div>
           <Input.TextArea rows={10} value={errMessage} />
         </div>

@@ -51,10 +51,12 @@ const Save = (props: Props) => {
   const getLevel = () => {
     return ConfigService.queryLevel().then((resp) => {
       if (resp.status === 200) {
-        return resp.result?.levels?.map((item: { level: number; title: string }) => ({
-          label: createImageLabel(LevelMap[item.level], item.title),
-          value: item.level,
-        }));
+        return resp.result?.levels
+          ?.filter((i: any) => i?.level && i?.title)
+          .map((item: { level: number; title: string }) => ({
+            label: createImageLabel(LevelMap[item.level], item.title),
+            value: item.level,
+          }));
       }
     });
   };
