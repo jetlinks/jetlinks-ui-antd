@@ -304,7 +304,7 @@ const Detail = observer(() => {
             'x-visible': id === 'voice' || id === 'sms',
             properties: {
               regionId: {
-                title: 'regionId',
+                title: 'RegionId',
                 required: true,
                 'x-component-props': {
                   placeholder: '请输入regionId',
@@ -313,7 +313,7 @@ const Detail = observer(() => {
                 'x-decorator': 'FormItem',
               },
               accessKeyId: {
-                title: 'accessKeyId',
+                title: 'AccessKeyId',
                 required: true,
                 'x-component-props': {
                   placeholder: '请输入accessKeyId',
@@ -322,7 +322,7 @@ const Detail = observer(() => {
                 'x-decorator': 'FormItem',
               },
               secret: {
-                title: 'secret',
+                title: 'Secret',
                 required: true,
                 'x-component-props': {
                   placeholder: '请输入secret',

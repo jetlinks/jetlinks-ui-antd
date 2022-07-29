@@ -1,7 +1,7 @@
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
 import { createForm, Field, onFieldReact, FormPath, onFieldChange } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
-import { Badge, Card, Input, Tooltip } from 'antd';
+import { Badge, Card, Empty, Input, Tooltip } from 'antd';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import './index.less';
@@ -25,6 +25,7 @@ export default (props: Props) => {
   const [masterList, setMasterList] = useState<any>([]);
   const [typeList, setTypeList] = useState<any>([]);
   const [reload, setReload] = useState<string>('');
+  const [empty, setEmpty] = useState<boolean>(false);
 
   //数据类型长度
   const lengthMap = new Map();
@@ -212,7 +213,6 @@ export default (props: Props) => {
       });
     service.dataType().then((res) => {
       if (res.status === 200) {
-        console.log(res.result);
         const items = res.result.map((item: any) => ({
           label: item.name,
           value: item.id,
@@ -227,22 +227,26 @@ export default (props: Props) => {
       metadataName: `${item.name}(${item.id})`,
       metadataType: 'property',
     }));
-    service.getDevicePoint(data.id).then((res) => {
-      if (res.status === 200) {
-        // console.log(res.result)
-        const array = res.result.reduce((x: any, y: any) => {
-          const metadataId = metadata.find((item: any) => item.metadataId === y.metadataId);
-          if (metadataId) {
-            Object.assign(metadataId, y);
-          } else {
-            x.push(y);
-          }
-          return x;
-        }, metadata);
-        setProperties(array);
-        setFilterList(array);
-      }
-    });
+    if (metadata && metadata.length !== 0) {
+      service.getDevicePoint(data.id).then((res) => {
+        if (res.status === 200) {
+          // console.log(res.result)
+          const array = res.result.reduce((x: any, y: any) => {
+            const metadataId = metadata.find((item: any) => item.metadataId === y.metadataId);
+            if (metadataId) {
+              Object.assign(metadataId, y);
+            } else {
+              x.push(y);
+            }
+            return x;
+          }, metadata);
+          setProperties(array);
+          setFilterList(array);
+        }
+      });
+    } else {
+      setEmpty(true);
+    }
   }, [reload]);
 
   const SchemaField = createSchemaField({
@@ -500,43 +504,48 @@ export default (props: Props) => {
 
   return (
     <Card className="modbus" style={{ minHeight }}>
-      <div className="edit-top">
-        <Input.Search
-          placeholder="请输入属性"
-          allowClear
-          style={{ width: 190 }}
-          onSearch={(value) => {
-            console.log(value);
-            if (value) {
-              const items = properties.filter((item: any) => item.metadataId.match(value));
-              setFilterList(items);
-            } else {
-              setFilterList(properties);
-            }
-          }}
-        />
-        <PermissionButton
-          onClick={async () => {
-            const value: any = await form.submit();
-            const items = value.array.filter((item: any) => item.collectorId);
-            save(items);
-          }}
-          isPermission={permission.add}
-          key="add"
-          type="primary"
-          style={{ marginRight: 10 }}
-        >
-          保存
-        </PermissionButton>
-      </div>
-      <div className="edit-table">
-        <FormProvider form={form}>
-          <SchemaField
-            schema={schema}
-            scope={{ useAsyncDataSource, getName, getMaster, getQuantity, useAsync }}
-          />
-        </FormProvider>
-      </div>
+      {empty ? (
+        <Empty description={'暂无数据，请配置物模型'} />
+      ) : (
+        <>
+          <div className="edit-top">
+            <Input.Search
+              placeholder="请输入属性ID"
+              allowClear
+              style={{ width: 190 }}
+              onSearch={(value) => {
+                if (value) {
+                  const items = properties.filter((item: any) => item.metadataId.match(value));
+                  setFilterList(items);
+                } else {
+                  setFilterList(properties);
+                }
+              }}
+            />
+            <PermissionButton
+              onClick={async () => {
+                const value: any = await form.submit();
+                const items = value.array.filter((item: any) => item.collectorId);
+                save(items);
+              }}
+              isPermission={permission.add}
+              key="add"
+              type="primary"
+              style={{ marginRight: 10 }}
+            >
+              保存
+            </PermissionButton>
+          </div>
+          <div className="edit-table">
+            <FormProvider form={form}>
+              <SchemaField
+                schema={schema}
+                scope={{ useAsyncDataSource, getName, getMaster, getQuantity, useAsync }}
+              />
+            </FormProvider>
+          </div>
+        </>
+      )}
     </Card>
   );
 };
