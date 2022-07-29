@@ -1,67 +1,137 @@
-import { PageContainer } from '@ant-design/pro-layout';
+import { Badge, Button, Card, Divider, Dropdown, Input, Menu, Modal } from 'antd';
+import { useDomFullHeight } from '@/hooks';
+import './index.less';
+import SearchComponent from '@/components/SearchComponent';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Card, Col, Row } from 'antd';
-import styles from './index.less';
-import { PermissionButton } from '@/components';
-import { history, useIntl } from 'umi';
+import PermissionButton from '@/components/PermissionButton';
 import {
-  ControlOutlined,
   DeleteOutlined,
   EditOutlined,
+  ExportOutlined,
+  ImportOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useRef, useState } from 'react';
-import SearchComponent from '@/components/SearchComponent';
+import { useEffect, useRef, useState } from 'react';
+import { useIntl } from 'umi';
+import ChannelCard from '../channelCard';
+import { PageContainer } from '@ant-design/pro-layout';
 import Service from './service';
-import Save from './Save';
-import { getMenuPathByCode } from '@/utils/menu';
-import { useDomFullHeight } from '@/hooks';
+import SaveChannel from './saveChannel';
+import SavePoint from './savePoint';
+// import Import from './import';
 import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('opc/client');
 
-const Opcua = () => {
+const NewModbus = () => {
+  const { minHeight } = useDomFullHeight(`.modbus`);
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
   const [param, setParam] = useState({});
-  const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
+  const [activeKey, setActiveKey] = useState<any>('');
   const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<Partial<OpaUa>>({});
-  const { minHeight } = useDomFullHeight(`.opcua`, 24);
+  const [visiblePoint, setVisiblePoint] = useState<boolean>(false);
+  const [current, setCurrent] = useState<any>({});
+  const [pointDetail, setPointDetail] = useState<any>({});
+  // const [importVisible, setImportVisible] = useState<boolean>(false);
+  const [masterList, setMasterList] = useState<any>([]);
+  const [filterList, setFilterList] = useState([]);
+  const masterId = useRef<string>('');
 
-  const iconMap = new Map();
-  iconMap.set('1', require('/public/images/channel/1.png'));
-  iconMap.set('2', require('/public/images/channel/2.png'));
-  iconMap.set('3', require('/public/images/channel/3.png'));
-  iconMap.set('4', require('/public/images/channel/4.png'));
+  const collectMap = new Map();
+  collectMap.set('running', 'success');
+  collectMap.set('error', 'error');
+  collectMap.set('stopped', 'warning');
 
-  const columns: ProColumns<OpaUa>[] = [
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <PermissionButton
+          isPermission={permission.export}
+          icon={<ExportOutlined />}
+          type="default"
+          onClick={() => {
+            // setExportVisible(true);
+          }}
+        >
+          批量导出设备
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <PermissionButton
+          isPermission={permission.import || true}
+          icon={<ImportOutlined />}
+          onClick={() => {
+            // setImportVisible(true);
+          }}
+        >
+          批量导入设备
+        </PermissionButton>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const columns: ProColumns<any>[] = [
     {
-      title: '通道名称',
+      title: '名称',
       dataIndex: 'name',
-      fixed: 'left',
-      width: 300,
       ellipsis: true,
+      width: 200,
+      fixed: 'left',
     },
     {
-      title: '服务地址',
-      // dataIndex: 'clientConfigs',
-      render: (_, record) => <>{record.clientConfigs?.[0].endpoint}</>,
+      title: '点位Id',
+      render: (record: any) => <>{record.function?.text}</>,
     },
     {
-      title: '安全策略',
-      render: (_, record) => <>{record.clientConfigs?.[0].securityPolicy}</>,
+      title: '数据类型',
+      dataIndex: 'unitId',
+      search: false,
+    },
+    {
+      title: '当前数据',
+      search: false,
+      render: (record: any) => <>{record.parameter?.quantity}</>,
+    },
+    {
+      title: '采集状态',
+      search: false,
+      render: (record: any) => (
+        <>
+          {record.state.value === 'disabled' ? (
+            '-'
+          ) : (
+            <>
+              <Badge
+                status={collectMap.get(record.collectState?.value)}
+                text={record.collectState?.text}
+              />
+              <SearchOutlined
+                style={{ color: '#1d39c4', marginLeft: 3 }}
+                onClick={() => {
+                  Modal.error({
+                    title: '失败原因',
+                    content: <div>111111</div>,
+                    onOk() {},
+                  });
+                }}
+              />
+            </>
+          )}
+        </>
+      ),
     },
     {
       title: '状态',
       dataIndex: 'state',
-      valueType: 'select',
-      width: 100,
       renderText: (state) => (
         <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
       ),
+      valueType: 'select',
       valueEnum: {
         disabled: {
           text: intl.formatMessage({
@@ -71,10 +141,7 @@ const Opcua = () => {
           status: 'disabled',
         },
         enabled: {
-          text: intl.formatMessage({
-            id: 'pages.device.product.status.enabled',
-            defaultMessage: '正常',
-          }),
+          text: '正常',
           status: 'enabled',
         },
       },
@@ -84,15 +151,15 @@ const Opcua = () => {
       title: '操作',
       valueType: 'option',
       align: 'center',
+      width: 120,
       fixed: 'right',
-      width: 200,
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}
           key="edit"
           onClick={() => {
-            setVisible(true);
-            setCurrent(record);
+            setPointDetail(record);
+            setVisiblePoint(true);
           }}
           type={'link'}
           style={{ padding: 0 }}
@@ -118,28 +185,23 @@ const Opcua = () => {
             }),
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
-                const res = await service.enable(record.id);
-                if (res.status === 200) {
-                  onlyMessage(
-                    intl.formatMessage({
-                      id: 'pages.data.option.success',
-                      defaultMessage: '操作成功!',
-                    }),
-                  );
-                  actionRef.current?.reload();
-                }
+                await service.editPoint(record.id, {
+                  ...record,
+                  state: 'enabled',
+                });
               } else {
-                const res = await service.disable(record.id);
-                if (res.status === 200) {
-                  onlyMessage(
-                    intl.formatMessage({
-                      id: 'pages.data.option.success',
-                      defaultMessage: '操作成功!',
-                    }),
-                  );
-                  actionRef.current?.reload();
-                }
+                await service.editPoint(record.id, {
+                  ...record,
+                  state: 'disabled',
+                });
               }
+              onlyMessage(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
             },
           }}
           isPermission={permission.action}
@@ -153,20 +215,6 @@ const Opcua = () => {
           {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
-          isPermission={permission.view}
-          style={{ padding: 0 }}
-          key="link"
-          type="link"
-          tooltip={{
-            title: '数据点绑定',
-          }}
-          onClick={() => {
-            history.push(`${getMenuPathByCode('link/Channel/Opcua/Access')}?id=${record.id}`);
-          }}
-        >
-          <ControlOutlined />
-        </PermissionButton>,
-        <PermissionButton
           isPermission={permission.delete}
           style={{ padding: 0 }}
           disabled={record.state.value === 'enabled'}
@@ -174,7 +222,7 @@ const Opcua = () => {
             title: '确认删除',
             disabled: record.state.value === 'enabled',
             onConfirm: async () => {
-              const resp: any = await service.remove(record.id);
+              const resp: any = await service.deletePoint(record.id);
               if (resp.status === 200) {
                 onlyMessage(
                   intl.formatMessage({
@@ -195,101 +243,283 @@ const Opcua = () => {
     },
   ];
 
-  const topCard = [
-    {
-      numeber: '1',
-      title: 'OPC UA通道',
-      text: '配置OPC UA通道',
-    },
-    {
-      numeber: '2',
-      title: '设备接入网关',
-      text: '创建OPC UA设备接入网关',
-    },
-    {
-      numeber: '3',
-      title: '创建产品',
-      text: '创建产品,并选择接入方式为OPC UA',
-    },
-    {
-      numeber: '4',
-      title: '添加设备',
-      text: '添加设备，单独为每一个设备进行数据点绑定',
-    },
-  ];
+  const getOpc = () => {
+    service
+      .noPagingOpcua({
+        paging: false,
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
+          },
+        ],
+      })
+      .then((res: any) => {
+        if (res.status === 200) {
+          setMasterList(res.result);
+          setFilterList(res.result);
+          setActiveKey(res.result?.[0]?.id);
+          masterId.current = res.result?.[0]?.id;
+          console.log(masterId.current);
+        }
+      });
+  };
+
+  //启用
+  const _start = (id: string) => {
+    service.enable(id).then((res) => {
+      if (res.status === 200) {
+        onlyMessage('操作成功');
+        getOpc();
+      }
+    });
+  };
+  //禁用
+  const _stop = (id: string) => {
+    service.disable(id).then((res) => {
+      if (res.status === 200) {
+        onlyMessage('操作成功');
+        getOpc();
+      }
+    });
+  };
+
+  const removeOpc = (id: string) => {
+    service.remove(id).then((res: any) => {
+      if (res.status === 200) {
+        onlyMessage('删除成功');
+        getOpc();
+      }
+    });
+  };
+
+  useEffect(() => {
+    masterId.current = activeKey;
+    actionRef.current?.reload();
+  }, [activeKey]);
+
+  useEffect(() => {
+    getOpc();
+  }, []);
+
   return (
     <PageContainer>
-      <Card style={{ marginBottom: 10 }}>
-        <Row gutter={[24, 24]}>
-          {topCard.map((item) => (
-            <Col span={6} key={item.numeber}>
-              <Card>
-                <div className={styles.topCard}>
-                  <div>
-                    <img src={iconMap.get(item.numeber)} />
-                  </div>
-                  <div className={styles.text}>
-                    <p className={styles.p1}>{item.title}</p>
-                    <p className={styles.p2}>{item.text}</p>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+      <Card className="modbus" style={{ minHeight }}>
+        <div className="item">
+          <div className="item-left">
+            <div style={{ width: 220 }}>
+              <Input.Search
+                placeholder="请输入名称"
+                allowClear
+                onSearch={(value) => {
+                  const items = masterList.filter((item: any) => item.name.match(value));
+                  if (value) {
+                    setFilterList(items);
+                    setActiveKey(items?.[0].id);
+                  } else {
+                    setFilterList(masterList);
+                    setActiveKey(masterList?.[0].id);
+                  }
+                }}
+              />
+              <PermissionButton
+                onClick={() => {
+                  setVisible(true);
+                  setCurrent({});
+                }}
+                isPermission={permission.add}
+                key="add"
+                icon={<PlusOutlined />}
+                type="default"
+                style={{ width: '100%', marginTop: 16, marginBottom: 16 }}
+              >
+                新增
+              </PermissionButton>
+              <div className="item-left-list">
+                {filterList.map((item: any) => (
+                  <ChannelCard
+                    active={activeKey === item.id}
+                    data={item}
+                    onClick={() => {
+                      setActiveKey(item.id);
+                    }}
+                    actions={
+                      <>
+                        <PermissionButton
+                          isPermission={permission.update}
+                          key="edit"
+                          onClick={() => {
+                            setVisible(true);
+                            setCurrent(item);
+                          }}
+                          type={'link'}
+                          style={{ padding: 0 }}
+                        >
+                          <EditOutlined />
+                          编辑
+                        </PermissionButton>
+                        <Divider type="vertical" />
+                        <PermissionButton
+                          isPermission={permission.update}
+                          key="enbale"
+                          type={'link'}
+                          style={{ padding: 0 }}
+                          popConfirm={{
+                            title: intl.formatMessage({
+                              id: `pages.data.option.${
+                                item.state.value !== 'disabled' ? 'disabled' : 'enabled'
+                              }.tips`,
+                              defaultMessage: '确认禁用？',
+                            }),
+                            onConfirm: async () => {
+                              if (item.state.value === 'disabled') {
+                                _start(item.id);
+                              } else {
+                                _stop(item.id);
+                              }
+                            },
+                          }}
+                        >
+                          {item.state.value === 'enabled' ? (
+                            <StopOutlined />
+                          ) : (
+                            <PlayCircleOutlined />
+                          )}
+                          {item.state.value === 'enabled' ? '禁用' : '启用'}
+                        </PermissionButton>
+                        <Divider type="vertical" />
+                        <PermissionButton
+                          isPermission={permission.delete}
+                          style={{ padding: 0 }}
+                          disabled={item.state.value === 'enabled'}
+                          tooltip={{
+                            title: item.state.value === 'enabled' ? '请先禁用该通道，再删除。' : '',
+                          }}
+                          popConfirm={{
+                            title: '确认删除',
+                            disabled: item.state.value === 'enabled',
+                            onConfirm: async () => {
+                              removeOpc(item.id);
+                            },
+                          }}
+                          key="delete"
+                          type="link"
+                        >
+                          <DeleteOutlined />
+                        </PermissionButton>
+                      </>
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="item-right">
+            <SearchComponent<any>
+              field={columns}
+              target="modbus"
+              onSearch={(value) => {
+                actionRef.current?.reset?.();
+                setParam(value);
+              }}
+            />
+            <ProTable
+              actionRef={actionRef}
+              params={param}
+              columns={columns}
+              rowKey="id"
+              // dataSource={dataSoure}
+              // scroll={{ x: 1000 }}
+              search={false}
+              headerTitle={
+                <>
+                  <PermissionButton
+                    onClick={() => {
+                      setPointDetail({});
+                      setVisiblePoint(true);
+                    }}
+                    isPermission={permission.add}
+                    key="add"
+                    icon={<PlusOutlined />}
+                    type="primary"
+                    style={{ marginRight: 10 }}
+                  >
+                    {intl.formatMessage({
+                      id: 'pages.data.option.add',
+                      defaultMessage: '新增',
+                    })}
+                  </PermissionButton>
+                  <Dropdown key={'more'} overlay={menu} placement="bottom">
+                    <Button>批量操作</Button>
+                  </Dropdown>
+                </>
+              }
+              // request={async (params) => {
+              //   if (masterId.current) {
+              //     const res = await service.queryPoint(masterId.current, {
+              //       ...params,
+              //       sorts: [{ name: 'createTime', order: 'desc' }],
+              //     });
+              //     return {
+              //       code: res.message,
+              //       result: {
+              //         data: res.result.data,
+              //         pageIndex: res.result.pageIndex,
+              //         pageSize: res.result.pageSize,
+              //         total: res.result.total,
+              //       },
+              //       status: res.status,
+              //     };
+              //   } else {
+              //     return {
+              //       code: 200,
+              //       result: {
+              //         data: [],
+              //         pageIndex: 0,
+              //         pageSize: 0,
+              //         total: 0,
+              //       },
+              //       status: 200,
+              //     };
+              //   }
+              // }}
+              // request={async (params) =>
+              //   service.queryPoint(masterId.current,{
+              // ...params,
+              // sorts: [{ name: 'createTime', order: 'desc' }] })
+              // }
+            />
+          </div>
+        </div>
       </Card>
-
-      <SearchComponent<any>
-        field={columns}
-        target="opcua"
-        onSearch={(data) => {
-          // 重置分页数据
-          actionRef.current?.reset?.();
-          setParam(data);
-        }}
-      />
-      <ProTable<OpaUa>
-        actionRef={actionRef}
-        params={param}
-        scroll={{ x: 1366 }}
-        columns={columns}
-        rowKey="id"
-        search={false}
-        columnEmptyText={''}
-        tableClassName={'opcua'}
-        tableStyle={{ minHeight }}
-        headerTitle={
-          <PermissionButton
-            onClick={() => {
-              // setMode('add');
-              setVisible(true);
-              setCurrent({});
-            }}
-            isPermission={permission.add}
-            key="add"
-            icon={<PlusOutlined />}
-            type="primary"
-          >
-            {intl.formatMessage({
-              id: 'pages.data.option.add',
-              defaultMessage: '新增',
-            })}
-          </PermissionButton>
-        }
-        request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'id', order: 'desc' }] })
-        }
-      />
       {visible && (
-        <Save
+        <SaveChannel
           data={current}
           close={() => {
             setVisible(false);
+            getOpc();
+          }}
+        />
+      )}
+      {visiblePoint && (
+        <SavePoint
+          data={pointDetail}
+          opcId={activeKey}
+          close={() => {
+            setVisiblePoint(false);
             actionRef.current?.reload();
           }}
         />
       )}
+      {/* <Import
+        data={current}
+        close={() => {
+          setImportVisible(false);
+          actionRef.current?.reload();
+        }}
+        visible={importVisible}
+      /> */}
     </PageContainer>
   );
 };
-export default Opcua;
+export default NewModbus;

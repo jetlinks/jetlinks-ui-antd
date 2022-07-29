@@ -23,8 +23,9 @@ import Service from '@/pages/account/Center/service';
 import moment from 'moment';
 import { useModel } from 'umi';
 import usePermissions from '@/hooks/permission';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
+import AccountInit from '@/pages/home/init/accountInit';
 
 export const service = new Service();
 
@@ -129,7 +130,6 @@ const Center = () => {
   }, []);
 
   useEffect(() => {
-    console.log(data);
     if (data?.name) {
       const item = {
         ...initialState?.currentUser?.user,
@@ -168,7 +168,9 @@ const Center = () => {
           <div className={styles.content}>
             <Descriptions column={4} layout="vertical" labelStyle={{ fontWeight: 600 }}>
               <Descriptions.Item label="登录账号">{data?.username}</Descriptions.Item>
-              <Descriptions.Item label="账号ID">{data?.id}</Descriptions.Item>
+              <Descriptions.Item label="账号ID">
+                <Ellipsis title={data?.id} tooltip={{ placement: 'topLeft' }} maxWidth={'90%'} />
+              </Descriptions.Item>
               <Descriptions.Item label="注册时间">
                 {moment(data?.createTime).format('YYYY-MM-DD HH:mm:ss')}
               </Descriptions.Item>
@@ -309,6 +311,17 @@ const Center = () => {
             </Col>
           ))}
         </Row>
+      </Card>
+      <Card
+        style={{ marginTop: 15 }}
+        title={
+          <div style={{ fontSize: '22px' }}>
+            <Divider type="vertical" style={{ backgroundColor: '#2F54EB', width: 3 }} />
+            首页视图
+          </div>
+        }
+      >
+        <AccountInit />,
       </Card>
       {infos && (
         <InfoEdit

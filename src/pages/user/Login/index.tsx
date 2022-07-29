@@ -33,16 +33,20 @@ const Login: React.FC = () => {
         ...initialState,
         currentUser: userInfo,
       });
-      return userInfo
+      return userInfo;
     }
-    return null
+    return null;
   };
 
   const loginRef = useRef<Partial<LoginParam>>({});
-  const loginForm = useMemo(() => createForm({
-    validateFirst: true,
-    initialValues: loginRef.current,
-  }), [captcha]);
+  const loginForm = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: loginRef.current,
+      }),
+    [captcha],
+  );
 
   const [loading, setLoading] = useState<boolean>(false);
 

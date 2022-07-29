@@ -1,11 +1,13 @@
 import { Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 // import { useEffect, useState } from 'react';
-// import { service } from '@/pages/link/Channel/Modbus';
+import { service } from '@/pages/link/Channel/Modbus';
+import { onlyMessage } from '@/utils/util';
 // import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: any;
   close: Function;
+  masterId: string;
 }
 
 const SavePoint = (props: Props) => {
@@ -13,7 +15,31 @@ const SavePoint = (props: Props) => {
 
   const handleSave = async () => {
     const formData = await form.validateFields();
-    console.log(formData);
+    if (props.data.id) {
+      service
+        .editPoint(props.data.id, {
+          masterId: props.masterId,
+          ...formData,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            onlyMessage('保存成功');
+            props.close();
+          }
+        });
+    } else {
+      service
+        .savePoint({
+          masterId: props.masterId,
+          ...formData,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            onlyMessage('保存成功');
+            props.close();
+          }
+        });
+    }
   };
 
   return (
@@ -30,15 +56,9 @@ const SavePoint = (props: Props) => {
       <Form
         form={form}
         layout="vertical"
-        // initialValues={{
-        //     ...props.data,
-        //     codecConfig: {
-        //         ...props.data?.codecConfig,
-        //         readIndex: props.data?.codecConfig?.readIndex || 0,
-        //         scaleFactor: props.data?.codecConfig?.scaleFactor || 1,
-        //         revertBytes: props.data?.codecConfig?.revertBytes || false,
-        //     },
-        // }}
+        initialValues={{
+          ...props.data,
+        }}
       >
         <Row gutter={[24, 24]}>
           <Col span={24}>
@@ -92,7 +112,7 @@ const SavePoint = (props: Props) => {
           <Col span={24}>
             <Form.Item
               label="寄存器数量"
-              name="quantity"
+              name={['parameter', 'quantity']}
               rules={[
                 { required: true, message: '请输入寄存器数量' },
                 ({}) => ({

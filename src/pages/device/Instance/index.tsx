@@ -260,7 +260,7 @@ const Instance = () => {
       width: '200px',
       valueType: 'dateTime',
       render: (_: any, row) => {
-        return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '/';
+        return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '';
       },
       sorter: true,
     },

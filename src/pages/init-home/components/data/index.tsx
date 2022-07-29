@@ -1,4 +1,4 @@
-import {forwardRef, useImperativeHandle, useState} from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { service } from '../../index';
 import Save from './save';
 
@@ -10,7 +10,7 @@ const Data = forwardRef((_, ref) => {
   const handleChange = () => {
     return new Promise(async (resolve) => {
       if (!Object.keys(values).length) {
-        return resolve(true)
+        return resolve(true);
       }
       try {
         // 新增网络组件
@@ -61,17 +61,17 @@ const Data = forwardRef((_, ref) => {
           productId: product?.result?.id,
           productName: product?.result?.name,
         });
-        resolve(device.status === 200)
+        resolve(device.status === 200);
       } catch (e) {
-        console.log(e)
-        resolve(false)
+        console.log(e);
+        resolve(false);
       }
-    })
+    });
   };
 
   useImperativeHandle(ref, () => ({
-    save: handleChange
-  }))
+    save: handleChange,
+  }));
 
   return (
     <div>

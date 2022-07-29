@@ -1,3 +1,4 @@
+import { Ellipsis } from '@/components';
 import { Badge } from 'antd';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -19,8 +20,8 @@ const ChannelCard = (props: Props) => {
     <div
       className={classNames('channel-card', {
         active: props.active,
-        connect: props.data.status === 'connect',
-        disconnect: props.data.status === 'disconnect',
+        connect: props.data.state.value === 'enabled',
+        disconnect: props.data.state.value === 'disabled',
       })}
       onMouseEnter={() => {
         setActions(true);
@@ -36,15 +37,17 @@ const ChannelCard = (props: Props) => {
         }}
       >
         <div className="card-top-img">
-          {' '}
-          <img src={props.data.status === 'connect' ? connectImg : disconnectImg} />
+          <img src={props.data.state.value === 'enabled' ? connectImg : disconnectImg} />
         </div>
-        <div className="card-top-name">这里是通道名称</div>
+
+        <div className="card-top-name">
+          <Ellipsis title={props.data.name} />
+        </div>
         <div className="card-top-status">
-          {props.data.status === 'connect' ? (
+          {props.data.state.value === 'enabled' ? (
             <Badge status="processing" color={'green'} text={'正常'} />
           ) : (
-            <Badge status="processing" color={'red'} text={'禁用'} />
+            <Badge status="error" color={'red'} text={'禁用'} />
           )}
         </div>
       </div>

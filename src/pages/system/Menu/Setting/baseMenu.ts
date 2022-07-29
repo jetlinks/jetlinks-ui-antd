@@ -608,12 +608,32 @@ export default [
                 icon: 'icon-changjingliandong',
                 permissions: [],
                 buttons: [
-                  {id: "update", name: "编辑", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
-                  {id: "action", name: "启/禁用", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
-                  {id: "view", name: "设备接入", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
-                  {id: "delete", name: "删除", permissions: [{permission: "modbus-master", actions: ["query", "delete"]}]},
-                  {id: "add", name: "新增", permissions: [{permission: "modbus-master", actions: ["query", "save"]}]},
-                ]
+                  {
+                    id: 'update',
+                    name: '编辑',
+                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+                  },
+                  {
+                    id: 'action',
+                    name: '启/禁用',
+                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+                  },
+                  {
+                    id: 'view',
+                    name: '设备接入',
+                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+                  },
+                  {
+                    id: 'delete',
+                    name: '删除',
+                    permissions: [{ permission: 'modbus-master', actions: ['query', 'delete'] }],
+                  },
+                  {
+                    id: 'add',
+                    name: '新增',
+                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+                  },
+                ],
               },
             ],
           },
@@ -626,10 +646,13 @@ export default [
             url: '/iot/link/firmware',
             icon: 'icon-wangluozujian',
             permissions: [
-              {permission: "firmware-manager", actions: ["query", "save", "delete"]},
-              {permission: "firmware-upgrade-task-manager", actions: ["query", "save", "delete", "deploy"]},
-              {permission: "device-product", actions: ["query"]},
-              {permission: "device-api", actions: ["query"]},
+              { permission: 'firmware-manager', actions: ['query', 'save', 'delete'] },
+              {
+                permission: 'firmware-upgrade-task-manager',
+                actions: ['query', 'save', 'delete', 'deploy'],
+              },
+              { permission: 'device-product', actions: ['query'] },
+              { permission: 'device-api', actions: ['query'] },
             ],
             buttons: [
               {
@@ -654,7 +677,6 @@ export default [
               },
             ],
           },
-
         ],
       },
 
@@ -1361,7 +1383,11 @@ export default [
         ],
         buttons: [
           { id: 'view', name: '查看', permissions: [{ permission: 'menu', actions: ['query'] }] },
-          { id: 'setting', name: '配置', permissions: [{ permission: 'menu', actions: ['query', 'save', 'grant'] }] },
+          {
+            id: 'setting',
+            name: '配置',
+            permissions: [{ permission: 'menu', actions: ['query', 'save', 'grant'] }],
+          },
           {
             id: 'update',
             name: '编辑',

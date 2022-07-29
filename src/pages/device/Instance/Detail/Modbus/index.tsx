@@ -1,425 +1,551 @@
-import PermissionButton from '@/components/PermissionButton';
-import { Badge, Card, Empty, Input, Tabs, Tooltip } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'umi';
-import styles from '@/pages/link/Channel/Opcua/Access/index.less';
-import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
-import { service } from '@/pages/link/Channel/Modbus';
-import Save from '@/pages/link/Channel/Modbus/Save';
-import { InstanceModel } from '@/pages/device/Instance';
-import AddPoint from '@/pages/link/Channel/Modbus/Access/addPoint';
-import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
-import { map } from 'rxjs/operators';
+import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
+import { createForm, Field, onFieldReact, FormPath, onFieldChange } from '@formily/core';
+import { FormProvider, createSchemaField } from '@formily/react';
+import { Badge, Card, Empty, Input, Tooltip } from 'antd';
+import { action } from '@formily/reactive';
+import type { Response } from '@/utils/typings';
+import './index.less';
 import { useDomFullHeight } from '@/hooks';
+import PermissionButton from '@/components/PermissionButton';
+import { service } from '@/pages/link/Channel/Modbus';
+import { useEffect, useState } from 'react';
+import { DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 
-const Modbus = () => {
-  const intl = useIntl();
+interface Props {
+  data: any;
+}
+
+export default (props: Props) => {
+  const { data } = props;
+  const { minHeight } = useDomFullHeight('.modbus');
   const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
-  const [bindList, setBindList] = useState<any>([]);
-  const [opcId, setOpcId] = useState<string>('');
-  const actionRef = useRef<ActionType>();
-  const [param, setParam] = useState<any>({});
-  const [visible, setVisible] = useState<boolean>(false);
-  const [channel, setChannel] = useState<any>({});
-  const [pointVisiable, setPointVisiable] = useState<boolean>(false);
-  const [current, setCurrent] = useState<any>({});
-  const [deviceId, setDeviceId] = useState<any>('');
-  const [data, setData] = useState<any>([]);
-  const [subscribeTopic] = useSendWebsocketMessage();
-  const [propertyValue, setPropertyValue] = useState<any>({});
-  const wsRef = useRef<any>();
-  const [filterList, setFilterList] = useState([]);
+  const [properties, setProperties] = useState<any>([]);
+  const [filterList, setFilterList] = useState<any>([]);
+  const [masterList, setMasterList] = useState<any>([]);
+  const [typeList, setTypeList] = useState<any>([]);
+  const [reload, setReload] = useState<string>('');
+  const [empty, setEmpty] = useState<boolean>(false);
 
-  const { minHeight } = useDomFullHeight(`.${styles.list}`);
+  //数据类型长度
+  const lengthMap = new Map();
+  lengthMap.set('int8', 1);
+  lengthMap.set('int16', 2);
+  lengthMap.set('int32', 4);
+  lengthMap.set('int64', 8);
+  lengthMap.set('ieee754_float', 4);
+  lengthMap.set('ieee754_double', 8);
+  lengthMap.set('hex', 1);
 
-  const columns: ProColumns<any>[] = [
-    {
-      title: '属性ID',
-      dataIndex: 'metadataId',
-      ellipsis: true,
-    },
-    {
-      title: '功能码',
-      render: (record: any) => <>{record.function?.text}</>,
-    },
-    {
-      title: '读取起始位置',
-      render: (record: any) => <>{record.codecConfig?.readIndex}</>,
-    },
-    {
-      title: '读取长度',
-      render: (record: any) => <>{record.codecConfig?.readLength}</>,
-    },
-    {
-      title: '值',
-      width: 120,
-      render: (record: any) => <>{propertyValue[record?.metadataId] || '-'}</>,
-    },
-    {
-      title: '状态',
-      width: 90,
-      dataIndex: 'state',
-      renderText: (state) => (
-        <Badge text={state?.text} status={state?.value === 'disabled' ? 'error' : 'success'} />
-      ),
-    },
-    {
-      title: '操作',
-      valueType: 'option',
-      align: 'center',
-      width: 200,
-      render: (text, record) => [
-        <PermissionButton
-          isPermission={permission.update}
-          key="edit"
-          onClick={() => {
-            setPointVisiable(true);
-            setCurrent(record);
-          }}
-          type={'link'}
-          style={{ padding: 0 }}
-          tooltip={{
-            title: intl.formatMessage({
-              id: 'pages.data.option.edit',
-              defaultMessage: '编辑',
-            }),
-          }}
-        >
-          <EditOutlined />
-        </PermissionButton>,
-        <PermissionButton
-          type="link"
-          key={'action'}
-          style={{ padding: 0 }}
-          popConfirm={{
-            title: intl.formatMessage({
-              id: `pages.data.option.${
-                record.state.value !== 'disabled' ? 'disabled' : 'enabled'
-              }.tips`,
-              defaultMessage: '确认禁用？',
-            }),
-            onConfirm: async () => {
-              const item = {
-                ...record,
-                state: record.state.value === 'enabled' ? 'disabled' : 'enabled',
-              };
-              await service.saveMetadataConfig(opcId, deviceId, item);
-              onlyMessage(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
-            },
-          }}
-          isPermission={permission.action}
-          tooltip={{
-            title: intl.formatMessage({
-              id: `pages.data.option.${record.state.value !== 'disabled' ? 'disabled' : 'enabled'}`,
-              defaultMessage: record.state.value !== 'disabled' ? '禁用' : '启用',
-            }),
-          }}
-        >
-          {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
-        </PermissionButton>,
-        <PermissionButton
-          isPermission={permission.delete}
-          style={{ padding: 0 }}
-          disabled={record.state.value === 'enabled'}
-          tooltip={{
-            title:
-              record.state.value === 'disabled'
-                ? intl.formatMessage({
-                    id: 'pages.data.option.remove',
-                    defaultMessage: '删除',
-                  })
-                : '请先禁用该点位，再删除。',
-          }}
-          popConfirm={{
-            title: '确认删除',
-            disabled: record.state.value === 'enabled',
-            onConfirm: async () => {
-              const resp: any = await service.removeMetadataConfig(record.id);
-              if (resp.status === 200) {
-                onlyMessage(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
-              }
-            },
-          }}
-          key="delete"
-          type="link"
-        >
-          <DeleteOutlined />
-        </PermissionButton>,
+  const Render = (propsText: any) => {
+    const text = properties.find((item: any) => item.metadataId === propsText.value);
+    return <>{text?.metadataName}</>;
+  };
+  const StatusRender = (propsRender: any) => {
+    if (propsRender.value) {
+      return <Badge status="success" text={'已绑定'} />;
+    } else {
+      return <Badge status="error" text={'未绑定'} />;
+    }
+  };
+  const remove = async (params: any) => {
+    const res = await service.removeDevicePoint(data.id, params);
+    if (res.status === 200) {
+      onlyMessage('解绑成功');
+      setReload('remove');
+    }
+  };
+  const ActionButton = () => {
+    const record = ArrayTable.useRecord?.();
+    const index = ArrayTable.useIndex?.();
+    return (
+      <PermissionButton
+        isPermission={true}
+        style={{ padding: 0 }}
+        disabled={!record(index)?.id}
+        tooltip={{
+          title: '解绑',
+        }}
+        popConfirm={{
+          title: '确认解绑',
+          disabled: !record(index)?.id,
+          onConfirm: async () => {
+            // deteleMaster(item.id)
+            remove([record(index)?.id]);
+          },
+        }}
+        key="unbind"
+        type="link"
+      >
+        <DisconnectOutlined />
+      </PermissionButton>
+    );
+  };
+
+  //异步数据源
+  const getMaster = () =>
+    service.queryMaster({
+      paging: false,
+      sorts: [
+        {
+          name: 'createTime',
+          order: 'desc',
+        },
       ],
-    },
-  ];
+    });
 
-  const getModbus = (id: string) => {
-    service
-      .queryMetadatabyId({
+  const getName = async (field: any) => {
+    const path = FormPath.transform(
+      field.path,
+      /\d+/,
+      (index) => `array.${parseInt(index)}.collectorId`,
+    );
+    const collectorId = field.query(path).get('value');
+    if (!collectorId) return [];
+    return service.getPoint({
+      paging: false,
+      sorts: [
+        {
+          name: 'createTime',
+          order: 'desc',
+        },
+      ],
+      terms: [
+        {
+          column: 'masterId',
+          value: collectorId,
+        },
+      ],
+    });
+  };
+
+  const getQuantity = async (field: any) => {
+    const path = FormPath.transform(
+      field.path,
+      /\d+/,
+      (index) => `array.${parseInt(index)}.collectorId`,
+    );
+    const path1 = FormPath.transform(
+      field.path,
+      /\d+/,
+      (index) => `array.${parseInt(index)}.pointId`,
+    );
+    const collectorId = field.query(path).get('value');
+    const pointId = field.query(path1).get('value');
+    if (collectorId && pointId) {
+      return service.getPoint({
         paging: false,
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
+          },
+        ],
         terms: [
           {
-            column: 'id$bind-modbus',
-            value: id,
+            column: 'masterId',
+            value: collectorId,
+          },
+          {
+            column: 'id',
+            value: pointId,
+          },
+        ],
+      });
+    } else {
+      return [];
+    }
+  };
+  const useAsync = (api: any) => (field: Field) => {
+    field.loading = true;
+    api(field).then(
+      action.bound!((resp: Response<any>) => {
+        const value = resp.result?.[0].parameter.quantity;
+        field.dataSource = [...new Array(value).keys()].map((item: any) => ({
+          label: item,
+          value: item,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
+
+  const useAsyncDataSource = (api: any) => (field: Field) => {
+    field.loading = true;
+    api(field).then(
+      action.bound!((resp: Response<any>) => {
+        field.dataSource = resp.result?.map((item: any) => ({
+          label: `${item.name}(${item.unitId}/${item.address}/${item.function.text})`,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
+
+  const save = async (value: any) => {
+    const res = await service.saveDevicePoint(data.id, value);
+    if (res.status === 200) {
+      onlyMessage('保存成功');
+      setReload('save');
+    }
+  };
+
+  useEffect(() => {
+    service
+      .queryMaster({
+        paging: false,
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
           },
         ],
       })
       .then((res) => {
-        setBindList(res.result);
-        setFilterList(res.result);
-        setOpcId(res.result?.[0]?.id);
-        setParam({
-          opcId: res.result?.[0]?.id,
+        if (res.status === 200) {
+          const list = res.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setMasterList(list);
+        }
+      });
+    service.dataType().then((res) => {
+      if (res.status === 200) {
+        const items = res.result.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        setTypeList(items);
+      }
+    });
+  }, []);
+  useEffect(() => {
+    const metadata = JSON.parse(data.metadata).properties?.map((item: any) => ({
+      metadataId: item.id,
+      metadataName: `${item.name}(${item.id})`,
+      metadataType: 'property',
+    }));
+    if (metadata && metadata.length !== 0) {
+      service.getDevicePoint(data.id).then((res) => {
+        if (res.status === 200) {
+          // console.log(res.result)
+          const array = res.result.reduce((x: any, y: any) => {
+            const metadataId = metadata.find((item: any) => item.metadataId === y.metadataId);
+            if (metadataId) {
+              Object.assign(metadataId, y);
+            } else {
+              x.push(y);
+            }
+            return x;
+          }, metadata);
+          setProperties(array);
+          setFilterList(array);
+        }
+      });
+    } else {
+      setEmpty(true);
+    }
+  }, [reload]);
+
+  const SchemaField = createSchemaField({
+    components: {
+      FormItem,
+      Editable,
+      ArrayTable,
+      Select,
+      NumberPicker,
+      Render,
+      ActionButton,
+      StatusRender,
+    },
+  });
+
+  const form = createForm({
+    values: {
+      array: filterList,
+    },
+    effects: () => {
+      onFieldReact('array.*.collectorId', async (field, f) => {
+        const value = (field as Field).value;
+        const path = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `array.${parseInt(index)}.pointId`,
+        );
+        const path1 = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `array.${parseInt(index)}.codec`,
+        );
+        f.setFieldState(path, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
+        });
+        f.setFieldState(path1, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
         });
       });
+      onFieldChange('array.*.codec', (field: any) => {
+        const value = (field as Field).value;
+        const path = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `array.${parseInt(index)}.codecConfiguration.readIndex`,
+        );
+        if ((field as Field).modified) {
+          const readIndex = field.query(path).get('value');
+          const dataLength = field.query(path).get('dataSource')?.length * 2 - 1;
+          const length = lengthMap.get(value) + readIndex;
+          console.log(length, dataLength);
+          if (length > dataLength) {
+            field.selfErrors = '数据类型对应的长度和起始位置加起来不能超过数据长度';
+          } else {
+            field.selfErrors = '';
+          }
+        }
+      });
+    },
+  });
+
+  const schema = {
+    type: 'object',
+    properties: {
+      array: {
+        type: 'array',
+        'x-decorator': 'FormItem',
+        'x-component': 'ArrayTable',
+        'x-component-props': {
+          pagination: {
+            pageSize: 10,
+          },
+          scroll: { x: '100%' },
+        },
+        items: {
+          type: 'object',
+          properties: {
+            column1: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { width: 120, title: '属性' },
+              properties: {
+                metadataId: {
+                  type: 'string',
+                  'x-component': 'Render',
+                },
+              },
+            },
+            column2: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { width: 200, title: '通道' },
+              properties: {
+                collectorId: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  'x-component-props': {
+                    placeholder: '请选择',
+                    showSearch: true,
+                    allowClear: true,
+                    showArrow: true,
+                    filterOption: (input: string, option: any) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                  },
+                  enum: masterList,
+                },
+              },
+            },
+            column3: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                width: 200,
+                title: (
+                  <>
+                    点位名称
+                    <Tooltip title="名称(从站ID/地址/功能码))">
+                      <QuestionCircleOutlined />
+                    </Tooltip>
+                  </>
+                ),
+              },
+              properties: {
+                pointId: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  'x-component-props': {
+                    placeholder: '请选择',
+                    showSearch: true,
+                    allowClear: true,
+                    showArrow: true,
+                    filterOption: (input: string, option: any) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                  },
+                  'x-reactions': ['{{useAsyncDataSource(getName)}}'],
+                },
+              },
+            },
+
+            column4: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                width: 200,
+                title: '起始位置',
+              },
+              properties: {
+                'codecConfiguration.readIndex': {
+                  type: 'string',
+                  default: 0,
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  'x-component-props': {
+                    placeholder: '请选择',
+                    showSearch: true,
+                    allowClear: true,
+                    showArrow: true,
+                    filterOption: (input: string, option: any) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                  },
+                  'x-reactions': ['{{useAsync(getQuantity)}}'],
+                },
+              },
+            },
+            column5: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                width: 200,
+                title: '数据类型',
+              },
+              properties: {
+                codec: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Select',
+                  'x-component-props': {
+                    placeholder: '请选择',
+                    showSearch: true,
+                    allowClear: true,
+                    showArrow: true,
+                    filterOption: (input: string, option: any) =>
+                      option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                  },
+                  enum: typeList,
+                  // 'x-reactions': {
+                  //   dependencies: ['.codecConfiguration.readIndex'],
+                  //   fulfill: {
+                  //     state: {
+                  //       selfErrors:
+                  //         "{{$deps[0]<lengthMap.get($self.value)?'数据类型对应的长度和起始位置加起来不能超过 （数据长度 - 1）的长度':''}}"
+                  //     }
+                  //   }
+                  // }
+                },
+              },
+            },
+            column6: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                width: 100,
+                title: '状态',
+                sorter: (a: any, b: any) => a.state.value.length - b.state.value.length,
+              },
+              properties: {
+                id: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'StatusRender',
+                },
+              },
+            },
+            column7: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                title: '操作',
+                dataIndex: 'operations',
+                width: 50,
+                fixed: 'right',
+              },
+              properties: {
+                item: {
+                  type: 'void',
+                  'x-component': 'FormItem',
+                  properties: {
+                    remove: {
+                      type: 'void',
+                      'x-component': 'ActionButton',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   };
 
-  useEffect(() => {
-    const { id } = InstanceModel.detail;
-    setDeviceId(id);
-    if (id) {
-      getModbus(id);
-    }
-  }, [visible]);
-
-  useEffect(() => {
-    const { id, productId } = InstanceModel.detail;
-    const point = data.map((item: any) => item.metadataId);
-    const wsId = `instance-info-property-${id}-${productId}-${point.join('-')}`;
-    const topic = `/dashboard/device/${productId}/properties/realTime`;
-    wsRef.current = subscribeTopic?.(wsId, topic, {
-      deviceId: deviceId,
-      properties: data.map((item: any) => item.metadataId),
-      history: 1,
-    })
-      ?.pipe(map((res: any) => res.payload))
-      .subscribe((payload: any) => {
-        const { value } = payload;
-        propertyValue[value.property] = value.formatValue;
-        setPropertyValue({ ...propertyValue });
-      });
-  }, [data]);
-
   return (
-    <Card className={styles.list} style={{ minHeight }}>
-      <div style={{ display: 'flex' }}>
-        <div>
-          <div style={{ width: '250px', marginTop: 15 }}>
+    <Card className="modbus" style={{ minHeight }}>
+      {empty ? (
+        <Empty description={'暂无数据，请配置物模型'} />
+      ) : (
+        <>
+          <div className="edit-top">
             <Input.Search
-              placeholder="请输入通道名称"
+              placeholder="请输入属性ID"
               allowClear
+              style={{ width: 190 }}
               onSearch={(value) => {
                 if (value) {
-                  const items = bindList.filter((item: any) => item.name.match(value));
+                  const items = properties.filter((item: any) => item.metadataId.match(value));
                   setFilterList(items);
-                  if (items.length === 0) {
-                    setParam({
-                      opcId: '',
-                    });
-                  } else {
-                    setParam({
-                      opcId: items[0]?.id,
-                    });
-                    setOpcId(items[0]?.id);
-                  }
                 } else {
-                  setFilterList(bindList);
-                  if (opcId) {
-                    setParam({
-                      opcId: opcId,
-                    });
-                  } else {
-                    setParam({
-                      opcId: '',
-                    });
-                  }
+                  setFilterList(properties);
                 }
               }}
             />
-
             <PermissionButton
-              onClick={() => {
-                setVisible(true);
-                setChannel({});
+              onClick={async () => {
+                const value: any = await form.submit();
+                const items = value.array.filter((item: any) => item.collectorId);
+                save(items);
               }}
               isPermission={permission.add}
               key="add"
-              icon={<PlusOutlined />}
-              type="dashed"
-              style={{ width: '100%', margin: '16px 0 18px 0' }}
+              type="primary"
+              style={{ marginRight: 10 }}
             >
-              新增通道
+              保存
             </PermissionButton>
           </div>
-          {filterList.length > 0 ? (
-            <Tabs
-              style={{ height: 600 }}
-              tabPosition={'left'}
-              activeKey={opcId}
-              onChange={(e) => {
-                setOpcId(e);
-                // console.log(e);
-                // actionRef.current?.reload();
-                setParam({
-                  opcId: e,
-                });
-              }}
-            >
-              {filterList.map((item: any) => (
-                <Tabs.TabPane
-                  key={item.id}
-                  tab={
-                    <div className={styles.left}>
-                      <Tooltip title={item.name}>
-                        <div className={styles.text}>{item.name}</div>
-                      </Tooltip>
-                      <PermissionButton
-                        isPermission={permission.update}
-                        key="edit"
-                        onClick={() => {
-                          setVisible(true);
-                          setChannel(item);
-                        }}
-                        type={'link'}
-                        style={{ padding: 0 }}
-                        tooltip={{
-                          title: intl.formatMessage({
-                            id: 'pages.data.option.edit',
-                            defaultMessage: '编辑',
-                          }),
-                        }}
-                      >
-                        <EditOutlined />
-                      </PermissionButton>
-                      <PermissionButton
-                        isPermission={permission.delete}
-                        style={{ padding: 0 }}
-                        popConfirm={{
-                          title: '确认删除',
-                          onConfirm: async () => {
-                            const resp: any = await service.remove(item.id);
-                            if (resp.status === 200) {
-                              getModbus(deviceId);
-                              onlyMessage(
-                                intl.formatMessage({
-                                  id: 'pages.data.option.success',
-                                  defaultMessage: '操作成功!',
-                                }),
-                              );
-                            }
-                          },
-                        }}
-                        key="delete"
-                        type="link"
-                      >
-                        <DeleteOutlined />
-                      </PermissionButton>
-                    </div>
-                  }
-                ></Tabs.TabPane>
-              ))}
-            </Tabs>
-          ) : (
-            <Empty description={<>暂无绑定通道</>} />
-          )}
-        </div>
-        <div style={{ width: '100%' }}>
-          <ProTable
-            actionRef={actionRef}
-            params={param}
-            columns={columns}
-            rowKey="id"
-            columnEmptyText={''}
-            search={false}
-            headerTitle={
-              <>
-                <PermissionButton
-                  onClick={() => {
-                    setPointVisiable(true);
-                    setCurrent({});
-                  }}
-                  isPermission={permission.add}
-                  key="add"
-                  icon={<PlusOutlined />}
-                  type="primary"
-                >
-                  {intl.formatMessage({
-                    id: 'pages.data.option.add',
-                    defaultMessage: '新增',
-                  })}
-                </PermissionButton>
-              </>
-            }
-            request={async (params) => {
-              if (!params.opcId) {
-                return {
-                  code: 200,
-                  result: {
-                    data: [],
-                    pageIndex: 0,
-                    pageSize: 0,
-                    total: 0,
-                  },
-                  status: 200,
-                };
-              }
-              const res = await service.queryMetadataConfig(params.opcId, deviceId, {
-                ...params.terms,
-                sorts: [{ name: 'createTime', order: 'desc' }],
-              });
-              setData(res.result.data);
-              return {
-                code: res.message,
-                result: {
-                  data: res.result.data,
-                  pageIndex: res.result.pageIndex,
-                  pageSize: res.result.pageSize,
-                  total: res.result.total,
-                },
-                status: res.status,
-              };
-            }}
-          />
-        </div>
-      </div>
-
-      {visible && (
-        <Save
-          data={channel}
-          close={() => {
-            setVisible(false);
-          }}
-          device={InstanceModel.detail}
-        />
-      )}
-      {pointVisiable && (
-        <AddPoint
-          deviceId={deviceId}
-          opcUaId={opcId}
-          data={current}
-          close={() => {
-            setPointVisiable(false);
-            actionRef.current?.reload();
-          }}
-        />
+          <div className="edit-table">
+            <FormProvider form={form}>
+              <SchemaField
+                schema={schema}
+                scope={{ useAsyncDataSource, getName, getMaster, getQuantity, useAsync }}
+              />
+            </FormProvider>
+          </div>
+        </>
       )}
     </Card>
   );
 };
-export default Modbus;

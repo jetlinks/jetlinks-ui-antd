@@ -218,15 +218,19 @@ const Debug = observer(() => {
     // const list = Store.get('notice-template-list');
     // const _template = list.find((item: any) => item.id === templateId);
 
-    const resp = await service.debug(state?.current.id, templateId, data.variableDefinitions?.reduce(
-      (previousValue: any, currentValue: { id: any; value: any }) => {
-        return {
-          ...previousValue,
-          [currentValue.id]: currentValue.value,
-        };
-      },
-      {},
-    ));
+    const resp = await service.debug(
+      state?.current.id,
+      templateId,
+      data.variableDefinitions?.reduce(
+        (previousValue: any, currentValue: { id: any; value: any }) => {
+          return {
+            ...previousValue,
+            [currentValue.id]: currentValue.value,
+          };
+        },
+        {},
+      ),
+    );
     if (resp.status === 200) {
       onlyMessage('操作成功!');
       state.debug = false;

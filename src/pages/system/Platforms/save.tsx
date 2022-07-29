@@ -39,7 +39,7 @@ export default (props: SaveProps) => {
   const [loading, setLoading] = useState(false);
   const { permission: RolePermission } = usePermissions('system/Role');
 
-  console.log(RolePermission)
+  console.log(RolePermission);
 
   const SchemaField = createSchemaField({
     components: {

@@ -2,9 +2,10 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-// import { service } from '@/pages/link/Channel/Modbus';
+import { service } from '@/pages/link/Channel/Modbus';
 import { Modal } from '@/components';
 import { useEffect } from 'react';
+import { onlyMessage } from '@/utils/util';
 // import { onlyMessage } from '@/utils/util';
 
 interface Props {
@@ -126,7 +127,20 @@ const SaveChannel = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<any>();
-    console.log(value);
+    if (props.data.id) {
+      console.log(value);
+      const res = await service.editMaster(props.data.id, value);
+      if (res.status === 200) {
+        onlyMessage('保存成功');
+        props.close();
+      }
+    } else {
+      const res = await service.saveMaster(value);
+      if (res.status === 200) {
+        onlyMessage('保存成功');
+        props.close();
+      }
+    }
   };
 
   useEffect(() => {

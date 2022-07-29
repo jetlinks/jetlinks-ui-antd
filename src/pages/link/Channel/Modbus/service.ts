@@ -2,55 +2,88 @@ import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
 
-class Service extends BaseService<OpaUa> {
-  edit = (data: any) =>
+class Service extends BaseService<any> {
+  saveMaster = (data: any) =>
     request(`/${SystemConst.API_BASE}/modbus/master`, {
-      method: 'PATCH',
-      data,
-    });
-  bindDevice = (params: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/_query/no-paging?paging=false`, {
-      method: 'GET',
-      params,
-    });
-  getDevice = (params?: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/_query`, {
-      method: 'POST',
-      data: params,
-    });
-  bind = (params: any, id: string) =>
-    request(`/${SystemConst.API_BASE}/modbus/master/${id}/_bind`, {
-      method: 'POST',
-      data: params,
-    });
-  unbind = (params: any, id: string) =>
-    request(`/${SystemConst.API_BASE}/modbus/master/${id}/_unbind`, {
-      method: 'POST',
-      data: params,
-    });
-  deviceDetail = (id: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/${id}/detail`, {
-      method: 'GET',
-    });
-  saveMetadataConfig = (master: string, deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/modbus/master/${master}/${deviceId}/metadata`, {
       method: 'POST',
       data,
     });
-  queryMetadataConfig = (master: string, deviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/modbus/master/${master}/${deviceId}/metadata/_query`, {
-      method: 'POST',
+  editMaster = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/master/${id}`, {
+      method: 'PUT',
       data,
     });
-  removeMetadataConfig = (metadataId: string) =>
-    request(`/${SystemConst.API_BASE}/modbus/master/metadata/${metadataId}`, {
-      method: 'DELETE',
-    });
-  //设备id查modbus通道
-  queryMetadatabyId = (data: any) =>
+  queryMaster = (data: any) =>
     request(`/${SystemConst.API_BASE}/modbus/master/_query/no-paging`, {
       method: 'POST',
       data,
+    });
+  deleteMaster = (id: string) =>
+    request(`/${SystemConst.API_BASE}/modbus/master/${id}`, {
+      method: 'DELETE',
+    });
+  savePoint = (data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/point`, {
+      method: 'POST',
+      data,
+    });
+  queryPoint = (masterId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/point/${masterId}/_query`, {
+      method: 'POST',
+      data,
+    });
+  editPoint = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/point/${id}`, {
+      method: 'PUT',
+      data,
+    });
+  deletePoint = (id: string) =>
+    request(`/${SystemConst.API_BASE}/modbus/point/${id}`, {
+      method: 'DELETE',
+    });
+  //查询modbus点位列表
+  getPoint = (data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/point/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
+  //保存设备绑定点位映射配置
+  // saveDevicePoint = (deviceId: string, data: any) =>
+  //   request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/collector/modbus`, {
+  //     method: 'PATCH',
+  //     data,
+  //   });
+  saveDevicePoint = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${deviceId}/MODBUS_TCP`, {
+      method: 'PATCH',
+      data,
+    });
+  //查询设备点位映射配置
+  // getDevicePoint = (deviceId: string, param?: string) =>
+  //   request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/collector/_query`, {
+  //     method: 'GET',
+  //     param,
+  //   });
+  getDevicePoint = (deviceId: string, param?: string) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${deviceId}/_query`, {
+      method: 'GET',
+      param,
+    });
+  //设备解绑点位映射配置
+  // removeDevicePoint = (deviceId: string, data: any) =>
+  //   request(`/${SystemConst.API_BASE}/device/instance/${deviceId}/collectors/_delete`, {
+  //     method: 'POST',
+  //     data,
+  //   });
+  removeDevicePoint = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${deviceId}/_delete`, {
+      method: 'POST',
+      data,
+    });
+  //modbus数据类型
+  dataType = () =>
+    request(`/${SystemConst.API_BASE}/things/collector/codecs`, {
+      method: 'GET',
     });
 }
 
