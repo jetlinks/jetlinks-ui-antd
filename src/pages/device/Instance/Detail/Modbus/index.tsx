@@ -376,7 +376,7 @@ export default (props: Props) => {
                 title: (
                   <>
                     点位名称
-                    <Tooltip title="名称(从站ID/地址/功能码))">
+                    <Tooltip title="名称(从站ID/地址/功能码)">
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </>
