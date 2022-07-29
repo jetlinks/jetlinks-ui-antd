@@ -45,3 +45,24 @@
   //  }
   //}
 }
+
+.scene-content {
+  position: relative;
+
+  .scene-content-left {
+    width: 66.66%;
+  }
+
+  .scene-content-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 33.33%;
+    height: 100%;
+
+    > div {
+      height: 100%;
+      overflow-y: auto;
+    }
+  }
+}

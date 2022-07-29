@@ -290,6 +290,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.componentType = 'DatePicker';
                     state.componentProps = { showTime: true, allowClear: true };
                   });
+                  console.log(isModified);
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'gte';
@@ -625,22 +626,26 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     onSearch({ terms: newTemp });
   };
 
-  useEffect(() => {
+  const handleLocation = async (l: any, tar?: string) => {
     // 防止页面下多个TabsTabPane中的查询组件共享路由中的参数
-    const params = new URLSearchParams(_location.search);
+    const params = new URLSearchParams(l.search);
     const q = params.get('q');
     const _target = params.get('target');
-    if (q && props.model !== 'simple') {
-      if (_target) {
-        if (props.target && _target === props.target) {
-          form.setValues(JSON.parse(q));
-          handleSearch(false);
-        }
+    const value = await form.submit<SearchTermsUI>();
+    if (q && props.model !== 'simple' && value && !value.terms1?.[0].value && !value.terms2) {
+      // 表单有值的情况下，不改变表单
+      if (_target && tar && _target === tar) {
+        form.setInitialValues(JSON.parse(q));
+        handleSearch(false);
         return;
       }
-      form.setValues(JSON.parse(q));
+      form.setInitialValues(JSON.parse(q));
       handleSearch(false);
     }
+  };
+
+  useEffect(() => {
+    handleLocation(_location, props.target);
   }, [_location, props.target]);
 
   useEffect(() => {

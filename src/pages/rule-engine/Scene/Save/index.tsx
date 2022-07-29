@@ -1,17 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Radio,
-  Row,
-  Space,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Button, Card, Form, Input, InputNumber, Radio, Space, Switch, Tooltip } from 'antd';
 import { useHistory, useIntl, useLocation } from 'umi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
@@ -217,8 +205,8 @@ export default () => {
   return (
     <PageContainer>
       <Card>
-        <Row>
-          <Col span={16}>
+        <div className={'scene-content'}>
+          <div className={'scene-content-left'}>
             <Form
               scrollToFirstError={{
                 behavior: 'smooth',
@@ -426,11 +414,11 @@ export default () => {
                 保存
               </PermissionButton>
             </Form>
-          </Col>
-          <Col span={8}>
+          </div>
+          <div className={'scene-content-right'}>
             <Explanation type={triggerType} />
-          </Col>
-        </Row>
+          </div>
+        </div>
       </Card>
     </PageContainer>
   );

@@ -124,7 +124,10 @@ export default (props: TimingTrigger) => {
 
   return (
     <Row gutter={24} className={props.className}>
-      <Col span={data.trigger !== TriggerEnum.cron ? 6 : 8}>
+      <Col
+        xxl={data.trigger !== TriggerEnum.cron ? 6 : 8}
+        xl={data.trigger !== TriggerEnum.cron ? 10 : 12}
+      >
         <ItemGroup>
           <Select
             options={[
@@ -179,7 +182,7 @@ export default (props: TimingTrigger) => {
       </Col>
       {data.trigger !== TriggerEnum.cron && (
         <>
-          <Col span={12}>
+          <Col xxl={12} xl={14}>
             <ItemGroup>
               <Select
                 options={[
@@ -228,7 +231,7 @@ export default (props: TimingTrigger) => {
               )}
             </ItemGroup>
           </Col>
-          <Col span={6}>
+          <Col xxl={6} xl={10}>
             <ItemGroup style={{ gap: 16 }}>
               {data.mod === PeriodModEnum.period ? (
                 <>

@@ -69,7 +69,10 @@ export default (props: TimingTrigger) => {
 
   return (
     <Row gutter={24} className={props.className}>
-      <Col span={data?.trigger !== TriggerEnum.cron ? 6 : 8}>
+      <Col
+        xxl={data.trigger !== TriggerEnum.cron ? 6 : 8}
+        xl={data.trigger !== TriggerEnum.cron ? 10 : 12}
+      >
         <ItemGroup>
           <Form.Item
             name={[...name, 'timer', 'trigger']}
@@ -150,7 +153,7 @@ export default (props: TimingTrigger) => {
           )}
         </ItemGroup>
       </Col>
-      <Col span={11}>
+      <Col xxl={11} xl={14}>
         {data?.trigger !== TriggerEnum.cron && (
           <ItemGroup>
             <Form.Item
@@ -193,12 +196,12 @@ export default (props: TimingTrigger) => {
           </ItemGroup>
         )}
       </Col>
-      <Col span={7}>
+      <Col xxl={7} xl={10}>
         {data?.trigger !== TriggerEnum.cron && (
           <ItemGroup style={{ gap: 16 }}>
             {data?.mod === PeriodModEnum.period ? (
               <>
-                <div style={{ paddingBottom: 14 }}> 每 </div>
+                <div style={{ paddingBottom: 16 }}> 每 </div>
                 <Form.Item
                   name={[...name, 'timer', 'period', 'every']}
                   rules={[{ required: true, message: '请输入时间' }]}
@@ -220,7 +223,7 @@ export default (props: TimingTrigger) => {
                 </Form.Item>
               </>
             ) : null}
-            <div style={{ flex: 0, flexBasis: 64, paddingBottom: 14 }}> 执行一次 </div>
+            <div style={{ flex: 0, flexBasis: 64, paddingBottom: 16 }}> 执行一次 </div>
           </ItemGroup>
         )}
       </Col>
