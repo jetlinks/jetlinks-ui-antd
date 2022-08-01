@@ -126,7 +126,7 @@ const Dashboard = observer(() => {
         series: [
           {
             name: '告警数',
-            data: fifteenData.sort((a,b) => b.timestamp - a.timestamp).map((item) => item.value),
+            data: fifteenData.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.value),
             type: 'bar',
             itemStyle: {
               color: '#2F54EB',

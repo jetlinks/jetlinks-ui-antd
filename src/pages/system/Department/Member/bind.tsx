@@ -35,9 +35,6 @@ const Bind = observer((props: Props) => {
         id: 'pages.system.name',
         defaultMessage: '姓名',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
     },
     {
       dataIndex: 'username',
@@ -73,11 +70,7 @@ const Bind = observer((props: Props) => {
       visible={props.visible}
       onOk={handleBind}
       onCancel={props.onCancel}
-      width={'800'}
-      bodyStyle={{
-        height: 'calc(100vh - 240px);',
-        overflowY: 'auto',
-      }}
+      width={'75vw'}
       title="绑定"
     >
       <SearchComponent<UserItem>

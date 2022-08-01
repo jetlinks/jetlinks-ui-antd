@@ -49,9 +49,6 @@ const Member = observer((props: { parentId: string }) => {
         id: 'pages.system.name',
         defaultMessage: '姓名',
       }),
-      search: {
-        transform: (value) => ({ name$LIKE: value }),
-      },
       width: 120,
       fixed: 'left',
     },

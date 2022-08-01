@@ -1267,7 +1267,6 @@ export default [
         url: '/system/Department',
         icon: 'icon-bumenguanli',
         permissions: [
-
           { permission: 'assets-bind', actions: ['bind', 'unbind', 'query', 'permission'] },
           { permission: 'role', actions: ['query', 'save', 'delete'] },
           { permission: 'device-category', actions: ['query', 'save', 'delete'] },

@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import Tree from './tree';
 import './index.less';
-import {Button, message, Modal, Tooltip} from 'antd';
+import { Button, message, Modal, Tooltip } from 'antd';
 import BaseTreeData from './baseMenu';
 import { useEffect, useState } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -186,10 +186,10 @@ export default observer(() => {
         visible={visible}
         onOk={() => {
           MenuSettingModel.menuData = cloneDeep(baseMenu);
-          setVisible(false)
+          setVisible(false);
         }}
         onCancel={() => {
-          setVisible(false)
+          setVisible(false);
         }}
       >
         源数据将会覆盖当前的系统菜单数据，确定要一键拷贝吗？
@@ -213,7 +213,7 @@ export default observer(() => {
                   type={'primary'}
                   ghost
                   onClick={() => {
-                    setVisible(true)
+                    setVisible(true);
                   }}
                 >
                   一键拷贝

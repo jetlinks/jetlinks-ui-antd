@@ -37,10 +37,11 @@ const Service = {
         map((resp) => resp.result),
       ),
     ),
-  login2: (data: LoginParam) => request(`/${SystemConst.API_BASE}/authorize/login`, {
-    method: 'POST',
-    data,
-  }),
+  login2: (data: LoginParam) =>
+    request(`/${SystemConst.API_BASE}/authorize/login`, {
+      method: 'POST',
+      data,
+    }),
 
   queryCurrent: () =>
     request(`/${SystemConst.API_BASE}/authorize/me`, {

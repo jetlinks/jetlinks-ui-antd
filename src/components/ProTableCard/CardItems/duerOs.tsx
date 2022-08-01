@@ -2,7 +2,7 @@ import React from 'react';
 import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
-import { DuerOSItem } from '@/pages/cloud/DuerOS/typings';
+import { DuerOSItem } from '@/pages/Northbound/DuerOS/types';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export interface DuerOSProps extends DuerOSItem {

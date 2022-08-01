@@ -160,17 +160,21 @@ const Login: React.FC = () => {
 
   const doLogin = async (data: LoginParam) => {
     setLoading(true);
-    const res = await Service.login2({ expires: loginRef.current.expires, verifyKey: captcha.key, ...data })
-    setLoading(false)
+    const res = await Service.login2({
+      expires: loginRef.current.expires,
+      verifyKey: captcha.key,
+      ...data,
+    });
+    setLoading(false);
     if (res.status === 200) {
-      const userInfo = res.result
+      const userInfo = res.result;
       Token.set(userInfo.token);
       const userRef: any = await fetchUserInfo();
       if (userRef?.user?.username === 'admin') {
-        const initRef = await Service.initPage()
+        const initRef = await Service.initPage();
         if (initRef.status === 200 && !initRef.result.length) {
           window.location.href = '/#/init-home';
-          return
+          return;
         }
       }
       window.location.href = '/';
