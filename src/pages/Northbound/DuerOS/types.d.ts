@@ -17,6 +17,11 @@ type DuerOSItem = {
   version: number;
   manufacturerName: string;
   autoReportProperty: boolean;
+  state?: {
+    text: string;
+    value: string | number;
+  };
+  productName?: string;
   applianceType: {
     text: string;
     value: string;

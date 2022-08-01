@@ -7,6 +7,7 @@ interface OperatorProps {
   propertiesList?: any[];
   value?: any;
   onChange?: (value: any) => void;
+  id?: string;
 }
 
 export default (props: OperatorProps) => {
@@ -81,6 +82,7 @@ export default (props: OperatorProps) => {
       <Col span={6}>
         <Select
           mode="multiple"
+          id={props.id}
           options={props.propertiesList || []}
           value={key}
           fieldNames={{

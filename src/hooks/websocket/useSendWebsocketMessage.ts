@@ -30,6 +30,7 @@ export const useSendWebsocketMessage = () => {
     if (data.type === 'error') {
       notification.error({ key: 'websocket-error', message: data.message });
     }
+
     if (subscribeList[data.requestId]) {
       if (data.type === 'complete') {
         subscribeList[data.requestId].forEach((element: any) => {

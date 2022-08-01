@@ -108,6 +108,9 @@ export default observer(() => {
       width: 80,
       dataIndex: 'sortIndex',
       valueType: 'digit',
+      render: (_, record) => {
+        return record.sortIndex;
+      },
     },
     {
       title: intl.formatMessage({
@@ -261,7 +264,11 @@ export default observer(() => {
         search={false}
         params={param}
         request={async (params) => {
-          const response = await service.queryMenuThree({ ...params, sorts: [{ name: 'sortIndex', order: 'asc'}], paging: false });
+          const response = await service.queryMenuThree({
+            ...params,
+            sorts: [{ name: 'sortIndex', order: 'asc' }],
+            paging: false,
+          });
           return {
             code: response.message,
             result: {

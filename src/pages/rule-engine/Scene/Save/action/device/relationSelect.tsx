@@ -5,6 +5,7 @@ import { getRelations } from '@/pages/rule-engine/Scene/Save/action/service';
 interface RelationProps {
   value?: any;
   onChange?: (value?: any) => void;
+  id?: string;
 }
 
 export default (props: RelationProps) => {
@@ -28,6 +29,7 @@ export default (props: RelationProps) => {
 
   return (
     <Select
+      id={props.id}
       options={options}
       style={{ width: '100%' }}
       value={props.value ? props.value[0]?.value?.relation : undefined}

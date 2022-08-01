@@ -16,6 +16,7 @@ interface OrgProps {
   notifyType: string;
   configId: string;
   onChange?: (value: ChangeType) => void;
+  id?: string;
 }
 
 export default (props: OrgProps) => {
@@ -47,6 +48,7 @@ export default (props: OrgProps) => {
   return (
     <TreeSelect
       value={keys}
+      id={props.id}
       listHeight={200}
       treeData={departmentTree}
       fieldNames={{

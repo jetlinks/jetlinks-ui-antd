@@ -15,6 +15,7 @@ interface TimeSelect {
   options?: OptionItemType[];
   className?: string;
   style?: React.CSSProperties;
+  id?: string;
 }
 
 export default (props: TimeSelect) => {
@@ -104,7 +105,7 @@ export default (props: TimeSelect) => {
         }}
         id={'timeSelect'}
       >
-        <div className={'time-select-content ellipsis'}>
+        <div className={'time-select-content ellipsis'} id={props.id}>
           {checkedNames.length ? (
             checkedKeys.includes('null') ? (
               '每天'
