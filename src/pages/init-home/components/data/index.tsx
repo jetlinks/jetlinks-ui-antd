@@ -78,7 +78,11 @@ const Data = forwardRef((_, ref) => {
       <img
         style={{ width: 300 }}
         onClick={() => {
-          setVisible(true);
+          if (flag) {
+            setFlag(false);
+          } else {
+            setVisible(true);
+          }
         }}
         src={
           flag

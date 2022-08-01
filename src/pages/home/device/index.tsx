@@ -50,7 +50,7 @@ const Device = () => {
       name: '创建产品',
       english: 'STEP1',
       auth: !!productPermission.add,
-      url: 'device/Product',
+      url: getMenuPathByCode('device/Product'),
       param: {
         save: true,
       },
@@ -60,7 +60,7 @@ const Device = () => {
       name: '创建设备',
       english: 'STEP2',
       auth: !!devicePermission.add,
-      url: 'device/Instance',
+      url: getMenuPathByCode('device/Instance'),
       param: {
         save: true,
       },
@@ -70,7 +70,7 @@ const Device = () => {
       name: '规则引擎',
       english: 'STEP3',
       auth: !!rulePermission.add,
-      url: 'rule-engine/Instance',
+      url: getMenuPathByCode('rule-engine/Instance'),
       param: {
         save: true,
       },

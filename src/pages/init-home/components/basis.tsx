@@ -1,6 +1,7 @@
 import { UploadImage } from '@/components';
 import { Col, Form, Input, Row, Select } from 'antd';
 import { useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useModel } from '@@/plugin-model/useModel';
 import { service } from '../index';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 const Basis = forwardRef((props: Props, ref) => {
   const [form] = Form.useForm();
+  const { initialState, setInitialState } = useModel<any>('@@initialState');
 
   const saveData = () => {
     return new Promise(async (resolve) => {
@@ -34,6 +36,17 @@ const Basis = forwardRef((props: Props, ref) => {
         const res = await service.save(item);
         if (res.status === 200) {
           resolve(true);
+          setInitialState({
+            ...initialState,
+            settings: {
+              ...initialState?.settings,
+              logo: formData.logo,
+            },
+          });
+          const ico: any = document.querySelector('link[rel="icon"]');
+          if (ico !== null) {
+            ico.href = formData.ico;
+          }
         } else {
           resolve(false);
         }
@@ -54,10 +67,23 @@ const Basis = forwardRef((props: Props, ref) => {
   }, []);
 
   return (
-    <Form layout="vertical" form={form}>
+    <Form
+      layout="vertical"
+      form={form}
+      initialValues={{
+        logo: require('/public/logo.png'),
+        ico: require('/public/favicon.ico'),
+        backgroud: require('/public/images/login.png'),
+        apikey: '',
+      }}
+    >
       <Row gutter={[24, 24]}>
         <Col span={10}>
-          <Form.Item label="系统名称" name="title">
+          <Form.Item
+            label="系统名称"
+            name="title"
+            rules={[{ max: 64, message: '最多可输入64个字符' }]}
+          >
             <Input placeholder={'请输入系统名称'} />
           </Form.Item>
           <Form.Item

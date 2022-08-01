@@ -71,7 +71,14 @@ const Basis = () => {
         <Form layout="vertical" form={form}>
           <Row gutter={[24, 24]}>
             <Col span={10}>
-              <Form.Item label="系统名称" name="title">
+              <Form.Item
+                label="系统名称"
+                name="title"
+                rules={[
+                  { required: true, message: '名称必填' },
+                  { max: 64, message: '最多可输入64个字符' },
+                ]}
+              >
                 <Input />
               </Form.Item>
               <Form.Item
