@@ -24,6 +24,7 @@ interface BuiltInProps {
   form: FormInstance;
   name: number;
   isEdit?: boolean;
+  id?: string;
 }
 
 export default (props: BuiltInProps) => {
@@ -110,6 +111,7 @@ export default (props: BuiltInProps) => {
     <ItemGroup compact>
       <Select
         value={source}
+        id={props.id}
         options={[
           { label: '手动输入', value: 'fixed' },
           { label: '内置参数', value: 'upper' },

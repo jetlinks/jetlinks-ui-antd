@@ -9,10 +9,12 @@ type RangePickerValue = {
 interface RangePickerProps {
   value?: RangePickerValue;
   onChange?: (value: RangePickerValue) => void;
+  id?: string;
 }
 export default (props: RangePickerProps) => {
   return (
     <TimePicker.RangePicker
+      id={props.id}
       style={{ width: '100%' }}
       format={'HH:mm:ss'}
       value={[

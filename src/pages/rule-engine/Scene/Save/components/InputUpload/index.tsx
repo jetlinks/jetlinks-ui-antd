@@ -8,6 +8,7 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 interface InputUploadProps {
   value?: string;
   onChange?: (value?: string) => void;
+  id?: string;
 }
 
 export default (props: InputUploadProps) => {
@@ -68,6 +69,7 @@ export default (props: InputUploadProps) => {
   return (
     <Input
       value={url}
+      id={props.id}
       onChange={(e) => {
         if (onChange) {
           onChange(e.target.value);

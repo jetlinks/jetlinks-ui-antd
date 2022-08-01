@@ -7,6 +7,7 @@ interface OrgTreeSelect extends Omit<TreeSelectProps, 'onChange' | 'value'> {
   onChange?: (value: any[]) => void;
   value?: any;
   productId?: string;
+  id?: string;
 }
 
 export default (props: OrgTreeSelect) => {
@@ -43,6 +44,12 @@ export default (props: OrgTreeSelect) => {
   }, [props.value]);
 
   return (
-    <TreeSelect<string> value={myValue} treeData={orgTree} onChange={onchange} {...extraProps} />
+    <TreeSelect<string>
+      id={props.id}
+      value={myValue}
+      treeData={orgTree}
+      onChange={onchange}
+      {...extraProps}
+    />
   );
 };

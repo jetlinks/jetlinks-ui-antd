@@ -21,6 +21,7 @@ interface UserProps {
   value?: ChangeType;
   type?: string;
   onChange?: (value: ChangeType) => void;
+  id?: string;
 }
 
 export default (props: UserProps) => {
@@ -308,6 +309,7 @@ export default (props: UserProps) => {
   return (
     <ItemGroup compact>
       <Select
+        id={props.id}
         value={source}
         options={
           props.notifyType && ['dingTalk', 'weixin'].includes(props.notifyType)
