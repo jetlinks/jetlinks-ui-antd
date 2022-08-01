@@ -185,12 +185,16 @@ const Detail = observer(() => {
     {
       title: '所属产品',
       ellipsis: true,
-      dataIndex: 'productName',
+      dataIndex: 'productId',
       valueType: 'select',
+      render: (text: any, record: any) => record?.productName,
       request: async () => {
-        const res: any = await service.queryProduct();
+        const res: any = await service.queryProduct({
+          paging: false,
+          sorts: [{ name: 'name', order: 'desc' }],
+        });
         if (res.status === 200) {
-          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.name }));
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
         }
         return [];
       },

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge, Popconfirm, Tooltip } from 'antd';
+import { Badge, message, Popconfirm, Tooltip } from 'antd';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
@@ -15,7 +15,6 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
 import Service from '@/pages/link/service';
-import { Store } from 'jetlinks-store';
 import { PermissionButton, ProTableCard } from '@/components';
 import NetworkCard from '@/components/ProTableCard/CardItems/networkCard';
 import usePermissions from '@/hooks/permission';
@@ -168,7 +167,7 @@ const Network = () => {
           // disabled={getButtonPermission('link/Type', ['view'])}
           key="edit"
           onClick={() => {
-            Store.set('current-network-data', record);
+            // Store.set('current-network-data', record);
             pageJump(record.id);
           }}
         >
@@ -207,6 +206,7 @@ const Network = () => {
         </PermissionButton>,
         <PermissionButton
           type="link"
+          key={'delete'}
           style={{ padding: 0 }}
           isPermission={networkPermission.delete}
           disabled={record.state.value === 'enabled'}
@@ -227,6 +227,8 @@ const Network = () => {
               if (response.status === 200) {
                 onlyMessage('删除成功');
                 actionRef.current?.reload();
+              } else {
+                message.error(response?.message || '删除失败');
               }
             }}
           >
@@ -294,7 +296,7 @@ const Network = () => {
                 isPermission={networkPermission.update}
                 key="edit"
                 onClick={() => {
-                  Store.set('current-network-data', record);
+                  // Store.set('current-network-data', record);
                   pageJump(record.id);
                 }}
               >
@@ -351,6 +353,8 @@ const Network = () => {
                     if (response.status === 200) {
                       onlyMessage('删除成功');
                       actionRef.current?.reload();
+                    } else {
+                      message.error(response?.message || '删除失败');
                     }
                   },
                 }}

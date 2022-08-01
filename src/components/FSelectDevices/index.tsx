@@ -6,14 +6,15 @@ import { connect } from '@formily/react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
-import moment from 'moment';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Instance/service';
 import SearchComponent from '../SearchComponent';
+import _ from 'lodash';
 
 interface Props {
   value: Partial<DeviceInstance>[];
   onChange: (data: Partial<DeviceInstance>[]) => void;
+  productId?: string;
 }
 
 export const service = new Service('device/instance');
@@ -24,14 +25,10 @@ const FSelectDevices = connect((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
   const columns: ProColumns<DeviceInstance>[] = [
-    // {
-    //   dataIndex: 'index',
-    //   valueType: 'indexBorder',
-    //   width: 48,
-    // },
     {
       title: 'ID',
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -42,38 +39,32 @@ const FSelectDevices = connect((props: Props) => {
       ellipsis: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.table.productName',
-        defaultMessage: '产品名称',
-      }),
-      dataIndex: 'productName',
+      title: '固件版本',
+      dataIndex: 'firmwareInfo',
       ellipsis: true,
+      render: (text: any, record: any) => record?.version || '',
     },
     {
       title: intl.formatMessage({
         id: 'pages.device.instance.registrationTime',
         defaultMessage: '注册时间',
       }),
-      dataIndex: 'registryTime',
+      dataIndex: 'registerTime',
       width: '200px',
-      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''),
-      sorter: true,
+      valueType: 'dateTime',
     },
-    // {
-    //   title: intl.formatMessage({
-    //     id: 'pages.table.description',
-    //     defaultMessage: '说明',
-    //   }),
-    //   dataIndex: 'description',
-    //   width: '15%',
-    //   ellipsis: true,
-    // },
   ];
 
-  const [data, setData] = useState<Partial<DeviceInstance>[]>(props.value);
+  const [data, setData] = useState<Partial<DeviceInstance>[]>(props?.value || []);
   const rowSelection = {
     onChange: (selectedRowKeys: Key[], selectedRows: DeviceInstance[]) => {
-      setData(selectedRows);
+      const list = [...data];
+      selectedRows.map((item) => {
+        if (!_.map(data, 'id').includes(item.id)) {
+          list.push(item);
+        }
+      });
+      setData(list);
     },
     selectedRowKeys: data?.map((item) => item.id) as Key[],
   };
@@ -103,6 +94,7 @@ const FSelectDevices = connect((props: Props) => {
             model="simple"
             onSearch={async (data1) => {
               setSearchParam(data1);
+              actionRef.current?.reset?.();
             }}
             target="choose-device"
           />
@@ -122,7 +114,29 @@ const FSelectDevices = connect((props: Props) => {
             params={searchParam}
             columns={columns}
             actionRef={actionRef}
-            request={(params) => service.query(params)}
+            request={async (params) => {
+              return service.queryDetailList({
+                context: {
+                  includeTags: false,
+                  includeBind: false,
+                  includeRelations: false,
+                },
+                ...params,
+                terms: [
+                  ...(params?.terms || []),
+                  {
+                    terms: [
+                      {
+                        column: 'productId',
+                        value: props?.productId,
+                      },
+                    ],
+                    type: 'and',
+                  },
+                ],
+                sorts: [{ name: 'createTime', order: 'desc' }],
+              });
+            }}
           />
         </Modal>
       )}

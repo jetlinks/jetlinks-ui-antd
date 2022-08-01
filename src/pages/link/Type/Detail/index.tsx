@@ -15,7 +15,7 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef } from 'react';
-import type { Field, FieldDataSource } from '@formily/core';
+import { Field, FieldDataSource, onFormInit } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card, Col, Row } from 'antd';
 import styles from './index.less';
@@ -28,6 +28,7 @@ import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
 import FMonacoEditor from '@/components/FMonacoEditor';
+import { useParams } from 'umi';
 
 /**
  *  根据类型过滤配置信息
@@ -53,7 +54,7 @@ const filterConfigByType = (data: any[], type: string) => {
   });
 };
 const Save = observer(() => {
-  // const param = useParams<{ id: string }>();
+  const param = useParams<{ id: string }>();
 
   const configRef = useRef([]);
 
@@ -120,6 +121,12 @@ const Save = observer(() => {
         // readPretty: true,
         // initialValues: {},
         effects() {
+          onFormInit(async (form1) => {
+            if (param?.id && param.id !== ':id') {
+              const resp = await service.detail(param.id);
+              form1.setInitialValues({ ...resp?.result });
+            }
+          });
           onFieldValueChange('type', (field, f) => {
             const value = (field as Field).value;
             if (f.modified) {
@@ -171,6 +178,10 @@ const Save = observer(() => {
                 f5.setFieldState('grid.cluster.cluster', (state) => {
                   state.value = [{}];
                 });
+                f5.setFieldState('grid.cluster.cluster.*.layout2.host', (state) => {
+                  state.value = undefined;
+                  state.disabled = false;
+                });
               }
             }
           });
@@ -192,36 +203,27 @@ const Save = observer(() => {
               state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
             });
           });
-          // onFieldValueChange('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
-          //   const host = (field as Field).value;
-          //   const value = (field.query('.serverId').take() as Field).value;
-          //   const type = (field.query('type').take() as Field).value;
-          //   const response = await getResourceById(value, type);
-          //   const _ports = response.find((item) => item.host === host);
-          //   f4.setFieldState(field.query('.port').take(), async (state) => {
-          //     state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
-          //   });
-          // });
         },
       }),
     [],
   );
 
   useEffect(() => {
-    const subscription = Store.subscribe('current-network-data', (data) => {
-      if (!data) return;
-      // form.readPretty = true;
-      const _data = _.cloneDeep(data);
-      // 处理一下集群模式数据
-      if (!_data.shareCluster) {
-        _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
-      }
-      form.setValues({ ..._data });
-    });
-    return () => {
-      subscription.unsubscribe();
-      Store.set('current-network-data', undefined);
-    };
+    console.log(Store.get('current-network-data'));
+    // const subscription = Store.subscribe('current-network-data', (data) => {
+    //   if (!data) return;
+    //   // form.readPretty = true;
+    //   const _data = _.cloneDeep(data);
+    //   // 处理一下集群模式数据
+    //   if (!_data.shareCluster) {
+    //     _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
+    //   }
+    //   form.setValues({ ..._data });
+    // });
+    // return () => {
+    //   subscription.unsubscribe();
+    //   // Store.set('current-network-data', undefined);
+    // };
   }, []);
 
   const SchemaField = createSchemaField({
@@ -290,6 +292,8 @@ const Save = observer(() => {
         'x-component-props': {
           placeholder: '请选择本地地址',
         },
+        default: '0.0.0.0',
+        'x-disabled': true,
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
@@ -350,7 +354,13 @@ const Save = observer(() => {
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
-          tooltip: '对外提供访问的地址,内网环境是填写服务器的内网IP地址',
+          tooltip: (
+            <span>
+              对外提供访问的地址,
+              <br />
+              内网环境时填写服务器的内网IP地址
+            </span>
+          ),
           layout: 'vertical',
         },
         required: true,

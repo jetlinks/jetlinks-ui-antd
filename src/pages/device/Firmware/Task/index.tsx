@@ -108,6 +108,7 @@ const Task = observer(() => {
       ellipsis: true,
       // hideInSearch: true,
       dataIndex: 'progress',
+      valueType: 'digit',
     },
     {
       title: intl.formatMessage({
@@ -147,14 +148,18 @@ const Task = observer(() => {
                   })
             }
             onConfirm={async () => {
-              await service.deleteTask(record.id);
-              onlyMessage(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
+              const resp = await service.deleteTask(record.id);
+              if (resp.status === 200) {
+                onlyMessage(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              } else {
+                message.error(resp?.message || '删除失败！');
+              }
             }}
           >
             <Tooltip
