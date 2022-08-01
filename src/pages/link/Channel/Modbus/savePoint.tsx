@@ -139,10 +139,10 @@ const SavePoint = (props: Props) => {
               name="address"
               tooltip="范围在0x0-0xFFFF"
               rules={[
-                { required: true, message: '请输入读取长度' },
+                { required: true, message: '请输入地址' },
                 ({}) => ({
                   validator(_, value) {
-                    if (value > 1 && value < 255) {
+                    if (value >= 1 && value <= 255) {
                       return Promise.resolve();
                     }
                     return Promise.reject(new Error('请输入1~255之间的数字'));

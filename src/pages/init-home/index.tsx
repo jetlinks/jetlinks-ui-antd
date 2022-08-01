@@ -143,7 +143,7 @@ const InitHome = () => {
                 });
               }}
             >
-              确认
+              确定
             </Button>
           </div>
         </div>
