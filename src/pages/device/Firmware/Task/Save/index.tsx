@@ -25,7 +25,7 @@ const Save = (props: Props) => {
     () =>
       createForm({
         validateFirst: true,
-        initialValues: data,
+        initialValues: {},
         effects() {
           onFormInit(async (form1) => {
             if (!data?.id) return;
@@ -241,6 +241,9 @@ const Save = (props: Props) => {
             title: '选择设备',
             'x-decorator': 'FormItem',
             'x-component': 'FSelectDevices',
+            'x-component-props': {
+              productId: ids?.productId || '',
+            },
             'x-visible': false,
             required: true,
             'x-reactions': {

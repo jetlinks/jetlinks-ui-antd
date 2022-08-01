@@ -105,7 +105,7 @@ const Configuration = () => {
     },
     {
       title: '关联场景联动',
-      dataIndex: 'sceneName',
+      dataIndex: 'sceneId',
       width: 250,
       render: (text: any, record: any) => (
         <PermissionButton
@@ -130,7 +130,7 @@ const Configuration = () => {
               textOverflow: 'ellipsis',
             }}
           >
-            {text}
+            {record?.sceneName}
           </span>
         </PermissionButton>
       ),
@@ -142,7 +142,7 @@ const Configuration = () => {
           }),
         );
         if (res.status === 200) {
-          return res.result.map((item: any) => ({ label: item.name, value: item.name }));
+          return res.result.map((item: any) => ({ label: item.name, value: item.id }));
         }
         return [];
       },

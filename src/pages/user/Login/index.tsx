@@ -92,9 +92,14 @@ const Login: React.FC = () => {
     });
     Service.settingDetail('basis').then((res) => {
       if (res.status === 200) {
-        console.log(res.result);
         const ico: any = document.querySelector('link[rel="icon"]');
-        ico.href = res.result.ico + setBasis(res.result);
+        ico.href = res.result.ico;
+        setBasis(res.result);
+        if (res.result.title) {
+          document.title = res.result.title;
+        } else {
+          document.title = '';
+        }
       }
     });
   }, []);

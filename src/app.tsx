@@ -316,8 +316,27 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     menuHeaderRender: undefined,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
+    pageTitleRender: (_props, _, info) => {
+      if (initialState?.settings?.title) {
+        return info?.pageName + ' - ' + initialState?.settings?.title;
+      } else {
+        return info?.pageName;
+      }
+    },
+    title: (
+      <div
+        title={initialState?.settings?.title || ''}
+        style={{
+          maxWidth: 150,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {initialState?.settings?.title}
+      </div>
+    ),
     ...initialState?.settings,
-    // title: '',
     // logo:''
   };
 };

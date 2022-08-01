@@ -25,6 +25,7 @@ const Publish = (props: Props) => {
     const source = new EventSourcePolyfill(activeAPI);
     source.onmessage = (e: any) => {
       const res = JSON.parse(e.data);
+      console.log(res);
       if (res.successful) {
         dt += 1;
         setCount(dt);
@@ -35,7 +36,8 @@ const Publish = (props: Props) => {
         setErrMessage(res.message);
       }
     };
-    source.onerror = () => {
+    source.onerror = (e: any) => {
+      console.log(e, 'error');
       source.close();
     };
     source.onopen = () => {};

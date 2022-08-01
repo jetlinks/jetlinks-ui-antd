@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Popconfirm } from 'antd';
+import { message, Popconfirm } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { DeleteOutlined, EditOutlined, NodeExpandOutlined, PlusOutlined } from '@ant-design/icons';
@@ -16,6 +16,7 @@ import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('firmware');
 
@@ -56,24 +57,25 @@ const Firmware = observer(() => {
         defaultMessage: '所属产品',
       }),
       ellipsis: true,
-      dataIndex: 'productName',
+      dataIndex: 'productId',
       valueType: 'select',
+      render: (text: any, record: any) => record?.productName,
       request: () =>
         service
           .queryProduct({
             paging: false,
-            terms: [
-              {
-                column: 'state',
-                value: 1,
-              },
-            ],
+            // terms: [
+            //   {
+            //     column: 'state',
+            //     value: 1,
+            //   },
+            // ],
             sorts: [{ name: 'name', order: 'desc' }],
           })
           .then((resp: any) =>
             (resp?.result || []).map((item: any) => ({
               label: item.name,
-              value: item.name,
+              value: item.id,
             })),
           ),
     },
@@ -167,8 +169,18 @@ const Firmware = observer(() => {
         >
           <Popconfirm
             onConfirm={async () => {
-              await service.remove(record.id);
-              actionRef.current?.reload();
+              const resp: any = await service.remove(record.id);
+              if (resp.status === 200) {
+                onlyMessage(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              } else {
+                message.error(resp?.message || '删除失败！');
+              }
             }}
             title="确认删除?"
           >
