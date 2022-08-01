@@ -49,6 +49,10 @@ import * as onenet from '@/pages/cloud/onenet/service';
 import * as ctwing from '@/pages/cloud/ctwing/service';
 import * as edgeProduct from '@/pages/edge-gateway/product/service';
 import * as edgeDevice from '@/pages/edge-gateway/device/service';
+import * as flowCard from '@/pages/iot-card/service';
+import * as onelink from '@/pages/cloud/onelink/service';
+import * as ctwingCmp from '@/pages/cloud/ctwingCmp/service';
+import * as unicom from '@/pages/cloud/unicomCmp/service';
 
 const apis = {
   login,
@@ -101,6 +105,10 @@ const apis = {
   ctwing,
   edgeProduct,
   edgeDevice,
-  assets
+  assets,
+  flowCard,
+  onelink,
+  ctwingCmp,
+  unicom
 };
 export default apis;

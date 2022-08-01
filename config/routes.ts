@@ -588,7 +588,7 @@ export const routes = [
             name: '云云对接',
             icon: 'cloud',
             version: 'pro',
-            authority: ['dueros-product', 'aliyun-bridge', 'onenet-product', 'ctwing-product'],
+            authority: ['dueros-product', 'aliyun-bridge', 'onenet-product', 'ctwing-product', 'onelink-product'],
             routes: [
               {
                 path: '/cloud/duer',
@@ -615,12 +615,36 @@ export const routes = [
                 component: './cloud/onenet',
               },
               {
+                path: '/cloud/onelink',
+                name: '移动OneLink',
+                version: 'pro',
+                // authority: ['onelink-product'],
+                icon: 'mobile',
+                component: './cloud/onelink',
+              },
+              {
+                path: '/cloud/ctwingCmp',
+                name: '电信CTWingCmp',
+                version: 'pro',
+                // authority: ['ctwingCmp-product'],
+                icon: 'mobile',
+                component: './cloud/ctwingCmp',
+              },
+              {
                 path: '/cloud/ctwing',
                 name: '电信CTWing',
                 version: 'pro',
                 authority: ['ctwing-product'],
                 icon: 'phone',
                 component: './cloud/ctwing',
+              },
+              {
+                path: '/cloud/unicom',
+                name: '联通Unicom',
+                version: 'pro',
+                // authority: ['ctwingCmp-product'],
+                icon: 'mobile',
+                component: './cloud/unicomCmp',
               },
             ],
           },
@@ -732,17 +756,39 @@ export const routes = [
             ],
           },
           {
+            path: 'iot-card',
+            name: '物联卡',
+            icon: 'container',
+            tenant: ['admin'],
+            iconfont: 'icon-guizeyinqing',
+            // authority: ['flow-card', 'query-transaction'],
+            routes: [
+              {
+                path: '/iot-card/flow-card',
+                name: '流量卡',
+                icon: 'credit-card',
+                tenant: ['admin'],
+                iconfont: 'icon-xian-buguize-moxing',
+                // authority: ['flow-card'],
+                component: './iot-card/flow-card',
+              },
+              {
+                path: '/iot-card/query-transaction',
+                name: '查询交易',
+                icon: 'search',
+                tenant: ['admin'],
+                iconfont: 'icon-xian-buguize-moxing',
+                // authority: ['query-transaction'],
+                component: './iot-card/query-transaction',
+              },
+            ],
+          },
+          {
             path: 'account',
             name: '个人中心',
             icon: 'user',
             hideInMenu: true,
             routes: [
-              // {
-              //   path: '/account/center',
-              //   name: '个人中心',
-              //   icon: 'smile',
-              //   component: './account/center'
-              // },
               {
                 path: '/account/settings',
                 name: '个人设置',
@@ -757,12 +803,6 @@ export const routes = [
               },
             ],
           },
-          // {
-          //   name: 'paramter',
-          //   path: '/properties',
-          //   inco: 'bar-chart',
-          //   component: './script-demo',
-          // },
           {
             name: 'exception',
             icon: 'smile',
