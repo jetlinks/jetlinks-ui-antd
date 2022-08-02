@@ -195,7 +195,17 @@ export default (props: DeviceModelProps) => {
                 取消选择
               </Button>
             )}
-            request={(params) => queryDevice(params)}
+            request={(params) =>
+              queryDevice({
+                ...params,
+                sorts: [
+                  {
+                    name: 'createTime',
+                    order: 'desc',
+                  },
+                ],
+              })
+            }
             params={searchParam}
           ></ProTable>
         </Modal>

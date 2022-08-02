@@ -6,6 +6,7 @@ import Device from './deviceModal';
 import TagModal from './tagModal';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 import RelationSelect from './relationSelect';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface DeviceProps {
   name: number;
@@ -67,7 +68,11 @@ export default (props: DeviceProps) => {
   };
 
   const getProducts = async () => {
-    const resp = await getProductList({ paging: false });
+    const params = encodeQuery({
+      paging: false,
+      sorts: { createTime: 'desc' },
+    });
+    const resp = await getProductList(params);
     if (resp && resp.status === 200) {
       setProductList(resp.result);
       if (props.value && props.value.productId) {

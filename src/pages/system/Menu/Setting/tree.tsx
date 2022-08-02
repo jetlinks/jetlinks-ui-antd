@@ -2,10 +2,11 @@ import { Input, Tree } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import DragItem from '@/pages/system/Menu/Setting/dragItem';
 import { useDrop } from 'react-dnd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { TreeProps } from 'antd';
 import { cloneDeep, debounce } from 'lodash';
 import './DragItem.less';
+import { Empty } from '@/components';
 
 interface TreeBodyProps {
   treeData: any[];
@@ -38,9 +39,11 @@ export default (props: TreeBodyProps) => {
   const [searchKeys, setSearchKeys] = useState<(string | number)[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const DefaultTreeRef = useRef<any[]>(props.treeData);
 
   useEffect(() => {
     setNewData(cloneDeep(props.treeData));
+    DefaultTreeRef.current = cloneDeep(props.treeData);
   }, [props.treeData]);
 
   useEffect(() => {
@@ -125,6 +128,18 @@ export default (props: TreeBodyProps) => {
     return parentKey;
   };
 
+  const findItem = (data: any[], keys: string[]): any[] => {
+    return data.filter((item) => {
+      if (item.children) {
+        item.children = findItem(item.children, keys);
+      }
+      if (keys.includes(item.code) || !!item.children?.length) {
+        return true;
+      }
+      return false;
+    });
+  };
+
   const findAllItem = (data: any[], value: string): string[] => {
     return data.reduce((pre, next) => {
       const childrenKeys = next.children ? findAllItem(next.children, value) : [];
@@ -142,10 +157,14 @@ export default (props: TreeBodyProps) => {
       const newExpandedKeys = newKeys.map((key) => {
         return getParentKey(key, props.treeData);
       });
+      const expandKeysSet = new Set([...newExpandedKeys, ...newKeys]);
+      const searchData = findItem(cloneDeep(DefaultTreeRef.current), [...expandKeysSet.keys()]);
+      setNewData(cloneDeep(searchData));
       setSearchKeys(newKeys);
-      setExpandedKeys(newExpandedKeys);
+      setExpandedKeys([...expandKeysSet.keys()]);
     } else {
       setSearchKeys([]);
+      setNewData(cloneDeep(DefaultTreeRef.current));
     }
     setAutoExpandParent(true);
   };
@@ -162,34 +181,42 @@ export default (props: TreeBodyProps) => {
       </div>
       {props.droppableId === 'source' ? (
         <div className={'tree-body'}>
-          <Tree
-            expandedKeys={expandedKeys}
-            onExpand={(_expandedKeys) => {
-              setExpandedKeys(_expandedKeys);
-              setAutoExpandParent(false);
-            }}
-            autoExpandParent={autoExpandParent}
-          >
-            {createTreeNode(newData, props.droppableId)}
-          </Tree>
+          {newData.length ? (
+            <Tree
+              expandedKeys={expandedKeys}
+              onExpand={(_expandedKeys) => {
+                setExpandedKeys(_expandedKeys);
+                setAutoExpandParent(false);
+              }}
+              autoExpandParent={autoExpandParent}
+            >
+              {createTreeNode(newData, props.droppableId)}
+            </Tree>
+          ) : (
+            <Empty />
+          )}
         </div>
       ) : (
         <div className={'tree-body'} ref={drop}>
-          <Tree
-            expandedKeys={expandedKeys}
-            onExpand={(_expandedKeys) => {
-              setExpandedKeys(_expandedKeys);
-              setAutoExpandParent(false);
-            }}
-            autoExpandParent={autoExpandParent}
-            draggable={{
-              icon: false,
-            }}
-            onDrop={props.onTreeDrop}
-            className="menu-setting-drag-tree"
-          >
-            {createTreeNode(props.treeData, props.droppableId)}
-          </Tree>
+          {newData.length ? (
+            <Tree
+              expandedKeys={expandedKeys}
+              onExpand={(_expandedKeys) => {
+                setExpandedKeys(_expandedKeys);
+                setAutoExpandParent(false);
+              }}
+              autoExpandParent={autoExpandParent}
+              draggable={{
+                icon: false,
+              }}
+              onDrop={props.onTreeDrop}
+              className="menu-setting-drag-tree"
+            >
+              {createTreeNode(newData, props.droppableId)}
+            </Tree>
+          ) : (
+            <Empty />
+          )}
         </div>
       )}
     </div>
