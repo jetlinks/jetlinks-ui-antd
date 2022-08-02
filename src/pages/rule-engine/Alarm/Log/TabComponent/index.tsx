@@ -70,6 +70,57 @@ const TabComponent = observer((props: Props) => {
       },
     },
   ];
+  const productCol: ProColumns<any>[] = [
+    ...columns,
+    {
+      title: '产品名称',
+      dataIndex: 'targetName',
+      width: 200,
+      ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getProductList();
+        if (res.status === 200) {
+          return res.result.map((item: any) => ({ label: item.name, value: item.name }));
+        }
+        return [];
+      },
+    },
+  ];
+  const deviceCol: ProColumns<any>[] = [
+    ...columns,
+    {
+      title: '设备名称',
+      dataIndex: 'targetName',
+      width: 200,
+      ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getDeviceList();
+        if (res.status === 200) {
+          return res.result.map((item: any) => ({ label: item.name, value: item.name }));
+        }
+        return [];
+      },
+    },
+  ];
+  const orgCol: ProColumns<any>[] = [
+    ...columns,
+    {
+      title: '部门名称',
+      dataIndex: 'targetName',
+      width: 200,
+      ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getOrgList();
+        if (res.status === 200) {
+          return res.result.map((item: any) => ({ label: item.name, value: item.name }));
+        }
+        return [];
+      },
+    },
+  ];
 
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const history = useHistory<Record<string, string>>();
@@ -107,6 +158,9 @@ const TabComponent = observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(param);
+    if (props.type === 'prodcut') {
+    }
+    console.log(props.type);
   }, [props.type]);
 
   const tools = (record: any) => [
@@ -182,17 +236,72 @@ const TabComponent = observer((props: Props) => {
 
   return (
     <div className="alarm-log-card">
-      <SearchComponent<any>
-        field={columns}
-        target="alarm-log"
-        onSearch={(data) => {
-          const dt = {
-            pageSize: 10,
-            terms: [...data?.terms],
-          };
-          handleSearch(dt);
-        }}
-      />
+      {props.type === 'all' && (
+        <SearchComponent<any>
+          field={columns}
+          target="alarm-log"
+          onSearch={(data) => {
+            const dt = {
+              pageSize: 10,
+              terms: [...data?.terms],
+            };
+            handleSearch(dt);
+          }}
+        />
+      )}
+      {props.type === 'product' && (
+        <SearchComponent<any>
+          field={productCol}
+          target="alarm-log"
+          onSearch={(data) => {
+            const dt = {
+              pageSize: 10,
+              terms: [...data?.terms],
+            };
+            handleSearch(dt);
+          }}
+        />
+      )}
+      {props.type === 'device' && (
+        <SearchComponent<any>
+          field={deviceCol}
+          target="alarm-log"
+          onSearch={(data) => {
+            const dt = {
+              pageSize: 10,
+              terms: [...data?.terms],
+            };
+            handleSearch(dt);
+          }}
+        />
+      )}
+      {props.type === 'org' && (
+        <SearchComponent<any>
+          field={orgCol}
+          target="alarm-log"
+          onSearch={(data) => {
+            const dt = {
+              pageSize: 10,
+              terms: [...data?.terms],
+            };
+            handleSearch(dt);
+          }}
+        />
+      )}
+      {props.type === 'other' && (
+        <SearchComponent<any>
+          field={productCol}
+          target="alarm-log"
+          onSearch={(data) => {
+            const dt = {
+              pageSize: 10,
+              terms: [...data?.terms],
+            };
+            handleSearch(dt);
+          }}
+        />
+      )}
+
       <Card>
         <div className="alarmLog" style={{ minHeight, position: 'relative' }}>
           <div style={{ height: '100%', paddingBottom: 48 }}>

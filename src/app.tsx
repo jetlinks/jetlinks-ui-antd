@@ -314,6 +314,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         ]
       : [],
     menuHeaderRender: undefined,
+    ...initialState?.settings,
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     pageTitleRender: (_props, _, info) => {
@@ -336,8 +337,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         {initialState?.settings?.title}
       </div>
     ),
-    ...initialState?.settings,
-    // logo:''
   };
 };
 
