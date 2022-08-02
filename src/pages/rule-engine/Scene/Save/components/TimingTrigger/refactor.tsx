@@ -27,6 +27,12 @@ const CronRegEx = new RegExp(
   '(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7])|([1-7])|(\\?)|(\\*)|(([1-7]L)|([1-7]\\#[1-4]))))|(((^([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|^([0-9]|[0-5][0-9]) |^(\\* ))((([0-9]|[0-5][0-9])(\\,|\\-|\\/){1}([0-9]|[0-5][0-9]) )|([0-9]|[0-5][0-9]) |(\\* ))((([0-9]|[01][0-9]|2[0-3])(\\,|\\-|\\/){1}([0-9]|[01][0-9]|2[0-3]) )|([0-9]|[01][0-9]|2[0-3]) |(\\* ))((([0-9]|[0-2][0-9]|3[01])(\\,|\\-|\\/){1}([0-9]|[0-2][0-9]|3[01]) )|(([0-9]|[0-2][0-9]|3[01]) )|(\\? )|(\\* )|(([1-9]|[0-2][0-9]|3[01])L )|([1-7]W )|(LW )|([1-7]\\#[1-4] ))((([1-9]|0[1-9]|1[0-2])(\\,|\\-|\\/){1}([1-9]|0[1-9]|1[0-2]) )|([1-9]|0[1-9]|1[0-2]) |(\\* ))(([1-7](\\,|\\-|\\/){1}[1-7] )|([1-7] )|(\\? )|(\\* )|(([1-7]L )|([1-7]\\#[1-4]) ))((19[789][0-9]|20[0-9][0-9])\\-(19[789][0-9]|20[0-9][0-9])))',
 );
 
+const getFormValueByName = (name: string[], values: any) => {
+  return name.reduce((prev, next) => {
+    return prev ? prev[next] : values[next];
+  }, '');
+};
+
 export default (props: TimingTrigger) => {
   const { name } = props;
   const [data, setData] = useState<any>({
@@ -38,7 +44,6 @@ export default (props: TimingTrigger) => {
     const formData = props.form.getFieldsValue();
     let _data = formData;
     name.forEach((key) => {
-      console.log(_data, key);
       if (key in _data) {
         _data = _data[key];
       }
@@ -91,141 +96,218 @@ export default (props: TimingTrigger) => {
                 { label: 'cron表达式', value: TriggerEnum.cron },
               ]}
               style={{ width: '120px' }}
-              onChange={() => {
+              onChange={(key) => {
                 props.form.setFields([
                   {
                     name: [...name, 'timer', 'when'],
                     value: undefined,
                   },
+                  {
+                    name: [...name, 'timer', 'mod'],
+                    value: PeriodModEnum.period,
+                  },
                 ]);
-                onChange();
+                setData({
+                  trigger: key,
+                  mod: PeriodModEnum.period,
+                });
               }}
             />
           </Form.Item>
-          {data?.trigger !== TriggerEnum.cron ? (
-            <Form.Item
-              name={[...name, 'timer', 'when']}
-              rules={[
-                {
-                  required: true,
-                  message: '请选择时间',
-                },
-              ]}
-            >
-              <TimeSelect
-                value={data?.when}
-                options={
-                  data?.trigger === TriggerEnum.week
-                    ? [
-                        { label: '周一', value: 1 },
-                        { label: '周二', value: 2 },
-                        { label: '周三', value: 3 },
-                        { label: '周四', value: 4 },
-                        { label: '周五', value: 5 },
-                        { label: '周六', value: 6 },
-                        { label: '周末', value: 7 },
-                      ]
-                    : new Array(31)
-                        .fill(1)
-                        .map((_, index) => ({ label: index + 1 + '号', value: index + 1 }))
-                }
-                style={{ width: '100%' }}
-                onChange={onChange}
-              />
-            </Form.Item>
-          ) : (
-            <Form.Item
-              name={[...name, 'timer', 'cron']}
-              rules={[
-                { max: 64, message: '最多可输入64个字符' },
-                {
-                  validator: async (_: any, value: any) => {
-                    if (value && !CronRegEx.test(value)) {
-                      return Promise.reject(new Error('请输入正确的cron表达式'));
+          <Form.Item
+            noStyle
+            dependencies={[...name, 'timer', 'trigger']}
+            shouldUpdate={(prevValues, curValues) => {
+              const pValue = getFormValueByName([...name, 'timer', 'trigger'], prevValues);
+              const cValue = getFormValueByName([...name, 'timer', 'trigger'], curValues);
+              return pValue !== cValue;
+            }}
+          >
+            {({ getFieldValue }) => {
+              const trigger = getFieldValue([...name, 'timer', 'trigger']);
+              const when = getFieldValue([...name, 'timer', 'when']);
+              return trigger !== TriggerEnum.cron ? (
+                <Form.Item
+                  name={[...name, 'timer', 'when']}
+                  rules={[
+                    {
+                      required: true,
+                      message: '请选择时间',
+                    },
+                  ]}
+                >
+                  <TimeSelect
+                    value={when}
+                    options={
+                      trigger === TriggerEnum.week
+                        ? [
+                            { label: '周一', value: 1 },
+                            { label: '周二', value: 2 },
+                            { label: '周三', value: 3 },
+                            { label: '周四', value: 4 },
+                            { label: '周五', value: 5 },
+                            { label: '周六', value: 6 },
+                            { label: '周末', value: 7 },
+                          ]
+                        : new Array(31)
+                            .fill(1)
+                            .map((_, index) => ({ label: index + 1 + '号', value: index + 1 }))
                     }
-                    return Promise.reject(new Error('请输入cron表达式'));
-                  },
-                },
-              ]}
-            >
-              <Input placeholder={'请输入cron表达式'} style={{ width: 400 }} />
-            </Form.Item>
-          )}
+                    style={{ width: '100%' }}
+                    onChange={onChange}
+                  />
+                </Form.Item>
+              ) : (
+                <Form.Item
+                  name={[...name, 'timer', 'cron']}
+                  rules={[
+                    { max: 64, message: '最多可输入64个字符' },
+                    {
+                      validator: async (_: any, value: any) => {
+                        if (value && !CronRegEx.test(value)) {
+                          return Promise.reject(new Error('请输入正确的cron表达式'));
+                        }
+                        return Promise.reject(new Error('请输入cron表达式'));
+                      },
+                    },
+                  ]}
+                >
+                  <Input placeholder={'请输入cron表达式'} style={{ width: 400 }} />
+                </Form.Item>
+              );
+            }}
+          </Form.Item>
         </ItemGroup>
       </Col>
       <Col xxl={11} xl={14}>
-        {data?.trigger !== TriggerEnum.cron && (
-          <ItemGroup>
-            <Form.Item
-              name={[...name, 'timer', 'mod']}
-              initialValue={PeriodModEnum.period}
-              rules={[
-                {
-                  required: true,
-                  message: '请选择执行频率',
-                },
-              ]}
-            >
-              <Select
-                options={[
-                  { label: '周期执行', value: PeriodModEnum.period },
-                  { label: '执行一次', value: PeriodModEnum.once },
-                ]}
-                style={{ width: 120 }}
-                onChange={onChange}
-              />
-            </Form.Item>
-            {data?.mod === PeriodModEnum.period ? (
-              <Form.Item
-                name={[...name, 'timer', 'period']}
-                initialValue={{
-                  from: moment(new Date()).format('HH:mm:ss'),
-                  to: moment(new Date()).format('HH:mm:ss'),
-                }}
-              >
-                <RangePicker />
-              </Form.Item>
-            ) : (
-              <Form.Item
-                name={[...name, 'timer', 'once']}
-                initialValue={{ time: moment(new Date()).format('HH:mm:ss') }}
-              >
-                <TimePicker />
-              </Form.Item>
-            )}
-          </ItemGroup>
-        )}
+        <Form.Item
+          noStyle
+          dependencies={[...name, 'timer', 'trigger']}
+          shouldUpdate={(prevValues, curValues) => {
+            const pValue = getFormValueByName([...name, 'timer', 'trigger'], prevValues);
+            const cValue = getFormValueByName([...name, 'timer', 'trigger'], curValues);
+            return pValue !== cValue;
+          }}
+        >
+          {({ getFieldValue }) => {
+            const trigger = getFieldValue([...name, 'timer', 'trigger']);
+            return (
+              trigger !== TriggerEnum.cron && (
+                <ItemGroup>
+                  <Form.Item
+                    name={[...name, 'timer', 'mod']}
+                    initialValue={PeriodModEnum.period}
+                    rules={[
+                      {
+                        required: true,
+                        message: '请选择执行频率',
+                      },
+                    ]}
+                  >
+                    <Select
+                      options={[
+                        { label: '周期执行', value: PeriodModEnum.period },
+                        { label: '执行一次', value: PeriodModEnum.once },
+                      ]}
+                      style={{ width: 120 }}
+                      onChange={onChange}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    noStyle
+                    dependencies={[...name, 'timer', 'mod']}
+                    shouldUpdate={(prevValues, curValues) => {
+                      const pValue = getFormValueByName([...name, 'timer', 'mod'], prevValues);
+                      const cValue = getFormValueByName([...name, 'timer', 'mod'], curValues);
+                      return pValue !== cValue;
+                    }}
+                  >
+                    {({ getFieldValue: getFieldValue2 }) => {
+                      const mod = getFieldValue2([...name, 'timer', 'mod']);
+                      return mod === PeriodModEnum.period ? (
+                        <Form.Item
+                          name={[...name, 'timer', 'period']}
+                          initialValue={{
+                            from: moment(new Date()).format('HH:mm:ss'),
+                            to: moment(new Date()).format('HH:mm:ss'),
+                          }}
+                        >
+                          <RangePicker />
+                        </Form.Item>
+                      ) : (
+                        <Form.Item
+                          name={[...name, 'timer', 'once']}
+                          initialValue={{ time: moment(new Date()).format('HH:mm:ss') }}
+                        >
+                          <TimePicker />
+                        </Form.Item>
+                      );
+                    }}
+                  </Form.Item>
+                </ItemGroup>
+              )
+            );
+          }}
+        </Form.Item>
       </Col>
       <Col xxl={7} xl={10}>
-        {data?.trigger !== TriggerEnum.cron && (
-          <ItemGroup style={{ gap: 16 }}>
-            {data?.mod === PeriodModEnum.period ? (
-              <>
-                <div style={{ paddingBottom: 16 }}> 每 </div>
-                <Form.Item
-                  name={[...name, 'timer', 'period', 'every']}
-                  rules={[{ required: true, message: '请输入时间' }]}
-                >
-                  <InputNumber
-                    placeholder={'请输入时间'}
-                    addonAfter={TimeTypeAfter}
-                    style={{ maxWidth: 170 }}
-                    min={0}
-                    max={59}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={[...name, 'timer', 'period', 'unit']}
-                  initialValue={'seconds'}
-                  hidden
-                >
-                  <Input />
-                </Form.Item>
-              </>
-            ) : null}
-            <div style={{ flex: 0, flexBasis: 64, paddingBottom: 16 }}> 执行一次 </div>
-          </ItemGroup>
-        )}
+        <Form.Item
+          noStyle
+          dependencies={[...name, 'timer', 'trigger']}
+          shouldUpdate={(prevValues, curValues) => {
+            const pValue = getFormValueByName([...name, 'timer', 'trigger'], prevValues);
+            const cValue = getFormValueByName([...name, 'timer', 'trigger'], curValues);
+            return pValue !== cValue;
+          }}
+        >
+          {({ getFieldValue }) => {
+            const trigger = getFieldValue([...name, 'timer', 'trigger']);
+            return (
+              trigger !== TriggerEnum.cron && (
+                <ItemGroup style={{ gap: 16 }}>
+                  <Form.Item
+                    noStyle
+                    dependencies={[...name, 'timer', 'mod']}
+                    shouldUpdate={(prevValues, curValues) => {
+                      const pValue = getFormValueByName([...name, 'timer', 'mod'], prevValues);
+                      const cValue = getFormValueByName([...name, 'timer', 'mod'], curValues);
+                      return pValue !== cValue;
+                    }}
+                  >
+                    {({ getFieldValue: getFieldValue2 }) => {
+                      const mod = getFieldValue2([...name, 'timer', 'mod']);
+                      return mod === PeriodModEnum.period ? (
+                        <>
+                          <div style={{ paddingBottom: 16 }}> 每 </div>
+                          <Form.Item
+                            name={[...name, 'timer', 'period', 'every']}
+                            rules={[{ required: true, message: '请输入时间' }]}
+                          >
+                            <InputNumber
+                              placeholder={'请输入时间'}
+                              addonAfter={TimeTypeAfter}
+                              style={{ maxWidth: 170 }}
+                              min={0}
+                              max={59}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name={[...name, 'timer', 'period', 'unit']}
+                            initialValue={'seconds'}
+                            hidden
+                          >
+                            <Input />
+                          </Form.Item>
+                        </>
+                      ) : null;
+                    }}
+                  </Form.Item>
+                  <div style={{ flex: 0, flexBasis: 64, paddingBottom: 16 }}> 执行一次 </div>
+                </ItemGroup>
+              )
+            );
+          }}
+        </Form.Item>
       </Col>
     </Row>
   );

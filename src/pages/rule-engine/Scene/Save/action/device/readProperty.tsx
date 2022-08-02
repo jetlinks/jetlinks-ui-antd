@@ -4,6 +4,7 @@ interface ReadPropertyProps {
   properties: any[];
   value?: any;
   onChange?: (value?: any) => void;
+  propertiesChange?: (value?: string) => void;
   id?: string;
 }
 
@@ -23,6 +24,7 @@ export default (props: ReadPropertyProps) => {
       onSelect={(key: any) => {
         if (props.onChange) {
           props.onChange([key]);
+          props.propertiesChange?.(key);
         }
       }}
       placeholder={'请选择属性'}

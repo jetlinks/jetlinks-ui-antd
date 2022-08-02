@@ -175,6 +175,16 @@ const TriggerTerm = (props: Props, ref: any) => {
                   date: DatePicker,
                   boolean: Select,
                 };
+                let tip: string | undefined = '';
+
+                switch (valueType) {
+                  case 'boolean':
+                    tip = '请选择过滤条件值';
+                    break;
+                  default:
+                    tip = '请输入过滤条件值';
+                    break;
+                }
 
                 form1.setFieldState(value, (state) => {
                   state.componentType = valueTypeMap[valueType];
@@ -182,6 +192,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                     style: {
                       width: '100%',
                     },
+                    placeholder: tip,
                   };
                   if (valueType === 'date') {
                     state.componentProps = {
@@ -199,6 +210,11 @@ const TriggerTerm = (props: Props, ref: any) => {
                   if (valueType === 'date') {
                     state.componentProps = {
                       showTime: true,
+                      placeholder: tip,
+                    };
+                  } else {
+                    state.componentProps = {
+                      placeholder: tip,
                     };
                   }
                 });
@@ -211,7 +227,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                   state.dataSource = target?.metrics
                     ?.filter((i: { range: boolean }) => i.range === tag)
                     .map((item: any) => ({
-                      label: item.name,
+                      label: item.name + `（${item.value}）`,
                       value: item.id,
                     }));
                   if (modified) {
