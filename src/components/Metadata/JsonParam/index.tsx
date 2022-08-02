@@ -9,11 +9,15 @@ import {
 } from '@formily/antd';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
-import { DataTypeList, DateTypeList } from '@/pages/device/data';
+import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/device/components/Metadata';
 import MetadataModel from '@/pages/device/components/Metadata/Base/model';
+import BooleanEnum from '@/components/Metadata/BooleanParam';
+import EnumParam from '@/components/Metadata/EnumParam';
+import ArrayParam from '@/components/Metadata/ArrayParam';
+import { useIntl } from '@/.umi/plugin-locale/localeExports';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
@@ -21,6 +25,7 @@ interface Props {
 }
 
 const JsonParam = observer((props: Props) => {
+  const intl = useIntl();
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -31,6 +36,9 @@ const JsonParam = observer((props: Props) => {
       Editable,
       FormLayout,
       NumberPicker,
+      BooleanEnum,
+      EnumParam,
+      ArrayParam,
     },
   });
   const getUnit = () =>
@@ -113,6 +121,71 @@ const JsonParam = observer((props: Props) => {
                           ? DataTypeList.filter((item) => item.value !== 'file')
                           : DataTypeList,
                     },
+                    booleanConfig: {
+                      title: '布尔值',
+                      type: 'void',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'BooleanEnum',
+                      'x-reactions': {
+                        dependencies: ['..valueType.type'],
+                        fulfill: {
+                          state: {
+                            visible: "{{['boolean'].includes($deps[0])}}",
+                          },
+                        },
+                      },
+                    },
+                    enumConfig: {
+                      title: intl.formatMessage({
+                        id: 'pages.device.productDetail.metadata.enum',
+                        defaultMessage: '枚举项',
+                      }),
+                      type: 'void',
+                      'x-decorator': 'FormItem',
+                      'x-component': 'EnumParam',
+                      'x-reactions': {
+                        dependencies: ['..valueType.type'],
+                        fulfill: {
+                          state: {
+                            visible: "{{['enum'].includes($deps[0])}}",
+                          },
+                        },
+                      },
+                    },
+                    elementType: {
+                      title: intl.formatMessage({
+                        id: 'pages.device.productDetail.metadata.elementConfiguration',
+                        defaultMessage: '元素配置',
+                      }),
+                      'x-decorator': 'FormItem',
+                      'x-component': 'ArrayParam',
+                      'x-reactions': {
+                        dependencies: ['..valueType.type'],
+                        fulfill: {
+                          state: {
+                            visible: "{{['array'].includes($deps[0])}}",
+                          },
+                        },
+                      },
+                    },
+                    fileType: {
+                      title: intl.formatMessage({
+                        id: 'pages.device.productDetail.metadata.fileType',
+                        defaultMessage: '文件类型',
+                      }),
+                      'x-decorator': 'FormItem',
+                      'x-component': 'Select',
+                      'x-visible': false,
+                      enum: FileTypeList,
+                      'x-reactions': {
+                        dependencies: ['..valueType.type'],
+                        fulfill: {
+                          state: {
+                            visible: "{{['file'].includes($deps[0])}}",
+                          },
+                        },
+                      },
+                    },
                     unit: {
                       title: '单位',
                       'x-decorator': 'FormItem',
@@ -160,11 +233,17 @@ const JsonParam = observer((props: Props) => {
                           title: '最大长度',
                           'x-decorator': 'FormItem',
                           'x-component': 'NumberPicker',
+                          'x-decorator-props': {
+                            tooltip: intl.formatMessage({
+                              id: 'pages.device.productDetail.metadata.maxLength.byte',
+                              defaultMessage: '字节',
+                            }),
+                          },
                           'x-reactions': {
                             dependencies: ['..type'],
                             fulfill: {
                               state: {
-                                visible: "{{['string'].includes($deps[0])}}",
+                                visible: "{{['string','password'].includes($deps[0])}}",
                               },
                             },
                           },

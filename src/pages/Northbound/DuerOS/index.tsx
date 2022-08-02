@@ -141,16 +141,16 @@ export default () => {
     {
       title: intl.formatMessage({
         id: 'page.cloud.duerOS.productName',
-        defaultMessage: '产品',
+        defaultMessage: '产品名称',
       }),
       dataIndex: 'productName',
-      hideInSearch: true,
+      // hideInSearch: true,
       ellipsis: true,
       valueType: 'select',
       request: async () => {
         const res = await service.getProduct();
         if (res.status === 200) {
-          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.name }));
         }
         return [];
       },

@@ -26,9 +26,9 @@ const AccountInit = () => {
     },
   ];
   useEffect(() => {
-    service.queryView().then((res) => {
+    service.queryViews().then((res) => {
       if (res.status === 200) {
-        setValue(res.result[0]?.content);
+        setValue(res.result?.content);
       }
     });
   }, []);
@@ -56,7 +56,7 @@ const AccountInit = () => {
           type="primary"
           onClick={() => {
             service
-              .setView({
+              .setViews({
                 name: 'view',
                 content: value,
               })

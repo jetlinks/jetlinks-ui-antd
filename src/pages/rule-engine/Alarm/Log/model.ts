@@ -19,19 +19,19 @@ export const AlarmLogModel = model<{
   defaultLevel: [],
   columns: [
     {
+      dataIndex: 'alarmConfigName',
+      title: '告警名称',
+      // hideInSearch: true,
+    },
+    {
       dataIndex: 'alarmTime',
       title: '告警时间',
       valueType: 'dateTime',
     },
     {
-      dataIndex: 'alarmConfigName',
-      title: '告警名称',
-      hideInSearch: true,
-    },
-    {
       dataIndex: 'description',
       title: '说明',
-      hideInSearch: true,
+      // hideInSearch: true,
     },
     {
       dataIndex: 'action',

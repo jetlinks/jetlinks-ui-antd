@@ -24,7 +24,7 @@ const Home = () => {
 
   const adminView = () => {
     service
-      .setView({
+      .setViews({
         name: 'view',
         content: 'comprehensive',
       })
@@ -38,6 +38,7 @@ const Home = () => {
   useEffect(() => {
     service.userDetail().then((res) => {
       if (res.status === 200) {
+        //三方用户
         service
           .apiDetail({
             terms: [
@@ -50,17 +51,18 @@ const Home = () => {
           .then((response) => {
             if (response.status === 200) {
               setDetail(response.result?.data);
-              service.queryView().then((resp) => {
+              service.queryViews().then((resp) => {
                 setLoading(false);
                 if (resp.status === 200) {
-                  if (resp.result.length == 0) {
-                    if (response.result.username === 'admin') {
+                  if (resp.result) {
+                    setCurrent(resp.result?.content);
+                  } else {
+                    if (res.result.username === 'admin') {
+                      setCurrent('comprehensive');
                       adminView();
                     } else {
                       setCurrent('init');
                     }
-                  } else {
-                    setCurrent(resp.result[0]?.content);
                   }
                 }
               });

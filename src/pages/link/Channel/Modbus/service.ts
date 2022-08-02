@@ -37,6 +37,16 @@ class Service extends BaseService<any> {
       method: 'PUT',
       data,
     });
+  enablePoint = (data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/point/_enable`, {
+      method: 'POST',
+      data,
+    });
+  disablePoint = (data: any) =>
+    request(`/${SystemConst.API_BASE}/modbus/point/_disable`, {
+      method: 'POST',
+      data,
+    });
   deletePoint = (id: string) =>
     request(`/${SystemConst.API_BASE}/modbus/point/${id}`, {
       method: 'DELETE',

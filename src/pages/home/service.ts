@@ -6,10 +6,18 @@ class Service {
     request(`/${SystemConst.API_BASE}/user/settings/view`, {
       method: 'GET',
     });
-
+  public queryViews = () =>
+    request(`/${SystemConst.API_BASE}/user/settings/view/user`, {
+      method: 'GET',
+    });
   public setView = (data: Record<string, any>) =>
     request(`/${SystemConst.API_BASE}/user/settings/view`, {
       method: 'POST',
+      data,
+    });
+  public setViews = (data: Record<string, any>) =>
+    request(`/${SystemConst.API_BASE}/user/settings/view/user`, {
+      method: 'PATCH',
       data,
     });
   // 设备数量

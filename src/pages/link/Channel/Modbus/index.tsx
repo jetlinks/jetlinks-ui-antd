@@ -94,22 +94,29 @@ const NewModbus = () => {
     },
     {
       title: '功能码',
-      render: (record: any) => <>{record.function?.text}</>,
+      valueType: 'select',
+      dataIndex: 'function',
+      valueEnum: {
+        Coils: { text: '线圈寄存器', status: 'Coils' },
+        HoldingRegisters: { text: '保存寄存器', status: 'HoldingRegisters' },
+        InputRegisters: { text: '输入寄存器', status: 'InputRegisters' },
+      },
+      render: (_, record: any) => <>{record.function?.text}</>,
     },
     {
       title: '从站ID',
+      valueType: 'digit',
       dataIndex: 'unitId',
-      search: false,
     },
     {
       title: '寄存器数量',
       search: false,
-      render: (record: any) => <>{record.parameter?.quantity}</>,
+      render: (_, record: any) => <>{record.parameter?.quantity}</>,
     },
     {
       title: '地址',
       dataIndex: 'address',
-      search: false,
+      valueType: 'digit',
     },
     {
       title: '当前数据',
@@ -142,29 +149,29 @@ const NewModbus = () => {
     },
     {
       title: '采集状态',
-      search: false,
-      render: (record: any) => (
+      dataIndex: 'collectState',
+      valueType: 'select',
+      valueEnum: {
+        running: { text: '采集中', status: 'running' },
+        error: { text: '失败', status: 'error' },
+        stopped: { text: '已停止', status: 'stopped' },
+      },
+      render: (_, record: any) => (
         <>
-          {record.state.value === 'disabled' ? (
-            ''
-          ) : (
-            <>
-              <Badge
-                status={collectMap.get(record.collectState?.value)}
-                text={record.collectState?.text}
-              />
-              {record.collectState?.value === 'error' && (
-                <SearchOutlined
-                  style={{ color: '#1d39c4', marginLeft: 3 }}
-                  onClick={() => {
-                    Modal.error({
-                      title: '失败原因',
-                      content: <div>{record.errorReason}</div>,
-                    });
-                  }}
-                />
-              )}
-            </>
+          <Badge
+            status={collectMap.get(record.collectState?.value)}
+            text={record.collectState?.text}
+          />
+          {record.collectState?.value === 'error' && (
+            <SearchOutlined
+              style={{ color: '#1d39c4', marginLeft: 3 }}
+              onClick={() => {
+                Modal.error({
+                  title: '失败原因',
+                  content: <div>{record.errorReason}</div>,
+                });
+              }}
+            />
           )}
         </>
       ),
@@ -229,15 +236,9 @@ const NewModbus = () => {
             }),
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
-                await service.editPoint(record.id, {
-                  ...record,
-                  state: 'enabled',
-                });
+                await service.enablePoint([record.id]);
               } else {
-                await service.editPoint(record.id, {
-                  ...record,
-                  state: 'disabled',
-                });
+                await service.disablePoint([record.id]);
               }
               onlyMessage(
                 intl.formatMessage({
