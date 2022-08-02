@@ -119,6 +119,7 @@ const BindUser = (props: Props) => {
                 ],
               },
             ],
+            sorts: [{ name: 'createTime', order: 'desc' }],
           });
           return {
             result: {

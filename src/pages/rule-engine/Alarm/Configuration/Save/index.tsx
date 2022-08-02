@@ -96,6 +96,7 @@ const Save = (props: Props) => {
     return service
       .getScene(
         encodeQuery({
+          sorts: { createTime: 'desc' },
           terms: {
             triggerType: map[form.getValuesIn('targetType')],
           },

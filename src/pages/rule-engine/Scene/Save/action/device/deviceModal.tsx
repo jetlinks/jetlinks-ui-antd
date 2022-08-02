@@ -11,6 +11,7 @@ interface DeviceModelProps {
   value?: ChangeValueType[];
   onChange?: (value: ChangeValueType[]) => void;
   productId?: string;
+  id?: string;
 }
 
 type DeviceBadgeProps = {
@@ -200,6 +201,7 @@ export default (props: DeviceModelProps) => {
         </Modal>
       )}
       <Input
+        id={props.id}
         placeholder={'请选择设备'}
         onClick={onClick}
         addonAfter={<AIcon type={'icon-shebei'} onClick={onClick} />}

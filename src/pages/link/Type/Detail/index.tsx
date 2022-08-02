@@ -124,7 +124,14 @@ const Save = observer(() => {
           onFormInit(async (form1) => {
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
-              form1.setInitialValues({ ...resp?.result });
+              const data = resp?.result || {};
+              if (data?.shareCluster === false) {
+                data.cluster = data.cluster?.map((item: any) => ({
+                  ...item.configuration,
+                  configuration: item,
+                }));
+              }
+              form1.setInitialValues({ ...data });
             }
           });
           onFieldValueChange('type', (field, f) => {
@@ -208,23 +215,23 @@ const Save = observer(() => {
     [],
   );
 
-  useEffect(() => {
-    console.log(Store.get('current-network-data'));
-    // const subscription = Store.subscribe('current-network-data', (data) => {
-    //   if (!data) return;
-    //   // form.readPretty = true;
-    //   const _data = _.cloneDeep(data);
-    //   // 处理一下集群模式数据
-    //   if (!_data.shareCluster) {
-    //     _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
-    //   }
-    //   form.setValues({ ..._data });
-    // });
-    // return () => {
-    //   subscription.unsubscribe();
-    //   // Store.set('current-network-data', undefined);
-    // };
-  }, []);
+  // useEffect(() => {
+  //   console.log(Store.get('current-network-data'));
+  //   // const subscription = Store.subscribe('current-network-data', (data) => {
+  //   //   if (!data) return;
+  //   //   // form.readPretty = true;
+  //   //   const _data = _.cloneDeep(data);
+  //   //   // 处理一下集群模式数据
+  //   //   if (!_data.shareCluster) {
+  //   //     _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
+  //   //   }
+  //   //   form.setValues({ ..._data });
+  //   // });
+  //   // return () => {
+  //   //   subscription.unsubscribe();
+  //   //   // Store.set('current-network-data', undefined);
+  //   // };
+  // }, []);
 
   const SchemaField = createSchemaField({
     components: {

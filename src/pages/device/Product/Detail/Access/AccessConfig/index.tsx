@@ -136,7 +136,9 @@ const AccessConfig = (props: Props) => {
         oldData.push(item);
       }
     });
-    return oldData;
+    return oldData.map((item, index) => {
+      return { ...item, sortsIndex: index };
+    });
   };
 
   return (

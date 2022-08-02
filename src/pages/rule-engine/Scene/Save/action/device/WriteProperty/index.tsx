@@ -18,6 +18,7 @@ interface WritePropertyProps {
   trigger?: any;
   productId: string;
   isEdit?: boolean;
+  id?: string;
 }
 
 export default (props: WritePropertyProps) => {
@@ -249,6 +250,7 @@ export default (props: WritePropertyProps) => {
       <Col span={6}>
         <Select
           value={propertiesKey}
+          id={props.id}
           options={props.properties.filter((item) => {
             if (item.expands && item.expands.type) {
               return item.expands.type.includes('write');

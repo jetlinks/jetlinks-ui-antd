@@ -46,7 +46,8 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
   const reconnectTimerRef = useRef<NodeJS.Timeout>(); // 计时器
   const websocketRef = useRef<WebSocket>();
   const lockReconnect = useRef(false); // 避免重复连接
-  const isReconnect = useRef(false);
+  const isReconnect = useRef(false); //
+  const readyStateRef = useRef<number>(ReadyState.Closed);
 
   const [latestMessage, setLatestMessage] = useState<WebSocketEventMap['message']>();
   const [readyState, setReadyState] = useState<ReadyState>(ReadyState.Closed);
@@ -55,6 +56,7 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
     const ws = Store.get(SystemConst.GLOBAL_WEBSOCKET) as WebSocket;
     if (ws) {
       setReadyState(ws?.readyState);
+      readyStateRef.current = ws?.readyState;
     } else {
       // if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
 
@@ -73,16 +75,18 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
           reconnect();
           onError?.(event);
           setReadyState(websocketRef.current?.readyState || ReadyState.Closed);
+          readyStateRef.current = websocketRef.current?.readyState || ReadyState.Closed;
         };
         websocketRef.current.onopen = (event) => {
           if (isReconnect.current && onReconnect) {
             // 是否为重连
             onReconnect();
-            return
+            return;
           }
           onOpen?.(event);
           reconnectTimesRef.current = 0;
           setReadyState(websocketRef.current?.readyState || ReadyState.Closed);
+          readyStateRef.current = websocketRef.current?.readyState || ReadyState.Closed;
         };
         websocketRef.current.onmessage = (message: WebSocketEventMap['message']) => {
           onMessage?.(message);
@@ -94,6 +98,7 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
           reconnect();
           onClose?.(event);
           setReadyState(websocketRef.current?.readyState || ReadyState.Closed);
+          readyStateRef.current = websocketRef.current?.readyState || ReadyState.Closed;
           Store.set(SystemConst.GLOBAL_WEBSOCKET, null);
         };
         Store.set(SystemConst.GLOBAL_WEBSOCKET, websocketRef.current);
@@ -143,16 +148,19 @@ export default function useWebSocket(socketUrl: string, options: Options = {}): 
   const sendMessage: WebSocket['send'] = usePersistFn((message) => {
     const ws = Store.get(SystemConst.GLOBAL_WEBSOCKET) as WebSocket;
     setReadyState(ws?.readyState);
-    if (readyState === ReadyState.Open) {
+    readyStateRef.current = ws?.readyState;
+
+    if (readyStateRef.current === ReadyState.Open) {
       ws.send(message);
     } else if (ws) {
+      isReconnect.current = true;
       connectWs();
       // todo 考虑重写
-      setTimeout(() => {
-        if (readyState === ReadyState.Open) {
-          ws.send(message);
-        }
-      }, 3000);
+      // setTimeout(() => {
+      //   if (readyStateRef.current === ReadyState.Open) {
+      //     ws.send(message);
+      //   }
+      // }, 3000);
       // throw new Error('WebSocket disconnected');
     }
   });

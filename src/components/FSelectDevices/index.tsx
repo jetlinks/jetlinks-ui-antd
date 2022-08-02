@@ -1,28 +1,38 @@
-import { Input, Modal } from 'antd';
+import { Badge, Input, Modal } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import type { Key } from 'react';
 import { useRef, useState } from 'react';
-import { connect } from '@formily/react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/device/Instance/service';
 import SearchComponent from '../SearchComponent';
-import _ from 'lodash';
+import { observer } from '@formily/react';
+import { model } from '@formily/reactive';
 
 interface Props {
-  value: Partial<DeviceInstance>[];
-  onChange: (data: Partial<DeviceInstance>[]) => void;
+  value?: Partial<DeviceInstance>[];
+  onChange?: (data: Partial<DeviceInstance>[]) => void;
   productId?: string;
 }
 
-export const service = new Service('device/instance');
-const FSelectDevices = connect((props: Props) => {
+const deviceStatus = new Map();
+deviceStatus.set('online', <Badge status="success" text={'在线'} />);
+deviceStatus.set('offline', <Badge status="error" text={'离线'} />);
+deviceStatus.set('notActive', <Badge status="processing" text={'禁用'} />);
+
+const service = new Service('device/instance');
+const State = model<{
+  visible: boolean;
+}>({
+  visible: false,
+});
+
+const FSelectDevices = observer((props: Props) => {
   // todo 考虑与单选设备合并
-  const [visible, setVisible] = useState<boolean>(false);
   const intl = useIntl();
-  const actionRef = useRef<ActionType>();
+  const actionRef1 = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
   const columns: ProColumns<DeviceInstance>[] = [
     {
@@ -53,20 +63,45 @@ const FSelectDevices = connect((props: Props) => {
       width: '200px',
       valueType: 'dateTime',
     },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      render: (text: any, record: any) =>
+        record?.state?.value ? deviceStatus.get(record?.state?.value) : '',
+      ellipsis: true,
+    },
   ];
 
   const [data, setData] = useState<Partial<DeviceInstance>[]>(props?.value || []);
   const rowSelection = {
-    onChange: (selectedRowKeys: Key[], selectedRows: DeviceInstance[]) => {
-      const list = [...data];
-      selectedRows.map((item) => {
-        if (!_.map(data, 'id').includes(item.id)) {
-          list.push(item);
-        }
-      });
-      setData(list);
+    onSelect: (selectedRow: any, selected: any) => {
+      let newSelectKeys = [...data];
+      if (selected) {
+        newSelectKeys.push({ ...selectedRow });
+      } else {
+        newSelectKeys = newSelectKeys.filter((item) => item.id !== selectedRow.id);
+      }
+      setData(newSelectKeys);
+    },
+    onSelectAll: (selected: boolean, _: any, changeRows: any) => {
+      let newSelectKeys = [...data];
+      if (selected) {
+        changeRows.forEach((item: any) => {
+          newSelectKeys.push({ ...item });
+        });
+      } else {
+        newSelectKeys = newSelectKeys.filter((a) => {
+          return !changeRows.some((b: any) => b.id === a.id);
+        });
+      }
+      setData(newSelectKeys);
     },
     selectedRowKeys: data?.map((item) => item.id) as Key[],
+  };
+
+  const reload = () => {
+    actionRef1.current?.reset?.();
+    setSearchParam({});
   };
 
   return (
@@ -74,29 +109,41 @@ const FSelectDevices = connect((props: Props) => {
       <Input
         disabled
         value={props.value?.map((item) => item.name).join(',')}
-        addonAfter={<EditOutlined onClick={() => setVisible(true)} />}
+        addonAfter={
+          <EditOutlined
+            onClick={() => {
+              State.visible = true;
+            }}
+          />
+        }
       />
-      {visible && (
+      {State.visible && (
         <Modal
           maskClosable={false}
           visible
           title="选择设备"
           width="80vw"
-          onCancel={() => setVisible(false)}
+          onCancel={() => {
+            State.visible = false;
+            reload();
+          }}
           onOk={() => {
-            setVisible(false);
-            props.onChange(data);
+            State.visible = false;
+            reload();
+            if (props.onChange) {
+              props.onChange(data);
+            }
           }}
         >
           <SearchComponent<DeviceInstance>
             field={columns}
             enableSave={false}
             model="simple"
-            onSearch={async (data1) => {
+            onSearch={(data1) => {
+              actionRef1.current?.reset?.();
               setSearchParam(data1);
-              actionRef.current?.reset?.();
             }}
-            target="choose-device"
+            target="choose-devices"
           />
           <ProTable<DeviceInstance>
             tableAlertRender={false}
@@ -106,14 +153,10 @@ const FSelectDevices = connect((props: Props) => {
             }}
             search={false}
             columnEmptyText={''}
-            toolBarRender={false}
             rowKey="id"
-            pagination={{
-              pageSize: 10,
-            }}
             params={searchParam}
             columns={columns}
-            actionRef={actionRef}
+            actionRef={actionRef1}
             request={async (params) => {
               return service.queryDetailList({
                 context: {

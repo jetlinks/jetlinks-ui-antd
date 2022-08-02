@@ -4,11 +4,13 @@ interface ReadPropertyProps {
   properties: any[];
   value?: any;
   onChange?: (value?: any) => void;
+  id?: string;
 }
 
 export default (props: ReadPropertyProps) => {
   return (
     <Select
+      id={props.id}
       value={props.value ? props.value[0] : undefined}
       options={props.properties.filter((item) => {
         if (item.expands && item.expands.type) {

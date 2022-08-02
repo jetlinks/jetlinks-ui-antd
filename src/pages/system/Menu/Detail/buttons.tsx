@@ -272,8 +272,7 @@ export default (props: ButtonsProps) => {
           </PermissionButton>,
         ]}
       />
-      {
-        visible &&
+      {visible && (
         <Modal
           maskClosable={false}
           width={660}
@@ -370,7 +369,7 @@ export default (props: ButtonsProps) => {
             </Form.Item>
           </Form>
         </Modal>
-      }
+      )}
     </>
   );
 };

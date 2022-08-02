@@ -6,6 +6,7 @@ interface TagSelectProps {
   configId?: string;
   value?: string;
   onChange?: (value: string) => void;
+  id?: string;
 }
 
 export default (props: TagSelectProps) => {
@@ -32,6 +33,7 @@ export default (props: TagSelectProps) => {
 
   return (
     <Select
+      id={props.id}
       value={value}
       placeholder={'请选择标签'}
       options={options}

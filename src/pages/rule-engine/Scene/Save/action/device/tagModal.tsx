@@ -7,6 +7,7 @@ interface TagModalProps {
   tagData: any[];
   value?: any[];
   onChange?: (value: any[]) => void;
+  id?: string;
 }
 
 /**
@@ -251,6 +252,7 @@ export default (props: TagModalProps) => {
         </div>
       </Modal>
       <Input
+        id={props.id}
         value={nameList.length ? nameList.toString() : undefined}
         readOnly
         style={{ width: 300 }}
