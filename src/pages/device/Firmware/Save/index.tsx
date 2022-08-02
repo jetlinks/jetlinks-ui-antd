@@ -13,6 +13,7 @@ import { useRef } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { onlyMessage } from '@/utils/util';
 import RemoveData from './RemoveData';
+import _ from 'lodash';
 
 interface Props {
   data?: FirmwareItem;
@@ -41,6 +42,25 @@ const Save = (props: Props) => {
         const value = (field as Field).value;
         fileInfo.current = value;
       });
+      onFieldValueChange('productId', (field, form1) => {
+        if (field.modified) {
+          form1.setFieldState('versionOrder', (state) => {
+            state.value = undefined;
+          });
+        }
+      });
+      onFieldValueChange('versionOrder', async (field, f1) => {
+        const value = (field as Field).value;
+        const productId = (field.query('.productId').take() as Field).value;
+        if (field.modified && productId && value) {
+          const resp = await service.validateVersion(productId, value);
+          if (resp.status === 200) {
+            f1.setFieldState('versionOrder', (state) => {
+              state.selfErrors = resp.result ? ['版本序号已存在'] : undefined;
+            });
+          }
+        }
+      });
     },
   });
 
@@ -50,7 +70,10 @@ const Save = (props: Props) => {
     field.loading = true;
     services(field).then(
       action.bound!((list: any) => {
-        field.dataSource = list.result.map((item: any) => ({ label: item.name, value: item.id }));
+        const _data = list.result.filter((it: any) => {
+          return _.map(it?.features || [], 'id').includes('supportFirmware');
+        });
+        field.dataSource = _data.map((item: any) => ({ label: item.name, value: item.id }));
         products.current = list.result;
         field.loading = false;
       }),
