@@ -5,13 +5,14 @@ import ProTable from '@jetlinks/pro-table';
 import type { SystemLogItem } from '@/pages/Log/System/typings';
 import { Tag, Tooltip } from 'antd';
 import moment from 'moment';
-import BaseService from '@/utils/BaseService';
+// import BaseService from '@/utils/BaseService';
+import Service from '../service';
 import { EyeOutlined } from '@ant-design/icons';
 import SearchComponent from '@/components/SearchComponent';
 import Detail from '@/pages/Log/System/Detail';
 import { useDomFullHeight } from '@/hooks';
 
-const service = new BaseService<SystemLogItem>('logger/system');
+const service = new Service('logger/system');
 const System = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -71,7 +72,15 @@ const System = () => {
       dataIndex: 'context.server',
       width: 150,
       ellipsis: true,
+      valueType: 'select',
       render: (text, record) => record?.context?.server || '',
+      request: async () => {
+        const res = await service.getServer();
+        if (res.status === 200) {
+          return res.result.map((item: any) => ({ label: item.name, value: item.id }));
+        }
+        return [];
+      },
     },
     {
       title: intl.formatMessage({

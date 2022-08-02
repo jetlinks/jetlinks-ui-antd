@@ -1112,9 +1112,14 @@ const Edit = observer((props: Props) => {
 
     if (!typeMap.get(props.type)) return;
 
+    const list = await DB.getDB().table(`${type}`).toArray();
+
     const updateDB = (t: 'add' | 'update', item: MetadataItem) => {
       switch (t) {
         case 'add':
+          const dt = list.sort((a, b) => b?.sortsIndex - a?.sortsIndex) || [];
+          item.sortsIndex =
+            dt.length > 0 && dt[0]?.sortsIndex !== undefined ? dt[0].sortsIndex + 1 : 0;
           DB.getDB().table(`${type}`).add(item, item.id);
           return;
         case 'update':

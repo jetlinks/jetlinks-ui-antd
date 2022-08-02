@@ -63,6 +63,11 @@ class Service extends BaseService<FirmwareItem> {
 
   queryDevice = () =>
     request(`/${SystemConst.API_BASE}/device/instance/_query/no-paging?paging=false`);
+
+  validateVersion = (productId: string, versionOrder: number) =>
+    request(`/${SystemConst.API_BASE}/firmware/${productId}/${versionOrder}/exists`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

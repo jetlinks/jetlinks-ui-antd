@@ -3,9 +3,6 @@ import { Badge, Button, message, Popconfirm, Space } from 'antd';
 import styles from './index.less';
 import { observer } from '@formily/reactive-react';
 import type { ListProps } from './model';
-import { urlMap } from './model';
-import { gatewayList } from './model';
-import { textColorMap } from './model';
 import {
   DiagnoseStatusModel,
   StatusMap,
@@ -13,6 +10,9 @@ import {
   childInitList,
   cloudInitList,
   mediaInitList,
+  TextColorMap,
+  gatewayList,
+  urlMap,
 } from './model';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
@@ -2006,7 +2006,7 @@ const Status = observer((props: Props) => {
                 <div className={styles.info}>{item?.info}</div>
               </div>
             </div>
-            <div className={styles.statusRight} style={{ color: textColorMap.get(item.status) }}>
+            <div className={styles.statusRight} style={{ color: TextColorMap.get(item.status) }}>
               {item?.text}
             </div>
           </div>

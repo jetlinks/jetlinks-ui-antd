@@ -30,6 +30,21 @@ class Service extends BaseService<AlarmLogItem> {
       method: 'POST',
       data,
     });
+  getProductList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
+  getDeviceList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
+  getOrgList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/organization/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;

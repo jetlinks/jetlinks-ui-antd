@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
-import Save from './Save';
+import Save from './Save/index1';
 import { onlyMessage } from '@/utils/util';
 import { PermissionButton } from '@/components';
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
@@ -26,6 +26,9 @@ import { service } from '@/pages/device/Firmware';
 
 const UpgradeBtn = (props: { data: any; actions: any }) => {
   const { data, actions } = props;
+  if (data.progress === 100) {
+    return null;
+  }
   return (
     <a>
       <Tooltip title={data.waiting ? '停止' : '继续升级'}>
@@ -106,9 +109,9 @@ const Task = observer(() => {
     {
       title: '完成比例',
       ellipsis: true,
-      // hideInSearch: true,
+      hideInSearch: true,
       dataIndex: 'progress',
-      valueType: 'digit',
+      // valueType: 'digit',
     },
     {
       title: intl.formatMessage({
@@ -223,18 +226,19 @@ const Task = observer(() => {
         columns={columns}
         actionRef={actionRef}
       />
-      <Save
-        data={state.current}
-        ids={{ id: id, productId: productId }}
-        visible={state.visible}
-        save={() => {
-          state.visible = false;
-          actionRef.current?.reload?.();
-        }}
-        close={() => {
-          state.visible = false;
-        }}
-      />
+      {state.visible && (
+        <Save
+          data={state.current}
+          ids={{ id: id, productId: productId }}
+          save={() => {
+            state.visible = false;
+            actionRef.current?.reload?.();
+          }}
+          close={() => {
+            state.visible = false;
+          }}
+        />
+      )}
     </PageContainer>
   );
 });

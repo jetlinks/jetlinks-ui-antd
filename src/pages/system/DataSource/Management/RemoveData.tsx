@@ -12,7 +12,7 @@ interface Props {
 
 const RemoveData = (props: Props) => {
   const { type } = props;
-  const row = ArrayItems.useRecord!();
+  const row = ArrayItems.useRecord!()();
 
   const index = ArrayItems.useIndex!();
   const self = useField();

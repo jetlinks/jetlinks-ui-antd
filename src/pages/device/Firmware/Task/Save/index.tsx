@@ -2,13 +2,12 @@ import { Modal } from 'antd';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Radio } from '@formily/antd';
-import { createForm, onFieldValueChange, onFormInit } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/device/Firmware';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { onlyMessage } from '@/utils/util';
 import FSelectDevices from '@/components/FSelectDevices';
-import type { DeviceInstance } from '@/pages/device/Instance/typings';
 
 interface Props {
   ids: { id: string; productId: string };
@@ -27,10 +26,10 @@ const Save = (props: Props) => {
         validateFirst: true,
         initialValues: {},
         effects() {
-          onFormInit(async (form1) => {
-            if (!data?.id) return;
-            form1.setInitialValues({ ...data, upload: { url: data?.url } });
-          });
+          // onFormInit(async (form1) => {
+          //   if (!data?.id) return;
+          //   form1.setInitialValues({ ...data, upload: { url: data?.url } });
+          // });
           onFieldValueChange('mode', async (field) => {
             field
               .query('timeoutSeconds')
@@ -55,7 +54,7 @@ const Save = (props: Props) => {
     [],
   );
 
-  const devices = useRef<DeviceInstance[]>([]);
+  // const devices = useRef<DeviceInstance[]>([]);
 
   const SchemaField = createSchemaField({
     components: {
@@ -70,19 +69,19 @@ const Save = (props: Props) => {
   });
 
   useEffect(() => {
-    if (visible) {
-      service.queryDevice().then((resp) => {
-        if (resp.status === 200) {
-          devices.current = resp.result;
-        }
-      });
-    }
+    // if (visible) {
+    //   service.queryDevice().then((resp) => {
+    //     if (resp.status === 200) {
+    //       devices.current = resp.result;
+    //     }
+    //   });
+    // }
   }, [visible]);
 
   const save = async () => {
     const values: any = await form.submit();
     if (values?.releaseType !== 'all') {
-      values.deviceId = devices.current.map((item) => item.id);
+      // values.deviceId = devices.current.map((item) => item.id);
     } else {
       values.deviceId = undefined;
     }
@@ -211,7 +210,7 @@ const Save = (props: Props) => {
             },
           },
           releaseType: {
-            type: 'number',
+            type: 'string',
             title: '升级设备',
             default: 'all',
             'x-visible': false,

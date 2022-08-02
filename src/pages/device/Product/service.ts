@@ -157,6 +157,12 @@ class Service extends BaseService<ProductItem> {
       method: 'POST',
       data: {
         paging: false,
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
+          },
+        ],
       },
     });
   //获取协议详情
