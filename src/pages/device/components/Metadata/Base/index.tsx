@@ -121,7 +121,7 @@ const BaseMetadata = observer((props: Props) => {
 
   const initData = useCallback(async () => {
     const result = await DB.getDB().table(`${type}`).toArray();
-    setData(result);
+    setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
   }, [param.id, type]);
 
   useEffect(() => {
@@ -146,7 +146,7 @@ const BaseMetadata = observer((props: Props) => {
         .where('id')
         .startsWithAnyOfIgnoreCase(name)
         .toArray();
-      setData(result);
+      setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
     } else {
       await initData();
     }

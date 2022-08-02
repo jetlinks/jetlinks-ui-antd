@@ -65,7 +65,7 @@ const Save = (props: Props) => {
           value: 1,
         },
       ],
-      sorts: [{ name: 'name', order: 'desc' }],
+      sorts: [{ name: 'createTime', order: 'desc' }],
     });
 
   const SchemaField = createSchemaField({

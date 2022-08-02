@@ -9,11 +9,11 @@ StatusMap.set('success', require('/public/images/diagnose/status/success.png'));
 StatusMap.set('warning', require('/public/images/diagnose/status/warning.png'));
 StatusMap.set('loading', require('/public/images/diagnose/status/loading.png'));
 
-export const textColorMap = new Map();
-textColorMap.set('loading', 'black');
-textColorMap.set('error', 'red');
-textColorMap.set('success', 'green');
-textColorMap.set('warning', 'red');
+export const TextColorMap = new Map();
+TextColorMap.set('loading', 'black');
+TextColorMap.set('error', 'red');
+TextColorMap.set('success', 'green');
+TextColorMap.set('warning', 'red');
 
 export type ListProps = {
   key: string;

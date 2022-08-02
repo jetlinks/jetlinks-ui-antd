@@ -31,7 +31,11 @@ const NormalUpload = (props: any) => {
 
     const target = typeMap.get(props.type);
 
-    const _data = updateMetadata('properties', _metadata.properties, target) as ProductItem;
+    const properties = (_metadata?.properties || []).map((item, index) => {
+      return { ...item, sortsIndex: index };
+    });
+
+    const _data = updateMetadata('properties', properties, target) as ProductItem;
     // const resp = await service.update(_product);
     const resp = await asyncUpdateMedata(props.type, _data);
     if (resp.status === 200) {

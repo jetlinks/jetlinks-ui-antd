@@ -197,6 +197,18 @@ const Import = (props: Props) => {
     if (fid.includes('propertyNotModifiable')) {
       obj.properties = old?.properties || [];
     }
+    obj.events.map((item, index) => {
+      return { ...item, sortsIndex: index };
+    });
+    obj.properties.map((item, index) => {
+      return { ...item, sortsIndex: index };
+    });
+    obj.functions.map((item, index) => {
+      return { ...item, sortsIndex: index };
+    });
+    obj.tags.map((item, index) => {
+      return { ...item, sortsIndex: index };
+    });
     return obj;
   };
 
