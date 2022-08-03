@@ -41,7 +41,7 @@ export const updateMetadata = (
     console.warn('未触发物模型修改');
   }
   // @ts-ignore
-  metadata[type] = config;
+  metadata[type] = config.sort((a, b) => b?.sortsIndex - a?.sortsIndex);
   data.metadata = JSON.stringify(metadata);
   return data;
 };

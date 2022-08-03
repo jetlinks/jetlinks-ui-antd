@@ -168,26 +168,25 @@ const Save = observer(() => {
           });
           onFieldValueChange('shareCluster', (field, f5) => {
             const value = (field as Field).value;
-            if (f5.modified) {
-              if (value) {
-                // 共享配置
-                f5.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
-                  state.value = '0.0.0.0';
-                  state.disabled = true;
-                });
-              } else {
-                // 独立配置
-                f5.setFieldState('grid.cluster.cluster', (state) => {
-                  state.value = [{}];
-                });
-                f5.setFieldState('grid.cluster.cluster.*.layout2.host', (state) => {
-                  state.value = undefined;
-                  state.disabled = false;
-                });
-              }
+            if (value) {
+              // 共享配置
+              f5.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
+                state.value = '0.0.0.0';
+                state.disabled = true;
+              });
+            }
+            if (f5.modified && !value) {
+              // 独立配置
+              f5.setFieldState('grid.cluster.cluster', (state) => {
+                state.value = [{}];
+              });
+              f5.setFieldState('grid.cluster.cluster.*.layout2.host', (state) => {
+                state.value = undefined;
+                state.disabled = false;
+              });
             }
           });
-          onFieldValueChange('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
+          onFieldReact('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
             const value = (field as Field).value;
             const type = (field.query('type').take() as Field).value;
             const response = await getResourceById(value, type);
@@ -195,7 +194,7 @@ const Save = observer(() => {
               state.dataSource = response.map((item) => ({ label: item.host, value: item.host }));
             });
           });
-          onFieldValueChange('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
+          onFieldReact('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
             const host = (field as Field).value;
             const value = (field.query('.serverId').take() as Field)?.value;
             const type = (field.query('type').take() as Field)?.value;
@@ -209,24 +208,6 @@ const Save = observer(() => {
       }),
     [],
   );
-
-  // useEffect(() => {
-  //   console.log(Store.get('current-network-data'));
-  //   // const subscription = Store.subscribe('current-network-data', (data) => {
-  //   //   if (!data) return;
-  //   //   // form.readPretty = true;
-  //   //   const _data = _.cloneDeep(data);
-  //   //   // 处理一下集群模式数据
-  //   //   if (!_data.shareCluster) {
-  //   //     _data.cluster = _data.cluster?.map((item: any) => ({ ...item.configuration }));
-  //   //   }
-  //   //   form.setValues({ ..._data });
-  //   // });
-  //   // return () => {
-  //   //   subscription.unsubscribe();
-  //   //   // Store.set('current-network-data', undefined);
-  //   // };
-  // }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -294,8 +275,6 @@ const Save = observer(() => {
         'x-component-props': {
           placeholder: '请选择本地地址',
         },
-        default: '0.0.0.0',
-        'x-disabled': true,
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
