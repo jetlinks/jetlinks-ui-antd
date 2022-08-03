@@ -29,12 +29,14 @@ const state = model<{
   finish: number;
   error: number;
   canceled: number;
+  info: any;
 }>({
   waiting: 0,
   loading: 0,
   finish: 0,
   error: 0,
   canceled: 0,
+  info: {},
 });
 
 const Detail = observer(() => {
@@ -173,6 +175,11 @@ const Detail = observer(() => {
   };
 
   useEffect(() => {
+    service.taskById(params.id).then((resp) => {
+      if (resp.status === 200) {
+        state.info = resp.result;
+      }
+    });
     handleSearch();
   }, [params.id]);
 
@@ -248,7 +255,7 @@ const Detail = observer(() => {
           status: 'success',
         },
         canceled: {
-          text: '已取消',
+          text: '已停止',
           status: 'canceled',
         },
       },
@@ -281,24 +288,28 @@ const Detail = observer(() => {
                   <SearchOutlined />
                 </Tooltip>
               </a>,
-              <Popconfirm
-                key="refresh"
-                onConfirm={async () => {
-                  const resp = await service.startOneTask([record.id]);
-                  if (resp.status === 200) {
-                    message.success('操作成功！');
-                    handleSearch();
-                    actionRef.current?.reload?.();
-                  }
-                }}
-                title={'确认重试'}
-              >
-                <a>
-                  <Tooltip title={'重试'} key={'refresh'}>
-                    <RedoOutlined />
-                  </Tooltip>
-                </a>
-              </Popconfirm>,
+              <>
+                {state.info?.mode?.value === 'push' ? (
+                  <Popconfirm
+                    key="refresh"
+                    onConfirm={async () => {
+                      const resp = await service.startOneTask([record.id]);
+                      if (resp.status === 200) {
+                        message.success('操作成功！');
+                        handleSearch();
+                        actionRef.current?.reload?.();
+                      }
+                    }}
+                    title={'确认重试'}
+                  >
+                    <a>
+                      <Tooltip title={'重试'} key={'refresh'}>
+                        <RedoOutlined />
+                      </Tooltip>
+                    </a>
+                  </Popconfirm>
+                ) : null}
+              </>,
             ]
           : [],
     },
@@ -317,7 +328,7 @@ const Detail = observer(() => {
                     {item.name}
                   </div>
                   <div className={styles.firmwareDetailCardRight}>
-                    {item.key === 'error' && (
+                    {item.key === 'error' && state.info?.mode?.value === 'push' && (
                       <Popconfirm
                         title="确认批量重试"
                         onConfirm={async () => {

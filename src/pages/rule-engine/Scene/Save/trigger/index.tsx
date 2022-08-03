@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormInstance } from 'antd';
 import { Col, Form, Row, Select } from 'antd';
 import { ItemGroup, TimingTrigger } from '@/pages/rule-engine/Scene/Save/components';
@@ -33,7 +33,7 @@ enum OperatorEnum {
 export default observer((props: TriggerProps) => {
   const [productList, setProductList] = useState<any[]>([]);
   const [productId, setProductId] = useState('');
-  const [selector, setSelector] = useState('fixed');
+  const [selector, setSelector] = useState(props.value?.device?.selector || 'fixed');
 
   const [operatorOptions, setOperatorOptions] = useState<any[] | undefined>(undefined);
 
@@ -42,6 +42,8 @@ export default observer((props: TriggerProps) => {
   const [functions, setFunctions] = useState([]); // 功能列表
 
   const [functionItem, setFunctionItem] = useState<any[]>([]); // 单个功能-属性列表
+
+  const isInitRef = useRef<boolean>(true);
 
   const handleMetadata = (metadata?: string) => {
     try {
@@ -125,15 +127,11 @@ export default observer((props: TriggerProps) => {
   }, []);
 
   useEffect(() => {
-    const triggerData = props.value;
-    if (triggerData && triggerData.device) {
-      const _device = triggerData.device;
-
-      if (_device.selector) {
-        setSelector(_device.selector);
-      }
+    if (props.value?.device?.selector && isInitRef.current) {
+      isInitRef.current = false;
+      setSelector(props.value?.device?.selector);
     }
-  }, [props.value]);
+  }, [props.value?.device?.selector]);
 
   return (
     <div className={classNames(props.className)}>
@@ -154,7 +152,6 @@ export default observer((props: TriggerProps) => {
                 props.form?.resetFields([['trigger', 'device', 'selector']]);
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                 props.form?.resetFields([['trigger', 'device', 'operation']]);
-                productIdChange(key, node?.metadata);
                 setSelector('fixed');
                 props.form?.setFieldsValue({
                   trigger: {
@@ -166,6 +163,7 @@ export default observer((props: TriggerProps) => {
                     productId: key,
                   },
                 });
+                productIdChange(key, node?.metadata);
               }}
               fieldNames={{ label: 'name', value: 'id' }}
               filterOption={(input: string, option: any) =>

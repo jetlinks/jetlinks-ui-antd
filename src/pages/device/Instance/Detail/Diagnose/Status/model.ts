@@ -13,7 +13,7 @@ export const TextColorMap = new Map();
 TextColorMap.set('loading', 'black');
 TextColorMap.set('error', 'red');
 TextColorMap.set('success', 'green');
-TextColorMap.set('warning', 'red');
+TextColorMap.set('warning', '#FAB247');
 
 export type ListProps = {
   key: string;

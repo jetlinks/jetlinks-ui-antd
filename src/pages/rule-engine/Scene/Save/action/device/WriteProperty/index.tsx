@@ -13,6 +13,7 @@ interface WritePropertyProps {
   form: FormInstance;
   value?: any;
   onChange?: (value?: any) => void;
+  propertiesChange?: (value?: string) => void;
   parallel?: boolean;
   name: number;
   trigger?: any;
@@ -56,6 +57,7 @@ export default (props: WritePropertyProps) => {
 
   const onChange = (key?: string, value?: any, _source: string = 'fixed') => {
     if (props.onChange) {
+      props.propertiesChange?.(key);
       props.onChange({
         [key || 0]: {
           value: value,

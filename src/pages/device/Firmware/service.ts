@@ -4,15 +4,21 @@ import SystemConst from '@/utils/const';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 
 class Service extends BaseService<FirmwareItem> {
-  querySystemApi = () =>
-    request(`/${SystemConst.API_BASE}/system/apis`, {
-      method: 'GET',
+  querySystemApi = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/scopes`, {
+      method: 'POST',
+      data,
     });
 
   task = (params: Record<string, unknown>) =>
     request(`/${SystemConst.API_BASE}/firmware/upgrade/task/detail/_query`, {
       method: 'POST',
       data: params,
+    });
+
+  taskById = (id: string) =>
+    request(`/${SystemConst.API_BASE}/firmware/upgrade/task/${id}`, {
+      method: 'GET',
     });
 
   saveTask = (data: Record<string, unknown>) =>

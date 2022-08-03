@@ -9,6 +9,7 @@ interface ConditionalFilteringProps {
   form: FormInstance;
   data?: any;
   productId: string;
+  propertiesId?: string;
 }
 
 export default (props: ConditionalFilteringProps) => {
@@ -23,7 +24,7 @@ export default (props: ConditionalFilteringProps) => {
       case 'float':
       case 'double':
       case 'long':
-        return <InputNumber />;
+        return <InputNumber placeholder={'请输入过滤条件值'} />;
       case 'date':
         return (
           <>
@@ -36,6 +37,7 @@ export default (props: ConditionalFilteringProps) => {
       case 'boolean':
         return (
           <Select
+            placeholder={'请选择过滤条件值'}
             options={[
               { label: '是', value: 'true' },
               { label: '否', value: 'false' },
@@ -43,7 +45,7 @@ export default (props: ConditionalFilteringProps) => {
           />
         );
       default:
-        return <Input />;
+        return <Input placeholder={'请输入过滤条件值'} />;
     }
   };
 
@@ -108,13 +110,22 @@ export default (props: ConditionalFilteringProps) => {
   };
 
   useEffect(() => {
-    if (props.data && props.data[0] && props.data[0].column && builtInList && builtInList.length) {
-      getBuiltItemById(props.data[0].column);
+    if (props.data && props.data[0] && props.data[0].column) {
+      if (builtInList && builtInList.length) {
+        getBuiltItemById(props.data[0].column);
+      }
     }
   }, [props.data, builtInList]);
 
   useEffect(() => {
-    if (props.productId) {
+    if (props.data && props.data[0] && props.data[0].column) {
+      setSource(props.data[0].value.source);
+    }
+    getBuiltInParamsData();
+  }, []);
+
+  useEffect(() => {
+    if (props.productId || props.propertiesId) {
       getBuiltInParamsData();
       const actions = props.form.getFieldValue('actions');
       if (actions?.[props.name].terms?.[0]) {
@@ -129,7 +140,7 @@ export default (props: ConditionalFilteringProps) => {
       }
       setSource('fixed');
     }
-  }, [props.productId]);
+  }, [props.productId, props.propertiesId]);
 
   return (
     <>

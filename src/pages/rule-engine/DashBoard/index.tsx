@@ -13,6 +13,7 @@ import Echarts from '@/components/DashBoard/echarts';
 import encodeQuery from '@/utils/encodeQuery';
 import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByCode } from '@/utils/menu';
+import { Empty } from '@/components';
 
 const service = new Service();
 export const state = model<{
@@ -102,7 +103,10 @@ const Dashboard = observer(() => {
       state.today = _data.find((item) => item.group === 'today')?.data.value;
       state.thisMonth = _data.find((item) => item.group === 'thisMonth')?.data.value;
 
-      const fifteenData = _data.filter((item) => item.group === '15day').map((item) => item.data);
+      const fifteenData = _data
+        .filter((item) => item.group === '15day')
+        .map((item) => item.data)
+        .sort((a, b) => b.timestamp - a.timestamp);
       state.fifteenOptions = {
         xAxis: {
           type: 'category',
@@ -126,7 +130,7 @@ const Dashboard = observer(() => {
         series: [
           {
             name: '告警数',
-            data: fifteenData.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.value),
+            data: fifteenData.map((item) => item.value),
             type: 'bar',
             itemStyle: {
               color: '#2F54EB',
@@ -239,6 +243,16 @@ const Dashboard = observer(() => {
     // 请求数据
     const resp = await service.dashboard([chartData, order]);
 
+    let tip = '其它';
+
+    if (params.targetType === 'device') {
+      tip = '设备';
+    } else if (params.targetType === 'product') {
+      tip = '产品';
+    } else if (params.targetType === 'org') {
+      tip = '部门';
+    }
+
     if (resp?.status === 200) {
       const xData: string[] = [];
       const sData: number[] = [];
@@ -278,7 +292,7 @@ const Dashboard = observer(() => {
         ],
         series: [
           {
-            name: 'Direct',
+            name: tip,
             type: 'bar',
             barWidth: '30%',
             itemStyle: {
@@ -327,48 +341,54 @@ const Dashboard = observer(() => {
                 <div className={'content-left-title'}>最新告警</div>
                 <div className={'new-alarm-items'}>
                   <ul>
-                    {state.alarmList.slice(0, 3).map((item) => (
-                      <li key={item.id}>
-                        <div className={'new-alarm-item'}>
-                          <div className={'new-alarm-item-time'}>
-                            <img src={require('/public/images/alarm/bashboard.png')} alt="" />
-                            {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
-                          </div>
-                          <div className={'new-alarm-item-content ellipsis'}>
-                            <Tooltip title={item.alarmName} placement="topLeft">
-                              <a
-                                onClick={() => {
-                                  console.log(item);
-                                  const url = getMenuPathByCode('rule-engine/Alarm/Log');
-                                  history.push(`${url}/detail/${item.id}`, {
-                                    param: {
-                                      detail: true,
-                                    },
-                                  });
-                                }}
-                              >
-                                {item.alarmName}
-                              </a>
-                            </Tooltip>
-                          </div>
-                          <div className={'new-alarm-item-state'}>
-                            <Badge
-                              status={item.state?.value === 'warning' ? 'error' : 'default'}
-                              text={
-                                <span
-                                  className={item.state?.value === 'warning' ? 'error' : 'default'}
+                    {state.alarmList.length ? (
+                      state.alarmList.slice(0, 3).map((item) => (
+                        <li key={item.id}>
+                          <div className={'new-alarm-item'}>
+                            <div className={'new-alarm-item-time'}>
+                              <img src={require('/public/images/alarm/bashboard.png')} alt="" />
+                              {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
+                            </div>
+                            <div className={'new-alarm-item-content ellipsis'}>
+                              <Tooltip title={item.alarmName} placement="topLeft">
+                                <a
+                                  onClick={() => {
+                                    console.log(item);
+                                    const url = getMenuPathByCode('rule-engine/Alarm/Log');
+                                    history.push(`${url}/detail/${item.id}`, {
+                                      param: {
+                                        detail: true,
+                                      },
+                                    });
+                                  }}
                                 >
-                                  {item.state?.text}
-                                </span>
-                              }
-                            />
+                                  {item.alarmName}
+                                </a>
+                              </Tooltip>
+                            </div>
+                            <div className={'new-alarm-item-state'}>
+                              <Badge
+                                status={item.state?.value === 'warning' ? 'error' : 'default'}
+                                text={
+                                  <span
+                                    className={
+                                      item.state?.value === 'warning' ? 'error' : 'default'
+                                    }
+                                  >
+                                    {item.state?.text}
+                                  </span>
+                                }
+                              />
+                            </div>
+                            <div className={`new-alarm-item-level level-${item.level}`}>
+                              {item.levelName}
+                            </div>
                           </div>
-                          <div className={`new-alarm-item-level level-${item.level}`}>
-                            {item.levelName}
-                          </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      ))
+                    ) : (
+                      <Empty />
+                    )}
                   </ul>
                 </div>
               </div>

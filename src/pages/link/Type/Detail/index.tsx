@@ -14,8 +14,9 @@ import {
   Select,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import { useEffect, useMemo, useRef } from 'react';
-import { Field, FieldDataSource, onFormInit } from '@formily/core';
+import { useMemo, useRef } from 'react';
+import type { Field, FieldDataSource } from '@formily/core';
+import { onFormInit } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card, Col, Row } from 'antd';
 import styles from './index.less';
@@ -57,16 +58,6 @@ const Save = observer(() => {
   const param = useParams<{ id: string }>();
 
   const configRef = useRef([]);
-
-  useEffect(() => {
-    service.getResourcesCurrent().then((resp) => {
-      if (resp.status === 200) {
-        // setConfig(resp.result);
-        // console.log('test', resp);
-        configRef.current = resp.result;
-      }
-    });
-  }, []);
 
   const useAsyncData = (services: (arg0: Field) => Promise<FieldDataSource>) => (field: Field) => {
     field.loading = true;
@@ -122,6 +113,10 @@ const Save = observer(() => {
         // initialValues: {},
         effects() {
           onFormInit(async (form1) => {
+            const response = await service.getResourcesCurrent();
+            if (response.status === 200) {
+              configRef.current = response.result;
+            }
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
               const data = resp?.result || {};
@@ -156,7 +151,7 @@ const Save = observer(() => {
             f.setFieldState('grid.configuration.panel1.layout2.host', (state) => {
               state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
             });
-            f.setFieldState('cluster.config.*.host', (state) => {
+            f.setFieldState('grid.cluster.cluster.*.layout2.host', (state) => {
               state.dataSource = _host.map((item) => ({ label: item.host, value: item.host }));
             });
           });

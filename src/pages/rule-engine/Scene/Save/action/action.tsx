@@ -45,6 +45,7 @@ export default observer((props: ActionProps) => {
   const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
   const [properties, setProperties] = useState([]); // 物模型-属性
   const [functionList, setFunctionList] = useState([]); // 物模型-功能
+  const [propertiesId, setPropertiesId] = useState<string | undefined>(''); // 物模型-属性ID,用于串行
 
   const [productId, setProductId] = useState('');
 
@@ -84,6 +85,12 @@ export default observer((props: ActionProps) => {
             { column: 'type', value: data.notify.notifyType },
             { column: 'provider', value: notifierItem.provider },
           ],
+          sorts: [
+            {
+              name: 'createTime',
+              order: 'desc',
+            },
+          ],
         });
       }
     }
@@ -103,6 +110,12 @@ export default observer((props: ActionProps) => {
     ) {
       queryMessageConfigs({
         terms: [{ column: 'type$IN', value: props.actionItemData.notify.notifyType }],
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
+          },
+        ],
       }).then(async (resp) => {
         if (props.actionItemData.notify.notifierId) {
           await handleNotifier(resp, props.actionItemData);
@@ -365,6 +378,7 @@ export default observer((props: ActionProps) => {
                   parallel={props.parallel}
                   productId={productId}
                   isEdit={props.isEdit}
+                  propertiesChange={setPropertiesId}
                 />
               </Form.Item>
             </Col>
@@ -377,6 +391,7 @@ export default observer((props: ActionProps) => {
                 form={props.form}
                 data={props.actionItemData.terms}
                 productId={productId}
+                propertiesId={propertiesId}
               />
             </Row>
           )}
@@ -392,7 +407,7 @@ export default observer((props: ActionProps) => {
                 name={[name, 'device', 'message', 'properties']}
                 rules={[{ required: true, message: '请选择属性' }]}
               >
-                <ReadProperty properties={properties} />
+                <ReadProperty properties={properties} propertiesChange={setPropertiesId} />
               </Form.Item>
             </Col>
             {parallelNode}
@@ -404,6 +419,7 @@ export default observer((props: ActionProps) => {
                 form={props.form}
                 data={props.actionItemData.terms}
                 productId={productId}
+                propertiesId={propertiesId}
               />
             </Row>
           )}
