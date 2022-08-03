@@ -26,13 +26,10 @@ import { service } from '@/pages/device/Firmware';
 
 const UpgradeBtn = (props: { data: any; actions: any }) => {
   const { data, actions } = props;
-  if (data.progress === 100) {
-    return null;
-  }
-  return (
-    <a>
-      <Tooltip title={data.waiting ? '停止' : '继续升级'}>
-        {data.waiting ? (
+  if (data.waiting && data?.state?.value === 'processing') {
+    return (
+      <a>
+        <Tooltip title={'停止'}>
           <StopOutlined
             onClick={async () => {
               const resp = await service.stopTask(data.id);
@@ -42,7 +39,13 @@ const UpgradeBtn = (props: { data: any; actions: any }) => {
               }
             }}
           />
-        ) : (
+        </Tooltip>
+      </a>
+    );
+  } else if (data?.state?.value === 'canceled') {
+    return (
+      <a>
+        <Tooltip title={'继续升级'}>
           <ControlOutlined
             onClick={async () => {
               const resp = await service.startTask(data.id, ['canceled']);
@@ -52,10 +55,11 @@ const UpgradeBtn = (props: { data: any; actions: any }) => {
               }
             }}
           />
-        )}
-      </Tooltip>
-    </a>
-  );
+        </Tooltip>
+      </a>
+    );
+  }
+  return null;
 };
 
 export const state = model<{

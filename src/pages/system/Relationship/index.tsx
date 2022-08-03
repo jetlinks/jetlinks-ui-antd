@@ -35,6 +35,14 @@ const Relationship = () => {
       dataIndex: 'objectTypeName',
       title: '关联方',
       ellipsis: true,
+      valueType: 'select',
+      request: async () => {
+        const res = await service.getTypes();
+        if (res.status === 200) {
+          return res.result.map((item: any) => ({ label: item.name, value: item.name }));
+        }
+        return [];
+      },
     },
     {
       dataIndex: 'targetTypeName',

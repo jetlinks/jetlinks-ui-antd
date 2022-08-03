@@ -22,10 +22,12 @@ const Basis = () => {
     if (res.status === 200) {
       const basis = res.result?.filter((item: any) => item.scope === 'basis');
       const api = res?.result.filter((item: any) => item.scope === 'api');
+      const basePath = res?.result.filter((item: any) => item.scope === 'basePath');
       localStorage.setItem(SystemConst.AMAP_KEY, api[0].properties.api);
       form.setFieldsValue({
         ...basis[0].properties,
         apikey: api[0].properties.api,
+        basePath: basePath[0].properties.basePath,
       });
       setInitialState({
         ...initialState,
@@ -45,6 +47,7 @@ const Basis = () => {
           properties: {
             ...formData,
             apikey: '',
+            basePath: '',
           },
         },
         {
@@ -53,17 +56,23 @@ const Basis = () => {
             api: formData.apikey,
           },
         },
+        {
+          scope: 'basePath',
+          properties: {
+            basePath: formData.basePath,
+          },
+        },
       ];
       const res = await service.save(item);
       if (res.status === 200) {
         onlyMessage('保存成功');
-        detail(['basis', 'api']);
+        detail(['basis', 'api', 'basePath']);
       }
     }
   };
 
   useEffect(() => {
-    detail(['basis', 'api']);
+    detail(['basis', 'api', 'basePath']);
   }, []);
   return (
     <PageContainer>
@@ -96,6 +105,14 @@ const Basis = () => {
                 label="高德API Key"
                 name="apikey"
                 tooltip="配置后平台可调用高德地图GIS服务"
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="base-path"
+                name="basePath"
+                tooltip="界面访问后台服务器的URL(统一资源定位符)"
+                required
               >
                 <Input />
               </Form.Item>

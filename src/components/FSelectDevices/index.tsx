@@ -10,6 +10,7 @@ import Service from '@/pages/device/Instance/service';
 import SearchComponent from '../SearchComponent';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
+import moment from 'moment';
 
 interface Props {
   value?: Partial<DeviceInstance>[];
@@ -59,9 +60,11 @@ const FSelectDevices = observer((props: Props) => {
         id: 'pages.device.instance.registrationTime',
         defaultMessage: '注册时间',
       }),
-      dataIndex: 'registerTime',
+      dataIndex: 'registryTime',
       width: '200px',
       valueType: 'dateTime',
+      render: (text: any, record: any) =>
+        record?.registerTime ? moment(record?.registerTime).format('YYYY-MM-DD HH:mm:ss') : '',
     },
     {
       title: '状态',

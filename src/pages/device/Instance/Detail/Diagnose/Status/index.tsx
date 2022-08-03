@@ -285,7 +285,7 @@ const Status = observer((props: Props) => {
                     key: 'gateway',
                     name: '设备接入网关',
                     desc: desc,
-                    status: 'error',
+                    status: 'warning',
                     text: '可能存在异常',
                     info: (
                       <div>
@@ -416,7 +416,7 @@ const Status = observer((props: Props) => {
                 key: 'gateway',
                 name: '设备接入网关',
                 desc: desc,
-                status: 'error',
+                status: 'warning',
                 text: '可能存在异常',
                 info: (
                   <div>
@@ -965,7 +965,7 @@ const Status = observer((props: Props) => {
                   key: `product-auth${i}`,
                   name: `产品-${item?.name}`,
                   desc: '诊断产品MQTT认证配置是否正确，错误的配置将导致连接失败',
-                  status: 'error',
+                  status: 'warning',
                   text: '可能存在异常',
                   info: (
                     <div>
@@ -1129,7 +1129,7 @@ const Status = observer((props: Props) => {
                   key: `device-auth${i}`,
                   name: `设备-${item?.name}`,
                   desc: '诊断设备MQTT认证配置是否正确，错误的配置将导致连接失败',
-                  status: 'error',
+                  status: 'warning',
                   text: '可能存在异常',
                   info: (
                     <div>
@@ -1409,7 +1409,7 @@ const Status = observer((props: Props) => {
             key: `onenet`,
             name: `设备-OneNet配置`,
             desc: '诊断设备OneNet是否已配置，未配置将导致连接失败',
-            status: 'error',
+            status: 'warning',
             text: '可能存在异常',
             info: (
               <div>
@@ -1524,7 +1524,7 @@ const Status = observer((props: Props) => {
             key: `ctwing`,
             name: `设备-CTWing配置`,
             desc: '诊断设备CTWing是否已配置，未配置将导致连接失败',
-            status: 'error',
+            status: 'warning',
             text: '可能存在异常',
             info: (
               <div>
