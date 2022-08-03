@@ -15,3 +15,4 @@ export { default as Empty } from './Empty';
 export { default as GeoPoint } from './GeoPoint';
 export { default as MetadataJsonInput } from './FormItems/MetadataJsonInput';
 export { default as Ellipsis } from './Ellipsis';
+export { default as FDatePicker } from './FDatePicker';

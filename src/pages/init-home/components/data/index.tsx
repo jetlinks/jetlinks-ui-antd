@@ -61,6 +61,11 @@ const Data = forwardRef((_, ref) => {
           productId: product?.result?.id,
           productName: product?.result?.name,
         });
+
+        if (device.status === 200) {
+          service.changeDeploy(product.result.id);
+          service.deployDevice(device.result.id);
+        }
         resolve(device.status === 200);
       } catch (e) {
         console.log(e);

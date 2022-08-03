@@ -53,6 +53,7 @@ const InitHome = () => {
             <Spin spinning={loadings}>
               <Collapse defaultActiveKey={['1']} accordion>
                 <Collapse.Panel
+                  forceRender={true}
                   header={
                     <div className={styles.collapseTitle}>
                       基本信息
@@ -66,6 +67,7 @@ const InitHome = () => {
                   <Basis ref={baseRef} />
                 </Collapse.Panel>
                 <Collapse.Panel
+                  forceRender={true}
                   header={
                     <div className={styles.collapseTitle}>
                       菜单初始化<div className={styles.collapseDesc}>初始化菜单数据</div>
@@ -76,6 +78,7 @@ const InitHome = () => {
                   <Menu ref={menuRef} />
                 </Collapse.Panel>
                 <Collapse.Panel
+                  forceRender={true}
                   header={
                     <div className={styles.collapseTitle}>
                       角色初始化<div className={styles.collapseDesc}>初始化内置角色与权限数据</div>
@@ -86,6 +89,7 @@ const InitHome = () => {
                   <Role ref={roleRef} />
                 </Collapse.Panel>
                 <Collapse.Panel
+                  forceRender={true}
                   header={
                     <div className={styles.collapseTitle}>
                       初始数据<div className={styles.collapseDesc}>初始化设备接入示例数据</div>
@@ -111,7 +115,6 @@ const InitHome = () => {
                   }
                   cacheRef.current?.add('base');
                 }
-
                 if (!cacheRef.current?.has('menu')) {
                   const menuRes = await menuRef.current?.save();
                   if (!menuRes) {
@@ -119,7 +122,6 @@ const InitHome = () => {
                   }
                   cacheRef.current?.add('menu');
                 }
-
                 if (!cacheRef.current?.has('role')) {
                   const roleRes = await roleRef.current?.save();
                   if (!roleRes) {
@@ -127,7 +129,6 @@ const InitHome = () => {
                   }
                   cacheRef.current?.add('role');
                 }
-
                 if (!cacheRef.current?.has('data')) {
                   const dataRes = await dataRef.current?.save();
                   if (!dataRes) {

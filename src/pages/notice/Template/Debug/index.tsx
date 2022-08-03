@@ -4,7 +4,6 @@ import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/co
 import { createSchemaField, observer } from '@formily/react';
 import {
   ArrayTable,
-  DatePicker,
   Form,
   FormItem,
   Input,
@@ -17,6 +16,7 @@ import { configService, service, state } from '@/pages/notice/Template';
 import { useLocation } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
+import { FDatePicker } from '@/components';
 import FUpload from '@/components/Upload';
 
 const Debug = observer(() => {
@@ -50,8 +50,14 @@ const Debug = observer(() => {
             if (format && value) {
               switch (value) {
                 case 'date':
-                  format.setComponent(DatePicker, {
+                  let dateFormat = 'YYYY-MM-DD HH:mm:ss';
+                  if (variableRef.current) {
+                    const a = variableRef.current?.find((i: any) => i.id === _id.value);
+                    dateFormat = a?.format;
+                  }
+                  format.setComponent(FDatePicker, {
                     showTime: true,
+                    format: dateFormat,
                   });
                   break;
                 case 'string':
@@ -133,7 +139,7 @@ const Debug = observer(() => {
       ArrayTable,
       PreviewText,
       NumberPicker,
-      DatePicker,
+      FDatePicker,
       FUpload,
     },
   });

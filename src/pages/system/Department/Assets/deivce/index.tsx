@@ -15,6 +15,7 @@ import { PermissionButton, ProTableCard } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 import UpdateModal from '@/pages/system/Department/Assets/updateModal';
+import encodeQuery from '@/utils/encodeQuery';
 
 export const service = new Service<DeviceItem>('assets');
 
@@ -108,7 +109,7 @@ export default observer((props: { parentId: string }) => {
       valueType: 'select',
       dataIndex: 'productId$product-info',
       request: async () => {
-        const res = await service.getProductList();
+        const res = await service.getProductList(encodeQuery({ sorts: { createTime: 'desc' } }));
         if (res.status === 200) {
           return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
         }
