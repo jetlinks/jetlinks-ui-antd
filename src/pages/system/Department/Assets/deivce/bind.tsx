@@ -12,6 +12,7 @@ import SearchComponent from '@/components/SearchComponent';
 import { ExtraDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { ProTableCard } from '@/components';
 import { AssetsModel } from '@/pages/system/Department/Assets';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface Props {
   reload: () => void;
@@ -48,7 +49,7 @@ const Bind = observer((props: Props) => {
       valueType: 'select',
       filterMultiple: true,
       request: async () => {
-        const res = await service.getProductList();
+        const res = await service.getProductList(encodeQuery({ sorts: { createTime: 'desc' } }));
         if (res.status === 200) {
           return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
         }
@@ -121,7 +122,6 @@ const Bind = observer((props: Props) => {
   }, [props.visible]);
 
   const getParams = (params: any) => {
-    console.log(params);
     const _params: any = [
       {
         column: 'id',

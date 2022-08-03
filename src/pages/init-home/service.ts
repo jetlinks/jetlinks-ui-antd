@@ -71,6 +71,18 @@ class Service extends BaseService<any> {
     });
   //  获取初始化
   getInit = () => request(`/${SystemConst.API_BASE}/user/settings/init`, { method: 'GET' });
+
+  // 启用设备
+  deployDevice = (deviceId: string, params?: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/deploy`, {
+      method: 'POST',
+      data: params,
+    });
+
+  changeDeploy = (id: string) =>
+    request(`/${SystemConst.API_BASE}/device-product/${id}/deploy`, {
+      method: 'POST',
+    });
 }
 
 export default Service;

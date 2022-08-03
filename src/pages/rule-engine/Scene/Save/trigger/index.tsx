@@ -69,7 +69,7 @@ export default observer((props: TriggerProps) => {
         newOperator = [...newOperator, { label: '功能调用', value: OperatorEnum.invokeFunction }];
         setFunctions(metadataObj.functions);
       }
-      setOperatorOptions(Object.keys(metadataObj).length ? newOperator : undefined);
+      setOperatorOptions(newOperator);
     } catch (err) {
       console.warn('handleMetadata === ', err);
     }

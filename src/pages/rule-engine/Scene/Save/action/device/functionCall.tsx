@@ -26,6 +26,7 @@ export default (props: FunctionCallProps) => {
 
   useEffect(() => {
     setEditableRowKeys(props.functionData.map((d) => d.id));
+    console.log(formRef.current, props.functionData);
     formRef.current?.setFieldsValue({
       table: props.functionData,
     });
@@ -42,6 +43,7 @@ export default (props: FunctionCallProps) => {
               value: oldValue.value,
             };
           }
+          console.log(item);
           return item;
         }),
       });
