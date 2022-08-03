@@ -338,17 +338,19 @@ const NewModbus = () => {
   }, []);
 
   useEffect(() => {
-    const id = `collector-data-modbus`;
-    const topic = `/collector/MODBUS_TCP/${activeKey}/data`;
-    wsRef.current = subscribeTopic?.(id, topic, {
-      pointId: pointList.map((item: any) => item.id),
-    })
-      ?.pipe(map((res: any) => res.payload))
-      .subscribe((payload: any) => {
-        const { pointId, hex } = payload;
-        current[pointId] = hex;
-        setCurrentData({ ...current });
-      });
+    if (pointList && activeKey) {
+      const id = `collector-data-modbus`;
+      const topic = `/collector/MODBUS_TCP/${activeKey}/data`;
+      wsRef.current = subscribeTopic?.(id, topic, {
+        pointId: pointList.map((item: any) => item.id),
+      })
+        ?.pipe(map((res: any) => res.payload))
+        .subscribe((payload: any) => {
+          const { pointId, hex } = payload;
+          current[pointId] = hex;
+          setCurrentData({ ...current });
+        });
+    }
     return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [pointList]);
 

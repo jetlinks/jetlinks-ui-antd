@@ -32,6 +32,12 @@ const Basis = forwardRef((props: Props, ref) => {
               api: formData.apikey,
             },
           },
+          {
+            scope: 'basePath',
+            properties: {
+              basePath: formData.basePath,
+            },
+          },
         ];
         const res = await service.save(item);
         if (res.status === 200) {
@@ -99,6 +105,14 @@ const Basis = forwardRef((props: Props, ref) => {
           </Form.Item>
           <Form.Item label="高德API Key" name="apikey" tooltip="配置后平台可调用高德地图GIS服务">
             <Input placeholder={'请输入高德API Key'} />
+          </Form.Item>
+          <Form.Item
+            label="base-path"
+            name="basePath"
+            tooltip="界面访问后台服务器的URL(统一资源定位符)"
+            required
+          >
+            <Input />
           </Form.Item>
           <Row gutter={[24, 24]}>
             <Col>

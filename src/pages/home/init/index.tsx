@@ -53,7 +53,7 @@ const Init = (props: Props) => {
           type="primary"
           onClick={() => {
             service
-              .setView({
+              .setViews({
                 name: 'view',
                 content: value,
               })
