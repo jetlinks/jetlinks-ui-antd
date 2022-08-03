@@ -320,8 +320,8 @@ const Config = () => {
         <div style={{ marginLeft: 20 }} className={styles.doc}>
           <h1>功能说明</h1>
           <div>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</div>
-          <div>2、告警级别将会在告警配置中被引用</div>
-          <div>3、最多可配置5个级别</div>
+          <div>2、告警级别将会在告警配置中被引用。</div>
+          <div>3、最多可配置5个级别。</div>
         </div>
       </Col>
     </Row>
