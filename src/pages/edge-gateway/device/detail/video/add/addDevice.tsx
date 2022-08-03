@@ -49,7 +49,7 @@ const AddDevice: React.FC<Props> = props => {
                         <Form.Item key="username" label="用户名">
                             {getFieldDecorator('username', {
                                 // rules: [{ required: true }],
-                                initialValue: data?.others?.username
+                                initialValue: data?.others?.onvifUsername
                             })(
                                 <Input placeholder='请输入用户名' />
                             )}
@@ -57,7 +57,7 @@ const AddDevice: React.FC<Props> = props => {
                         <Form.Item key="password" label="密码">
                             {getFieldDecorator('password', {
                                 // rules: [{ required: true }],
-                                initialValue: data?.others?.password
+                                initialValue: data?.others?.onvifPassword
                             })(
                                 <Input type="password" placeholder='请输入密码' />
                             )}
@@ -78,7 +78,7 @@ const AddDevice: React.FC<Props> = props => {
             confirmLoading={props.loading}
             onOk={() => {
                 form.validateFields((err, fileValue) => {
-                    console.log(props.loading);
+                    console.log(fileValue);
                     if (err) return;
                     if (!data.id) {
                         props.save({ ...fileValue });

@@ -99,7 +99,7 @@ function Left(props: LeftProps) {
       addOnvifRequest(fileValue)
     } else {
       let param = {
-        url: fileValue.url,
+        url: fileValue.onvifUrl,
         username: fileValue.username,
         password: fileValue.password,
       }

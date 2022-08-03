@@ -11,9 +11,9 @@ interface GetDeviceList {
 
 
 interface MediaDeviceListOther {
-  password: string
+  onvifUsername: string
   onvifUrl: string
-  username: string
+  onvifPassword: string
   mediaProfiles: Array<MediaProfiles>
 }
 interface MediaProfiles {
