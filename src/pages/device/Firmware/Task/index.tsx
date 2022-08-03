@@ -26,7 +26,7 @@ import { service } from '@/pages/device/Firmware';
 
 const UpgradeBtn = (props: { data: any; actions: any }) => {
   const { data, actions } = props;
-  if (data.waiting && data?.state?.value === 'processing') {
+  if (data.waiting > 0 && data?.state?.value === 'processing') {
     return (
       <a>
         <Tooltip title={'停止'}>
@@ -147,7 +147,7 @@ const Task = observer(() => {
         <a key="delete">
           <Popconfirm
             title={
-              record.waiting
+              record.waiting > 0 || record.processing > 0
                 ? '删除将导致正在进行的任务终止，确定要删除吗？'
                 : intl.formatMessage({
                     id: 'pages.data.option.remove.tips',
