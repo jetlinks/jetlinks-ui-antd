@@ -160,7 +160,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                 : treeValue[0];
             const source = (field as Field).value;
             const value = field.query(source === 'manual' ? '.value.0' : '.metric');
-
+            console.log(target, source);
             if (target) {
               if (source === 'manual') {
                 // 手动输入
@@ -187,6 +187,7 @@ const TriggerTerm = (props: Props, ref: any) => {
                 }
 
                 form1.setFieldState(value, (state) => {
+                  console.log(state, valueType);
                   state.componentType = valueTypeMap[valueType];
                   state.componentProps = {
                     style: {
@@ -259,6 +260,21 @@ const TriggerTerm = (props: Props, ref: any) => {
     getTriggerForm: async () => {
       await form.validate();
 
+      const data: any = await form.submit().then((_data: any) => {
+        if (!Array.isArray(_data.trigger)) return;
+        _data.trigger?.map((item: { terms: any[] }) =>
+          item.terms.map((j) => {
+            if (j.value?.value?.length === 1) {
+              j.value.value = j.value.value[0];
+            }
+            return j;
+          }),
+        );
+        return _data;
+      });
+      return Array.isArray(data?.trigger) ? data : undefined;
+    },
+    getTriggerData: async () => {
       const data: any = await form.submit().then((_data: any) => {
         if (!Array.isArray(_data.trigger)) return;
         _data.trigger?.map((item: { terms: any[] }) =>

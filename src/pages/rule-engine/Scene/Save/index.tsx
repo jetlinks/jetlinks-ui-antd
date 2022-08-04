@@ -348,6 +348,7 @@ export default () => {
                             name={name}
                             trigger={actionParams}
                             triggerType={triggerType}
+                            triggerRef={triggerRef.current}
                             onRemove={() => {
                               remove(name);
                               setActionDataCount(actionDataCount - 1);
