@@ -9,13 +9,12 @@ import SystemConst from '@/utils/const';
 import { downloadFile } from '@/utils/util';
 
 interface Props {
-  visible: boolean;
   close: () => void;
   data: any;
 }
 
 const Export = (props: Props) => {
-  const { visible, close } = props;
+  const { close } = props;
   const [list, setList] = useState<any[]>([]);
   const SchemaField = createSchemaField({
     components: {
@@ -108,7 +107,7 @@ const Export = (props: Props) => {
   return (
     <Modal
       maskClosable={false}
-      visible={visible}
+      visible
       onCancel={() => close()}
       width="35vw"
       title="导出"

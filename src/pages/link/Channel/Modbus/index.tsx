@@ -14,7 +14,7 @@ import {
   SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import ChannelCard from '../channelCard';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -354,6 +354,19 @@ const NewModbus = () => {
     return () => wsRef.current && wsRef.current?.unsubscribe();
   }, [pointList]);
 
+  const masterMemo = useMemo(
+    () => (
+      <Export
+        data={masterList}
+        close={() => {
+          setExportVisible(false);
+          actionRef.current?.reload();
+        }}
+      />
+    ),
+    [masterList],
+  );
+
   return (
     <PageContainer>
       <Card className="modbus" style={{ minHeight }}>
@@ -561,22 +574,17 @@ const NewModbus = () => {
           }}
         />
       )}
-      <Import
-        masterId={activeKey}
-        close={() => {
-          setImportVisible(false);
-          actionRef.current?.reload();
-        }}
-        visible={importVisible}
-      />
-      <Export
-        data={masterList}
-        close={() => {
-          setExportVisible(false);
-          actionRef.current?.reload();
-        }}
-        visible={exportVisible}
-      />
+      {importVisible && (
+        <Import
+          masterId={activeKey}
+          close={() => {
+            setImportVisible(false);
+            actionRef.current?.reload();
+          }}
+          // visible={importVisible}
+        />
+      )}
+      {exportVisible && masterMemo}
     </PageContainer>
   );
 };

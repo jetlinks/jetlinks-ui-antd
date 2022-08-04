@@ -160,8 +160,8 @@ export default (props: Props) => {
     field.loading = true;
     api(field).then(
       action.bound!((resp: Response<any>) => {
-        const value = resp.result?.[0].parameter.quantity;
-        field.dataSource = [...new Array(value).keys()].map((item: any) => ({
+        const value = resp.result?.[0].parameter.quantity || '';
+        field.dataSource = [...new Array(value * 2).keys()].map((item: any) => ({
           label: item,
           value: item,
         }));
@@ -240,8 +240,15 @@ export default (props: Props) => {
             }
             return x;
           }, metadata);
-          setProperties(array);
-          setFilterList(array);
+          //删除物模型
+          const items = array.filter((item: any) => item.metadataName);
+          setProperties(items);
+          setFilterList(items);
+          const delList = array.filter((a: any) => !a.metadataName).map((b: any) => b.id);
+          //删除后解绑
+          if (delList && delList.length !== 0) {
+            service.removeDevicePoint(data.id, delList);
+          }
         }
       });
     } else {
@@ -307,7 +314,7 @@ export default (props: Props) => {
         );
         if ((field as Field).modified) {
           const readIndex = field.query(path).get('value');
-          const dataLength = field.query(path).get('dataSource')?.length * 2 - 1;
+          const dataLength = field.query(path).get('dataSource')?.length - 1;
           const length = lengthMap.get(value) + readIndex;
           console.log(length, dataLength);
           if (length > dataLength) {

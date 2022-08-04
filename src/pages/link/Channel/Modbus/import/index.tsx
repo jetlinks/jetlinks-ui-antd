@@ -10,7 +10,6 @@ import { UploadOutlined } from '@ant-design/icons';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 
 interface Props {
-  visible: boolean;
   close: () => void;
   masterId: any;
 }
@@ -167,7 +166,7 @@ const NormalUpload = (props: any) => {
   );
 };
 const Import = (props: Props) => {
-  const { visible, close, masterId } = props;
+  const { close, masterId } = props;
 
   useEffect(() => {
     console.log(masterId);
@@ -220,7 +219,7 @@ const Import = (props: Props) => {
   return (
     <Modal
       maskClosable={false}
-      visible={visible}
+      visible
       onCancel={() => close()}
       width="35vw"
       title="导入"

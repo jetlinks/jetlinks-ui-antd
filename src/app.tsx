@@ -63,7 +63,7 @@ export async function getInitialState(): Promise<{
   };
   const getSettings = async () => {
     try {
-      const res = await Service.settingDetail('basis');
+      const res = await Service.settingDetail('front');
       return res.result;
     } catch (error) {
       history.push(loginPath);
@@ -243,7 +243,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   // console.log({ ...initialState });
   const ico: any = document.querySelector('link[rel="icon"]');
   if (ico !== null) {
-    Service.settingDetail('basis').then((res) => {
+    Service.settingDetail('front').then((res) => {
       if (res.status === 200) {
         // console.log(res.result.ico)
         ico.href = res.result.ico;

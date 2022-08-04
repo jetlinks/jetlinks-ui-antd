@@ -383,6 +383,7 @@ export default observer((props: ActionProps) => {
                   propertiesChange={setPropertiesId}
                 />
               </Form.Item>
+              l
             </Col>
             {parallelNode}
           </Row>

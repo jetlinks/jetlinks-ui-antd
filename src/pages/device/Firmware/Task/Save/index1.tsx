@@ -1,40 +1,87 @@
-import { Col, Form, Input, InputNumber, message, Modal, Radio, Row, Select } from 'antd';
+import { Modal } from 'antd';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
-import FSelectDevices from '@/components/FSelectDevices';
-import { useEffect, useRef, useState } from 'react';
-import type { DeviceInstance } from '@/pages/device/Instance/typings';
+import { createSchemaField } from '@formily/react';
+import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Radio } from '@formily/antd';
+import { createForm, onFieldValueChange } from '@formily/core';
+import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/device/Firmware';
+import { useEffect, useMemo } from 'react';
 import { onlyMessage } from '@/utils/util';
+import FSelectDevices from '@/components/FSelectDevices';
 
 interface Props {
   ids: { id: string; productId: string };
   data?: FirmwareItem;
   close: () => void;
   save: () => void;
+  visible: boolean;
 }
 
 const Save = (props: Props) => {
-  const { data, close, ids } = props;
-  const [mode, setMode] = useState<'push' | 'pull' | undefined>(undefined);
-  const [releaseType, setReleaseType] = useState<'all' | 'part' | undefined>(undefined);
+  const { data, close, visible, ids } = props;
 
-  const [form] = Form.useForm();
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        initialValues: {},
+        effects() {
+          // onFormInit(async (form1) => {
+          //   if (!data?.id) return;
+          //   form1.setInitialValues({ ...data, upload: { url: data?.url } });
+          // });
+          onFieldValueChange('mode', async (field) => {
+            field
+              .query('timeoutSeconds')
+              .take()
+              .setDecoratorProps({
+                gridSpan: field.value === 'push' ? 1 : 2,
+              });
+            field
+              .query('responseTimeoutSeconds')
+              .take()
+              .setDecoratorProps({
+                gridSpan: field.value === 'push' ? 1 : 2,
+              });
+          });
+          onFieldValueChange('releaseType', async (field) => {
+            field.setDecoratorProps({
+              gridSpan: field.value === 'all' ? 2 : 1,
+            });
+          });
+        },
+      }),
+    [],
+  );
 
-  const devices = useRef<DeviceInstance[]>([]);
+  // const devices = useRef<DeviceInstance[]>([]);
+
+  const SchemaField = createSchemaField({
+    components: {
+      FormItem,
+      FormGrid,
+      Input,
+      Select,
+      NumberPicker,
+      Radio,
+      FSelectDevices,
+    },
+  });
 
   useEffect(() => {
-    service.queryDevice().then((resp) => {
-      if (resp.status === 200) {
-        devices.current = resp.result;
-      }
-    });
-  }, []);
+    // if (visible) {
+    //   service.queryDevice().then((resp) => {
+    //     if (resp.status === 200) {
+    //       devices.current = resp.result;
+    //     }
+    //   });
+    // }
+  }, [visible]);
 
   const save = async () => {
-    const values = await form.validateFields();
-    console.log(values);
+    const values: any = await form.submit();
     if (values?.releaseType !== 'all') {
-      values.deviceId = (values?.deviceId || []).map((item: any) => item.id);
+      // values.deviceId = devices.current.map((item) => item.id);
     } else {
       values.deviceId = undefined;
     }
@@ -46,12 +93,190 @@ const Save = (props: Props) => {
     if (resp.status === 200) {
       onlyMessage('保存成功！');
       props.save();
-      form.resetFields();
-      setMode(undefined);
-      setReleaseType(undefined);
     } else {
-      message.error('保存失败！');
+      onlyMessage('保存失败！', 'error');
     }
+  };
+
+  const schema: ISchema = {
+    type: 'object',
+    properties: {
+      grid: {
+        type: 'void',
+        'x-component': 'FormGrid',
+        'x-component-props': {
+          minColumns: 2,
+          maxColumns: 2,
+        },
+        properties: {
+          name: {
+            title: '任务名称',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input',
+            'x-component-props': {
+              placeholder: '请输入任务名称',
+            },
+            required: true,
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入任务名称',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
+          },
+          mode: {
+            title: '推送方式',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            enum: [
+              { label: '平台推送', value: 'push' },
+              { label: '设备拉取', value: 'pull' },
+            ],
+            'x-component-props': {
+              placeholder: '请选择推送方式',
+            },
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择推送方式',
+              },
+            ],
+          },
+          responseTimeoutSeconds: {
+            title: '响应超时时间',
+            'x-decorator': 'FormItem',
+            'x-component': 'NumberPicker',
+            'x-component-props': {
+              placeholder: '请输入响应超时时间(秒)',
+            },
+            'x-visible': false,
+            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入响应超时时间',
+              },
+              {
+                maximum: 99999,
+                minimum: 1,
+              },
+            ],
+            'x-reactions': {
+              dependencies: ['.mode'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="push"}}',
+                },
+              },
+            },
+          },
+          timeoutSeconds: {
+            title: '升级超时时间',
+            'x-decorator': 'FormItem',
+            'x-component': 'NumberPicker',
+            'x-component-props': {
+              placeholder: '请输入升级超时时间(秒)',
+            },
+            'x-visible': false,
+            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入升级超时时间',
+              },
+              {
+                maximum: 99999,
+                minimum: 1,
+              },
+            ],
+            'x-reactions': {
+              dependencies: ['.mode'],
+              fulfill: {
+                state: {
+                  visible: '{{!!$deps[0]}}',
+                },
+              },
+            },
+          },
+          releaseType: {
+            type: 'string',
+            title: '升级设备',
+            default: 'all',
+            'x-visible': false,
+            enum: [
+              { label: '所有设备', value: 'all' },
+              { label: '选择设备', value: 'part' },
+            ],
+            'x-decorator': 'FormItem',
+            'x-component': 'Radio.Group',
+            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择升级设备',
+              },
+            ],
+            'x-reactions': {
+              dependencies: ['.mode'],
+              fulfill: {
+                state: {
+                  visible: '{{!!$deps[0]}}',
+                },
+              },
+            },
+          },
+          deviceId: {
+            title: '选择设备',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelectDevices',
+            'x-component-props': {
+              productId: ids?.productId || '',
+            },
+            'x-visible': false,
+            required: true,
+            'x-reactions': {
+              dependencies: ['.releaseType'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="part"}}',
+                },
+              },
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择设备',
+              },
+            ],
+          },
+          description: {
+            title: '说明',
+            'x-decorator': 'FormItem',
+            'x-component': 'Input.TextArea',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              rows: 3,
+              showCount: true,
+              maxLength: 200,
+              placeholder: '请输入说明',
+            },
+          },
+        },
+      },
+    },
   };
 
   return (
@@ -59,170 +284,12 @@ const Save = (props: Props) => {
       maskClosable={false}
       width="50vw"
       title={data?.id ? '编辑任务' : '新增任务'}
-      onCancel={() => {
-        form.resetFields();
-        close();
-        setMode(undefined);
-        setReleaseType(undefined);
-      }}
+      onCancel={() => close()}
       onOk={() => save()}
-      visible
+      visible={visible}
     >
-      <Form form={form} name="basic" layout="vertical">
-        <Row gutter={24}>
-          <Col span={24}>
-            <Form.Item
-              label="任务名称"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入任务名称',
-                },
-                {
-                  max: 64,
-                  message: '最多可输入64个字符',
-                },
-              ]}
-            >
-              <Input placeholder="请输入任务名称" />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              label="推送方式"
-              name="mode"
-              rules={[
-                {
-                  required: true,
-                  message: '请选择推送方式',
-                },
-              ]}
-            >
-              <Select
-                placeholder="请选择推送方式"
-                onChange={(value) => {
-                  setMode(value);
-                }}
-              >
-                <Select.Option value="push">平台推送</Select.Option>
-                <Select.Option value="pull">设备拉取</Select.Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          {mode === 'push' && (
-            <>
-              <Col span={12}>
-                <Form.Item
-                  label="响应超时时间"
-                  name="responseTimeoutSeconds"
-                  rules={[
-                    {
-                      required: true,
-                      message: '请输入响应超时时间',
-                    },
-                    {
-                      type: 'number',
-                      max: 99999,
-                      min: 1,
-                      message: '请输入1~99999之间的数字',
-                    },
-                  ]}
-                >
-                  <InputNumber style={{ width: '100%' }} placeholder="请输入响应超时时间(秒)" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  label="升级超时时间"
-                  name="timeoutSeconds"
-                  rules={[
-                    {
-                      required: true,
-                      message: '请输入升级超时时间',
-                    },
-                    {
-                      type: 'number',
-                      max: 99999,
-                      min: 1,
-                      message: '请输入1~99999之间的数字',
-                    },
-                  ]}
-                >
-                  <InputNumber style={{ width: '100%' }} placeholder="请请输入升级超时时间(秒)" />
-                </Form.Item>
-              </Col>
-            </>
-          )}
-          {mode === 'pull' && (
-            <Col span={24}>
-              <Form.Item
-                label="升级超时时间"
-                name="timeoutSeconds"
-                rules={[
-                  {
-                    required: true,
-                    message: '请输入升级超时时间',
-                  },
-                  {
-                    type: 'number',
-                    max: 99999,
-                    min: 1,
-                    message: '请输入1~99999之间的数字',
-                  },
-                ]}
-              >
-                <InputNumber style={{ width: '100%' }} placeholder="请请输入升级超时时间(秒)" />
-              </Form.Item>
-            </Col>
-          )}
-          {!!mode && (
-            <>
-              <Col span={12}>
-                <Form.Item
-                  label="升级设备"
-                  name="releaseType"
-                  rules={[
-                    {
-                      required: true,
-                      message: '请选择升级设备',
-                    },
-                  ]}
-                >
-                  <Radio.Group
-                    onChange={(e) => {
-                      setReleaseType(e.target.value);
-                    }}
-                  >
-                    <Radio value="all"> 所有设备 </Radio>
-                    <Radio value="part"> 选择设备 </Radio>
-                  </Radio.Group>
-                </Form.Item>
-              </Col>
-              {releaseType === 'part' && (
-                <Col span={12}>
-                  <Form.Item
-                    label="选择设备"
-                    name="deviceId"
-                    rules={[
-                      {
-                        required: true,
-                        message: '请选择设备',
-                      },
-                    ]}
-                  >
-                    <FSelectDevices productId={ids?.productId || ''} />
-                  </Form.Item>
-                </Col>
-              )}
-            </>
-          )}
-          <Col span={24}>
-            <Form.Item label="说明" name="description">
-              <Input.TextArea rows={3} maxLength={200} showCount={true} placeholder="请输入说明" />
-            </Form.Item>
-          </Col>
-        </Row>
+      <Form form={form} labelCol={5} wrapperCol={16} layout="vertical">
+        <SchemaField schema={schema} />
       </Form>
     </Modal>
   );

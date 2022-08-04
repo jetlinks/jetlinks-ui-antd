@@ -38,6 +38,11 @@ class Service {
       method: 'POST',
       data,
     });
+  settingDetail = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/scopes`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;
