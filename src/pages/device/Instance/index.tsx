@@ -413,6 +413,31 @@ const Instance = () => {
     },
   ];
 
+  const paramsFormat = (config: any, _terms: any, name?: string) => {
+    if (config?.terms && Array.isArray(config.terms) && config?.terms.length > 0) {
+      (config?.terms || []).map((item: any, index: number) => {
+        if (item?.type) {
+          _terms[`${name ? `${name}.` : ''}terms[${index}].type`] = item.type;
+        }
+        paramsFormat(item, _terms, `${name ? `${name}.` : ''}terms[${index}]`);
+      });
+    } else if (!config?.terms && Object.keys(config).length > 0) {
+      Object.keys(config).forEach((key) => {
+        _terms[`${name ? `${name}.` : ''}${key}`] = config[key];
+      });
+    }
+  };
+
+  const handleParams = (config: any) => {
+    const _terms: any = {};
+    paramsFormat(config, _terms);
+    const url = new URLSearchParams();
+    Object.keys(_terms).forEach((key) => {
+      url.append(key, _terms[key]);
+    });
+    return url.toString();
+  };
+
   const menu = (
     <Menu>
       <Menu.Item key="1">
@@ -450,7 +475,9 @@ const Instance = () => {
               setType('active');
               const activeAPI = `/${
                 SystemConst.API_BASE
-              }/device-instance/deploy?:X_Access_Token=${Token.get()}`;
+              }/device-instance/deploy?:X_Access_Token=${Token.get()}&${handleParams(
+                searchParams,
+              )}`;
               setApi(activeAPI);
               setOperationVisible(true);
             },
@@ -468,7 +495,9 @@ const Instance = () => {
             setType('sync');
             const syncAPI = `/${
               SystemConst.API_BASE
-            }/device-instance/state/_sync?:X_Access_Token=${Token.get()}`;
+            }/device-instance/state/_sync?:X_Access_Token=${Token.get()}&${handleParams(
+              searchParams,
+            )}`;
             setApi(syncAPI);
             setOperationVisible(true);
           }}

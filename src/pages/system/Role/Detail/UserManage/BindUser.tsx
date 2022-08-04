@@ -100,14 +100,10 @@ const BindUser = (props: Props) => {
             setSelectedRowKeys(key as string[]);
           },
         }}
-        pagination={{
-          pageSize: 10,
-        }}
         columnEmptyText={''}
         request={async (params: any) => {
           const response = await service.query({
-            pageSize: params.pageSize,
-            pageIndex: params.current,
+            ...params,
             terms: [
               ...(param?.terms || []),
               {
