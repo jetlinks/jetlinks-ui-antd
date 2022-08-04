@@ -32,8 +32,9 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const values = await form.validateFields();
+    console.log(values);
     if (values?.releaseType !== 'all') {
-      values.deviceId = devices.current.map((item) => item.id);
+      values.deviceId = (values?.deviceId || []).map((item: any) => item.id);
     } else {
       values.deviceId = undefined;
     }
