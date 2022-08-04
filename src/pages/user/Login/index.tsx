@@ -90,7 +90,7 @@ const Login: React.FC = () => {
         setBindings(res.result);
       }
     });
-    Service.settingDetail('basis').then((res) => {
+    Service.settingDetail('front').then((res) => {
       if (res.status === 200) {
         const ico: any = document.querySelector('link[rel="icon"]');
         ico.href = res.result.ico;
