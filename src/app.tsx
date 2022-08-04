@@ -63,7 +63,7 @@ export async function getInitialState(): Promise<{
   };
   const getSettings = async () => {
     try {
-      const res = await Service.settingDetail('basis');
+      const res = await Service.settingDetail('front');
       return res.result;
     } catch (error) {
       history.push(loginPath);
