@@ -25,7 +25,7 @@ const Publish = (props: Props) => {
     const source = new EventSourcePolyfill(activeAPI);
     source.onmessage = (e: any) => {
       const res = JSON.parse(e.data);
-      console.log(res);
+      // console.log(res);
       if (res.successful) {
         dt += 1;
         setCount(dt);
@@ -36,8 +36,7 @@ const Publish = (props: Props) => {
         setErrMessage(res.message);
       }
     };
-    source.onerror = (e: any) => {
-      console.log(e, 'error');
+    source.onerror = () => {
       source.close();
     };
     source.onopen = () => {};
@@ -61,14 +60,16 @@ const Publish = (props: Props) => {
           <div>成功: {count}</div>
           <div>
             失败: {countErr}
-            <a
-              style={{ marginLeft: 20 }}
-              onClick={() => {
-                downloadObject(JSON.parse(errMessage || '{}'), props.data.name + '-推送失败');
-              }}
-            >
-              下载
-            </a>
+            {!!errMessage && (
+              <a
+                style={{ marginLeft: 20 }}
+                onClick={() => {
+                  downloadObject(JSON.parse(errMessage || '{}'), props.data.name + '-推送失败');
+                }}
+              >
+                下载
+              </a>
+            )}
           </div>
         </Col>
         <Col span={8}>推送通道数量: {props.data?.count || 0}</Col>

@@ -19,6 +19,12 @@ class Service extends BaseService<ProtocolItem> {
 
   public productCount = (data: Record<string, unknown>) =>
     request(`${SystemConst.API_BASE}/device-product/_count`, { method: 'POST', data });
+
+  public querySystemApi = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/scopes`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

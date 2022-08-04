@@ -15,7 +15,7 @@ import { useHistory, useLocation } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
-import Save from './Save/index1';
+import Save from './Save';
 import { onlyMessage } from '@/utils/util';
 import { PermissionButton } from '@/components';
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
