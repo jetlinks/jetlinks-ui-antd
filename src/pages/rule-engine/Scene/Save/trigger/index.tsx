@@ -11,6 +11,7 @@ import { observer } from '@formily/reactive-react';
 import OrgTreeSelect from './OrgTreeSelect';
 import { FormModel } from '../index';
 import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
+import encodeQuery from '@/utils/encodeQuery';
 
 interface TriggerProps {
   value?: any;
@@ -107,7 +108,11 @@ export default observer((props: TriggerProps) => {
   }, [functions, FormModel]);
 
   const getProducts = async () => {
-    const resp = await getProductList({ paging: false });
+    const params = encodeQuery({
+      paging: false,
+      sorts: { createTime: 'desc' },
+    });
+    const resp = await getProductList(params);
     if (resp && resp.status === 200) {
       setProductList(resp.result);
       if (FormModel.trigger && FormModel.trigger.device) {

@@ -25,28 +25,26 @@ export default (props: FunctionCallProps) => {
   const formRef = useRef<ProFormInstance<any>>();
 
   useEffect(() => {
-    setEditableRowKeys(props.functionData.map((d) => d.id));
-    console.log(formRef.current, props.functionData);
-    formRef.current?.setFieldsValue({
-      table: props.functionData,
-    });
-  }, [props.functionData]);
-
-  useEffect(() => {
-    if (props.functionData && props.functionData.length && props.value) {
-      formRef.current?.setFieldsValue({
-        table: props.functionData.map((item: any) => {
-          const oldValue = props.value.find((oldItem: any) => oldItem.name === item.id);
-          if (oldValue) {
-            return {
-              ...item,
-              value: oldValue.value,
-            };
-          }
-          console.log(item);
-          return item;
-        }),
-      });
+    if (props.functionData && props.functionData.length) {
+      setEditableRowKeys(props.functionData.map((d) => d.id));
+      if (props.value) {
+        formRef.current?.setFieldsValue({
+          table: props.functionData.map((item: any) => {
+            const oldValue = props.value.find((oldItem: any) => oldItem.name === item.id);
+            if (oldValue) {
+              return {
+                ...item,
+                value: oldValue.value,
+              };
+            }
+            return item;
+          }),
+        });
+      } else {
+        formRef.current?.setFieldsValue({
+          table: props.functionData,
+        });
+      }
     } else {
       formRef.current?.setFieldsValue({
         table: [],
@@ -60,7 +58,7 @@ export default (props: FunctionCallProps) => {
     }
   }, [props.productId]);
 
-  const getItemNode = (record: any) => {
+  const getItemNode = (record: any, config: any) => {
     const type = record.type;
     const name = record.name;
 
@@ -104,6 +102,7 @@ export default (props: FunctionCallProps) => {
             {
               // @ts-ignore
               <DatePickerFormat
+                {...config}
                 value={record.value}
                 format={record.format || 'YYYY-MM-DD HH:mm:ss'}
                 style={{ width: '100%' }}
@@ -134,12 +133,12 @@ export default (props: FunctionCallProps) => {
       dataIndex: 'value',
       align: 'center',
       width: 260,
-      renderFormItem: (_, row: any) => {
-        return getItemNode(row.record);
+      renderFormItem: (_, row) => {
+        return getItemNode(row.record, row);
       },
     },
   ];
-
+  console.log(editableKeys);
   return (
     <ProForm<{ table: FunctionTableDataType[] }>
       formRef={formRef}
@@ -159,9 +158,8 @@ export default (props: FunctionCallProps) => {
     >
       <EditableProTable
         rowKey="id"
-        name="table"
+        name={'table'}
         columns={columns}
-        recordCreatorProps={false}
         size={'small'}
         editable={{
           type: 'multiple',

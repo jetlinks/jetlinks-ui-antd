@@ -8,7 +8,7 @@ interface DatePickerFormat extends Omit<DatePickerProps, 'onChange'> {
 
 export default (props: DatePickerFormat) => {
   const { value, onChange, ...extraProps } = props;
-
+  console.log(props);
   return (
     <>
       {

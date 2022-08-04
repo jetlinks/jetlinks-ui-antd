@@ -12,6 +12,12 @@ interface ConditionalFilteringProps {
   propertiesId?: string;
 }
 
+const getFormValueByName = (name: string[], values: any) => {
+  return name.reduce((prev, next) => {
+    return prev ? prev[next] : values[next];
+  }, '');
+};
+
 export default (props: ConditionalFilteringProps) => {
   const [builtInList, setBuiltInList] = useState<any[]>([]);
   const [source, setSource] = useState<any>('fixed');
@@ -58,6 +64,22 @@ export default (props: ConditionalFilteringProps) => {
         )}
       </Space>
     );
+  };
+
+  const getTreeItem = (data: any, id: string): any => {
+    let _item = undefined;
+    data.some((item: any) => {
+      if (item.id === id) {
+        _item = item;
+        return true;
+      }
+      if (item.children) {
+        _item = getTreeItem(item.children, id);
+        return !!_item;
+      }
+      return false;
+    });
+    return _item;
   };
 
   const handleTreeData = (data: any): any[] => {
@@ -180,16 +202,42 @@ export default (props: ConditionalFilteringProps) => {
           />
         </Form.Item>
       </Col>
-      <Col span={3}>
-        <Form.Item name={[props.name, 'terms', 0, 'termType']}>
-          <Select
-            style={{ width: '100%' }}
-            options={termTypes}
-            fieldNames={{ value: 'id', label: 'name' }}
-            placeholder={'操作符'}
-          />
-        </Form.Item>
-      </Col>
+      <Form.Item
+        noStyle
+        dependencies={[props.name, 'terms', 0, 'column']}
+        shouldUpdate={(prevValues, curValues) => {
+          console.log(['actions', `${props.name}`, 'terms', '0', 'column']);
+          const pValue = getFormValueByName(
+            ['actions', `${props.name}`, 'terms', '0', 'column'],
+            prevValues,
+          );
+          const cValue = getFormValueByName(
+            ['actions', `${props.name}`, 'terms', '0', 'column'],
+            curValues,
+          );
+          return pValue !== cValue;
+        }}
+      >
+        {({ getFieldValue }) => {
+          const column = getFieldValue(['actions', `${props.name}`, 'terms', '0', 'column']);
+          const columnItem = getTreeItem(builtInList, column);
+          return (
+            columnItem?.type !== 'boolean' && (
+              <Col span={3}>
+                <Form.Item name={[props.name, 'terms', 0, 'termType']}>
+                  <Select
+                    style={{ width: '100%' }}
+                    options={termTypes}
+                    fieldNames={{ value: 'id', label: 'name' }}
+                    placeholder={'操作符'}
+                  />
+                </Form.Item>
+              </Col>
+            )
+          );
+        }}
+      </Form.Item>
+
       <Col span={8}>
         <Form.Item noStyle>
           <ItemGroup>
