@@ -147,7 +147,7 @@ export default (props: TimingTrigger) => {
                             { label: '星期四', value: 4 },
                             { label: '星期五', value: 5 },
                             { label: '星期六', value: 6 },
-                            { label: '星期天', value: 7 },
+                            { label: '星期日', value: 7 },
                           ]
                         : new Array(31)
                             .fill(1)
