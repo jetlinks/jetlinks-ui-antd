@@ -29,6 +29,7 @@ const InitHome = () => {
   };
 
   useEffect(() => {
+    document.title = '';
     service.getInit().then((res) => {
       if (res.status === 200 && res.result.length) {
         // jump()

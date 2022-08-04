@@ -20,9 +20,9 @@ const Basis = () => {
   const detail = async (data: any) => {
     const res = await service.detail(data);
     if (res.status === 200) {
-      const basis = res.result?.filter((item: any) => item.scope === 'basis');
-      const api = res?.result.filter((item: any) => item.scope === 'api');
-      const basePath = res?.result.filter((item: any) => item.scope === 'basePath');
+      const basis = res.result?.filter((item: any) => item.scope === 'front');
+      const api = res.result?.filter((item: any) => item.scope === 'amap');
+      const basePath = res.result?.filter((item: any) => item.scope === 'paths');
       localStorage.setItem(SystemConst.AMAP_KEY, api[0].properties.api);
       form.setFieldsValue({
         ...basis[0].properties,
@@ -39,11 +39,10 @@ const Basis = () => {
   };
   const save = async () => {
     const formData = await form.validateFields();
-    console.log(formData);
     if (formData) {
       const item = [
         {
-          scope: 'basis',
+          scope: 'front',
           properties: {
             ...formData,
             apikey: '',
@@ -51,13 +50,13 @@ const Basis = () => {
           },
         },
         {
-          scope: 'api',
+          scope: 'amap',
           properties: {
             api: formData.apikey,
           },
         },
         {
-          scope: 'basePath',
+          scope: 'paths',
           properties: {
             basePath: formData.basePath,
           },
@@ -66,13 +65,13 @@ const Basis = () => {
       const res = await service.save(item);
       if (res.status === 200) {
         onlyMessage('保存成功');
-        detail(['basis', 'api', 'basePath']);
+        detail(['front', 'amap', 'paths']);
       }
     }
   };
 
   useEffect(() => {
-    detail(['basis', 'api', 'basePath']);
+    detail(['front', 'amap', 'paths']);
   }, []);
   return (
     <PageContainer>
@@ -111,10 +110,11 @@ const Basis = () => {
               <Form.Item
                 label="base-path"
                 name="basePath"
-                tooltip="界面访问后台服务器的URL(统一资源定位符)"
+                tooltip="访问后台服务器的url"
                 required
+                rules={[{ required: true, message: 'base-path必填' }]}
               >
-                <Input />
+                <Input placeholder="请输入" />
               </Form.Item>
               <Row gutter={[24, 24]}>
                 <Col>

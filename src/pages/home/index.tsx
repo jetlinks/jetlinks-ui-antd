@@ -7,10 +7,12 @@ import Ops from './ops';
 import Api from './Api';
 import Service from './service';
 import { Skeleton } from 'antd';
+import { useModel } from '@@/plugin-model/useModel';
 
 export const service = new Service();
 const Home = () => {
   type ViewType = keyof typeof ViewMap;
+  const { initialState, setInitialState } = useModel<any>('@@initialState');
   const [current, setCurrent] = useState<ViewType>('init'); // 默认为初始化
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<any>({});
@@ -35,6 +37,18 @@ const Home = () => {
       });
   };
 
+  useEffect(() => {
+    service.settingDetail(['front']).then((res) => {
+      if (res.status === 200) {
+        setInitialState({
+          ...initialState,
+          settings: {
+            ...res.result[0].properties,
+          },
+        });
+      }
+    });
+  }, []);
   useEffect(() => {
     service.userDetail().then((res) => {
       if (res.status === 200) {
