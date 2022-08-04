@@ -273,7 +273,7 @@ export default (props: WritePropertyProps) => {
           placeholder={'请选择属性'}
         ></Select>
       </Col>
-      <Col span={16}>
+      <Col span={18}>
         <ItemGroup compact>
           <Select
             value={source}

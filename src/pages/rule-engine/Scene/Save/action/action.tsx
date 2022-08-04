@@ -353,7 +353,7 @@ export default observer((props: ActionProps) => {
       properties.length ? (
         <>
           <Row gutter={24}>
-            <Col span={18}>
+            <Col span={16}>
               <Form.Item
                 name={[name, 'device', 'message', 'properties']}
                 rules={[
