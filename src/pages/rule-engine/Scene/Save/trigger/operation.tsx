@@ -65,6 +65,7 @@ export default (props: OperatorProps) => {
   );
 
   useEffect(() => {
+    console.log(props.value, props.propertiesList);
     if (props.value && props.propertiesList?.length) {
       console.log(Object.keys(props.value));
       const _key = Object.keys(props.value);

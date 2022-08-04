@@ -87,6 +87,8 @@ export default [
             url: '/iot/device/Product',
             icon: 'icon-chanpin',
             sortIndex: 2,
+            accessSupport: 'support',
+            assetType: 'product',
             permissions: [
               { permission: 'device-mapping', actions: ['query', 'save'] },
               { permission: 'device-gateway', actions: ['query', 'save', 'delete'] },
@@ -160,6 +162,8 @@ export default [
             url: '/iot/device/Instance',
             icon: 'icon-shebei',
             sortIndex: 3,
+            accessSupport: 'support',
+            assetType: 'device',
             permissions: [
               { permission: 'transparent-codec', actions: ['query'] },
               { permission: 'device-api', actions: ['query-device-events'] },
@@ -234,6 +238,8 @@ export default [
             sortIndex: 4,
             url: '/iot/device/Category',
             icon: 'icon-chanpinfenlei1',
+            accessSupport: 'support',
+            assetType: 'deviceCategory',
             permissions: [{ permission: 'device-category', actions: ['query', 'save'] }],
             buttons: [
               {
@@ -987,6 +993,8 @@ export default [
     url: '/media',
     icon: 'icon-shipinwangguan',
     sortIndex: 2,
+    accessSupport: 'indirect',
+    indirectMenus: ['1-3-3'],
     permissions: [],
     buttons: [],
     children: [

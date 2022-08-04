@@ -28,17 +28,18 @@ export default (props: FunctionCallProps) => {
     if (props.functionData && props.functionData.length) {
       setEditableRowKeys(props.functionData.map((d) => d.id));
       if (props.value) {
+        const tableData = props.functionData.map((item: any) => {
+          const oldValue = props.value.find((oldItem: any) => oldItem.name === item.id);
+          if (oldValue) {
+            return {
+              ...item,
+              value: oldValue.value,
+            };
+          }
+          return item;
+        });
         formRef.current?.setFieldsValue({
-          table: props.functionData.map((item: any) => {
-            const oldValue = props.value.find((oldItem: any) => oldItem.name === item.id);
-            if (oldValue) {
-              return {
-                ...item,
-                value: oldValue.value,
-              };
-            }
-            return item;
-          }),
+          table: tableData,
         });
       } else {
         formRef.current?.setFieldsValue({
@@ -98,17 +99,12 @@ export default (props: FunctionCallProps) => {
         );
       case 'date':
         return (
-          <>
-            {
-              // @ts-ignore
-              <DatePickerFormat
-                {...config}
-                value={record.value}
-                format={record.format || 'YYYY-MM-DD HH:mm:ss'}
-                style={{ width: '100%' }}
-              />
-            }
-          </>
+          <DatePickerFormat
+            {...config}
+            value={record.value}
+            format={record.format || 'YYYY-MM-DD HH:mm:ss'}
+            style={{ width: '100%' }}
+          />
         );
       default:
         return <Input value={record.value} placeholder={'请输入' + name} />;
@@ -138,7 +134,7 @@ export default (props: FunctionCallProps) => {
       },
     },
   ];
-  console.log(editableKeys);
+
   return (
     <ProForm<{ table: FunctionTableDataType[] }>
       formRef={formRef}
