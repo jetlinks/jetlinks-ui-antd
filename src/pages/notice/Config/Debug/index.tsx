@@ -19,6 +19,7 @@ import { useLocation } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import FUpload from '@/components/Upload';
+import { FDatePicker } from '@/components';
 
 const Debug = observer(() => {
   const location = useLocation<{ id: string }>();
@@ -61,6 +62,15 @@ const Debug = observer(() => {
             switch (value) {
               case 'date':
                 // const a = variableRef.current?.find((i: any) => i.id === _id.value);
+                let dateFormat = 'YYYY-MM-DD HH:mm:ss';
+                if (variableRef.current) {
+                  const a = variableRef.current?.find((i: any) => i.id === _id.value);
+                  dateFormat = a?.format;
+                }
+                format.setComponent(FDatePicker, {
+                  showTime: true,
+                  format: dateFormat === 'timestamp' ? 'X' : dateFormat,
+                });
                 format.setComponent(DatePicker);
                 break;
               case 'string':

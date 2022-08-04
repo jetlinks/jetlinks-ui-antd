@@ -7,19 +7,38 @@ interface DatePickerFormat extends Omit<DatePickerProps, 'onChange'> {
 }
 
 export default (props: DatePickerFormat) => {
-  const { value, onChange, ...extraProps } = props;
-  console.log(props);
+  const { value, onChange, format, ...extraProps } = props;
+  const defaultFormat = 'YYYY-MM-DD HH:mm:ss';
+
+  const handleFormat = (f: DatePickerProps['format']): string => {
+    if (f === 'string') {
+      return defaultFormat;
+    }
+
+    return f as string;
+  };
+
+  const handleValue = (
+    v: DatePickerProps['value'],
+    f: DatePickerProps['format'],
+  ): moment.Moment => {
+    if (f === 'string') {
+      const _format = handleFormat(f);
+      return moment(moment(v, defaultFormat), _format).utc();
+    } else {
+      const _format = handleFormat(f);
+      return moment(moment(v, defaultFormat), _format);
+    }
+  };
+
   return (
     <>
       {
         // @ts-ignore
         <DatePicker
           {...extraProps}
-          value={
-            value
-              ? moment(value, props.format ? (props.format as string) : 'YYYY-MM-DD HH:mm:ss')
-              : undefined
-          }
+          format={handleFormat(format)}
+          value={value ? handleValue(value, format) : undefined}
           onChange={(date, dateString) => {
             if (onChange) {
               onChange(dateString, date);

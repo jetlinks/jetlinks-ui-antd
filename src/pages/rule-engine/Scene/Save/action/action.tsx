@@ -31,6 +31,7 @@ interface ActionProps {
   trigger?: any;
   parallel?: boolean;
   isEdit?: boolean;
+  triggerRef?: any;
 }
 
 export default observer((props: ActionProps) => {
@@ -344,6 +345,7 @@ export default observer((props: ActionProps) => {
           configId={configId}
           parallel={props.parallel}
           isEdit={props.isEdit}
+          triggerRef={props.triggerRef}
         />
       ) : null}
       {type1 === 'device' &&
@@ -351,7 +353,7 @@ export default observer((props: ActionProps) => {
       properties.length ? (
         <>
           <Row gutter={24}>
-            <Col span={18}>
+            <Col span={16}>
               <Form.Item
                 name={[name, 'device', 'message', 'properties']}
                 rules={[
@@ -381,6 +383,7 @@ export default observer((props: ActionProps) => {
                   propertiesChange={setPropertiesId}
                 />
               </Form.Item>
+              l
             </Col>
             {parallelNode}
           </Row>

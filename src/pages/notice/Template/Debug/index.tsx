@@ -57,7 +57,7 @@ const Debug = observer(() => {
                   }
                   format.setComponent(FDatePicker, {
                     showTime: true,
-                    format: dateFormat,
+                    format: dateFormat === 'timestamp' ? 'X' : dateFormat,
                   });
                   break;
                 case 'string':
