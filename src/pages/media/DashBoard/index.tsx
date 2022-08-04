@@ -119,6 +119,7 @@ export default () => {
         },
         yAxis: {
           type: 'value',
+          minInterval: 1,
         },
         grid: {
           left: '4%',
