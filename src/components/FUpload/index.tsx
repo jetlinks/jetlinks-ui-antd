@@ -20,10 +20,10 @@ const FUpload = connect((props: Props) => {
   const handleChange = async (info: UploadChangeParam) => {
     if (info.file.status === 'done') {
       const result = info.file.response?.result;
-      const api = await service.querySystemApi(['basePath']);
+      const api = await service.querySystemApi(['paths']);
       const f = {
         ...result,
-        url: `${api?.result[0]?.properties?.basePath}file/${result?.id}?accessKey=${result?.others?.accessKey}`,
+        url: `${api?.result[0]?.properties?.basePath}/file/${result?.id}?accessKey=${result?.others?.accessKey}`,
       };
       setUrl(f.url);
       props.onChange(f);

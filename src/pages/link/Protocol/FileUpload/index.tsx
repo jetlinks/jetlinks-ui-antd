@@ -5,7 +5,7 @@ import { connect } from '@formily/react';
 import { Button, Input, Spin, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/lib/upload/interface';
 import { onlyMessage } from '@/utils/util';
-
+import { service } from '@/pages/link/Protocol';
 interface Props {
   value: string;
   onChange: (value: string) => void;
@@ -17,14 +17,16 @@ const FileUpload = connect((props: Props) => {
   const [url, setUrl] = useState<string>(props?.value);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleChange = (info: UploadChangeParam) => {
+  const handleChange = async (info: UploadChangeParam) => {
     setLoading(true);
     if (info.file.status === 'done') {
       onlyMessage('上传成功！');
-      info.file.url = info.file.response?.result;
-      setUrl(info.file.response?.result);
+      const result = info.file.response?.result;
+      const api = await service.querySystemApi(['paths']);
+      const f = `${api?.result[0]?.properties?.basePath}/file/${result?.id}?accessKey=${result?.others?.accessKey}`;
+      setUrl(f);
       setLoading(false);
-      props.onChange(info.file.response?.result);
+      props.onChange(f);
     }
   };
 
@@ -34,7 +36,7 @@ const FileUpload = connect((props: Props) => {
         accept={props?.accept || '*'}
         listType={'text'}
         disabled={props?.disabled}
-        action={`/${SystemConst.API_BASE}/file/static`}
+        action={`/${SystemConst.API_BASE}/file/upload`}
         headers={{
           'X-Access-Token': Token.get(),
         }}

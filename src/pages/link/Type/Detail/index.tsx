@@ -535,7 +535,7 @@ const Save = observer(() => {
         },
       },
       secure: {
-        title: '开启DTLS',
+        // title: '开启DTLS',
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
         'x-decorator-props': {
@@ -549,6 +549,14 @@ const Save = observer(() => {
           { label: '是', value: true },
           { label: '否', value: false },
         ],
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              title: '{{$deps[0] === "TCP_SERVER" ? "开启TLS" : "开启DTLS"}}',
+            },
+          },
+        },
       },
       certId: {
         title: '证书',

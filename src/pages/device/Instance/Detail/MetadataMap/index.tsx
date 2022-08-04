@@ -1,11 +1,11 @@
-import { Button, Card, Empty } from 'antd';
+import { Button, Card } from 'antd';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import EditableTable from './EditableTable';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { useParams } from 'umi';
-import { PermissionButton } from '@/components';
+import { Empty, PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 
 interface Props {
