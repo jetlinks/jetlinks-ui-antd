@@ -100,7 +100,7 @@ const Save: React.FC<Props> = props => {
         data.configuration.script = script;
         data.configuration.transport = data.configuration.transport.join(',');
       }
-      if(data.type === 'jar' || data.type === 'local'){
+      if (data.type === 'jar' || data.type === 'local') {
         data.configuration.fileId = data.configuration.location
       }
       props.save({
@@ -122,8 +122,13 @@ const Save: React.FC<Props> = props => {
         setUploading(true);
       }
       if (info.file.status === 'done') {
-        setJarLocation(info.file.response.result?.id);
-        setFieldsValue({ 'configuration.location': info.file.response.result?.id })
+        const result = info.file.response?.result;
+        // const api = await apis.protocol.querySystemApi();
+        // setJarLocation(info.file.response.result?.id);
+        // setFieldsValue({ 'configuration.location': info.file.response.result?.id })
+        const url = `${origin}/file/${result?.id}?accessKey=${result?.others?.accessKey}`;
+        setJarLocation(url);
+        setFieldsValue({ 'configuration.location': url })
         message.success(`${info.file.name} 上传成功`);
         setUploading(false);
       } else if (info.file.status === 'error') {
