@@ -20,20 +20,21 @@ const Basis = forwardRef((props: Props, ref) => {
       if (formData) {
         const item = [
           {
-            scope: 'basis',
+            scope: 'front',
             properties: {
               ...formData,
               apikey: '',
+              basePath: '',
             },
           },
           {
-            scope: 'api',
+            scope: 'amap',
             properties: {
               api: formData.apikey,
             },
           },
           {
-            scope: 'basePath',
+            scope: 'paths',
             properties: {
               basePath: formData.basePath,
             },
@@ -47,6 +48,7 @@ const Basis = forwardRef((props: Props, ref) => {
             settings: {
               ...initialState?.settings,
               logo: formData.logo,
+              title: formData.title,
             },
           });
           const ico: any = document.querySelector('link[rel="icon"]');
@@ -109,10 +111,11 @@ const Basis = forwardRef((props: Props, ref) => {
           <Form.Item
             label="base-path"
             name="basePath"
-            tooltip="界面访问后台服务器的URL(统一资源定位符)"
+            tooltip="系统后台访问的url"
             required
+            rules={[{ required: true, message: 'base-path必填' }]}
           >
-            <Input />
+            <Input placeholder="请输入" />
           </Form.Item>
           <Row gutter={[24, 24]}>
             <Col>
