@@ -16,6 +16,7 @@ interface Props {
   placeholder: string;
   display?: string;
   beforeUpload: any;
+  accept?: string;
 }
 
 type FileProperty = {
@@ -92,6 +93,7 @@ const FUpload = connect((props: Props) => {
   });
   return (
     <Upload
+      accept={props?.accept}
       beforeUpload={props.beforeUpload}
       listType={map.get(props.type || 'image')?.type}
       action={`/${SystemConst.API_BASE}/file/static`}

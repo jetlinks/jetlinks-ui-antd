@@ -15,7 +15,7 @@ import { onlyMessage } from '@/utils/util';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { InstanceModel } from '@/pages/device/Instance';
 import _ from 'lodash';
-import { DeviceMetadata } from '@/pages/device/Product/typings';
+import type { DeviceMetadata } from '@/pages/device/Product/typings';
 
 interface Props {
   visible: boolean;
@@ -44,6 +44,7 @@ const Import = (props: Props) => {
     field.loading = true;
     const product = (await service.queryNoPagingPost({
       paging: false,
+      sorts: [{ name: 'createTime', order: 'desc' }],
       terms: [{ column: 'id$not', value: param.id }],
     })) as any;
     field.dataSource = product.result
@@ -66,6 +67,12 @@ const Import = (props: Props) => {
         enum: [
           { label: '拷贝产品', value: 'copy' },
           { label: '导入物模型', value: 'import' },
+        ],
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择导入方式',
+          },
         ],
       },
       copy: {
@@ -91,6 +98,12 @@ const Import = (props: Props) => {
             },
           },
         ],
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择产品',
+          },
+        ],
       },
       metadata: {
         title: '物模型类型',
@@ -102,6 +115,12 @@ const Import = (props: Props) => {
         'x-component-props': {
           width: '800px',
         },
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择物模型类型',
+          },
+        ],
         default: 'jetlinks',
         'x-reactions': {
           dependencies: ['.type'],
@@ -122,10 +141,17 @@ const Import = (props: Props) => {
           },
         ],
       },
-      layout: {
-        type: 'void',
-        'x-component': 'Space',
-        'x-visible': false,
+      metadataType: {
+        title: '导入类型',
+        'x-decorator': 'FormItem',
+        'x-component': 'Select',
+        'x-decorator-props': {
+          width: '800px',
+        },
+        'x-component-props': {
+          width: '800px',
+        },
+        default: 'script',
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -134,29 +160,57 @@ const Import = (props: Props) => {
             },
           },
         },
-
-        properties: {
-          upload: {
-            'x-decorator': 'FormItem',
-            'x-component': 'FUpload',
-            'x-component-props': {
-              title: '快速导入',
-              showUploadList: false,
-              accept: '.json',
-              formatOnType: true,
-              formatOnPaste: true,
-              type: 'file',
-              beforeUpload: (file: any) => {
-                console.log(file, 'fff');
-                const reader = new FileReader();
-                reader.readAsText(file);
-                reader.onload = (json) => {
-                  form.setValues({
-                    import: json.target?.result,
-                  });
-                };
-              },
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择导入类型',
+          },
+        ],
+        enum: [
+          {
+            label: '文件上传',
+            value: 'file',
+          },
+          {
+            label: '脚本',
+            value: 'script',
+          },
+        ],
+      },
+      upload: {
+        title: '文件上传',
+        'x-decorator': 'FormItem',
+        'x-component': 'FUpload',
+        'x-visible': false,
+        'x-reactions': {
+          dependencies: ['.metadataType'],
+          fulfill: {
+            state: {
+              visible: "{{$deps[0]==='file'}}",
             },
+          },
+        },
+        'x-validator': [
+          {
+            required: true,
+            message: '请上传文件',
+          },
+        ],
+        'x-component-props': {
+          title: '快速导入',
+          showUploadList: false,
+          accept: '.json',
+          formatOnType: true,
+          formatOnPaste: true,
+          type: 'file',
+          beforeUpload: (file: any) => {
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = (json) => {
+              form.setValues({
+                import: json.target?.result,
+              });
+            };
           },
         },
       },
@@ -175,11 +229,17 @@ const Import = (props: Props) => {
           },
         },
         'x-visible': false,
+        'x-validator': [
+          {
+            required: true,
+            message: '请输入物模型',
+          },
+        ],
         'x-reactions': {
-          dependencies: ['.type'],
+          dependencies: ['.metadataType'],
           fulfill: {
             state: {
-              visible: "{{$deps[0]==='import'}}",
+              visible: "{{$deps[0]==='script'}}",
             },
           },
         },
