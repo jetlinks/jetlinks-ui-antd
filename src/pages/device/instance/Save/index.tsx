@@ -145,7 +145,7 @@ const Save: React.FC<Props> = props => {
               rules: [
                 {required: true, message: '请输入设备id'},
                 {max: 64, message: '设备ID不超过64个字符'},
-                {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '产品ID只能由数字、字母、下划线、中划线组成'}
+                {pattern: new RegExp(/^[0-9a-zA-Z_\-]+$/, "g"), message: '设备ID只能由数字、字母、下划线、中划线组成'}
               ],
               initialValue: props.data.id,
             })(<Input placeholder="请输入设备id" disabled={!!props.data.id}/>)}

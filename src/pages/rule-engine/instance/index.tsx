@@ -89,76 +89,76 @@ const RuleInstanceList: React.FC<Props> = props => {
   }, []);
 
   const startInstance = (record: any) => {
-    if(record.modelType === "device_alarm"){
+    if (record.modelType === "device_alarm") {
       apis.ruleInstance
-      .startDeviceAlarm(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('启动成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
-    }else if(record.modelType === "rule-scene"){
+        .startDeviceAlarm(record.id)
+        .then(response => {
+          if (response.status === 200) {
+            message.success('启动成功');
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
+    } else if (record.modelType === "rule-scene") {
       apis.ruleInstance
-      .startScene(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('启动成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
-    }else{
+        .startScene(record.id)
+        .then(response => {
+          if (response.status === 200) {
+            message.success('启动成功');
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
+    } else {
       apis.ruleInstance
-      .start(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('启动成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
+        .start(record.id)
+        .then(response => {
+          if (response.status === 200) {
+            message.success('启动成功');
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
     }
   };
 
   const stopInstance = (record: any) => {
-    if(record.modelType === "device_alarm"){
+    if (record.modelType === "device_alarm") {
       apis.ruleInstance
-      .stopDeviceAlarm(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('停止成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
-    }else if(record.modelType === "rule-scene"){
+        .stopDeviceAlarm(record.id)
+        .then(response => {
+          if (response.status === 200) {
+            message.success('停止成功');
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
+    } else if (record.modelType === "rule-scene") {
       apis.ruleInstance
-      .stopScene(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('停止成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
-    }else{
+        .stopScene(record.id)
+        .then(response => {
+          if (response.status === 200) {
+            message.success('停止成功');
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
+    } else {
       apis.ruleInstance
-      .stop(record.id)
-      .then(response => {
-        if (response.status === 200) {
-          message.success('停止成功');
-          handleSearch(searchParam);
-        }
-      })
-      .catch(() => {
-      });
+        .stop(record.id)
+        .then(response => {
+          if (response.status === 200) {
+            message.success('停止成功');
+            handleSearch(searchParam);
+          }
+        })
+        .catch(() => {
+        });
     }
   };
 
@@ -352,7 +352,7 @@ const RuleInstanceList: React.FC<Props> = props => {
               onChange,
               onShowSizeChange,
             }}
-            renderItem={item => {
+            renderItem={(item) => {
               if (item && item.id) {
                 return (
                   <List.Item key={item.id}>
@@ -418,7 +418,7 @@ const RuleInstanceList: React.FC<Props> = props => {
                                     startInstance(item);
                                   }}>
                                   重启
-                                      </Button>
+                                </Button>
                               </Menu.Item>
                               {item.modelType === 'node-red' && (
                                 <Menu.Item key="3">
@@ -428,7 +428,7 @@ const RuleInstanceList: React.FC<Props> = props => {
                                       setSaveVisible(true);
                                     }}>
                                     复制
-                                      </Button>
+                                  </Button>
                                 </Menu.Item>
                               )}
                               {item.state?.value === 'stopped' && (
@@ -442,7 +442,7 @@ const RuleInstanceList: React.FC<Props> = props => {
                                   >
                                     <Button icon="delete" type="link">
                                       删除
-                                        </Button>
+                                    </Button>
                                   </Popconfirm>
                                 </Menu.Item>
                               )}
@@ -455,10 +455,10 @@ const RuleInstanceList: React.FC<Props> = props => {
                     >
                       <Card.Meta
                         avatar={logoMap[item.modelType]}
-                        title={<AutoHide title={item.name} style={{ width: '95%', fontWeight: 600 }} />}
+                        title={<AutoHide title={item.name || '--'} style={{ width: '95%', fontWeight: 600 }} />}
                         description={<AutoHide title={item.id} style={{ width: '95%' }} />}
                       />
-                      <div className={cardStyles.cardItemContent}>
+                      <div className={cardStyles.cardItemContent} style={{ minHeight: 45 }}>
                         <div className={cardStyles.cardInfo}>
                           {/* <div style={{ textAlign: 'center', width: '33%' }}>
                             <p style={cardInfoTitle}>模型版本</p>
