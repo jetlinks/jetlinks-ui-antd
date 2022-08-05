@@ -228,6 +228,7 @@ export default (props: SaveProps) => {
             'x-decorator-props': {
               gridSpan: 1,
             },
+
             'x-reactions': [
               {
                 dependencies: ['.confirm_password'],
@@ -240,6 +241,10 @@ export default (props: SaveProps) => {
               },
             ],
             'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
               {
                 triggerType: 'onBlur',
                 validator: (value: string) => {
@@ -457,7 +462,7 @@ export default (props: SaveProps) => {
         onlyMessage('操作成功');
       }
     }
-  }, [props.type]);
+  }, [props.type, form]);
 
   return (
     <Modal

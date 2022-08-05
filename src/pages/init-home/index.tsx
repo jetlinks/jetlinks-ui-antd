@@ -29,7 +29,7 @@ const InitHome = () => {
   };
 
   useEffect(() => {
-    document.title = '';
+    document.title = '系统初始化';
     service.getInit().then((res) => {
       if (res.status === 200 && res.result.length) {
         // jump()
