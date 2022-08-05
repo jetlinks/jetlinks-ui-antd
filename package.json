@@ -35,7 +35,7 @@
     "start:pre": "cross-env REACT_APP_ENV=pre UMI_ENV=dev umi dev",
     "start:test": "cross-env REACT_APP_ENV=test MOCK=none UMI_ENV=dev umi dev",
     "pretest": "node ./tests/beforeTest",
-    "test": "umi test",
+    "test": "node --max_old_space_size=8192 ./node_modules/.bin/ng test",
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "serve": "umi-serve",

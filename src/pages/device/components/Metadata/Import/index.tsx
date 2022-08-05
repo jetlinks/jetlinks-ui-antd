@@ -68,6 +68,8 @@ const Import = (props: Props) => {
           { label: '拷贝产品', value: 'copy' },
           { label: '导入物模型', value: 'import' },
         ],
+        default: 'import',
+        'x-visible': props?.type === 'product',
         'x-validator': [
           {
             required: true,
@@ -126,7 +128,7 @@ const Import = (props: Props) => {
           dependencies: ['.type'],
           fulfill: {
             state: {
-              visible: "{{$deps[0]==='import'}}",
+              visible: props?.type === 'device' || "{{$deps[0]==='import'}}",
             },
           },
         },
@@ -156,7 +158,7 @@ const Import = (props: Props) => {
           dependencies: ['.type'],
           fulfill: {
             state: {
-              visible: "{{$deps[0]==='import'}}",
+              visible: props?.type === 'device' || "{{$deps[0]==='import'}}",
             },
           },
         },
@@ -196,6 +198,9 @@ const Import = (props: Props) => {
             message: '请上传文件',
           },
         ],
+        'x-decorator-props': {
+          tooltip: '上传json格式的物模型文件',
+        },
         'x-component-props': {
           title: '快速导入',
           showUploadList: false,
@@ -235,6 +240,9 @@ const Import = (props: Props) => {
             message: '请输入物模型',
           },
         ],
+        'x-decorator-props': {
+          tooltip: '在线编辑器中编写物模型脚本',
+        },
         'x-reactions': {
           dependencies: ['.metadataType'],
           fulfill: {
@@ -257,16 +265,16 @@ const Import = (props: Props) => {
     if (fid.includes('propertyNotModifiable')) {
       obj.properties = old?.properties || [];
     }
-    obj.events.map((item, index) => {
+    (obj?.events || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
-    obj.properties.map((item, index) => {
+    (obj?.properties || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
-    obj.functions.map((item, index) => {
+    (obj?.functions || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
-    obj.tags.map((item, index) => {
+    (obj?.tags || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
     return obj;
@@ -300,7 +308,7 @@ const Import = (props: Props) => {
       } else {
         resp = await service.modify(param.id, params);
       }
-      if (resp.status === '200') {
+      if (resp.status === 200) {
         onlyMessage('导入成功');
       }
     }
