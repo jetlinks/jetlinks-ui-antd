@@ -6,16 +6,13 @@ import Menu from './components/menu';
 import Role from './components/role';
 import Data from './components/data';
 import Service from './service';
-import { useHistory } from 'umi';
 import { useState, useRef, useEffect } from 'react';
-import BaseMenu from '@/pages/system/Menu/Setting/baseMenu';
 
 export const service = new Service();
 
 const InitHome = () => {
   const [loadings, setLoadings] = useState<boolean>(false);
   const [, setCurrent] = useState<number>(0);
-  const history = useHistory();
 
   const cacheRef = useRef<Set<string>>();
 
@@ -25,7 +22,7 @@ const InitHome = () => {
   const dataRef = useRef<{ save: any }>();
 
   const jump = () => {
-    history.push(BaseMenu[0].url);
+    window.location.href = '/';
   };
 
   useEffect(() => {

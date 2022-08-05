@@ -57,7 +57,7 @@ export default (props: BuiltInProps) => {
     const data = props.form.getFieldsValue();
     const triggerData = await props.triggerRef.getTriggerData();
     console.log(triggerData);
-    data.terms = triggerData.trigger;
+    data.terms = triggerData?.trigger;
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
     queryBuiltInParams(data, params).then((res: any) => {
       if (res.status === 200) {
