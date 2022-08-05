@@ -76,13 +76,10 @@ export default observer((props: TriggerProps) => {
     }
   };
 
-  const productIdChange = useCallback(
-    (id: string, metadata: any) => {
-      setProductId(id);
-      handleMetadata(metadata);
-    },
-    [selector],
-  );
+  const productIdChange = useCallback((id: string, metadata: any) => {
+    setProductId(id);
+    handleMetadata(metadata);
+  }, []);
 
   useEffect(() => {
     if (FormModel.trigger?.device?.operation?.functionId && functions.length) {
@@ -128,7 +125,9 @@ export default observer((props: TriggerProps) => {
   };
 
   useEffect(() => {
-    getProducts();
+    setTimeout(() => {
+      getProducts();
+    }, 10);
   }, []);
 
   useEffect(() => {
@@ -153,10 +152,11 @@ export default observer((props: TriggerProps) => {
               placeholder={'请选择产品'}
               style={{ width: '100%' }}
               listHeight={220}
-              onChange={(key: any, node: any) => {
+              onChange={(key: any, node?: any) => {
                 props.form?.resetFields([['trigger', 'device', 'selector']]);
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                 props.form?.resetFields([['trigger', 'device', 'operation']]);
+                productIdChange(key, node?.metadata);
                 setSelector('fixed');
                 props.form?.setFieldsValue({
                   trigger: {
@@ -168,7 +168,6 @@ export default observer((props: TriggerProps) => {
                     productId: key,
                   },
                 });
-                productIdChange(key, node?.metadata);
               }}
               fieldNames={{ label: 'name', value: 'id' }}
               filterOption={(input: string, option: any) =>
@@ -245,54 +244,7 @@ export default observer((props: TriggerProps) => {
       {FormModel.trigger?.device?.operation?.operator === OperatorEnum.invokeFunction ||
       FormModel.trigger?.device?.operation?.operator === OperatorEnum.readProperty ||
       FormModel.trigger?.device?.operation?.operator === OperatorEnum.writeProperty ? (
-        <Form.Item
-          noStyle
-          // name={['trigger', 'device', 'operation', 'timer']}
-          // rules={[
-          //   {
-          //     validator: async (_: any, value: any) => {
-          //       if (value) {
-          //         if (value.trigger === 'cron') {
-          //           if (!value.cron) {
-          //             return Promise.reject(new Error('请输入cron表达式'));
-          //           } else if (value.cron.length > 64) {
-          //             return Promise.reject(new Error('最多可输入64个字符'));
-          //           } else if (!CronRegEx.test(value.cron)) {
-          //             return Promise.reject(new Error('请输入正确的cron表达式'));
-          //           }
-          //         } else {
-          //           if (!value.when.length) {
-          //             return Promise.reject(new Error('请选择时间'));
-          //           }
-          //           if (value.period) {
-          //             if (!value.period.from || !value.period.to) {
-          //               return Promise.reject(new Error('请选择时间周期'));
-          //             }
-          //             if (!value.period.every) {
-          //               return Promise.reject(new Error('请输入周期频率'));
-          //             }
-          //           } else if (value.once) {
-          //             if (!value.once.time) {
-          //               return Promise.reject(new Error('请选择时间周期'));
-          //             }
-          //           }
-          //         }
-          //       }
-          //       return Promise.resolve();
-          //     },
-          //   },
-          // ]}
-          // initialValue={{
-          //   trigger: 'week',
-          //   mod: 'period',
-          //   when: [],
-          //   period: {
-          //     unit: 'seconds',
-          //     from: moment(new Date()).format('HH:mm:ss'),
-          //     to: moment(new Date()).format('HH:mm:ss'),
-          //   },
-          // }}
-        >
+        <Form.Item noStyle>
           <TimingTrigger name={['trigger', 'device', 'operation']} form={props.form!} />
         </Form.Item>
       ) : null}

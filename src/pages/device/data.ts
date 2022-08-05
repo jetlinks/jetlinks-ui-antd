@@ -111,12 +111,12 @@ export const DateTypeList = [
     label: 'yyyy-MM-dd HH:mm:ss',
     value: 'yyyy-MM-dd HH:mm:ss',
   },
-  {
-    label: 'yyyy-MM-dd HH:mm:ss EE',
-    value: 'yyyy-MM-dd HH:mm:ss EE',
-  },
-  {
-    label: 'yyyy-MM-dd HH:mm:ss zzz',
-    value: 'yyyy-MM-dd HH:mm:ss zzz',
-  },
+  // {
+  //   label: 'yyyy-MM-dd HH:mm:ss EE',
+  //   value: 'yyyy-MM-dd HH:mm:ss EE',
+  // },
+  // {
+  //   label: 'yyyy-MM-dd HH:mm:ss zzz',
+  //   value: 'yyyy-MM-dd HH:mm:ss zzz',
+  // },
 ];

@@ -107,7 +107,11 @@ const Save = (props: Props) => {
             'x-decorator-props': {
               gridSpan: 1,
               labelAlign: 'left',
-              tooltip: '对外提供访问的地址,内网环境是填写服务器的内网IP地址',
+              tooltip: (
+                <span>
+                  <div>对外提供访问的地址</div>内网环境时填写服务器的内网IP地址
+                </span>
+              ),
               layout: 'vertical',
             },
             required: true,

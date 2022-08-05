@@ -13,6 +13,7 @@ import { model } from '@formily/reactive';
 import moment from 'moment';
 
 interface Props {
+  id?: string;
   value?: Partial<DeviceInstance>[];
   onChange?: (data: Partial<DeviceInstance>[]) => void;
   productId?: string;
@@ -112,6 +113,7 @@ const FSelectDevices = observer((props: Props) => {
       <Input
         disabled
         value={props.value?.map((item) => item.name).join(',')}
+        id={props?.id}
         addonAfter={
           <EditOutlined
             onClick={() => {

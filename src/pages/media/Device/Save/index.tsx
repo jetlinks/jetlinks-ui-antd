@@ -41,6 +41,7 @@ const Save = () => {
         { column: 'accessProvider', value: value },
         { column: 'state', value: 1 },
       ],
+      sorts: [{ name: 'createTime', order: 'desc' }],
     });
   };
 

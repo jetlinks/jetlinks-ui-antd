@@ -25,6 +25,7 @@ interface BuiltInProps {
   name: number;
   isEdit?: boolean;
   id?: string;
+  triggerRef?: any;
 }
 
 export default (props: BuiltInProps) => {
@@ -51,9 +52,12 @@ export default (props: BuiltInProps) => {
     }
   };
 
-  const sourceChangeEvent = () => {
+  const sourceChangeEvent = async () => {
     onChange(source, undefined);
     const data = props.form.getFieldsValue();
+    const triggerData = await props.triggerRef.getTriggerData();
+    console.log(triggerData);
+    data.terms = triggerData.trigger;
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
     queryBuiltInParams(data, params).then((res: any) => {
       if (res.status === 200) {
@@ -67,15 +71,19 @@ export default (props: BuiltInProps) => {
   useEffect(() => {
     if (props.isEdit) {
       setIsEdit(false);
-      const data = props.form.getFieldsValue();
-      const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
-      queryBuiltInParams(data, params).then((res: any) => {
-        if (res.status === 200) {
-          const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
-          const _data = BuiltInParamsHandleTreeData(props.name === 0 ? res.result : actionParams);
-          setBuiltInList(_data);
-        }
-      });
+      sourceChangeEvent();
+      // const data = props.form.getFieldsValue();
+      // const triggerData = props.triggerRef.getTriggerData();
+      // console.log(triggerData)
+      // data.terms = triggerData.trigger
+      // const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+      // queryBuiltInParams(data, params).then((res: any) => {
+      //   if (res.status === 200) {
+      //     const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+      //     const _data = BuiltInParamsHandleTreeData(props.name === 0 ? res.result : actionParams);
+      //     setBuiltInList(_data);
+      //   }
+      // });
     }
     setTimeout(() => {
       setIsEdit(true);
