@@ -59,7 +59,9 @@ export default (props: EchartsProps) => {
   const chartsRef = useRef<any>(null);
 
   const initEcharts = (dom: HTMLDivElement) => {
+    console.log(chartsRef.current);
     if (!chartsRef.current) {
+      console.log(dom);
       chartsRef.current = echarts.init(dom);
       if (props.options) {
         chartsRef.current.setOption(props.options);
