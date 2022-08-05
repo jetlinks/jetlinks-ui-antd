@@ -167,6 +167,7 @@ export default [
             permissions: [
               { permission: 'transparent-codec', actions: ['query'] },
               { permission: 'device-api', actions: ['query-device-events'] },
+              { permission: 'things-collector', actions: ['save', 'delete'] },
             ],
             buttons: [
               {
@@ -612,7 +613,10 @@ export default [
                 sortIndex: 2,
                 url: '/iot/link/Channel/Modbus',
                 icon: 'icon-changjingliandong',
-                permissions: [],
+                permissions: [
+                  { permission: 'modbus-point', actions: ['query', 'save', 'delete'] },
+                  { permission: 'modbus-master', actions: ['query', 'save', 'delete'] },
+                ],
                 buttons: [
                   {
                     id: 'update',
