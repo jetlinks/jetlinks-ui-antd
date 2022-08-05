@@ -68,6 +68,8 @@ const Import = (props: Props) => {
           { label: '拷贝产品', value: 'copy' },
           { label: '导入物模型', value: 'import' },
         ],
+        default: 'import',
+        'x-visible': props?.type === 'product',
         'x-validator': [
           {
             required: true,
@@ -126,7 +128,7 @@ const Import = (props: Props) => {
           dependencies: ['.type'],
           fulfill: {
             state: {
-              visible: "{{$deps[0]==='import'}}",
+              visible: props?.type === 'device' || "{{$deps[0]==='import'}}",
             },
           },
         },
@@ -156,7 +158,7 @@ const Import = (props: Props) => {
           dependencies: ['.type'],
           fulfill: {
             state: {
-              visible: "{{$deps[0]==='import'}}",
+              visible: props?.type === 'device' || "{{$deps[0]==='import'}}",
             },
           },
         },
@@ -196,6 +198,9 @@ const Import = (props: Props) => {
             message: '请上传文件',
           },
         ],
+        'x-decorator-props': {
+          tooltip: '上传json格式的物模型文件',
+        },
         'x-component-props': {
           title: '快速导入',
           showUploadList: false,
@@ -235,6 +240,9 @@ const Import = (props: Props) => {
             message: '请输入物模型',
           },
         ],
+        'x-decorator-props': {
+          tooltip: '在线编辑器中编写物模型脚本',
+        },
         'x-reactions': {
           dependencies: ['.metadataType'],
           fulfill: {
@@ -319,7 +327,8 @@ const Import = (props: Props) => {
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
           <ExclamationCircleOutlined style={{ marginRight: 5 }} />
-          导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
+          导入的物模型会覆盖原来的属性、功能、{props?.type === 'device' ? '事件、' : ''}
+          标签，请谨慎操作。
           {/* <br /> */}
           {/*物模型格式请参考文档：*/}
           {/*<a*/}
