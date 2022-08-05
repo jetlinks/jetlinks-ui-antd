@@ -31,6 +31,18 @@ const Comprehensive = () => {
   const [jvmValue, setJvmValue] = useState<number>(0);
   const [productVisible, setProductVisible] = useState<boolean>(false);
   const [deviceVisible, setDeviceVisible] = useState<boolean>(false);
+  const [StatisticsList] = useState([
+    {
+      name: 'CPU使用率',
+      value: String(cpuValue) + '%',
+      children: <Pie value={cpuValue} />,
+    },
+    {
+      name: 'JVM内存',
+      value: String(jvmValue) + '%',
+      children: <Pie value={jvmValue} />,
+    },
+  ]);
 
   const getProductCount = async () => {
     const resp = await service.productCount({});
@@ -200,18 +212,7 @@ const Comprehensive = () => {
           </Col>
           <Col span={12}>
             <Statistics
-              data={[
-                {
-                  name: 'CPU使用率',
-                  value: String(cpuValue) + '%',
-                  children: <Pie value={cpuValue} />,
-                },
-                {
-                  name: 'JVM内存',
-                  value: String(jvmValue) + '%',
-                  children: <Pie value={jvmValue} />,
-                },
-              ]}
+              data={StatisticsList}
               title="基础统计"
               extra={
                 <div style={{ fontSize: 14, fontWeight: 400 }}>
