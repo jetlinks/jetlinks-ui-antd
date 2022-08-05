@@ -327,8 +327,7 @@ const Import = (props: Props) => {
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>
           <ExclamationCircleOutlined style={{ marginRight: 5 }} />
-          导入的物模型会覆盖原来的属性、功能、{props?.type === 'device' ? '事件、' : ''}
-          标签，请谨慎操作。
+          导入的物模型会覆盖原来的属性、功能、事件、标签，请谨慎操作。
           {/* <br /> */}
           {/*物模型格式请参考文档：*/}
           {/*<a*/}
