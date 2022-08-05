@@ -152,10 +152,11 @@ export default observer((props: TriggerProps) => {
               placeholder={'请选择产品'}
               style={{ width: '100%' }}
               listHeight={220}
-              onChange={(key: any) => {
+              onChange={(key: any, node?: any) => {
                 props.form?.resetFields([['trigger', 'device', 'selector']]);
                 props.form?.resetFields([['trigger', 'device', 'selectorValues']]);
                 props.form?.resetFields([['trigger', 'device', 'operation']]);
+                productIdChange(key, node?.metadata);
                 setSelector('fixed');
                 props.form?.setFieldsValue({
                   trigger: {
