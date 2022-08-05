@@ -72,7 +72,7 @@ const Save: React.FC<Props> = props => {
       apis.scene.info(props.data.id).then(res => {
         let result = res.result;
         setData(result);
-        setParallel(result.parallel || false);
+        setParallel(result?.parallel) ;
         if (result.triggers && result.triggers.length > 0) {
           setTriggers(result.triggers)
         } else {
@@ -210,10 +210,11 @@ const Save: React.FC<Props> = props => {
               <span>执行动作</span>
               <Switch key='parallel'
                       checkedChildren="并行执行" unCheckedChildren="串行执行"
-                      defaultChecked={parallel || false}
+                      checked={parallel}
                       style={{marginLeft: 20, width: '100px'}}
                       onChange={(value: boolean) => {
                         setParallel(value)
+                        console.log(value)
                       }}
               />
             </p>
