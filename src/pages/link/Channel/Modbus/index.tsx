@@ -264,7 +264,15 @@ const NewModbus = () => {
           style={{ padding: 0 }}
           disabled={record.state.value === 'enabled'}
           popConfirm={{
-            title: '确认删除',
+            title: (
+              <div
+                style={{
+                  width: 185,
+                }}
+              >
+                该点位已被设备绑定，删除后将清空与设备的绑定关系，确定要删除吗?
+              </div>
+            ),
             disabled: record.state.value === 'enabled',
             onConfirm: async () => {
               const resp: any = await service.deletePoint(record.id);
@@ -461,7 +469,15 @@ const NewModbus = () => {
                             title: item.state.value === 'enabled' ? '请先禁用该通道，再删除。' : '',
                           }}
                           popConfirm={{
-                            title: '确认删除',
+                            title: (
+                              <div
+                                style={{
+                                  width: 190,
+                                }}
+                              >
+                                该通道已被设备绑定，删除后将清空与设备的绑定关系，确定要删除吗？
+                              </div>
+                            ),
                             disabled: item.state.value === 'enabled',
                             onConfirm: async () => {
                               deteleMaster(item.id);

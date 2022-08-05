@@ -35,6 +35,7 @@ import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import FAutoComplete from '@/components/FAutoComplete';
 import Webhook from './doc/Webhook';
+import { useModel } from '@@/plugin-model/useModel';
 
 export const docMap = {
   weixin: {
@@ -61,7 +62,7 @@ export const docMap = {
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
-
+  const { initialState } = useModel('@@initialState');
   const [provider, setProvider] = useState<string>('embedded');
   const form = useMemo(
     () =>
@@ -91,6 +92,13 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
+    setTimeout(() => {
+      if (initialState?.settings?.title) {
+        document.title = `通知配置 - ${initialState?.settings?.title}`;
+      } else {
+        document.title = '通知配置';
+      }
+    }, 0);
     if (id === 'webhook') {
       setProvider('http');
     }

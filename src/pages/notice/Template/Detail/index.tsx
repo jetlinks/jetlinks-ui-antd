@@ -48,6 +48,7 @@ import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import Webhook from './doc/Webhook';
+import { useModel } from '@@/plugin-model/useModel';
 
 export const docMap = {
   weixin: {
@@ -75,6 +76,7 @@ export const docMap = {
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
   const [provider, setProvider] = useState<string>('embedded');
+  const { initialState } = useModel('@@initialState');
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
 
@@ -389,6 +391,13 @@ const Detail = observer(() => {
   );
 
   useEffect(() => {
+    setTimeout(() => {
+      if (initialState?.settings?.title) {
+        document.title = `通知模板 - ${initialState?.settings?.title}`;
+      } else {
+        document.title = '通知模板';
+      }
+    }, 0);
     if (state.current) {
       form.setValues(state.current);
     }
