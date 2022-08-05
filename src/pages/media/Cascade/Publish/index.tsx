@@ -17,15 +17,15 @@ const Publish = (props: Props) => {
   const [count, setCount] = useState<number>(0);
   const [countErr, setCountErr] = useState<number>(0);
   const [flag, setFlag] = useState<boolean>(true);
-  const [errMessage, setErrMessage] = useState<string>('');
+  const [errMessage, setErrMessage] = useState<any[]>([]);
 
   const getData = () => {
     let dt = 0;
     let et = 0;
+    const errMessages: any[] = [];
     const source = new EventSourcePolyfill(activeAPI);
     source.onmessage = (e: any) => {
       const res = JSON.parse(e.data);
-      // console.log(res);
       if (res.successful) {
         dt += 1;
         setCount(dt);
@@ -33,7 +33,8 @@ const Publish = (props: Props) => {
         et += 1;
         setCountErr(et);
         setFlag(false);
-        setErrMessage(res.message);
+        errMessages.push({ ...res });
+        setErrMessage([...errMessages]);
       }
     };
     source.onerror = () => {
@@ -60,11 +61,11 @@ const Publish = (props: Props) => {
           <div>成功: {count}</div>
           <div>
             失败: {countErr}
-            {!!errMessage && (
+            {errMessage.length > 0 && (
               <a
                 style={{ marginLeft: 20 }}
                 onClick={() => {
-                  downloadObject(JSON.parse(errMessage || '{}'), props.data.name + '-推送失败');
+                  downloadObject(errMessage, props.data.name + '-推送失败');
                 }}
               >
                 下载
@@ -77,7 +78,7 @@ const Publish = (props: Props) => {
       </Row>
       {!flag && (
         <div>
-          <Input.TextArea rows={10} value={errMessage} />
+          <Input.TextArea rows={10} value={JSON.stringify(errMessage)} />
         </div>
       )}
     </Modal>

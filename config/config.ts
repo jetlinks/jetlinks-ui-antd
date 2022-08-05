@@ -93,4 +93,5 @@ export default defineConfig({
     );
     memo.module.rule('mjs-rule').test(/.m?js/).resolve.set('fullySpecified', false);
   },
+  devtool: 'source-map',
 });
