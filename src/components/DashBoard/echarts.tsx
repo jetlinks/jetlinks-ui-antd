@@ -80,6 +80,10 @@ export default (props: EchartsProps) => {
     setTimeout(() => (window as Window).addEventListener('resize', updateSize), 100);
     return () => {
       (window as Window).removeEventListener('resize', updateSize);
+      if (chartsRef.current) {
+        chartsRef.current.dispose();
+        chartsRef.current = null;
+      }
     };
   }, []);
 
