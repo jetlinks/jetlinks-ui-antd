@@ -349,8 +349,8 @@ const Detail = observer(() => {
                 format.setComponent(FAutoComplete);
                 format.setDataSource([
                   { label: 'timestamp', value: 'timestamp' },
-                  { label: 'yyyy-MM-DD', value: 'yyyy-MM-DD' },
-                  { label: 'yyyy-MM-DD HH:mm:ss', value: 'yyyy-MM-DD HH:mm:ss' },
+                  { label: 'yyyy-MM-dd', value: 'yyyy-MM-dd' },
+                  { label: 'yyyy-MM-dd HH:mm:ss', value: 'yyyy-MM-dd HH:mm:ss' },
                   // { label: 'yyyy-MM-dd HH:mm:ss EE', value: 'yyyy-MM-dd HH:mm:ss EE' },
                   // { label: 'yyyy-MM-dd HH:mm:ss zzz', value: 'yyyy-MM-dd HH:mm:ss zzz' },
                 ]);

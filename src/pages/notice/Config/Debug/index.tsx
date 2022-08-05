@@ -62,14 +62,14 @@ const Debug = observer(() => {
             switch (value) {
               case 'date':
                 // const a = variableRef.current?.find((i: any) => i.id === _id.value);
-                let dateFormat = 'YYYY-MM-DD HH:mm:ss';
+                let dateFormat = 'yyyy-MM-dd HH:mm:ss';
                 if (variableRef.current) {
                   const a = variableRef.current?.find((i: any) => i.id === _id.value);
                   dateFormat = a?.format;
                 }
                 format.setComponent(FDatePicker, {
                   showTime: true,
-                  format: dateFormat === 'timestamp' ? 'X' : dateFormat,
+                  format: dateFormat === 'timestamp' ? 'X' : dateFormat.replace('dd', 'DD'),
                 });
                 format.setComponent(DatePicker);
                 break;

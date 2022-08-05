@@ -155,6 +155,7 @@ export default (props: FunctionCallProps) => {
       <EditableProTable
         rowKey="id"
         name={'table'}
+        recordCreatorProps={false}
         columns={columns}
         size={'small'}
         editable={{
