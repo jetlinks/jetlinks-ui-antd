@@ -423,7 +423,9 @@ const Instance = () => {
       });
     } else if (!config?.terms && Object.keys(config).length > 0) {
       Object.keys(config).forEach((key) => {
-        _terms[`${name ? `${name}.` : ''}${key}`] = config[key];
+        if (config[key]) {
+          _terms[`${name ? `${name}.` : ''}${key}`] = config[key];
+        }
       });
     }
   };

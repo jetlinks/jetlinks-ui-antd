@@ -16,7 +16,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { InstanceModel } from '@/pages/device/Instance';
 import _ from 'lodash';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
-
+import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 interface Props {
   visible: boolean;
   close: () => void;
@@ -282,16 +282,17 @@ const Import = (props: Props) => {
 
   const handleImport = async () => {
     const data = (await form.submit()) as any;
-
     if (data.metadata === 'alink') {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
           onlyMessage('导入成功');
+          const metadata = JSON.stringify(operateLimits(meta));
           if (props?.type === 'device') {
-            await deviceService.modify(param.id, { metadata: JSON.stringify(operateLimits(meta)) });
+            await deviceService.modify(param.id, { metadata: metadata });
           } else {
-            await service.modify(param.id, { metadata: JSON.stringify(operateLimits(meta)) });
+            await service.modify(param.id, { metadata: metadata });
           }
+          MetadataAction.insert(JSON.parse(metadata || '{}'));
         },
         error: () => {
           onlyMessage('发生错误!', 'error');
@@ -300,7 +301,9 @@ const Import = (props: Props) => {
     } else {
       const params = {
         id: param.id,
-        metadata: JSON.stringify(operateLimits(JSON.parse(data[data?.type] || '{}'))),
+        metadata: JSON.stringify(
+          operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
+        ),
       };
       let resp: any = undefined;
       if (props?.type === 'device') {
@@ -309,10 +312,13 @@ const Import = (props: Props) => {
         resp = await service.modify(param.id, params);
       }
       if (resp.status === 200) {
+        const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
+        MetadataAction.insert(metadata);
         onlyMessage('导入成功');
       }
     }
     Store.set(SystemConst.GET_METADATA, true);
+    Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
     props.close();
   };
   return (
