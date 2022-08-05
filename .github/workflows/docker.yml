@@ -16,6 +16,7 @@ jobs:
 #          key: jetlinks-ui-pro-repository
       - name: Install 🔧
         run: |
+          set NODE_OPTIONS=-max_old_space_size=8096
           yarn install
           yarn run build
           cp -r dist docker/
