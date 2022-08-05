@@ -257,16 +257,16 @@ const Import = (props: Props) => {
     if (fid.includes('propertyNotModifiable')) {
       obj.properties = old?.properties || [];
     }
-    obj.events.map((item, index) => {
+    (obj?.events || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
-    obj.properties.map((item, index) => {
+    (obj?.properties || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
-    obj.functions.map((item, index) => {
+    (obj?.functions || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
-    obj.tags.map((item, index) => {
+    (obj?.tags || []).map((item, index) => {
       return { ...item, sortsIndex: index };
     });
     return obj;
@@ -300,7 +300,7 @@ const Import = (props: Props) => {
       } else {
         resp = await service.modify(param.id, params);
       }
-      if (resp.status === '200') {
+      if (resp.status === 200) {
         onlyMessage('导入成功');
       }
     }
