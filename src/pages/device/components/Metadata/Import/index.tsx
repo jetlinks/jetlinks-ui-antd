@@ -288,7 +288,7 @@ const Import = (props: Props) => {
           onlyMessage('导入成功');
           const metadata = JSON.stringify(operateLimits(meta));
           if (props?.type === 'device') {
-            await deviceService.modify(param.id, { metadata: metadata });
+            await deviceService.saveMetadata(param.id, metadata);
           } else {
             await service.modify(param.id, { metadata: metadata });
           }
@@ -305,16 +305,31 @@ const Import = (props: Props) => {
           operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
         ),
       };
+      // const paramsDevice = {
+      //   id: param.id,
+      //   deriveMetadata: JSON.stringify(
+      //     operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
+      //   ),
+      // };
+      const paramsDevice = JSON.stringify(
+        operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
+      );
       let resp: any = undefined;
       if (props?.type === 'device') {
-        resp = await deviceService.modify(param.id, params);
+        resp = await deviceService.saveMetadata(param.id, paramsDevice);
       } else {
         resp = await service.modify(param.id, params);
       }
       if (resp.status === 200) {
-        const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
-        MetadataAction.insert(metadata);
-        onlyMessage('导入成功');
+        if (props?.type === 'device') {
+          const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
+          MetadataAction.insert(metadata);
+          onlyMessage('导入成功');
+        } else {
+          const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
+          MetadataAction.insert(metadata);
+          onlyMessage('导入成功');
+        }
       }
     }
     Store.set(SystemConst.GET_METADATA, true);

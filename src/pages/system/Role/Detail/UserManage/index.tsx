@@ -128,7 +128,7 @@ const UserManage = () => {
           </Space>
         )}
         columnEmptyText={''}
-        toolBarRender={() => [
+        headerTitle={
           <Button
             onClick={() => {
               setBindUserVisible(true);
@@ -138,8 +138,8 @@ const UserManage = () => {
             type="primary"
           >
             添加
-          </Button>,
-        ]}
+          </Button>
+        }
         rowSelection={{
           selectedRowKeys: selectedRowKeys,
           onChange: (key) => {

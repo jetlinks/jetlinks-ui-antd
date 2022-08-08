@@ -370,6 +370,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+  public saveMetadata = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/device/instance/${id}/metadata`, {
+      method: 'PUT',
+      data,
+    });
 }
 
 export default Service;

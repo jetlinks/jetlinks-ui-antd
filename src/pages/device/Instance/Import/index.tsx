@@ -210,7 +210,7 @@ const Import = (props: Props) => {
       });
       onFieldValueChange('upload', (field) => {
         if (!field.value) {
-          close();
+          // close();
         }
       });
     },
