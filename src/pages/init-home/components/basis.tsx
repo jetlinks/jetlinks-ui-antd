@@ -83,6 +83,7 @@ const Basis = forwardRef((props: Props, ref) => {
         ico: require('/public/favicon.ico'),
         backgroud: require('/public/images/login.png'),
         apikey: '',
+        basePath: `${window.location.origin}/api`,
       }}
     >
       <Row gutter={[24, 24]}>
@@ -90,7 +91,11 @@ const Basis = forwardRef((props: Props, ref) => {
           <Form.Item
             label="系统名称"
             name="title"
-            rules={[{ max: 64, message: '最多可输入64个字符' }]}
+            required
+            rules={[
+              { max: 64, message: '最多可输入64个字符' },
+              { required: true, message: '请输入系统名称' },
+            ]}
           >
             <Input placeholder={'请输入系统名称'} />
           </Form.Item>
