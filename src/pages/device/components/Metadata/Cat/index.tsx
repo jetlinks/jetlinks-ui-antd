@@ -26,25 +26,31 @@ const Cat = observer((props: Props) => {
   const [value, setValue] = useState(metadata);
   const _path = location.pathname.split('/');
   const id = _path[_path.length - 1];
+
   useEffect(() => {
     service.codecs().subscribe({
       next: (data) => {
         setCodecs([{ id: 'jetlinks', name: 'jetlinks' }].concat(data));
       },
     });
-
     if (props.type === 'device' && id) {
       instanceService.detail(id).then((resp) => {
         if (resp.status === 200) {
           InstanceModel.current = resp.result;
           const _metadata = resp.result?.metadata;
+          console.log(_metadata, '11111');
           setValue(_metadata);
         }
       });
     }
   }, [id]);
 
+  useEffect(() => {
+    console.log(value, '22222');
+  }, [value]);
+
   const convertMetadata = (key: string) => {
+    console.log(key);
     if (key === 'alink') {
       setValue('');
       if (metadata) {
@@ -55,6 +61,7 @@ const Cat = observer((props: Props) => {
         });
       }
     } else {
+      console.log(metadata, 'metadata');
       setValue(metadata);
     }
   };
@@ -62,7 +69,7 @@ const Cat = observer((props: Props) => {
     <Drawer
       maskClosable={false}
       title="查看物模型"
-      width={'40%'}
+      width={700}
       onClose={() => props.close()}
       visible={props.visible}
       extra={
@@ -92,11 +99,12 @@ const Cat = observer((props: Props) => {
       <Tabs onChange={convertMetadata}>
         {codecs?.map((item) => (
           <Tabs.TabPane tab={item.name} tabKey={item.id} key={item.id}>
-            <div style={{ border: '1px solid #eee' }}>
+            <div style={{ border: '1px solid #eee', height: 670, width: 650 }}>
               <MonacoEditor
-                height={670}
+                height={'100%'}
                 theme="vs"
                 language="json"
+                key={item.id}
                 value={value}
                 editorDidMount={(editor) => {
                   editor.getAction('editor.action.formatDocument').run();

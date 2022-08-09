@@ -10,6 +10,7 @@ import { providerType, service } from '@/pages/media/Device';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useRequest } from '@@/plugin-request/request';
+import { CheckOutlined } from '@ant-design/icons';
 
 interface ProviderProps {
   value?: string;
@@ -132,6 +133,11 @@ export default (props: ProviderProps) => {
                       <p>{item.protocolDetail?.description || ''}</p>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div className="checkedIcon">
+                <div>
+                  <CheckOutlined />
                 </div>
               </div>
             </TableCard>

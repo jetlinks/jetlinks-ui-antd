@@ -1,6 +1,8 @@
 import { Badge, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import { EventSourcePolyfill } from 'event-source-polyfill';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 interface Props {
   api: string;
@@ -20,6 +22,9 @@ const Process = (props: Props) => {
   const [count, setCount] = useState<number>(0);
   const [flag, setFlag] = useState<boolean>(true);
   const [errMessage, setErrMessage] = useState<string>('');
+  const [isSource, setIsSource] = useState<boolean>(false);
+  const [id, setId] = useState<string>('');
+  const history = useHistory<Record<string, string>>();
   const { action } = props;
 
   const getData = () => {
@@ -29,13 +34,21 @@ const Process = (props: Props) => {
     setSource(source);
     source.onmessage = (e: any) => {
       const res = JSON.parse(e.data);
+      console.log(e.data);
       switch (action) {
         case 'active':
           if (res.success) {
             dt += res.total;
             setCount(dt);
           } else {
-            setErrMessage(res.message);
+            if (res.source) {
+              const msg = `${res.source.name}: ${res.message}`;
+              setErrMessage(msg);
+              setId(res.source.id);
+              setIsSource(true);
+            } else {
+              setErrMessage(res.message);
+            }
           }
           break;
         case 'sync':
@@ -89,7 +102,17 @@ const Process = (props: Props) => {
         <Badge status="success" text="已完成" />
       )}
       <p>总数量:{count}</p>
-      <p style={{ color: 'red' }}>{errMessage}</p>
+      <a
+        style={{ color: 'red' }}
+        onClick={() => {
+          if (isSource) {
+            const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], id);
+            history.push(url);
+          }
+        }}
+      >
+        {errMessage}
+      </a>
     </Modal>
   );
 };

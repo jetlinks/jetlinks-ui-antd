@@ -120,13 +120,14 @@ const Save = observer(() => {
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
               const data = resp?.result || {};
+              console.log(data);
               if (data?.shareCluster === false) {
                 data.cluster = data.cluster?.map((item: any) => ({
                   ...item.configuration,
                   configuration: item,
                 }));
               }
-              form1.setInitialValues({ ...data });
+              form1.setValues({ ...data });
             }
           });
           onFieldValueChange('type', (field, f) => {

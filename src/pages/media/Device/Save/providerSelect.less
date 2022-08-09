@@ -4,9 +4,38 @@
   max-height: 450px;
   overflow-y: auto;
 
+  .checkedIcon {
+    position: absolute;
+    right: -22px;
+    bottom: -22px;
+    z-index: 2;
+    display: none;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    background-color: red;
+    background-color: #2f54eb;
+    transform: rotate(-45deg);
+
+    > div {
+      position: relative;
+      height: 100%;
+      transform: rotate(45deg);
+
+      > span {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        font-size: 12px;
+      }
+    }
+  }
   .active {
     .card-warp {
       border-color: @primary-color-active;
+    }
+    .checkedIcon {
+      display: block;
     }
   }
 }
