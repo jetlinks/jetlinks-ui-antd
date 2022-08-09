@@ -6,7 +6,7 @@ import Device from '@/pages/system/Department/Assets/deivce';
 import Member from '@/pages/system/Department/Member';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+// import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 
 interface AssetsProps {
@@ -69,10 +69,10 @@ const Assets = observer((props: AssetsProps) => {
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      <div style={{ position: 'absolute', top: 12, left: 180 }}>
+      {/* <div style={{ position: 'absolute', top: 12, left: 180 }}>
         <ExclamationCircleOutlined style={{ marginRight: 12 }} />
         部门拥有的资产为所有类型资产的并集
-      </div>
+      </div> */}
       <Tabs
         activeKey={AssetsModel.tabsIndex}
         onChange={(key) => {

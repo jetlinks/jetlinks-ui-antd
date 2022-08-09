@@ -485,6 +485,14 @@ const Edit = observer((props: Props) => {
             'x-component': 'Input',
             'x-decorator': 'FormItem',
             'x-hidden': true,
+            'x-reactions': {
+              dependencies: ['..virtualRule.windowType'],
+              fulfill: {
+                state: {
+                  value: "{{$self.value?'window':'script'}}",
+                },
+              },
+            },
           },
           'virtualRule.script': {
             type: 'string',

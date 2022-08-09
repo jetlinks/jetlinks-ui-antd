@@ -17,8 +17,8 @@ export default {
       // 测试环境
       target: 'http://120.77.179.54:8844/',
       ws: 'ws://120.77.179.54:8844/',
-      // target: 'http://192.168.66.5:8844/',
-      // ws: 'ws://192.168.66.5:8844/',
+      // target: 'http://47.109.52.230:8844/',
+      // ws: 'ws://47.109.52.230:8844/',
       // ws: 'ws://demo.jetlinks.cn/jetlinks',
       // target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,

@@ -14,16 +14,18 @@ import type { Field } from '@formily/core';
 import { createForm, FormPath, onFieldChange, onFieldValueChange, onFormInit } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Card, Col, Image, Row } from 'antd';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import './index.less';
 import { service } from '@/pages/Northbound/AliCloud';
 import usePermissions from '@/hooks/permission';
 import { Store } from 'jetlinks-store';
+import { useModel } from '@@/plugin-model/useModel';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
+  const { initialState } = useModel('@@initialState');
 
   const form = useMemo(
     () =>
@@ -415,6 +417,16 @@ const Detail = observer(() => {
   };
 
   const { getOtherPermission } = usePermissions('Northbound/AliCloud');
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (initialState?.settings?.title) {
+        document.title = `阿里云 - ${initialState?.settings?.title}`;
+      } else {
+        document.title = '阿里云';
+      }
+    }, 0);
+  }, []);
 
   return (
     <PageContainer>

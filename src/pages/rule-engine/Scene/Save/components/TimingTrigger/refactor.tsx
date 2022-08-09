@@ -232,7 +232,7 @@ export default (props: TimingTrigger) => {
                             to: moment(new Date()).format('HH:mm:ss'),
                           }}
                         >
-                          <RangePicker />
+                          <RangePicker form={props.form} />
                         </Form.Item>
                       ) : (
                         <Form.Item
