@@ -70,9 +70,11 @@ const Parsing = (props: Props) => {
     service.deviceCode(productId, deviceId).then((res) => {
       if (res.status === 200) {
         // console.log(res.result)
-        setValue(res.result?.configuration?.script);
-        setData(res.result);
-        if (res.result.deviceId) {
+        if (res.result) {
+          setValue(res.result?.configuration?.script);
+          setData(res.result);
+        }
+        if (res.result?.deviceId) {
           setReadOnly(false);
         } else {
           setReadOnly(true);
@@ -128,6 +130,7 @@ const Parsing = (props: Props) => {
     service.delDeviceCode(productId, deviceId).then((res) => {
       if (res.status === 200) {
         getDeviceCode(productId, deviceId);
+        onlyMessage('操作成功');
       }
     });
   };
@@ -161,6 +164,10 @@ const Parsing = (props: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
   return (
     <Card className="parsing" style={{ minHeight }}>
       <div>
@@ -186,6 +193,7 @@ const Parsing = (props: Props) => {
                     <>
                       当前数据解析内容继承自产品，
                       <a
+                        style={readOnly ? {} : { color: '#a6a6a6' }}
                         onClick={() => {
                           setReadOnly(false);
                         }}
@@ -395,7 +403,6 @@ const Parsing = (props: Props) => {
         <Button
           style={{ marginLeft: 10 }}
           onClick={() => {
-            console.log(typeof value, value);
             if (props.tag === 'device') {
               saveDeviceCode(props.data.productId, props.data.id, {
                 provider: 'jsr223',
