@@ -1,4 +1,4 @@
-import { Button, Input, Tree } from 'antd';
+import { Input, Tree } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -193,7 +193,19 @@ export default (props: TreeProps) => {
         suffix={<SearchOutlined />}
         onChange={debounce(onSearchChange, 500)}
       />
-      <Button
+      <PermissionButton
+        key={'add'}
+        style={{ width: '100%', margin: '24px 0' }}
+        type="primary"
+        isPermission={permission.add}
+        onClick={() => {
+          setData({ sortIndex: treeData && treeData.length + 1 });
+          setVisible(true);
+        }}
+      >
+        新增
+      </PermissionButton>
+      {/* <Button
         style={{ width: '100%', margin: '24px 0' }}
         type={'primary'}
         onClick={() => {
@@ -202,7 +214,7 @@ export default (props: TreeProps) => {
         }}
       >
         新增
-      </Button>
+      </Button> */}
       {treeData ? (
         <div className={'left-tree-body'}>
           <Tree

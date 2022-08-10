@@ -1,6 +1,6 @@
 import { Modal, Spin } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
+import { createForm, Field, FormPath, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import {
   ArrayTable,
@@ -108,6 +108,16 @@ const Debug = observer(() => {
                 }
               }
             }
+          });
+          onFieldReact('variableDefinitions.*.value', (field: any) => {
+            const path = FormPath.transform(
+              field.path,
+              /\d+/,
+              (index) => `variableDefinitions.${parseInt(index)}.required`,
+            );
+            const item = field.query(path).get('value');
+            field.required = item;
+            // console.log(item)
           });
         },
       }),
@@ -239,6 +249,12 @@ const Debug = observer(() => {
                   'x-component': 'Input',
                 },
                 type: {
+                  'x-hidden': true,
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                },
+                required: {
                   'x-hidden': true,
                   type: 'string',
                   'x-decorator': 'FormItem',

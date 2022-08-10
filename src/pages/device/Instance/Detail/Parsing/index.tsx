@@ -360,7 +360,7 @@ const Parsing = (props: Props) => {
           <Button
             type="primary"
             loading={loading}
-            disabled={!value || !simulation}
+            disabled={value !== '' && !simulation}
             onClick={() => {
               if (type === 'MQTT') {
                 if (topic !== '') {
