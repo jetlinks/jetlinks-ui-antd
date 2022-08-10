@@ -794,7 +794,7 @@ const Detail = observer(() => {
                     properties: {
                       departmentIdList: {
                         title: '收信部门',
-                        required: true,
+                        // required: true,
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         // 'x-decorator-props': {

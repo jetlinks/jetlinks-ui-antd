@@ -274,7 +274,11 @@ const MenuPermission = (props: Props) => {
           ) : (
             <div>
               {value?.accessSupport?.value !== 'support' ? (
-                <div>{value?.accessDescription}</div>
+                <div>
+                  {value?.accessDescription
+                    ? `${value?.accessDescription}`
+                    : '不支持数据权限配置，默认可查看全部数据'}
+                </div>
               ) : (
                 <Radio.Group
                   defaultValue={'creator'}

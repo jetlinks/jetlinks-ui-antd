@@ -187,7 +187,7 @@ export default (props: FunctionProps) => {
         type: type,
         format: datum.valueType ? datum.valueType.format : undefined,
         options: datum.valueType ? datum.valueType.elements : undefined,
-        json: type === 'object' ? datum['json']['properties'][0] : undefined,
+        json: type === 'object' ? datum['json']?.['properties'][0] : undefined,
         value: undefined,
       });
     }

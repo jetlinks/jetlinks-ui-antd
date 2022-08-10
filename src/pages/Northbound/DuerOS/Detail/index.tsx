@@ -16,7 +16,7 @@ import {
   Select,
 } from '@formily/antd';
 import { PermissionButton } from '@/components';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   createForm,
   Field,
@@ -32,8 +32,10 @@ import { useParams } from 'umi';
 import Doc from '@/pages/Northbound/DuerOS/Detail/Doc';
 import _ from 'lodash';
 import FUpload from '@/components/Upload';
+import { useModel } from '@@/plugin-model/useModel';
 
 const Save = () => {
+  const { initialState } = useModel('@@initialState');
   const SchemaField = createSchemaField({
     components: {
       FormGrid,
@@ -669,6 +671,17 @@ const Save = () => {
       history.back();
     }
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (initialState?.settings?.title) {
+        document.title = `DuerOS - ${initialState?.settings?.title}`;
+      } else {
+        document.title = 'DuerOS';
+      }
+    }, 0);
+  }, []);
+
   return (
     <PageContainer>
       <Card>

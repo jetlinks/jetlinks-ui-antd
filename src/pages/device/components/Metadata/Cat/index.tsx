@@ -38,19 +38,13 @@ const Cat = observer((props: Props) => {
         if (resp.status === 200) {
           InstanceModel.current = resp.result;
           const _metadata = resp.result?.metadata;
-          console.log(_metadata, '11111');
           setValue(_metadata);
         }
       });
     }
   }, [id]);
 
-  useEffect(() => {
-    console.log(value, '22222');
-  }, [value]);
-
   const convertMetadata = (key: string) => {
-    console.log(key);
     if (key === 'alink') {
       setValue('');
       if (metadata) {
@@ -61,7 +55,6 @@ const Cat = observer((props: Props) => {
         });
       }
     } else {
-      console.log(metadata, 'metadata');
       setValue(metadata);
     }
   };

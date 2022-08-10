@@ -32,15 +32,12 @@ const Doc = () => {
         <h1>授权地址</h1>
         <div>物联网平台的登录地址。注意需要为https。</div>
         <div>请复制并填写: https://{location.host}/#/user/login</div>
-        <div className={'image'}>
-          <Image width="100%" src={image1} />
-        </div>
         <h1>Client_Id</h1>
         <div>请填写物联网平台-第三方平台的clientId。</div>
         <div className={'image'}>
-          <Image width="100%" src={image2} />
+          <Image width="100%" src={image1} />
         </div>
-        <h1>Token地址</h1>
+        <h1>回调地址</h1>
         <div>请复制DuerOS平台中的值，填写到第三方平台-redirectUrl中</div>
         <div>
           <Alert
@@ -50,12 +47,15 @@ const Doc = () => {
           />
         </div>
         <div className={'image'}>
-          <Image width="100%" src={image3} />
+          <Image width="100%" src={image2} />
         </div>
         <h1>Token地址</h1>
         <div>请复制并填写：HTTPS://{location.host}/api/v1/token</div>
         <h1>ClientSecret</h1>
         <div>请复制物联网平台-第三方平台中的secureKey，填写到DuerOS平台。</div>
+        <div className={'image'}>
+          <Image width="100%" src={image3} />
+        </div>
         <div></div>
         <h1>WebService</h1>
         <div>请复制并填写：/dueros/product/_query</div>

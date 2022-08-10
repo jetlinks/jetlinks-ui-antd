@@ -1,7 +1,8 @@
 import { Space } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React, { useEffect } from 'react';
-import { SelectLang, useModel } from 'umi';
+// import { SelectLang, useModel } from 'umi';
+import { useModel } from 'umi';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
@@ -65,7 +66,7 @@ const GlobalHeaderRight: React.FC = () => {
         <NoticeIcon />
       </span>
       <Avatar menu={true} />
-      <SelectLang className={styles.action} />
+      {/* <SelectLang className={styles.action} /> */}
     </Space>
   );
 };

@@ -101,8 +101,11 @@ export default (props: TableProps) => {
 
     setLoading(true);
     if (props.isOpenGranted === false) {
-      const resp = await service.apiOperationsAdd(addGrant);
+      // console.log(props.grantKeys)
+      // console.log(addGrant,'add')
+      // console.log(removeGrant,'del')
       const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
+      const resp = await service.apiOperationsAdd(addGrant);
       if (resp.status === 200 || resp2.status === 200) {
         onlyMessage('操作成功');
       }
@@ -162,8 +165,13 @@ export default (props: TableProps) => {
                 },
                 onSelectAll: (selected, selectedRows) => {
                   if (selected) {
+                    // const items = selectedRows.filter((item) => !!item).map((item) => item.operationId).concat(props.grantKeys)
+                    // console.log(items)
                     setSelectKeys(
-                      selectedRows.filter((item) => !!item).map((item) => item.operationId),
+                      selectedRows
+                        .filter((item) => !!item)
+                        .map((item) => item.operationId)
+                        .concat(props.grantKeys),
                     );
                   } else {
                     setSelectKeys([]);
