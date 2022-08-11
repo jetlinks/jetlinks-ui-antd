@@ -57,7 +57,7 @@ const filterConfigByType = (data: any[], type: string) => {
 };
 const Save = observer(() => {
   const param = useParams<{ id: string }>();
-  const location = useLocation();
+  const locations = useLocation();
   const [view, setView] = useState<boolean>(false);
 
   const configRef = useRef([]);
@@ -67,7 +67,7 @@ const Save = observer(() => {
     services(field).then(
       action.bound!((resp: any) => {
         const type = location.href.split('?')?.pop()?.split('=')?.pop() || '';
-        const save = location?.href?.split('/');
+        const save = location?.href?.split?.('/');
         if (location.href.includes('type=') && !!type) {
           field.value = type;
         } else if (save[save.length - 1] === ':id') {
@@ -1002,10 +1002,10 @@ const Save = observer(() => {
 
   const { getOtherPermission } = usePermissions('link/Type');
   useEffect(() => {
-    if (location && location.state) {
-      setView(location.state.view);
+    if (locations && locations.state) {
+      setView(locations.state.view);
     }
-  }, [location]);
+  }, [locations]);
   return (
     <PageContainer>
       <Card>
