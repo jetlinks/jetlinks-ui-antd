@@ -23,7 +23,7 @@ export default (props: AliyunCardProps) => {
         enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,
       }}
-      showMask={false}
+      // showMask={false}
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>

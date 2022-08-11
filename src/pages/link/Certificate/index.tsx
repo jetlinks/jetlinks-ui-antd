@@ -3,13 +3,14 @@ import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Tooltip } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import PermissionButton from '@/components/PermissionButton';
 import usePermissions from '@/hooks/permission';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { history } from 'umi';
+// import { history } from 'umi';
+import useHistory from '@/hooks/route/useHistory';
 import Service from '../service';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
@@ -21,6 +22,7 @@ const Certificate = () => {
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const { permission } = usePermissions('link/Certificate');
+  const history = useHistory();
 
   const { minHeight } = useDomFullHeight(`.link-certificate`, 24);
 
@@ -62,6 +64,21 @@ const Certificate = () => {
       valueType: 'option',
       width: 100,
       render: (text, record) => [
+        <PermissionButton
+          key={'update'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.view}
+          tooltip={{
+            title: '查看',
+          }}
+          onClick={() => {
+            const url = `${getMenuPathByParams(MENUS_CODE['link/Certificate/Detail'], record.id)}`;
+            history.push(url, { view: true });
+          }}
+        >
+          <EyeOutlined />
+        </PermissionButton>,
         <PermissionButton
           key={'update'}
           type={'link'}

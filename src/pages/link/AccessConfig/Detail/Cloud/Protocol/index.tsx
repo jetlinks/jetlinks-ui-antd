@@ -25,6 +25,7 @@ interface Props {
   data: string;
   prev: () => void;
   next: (data: string) => void;
+  view?: boolean;
 }
 
 const Protocol = (props: Props) => {
@@ -66,22 +67,24 @@ const Protocol = (props: Props) => {
           }}
           style={{ width: 500, margin: '20px 0' }}
         />
-        <PermissionButton
-          isPermission={protocolPermission.add}
-          onClick={() => {
-            const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
-            const tab: any = window.open(`${origin}/#${url}?save=true`);
-            tab!.onTabSaveSuccess = (resp: any) => {
-              if (resp.status === 200) {
-                queryProcotolList(props.provider?.id);
-              }
-            };
-          }}
-          key="button"
-          type="primary"
-        >
-          新增
-        </PermissionButton>
+        {!props.view && (
+          <PermissionButton
+            isPermission={protocolPermission.add}
+            onClick={() => {
+              const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
+              const tab: any = window.open(`${origin}/#${url}?save=true`);
+              tab!.onTabSaveSuccess = (resp: any) => {
+                if (resp.status === 200) {
+                  queryProcotolList(props.provider?.id);
+                }
+              };
+            }}
+            key="button"
+            type="primary"
+          >
+            新增
+          </PermissionButton>
+        )}
       </div>
       {procotolList.length > 0 ? (
         <Row gutter={[16, 16]}>
@@ -113,6 +116,8 @@ const Protocol = (props: Props) => {
               暂无数据
               {getButtonPermission('link/Protocol', ['add']) ? (
                 '请联系管理员进行配置'
+              ) : props.view ? (
+                ''
               ) : (
                 <Button
                   type="link"

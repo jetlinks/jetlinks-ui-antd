@@ -1,12 +1,12 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import { useRef, useState } from 'react';
-import { history } from 'umi';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { PermissionButton, ProTableCard } from '@/components';
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
@@ -18,6 +18,7 @@ import AliyunCard from '@/components/ProTableCard/CardItems/aliyun';
 import Service from './service';
 import { Badge } from 'antd';
 import { onlyMessage } from '@/utils/util';
+import { useHistory } from '@/hooks';
 
 export const service = new Service('device/aliyun/bridge');
 
@@ -25,11 +26,27 @@ const AliCloud = () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParams, setSearchParams] = useState<any>({});
+  const history = useHistory();
 
   const { permission } = PermissionButton.usePermission('Northbound/AliCloud');
 
   const Tools = (record: any, type: 'card' | 'table') => {
     return [
+      <PermissionButton
+        key={'update'}
+        type={'link'}
+        style={{ padding: 0 }}
+        isPermission={permission.view}
+        tooltip={{
+          title: '查看',
+        }}
+        onClick={() => {
+          const url = `${getMenuPathByParams(MENUS_CODE['Northbound/AliCloud/Detail'], record.id)}`;
+          history.push(url, { view: true });
+        }}
+      >
+        <EyeOutlined />
+      </PermissionButton>,
       <PermissionButton
         key={'update'}
         type={'link'}
@@ -243,6 +260,20 @@ const AliCloud = () => {
         cardRender={(record) => (
           <AliyunCard
             {...record}
+            detail={
+              <div
+                style={{ padding: 8, fontSize: 24 }}
+                onClick={() => {
+                  const url = `${getMenuPathByParams(
+                    MENUS_CODE['Northbound/AliCloud/Detail'],
+                    record.id,
+                  )}`;
+                  history.push(url, { view: true });
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
             actions={[
               <PermissionButton
                 type={'link'}

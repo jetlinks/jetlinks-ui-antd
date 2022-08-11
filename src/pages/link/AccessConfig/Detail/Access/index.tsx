@@ -18,6 +18,7 @@ interface Props {
   change: () => void;
   data: any;
   provider: any;
+  view?: boolean;
 }
 
 const Access = (props: Props) => {
@@ -286,27 +287,29 @@ const Access = (props: Props) => {
                 }}
                 style={{ width: 500, margin: '20px 0' }}
               />
-              <PermissionButton
-                isPermission={networkPermission.add}
-                onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
-                  const tab: any = window.open(
-                    `${origin}/#${url}?type=${MetworkTypeMapping.get(props.provider?.id) || ''}`,
-                  );
-                  tab!.onTabSaveSuccess = (value: any) => {
-                    if (value.status === 200) {
-                      setNetworkCurrent(value.result?.id);
-                      queryNetworkList(props.provider?.id, {
-                        include: networkCurrent || '',
-                      });
-                    }
-                  };
-                }}
-                key="button"
-                type="primary"
-              >
-                新增
-              </PermissionButton>
+              {!props.view && (
+                <PermissionButton
+                  isPermission={networkPermission.add}
+                  onClick={() => {
+                    const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                    const tab: any = window.open(
+                      `${origin}/#${url}?type=${MetworkTypeMapping.get(props.provider?.id) || ''}`,
+                    );
+                    tab!.onTabSaveSuccess = (value: any) => {
+                      if (value.status === 200) {
+                        setNetworkCurrent(value.result?.id);
+                        queryNetworkList(props.provider?.id, {
+                          include: networkCurrent || '',
+                        });
+                      }
+                    };
+                  }}
+                  key="button"
+                  type="primary"
+                >
+                  新增
+                </PermissionButton>
+              )}
             </div>
             {networkList.length > 0 ? (
               <Row gutter={[16, 16]}>
@@ -447,23 +450,25 @@ const Access = (props: Props) => {
                 }}
                 style={{ width: 500, margin: '20px 0' }}
               />
-              <PermissionButton
-                isPermission={protocolPermission.add}
-                onClick={() => {
-                  const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
-                  const tab: any = window.open(`${origin}/#${url}?save=true`);
-                  tab!.onTabSaveSuccess = (resp: any) => {
-                    if (resp.status === 200) {
-                      setProcotolCurrent(resp.result?.id);
-                      queryProcotolList(props.provider?.id);
-                    }
-                  };
-                }}
-                key="button"
-                type="primary"
-              >
-                新增
-              </PermissionButton>
+              {!props.view && (
+                <PermissionButton
+                  isPermission={protocolPermission.add}
+                  onClick={() => {
+                    const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
+                    const tab: any = window.open(`${origin}/#${url}?save=true`);
+                    tab!.onTabSaveSuccess = (resp: any) => {
+                      if (resp.status === 200) {
+                        setProcotolCurrent(resp.result?.id);
+                        queryProcotolList(props.provider?.id);
+                      }
+                    };
+                  }}
+                  key="button"
+                  type="primary"
+                >
+                  新增
+                </PermissionButton>
+              )}
             </div>
             {procotolList.length > 0 ? (
               <Row gutter={[16, 16]}>
@@ -512,6 +517,8 @@ const Access = (props: Props) => {
                     暂无数据
                     {getButtonPermission('link/Protocol', ['add']) ? (
                       '请联系管理员进行配置'
+                    ) : props.view ? (
+                      ''
                     ) : (
                       <Button
                         type="link"
@@ -557,69 +564,71 @@ const Access = (props: Props) => {
                   <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
                     上一步
                   </Button>
-                  <Button
-                    type="primary"
-                    disabled={
-                      !!props.data.id
-                        ? getButtonPermission('link/AccessConfig', ['update'])
-                        : getButtonPermission('link/AccessConfig', ['add'])
-                    }
-                    onClick={async () => {
-                      try {
-                        const values = await form.validateFields();
-                        // 编辑还是保存
-                        if (!props.data?.id) {
-                          service
-                            .save({
-                              name: values.name,
-                              description: values.description,
-                              provider: props.provider.id,
-                              protocol: procotolCurrent,
-                              transport:
-                                props.provider?.id === 'child-device'
-                                  ? 'Gateway'
-                                  : ProcotoleMapping.get(props.provider.id),
-                              channel: 'network', // 网络组件
-                              channelId: networkCurrent,
-                            })
-                            .then((resp: any) => {
-                              if (resp.status === 200) {
-                                onlyMessage('操作成功！');
-                                history.goBack();
-                                if ((window as any).onTabSaveSuccess) {
-                                  (window as any).onTabSaveSuccess(resp);
-                                  setTimeout(() => window.close(), 300);
-                                }
-                              }
-                            });
-                        } else {
-                          service
-                            .update({
-                              ...props.data,
-                              name: values.name,
-                              description: values.description,
-                              protocol: procotolCurrent,
-                              channel: 'network', // 网络组件
-                              channelId: networkCurrent,
-                            })
-                            .then((resp: any) => {
-                              if (resp.status === 200) {
-                                onlyMessage('操作成功！');
-                                history.goBack();
-                                if ((window as any).onTabSaveSuccess) {
-                                  (window as any).onTabSaveSuccess(resp);
-                                  setTimeout(() => window.close(), 300);
-                                }
-                              }
-                            });
-                        }
-                      } catch (errorInfo) {
-                        console.error('Failed:', errorInfo);
+                  {!props.view && (
+                    <Button
+                      type="primary"
+                      disabled={
+                        !!props.data.id
+                          ? getButtonPermission('link/AccessConfig', ['update'])
+                          : getButtonPermission('link/AccessConfig', ['add'])
                       }
-                    }}
-                  >
-                    保存
-                  </Button>
+                      onClick={async () => {
+                        try {
+                          const values = await form.validateFields();
+                          // 编辑还是保存
+                          if (!props.data?.id) {
+                            service
+                              .save({
+                                name: values.name,
+                                description: values.description,
+                                provider: props.provider.id,
+                                protocol: procotolCurrent,
+                                transport:
+                                  props.provider?.id === 'child-device'
+                                    ? 'Gateway'
+                                    : ProcotoleMapping.get(props.provider.id),
+                                channel: 'network', // 网络组件
+                                channelId: networkCurrent,
+                              })
+                              .then((resp: any) => {
+                                if (resp.status === 200) {
+                                  onlyMessage('操作成功！');
+                                  history.goBack();
+                                  if ((window as any).onTabSaveSuccess) {
+                                    (window as any).onTabSaveSuccess(resp);
+                                    setTimeout(() => window.close(), 300);
+                                  }
+                                }
+                              });
+                          } else {
+                            service
+                              .update({
+                                ...props.data,
+                                name: values.name,
+                                description: values.description,
+                                protocol: procotolCurrent,
+                                channel: 'network', // 网络组件
+                                channelId: networkCurrent,
+                              })
+                              .then((resp: any) => {
+                                if (resp.status === 200) {
+                                  onlyMessage('操作成功！');
+                                  history.goBack();
+                                  if ((window as any).onTabSaveSuccess) {
+                                    (window as any).onTabSaveSuccess(resp);
+                                    setTimeout(() => window.close(), 300);
+                                  }
+                                }
+                              });
+                          }
+                        } catch (errorInfo) {
+                          console.error('Failed:', errorInfo);
+                        }
+                      }}
+                    >
+                      保存
+                    </Button>
+                  )}
                 </div>
               </div>
             </Col>

@@ -12,6 +12,7 @@ interface Props {
   change: () => void;
   data: any;
   provider: any;
+  view?: boolean;
 }
 
 const Media = (props: Props) => {
@@ -68,40 +69,42 @@ const Media = (props: Props) => {
                 </Form.Item>
               </Form>
               <div style={{ marginTop: 50 }}>
-                <Button
-                  type="primary"
-                  disabled={
-                    !!props.data.id
-                      ? getButtonPermission('link/AccessConfig', ['update'])
-                      : getButtonPermission('link/AccessConfig', ['add'])
-                  }
-                  onClick={async () => {
-                    try {
-                      const values = await form.validateFields();
-                      const param = {
-                        ...props.data,
-                        ...values,
-                        provider: props.provider?.id,
-                        protocol: procotol,
-                        transport: props.provider.id === 'modbus-tcp' ? 'MODBUS_TCP' : 'OPC_UA',
-                        channel: props.provider.id === 'modbus-tcp' ? 'modbus' : 'opc-ua',
-                      };
-                      const resp: any = await service[!props.data?.id ? 'save' : 'update'](param);
-                      if (resp.status === 200) {
-                        onlyMessage('操作成功！');
-                        history.goBack();
-                        if ((window as any).onTabSaveSuccess) {
-                          (window as any).onTabSaveSuccess(resp);
-                          setTimeout(() => window.close(), 300);
-                        }
-                      }
-                    } catch (errorInfo) {
-                      console.error('Failed:', errorInfo);
+                {!props.view && (
+                  <Button
+                    type="primary"
+                    disabled={
+                      !!props.data.id
+                        ? getButtonPermission('link/AccessConfig', ['update'])
+                        : getButtonPermission('link/AccessConfig', ['add'])
                     }
-                  }}
-                >
-                  保存
-                </Button>
+                    onClick={async () => {
+                      try {
+                        const values = await form.validateFields();
+                        const param = {
+                          ...props.data,
+                          ...values,
+                          provider: props.provider?.id,
+                          protocol: procotol,
+                          transport: props.provider.id === 'modbus-tcp' ? 'MODBUS_TCP' : 'OPC_UA',
+                          channel: props.provider.id === 'modbus-tcp' ? 'modbus' : 'opc-ua',
+                        };
+                        const resp: any = await service[!props.data?.id ? 'save' : 'update'](param);
+                        if (resp.status === 200) {
+                          onlyMessage('操作成功！');
+                          history.goBack();
+                          if ((window as any).onTabSaveSuccess) {
+                            (window as any).onTabSaveSuccess(resp);
+                            setTimeout(() => window.close(), 300);
+                          }
+                        }
+                      } catch (errorInfo) {
+                        console.error('Failed:', errorInfo);
+                      }
+                    }}
+                  >
+                    保存
+                  </Button>
+                )}
               </div>
             </div>
           </Col>

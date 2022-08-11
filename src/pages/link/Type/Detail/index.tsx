@@ -14,7 +14,7 @@ import {
   Select,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Field, FieldDataSource } from '@formily/core';
 import { onFormInit } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
@@ -30,6 +30,7 @@ import usePermissions from '@/hooks/permission';
 import { action } from '@formily/reactive';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import { useParams } from 'umi';
+import { useLocation } from '@/hooks';
 
 /**
  *  根据类型过滤配置信息
@@ -56,6 +57,8 @@ const filterConfigByType = (data: any[], type: string) => {
 };
 const Save = observer(() => {
   const param = useParams<{ id: string }>();
+  const locations = useLocation();
+  const [view, setView] = useState<boolean>(false);
 
   const configRef = useRef([]);
 
@@ -64,7 +67,7 @@ const Save = observer(() => {
     services(field).then(
       action.bound!((resp: any) => {
         const type = location.href.split('?')?.pop()?.split('=')?.pop() || '';
-        const save = location.href.split('/');
+        const save = location?.href?.split?.('/');
         if (location.href.includes('type=') && !!type) {
           field.value = type;
         } else if (save[save.length - 1] === ':id') {
@@ -998,6 +1001,11 @@ const Save = observer(() => {
   };
 
   const { getOtherPermission } = usePermissions('link/Type');
+  useEffect(() => {
+    if (locations && locations.state) {
+      setView(locations.state.view);
+    }
+  }, [locations]);
   return (
     <PageContainer>
       <Card>
@@ -1017,13 +1025,15 @@ const Save = observer(() => {
               />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <PermissionButton
-                    type="primary"
-                    isPermission={getOtherPermission(['add', 'update'])}
-                    onClick={() => handleSave()}
-                  >
-                    保存
-                  </PermissionButton>
+                  {!view && (
+                    <PermissionButton
+                      type="primary"
+                      isPermission={getOtherPermission(['add', 'update'])}
+                      onClick={() => handleSave()}
+                    >
+                      保存
+                    </PermissionButton>
+                  )}
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>

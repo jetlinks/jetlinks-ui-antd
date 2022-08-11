@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'umi';
+// import { useLocation } from 'umi';
 import Access from './Access';
 import Provider from './Provider';
 import Media from './Media';
@@ -8,13 +8,11 @@ import { service } from '@/pages/link/AccessConfig';
 import { Spin } from 'antd';
 import Cloud from './Cloud';
 import Channel from './Channel';
-
-type LocationType = {
-  id?: string;
-};
+import { useLocation } from '@/hooks';
 
 const Detail = () => {
-  const location = useLocation<LocationType>();
+  const location = useLocation();
+  const [view, setView] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [data, setData] = useState<any>({});
@@ -70,7 +68,13 @@ const Detail = () => {
         setLoading(false);
       }
     });
-  }, []);
+  }, [location]);
+
+  useEffect(() => {
+    if (location && location.state) {
+      setView(location.state.view);
+    }
+  }, [location]);
 
   const componentRender = () => {
     switch (type) {
@@ -79,6 +83,7 @@ const Detail = () => {
           <Access
             data={data}
             provider={provider}
+            view={view}
             change={() => {
               setVisible(true);
             }}
@@ -88,6 +93,7 @@ const Detail = () => {
         return (
           <Media
             data={data}
+            view={view}
             provider={provider}
             change={() => {
               setVisible(true);
@@ -99,6 +105,7 @@ const Detail = () => {
           <Cloud
             data={data}
             provider={provider}
+            view={view}
             change={() => {
               setVisible(true);
             }}
@@ -109,6 +116,7 @@ const Detail = () => {
           <Channel
             data={data}
             provider={provider}
+            view={view}
             change={() => {
               setVisible(true);
             }}

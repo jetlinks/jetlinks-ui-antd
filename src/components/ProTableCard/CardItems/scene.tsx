@@ -7,6 +7,7 @@ import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 
 export interface DeviceCardProps extends SceneItem {
   tools: React.ReactNode[];
+  detail?: React.ReactNode;
 }
 
 const defaultImage = require('/public/images/scene.png');
@@ -20,7 +21,8 @@ enum TriggerWayType {
 export default (props: DeviceCardProps) => {
   return (
     <TableCard
-      showMask={false}
+      // showMask={false}
+      detail={props.detail}
       actions={props.tools}
       status={props.state.value}
       statusText={props.state.text}
