@@ -5,6 +5,7 @@ import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
@@ -13,10 +14,11 @@ import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import SceneCard from '@/components/ProTableCard/CardItems/scene';
 import Service from './service';
-import { useHistory, useIntl } from 'umi';
+import { useIntl } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { onlyMessage } from '@/utils/util';
+import useHistory from '@/hooks/route/useHistory';
 
 export const service = new Service('scene');
 
@@ -46,7 +48,7 @@ const Scene = () => {
   };
 
   const Tools = (record: any, type: 'card' | 'table'): React.ReactNode[] => {
-    return [
+    const item = [
       <PermissionButton
         key={'update'}
         type={'link'}
@@ -157,6 +159,28 @@ const Scene = () => {
         <DeleteOutlined />
       </PermissionButton>,
     ];
+    if (type === 'table') {
+      return [
+        <PermissionButton
+          key={'update'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.view}
+          tooltip={{
+            title: '查看',
+          }}
+          onClick={() => {
+            const url = getMenuPathByCode('rule-engine/Scene/Save');
+            history.push(`${url}?id=${record.id}`, { view: true });
+          }}
+        >
+          <EyeOutlined />
+        </PermissionButton>,
+        ...item,
+      ];
+    } else {
+      return item;
+    }
   };
 
   const columns: ProColumns<SceneItem>[] = [
@@ -295,7 +319,23 @@ const Scene = () => {
             })}
           </PermissionButton>,
         ]}
-        cardRender={(record) => <SceneCard {...record} tools={Tools(record, 'card')} />}
+        cardRender={(record) => (
+          <SceneCard
+            {...record}
+            detail={
+              <div
+                style={{ padding: 8, fontSize: 24 }}
+                onClick={() => {
+                  const url = getMenuPathByCode('rule-engine/Scene/Save');
+                  history.push(`${url}?id=${record.id}`, { view: true });
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+            tools={Tools(record, 'card')}
+          />
+        )}
       />
     </PageContainer>
   );

@@ -16,7 +16,7 @@ import {
   Select,
 } from '@formily/antd';
 import { PermissionButton } from '@/components';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   createForm,
   Field,
@@ -33,9 +33,12 @@ import Doc from '@/pages/Northbound/DuerOS/Detail/Doc';
 import _ from 'lodash';
 import FUpload from '@/components/Upload';
 import { useModel } from '@@/plugin-model/useModel';
+import { useLocation } from '@/hooks';
 
 const Save = () => {
   const { initialState } = useModel('@@initialState');
+  const location = useLocation();
+  const [view, setView] = useState<boolean>(false);
   const SchemaField = createSchemaField({
     components: {
       FormGrid,
@@ -681,6 +684,11 @@ const Save = () => {
       }
     }, 0);
   }, []);
+  useEffect(() => {
+    if (location && location.state) {
+      setView(location.state.view);
+    }
+  }, [location]);
 
   return (
     <PageContainer>
@@ -700,9 +708,11 @@ const Save = () => {
               />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <PermissionButton isPermission={true} type="primary" onClick={handleSave}>
-                    保存
-                  </PermissionButton>
+                  {!view && (
+                    <PermissionButton isPermission={true} type="primary" onClick={handleSave}>
+                      保存
+                    </PermissionButton>
+                  )}
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>

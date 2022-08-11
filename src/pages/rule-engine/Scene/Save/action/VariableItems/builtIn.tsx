@@ -55,7 +55,7 @@ export default (props: BuiltInProps) => {
   const sourceChangeEvent = async () => {
     onChange(source, undefined);
     const data = props.form.getFieldsValue();
-    const triggerData = await props.triggerRef.getTriggerData();
+    const triggerData = await props.triggerRef?.getTriggerData();
     console.log(triggerData);
     data.terms = triggerData?.trigger;
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;

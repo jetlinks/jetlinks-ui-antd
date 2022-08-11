@@ -8,11 +8,10 @@ const useLocations = () => {
   useEffect(() => {
     setLocation({
       ...umiLocation,
-      state: historyStateModel.state[umiLocation.pathname],
+      state: historyStateModel.state[umiLocation.pathname + umiLocation.search],
     });
-
     return () => {
-      delete historyStateModel.state[umiLocation.pathname];
+      delete historyStateModel.state[umiLocation.pathname + umiLocation.search];
     };
   }, [umiLocation]);
 

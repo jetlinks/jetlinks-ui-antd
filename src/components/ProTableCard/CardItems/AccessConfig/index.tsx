@@ -22,7 +22,8 @@ const defaultImage = require('/public/images/device-access.png');
 export default (props: AccessConfigCardProps) => {
   return (
     <TableCard
-      showMask={false}
+      // showMask={false}
+      detail={props.detail}
       actions={props.actions}
       status={props.state.value}
       statusText={props.state.text}

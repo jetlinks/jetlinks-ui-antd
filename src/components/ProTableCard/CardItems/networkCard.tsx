@@ -56,7 +56,7 @@ export default (props: NoticeCardProps) => {
         disabled: StatusColorEnum.error,
         enabled: StatusColorEnum.success,
       }}
-      showMask={false}
+      // showMask={false}
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>

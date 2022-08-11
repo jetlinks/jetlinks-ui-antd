@@ -14,7 +14,7 @@ import type { Field } from '@formily/core';
 import { createForm, FormPath, onFieldChange, onFieldValueChange, onFormInit } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Card, Col, Image, Row } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import './index.less';
@@ -22,10 +22,13 @@ import { service } from '@/pages/Northbound/AliCloud';
 import usePermissions from '@/hooks/permission';
 import { Store } from 'jetlinks-store';
 import { useModel } from '@@/plugin-model/useModel';
+import { useLocation } from '@/hooks';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
   const { initialState } = useModel('@@initialState');
+  const location = useLocation();
+  const [view, setView] = useState<boolean>(false);
 
   const form = useMemo(
     () =>
@@ -427,6 +430,11 @@ const Detail = observer(() => {
       }
     }, 0);
   }, []);
+  useEffect(() => {
+    if (location && location.state) {
+      setView(location.state.view);
+    }
+  }, [location]);
 
   return (
     <PageContainer>
@@ -446,13 +454,15 @@ const Detail = observer(() => {
               />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <PermissionButton
-                    type="primary"
-                    isPermission={getOtherPermission(['add', 'update'])}
-                    onClick={() => handleSave()}
-                  >
-                    保存
-                  </PermissionButton>
+                  {!view && (
+                    <PermissionButton
+                      type="primary"
+                      isPermission={getOtherPermission(['add', 'update'])}
+                      onClick={() => handleSave()}
+                    >
+                      保存
+                    </PermissionButton>
+                  )}
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>

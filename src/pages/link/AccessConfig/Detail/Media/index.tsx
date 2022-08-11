@@ -32,6 +32,7 @@ interface Props {
   change: () => void;
   data: any;
   provider: any;
+  view?: boolean;
 }
 
 const Media = (props: Props) => {
@@ -499,52 +500,54 @@ const Media = (props: Props) => {
                   上一步
                 </Button>
               )}
-              <Button
-                type="primary"
-                disabled={
-                  !!params.get('id')
-                    ? getButtonPermission('link/AccessConfig', ['update'])
-                    : getButtonPermission('link/AccessConfig', ['add'])
-                }
-                onClick={async () => {
-                  const values = await form.validateFields();
-                  const param: any = {
-                    name: values.name,
-                    description: values.description,
-                  };
-                  if (props?.provider?.id === 'fixed-media') {
-                    param.provider = 'fixed-media';
-                    param.transport = 'URL';
-                    param.channel = 'fixed-media';
-                  } else {
-                    param.provider = 'gb28181-2016';
-                    param.transport = 'SIP';
-                    param.channel = 'gb28181';
-                    param.configuration = configuration;
+              {!props.view && (
+                <Button
+                  type="primary"
+                  disabled={
+                    !!params.get('id')
+                      ? getButtonPermission('link/AccessConfig', ['update'])
+                      : getButtonPermission('link/AccessConfig', ['add'])
                   }
-                  let resp = undefined;
-                  if (!!params.get('id')) {
-                    resp = await service.update({ ...param, id: params.get('id') || '' });
-                  } else {
-                    resp = await service.save({ ...param });
-                  }
-                  if (resp.status === 200) {
-                    onlyMessage('操作成功！');
-                    if (params.get('save')) {
-                      if ((window as any).onTabSaveSuccess) {
-                        if (resp.result) {
-                          (window as any).onTabSaveSuccess(resp.result);
-                          setTimeout(() => window.close(), 300);
-                        }
-                      }
+                  onClick={async () => {
+                    const values = await form.validateFields();
+                    const param: any = {
+                      name: values.name,
+                      description: values.description,
+                    };
+                    if (props?.provider?.id === 'fixed-media') {
+                      param.provider = 'fixed-media';
+                      param.transport = 'URL';
+                      param.channel = 'fixed-media';
                     } else {
-                      history.back();
+                      param.provider = 'gb28181-2016';
+                      param.transport = 'SIP';
+                      param.channel = 'gb28181';
+                      param.configuration = configuration;
                     }
-                  }
-                }}
-              >
-                保存
-              </Button>
+                    let resp = undefined;
+                    if (!!params.get('id')) {
+                      resp = await service.update({ ...param, id: params.get('id') || '' });
+                    } else {
+                      resp = await service.save({ ...param });
+                    }
+                    if (resp.status === 200) {
+                      onlyMessage('操作成功！');
+                      if (params.get('save')) {
+                        if ((window as any).onTabSaveSuccess) {
+                          if (resp.result) {
+                            (window as any).onTabSaveSuccess(resp.result);
+                            setTimeout(() => window.close(), 300);
+                          }
+                        }
+                      } else {
+                        history.back();
+                      }
+                    }
+                  }}
+                >
+                  保存
+                </Button>
+              )}
             </div>
           </div>
         </Col>

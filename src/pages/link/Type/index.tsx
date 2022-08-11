@@ -5,6 +5,7 @@ import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -13,7 +14,8 @@ import type { NetworkItem } from '@/pages/link/Type/typings';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { history } from 'umi';
+// import { history } from 'umi';
+import useHistory from '@/hooks/route/useHistory';
 import Service from '@/pages/link/service';
 import { PermissionButton, ProTableCard } from '@/components';
 import NetworkCard from '@/components/ProTableCard/CardItems/networkCard';
@@ -21,15 +23,6 @@ import usePermissions from '@/hooks/permission';
 import { onlyMessage } from '@/utils/util';
 
 export const service = new Service('network/config');
-
-/**
- * 跳转详情页
- * @param id
- */
-const pageJump = (id?: string) => {
-  // 跳转详情
-  history.push(`${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], id)}`);
-};
 
 export const networkMap = {
   UDP: 'udp://',
@@ -44,8 +37,17 @@ export const networkMap = {
 const Network = () => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
+  const history = useHistory();
 
   const { permission: networkPermission } = usePermissions('link/Type');
+  /**
+   * 跳转详情页
+   * @param id
+   */
+  const pageJump = (id?: string) => {
+    // 跳转详情
+    history.push(`${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], id)}`);
+  };
   const columns: ProColumns<NetworkItem>[] = [
     {
       dataIndex: 'name',
@@ -160,6 +162,20 @@ const Network = () => {
       width: 120,
       fixed: 'right',
       render: (text, record) => [
+        <PermissionButton
+          type="link"
+          isPermission={networkPermission.view}
+          style={{ padding: 0 }}
+          key="view"
+          onClick={() => {
+            const url = `${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], record.id)}`;
+            history.push(url, { view: true });
+          }}
+        >
+          <Tooltip title="查看">
+            <EyeOutlined />
+          </Tooltip>
+        </PermissionButton>,
         <PermissionButton
           type="link"
           isPermission={networkPermission.update}
@@ -280,17 +296,19 @@ const Network = () => {
         cardRender={(record) => (
           <NetworkCard
             {...record}
-            // detail={
-            //   <div
-            //     style={{ fontSize: 18, padding: 8 }}
-            //     onClick={() => {
-            //       Store.set('current-network-data', record);
-            //       pageJump(record.id);
-            //     }}
-            //   >
-            //     <EyeOutlined />
-            //   </div>
-            // }
+            detail={
+              <div
+                style={{ fontSize: 18, padding: 8 }}
+                onClick={() => {
+                  const url = `${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], record.id)}`;
+                  history.push(url, { view: true });
+                  // Store.set('current-network-data', record);
+                  // pageJump(record.id);
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
             actions={[
               <PermissionButton
                 isPermission={networkPermission.update}

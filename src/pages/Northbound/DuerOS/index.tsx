@@ -7,6 +7,7 @@ import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
@@ -15,7 +16,8 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { Badge, Space } from 'antd';
 import { DuerOSItem } from '@/pages/Northbound/DuerOS/types';
 import DuerOSCard from '@/components/ProTableCard/CardItems/duerOs';
-import { history } from '@@/core/history';
+// import { history } from '@@/core/history';
+import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 import { onlyMessage } from '@/utils/util';
@@ -26,9 +28,10 @@ export default () => {
   const intl = useIntl();
   const [searchParams, setSearchParams] = useState<any>({});
   const { permission } = PermissionButton.usePermission('Northbound/DuerOS');
+  const history = useHistory();
 
   const Tools = (record: any, type: 'card' | 'table') => {
-    return [
+    const item = [
       <PermissionButton
         key={'update'}
         type={'link'}
@@ -126,6 +129,29 @@ export default () => {
         <DeleteOutlined />
       </PermissionButton>,
     ];
+    if (type === 'card') {
+      return item;
+    } else {
+      return [
+        <PermissionButton
+          key={'update'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.view}
+          tooltip={{
+            title: '查看',
+          }}
+          onClick={() => {
+            history.push(getMenuPathByParams(MENUS_CODE['Northbound/DuerOS/Detail'], record.id), {
+              view: true,
+            });
+          }}
+        >
+          <EyeOutlined />
+        </PermissionButton>,
+        ...item,
+      ];
+    }
   };
 
   const columns: ProColumns<DuerOSItem>[] = [
@@ -247,7 +273,25 @@ export default () => {
         request={(params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
-        cardRender={(record) => <DuerOSCard {...record} action={Tools(record, 'card')} />}
+        cardRender={(record) => (
+          <DuerOSCard
+            {...record}
+            detail={
+              <div
+                style={{ padding: 8, fontSize: 24 }}
+                onClick={() => {
+                  history.push(
+                    getMenuPathByParams(MENUS_CODE['Northbound/DuerOS/Detail'], record.id),
+                    { view: true },
+                  );
+                }}
+              >
+                <EyeOutlined />
+              </div>
+            }
+            action={Tools(record, 'card')}
+          />
+        )}
         headerTitle={
           <Space>
             <PermissionButton

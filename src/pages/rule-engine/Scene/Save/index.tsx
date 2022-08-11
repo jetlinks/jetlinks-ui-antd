@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { Button, Card, Form, Input, InputNumber, Radio, Space, Switch, Tooltip } from 'antd';
-import { useHistory, useIntl, useLocation } from 'umi';
+import { useIntl } from 'umi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';
@@ -16,6 +16,7 @@ import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 import { onlyMessage } from '@/utils/util';
 import Explanation from './Explanation';
 import { getMenuPathByCode } from '@/utils/menu';
+import { useLocation, useHistory } from '@/hooks';
 
 type ShakeLimitType = {
   enabled: boolean;
@@ -54,6 +55,7 @@ export default () => {
 
   const [actionsData, setActionsData] = useState<any[]>([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [view, setView] = useState<boolean>(false);
 
   useEffect(() => {
     FormModel = {};
@@ -92,6 +94,9 @@ export default () => {
     const id = params.get('id');
     if (id) {
       getDetail(id);
+    }
+    if (location && location.state) {
+      setView(location.state.view);
     }
   }, [location]);
 
@@ -405,15 +410,17 @@ export default () => {
               <Form.Item hidden name={'id'}>
                 <Input />
               </Form.Item>
-              <PermissionButton
-                isPermission={getOtherPermission(['add', 'update'])}
-                onClick={saveData}
-                type={'primary'}
-                loading={loading}
-                htmlType="submit"
-              >
-                保存
-              </PermissionButton>
+              {!view && (
+                <PermissionButton
+                  isPermission={getOtherPermission(['add', 'update'])}
+                  onClick={saveData}
+                  type={'primary'}
+                  loading={loading}
+                  htmlType="submit"
+                >
+                  保存
+                </PermissionButton>
+              )}
             </Form>
           </div>
           <div className={'scene-content-right'}>

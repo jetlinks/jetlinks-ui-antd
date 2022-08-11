@@ -11,6 +11,7 @@ interface Props {
   change: () => void;
   data: any;
   provider: any;
+  view?: boolean;
 }
 
 const Cloud = (props: Props) => {
@@ -64,6 +65,7 @@ const Cloud = (props: Props) => {
               <Protocol
                 data={procotolCurrent}
                 provider={props.provider}
+                view={props.view}
                 next={(param: string) => {
                   setProcotolCurrent(param);
                   setCurrent(current + 1);
@@ -81,6 +83,7 @@ const Cloud = (props: Props) => {
             data={props.data}
             config={config}
             prev={prev}
+            view={props.view}
           />
         );
       default:

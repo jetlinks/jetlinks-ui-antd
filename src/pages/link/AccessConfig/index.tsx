@@ -4,14 +4,20 @@ import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { Card, Col, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'umi';
 import Service from './service';
-import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  PlayCircleOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import AccessConfigCard from '@/components/ProTableCard/CardItems/AccessConfig';
 import { Empty, PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { Store } from 'jetlinks-store';
 import { onlyMessage } from '@/utils/util';
+import { useHistory } from '@/hooks';
 
 export const service = new Service('gateway/device');
 
@@ -123,6 +129,21 @@ const AccessConfig = () => {
                   <Col key={item.id} span={12}>
                     <AccessConfigCard
                       {...item}
+                      detail={
+                        <div
+                          style={{ padding: 8, fontSize: 24 }}
+                          onClick={() => {
+                            history.push(
+                              `${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}?id=${
+                                item.id
+                              }`,
+                              { view: true },
+                            );
+                          }}
+                        >
+                          <EyeOutlined />
+                        </div>
+                      }
                       actions={[
                         <PermissionButton
                           isPermission={permission.update}

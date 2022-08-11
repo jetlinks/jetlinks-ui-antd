@@ -5,7 +5,7 @@ import { Form, FormButtonGroup, FormItem } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { Card, Col, Input, Row } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createForm } from '@formily/core';
 import CertificateFile from './components/CertificateFile';
 import Standard from './components/Standard';
@@ -13,9 +13,12 @@ import { service } from '@/pages/link/Certificate';
 import { useParams } from 'umi';
 import './index.less';
 import { onlyMessage } from '@/utils/util';
+import { useLocation } from '@/hooks';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
+  const location = useLocation();
+  const [view, setView] = useState<boolean>(false);
   const form = useMemo(
     () =>
       createForm({
@@ -33,6 +36,11 @@ const Detail = observer(() => {
       });
     }
   }, [params.id]);
+  useEffect(() => {
+    if (location && location.state) {
+      setView(location.state.view);
+    }
+  }, [location]);
 
   const SchemaField = createSchemaField({
     components: {
@@ -138,22 +146,24 @@ const Detail = observer(() => {
               <SchemaField schema={schema} />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <PermissionButton
-                    type="primary"
-                    isPermission={getOtherPermission(['add', 'update'])}
-                    onClick={async () => {
-                      const data: any = await form.submit();
-                      const response: any = data.id
-                        ? await service.update(data)
-                        : await service.save(data);
-                      if (response.status === 200) {
-                        onlyMessage('操作成功');
-                        history.back();
-                      }
-                    }}
-                  >
-                    保存
-                  </PermissionButton>
+                  {!view && (
+                    <PermissionButton
+                      type="primary"
+                      isPermission={getOtherPermission(['add', 'update'])}
+                      onClick={async () => {
+                        const data: any = await form.submit();
+                        const response: any = data.id
+                          ? await service.update(data)
+                          : await service.save(data);
+                        if (response.status === 200) {
+                          onlyMessage('操作成功');
+                          history.back();
+                        }
+                      }}
+                    >
+                      保存
+                    </PermissionButton>
+                  )}
                 </FormButtonGroup.FormItem>
               </FormButtonGroup.Sticky>
             </Form>
