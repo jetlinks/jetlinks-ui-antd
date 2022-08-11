@@ -70,7 +70,7 @@ export const PropertySource: { label: string; value: string }[] = [
 
 export const FileTypeList: { label: string; value: string }[] = [
   {
-    label: '文件类型',
+    label: 'URL(链接)',
     value: 'url',
   },
   {

@@ -1,7 +1,7 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Button, Modal, Popconfirm, Tooltip } from 'antd';
+import { Modal } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
@@ -24,7 +24,7 @@ export const service = new Service<ProductItem>('assets');
 export default observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-
+  const { permission } = PermissionButton.usePermission('system/Department');
   const [searchParam, setSearchParam] = useState({});
   const [deviceVisible, setDeviceVisible] = useState(false);
   const [updateVisible, setUpdateVisible] = useState(false);
@@ -131,31 +131,47 @@ export default observer((props: { parentId: string }) => {
             setPermissions(record.grantedPermissions!);
             setUpdateVisible(true);
           }}
-          isPermission={true}
+          isPermission={permission.edit}
         >
           <EditOutlined />
         </PermissionButton>,
-        <Popconfirm
-          title={intl.formatMessage({
-            id: 'pages.system.role.option.unBindUser',
-            defaultMessage: '是否解除绑定',
-          })}
-          key="unBind"
-          onConfirm={() => {
-            singleUnBind(record.id);
+        <PermissionButton
+          key="unbind"
+          type={'link'}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否解除绑定',
+            }),
+            onConfirm: () => {
+              singleUnBind(record.id);
+            },
           }}
+          isPermission={permission.bind}
         >
-          <Button type={'link'} style={{ padding: 0 }}>
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '解绑',
-              })}
-            >
-              <DisconnectOutlined />
-            </Tooltip>
-          </Button>
-        </Popconfirm>,
+          <DisconnectOutlined />
+        </PermissionButton>,
+        // <Popconfirm
+        //   title={intl.formatMessage({
+        //     id: 'pages.system.role.option.unBindUser',
+        //     defaultMessage: '是否解除绑定',
+        //   })}
+        //   key="unBind"
+        //   onConfirm={() => {
+        //     singleUnBind(record.id);
+        //   }}
+        // >
+        //   <Button type={'link'} style={{ padding: 0 }}>
+        //     <Tooltip
+        //       title={intl.formatMessage({
+        //         id: 'pages.system.role.option.unBindUser',
+        //         defaultMessage: '解绑',
+        //       })}
+        //     >
+        //       <DisconnectOutlined />
+        //     </Tooltip>
+        //   </Button>
+        // </Popconfirm>,
       ],
     },
   ];
@@ -320,7 +336,7 @@ export default observer((props: { parentId: string }) => {
                   setPermissions(record.grantedPermissions!);
                   setUpdateVisible(true);
                 }}
-                isPermission={true}
+                isPermission={permission.edit}
               >
                 <EditOutlined />
               </PermissionButton>,
@@ -342,7 +358,7 @@ export default observer((props: { parentId: string }) => {
                 onClick={(e) => {
                   e?.stopPropagation();
                 }}
-                isPermission={true}
+                isPermission={permission.bind}
               >
                 <DisconnectOutlined />
               </PermissionButton>,
@@ -350,7 +366,7 @@ export default observer((props: { parentId: string }) => {
           />
         )}
         toolBarRender={() => [
-          <Button
+          <PermissionButton
             onClick={() => {
               Models.bind = true;
             }}
@@ -358,27 +374,51 @@ export default observer((props: { parentId: string }) => {
             type="primary"
             key="bind"
             disabled={!props.parentId}
+            isPermission={permission.assert}
           >
             {intl.formatMessage({
               id: 'pages.data.option.assets',
               defaultMessage: '资产分配',
             })}
-          </Button>,
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '是否批量解除绑定',
-            })}
+          </PermissionButton>,
+          <PermissionButton
+            icon={<DisconnectOutlined />}
             key="unBind"
-            onConfirm={handleUnBind}
-          >
-            <Button icon={<DisconnectOutlined />}>
-              {intl.formatMessage({
+            popConfirm={{
+              title: intl.formatMessage({
+                id: 'pages.system.role.option.unBindUser',
+                defaultMessage: '是否批量解除绑定',
+              }),
+              onConfirm: handleUnBind,
+            }}
+            tooltip={{
+              title: intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
                 defaultMessage: '批量解绑',
-              })}
-            </Button>
-          </Popconfirm>,
+              }),
+            }}
+            isPermission={permission.bind}
+          >
+            {intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '批量解绑',
+            })}
+          </PermissionButton>,
+          // <Popconfirm
+          //   title={intl.formatMessage({
+          //     id: 'pages.system.role.option.unBindUser',
+          //     defaultMessage: '是否批量解除绑定',
+          //   })}
+          //   key="unBind"
+          //   onConfirm={handleUnBind}
+          // >
+          //   <Button icon={<DisconnectOutlined />}>
+          //     {intl.formatMessage({
+          //       id: 'pages.system.role.option.unBindUser',
+          //       defaultMessage: '批量解绑',
+          //     })}
+          //   </Button>
+          // </Popconfirm>,
         ]}
       />
     </>

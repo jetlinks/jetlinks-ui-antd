@@ -2,7 +2,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, Button, Popconfirm, Tooltip } from 'antd';
+import { Badge } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import MemberModel from '@/pages/system/Department/Member/model';
@@ -13,13 +13,14 @@ import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import Models from '@/pages/system/Department/Assets/productCategory/model';
 import { onlyMessage } from '@/utils/util';
+import PermissionButton from '@/components/PermissionButton';
 
 export const service = new Service('tenant');
 
 const Member = observer((props: { parentId: string }) => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-
+  const { permission } = PermissionButton.usePermission('system/Department');
   const [searchParam, setSearchParam] = useState({});
 
   const handleUnBind = () => {
@@ -54,6 +55,7 @@ const Member = observer((props: { parentId: string }) => {
     },
     {
       dataIndex: 'username',
+      ellipsis: true,
       title: intl.formatMessage({
         id: 'pages.system.username',
         defaultMessage: '用户名',
@@ -123,27 +125,43 @@ const Member = observer((props: { parentId: string }) => {
       ellipsis: true,
       fixed: 'right',
       render: (text, record) => [
-        <Popconfirm
-          title={intl.formatMessage({
-            id: 'pages.system.role.option.unBindUser',
-            defaultMessage: '是否解除绑定',
-          })}
-          key="unBindUser"
-          onConfirm={() => {
-            singleUnBind(record.id);
+        <PermissionButton
+          key="unbind"
+          type={'link'}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否解除绑定',
+            }),
+            onConfirm: () => {
+              singleUnBind(record.id);
+            },
           }}
+          isPermission={permission.bind}
         >
-          <Button type={'link'} style={{ padding: 0 }}>
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '解绑',
-              })}
-            >
-              <DisconnectOutlined />
-            </Tooltip>
-          </Button>
-        </Popconfirm>,
+          <DisconnectOutlined />
+        </PermissionButton>,
+        // <Popconfirm
+        //   title={intl.formatMessage({
+        //     id: 'pages.system.role.option.unBindUser',
+        //     defaultMessage: '是否解除绑定',
+        //   })}
+        //   key="unBindUser"
+        //   onConfirm={() => {
+        //     singleUnBind(record.id);
+        //   }}
+        // >
+        //   <Button type={'link'} style={{ padding: 0 }}>
+        //     <Tooltip
+        //       title={intl.formatMessage({
+        //         id: 'pages.system.role.option.unBindUser',
+        //         defaultMessage: '解绑',
+        //       })}
+        //     >
+        //       <DisconnectOutlined />
+        //     </Tooltip>
+        //   </Button>
+        // </Popconfirm>,
       ],
     },
   ];
@@ -217,7 +235,7 @@ const Member = observer((props: { parentId: string }) => {
         }}
         params={searchParam}
         toolBarRender={() => [
-          <Button
+          <PermissionButton
             onClick={() => {
               MemberModel.bind = true;
             }}
@@ -225,27 +243,51 @@ const Member = observer((props: { parentId: string }) => {
             type="primary"
             key="bind"
             disabled={!props.parentId}
+            isPermission={permission['bind-user']}
           >
             {intl.formatMessage({
               id: 'pages.system.role.option.bindUser',
               defaultMessage: '绑定用户',
             })}
-          </Button>,
-          <Popconfirm
-            title={intl.formatMessage({
-              id: 'pages.system.role.option.unBinds',
-              defaultMessage: '是否批量解除绑定',
-            })}
+          </PermissionButton>,
+          <PermissionButton
+            icon={<DisconnectOutlined />}
             key="unBind"
-            onConfirm={handleUnBind}
-          >
-            <Button icon={<DisconnectOutlined />}>
-              {intl.formatMessage({
+            popConfirm={{
+              title: intl.formatMessage({
+                id: 'pages.system.role.option.unBindUser',
+                defaultMessage: '是否批量解除绑定',
+              }),
+              onConfirm: handleUnBind,
+            }}
+            tooltip={{
+              title: intl.formatMessage({
                 id: 'pages.system.role.option.unBindUser',
                 defaultMessage: '批量解绑',
-              })}
-            </Button>
-          </Popconfirm>,
+              }),
+            }}
+            isPermission={permission.bind}
+          >
+            {intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '批量解绑',
+            })}
+          </PermissionButton>,
+          // <Popconfirm
+          //   title={intl.formatMessage({
+          //     id: 'pages.system.role.option.unBinds',
+          //     defaultMessage: '是否批量解除绑定',
+          //   })}
+          //   key="unBind"
+          //   onConfirm={handleUnBind}
+          // >
+          //   <Button icon={<DisconnectOutlined />}>
+          //     {intl.formatMessage({
+          //       id: 'pages.system.role.option.unBindUser',
+          //       defaultMessage: '批量解绑',
+          //     })}
+          //   </Button>
+          // </Popconfirm>,
         ]}
       />
     </>
