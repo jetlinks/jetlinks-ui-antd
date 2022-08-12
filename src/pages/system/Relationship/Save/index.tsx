@@ -285,8 +285,8 @@ const Save = (props: Props) => {
       onCancel={props.close}
       onOk={save}
       width="35vw"
-      permissionCode={'system/Relationship'}
-      permission={['add', 'edit']}
+      // permissionCode={'system/Relationship'}
+      // permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getTypes }} />

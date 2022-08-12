@@ -297,7 +297,7 @@ export default observer(() => {
           </PermissionButton>,
           <PermissionButton
             style={{ marginLeft: 12 }}
-            isPermission={permission.add}
+            isPermission={permission.setting}
             onClick={() => {
               history.push(getMenuPathByCode('system/Menu/Setting'));
             }}

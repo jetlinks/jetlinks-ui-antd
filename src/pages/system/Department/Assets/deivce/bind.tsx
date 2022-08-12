@@ -78,19 +78,19 @@ const Bind = observer((props: Props) => {
       dataIndex: 'state',
       valueType: 'select',
       valueEnum: {
-        onLine: {
+        online: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
             defaultMessage: '在线',
           }),
-          status: 'onLine',
+          status: 'online',
         },
-        offLine: {
+        offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
             defaultMessage: '离线',
           }),
-          status: 'offLine',
+          status: 'offline',
         },
         notActive: {
           text: intl.formatMessage({
@@ -141,7 +141,7 @@ const Bind = observer((props: Props) => {
       _params.push({
         type: 'and',
         column: 'productId$product-info',
-        value: 'id is ' + params.productId[0],
+        value: params.productId[0],
       });
     }
     return _params;

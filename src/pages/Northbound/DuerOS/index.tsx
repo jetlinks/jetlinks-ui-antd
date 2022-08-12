@@ -8,7 +8,6 @@ import {
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
-  InfoCircleOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -248,7 +247,7 @@ export default () => {
           setSearchParams(data);
         }}
       />
-      <div style={{ backgroundColor: 'white', width: '100%', height: 60, padding: 20 }}>
+      {/* <div style={{ backgroundColor: 'white', width: '100%', height: 60, padding: 20 }}>
         <div
           style={{
             padding: 10,
@@ -260,7 +259,7 @@ export default () => {
           <InfoCircleOutlined style={{ marginRight: 10 }} />
           将平台产品通过API的方式同步DuerOS平台
         </div>
-      </div>
+      </div> */}
       <ProTableCard<DuerOSItem>
         rowKey="id"
         search={false}

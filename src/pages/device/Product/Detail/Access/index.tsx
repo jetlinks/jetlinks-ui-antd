@@ -506,7 +506,7 @@ const Access = () => {
             placeholder: '请选择存储策略',
           },
           // required: true,
-          default: 'default-column',
+          default: 'default-row',
           'x-decorator-props': {
             // tooltip: '使用指定的存储策略来存储设备数据',
             gridSpan: 1,

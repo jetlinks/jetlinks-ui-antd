@@ -137,7 +137,7 @@ const DataSource = observer(() => {
         <PermissionButton
           style={{ padding: 0 }}
           type="link"
-          isPermission={userPermission.action}
+          isPermission={userPermission.manage}
           key="manage"
           disabled={record.state?.value !== 'enabled'}
           onClick={() => {
