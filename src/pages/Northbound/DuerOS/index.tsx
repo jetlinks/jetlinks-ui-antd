@@ -276,17 +276,32 @@ export default () => {
           <DuerOSCard
             {...record}
             detail={
-              <div
-                style={{ padding: 8, fontSize: 24 }}
+              <PermissionButton
+                key={'view'}
+                type={'link'}
+                style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                isPermission={permission.view}
                 onClick={() => {
-                  history.push(
-                    getMenuPathByParams(MENUS_CODE['Northbound/DuerOS/Detail'], record.id),
-                    { view: true },
-                  );
+                  const url = `${getMenuPathByParams(
+                    MENUS_CODE['Northbound/DuerOS/Detail'],
+                    record.id,
+                  )}`;
+                  history.push(url, { view: true });
                 }}
               >
                 <EyeOutlined />
-              </div>
+              </PermissionButton>
+              // <div
+              //   style={{ padding: 8, fontSize: 24 }}
+              //   onClick={() => {
+              //     history.push(
+              //       getMenuPathByParams(MENUS_CODE['Northbound/DuerOS/Detail'], record.id),
+              //       { view: true },
+              //     );
+              //   }}
+              // >
+              //   <EyeOutlined />
+              // </div>
             }
             action={Tools(record, 'card')}
           />

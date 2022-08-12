@@ -123,10 +123,10 @@ export default (props: ConditionalFilteringProps) => {
     const data = props.form.getFieldsValue();
     queryBuiltInParams(data, { action: props.name }).then((res: any) => {
       if (res.status === 200) {
-        const actionParams = res.result.filter(
-          (item: any) => item.id === `action_${props.name + 1}`,
-        );
-        setBuiltInList(handleTreeData(actionParams));
+        // const actionParams = res.result.filter(
+        //   (item: any) => item.id === `action_${props.name + 1}`,
+        // );
+        setBuiltInList(handleTreeData(res.result));
       }
     });
   };

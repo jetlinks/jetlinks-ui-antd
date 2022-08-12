@@ -487,7 +487,9 @@ const Access = (props: Props) => {
                       // }}
                       hoverable
                       onClick={() => {
-                        setProcotolCurrent(item.id);
+                        if (!props.data.id) {
+                          setProcotolCurrent(item.id);
+                        }
                       }}
                     >
                       <div style={{ height: '45px' }}>

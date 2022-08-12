@@ -20,6 +20,7 @@ interface WritePropertyProps {
   productId: string;
   isEdit?: boolean;
   id?: string;
+  triggerRef?: any;
 }
 
 export default (props: WritePropertyProps) => {
@@ -83,10 +84,14 @@ export default (props: WritePropertyProps) => {
     return data || [];
   };
 
-  const sourceChangeEvent = useCallback(() => {
+  const sourceChangeEvent = useCallback(async () => {
     onChange(propertiesKey, undefined, source);
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+
     const data = props.form.getFieldsValue();
+    const triggerData = await props.triggerRef?.getTriggerData();
+    console.log(triggerData);
+    data.terms = triggerData?.trigger;
     queryBuiltInParams(data, params).then((res: any) => {
       if (res.status === 200) {
         // const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
@@ -105,6 +110,7 @@ export default (props: WritePropertyProps) => {
         paramsListRef.current = cloneDeep(_params);
         const _filterData = filterParamsData(type, _params);
         const _data = handleTreeData(_filterData);
+        console.log(_data, type);
         setBuiltInList(_data);
       }
     });
@@ -116,11 +122,14 @@ export default (props: WritePropertyProps) => {
     }
   }, [source, props.type, props.parallel]);
 
-  useEffect(() => {
+  const sourceChangeEventEdit = useCallback(async () => {
     if (props.isEdit) {
       setIsEdit(false);
       const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
       const data = props.form.getFieldsValue();
+      const triggerData = await props.triggerRef?.getTriggerData();
+      console.log(triggerData);
+      data.terms = triggerData?.trigger;
       queryBuiltInParams(data, params).then((res: any) => {
         if (res.status === 200) {
           // const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
@@ -138,10 +147,42 @@ export default (props: WritePropertyProps) => {
           paramsListRef.current = cloneDeep(_params);
           const _filterData = filterParamsData(type, _params);
           const _data = handleTreeData(_filterData);
+          // console.log(_data)
           setBuiltInList(_data);
         }
       });
     }
+  }, [props.isEdit]);
+
+  useEffect(() => {
+    sourceChangeEventEdit();
+    // if (props.isEdit) {
+    //   setIsEdit(false);
+    //   const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+    //   const data = props.form.getFieldsValue();
+    //   queryBuiltInParams(data, params).then((res: any) => {
+    //     if (res.status === 200) {
+    //       // const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+    //       // 获取当前属性类型，过滤不同类型的数据
+    //       const propertiesItem = props.properties
+    //         .filter((item) => {
+    //           if (item.expands && item.expands.type) {
+    //             return item.expands.type.includes('write');
+    //           }
+    //           return false;
+    //         })
+    //         .find((item) => item.id === propertiesKey);
+    //       const type = propertiesItem?.valueType?.type;
+    //       const _params = res.result;
+    //       paramsListRef.current = cloneDeep(_params);
+    //       const _filterData = filterParamsData(type, _params);
+    //       const _data = handleTreeData(_filterData);
+    //       // console.log(_data)
+    //       setBuiltInList(_data);
+    //     }
+    //   });
+    // }
+
     setTimeout(() => {
       setIsEdit(true);
     }, 300);
