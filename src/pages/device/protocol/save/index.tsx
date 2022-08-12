@@ -126,7 +126,7 @@ const Save: React.FC<Props> = props => {
         // const api = await apis.protocol.querySystemApi();
         // setJarLocation(info.file.response.result?.id);
         // setFieldsValue({ 'configuration.location': info.file.response.result?.id })
-        const url = `${origin}/file/${result?.id}?accessKey=${result?.others?.accessKey}`;
+        const url = `${origin}/jetlinks/file/${result?.id}?accessKey=${result?.others?.accessKey}`;
         setJarLocation(url);
         setFieldsValue({ 'configuration.location': url })
         message.success(`${info.file.name} 上传成功`);
