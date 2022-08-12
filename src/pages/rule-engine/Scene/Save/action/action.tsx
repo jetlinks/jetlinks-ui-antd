@@ -381,6 +381,7 @@ export default observer((props: ActionProps) => {
                   productId={productId}
                   isEdit={props.isEdit}
                   propertiesChange={setPropertiesId}
+                  triggerRef={props.triggerRef}
                 />
               </Form.Item>
               l

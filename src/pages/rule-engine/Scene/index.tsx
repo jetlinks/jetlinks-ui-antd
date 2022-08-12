@@ -323,15 +323,21 @@ const Scene = () => {
           <SceneCard
             {...record}
             detail={
-              <div
-                style={{ padding: 8, fontSize: 24 }}
+              <PermissionButton
+                key={'update'}
+                type={'link'}
+                style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                isPermission={permission.view}
+                tooltip={{
+                  title: '查看',
+                }}
                 onClick={() => {
                   const url = getMenuPathByCode('rule-engine/Scene/Save');
                   history.push(`${url}?id=${record.id}`, { view: true });
                 }}
               >
                 <EyeOutlined />
-              </div>
+              </PermissionButton>
             }
             tools={Tools(record, 'card')}
           />

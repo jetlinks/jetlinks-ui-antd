@@ -260,8 +260,11 @@ const AliCloud = () => {
           <AliyunCard
             {...record}
             detail={
-              <div
-                style={{ padding: 8, fontSize: 24 }}
+              <PermissionButton
+                key={'view'}
+                type={'link'}
+                style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                isPermission={permission.view}
                 onClick={() => {
                   const url = `${getMenuPathByParams(
                     MENUS_CODE['Northbound/AliCloud/Detail'],
@@ -271,7 +274,19 @@ const AliCloud = () => {
                 }}
               >
                 <EyeOutlined />
-              </div>
+              </PermissionButton>
+              // <div
+              //   style={{ padding: 8, fontSize: 24 }}
+              //   onClick={() => {
+              //     const url = `${getMenuPathByParams(
+              //       MENUS_CODE['Northbound/AliCloud/Detail'],
+              //       record.id,
+              //     )}`;
+              //     history.push(url, { view: true });
+              //   }}
+              // >
+              //   <EyeOutlined />
+              // </div>
             }
             actions={[
               <PermissionButton

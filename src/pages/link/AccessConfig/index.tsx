@@ -130,8 +130,11 @@ const AccessConfig = () => {
                     <AccessConfigCard
                       {...item}
                       detail={
-                        <div
-                          style={{ padding: 8, fontSize: 24 }}
+                        <PermissionButton
+                          key={'view'}
+                          type={'link'}
+                          style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                          isPermission={permission.view}
                           onClick={() => {
                             history.push(
                               `${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}?id=${
@@ -142,7 +145,7 @@ const AccessConfig = () => {
                           }}
                         >
                           <EyeOutlined />
-                        </div>
+                        </PermissionButton>
                       }
                       actions={[
                         <PermissionButton

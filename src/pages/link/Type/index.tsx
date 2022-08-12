@@ -297,17 +297,18 @@ const Network = () => {
           <NetworkCard
             {...record}
             detail={
-              <div
-                style={{ fontSize: 18, padding: 8 }}
+              <PermissionButton
+                type="link"
+                isPermission={networkPermission.view}
+                style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                key="view"
                 onClick={() => {
                   const url = `${getMenuPathByParams(MENUS_CODE['link/Type/Detail'], record.id)}`;
                   history.push(url, { view: true });
-                  // Store.set('current-network-data', record);
-                  // pageJump(record.id);
                 }}
               >
                 <EyeOutlined />
-              </div>
+              </PermissionButton>
             }
             actions={[
               <PermissionButton
