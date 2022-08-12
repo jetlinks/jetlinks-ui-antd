@@ -153,7 +153,11 @@ export enum BUTTON_PERMISSION_ENUM {
   'tigger' = 'tigger',
   'empowerment' = 'empowerment',
   'bind' = 'bind',
-  'edit' = 'edit',
+  'edit' = 'edit', //资产权限编辑
+  'setting' = 'setting', //菜单配置
+  'password' = 'password', //重置密码
+  'api' = 'api', //查看api
+  'manage' = 'manage', //数据源-管理
 }
 
 // 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥

@@ -256,7 +256,7 @@ export default (props: PermissionType) => {
       return {
         ...item,
         actions: item.actions
-          .filter((action) => Object.keys(action).length)
+          ?.filter((action) => Object.keys(action).length)
           .map((a) => ({ ...a, checked: propsActions.includes(a.action) })),
         state: false, // 是否为半选中状态
         checked: false, // 是否为全选

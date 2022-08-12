@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Badge, Button, Card, Col, Descriptions, Divider, Image, Row, Table, Tooltip } from 'antd';
+import { Badge, Card, Col, Descriptions, Divider, Image, Row, Table, Tooltip } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
 import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
@@ -14,6 +14,7 @@ import { EditOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import OutputSave from './Save/output';
 import InputSave from './Save/input';
+import PermissionButton from '@/components/PermissionButton';
 
 export const service = new Service('alarm/config');
 const ioImg = require('/public/images/alarm/io.png');
@@ -23,6 +24,7 @@ const Config = () => {
   const [outputVisible, setOutputVisible] = useState<boolean>(false);
   const [input, setInput] = useState<any>({});
   const [output, setOutput] = useState<any>({});
+  const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Config');
 
   const outputData = [
     {
@@ -308,9 +310,18 @@ const Config = () => {
             <SchemaField schema={levelSchema} />
             <FormButtonGroup.Sticky>
               <FormButtonGroup.FormItem>
-                <Button type="primary" onClick={handleSaveLevel}>
+                <PermissionButton
+                  key={'update'}
+                  type={'primary'}
+                  style={{ padding: 0, width: 50 }}
+                  isPermission={permission.update}
+                  onClick={handleSaveLevel}
+                >
                   保存
-                </Button>
+                </PermissionButton>
+                {/* <Button type="primary" onClick={handleSaveLevel}>
+                  保存
+                </Button> */}
               </FormButtonGroup.FormItem>
             </FormButtonGroup.Sticky>
           </Form>
@@ -338,14 +349,25 @@ const Config = () => {
                   <Tooltip title={'将告警数据输出到其他第三方系统'}>
                     <QuestionCircleOutlined style={{ marginLeft: 5 }} />
                   </Tooltip>
-                  <a
+                  <PermissionButton
+                    key={'update'}
+                    type={'link'}
+                    style={{ padding: 0, marginLeft: 10 }}
+                    isPermission={permission.update}
+                    onClick={() => {
+                      setOutputVisible(true);
+                    }}
+                  >
+                    <EditOutlined />
+                  </PermissionButton>
+                  {/* <a
                     style={{ marginLeft: 10 }}
                     onClick={() => {
                       setOutputVisible(true);
                     }}
                   >
                     <EditOutlined />
-                  </a>
+                  </a> */}
                 </span>
               }
             />
@@ -374,14 +396,25 @@ const Config = () => {
                   <Tooltip title={'接收第三方系统处理的告警结果'}>
                     <QuestionCircleOutlined style={{ marginLeft: 5 }} />
                   </Tooltip>
-                  <a
+                  <PermissionButton
+                    key={'update'}
+                    type={'link'}
+                    style={{ padding: 0, marginLeft: 10 }}
+                    isPermission={permission.update}
+                    onClick={() => {
+                      setInputVisible(true);
+                    }}
+                  >
+                    <EditOutlined />
+                  </PermissionButton>
+                  {/* <a
                     style={{ marginLeft: 10 }}
                     onClick={() => {
                       setInputVisible(true);
                     }}
                   >
                     <EditOutlined />
-                  </a>
+                  </a> */}
                 </span>
               }
             />

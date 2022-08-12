@@ -69,7 +69,7 @@ const Save = () => {
     const formData = await form.validateFields();
     if (formData) {
       const { provider, ...extraFormData } = formData;
-      if (formData.password === oldPassword) {
+      if (formData.password === oldPassword && !id) {
         delete extraFormData.password;
       }
       if (formData.id === '') {

@@ -257,8 +257,8 @@ const Save = (props: Props) => {
       onCancel={props.close}
       onOk={save}
       width="1000px"
-      permissionCode={'system/Permission'}
-      permission={['add', 'edit']}
+      // permissionCode={'system/Permission'}
+      // permission={['add', 'edit']}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} />

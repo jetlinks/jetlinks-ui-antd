@@ -47,6 +47,7 @@ const Permission: React.FC = observer(() => {
           headers={{
             'X-Access-Token': Token.get(),
           }}
+          disabled={getButtonPermission('system/Permission', ['import'])}
           showUploadList={false}
           accept=".json"
           beforeUpload={(file) => {

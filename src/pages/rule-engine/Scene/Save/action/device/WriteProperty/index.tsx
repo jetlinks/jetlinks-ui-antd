@@ -89,7 +89,7 @@ export default (props: WritePropertyProps) => {
     const data = props.form.getFieldsValue();
     queryBuiltInParams(data, params).then((res: any) => {
       if (res.status === 200) {
-        const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+        // const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
         // 获取当前属性类型，过滤不同类型的数据
         const propertiesItem = props.properties
           .filter((item) => {
@@ -100,7 +100,8 @@ export default (props: WritePropertyProps) => {
           })
           .find((item) => item.id === propertiesKey);
         const type = propertiesItem?.valueType?.type;
-        const _params = props.name === 0 ? res.result : actionParams;
+        // const _params = props.name === 0 ? res.result : actionParams;
+        const _params = res.result;
         paramsListRef.current = cloneDeep(_params);
         const _filterData = filterParamsData(type, _params);
         const _data = handleTreeData(_filterData);
@@ -122,7 +123,7 @@ export default (props: WritePropertyProps) => {
       const data = props.form.getFieldsValue();
       queryBuiltInParams(data, params).then((res: any) => {
         if (res.status === 200) {
-          const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
+          // const actionParams = res.result.filter((item: any) => item.id === `action_${props.name}`);
           // 获取当前属性类型，过滤不同类型的数据
           const propertiesItem = props.properties
             .filter((item) => {
@@ -133,7 +134,7 @@ export default (props: WritePropertyProps) => {
             })
             .find((item) => item.id === propertiesKey);
           const type = propertiesItem?.valueType?.type;
-          const _params = props.name === 0 ? res.result : actionParams;
+          const _params = res.result;
           paramsListRef.current = cloneDeep(_params);
           const _filterData = filterParamsData(type, _params);
           const _data = handleTreeData(_filterData);

@@ -155,7 +155,7 @@ export default () => {
           key={'api'}
           type={'link'}
           style={{ padding: 0 }}
-          isPermission={true}
+          isPermission={permission.api}
           tooltip={{
             title: '查看API',
           }}
@@ -170,7 +170,7 @@ export default () => {
           key={'password'}
           type={'link'}
           style={{ padding: 0 }}
-          isPermission={permission.update}
+          isPermission={permission.password}
           tooltip={{
             title: '重置密码',
           }}

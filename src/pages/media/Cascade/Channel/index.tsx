@@ -155,7 +155,7 @@ const Channel = () => {
           status: 'online',
         },
         offline: {
-          text: '离线',
+          text: '未连接',
           status: 'offline',
         },
       },

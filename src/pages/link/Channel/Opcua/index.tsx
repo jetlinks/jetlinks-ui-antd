@@ -30,7 +30,7 @@ const NewModbus = () => {
   const { minHeight } = useDomFullHeight(`.modbus`);
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-  const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
+  const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
   const [param, setParam] = useState({});
   const [activeKey, setActiveKey] = useState<any>('');
   const [visible, setVisible] = useState<boolean>(false);
