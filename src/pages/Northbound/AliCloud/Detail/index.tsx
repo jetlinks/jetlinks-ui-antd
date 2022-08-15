@@ -135,10 +135,12 @@ const Detail = observer(() => {
         resolve(list);
       });
     } else {
-      return service.getProductsList({ paging: false }).then((resp) => {
-        Store.set('productList', resp);
-        return resp.filter((j: any) => !checked.includes(j.value));
-      });
+      return service
+        .getProductsList({ paging: false, sorts: [{ name: 'createTime', order: 'desc' }] })
+        .then((resp) => {
+          Store.set('productList', resp);
+          return resp.filter((j: any) => !checked.includes(j.value));
+        });
     }
   };
 

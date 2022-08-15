@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'umi';
 import { EditOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import Edit from './Edit';
-import { PermissionButton } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import _ from 'lodash';
 
 const Reation = () => {
@@ -57,14 +57,20 @@ const Reation = () => {
       >
         {(data || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={item.relationName} key={item.objectId}>
-            <Tooltip
+            <Ellipsis
+              title={item?.related ? _.map(item?.related || [], 'name').join(',') : ''}
+              tooltip={{ placement: 'topLeft' }}
+              style={{ maxWidth: 250 }}
+              limitWidth={250}
+            />
+            {/* <Tooltip
               title={item?.related ? _.map(item?.related || [], 'name').join(',') : ''}
               placement="topLeft"
             >
               <div className="ellipsis" style={{ width: 300 }}>
                 {item?.related ? _.map(item?.related || [], 'name').join(',') : ''}
               </div>
-            </Tooltip>
+            </Tooltip> */}
           </Descriptions.Item>
         ))}
       </Descriptions>

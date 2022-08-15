@@ -60,7 +60,7 @@ const NewModbus = () => {
     <Menu>
       <Menu.Item key="1">
         <PermissionButton
-          isPermission={permission.export || true}
+          isPermission={permission.view}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
@@ -72,7 +72,7 @@ const NewModbus = () => {
       </Menu.Item>
       <Menu.Item key="2">
         <PermissionButton
-          isPermission={permission.import || true}
+          isPermission={permission.update}
           icon={<ImportOutlined />}
           onClick={() => {
             setImportVisible(true);

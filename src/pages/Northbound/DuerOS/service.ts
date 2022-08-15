@@ -22,6 +22,7 @@ class Service extends BaseService<DuerOSItem> {
       data: {
         paging: false,
         terms: data,
+        sorts: [{ name: 'createTime', order: 'desc' }],
       },
     });
   };
