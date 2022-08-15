@@ -6,6 +6,7 @@ import MonacoEditor from 'react-monaco-editor';
 import { useFullscreen, useSize } from 'ahooks';
 import Service from '@/pages/device/Instance/service';
 import { onlyMessage } from '@/utils/util';
+import { PermissionButton } from '@/components';
 
 interface Props {
   tag: string;
@@ -15,6 +16,7 @@ interface Props {
 const Parsing = (props: Props) => {
   const service = new Service('device-instance');
   const { minHeight } = useDomFullHeight(`.parsing`);
+  const { permission } = PermissionButton.usePermission('device/Instance');
   const [value, setValue] = useState(
     '//解码函数\r\nfunction decode(context) {\r\n    //原始报文\r\n    var buffer = context.payload();\r\n    // 转为json\r\n    // var json = context.json();\r\n    //mqtt 时通过此方法获取topic\r\n    // var topic = context.topic();\r\n\r\n    // 提取变量\r\n    // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n    //温度属性\r\n    var temperature = buffer.getShort(3) * 10;\r\n    //湿度属性\r\n    var humidity = buffer.getShort(6) * 10;\r\n    return {\r\n        "temperature": temperature,\r\n        "humidity": humidity\r\n    };\r\n}\r\n',
   );
@@ -29,8 +31,9 @@ const Parsing = (props: Props) => {
   const [topic, setTopic] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [resultValue, setResultValue] = useState<any>('');
-  const [data, setData] = useState<any>({});
+  // const [data, setData] = useState<any>({});
   const [readOnly, setReadOnly] = useState<boolean>(true);
+  const [topTitle, setTopTitle] = useState<string>();
 
   const editorDidMountHandle = (editor: any) => {
     editor.getAction('editor.action.formatDocument').run();
@@ -72,12 +75,17 @@ const Parsing = (props: Props) => {
         // console.log(res.result)
         if (res.result) {
           setValue(res.result?.configuration?.script);
-          setData(res.result);
+          // setData(res.result);
         }
         if (res.result?.deviceId) {
           setReadOnly(false);
+          setTopTitle('rest');
         } else {
           setReadOnly(true);
+          setTopTitle('edit');
+          setValue(
+            '//解码函数\r\nfunction decode(context) {\r\n    //原始报文\r\n    var buffer = context.payload();\r\n    // 转为json\r\n    // var json = context.json();\r\n    //mqtt 时通过此方法获取topic\r\n    // var topic = context.topic();\r\n\r\n    // 提取变量\r\n    // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n    //温度属性\r\n    var temperature = buffer.getShort(3) * 10;\r\n    //湿度属性\r\n    var humidity = buffer.getShort(6) * 10;\r\n    return {\r\n        "temperature": temperature,\r\n        "humidity": humidity\r\n    };\r\n}\r\n',
+          );
         }
       }
     });
@@ -98,7 +106,6 @@ const Parsing = (props: Props) => {
       if (res.status === 200) {
         onlyMessage('保存成功');
       }
-      console.log(res.result);
     });
   };
 
@@ -164,9 +171,9 @@ const Parsing = (props: Props) => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
+  // useEffect(() => {
+  //   console.log(value);
+  // }, [value]);
 
   return (
     <Card className="parsing" style={{ minHeight }}>
@@ -177,7 +184,7 @@ const Parsing = (props: Props) => {
               {props.tag === 'device' ? (
                 <>
                   <ExclamationCircleOutlined style={{ marginRight: 5 }} />
-                  {data?.deviceId ? (
+                  {topTitle === 'rest' ? (
                     <>
                       当前数据解析内容已脱离产品影响，
                       <a
@@ -400,7 +407,34 @@ const Parsing = (props: Props) => {
             调试
           </Button>
         </Tooltip>
-        <Button
+        <PermissionButton
+          // type={'link'}
+          key={'update'}
+          style={{ marginLeft: 10 }}
+          isPermission={permission.update}
+          onClick={() => {
+            if (props.tag === 'device') {
+              saveDeviceCode(props.data.productId, props.data.id, {
+                provider: 'jsr223',
+                configuration: {
+                  script: value,
+                  lang: 'javascript',
+                },
+              });
+            } else {
+              saveProductCode(props.data.id, {
+                provider: 'jsr223',
+                configuration: {
+                  script: value,
+                  lang: 'javascript',
+                },
+              });
+            }
+          }}
+        >
+          保存
+        </PermissionButton>
+        {/* <Button
           style={{ marginLeft: 10 }}
           onClick={() => {
             if (props.tag === 'device') {
@@ -423,7 +457,7 @@ const Parsing = (props: Props) => {
           }}
         >
           保存
-        </Button>
+        </Button> */}
       </div>
     </Card>
   );

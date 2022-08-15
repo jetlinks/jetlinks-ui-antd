@@ -5,6 +5,7 @@ import { useHistory } from 'umi';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { InstanceModel } from '@/pages/device/Instance';
 import { randomString } from '@/utils/util';
+import { PermissionButton } from '@/components';
 interface Props {
   close: () => void;
   data: any;
@@ -13,6 +14,7 @@ interface Props {
 
 const ManualInspection = (props: Props) => {
   const { data } = props;
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   const history = useHistory<Record<string, string>>();
 
@@ -211,8 +213,11 @@ const ManualInspection = (props: Props) => {
       }}
       width={900}
       footer={[
-        <Button
+        <PermissionButton
+          isPermission={permission.update}
+          // type={'link'}
           key="back"
+          style={{ marginRight: 10 }}
           onClick={() => {
             if (data.type === 'device') {
               InstanceModel.active = 'detail';
@@ -234,7 +239,30 @@ const ManualInspection = (props: Props) => {
           }}
         >
           去修改
-        </Button>,
+        </PermissionButton>,
+        // <Button
+        //   key="back"
+        //   onClick={() => {
+        //     if (data.type === 'device') {
+        //       InstanceModel.active = 'detail';
+        //     } else if (data.type === 'product') {
+        //       history.push(
+        //         `${getMenuPathByParams(MENUS_CODE['device/Product/Detail'], data.productId)}`,
+        //         {
+        //           tab: 'access',
+        //         },
+        //       );
+        //     } else {
+        //       history.push(
+        //         `${getMenuPathByCode(MENUS_CODE['link/AccessConfig/Detail'])}?id=${data.configuration?.id
+        //         }`,
+        //       );
+        //     }
+        //     props.close();
+        //   }}
+        // >
+        //   去修改
+        // </Button>,
         <Button
           key="submit"
           onClick={() => {

@@ -75,13 +75,13 @@ const Member = observer((props: { parentId: string }) => {
       onFilter: true,
       valueType: 'select',
       valueEnum: {
-        all: {
-          text: intl.formatMessage({
-            id: 'pages.searchTable.titleStatus.all',
-            defaultMessage: '全部',
-          }),
-          status: 'Default',
-        },
+        // all: {
+        //   text: intl.formatMessage({
+        //     id: 'pages.searchTable.titleStatus.all',
+        //     defaultMessage: '全部',
+        //   }),
+        //   status: 'Default',
+        // },
         1: {
           text: intl.formatMessage({
             id: 'pages.searchTable.titleStatus.normal',

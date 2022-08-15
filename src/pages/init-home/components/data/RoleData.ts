@@ -346,7 +346,7 @@ export default {
       icon: 'icon-zhilianshebei',
       url: '/iot/link/Channel/Opcua',
       buttons: [
-        { id: 'view', name: '设备接入', enabled: true, granted: true },
+        { id: 'view', name: '查看', enabled: true, granted: true },
         {
           id: 'action',
           name: '启/禁用',
@@ -385,7 +385,7 @@ export default {
           enabled: true,
           granted: true,
         },
-        { id: 'view', name: '设备接入', enabled: true, granted: true },
+        { id: 'view', name: '查看', enabled: true, granted: true },
         {
           id: 'delete',
           name: '删除',
@@ -752,7 +752,7 @@ export default {
       icon: 'icon-zhilianshebei',
       url: '/iot/link/Channel/Opcua',
       buttons: [
-        { id: 'view', name: '设备接入', enabled: true, granted: true },
+        { id: 'view', name: '查看', enabled: true, granted: true },
         {
           id: 'action',
           name: '启/禁用',
@@ -791,7 +791,7 @@ export default {
           enabled: true,
           granted: true,
         },
-        { id: 'view', name: '设备接入', enabled: true, granted: true },
+        { id: 'view', name: '查看', enabled: true, granted: true },
         {
           id: 'delete',
           name: '删除',
