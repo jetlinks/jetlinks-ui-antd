@@ -25,13 +25,13 @@ export default (props: RangePickerProps) => {
         moment(props.value?.to || new Date(), 'hh:mm:ss'),
       ]}
       onChange={(_, dateString) => {
-        const { every, unit } = props.form.getFieldsValue().trigger?.timer?.period;
+        const item = props.form.getFieldsValue().trigger?.timer?.period;
         if (props.onChange) {
           props.onChange({
             from: dateString[0],
             to: dateString[1],
-            every: every,
-            unit: unit,
+            every: item?.every,
+            unit: item?.unit,
           });
         }
       }}
