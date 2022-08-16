@@ -164,7 +164,9 @@ const Network = () => {
       render: (text, record) => [
         <PermissionButton
           type="link"
-          isPermission={networkPermission.view}
+          isPermission={
+            networkPermission.view || networkPermission.update || networkPermission.action
+          }
           style={{ padding: 0 }}
           key="view"
           onClick={() => {
@@ -299,7 +301,9 @@ const Network = () => {
             detail={
               <PermissionButton
                 type="link"
-                isPermission={networkPermission.view}
+                isPermission={
+                  networkPermission.view || networkPermission.update || networkPermission.action
+                }
                 style={{ padding: 0, fontSize: 24, color: '#fff' }}
                 key="view"
                 onClick={() => {

@@ -1,14 +1,16 @@
-import { Button, Descriptions, Tooltip } from 'antd';
+import { Descriptions, Tooltip } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
 import { EditOutlined } from '@ant-design/icons';
 import Edit from './Edit';
+import { PermissionButton } from '@/components';
 
 const Tags = () => {
   const intl = useIntl();
   const [tags, setTags] = useState<any[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   const tag = InstanceModel.detail?.tags;
 
@@ -38,7 +40,17 @@ const Tags = () => {
               id: 'pages.device.instanceDetail.tags',
               defaultMessage: '标签',
             })}
-            <Button
+            <PermissionButton
+              isPermission={permission.update}
+              type="link"
+              onClick={async () => {
+                setVisible(true);
+              }}
+            >
+              <EditOutlined />
+              编辑
+            </PermissionButton>
+            {/* <Button
               type="link"
               onClick={() => {
                 setVisible(true);
@@ -46,7 +58,7 @@ const Tags = () => {
             >
               <EditOutlined />
               编辑
-            </Button>
+            </Button> */}
           </span>
         }
       >

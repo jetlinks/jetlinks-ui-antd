@@ -27,7 +27,7 @@ import { onlyMessage } from '@/utils/util';
 import Driver from 'driver.js';
 import 'driver.js/dist/driver.min.css';
 import './index.less';
-import { Ellipsis } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 
 const componentMap = {
   string: 'Input',
@@ -523,7 +523,37 @@ const Access = () => {
           <FormLayout>
             <SchemaField schema={schema} />
           </FormLayout>
-          <Button
+          <PermissionButton
+            isPermission={permission.update}
+            key="update"
+            onClick={async () => {
+              const values = (await form.submit()) as any;
+              const result: any = {};
+              flatObj(values, result);
+              const { storePolicy, ...extra } = result;
+              const resp = await productService.modify(id || '', {
+                id,
+                configuration: { ...extra },
+                storePolicy: storePolicy,
+              });
+              if (resp.status === 200) {
+                onlyMessage('操作成功！');
+                if ((window as any).onTabSaveSuccess) {
+                  if (resp.result) {
+                    (window as any).onTabSaveSuccess(resp);
+                    setTimeout(() => window.close(), 300);
+                  }
+                } else {
+                  getDetailInfo();
+                }
+              }
+            }}
+            type={'primary'}
+          >
+            保存
+          </PermissionButton>
+          ,
+          {/* <Button
             type="primary"
             onClick={async () => {
               const values = (await form.submit()) as any;
@@ -549,7 +579,7 @@ const Access = () => {
             }}
           >
             保存
-          </Button>
+          </Button> */}
         </Form>
       </PreviewText.Placeholder>
     );
