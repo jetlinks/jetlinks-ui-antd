@@ -176,15 +176,17 @@ const Import = (props: Props) => {
   });
 
   useEffect(() => {
-    service.getProductList(encodeQuery({ paging: false, terms: { state: 1 } })).then((resp) => {
-      if (resp.status === 200) {
-        const list = resp.result.map((item: { name: any; id: any }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setProductList(list);
-      }
-    });
+    service
+      .getProductList(encodeQuery({ terms: { state: 1 }, sorts: { createTime: 'desc' } }))
+      .then((resp) => {
+        if (resp.status === 200) {
+          const list = resp.result.map((item: { name: any; id: any }) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setProductList(list);
+        }
+      });
   }, []);
 
   const form = createForm({

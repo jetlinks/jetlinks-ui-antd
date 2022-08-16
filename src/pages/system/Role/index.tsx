@@ -178,7 +178,13 @@ const Role: React.FC = observer(() => {
           </PermissionButton>
         }
         request={async (params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.query({
+            ...params,
+            sorts: [
+              { name: 'createTime', order: 'desc' },
+              { name: 'id', order: 'desc' },
+            ],
+          })
         }
       />
       <Save

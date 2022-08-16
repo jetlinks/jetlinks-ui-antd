@@ -188,9 +188,9 @@ const TabComponent = observer((props: Props) => {
         告警处理
       </Button>
     </Tooltip>,
-    <Button
+    <PermissionButton
+      isPermission={permission.view}
       type={'link'}
-      style={{ padding: 0 }}
       key={'log'}
       onClick={() => {
         AlarmLogModel.current = record;
@@ -200,10 +200,10 @@ const TabComponent = observer((props: Props) => {
     >
       <FileFilled />
       告警日志
-    </Button>,
-    <Button
+    </PermissionButton>,
+    <PermissionButton
+      isPermission={permission.view}
       type={'link'}
-      style={{ padding: 0 }}
       key={'detail'}
       onClick={() => {
         AlarmLogModel.logVisible = true;
@@ -212,7 +212,20 @@ const TabComponent = observer((props: Props) => {
     >
       <FileTextFilled />
       处理记录
-    </Button>,
+    </PermissionButton>,
+
+    // <Button
+    //   type={'link'}
+    //   style={{ padding: 0 }}
+    //   key={'detail'}
+    //   onClick={() => {
+    //     AlarmLogModel.logVisible = true;
+    //     AlarmLogModel.current = record;
+    //   }}
+    // >
+    //   <FileTextFilled />
+    //   处理记录
+    // </Button>,
   ];
 
   const getAction = (actions: React.ReactNode[]) => {
