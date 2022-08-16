@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { Button, Card, Form, Input, InputNumber, Radio, Space, Switch, Tooltip } from 'antd';
-import { useIntl } from 'umi';
+import { useIntl, useHistory } from 'umi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PermissionButton, TitleComponent } from '@/components';
 import ActionItems from './action/action';
@@ -16,7 +16,7 @@ import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 import { onlyMessage } from '@/utils/util';
 import Explanation from './Explanation';
 import { getMenuPathByCode } from '@/utils/menu';
-import { useLocation, useHistory } from '@/hooks';
+import { useLocation } from '@/hooks';
 
 type ShakeLimitType = {
   enabled: boolean;
@@ -132,7 +132,8 @@ export default () => {
       setLoading(false);
       if (resp.status === 200) {
         onlyMessage('操作成功');
-        history.push(getMenuPathByCode('rule-engine/Scene'));
+        const url = getMenuPathByCode('rule-engine/Scene');
+        history.push(url);
       } else {
         onlyMessage(resp.message);
       }
