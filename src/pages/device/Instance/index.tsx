@@ -318,6 +318,21 @@ const Instance = () => {
           .then((resp: any) => resp.result),
     },
     {
+      title: '网关类型',
+      dataIndex: 'productId$product-info',
+      width: 150,
+      ellipsis: true,
+      valueType: 'select',
+      hideInTable: true,
+      request: () =>
+        service.getProviders().then((resp: any) => {
+          return (resp?.result || []).map((item: any) => ({
+            label: item.name,
+            value: `accessProvider is ${item.id}`,
+          }));
+        }),
+    },
+    {
       dataIndex: 'productId$product-info',
       title: '接入方式',
       valueType: 'select',

@@ -23,6 +23,11 @@ class Service extends BaseService<SceneItem> {
       method: 'POST',
       data: { terms: [{ column: 'sceneId', value: id }] },
     });
+  _execute = (id: string) =>
+    request(`/${SystemConst.API_BASE}/scene/${id}/_execute`, {
+      method: 'POST',
+      data: {},
+    });
 }
 
 export default Service;

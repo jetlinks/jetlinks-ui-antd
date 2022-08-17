@@ -384,7 +384,6 @@ export default observer((props: ActionProps) => {
                   triggerRef={props.triggerRef}
                 />
               </Form.Item>
-              l
             </Col>
             {parallelNode}
           </Row>

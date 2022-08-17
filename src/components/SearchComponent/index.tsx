@@ -555,6 +555,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               item.value = `%${item.value}%`;
               return item;
             }
+            if (item.termType === 'nlike' && item.value && item.value !== '') {
+              item.value = `%${item.value}%`;
+              return item;
+            }
             return item;
           });
         return _term;

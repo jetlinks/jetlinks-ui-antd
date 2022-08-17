@@ -215,7 +215,7 @@ const BaseMetadata = observer((props: Props) => {
         ]}
       />
       {MetadataModel.importMetadata && <PropertyImport type={target} />}
-      {MetadataModel.edit && <Edit type={target} />}
+      {MetadataModel.edit && <Edit type={target} tabs={type} />}
     </>
   );
 });

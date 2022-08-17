@@ -6,6 +6,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
+  LikeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
@@ -49,6 +50,35 @@ const Scene = () => {
 
   const Tools = (record: any, type: 'card' | 'table'): React.ReactNode[] => {
     const item = [
+      record.triggerType === 'manual' && (
+        <PermissionButton
+          key="trigger"
+          type="link"
+          style={{ padding: 0 }}
+          isPermission={permission.tigger}
+          tooltip={{
+            title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '手动触发',
+          }}
+          disabled={record.state?.value === 'disabled'}
+          popConfirm={{
+            disabled: record.state?.value === 'disabled',
+            title: '确认手动触发?',
+            onConfirm: async () => {
+              await service._execute(record.id);
+              onlyMessage(
+                intl.formatMessage({
+                  id: 'pages.data.option.success',
+                  defaultMessage: '操作成功!',
+                }),
+              );
+              actionRef.current?.reload();
+            },
+          }}
+        >
+          <LikeOutlined />
+          {type === 'table' ? '' : '手动触发'}
+        </PermissionButton>
+      ),
       <PermissionButton
         key={'update'}
         type={'link'}
