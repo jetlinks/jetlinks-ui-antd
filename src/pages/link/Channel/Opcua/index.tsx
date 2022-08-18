@@ -304,8 +304,8 @@ const NewOpc = () => {
 
   useEffect(() => {
     if (pointList && activeKey) {
-      const id = `collector-data-modbus`;
-      const topic = `/collector/MODBUS_TCP/${activeKey}/data`;
+      const id = `collector-data-opcua`;
+      const topic = `/collector/OPC_UA/${activeKey}/data`;
       wsRef.current = subscribeTopic?.(id, topic, {
         pointId: pointList.map((item: any) => item.id),
       })
