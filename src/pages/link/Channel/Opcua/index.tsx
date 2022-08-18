@@ -14,7 +14,7 @@ import {
   SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'umi';
 import ChannelCard from '../channelCard';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -23,10 +23,12 @@ import SaveChannel from './saveChannel';
 import SavePoint from './savePoint';
 // import Import from './import';
 import { onlyMessage } from '@/utils/util';
+import Export from './Export';
+import Import from './import';
 
 export const service = new Service('opc/client');
 
-const NewModbus = () => {
+const NewOpc = () => {
   const { minHeight } = useDomFullHeight(`.modbus`);
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
@@ -38,38 +40,43 @@ const NewModbus = () => {
   const [current, setCurrent] = useState<any>({});
   const [pointDetail, setPointDetail] = useState<any>({});
   // const [importVisible, setImportVisible] = useState<boolean>(false);
-  const [masterList, setMasterList] = useState<any>([]);
+  const [opcList, setOpcList] = useState<any>([]);
   const [filterList, setFilterList] = useState([]);
-  const masterId = useRef<string>('');
+  const opcId = useRef<string>('');
+  const [pointList, setPointList] = useState<any>([]);
+  const [exportVisible, setExportVisible] = useState<boolean>(false);
+  const [importVisible, setImportVisible] = useState<boolean>(false);
 
   const collectMap = new Map();
-  collectMap.set('running', 'success');
-  collectMap.set('error', 'error');
-  collectMap.set('stopped', 'warning');
+  collectMap.set('good', 'success');
+  collectMap.set('failed', 'error');
+  collectMap.set('bad', 'warning');
+  collectMap.set('uncertain', 'default');
+  collectMap.set('unknown', 'default');
 
   const menu = (
     <Menu>
       <Menu.Item key="1">
         <PermissionButton
-          isPermission={permission.export}
+          isPermission={permission.view}
           icon={<ExportOutlined />}
           type="default"
           onClick={() => {
-            // setExportVisible(true);
+            setExportVisible(true);
           }}
         >
-          批量导出设备
+          批量导出点位
         </PermissionButton>
       </Menu.Item>
       <Menu.Item key="2">
         <PermissionButton
-          isPermission={permission.import || true}
+          isPermission={permission.update}
           icon={<ImportOutlined />}
           onClick={() => {
-            // setImportVisible(true);
+            setImportVisible(true);
           }}
         >
-          批量导入设备
+          批量导入点位
         </PermissionButton>
       </Menu.Item>
     </Menu>
@@ -84,13 +91,12 @@ const NewModbus = () => {
       fixed: 'left',
     },
     {
-      title: '点位Id',
-      render: (record: any) => <>{record.function?.text}</>,
+      title: '点位ID',
+      dataIndex: 'opcPointId',
     },
     {
       title: '数据类型',
-      dataIndex: 'unitId',
-      search: false,
+      dataIndex: 'type',
     },
     {
       title: '当前数据',
@@ -99,28 +105,29 @@ const NewModbus = () => {
     },
     {
       title: '采集状态',
-      search: false,
-      render: (record: any) => (
+      dataIndex: 'runningState',
+      valueType: 'select',
+      valueEnum: {
+        running: { text: '采集中', status: 'running' },
+        error: { text: '失败', status: 'error' },
+        stopped: { text: '已停止', status: 'stopped' },
+      },
+      render: (_, record: any) => (
         <>
-          {record.state.value === 'disabled' ? (
-            '-'
-          ) : (
-            <>
-              <Badge
-                status={collectMap.get(record.collectState?.value)}
-                text={record.collectState?.text}
-              />
-              <SearchOutlined
-                style={{ color: '#1d39c4', marginLeft: 3 }}
-                onClick={() => {
-                  Modal.error({
-                    title: '失败原因',
-                    content: <div>111111</div>,
-                    onOk() {},
-                  });
-                }}
-              />
-            </>
+          <Badge
+            status={collectMap.get(record.runningState?.value)}
+            text={record.runningState?.text}
+          />
+          {record.runningState?.value === 'error' && (
+            <SearchOutlined
+              style={{ color: '#1d39c4', marginLeft: 3 }}
+              onClick={() => {
+                Modal.error({
+                  title: '失败原因',
+                  content: <div>{record.errorReason}</div>,
+                });
+              }}
+            />
           )}
         </>
       ),
@@ -256,11 +263,10 @@ const NewModbus = () => {
       })
       .then((res: any) => {
         if (res.status === 200) {
-          setMasterList(res.result);
+          setOpcList(res.result);
           setFilterList(res.result);
           setActiveKey(res.result?.[0]?.id);
-          masterId.current = res.result?.[0]?.id;
-          console.log(masterId.current);
+          opcId.current = res.result?.[0]?.id;
         }
       });
   };
@@ -293,13 +299,28 @@ const NewModbus = () => {
     });
   };
 
+  const masterMemo = useMemo(
+    () => (
+      <Export
+        data={opcList}
+        close={() => {
+          setExportVisible(false);
+          actionRef.current?.reload();
+        }}
+      />
+    ),
+    [opcList],
+  );
   useEffect(() => {
-    masterId.current = activeKey;
+    opcId.current = activeKey;
     actionRef.current?.reload();
   }, [activeKey]);
 
   useEffect(() => {
     getOpc();
+  }, []);
+  useEffect(() => {
+    console.log(pointList);
   }, []);
 
   return (
@@ -312,13 +333,13 @@ const NewModbus = () => {
                 placeholder="请输入名称"
                 allowClear
                 onSearch={(value) => {
-                  const items = masterList.filter((item: any) => item.name.match(value));
+                  const items = opcList.filter((item: any) => item.name.match(value));
                   if (value) {
                     setFilterList(items);
                     setActiveKey(items?.[0].id);
                   } else {
-                    setFilterList(masterList);
-                    setActiveKey(masterList?.[0].id);
+                    setFilterList(opcList);
+                    setActiveKey(opcList?.[0].id);
                   }
                 }}
               />
@@ -454,40 +475,36 @@ const NewModbus = () => {
                   </Dropdown>
                 </>
               }
-              // request={async (params) => {
-              //   if (masterId.current) {
-              //     const res = await service.queryPoint(masterId.current, {
-              //       ...params,
-              //       sorts: [{ name: 'createTime', order: 'desc' }],
-              //     });
-              //     return {
-              //       code: res.message,
-              //       result: {
-              //         data: res.result.data,
-              //         pageIndex: res.result.pageIndex,
-              //         pageSize: res.result.pageSize,
-              //         total: res.result.total,
-              //       },
-              //       status: res.status,
-              //     };
-              //   } else {
-              //     return {
-              //       code: 200,
-              //       result: {
-              //         data: [],
-              //         pageIndex: 0,
-              //         pageSize: 0,
-              //         total: 0,
-              //       },
-              //       status: 200,
-              //     };
-              //   }
-              // }}
-              // request={async (params) =>
-              //   service.queryPoint(masterId.current,{
-              // ...params,
-              // sorts: [{ name: 'createTime', order: 'desc' }] })
-              // }
+              request={async (params) => {
+                if (opcId.current) {
+                  const res = await service.queryPoint(opcId.current, {
+                    ...params,
+                    sorts: [{ name: 'createTime', order: 'desc' }],
+                  });
+                  setPointList(res.result.data);
+                  return {
+                    code: res.message,
+                    result: {
+                      data: res.result.data,
+                      pageIndex: res.result.pageIndex,
+                      pageSize: res.result.pageSize,
+                      total: res.result.total,
+                    },
+                    status: res.status,
+                  };
+                } else {
+                  return {
+                    code: 200,
+                    result: {
+                      data: [],
+                      pageIndex: 0,
+                      pageSize: 0,
+                      total: 0,
+                    },
+                    status: 200,
+                  };
+                }
+              }}
             />
           </div>
         </div>
@@ -511,15 +528,17 @@ const NewModbus = () => {
           }}
         />
       )}
-      {/* <Import
-        data={current}
-        close={() => {
-          setImportVisible(false);
-          actionRef.current?.reload();
-        }}
-        visible={importVisible}
-      /> */}
+      {importVisible && (
+        <Import
+          opcId={activeKey}
+          close={() => {
+            setImportVisible(false);
+            actionRef.current?.reload();
+          }}
+        />
+      )}
+      {exportVisible && masterMemo}
     </PageContainer>
   );
 };
-export default NewModbus;
+export default NewOpc;

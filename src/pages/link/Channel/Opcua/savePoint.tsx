@@ -1,7 +1,7 @@
 import { Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
-// import { service } from '@/pages/link/Channel/Modbus';
-// import { onlyMessage } from '@/utils/util';
+import { service } from '@/pages/link/Channel/Opcua';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: any;
@@ -15,12 +15,39 @@ const SavePoint = (props: Props) => {
 
   const handleSave = async () => {
     const formData = await form.validateFields();
-    console.log(formData);
+    if (props.data.id) {
+      service
+        .editPoint(props.data.id, {
+          opcUaId: props.opcId,
+          ...formData,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            onlyMessage('保存成功');
+            props.close();
+          }
+        });
+    } else {
+      service
+        .addPoint({
+          opcUaId: props.opcId,
+          ...formData,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            onlyMessage('保存成功');
+            props.close();
+          }
+        });
+    }
   };
 
   useEffect(() => {
-    console.log(dataMode);
-  }, [dataMode]);
+    console.log(props.data);
+    if (props.data.id) {
+      setDataMode(props.data.dataMode?.value);
+    }
+  }, []);
 
   return (
     <Modal
@@ -36,15 +63,9 @@ const SavePoint = (props: Props) => {
       <Form
         form={form}
         layout="vertical"
-        // initialValues={{
-        //     ...props.data,
-        //     codecConfig: {
-        //         ...props.data?.codecConfig,
-        //         readIndex: props.data?.codecConfig?.readIndex || 0,
-        //         scaleFactor: props.data?.codecConfig?.scaleFactor || 1,
-        //         revertBytes: props.data?.codecConfig?.revertBytes || false,
-        //     },
-        // }}
+        initialValues={{
+          ...props.data,
+        }}
       >
         <Row gutter={[24, 24]}>
           <Col span={24}>
@@ -82,6 +103,54 @@ const SavePoint = (props: Props) => {
           </Col>
         </Row>
         <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <Form.Item
+              label="数据类型"
+              name="type"
+              required
+              rules={[{ required: true, message: '数据类型必选' }]}
+            >
+              <Select
+                placeholder="请选择数据模式"
+                onChange={(value) => {
+                  setDataMode(value);
+                  form.setFieldsValue({
+                    interval: '',
+                  });
+                }}
+              >
+                <Select.Option value="Boolean" key={'Boolean'}>
+                  Boolean
+                </Select.Option>
+                <Select.Option value="Byte" key={'Byte'}>
+                  Byte
+                </Select.Option>
+                <Select.Option value="Short" key={'Short'}>
+                  Short
+                </Select.Option>
+                <Select.Option value="Integer" key={'Integer'}>
+                  Boolean
+                </Select.Option>
+                <Select.Option value="Long" key={'Long'}>
+                  Long
+                </Select.Option>
+                <Select.Option value="LLong" key={'LLong'}>
+                  LLong
+                </Select.Option>
+                <Select.Option value="Double" key={'Double'}>
+                  Double
+                </Select.Option>
+                <Select.Option value="String" key={'String'}>
+                  String
+                </Select.Option>
+                <Select.Option value="DateTime" key={'DateTime'}>
+                  DateTime
+                </Select.Option>
+              </Select>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={[24, 24]}>
           <Col span={12}>
             <Form.Item
               label="数据模式"
@@ -103,6 +172,9 @@ const SavePoint = (props: Props) => {
                 placeholder="请选择数据模式"
                 onChange={(value) => {
                   setDataMode(value);
+                  form.setFieldsValue({
+                    interval: '',
+                  });
                 }}
               >
                 <Select.Option value="sub" key={'sub'}>
