@@ -21,10 +21,11 @@ import { PageContainer } from '@ant-design/pro-layout';
 import Service from './service';
 import SaveChannel from './saveChannel';
 import SavePoint from './savePoint';
-// import Import from './import';
 import { onlyMessage } from '@/utils/util';
 import Export from './Export';
 import Import from './import';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { map } from 'rxjs/operators';
 
 export const service = new Service('opc/client');
 
@@ -39,13 +40,15 @@ const NewOpc = () => {
   const [visiblePoint, setVisiblePoint] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
   const [pointDetail, setPointDetail] = useState<any>({});
-  // const [importVisible, setImportVisible] = useState<boolean>(false);
   const [opcList, setOpcList] = useState<any>([]);
   const [filterList, setFilterList] = useState([]);
   const opcId = useRef<string>('');
   const [pointList, setPointList] = useState<any>([]);
   const [exportVisible, setExportVisible] = useState<boolean>(false);
   const [importVisible, setImportVisible] = useState<boolean>(false);
+  const [subscribeTopic] = useSendWebsocketMessage();
+  const wsRef = useRef<any>();
+  const [currentData, setCurrentData] = useState<any>({});
 
   const collectMap = new Map();
   collectMap.set('good', 'success');
@@ -101,7 +104,7 @@ const NewOpc = () => {
     {
       title: '当前数据',
       search: false,
-      render: (record: any) => <>{record.parameter?.quantity}</>,
+      render: (record: any) => <>{currentData[record?.id] || ''}</>,
     },
     {
       title: '采集状态',
@@ -299,6 +302,22 @@ const NewOpc = () => {
     });
   };
 
+  useEffect(() => {
+    if (pointList && activeKey) {
+      const id = `collector-data-modbus`;
+      const topic = `/collector/MODBUS_TCP/${activeKey}/data`;
+      wsRef.current = subscribeTopic?.(id, topic, {
+        pointId: pointList.map((item: any) => item.id),
+      })
+        ?.pipe(map((res: any) => res.payload))
+        .subscribe((payload: any) => {
+          const { value } = payload;
+          current[value.property] = value.formatValue;
+          setCurrentData({ ...current });
+        });
+    }
+    return () => wsRef.current && wsRef.current?.unsubscribe();
+  }, [pointList]);
   const masterMemo = useMemo(
     () => (
       <Export
@@ -318,9 +337,6 @@ const NewOpc = () => {
 
   useEffect(() => {
     getOpc();
-  }, []);
-  useEffect(() => {
-    console.log(pointList);
   }, []);
 
   return (
