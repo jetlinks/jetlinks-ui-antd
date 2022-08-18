@@ -40,30 +40,30 @@ const extraRouteObj = {
   'device/Firmware': {
     children: [{ code: 'Task', name: '升级任务' }],
   },
-  'link/Channel': {
-    children: [
-      {
-        code: 'Opcua',
-        name: 'OPC UA',
-        children: [
-          {
-            code: 'Access',
-            name: '数据点绑定',
-          },
-        ],
-      },
-      {
-        code: 'Modbus',
-        name: 'OPC UA',
-        children: [
-          {
-            code: 'Access',
-            name: '数据点绑定',
-          },
-        ],
-      },
-    ],
-  },
+  // 'link/Channel': {
+  //   children: [
+  //     {
+  //       code: 'Opcua',
+  //       name: 'OPC UA',
+  //       children: [
+  //         {
+  //           code: 'Access',
+  //           name: '数据点绑定',
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       code: 'Modbus',
+  //       name: 'Modbus',
+  //       children: [
+  //         {
+  //           code: 'Access',
+  //           name: '数据点绑定',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
   demo: {
     children: [{ code: 'AMap', name: '地图' }],
   },

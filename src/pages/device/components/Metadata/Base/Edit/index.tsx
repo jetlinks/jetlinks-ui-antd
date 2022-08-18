@@ -32,7 +32,7 @@ import {
   FileTypeList,
   PropertySource,
 } from '@/pages/device/data';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
@@ -57,11 +57,15 @@ import { onlyMessage } from '@/utils/util';
 
 interface Props {
   type: 'product' | 'device';
+  tabs?: string;
 }
 
 const Edit = observer((props: Props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState<boolean>(false);
+  useEffect(() => {
+    console.log(props.tabs);
+  }, []);
   const form = useMemo(
     () =>
       createForm({
@@ -969,6 +973,7 @@ const Edit = observer((props: Props) => {
                 state: {
                   visible:
                     props.type === 'product' &&
+                    props.tabs !== 'tags' &&
                     "{{['int','float','double','long','date','string','boolean'].includes($deps[0])}}",
                   // value: []
                 },

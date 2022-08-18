@@ -56,7 +56,6 @@ export default (props: BuiltInProps) => {
     onChange(source, undefined);
     const data = props.form.getFieldsValue();
     const triggerData = await props.triggerRef?.getTriggerData();
-    console.log(triggerData);
     data.terms = triggerData?.trigger;
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
     queryBuiltInParams(data, params).then((res: any) => {
@@ -103,10 +102,11 @@ export default (props: BuiltInProps) => {
   }, [props.trigger?.trigger?.device?.productId, source]);
 
   useEffect(() => {
+    // console.log(props.value,11111)
     setSource(props.value?.source);
     setValue(props.value?.value);
     setUpperKey(props.value?.upperKey);
-  }, [props.value]);
+  }, []);
 
   const itemOnChange = useCallback(
     (_value: any) => {

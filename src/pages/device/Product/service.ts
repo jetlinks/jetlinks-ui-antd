@@ -165,6 +165,11 @@ class Service extends BaseService<ProductItem> {
         ],
       },
     });
+  //网关类型
+  public getProviders = () =>
+    request(`/${SystemConst.API_BASE}/gateway/device/providers`, {
+      method: 'GET',
+    });
   //获取协议详情
   public getProtocolDetail = (id: string) =>
     request(`/${SystemConst.API_BASE}/protocol/${id}/detail`, {

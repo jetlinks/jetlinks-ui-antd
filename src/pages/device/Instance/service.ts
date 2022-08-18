@@ -375,6 +375,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'PUT',
       data,
     });
+  //网关类型
+  public getProviders = () =>
+    request(`/${SystemConst.API_BASE}/gateway/device/providers`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

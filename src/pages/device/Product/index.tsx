@@ -259,6 +259,21 @@ const Product = observer(() => {
       ellipsis: true,
     },
     {
+      title: '网关类型',
+      dataIndex: 'accessProvider',
+      width: 150,
+      ellipsis: true,
+      valueType: 'select',
+      hideInTable: true,
+      request: () =>
+        service.getProviders().then((resp: any) => {
+          return (resp?.result || []).map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+        }),
+    },
+    {
       title: '接入方式',
       dataIndex: 'accessId',
       width: 150,

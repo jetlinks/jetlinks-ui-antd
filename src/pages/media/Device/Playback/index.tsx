@@ -117,6 +117,7 @@ export default () => {
         });
         setLoading(false);
         let newList: recordsItemType[] = serviceResp.result;
+        // console.log(newList)
 
         if (serviceResp.status === 200 && serviceResp.result) {
           // 判断是否已下载云端视频
@@ -126,7 +127,7 @@ export default () => {
               isServer: serviceResp.result.length
                 ? serviceResp.result.some(
                     (serverFile: any) =>
-                      item.startTime >= serverFile.streamStartTime &&
+                      item.startTime <= serverFile.streamStartTime &&
                       serverFile.streamEndTime <= item.endTime,
                   )
                 : false,
@@ -278,7 +279,6 @@ export default () => {
               itemStyle={{ minWidth: 0, width: '100%' }}
               onSelect={(key: string) => {
                 setType(key);
-                console.log(key);
                 if (key === 'cloud') {
                   queryServiceRecords(time!);
                 } else {
