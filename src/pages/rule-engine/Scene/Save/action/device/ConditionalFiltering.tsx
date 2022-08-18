@@ -267,6 +267,9 @@ export default (props: ConditionalFilteringProps) => {
                       },
                     ]);
                   } else {
+                    // console.log(2222222222)
+                    // console.log(props.form.getFieldValue([props.name, 'terms', 0, 'value', 'value']))
+                    // props.form.resetFields([props.name, 'terms', 0, 'value', 'value'])
                     props.form.setFields([
                       {
                         name: [props.name, 'terms', 0, 'value', 'value'],

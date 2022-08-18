@@ -199,7 +199,7 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'opcua',
           tab: 'OPC UA',
-          component: <Opcua />,
+          component: <Opcua data={InstanceModel.detail} />,
         });
       }
       if (response.result.deviceType?.value === 'gateway') {

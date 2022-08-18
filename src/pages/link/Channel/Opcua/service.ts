@@ -66,7 +66,7 @@ class Service extends BaseService<OpaUa> {
       method: 'POST',
       data: params,
     });
-  editPoint = (params: any, id: string) =>
+  editPoint = (id: string, params: any) =>
     request(`/${SystemConst.API_BASE}/opc/point/${id}`, {
       method: 'PUT',
       data: params,
@@ -87,6 +87,11 @@ class Service extends BaseService<OpaUa> {
     });
   noPagingOpcua = (data: any) =>
     request(`/${SystemConst.API_BASE}/opc/client/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
+  queryPoint = (opcUaId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/opc/point/${opcUaId}/_query`, {
       method: 'POST',
       data,
     });
