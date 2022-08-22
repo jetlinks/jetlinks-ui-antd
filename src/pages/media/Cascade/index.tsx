@@ -207,7 +207,7 @@ const Cascade = () => {
       ellipsis: true,
       fixed: 'right',
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       render: (text, record) => [
         <PermissionButton
           isPermission={permission.update}

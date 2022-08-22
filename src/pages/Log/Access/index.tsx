@@ -102,7 +102,7 @@ const Access = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       fixed: 'right',
       render: (text, record) => [
         <a

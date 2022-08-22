@@ -101,8 +101,8 @@ const System = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
-      width: 200,
+      align: 'left',
+      width: 100,
       fixed: 'right',
       render: (text, record) => [
         <a

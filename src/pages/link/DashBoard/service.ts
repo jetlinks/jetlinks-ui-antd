@@ -3,8 +3,7 @@ import SystemConst from '@/utils/const';
 import { request } from 'umi';
 
 class Service extends BaseService<any> {
-  serverNode = () =>
-    request(`/${SystemConst.API_BASE}/network/resources/clusters`, { method: 'GET' });
+  serverNode = () => request(`/${SystemConst.API_BASE}/dashboard/cluster/nodes`, { method: 'GET' });
 
   /**
    * echarts数据

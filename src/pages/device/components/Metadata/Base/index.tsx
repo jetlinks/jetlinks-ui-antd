@@ -74,7 +74,7 @@ const BaseMetadata = observer((props: Props) => {
     {
       title: '操作',
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 200,
       render: (_: unknown, record: MetadataItem) => [
         <PermissionButton

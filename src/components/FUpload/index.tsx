@@ -23,7 +23,7 @@ const FUpload = connect((props: Props) => {
       const api = await service.querySystemApi(['paths']);
       const f = {
         ...result,
-        url: `${api?.result[0]?.properties?.basePath}/file/${result?.id}?accessKey=${result?.others?.accessKey}`,
+        url: `${api?.result[0]?.properties['base-path']}/file/${result?.id}?accessKey=${result?.others?.accessKey}`,
       };
       setUrl(f.url);
       props.onChange(f);

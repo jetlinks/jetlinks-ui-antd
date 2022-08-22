@@ -57,7 +57,7 @@ const Relationship = () => {
     {
       title: '操作',
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 200,
       fixed: 'right',
       render: (text, record) => [

@@ -140,7 +140,8 @@ export default observer(() => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      width: 240,
+      width: 140,
+      align: 'left',
       fixed: 'right',
       render: (_, record) => [
         <Button

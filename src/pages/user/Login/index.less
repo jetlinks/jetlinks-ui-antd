@@ -65,13 +65,17 @@
         .desc {
           margin-top: 12px;
           margin-bottom: 40px;
-          color: @text-color-secondary;
-          font-size: @font-size-base;
+          // color: @heading-color;
+          color: rgb(0 0 0 / 70%);
+          font-weight: 600;
+          font-size: 22px;
+          font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
         }
 
         .main {
           width: 70%;
           margin: 60px auto 0;
+
           @media screen and (max-width: @screen-sm) {
             width: 95%;
             max-width: 328px;
@@ -82,10 +86,12 @@
               margin: auto;
               font-size: 16px;
             }
+
             .ant-formily-item-size-large .ant-formily-item-help {
               text-align: left;
             }
           }
+
           .icon {
             margin-left: 16px;
             color: rgba(0, 0, 0, 0.2);

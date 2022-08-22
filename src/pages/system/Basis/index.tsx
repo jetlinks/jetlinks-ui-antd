@@ -27,7 +27,7 @@ const Basis = () => {
       form.setFieldsValue({
         ...basis[0].properties,
         apikey: api[0].properties.api,
-        basePath: basePath[0].properties.basePath,
+        'base-path': basePath[0].properties['base-path'],
       });
       setInitialState({
         ...initialState,
@@ -46,7 +46,7 @@ const Basis = () => {
           properties: {
             ...formData,
             apikey: '',
-            basePath: '',
+            'base-path': '',
           },
         },
         {
@@ -58,8 +58,11 @@ const Basis = () => {
         {
           scope: 'paths',
           properties: {
-            basePath: formData.basePath,
+            'base-path': formData['base-path'],
           },
+          // properties: {
+          //   basePath: formData.basePath,
+          // },
         },
       ];
       const res = await service.save(item);
@@ -109,7 +112,7 @@ const Basis = () => {
               </Form.Item>
               <Form.Item
                 label="base-path"
-                name="basePath"
+                name="base-path"
                 tooltip="访问后台服务器的url"
                 required
                 rules={[{ required: true, message: 'base-path必填' }]}

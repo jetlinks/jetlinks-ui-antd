@@ -160,7 +160,7 @@ const NewOpc = () => {
     {
       title: '操作',
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 120,
       fixed: 'right',
       render: (text, record) => [
@@ -311,8 +311,8 @@ const NewOpc = () => {
       })
         ?.pipe(map((res: any) => res.payload))
         .subscribe((payload: any) => {
-          const { value } = payload;
-          current[value.property] = value.formatValue;
+          const { pointId, parseData } = payload;
+          current[pointId] = parseData;
           setCurrentData({ ...current });
         });
     }
