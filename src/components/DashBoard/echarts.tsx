@@ -60,7 +60,7 @@ export default (props: EchartsProps) => {
 
   const initEcharts = (dom: HTMLDivElement) => {
     chartsRef.current = chartsRef.current || echarts.init(dom);
-
+    // chartsRef.current.clear()
     if (props.options) {
       chartsRef.current.setOption(props.options);
     } else {
@@ -80,6 +80,7 @@ export default (props: EchartsProps) => {
     return () => {
       (window as Window).removeEventListener('resize', updateSize);
       if (chartsRef.current) {
+        // chartsRef.current.clear();
         chartsRef.current.dispose();
         chartsRef.current = null;
       }
@@ -88,6 +89,7 @@ export default (props: EchartsProps) => {
 
   useEffect(() => {
     if (chartsRef.current && props.options) {
+      // chartsRef.current.clear()
       chartsRef.current.setOption(props.options);
     }
   }, [props.options, chartsRef.current]);

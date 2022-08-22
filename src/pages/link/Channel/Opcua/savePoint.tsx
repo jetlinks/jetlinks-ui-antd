@@ -87,15 +87,15 @@ const SavePoint = (props: Props) => {
               required
               rules={[
                 { required: true, message: '点位ID必填' },
-                ({}) => ({
-                  validator(_, value) {
-                    const item = value.substring(0, 2);
-                    if (item === 'i=' || item === 's=' || item === 'g=' || item === 'b=') {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('前两个字符必须为i=、s=、g=、b=中的一个'));
-                  },
-                }),
+                // ({}) => ({
+                //   validator(_, value) {
+                //     const item = value.substring(0, 2);
+                //     if (item === 'i=' || item === 's=' || item === 'g=' || item === 'b=') {
+                //       return Promise.resolve();
+                //     }
+                //     return Promise.reject(new Error('前两个字符必须为i=、s=、g=、b=中的一个'));
+                //   },
+                // }),
               ]}
             >
               <Input placeholder="请输入点位ID" />

@@ -24,7 +24,7 @@ const Basis = forwardRef((props: Props, ref) => {
             properties: {
               ...formData,
               apikey: '',
-              basePath: '',
+              'base-path': '',
             },
           },
           {
@@ -36,7 +36,7 @@ const Basis = forwardRef((props: Props, ref) => {
           {
             scope: 'paths',
             properties: {
-              basePath: formData.basePath,
+              'base-path': formData['base-path'],
             },
           },
         ];
@@ -83,7 +83,7 @@ const Basis = forwardRef((props: Props, ref) => {
         ico: require('/public/favicon.ico'),
         backgroud: require('/public/images/login.png'),
         apikey: '',
-        basePath: `${window.location.origin}/api`,
+        'base-path': `${window.location.origin}/api`,
       }}
     >
       <Row gutter={[24, 24]}>
@@ -115,7 +115,7 @@ const Basis = forwardRef((props: Props, ref) => {
           </Form.Item>
           <Form.Item
             label="base-path"
-            name="basePath"
+            name="base-path"
             tooltip="系统后台访问的url"
             required
             rules={[{ required: true, message: 'base-path必填' }]}

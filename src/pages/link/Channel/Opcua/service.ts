@@ -31,31 +31,7 @@ class Service extends BaseService<OpaUa> {
       method: 'GET',
       params,
     });
-  getDevice = (params?: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/_query`, {
-      method: 'POST',
-      data: params,
-    });
-  //绑定设备
-  bind = (params: any) =>
-    request(`/${SystemConst.API_BASE}/opc/device-bind/batch/_create`, {
-      method: 'POST',
-      data: params,
-    });
-  getBindList = (params: any) =>
-    request(`/${SystemConst.API_BASE}/opc/device-bind/device-details/_query/no-paging`, {
-      method: 'GET',
-      params,
-    });
-  unbind = (params: any, opcUaId: string) =>
-    request(`${SystemConst.API_BASE}/opc/device-bind/batch/${opcUaId}/_delete`, {
-      method: 'POST',
-      data: params,
-    });
-  deviceDetail = (id: any) =>
-    request(`${SystemConst.API_BASE}/device-instance/${id}/detail`, {
-      method: 'GET',
-    });
+
   addPoint = (params: any) =>
     request(`${SystemConst.API_BASE}/opc/point`, {
       method: 'POST',
@@ -63,6 +39,11 @@ class Service extends BaseService<OpaUa> {
     });
   PointList = (params: any) =>
     request(`${SystemConst.API_BASE}/opc/point/_query`, {
+      method: 'POST',
+      data: params,
+    });
+  getPoint = (params: any) =>
+    request(`${SystemConst.API_BASE}/opc/point/_query/no-paging`, {
       method: 'POST',
       data: params,
     });
@@ -80,11 +61,6 @@ class Service extends BaseService<OpaUa> {
       method: 'POST',
       data,
     });
-  stopPoint = (bindDeviceId: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/opc/device-bind/points/${bindDeviceId}/_stop`, {
-      method: 'POST',
-      data,
-    });
   noPagingOpcua = (data: any) =>
     request(`/${SystemConst.API_BASE}/opc/client/_query/no-paging`, {
       method: 'POST',
@@ -93,6 +69,23 @@ class Service extends BaseService<OpaUa> {
   queryPoint = (opcUaId: string, data: any) =>
     request(`/${SystemConst.API_BASE}/opc/point/${opcUaId}/_query`, {
       method: 'POST',
+      data,
+    });
+  removeDevicePoint = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${deviceId}/_delete`, {
+      method: 'POST',
+      data,
+    });
+  //查询设备点位映射配置
+  getDevicePoint = (deviceId: string, param?: string) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${deviceId}/_query`, {
+      method: 'GET',
+      param,
+    });
+  //保存设备绑定点位映射配置
+  saveDevicePoint = (deviceId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${deviceId}/OPC_UA`, {
+      method: 'PATCH',
       data,
     });
 }

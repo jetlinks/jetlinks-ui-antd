@@ -1,5 +1,5 @@
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
-import { createForm, Field, onFieldReact, FormPath, onFieldChange } from '@formily/core';
+import { createForm, Field, onFieldReact, FormPath } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
 import { Badge, Card, Empty, Input, Tooltip } from 'antd';
 import { action } from '@formily/reactive';
@@ -7,7 +7,7 @@ import type { Response } from '@/utils/typings';
 import './index.less';
 import { useDomFullHeight } from '@/hooks';
 import PermissionButton from '@/components/PermissionButton';
-import { service } from '@/pages/link/Channel/Modbus';
+import { service } from '@/pages/link/Channel/Opcua';
 import { useEffect, useState } from 'react';
 import { DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
@@ -19,23 +19,14 @@ interface Props {
 export default (props: Props) => {
   const { data } = props;
   const { minHeight } = useDomFullHeight('.modbus');
-  const { permission } = PermissionButton.usePermission('link/Channel/Modbus');
+  const { permission } = PermissionButton.usePermission('link/Channel/Opcua');
   const [properties, setProperties] = useState<any>([]);
   const [filterList, setFilterList] = useState<any>([]);
   const [masterList, setMasterList] = useState<any>([]);
-  const [typeList, setTypeList] = useState<any>([]);
   const [reload, setReload] = useState<string>('');
   const [empty, setEmpty] = useState<boolean>(false);
 
   //数据类型长度
-  const lengthMap = new Map();
-  lengthMap.set('int8', 1);
-  lengthMap.set('int16', 2);
-  lengthMap.set('int32', 4);
-  lengthMap.set('int64', 8);
-  lengthMap.set('ieee754_float', 4);
-  lengthMap.set('ieee754_double', 8);
-  lengthMap.set('hex', 1);
 
   const Render = (propsText: any) => {
     const text = properties.find((item: any) => item.metadataId === propsText.value);
@@ -84,7 +75,7 @@ export default (props: Props) => {
 
   //异步数据源
   const getMaster = () =>
-    service.queryMaster({
+    service.noPagingOpcua({
       paging: false,
       sorts: [
         {
@@ -112,62 +103,11 @@ export default (props: Props) => {
       ],
       terms: [
         {
-          column: 'masterId',
+          column: 'opcUaId',
           value: collectorId,
         },
       ],
     });
-  };
-
-  const getQuantity = async (field: any) => {
-    const path = FormPath.transform(
-      field.path,
-      /\d+/,
-      (index) => `array.${parseInt(index)}.collectorId`,
-    );
-    const path1 = FormPath.transform(
-      field.path,
-      /\d+/,
-      (index) => `array.${parseInt(index)}.pointId`,
-    );
-    const collectorId = field.query(path).get('value');
-    const pointId = field.query(path1).get('value');
-    if (collectorId && pointId) {
-      return service.getPoint({
-        paging: false,
-        sorts: [
-          {
-            name: 'createTime',
-            order: 'desc',
-          },
-        ],
-        terms: [
-          {
-            column: 'masterId',
-            value: collectorId,
-          },
-          {
-            column: 'id',
-            value: pointId,
-          },
-        ],
-      });
-    } else {
-      return [];
-    }
-  };
-  const useAsync = (api: any) => (field: Field) => {
-    field.loading = true;
-    api(field).then(
-      action.bound!((resp: Response<any>) => {
-        const value = resp.result?.[0].parameter.quantity || '';
-        field.dataSource = [...new Array(value * 2).keys()].map((item: any) => ({
-          label: item,
-          value: item,
-        }));
-        field.loading = false;
-      }),
-    );
   };
 
   const useAsyncDataSource = (api: any) => (field: Field) => {
@@ -175,7 +115,7 @@ export default (props: Props) => {
     api(field).then(
       action.bound!((resp: Response<any>) => {
         field.dataSource = resp.result?.map((item: any) => ({
-          label: `${item.name}(${item.unitId}/${item.address}/${item.function.text})`,
+          label: `${item.name}(${item.opcPointId}/${item.dataMode?.text})`,
           value: item.id,
         }));
         field.loading = false;
@@ -193,7 +133,7 @@ export default (props: Props) => {
 
   useEffect(() => {
     service
-      .queryMaster({
+      .noPagingOpcua({
         paging: false,
         sorts: [
           {
@@ -211,18 +151,8 @@ export default (props: Props) => {
           setMasterList(list);
         }
       });
-    service.dataType().then((res) => {
-      if (res.status === 200) {
-        const items = res.result.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setTypeList(items);
-      }
-    });
   }, []);
   useEffect(() => {
-    console.log(typeList);
     const metadata = JSON.parse(data.metadata).properties?.map((item: any) => ({
       metadataId: item.id,
       metadataName: `${item.name}(${item.id})`,
@@ -282,11 +212,6 @@ export default (props: Props) => {
           /\d+/,
           (index) => `array.${parseInt(index)}.pointId`,
         );
-        const path1 = FormPath.transform(
-          field.path,
-          /\d+/,
-          (index) => `array.${parseInt(index)}.codec`,
-        );
         f.setFieldState(path, (state) => {
           if (value) {
             state.required = true;
@@ -296,34 +221,6 @@ export default (props: Props) => {
             form.validate();
           }
         });
-        f.setFieldState(path1, (state) => {
-          if (value) {
-            state.required = true;
-            form.validate();
-          } else {
-            state.required = false;
-            form.validate();
-          }
-        });
-      });
-      onFieldChange('array.*.codec', (field: any) => {
-        const value = (field as Field).value;
-        const path = FormPath.transform(
-          field.path,
-          /\d+/,
-          (index) => `array.${parseInt(index)}.codecConfiguration.readIndex`,
-        );
-        if ((field as Field).modified) {
-          const readIndex = field.query(path).get('value');
-          const dataLength = field.query(path).get('dataSource')?.length - 1;
-          const length = lengthMap.get(value) + readIndex;
-          console.log(length, dataLength);
-          if (length > dataLength) {
-            field.selfErrors = '数据类型对应的长度和起始位置加起来不能超过数据长度';
-          } else {
-            field.selfErrors = '';
-          }
-        }
       });
     },
   });
@@ -384,7 +281,7 @@ export default (props: Props) => {
                 title: (
                   <>
                     点位名称
-                    <Tooltip title="名称(从站ID/地址/功能码)">
+                    <Tooltip title="名称(点位ID/数据模式)">
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </>
@@ -487,10 +384,7 @@ export default (props: Props) => {
           </div>
           <div className="edit-table">
             <FormProvider form={form}>
-              <SchemaField
-                schema={schema}
-                scope={{ useAsyncDataSource, getName, getMaster, getQuantity, useAsync }}
-              />
+              <SchemaField schema={schema} scope={{ useAsyncDataSource, getName, getMaster }} />
             </FormProvider>
           </div>
         </>

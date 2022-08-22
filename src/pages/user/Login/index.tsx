@@ -95,6 +95,7 @@ const Login: React.FC = () => {
         const ico: any = document.querySelector('link[rel="icon"]');
         ico.href = res.result.ico;
         setBasis(res.result);
+        console.log(res.result);
         if (res.result.title) {
           document.title = res.result.title;
         } else {
@@ -232,16 +233,10 @@ const Login: React.FC = () => {
             <div className={styles.top}>
               <div className={styles.header}>
                 <Link to="/">
-                  <img alt="logo" className={styles.logo} src="/logo.svg" />
-                  {/*<span className={styles.title}>{SystemConst.SYSTEM_NAME}</span>*/}
+                  <img alt="logo" className={styles.logo} src={basis.logo || '/logo.svg'} />
                 </Link>
               </div>
-              <div className={styles.desc}>
-                {intl.formatMessage({
-                  id: 'pages.layouts.userLayout.title',
-                  defaultMessage: 'Jetlinks',
-                })}
-              </div>
+              <div className={styles.desc}>{basis.title || SystemConst.SYSTEM_NAME}</div>
               <div className={styles.main}>
                 <Form form={loginForm} layout="horizontal" size="large" onAutoSubmit={doLogin}>
                   <SchemaField schema={schema} />

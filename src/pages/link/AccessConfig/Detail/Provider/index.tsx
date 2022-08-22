@@ -12,6 +12,7 @@ const Provider = (props: Props) => {
   const [dataSource, setDataSource] = useState<any[]>([]);
 
   useEffect(() => {
+    console.log(props.data);
     const media: any[] = [];
     const network: any[] = [];
     const cloud: any[] = [];
@@ -70,7 +71,7 @@ const Provider = (props: Props) => {
 
   return (
     <div>
-      {dataSource.map((i) => (
+      {/* {dataSource.map((i) => (
         <Card key={i.type} style={{ marginTop: 20 }}>
           <TitleComponent data={i.title} />
           <Row gutter={[24, 24]}>
@@ -107,7 +108,51 @@ const Provider = (props: Props) => {
             ))}
           </Row>
         </Card>
-      ))}
+      ))} */}
+      {dataSource.map((i) => {
+        if (i.list && i.list.length !== 0) {
+          return (
+            <Card key={i.type} style={{ marginTop: 20 }}>
+              <TitleComponent data={i.title} />
+              <Row gutter={[24, 24]}>
+                {(i?.list || []).map((item: any) => (
+                  <Col key={item.name} span={12}>
+                    <div className={styles.provider}>
+                      <div className={styles.box}>
+                        <div className={styles.left}>
+                          <div className={styles.images}>
+                            <img src={backMap.get(item.id)} />
+                          </div>
+                          <div className={styles.context}>
+                            <div style={{ fontWeight: 600 }}>{item.name}</div>
+                            <div className={styles.desc}>
+                              <Tooltip title={item?.description || ''}>
+                                {item?.description || ''}
+                              </Tooltip>
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ width: '70px' }}>
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              props.change(item, i.type);
+                            }}
+                          >
+                            接入
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </Col>
+                ))}
+              </Row>
+            </Card>
+          );
+        } else {
+          return <></>;
+        }
+      })}
     </div>
   );
 };

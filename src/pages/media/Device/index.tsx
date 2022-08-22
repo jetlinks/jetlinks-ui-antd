@@ -126,6 +126,25 @@ const Device = () => {
         defaultMessage: '设备厂家',
       }),
     },
+    {
+      title: intl.formatMessage({
+        id: 'pages.table.productName',
+        defaultMessage: '产品名称',
+      }),
+      dataIndex: 'productId',
+      ellipsis: true,
+      valueType: 'select',
+      hideInTable: false,
+      request: async () => {
+        const res = await service.getProductList();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
+      // render: (_, row) => row.productName,
+      filterMultiple: true,
+    },
     // {
     //   dataIndex: 'model',
     //   title: intl.formatMessage({
@@ -189,7 +208,7 @@ const Device = () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 200,
       fixed: 'right',
       render: (text, record) => [

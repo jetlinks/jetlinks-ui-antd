@@ -15,6 +15,7 @@ interface Props {
 const ManualInspection = (props: Props) => {
   const { data } = props;
   const { permission } = PermissionButton.usePermission('device/Product');
+  const { update } = PermissionButton.usePermission('device/Instance').permission;
 
   const history = useHistory<Record<string, string>>();
 
@@ -214,7 +215,7 @@ const ManualInspection = (props: Props) => {
       width={900}
       footer={[
         <PermissionButton
-          isPermission={permission.update}
+          isPermission={data.type === 'product' ? permission.update : update}
           // type={'link'}
           key="back"
           style={{ marginRight: 10 }}

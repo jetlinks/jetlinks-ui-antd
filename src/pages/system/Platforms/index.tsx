@@ -113,7 +113,7 @@ export default () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 250,
       fixed: 'right',
       render: (_, record: any) => [

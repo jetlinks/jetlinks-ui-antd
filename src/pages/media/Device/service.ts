@@ -30,6 +30,12 @@ class Service extends BaseService<DeviceItem> {
     request(`/${SystemConst.API_BASE}/gateway/device/detail/_query`, { method: 'POST', data });
   //视频设备详情
   getDetail = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
+  // 查询产品列表
+  getProductList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;

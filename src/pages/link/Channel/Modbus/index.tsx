@@ -201,7 +201,7 @@ const NewModbus = () => {
     {
       title: '操作',
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 120,
       fixed: 'right',
       render: (text, record) => [

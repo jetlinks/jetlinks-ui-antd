@@ -138,7 +138,7 @@ export default () => {
         defaultMessage: '操作',
       }),
       valueType: 'option',
-      align: 'center',
+      align: 'left',
       width: 200,
       render: (_, record) => [
         <Tooltip

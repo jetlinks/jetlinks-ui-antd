@@ -23,7 +23,7 @@ const FileUpload = connect((props: Props) => {
       onlyMessage('上传成功！');
       const result = info.file.response?.result;
       const api = await service.querySystemApi(['paths']);
-      const f = `${api?.result[0]?.properties?.basePath}/file/${result?.id}?accessKey=${result?.others?.accessKey}`;
+      const f = `${api?.result[0]?.properties['base-path']}/file/${result?.id}?accessKey=${result?.others?.accessKey}`;
       setUrl(f);
       setLoading(false);
       props.onChange(f);
