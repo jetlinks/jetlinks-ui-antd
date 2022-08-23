@@ -7,10 +7,11 @@ import Editor from '@/components/FRuleEditor/Editor';
 interface Props {
   model: 'advance' | 'simple';
   onChange: (value: 'advance' | 'simple') => void;
+  virtualRule?: any;
 }
 
 const Advance = (props: Props) => {
-  const { model, onChange } = props;
+  const { model, onChange, virtualRule } = props;
   return (
     <Modal
       maskClosable={false}
@@ -23,7 +24,7 @@ const Advance = (props: Props) => {
       <div className={styles.box}>
         <div className={styles.left}>
           <Editor mode="advance" />
-          <Debug />
+          <Debug virtualRule={virtualRule} />
         </div>
         <div className={styles.right}>
           <Operator />

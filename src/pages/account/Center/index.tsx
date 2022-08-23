@@ -39,11 +39,15 @@ const Center = () => {
   const [bindList, setBindList] = useState<any>([]);
 
   const iconMap = new Map();
-  iconMap.set('dingtalk', require('/public/images/notice/dingtalk.png'));
+  iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));
   iconMap.set('wechat-webapp', require('/public/images/notice/wechat.png'));
 
+  const nameMap = new Map();
+  nameMap.set('dingtalk-ent-app', '钉钉');
+  nameMap.set('wechat-webapp', '微信');
+
   const bGroundMap = new Map();
-  bGroundMap.set('dingtalk', require('/public/images/notice/dingtalk-background.png'));
+  bGroundMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk-background.png'));
   bGroundMap.set('wechat-webapp', require('/public/images/notice/wechat-background.png'));
 
   const getDetail = () => {
@@ -109,14 +113,14 @@ const Center = () => {
     });
   };
   const getBindInfo = () => {
-    service.bindInfo().then((res) => {
+    service.getSsoBinds().then((res) => {
       if (res.status === 200) {
         setBindList(res.result);
       }
     });
   };
-  const unBind = (type: string, provider: string) => {
-    service.unbind(type, provider).then((res) => {
+  const unBind = (appId: string) => {
+    service.unbind(appId).then((res) => {
       if (res.status === 200) {
         onlyMessage('解绑成功');
         getBindInfo();
@@ -182,7 +186,6 @@ const Center = () => {
             </Descriptions>
           </div>
           <a>
-            {' '}
             <EditOutlined
               className={styles.action}
               onClick={() => {
@@ -244,17 +247,17 @@ const Center = () => {
       >
         <Row gutter={[24, 24]}>
           {bindList.map((item: any) => (
-            <Col key={item.type}>
+            <Col key={item.id}>
               <Card
                 style={{
-                  background: `url(${bGroundMap.get(item.type)}) no-repeat`,
+                  background: `url(${bGroundMap.get(item.provider)}) no-repeat`,
                   backgroundSize: '100% 100%',
                   width: 415,
                 }}
               >
                 <div className={styles.bind}>
                   <div>
-                    <img style={{ height: 56 }} src={iconMap.get(item.type)} />
+                    <img style={{ height: 56 }} src={iconMap.get(item.provider)} />
                   </div>
                   <div>
                     {item.bound ? (
@@ -272,9 +275,7 @@ const Center = () => {
                         </div>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '22px' }}>{`${
-                        item.type === 'dingtalk' ? '钉钉' : '微信'
-                      }未绑定`}</div>
+                      <div style={{ fontSize: '22px' }}>{nameMap.get(item.provider)}未绑定</div>
                     )}
                   </div>
                   <div>
@@ -282,7 +283,7 @@ const Center = () => {
                       <Popconfirm
                         title="确认解除绑定嘛?"
                         onConfirm={() => {
-                          unBind(item.type, item.provider);
+                          unBind(item.id);
                         }}
                       >
                         <Button>解除绑定</Button>
@@ -291,7 +292,9 @@ const Center = () => {
                       <Button
                         type="primary"
                         onClick={() => {
-                          window.open(`/${SystemConst.API_BASE}/sso/${item.provider}/login`);
+                          window.open(
+                            `/${SystemConst.API_BASE}/application/sso/${item.id}/login?autoCreateUser=false&redirect=/account/center/bind`,
+                          );
                           // window.open(`/#/account/center/bind`);
                           localStorage.setItem('onBind', 'false');
                           localStorage.setItem('onLogin', 'yes');

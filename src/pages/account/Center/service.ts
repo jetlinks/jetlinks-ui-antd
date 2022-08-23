@@ -45,21 +45,34 @@ class Service extends BaseService<UserItem> {
       data: password,
     });
   bindInfo = (params?: any) =>
-    request(`/${SystemConst.API_BASE}/sso/me/bindings`, {
+    request(`/${SystemConst.API_BASE}/application/sso/me/bindings`, {
       method: 'GET',
       params,
     });
   bindUserInfo = (code: string) =>
-    request(`/${SystemConst.API_BASE}/sso/bind-code/${code}`, {
+    request(`/${SystemConst.API_BASE}/application/sso/bind-code/${code}`, {
       method: 'GET',
     });
   bind = (code: string) =>
-    request(`/${SystemConst.API_BASE}/sso/me/bind/${code}`, {
+    request(`/${SystemConst.API_BASE}/application/sso/me/bind/${code}`, {
       method: 'POST',
     });
-  unbind = (type: string, provider: string) =>
-    request(`/${SystemConst.API_BASE}/sso/me/${type}/${provider}/unbind`, {
+  unbind = (appId: string) =>
+    request(`/${SystemConst.API_BASE}/application/sso/${appId}/unbind/me`, {
       method: 'POST',
+    });
+  getSso = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/application/sso/_all`, {
+      method: 'GET',
+      params,
+    });
+  getSsoBinds = () =>
+    request(`/${SystemConst.API_BASE}/application/sso/me/bindings`, {
+      method: 'GET',
+    });
+  settingDetail = (scopes: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/${scopes}`, {
+      method: 'GET',
     });
 }
 

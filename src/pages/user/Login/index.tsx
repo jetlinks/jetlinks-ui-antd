@@ -23,7 +23,7 @@ const Login: React.FC = () => {
   const intl = useIntl();
 
   const iconMap = new Map();
-  iconMap.set('dingtalk', require('/public/images/bind/dingtalk.png'));
+  iconMap.set('dingtalk-ent-app', require('/public/images/bind/dingtalk.png'));
   iconMap.set('wechat-webapp', require('/public/images/bind/wechat-webapp.png'));
 
   const fetchUserInfo = async () => {
@@ -266,7 +266,9 @@ const Login: React.FC = () => {
                           onClick={() => {
                             localStorage.setItem('onLogin', 'no');
                             //  window.open(`/#/account/center/bind`);
-                            window.open(`/${SystemConst.API_BASE}/sso/${item.provider}/login`);
+                            window.open(
+                              `/${SystemConst.API_BASE}/application/sso/${item.id}/login?redirect=/account/center/bind`,
+                            );
                             window.onstorage = (e) => {
                               if (e.newValue) {
                                 window.location.href = '/';
@@ -274,7 +276,7 @@ const Login: React.FC = () => {
                             };
                           }}
                         >
-                          <img src={iconMap.get(item.type)} />
+                          <img src={iconMap.get(item.provider)} />
                         </Button>
                       ))}
                     </div>

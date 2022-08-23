@@ -1,7 +1,7 @@
 import { Button, Drawer, message } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
 import MetadataModel from '../model';
-import type { Field, IFieldState } from '@formily/core';
+import { Field, IFieldState } from '@formily/core';
 import {
   createForm,
   onFieldInit,
@@ -493,7 +493,7 @@ const Edit = observer((props: Props) => {
               dependencies: ['..virtualRule.windowType'],
               fulfill: {
                 state: {
-                  value: "{{$self.value?'window':'script'}}",
+                  value: "{{ $self.value?'window':'script'}}",
                 },
               },
             },
@@ -504,13 +504,14 @@ const Edit = observer((props: Props) => {
             'x-visible': false,
             'x-reactions': [
               {
-                dependencies: ['..source', 'id'],
+                dependencies: ['..source', 'id', '..virtualRule'],
                 fulfill: {
                   state: {
                     visible: '{{$deps[0]==="rule"}}',
                   },
                   schema: {
                     'x-component-props.property': '{{$deps[1]}}',
+                    'x-component-props.virtualRule': '{{$deps[2]}}',
                   },
                 },
               },
