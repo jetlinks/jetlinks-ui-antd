@@ -21,6 +21,7 @@ import {
 } from '@ant-design/icons';
 import TimeLine from './timeLine';
 import { RadioCard } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 const service = new Service('media');
 
@@ -56,6 +57,9 @@ const IconNode = (props: IconNodeType) => {
         endTime: item.endTime,
       })
       .then((res) => {
+        if (res.status === 200) {
+          onlyMessage('操作成功。上传云端需要一定时间，请稍后查看云端数据');
+        }
         setStatus(res.status === 200 ? 2 : 0);
       });
   };

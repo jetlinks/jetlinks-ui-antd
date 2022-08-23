@@ -23,11 +23,13 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   property?: string;
+  virtualRule?: any;
 }
 
 const FRuleEditor = observer((props: Props) => {
-  const { value, onChange, property } = props;
+  const { value, onChange, property, virtualRule } = props;
   useEffect(() => {
+    console.log(virtualRule, 111111111);
     State.property = property;
     const subscription = Store.subscribe('rule-editor-value', onChange);
     State.code = value;
@@ -45,6 +47,7 @@ const FRuleEditor = observer((props: Props) => {
       />
       <Advance
         model={State.model}
+        virtualRule={virtualRule}
         onChange={(v) => {
           State.model = v;
         }}

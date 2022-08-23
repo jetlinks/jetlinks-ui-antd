@@ -14,7 +14,7 @@ const Bind = () => {
   const [form] = Form.useForm();
   const [bindUser, setBindUser] = useState<any>();
   const [user, setUser] = useState<any>();
-  const [code, setCode] = useState<string>('');
+  const [code, setCode] = useState<any>('');
   const [isLogin, setIslogin] = useState<any>('yes');
   const { initialState, setInitialState } = useModel('@@initialState');
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
@@ -25,10 +25,10 @@ const Bind = () => {
   const logo = require('/public/images/bind/jetlinksLogo.png');
 
   const iconMap = new Map();
-  iconMap.set('dingtalk', require('/public/images/notice/dingtalk.png'));
+  iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));
   iconMap.set('wechat-webapp', require('/public/images/notice/wechat.png'));
 
-  const bindUserInfo = (params: string) => {
+  const bindUserInfo = (params: any) => {
     service.bindUserInfo(params).then((res) => {
       if (res.status === 200) {
         setBindUser(res.result);
@@ -57,10 +57,14 @@ const Bind = () => {
       <div className={styles.topimg}>
         <img src={logo} style={{ width: '50px', height: '50px' }} />
         <img src={Vector} style={{ height: '15px', margin: '0 15px' }} />
-        <img src={iconMap.get(bindUser?.type)} style={{ width: '50px', height: '50px' }} />
+        <img
+          src={iconMap.get(bindUser?.applicationProvider)}
+          style={{ width: '50px', height: '50px' }}
+        />
       </div>
       <div className={styles.topfont}>
-        你已通过{bindUser?.type === 'dingtalk' ? '钉钉' : '微信'}授权,完善以下登录信息即可以完成绑定
+        你已通过{bindUser?.type === 'dingtalk-ent-app' ? '钉钉' : '微信'}
+        授权,完善以下登录信息即可以完成绑定
       </div>
       <div className={styles.form}>
         <Form layout="vertical" form={form}>
@@ -136,8 +140,9 @@ const Bind = () => {
   };
 
   useEffect(() => {
-    const params = window.location.href.split('?')[1].split('&')[1].split('=')[1];
-    // const params = 'b584032923c78d69e6148cf0e9312723'
+    const url = new URLSearchParams(window.location.href);
+    const params = url.get('code');
+    // const params = '5c021c8892d4afffd8fd42439c4e2382'
     setCode(params);
     bindUserInfo(params);
     if (localStorage.getItem('onLogin') === 'yes') {
@@ -146,6 +151,17 @@ const Bind = () => {
     if (localStorage.getItem('onLogin')) {
       setIslogin(localStorage.getItem('onLogin'));
     }
+    service.settingDetail('front').then((res) => {
+      if (res.status === 200) {
+        const ico: any = document.querySelector('link[rel="icon"]');
+        ico.href = res.result.ico;
+        if (res.result.title) {
+          document.title = res.result.title;
+        } else {
+          document.title = '';
+        }
+      }
+    });
   }, []);
   useEffect(getCode, []);
 
@@ -181,7 +197,7 @@ const Bind = () => {
                 >
                   <div className={styles.item}>
                     <div style={{ height: 100, marginTop: 10, marginBottom: 10 }}>
-                      <img src={logo} style={{ height: 70 }} />
+                      <img src={user?.avatar || logo} style={{ height: 70 }} />
                     </div>
                     <p className={styles.fonts}>账号：{user?.username}</p>
                     <p className={styles.fonts}>用户名：{user?.name}</p>
@@ -202,10 +218,13 @@ const Bind = () => {
                 >
                   <div className={styles.item}>
                     <div style={{ height: 100, marginTop: 10, marginBottom: 10 }}>
-                      <img style={{ height: 70 }} src={iconMap.get(bindUser?.type)} />
+                      <img
+                        style={{ height: 70 }}
+                        src={iconMap.get(bindUser?.applicationProvider)}
+                      />
                     </div>
-                    <p className={styles.fonts}>账户：{bindUser?.providerName}</p>
-                    <p className={styles.fonts}>用户名：{bindUser?.result.others.name}</p>
+                    <p className={styles.fonts}>用户名：{bindUser?.result?.username || '-'}</p>
+                    <p className={styles.fonts}>名称：{bindUser?.result?.name || '-'}</p>
                   </div>
                 </Card>
               </>

@@ -1,7 +1,7 @@
 import styles from './index.less';
 import { createSchemaField, observer } from '@formily/react';
 import { ArrayTable, Form, FormItem, Input, Select } from '@formily/antd';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
@@ -15,7 +15,11 @@ import DB from '@/db';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { action } from '@formily/reactive';
 
-const Debug = observer(() => {
+interface Props {
+  virtualRule?: any;
+}
+
+const Debug = observer((props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -40,6 +44,9 @@ const Debug = observer(() => {
   };
 
   const getProperty = async () => DB.getDB().table('properties').toArray();
+  const virtualIdRef = useRef(new Date().getTime());
+  const ws = useRef<any>();
+  const [isBeginning, setIsBeginning] = useState<any>(true);
 
   const schema: ISchema = {
     type: 'object',
@@ -144,20 +151,20 @@ const Debug = observer(() => {
       const _item = propertiesList.find((i) => i.id === item.id);
       return { ...item, type: _item?.valueType?.type };
     });
-    subscribeTopic?.(
+    ws.current = subscribeTopic?.(
       `virtual-property-debug-${State.property}-${new Date().getTime()}`,
       '/virtual-property-debug',
       {
-        virtualId: `${new Date().getTime()}-virtual-id`,
+        virtualId: `${virtualIdRef.current}-virtual-id`,
         property: State.property,
         virtualRule: {
-          type: 'script',
-          script: State.code,
+          ...props.virtualRule,
         },
         properties: _properties || [],
       },
     )?.subscribe((data: WebsocketPayload) => {
       State.log.push({ time: new Date().getTime(), content: JSON.stringify(data.payload) });
+      setIsBeginning(true);
     });
   };
   return (
@@ -169,6 +176,16 @@ const Debug = observer(() => {
               属性赋值
               <div className={styles.description}>请对上方规则使用的属性进行赋值</div>
             </div>
+            {!isBeginning && props.virtualRule?.type === 'window' && (
+              <div
+                className={styles.action}
+                onClick={() => {
+                  runScript();
+                }}
+              >
+                <a>发送数据</a>
+              </div>
+            )}
           </div>
         </div>
         <Form form={form}>
@@ -183,11 +200,31 @@ const Debug = observer(() => {
 
           <div className={styles.action}>
             <div>
-              <a onClick={runScript}>开始运行</a>
+              {isBeginning ? (
+                <a
+                  onClick={() => {
+                    setIsBeginning(false);
+                    runScript();
+                  }}
+                >
+                  开始运行
+                </a>
+              ) : (
+                <a
+                  onClick={() => {
+                    setIsBeginning(true);
+                    // ws.current && ws.current.unsubscribe();
+                  }}
+                >
+                  停止运行
+                </a>
+              )}
             </div>
             <div>
               <a
                 onClick={() => {
+                  // console.log(props.virtualRule, 222222222222)
+                  // console.log(virtualIdRef.current)
                   State.log = [];
                 }}
               >

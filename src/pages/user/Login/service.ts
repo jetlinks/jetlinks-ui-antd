@@ -53,7 +53,7 @@ const Service = {
       method: 'GET',
     }),
   bindInfo: (params?: any) =>
-    request(`/${SystemConst.API_BASE}/sso/providers`, {
+    request(`/${SystemConst.API_BASE}/application/sso/_all`, {
       method: 'GET',
       params,
     }),

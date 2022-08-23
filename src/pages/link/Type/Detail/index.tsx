@@ -193,20 +193,24 @@ const Save = observer(() => {
           onFieldReact('grid.cluster.cluster.*.layout2.serverId', async (field, f3) => {
             const value = (field as Field).value;
             const type = (field.query('type').take() as Field).value;
-            const response = await getResourceById(value, type);
-            f3.setFieldState(field.query('.host'), (state) => {
-              state.dataSource = response.map((item) => ({ label: item.host, value: item.host }));
-            });
+            if (value) {
+              const response = await getResourceById(value, type);
+              f3.setFieldState(field.query('.host'), (state) => {
+                state.dataSource = response.map((item) => ({ label: item.host, value: item.host }));
+              });
+            }
           });
           onFieldReact('grid.cluster.cluster.*.layout2.host', async (field, f4) => {
             const host = (field as Field).value;
             const value = (field.query('.serverId').take() as Field)?.value;
             const type = (field.query('type').take() as Field)?.value;
-            const response = await getResourceById(value, type);
-            const _ports = response.find((item) => item.host === host);
-            f4.setFieldState(field.query('.port').take(), async (state) => {
-              state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
-            });
+            if (value) {
+              const response = await getResourceById(value, type);
+              const _ports = response.find((item) => item.host === host);
+              f4.setFieldState(field.query('.port').take(), async (state) => {
+                state.dataSource = _ports?.ports?.map((i: any) => ({ label: i, value: i }));
+              });
+            }
           });
         },
       }),
