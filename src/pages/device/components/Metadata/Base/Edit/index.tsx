@@ -84,6 +84,15 @@ const Edit = observer((props: Props) => {
               (field as any).disabled = true;
             }
           });
+          onFieldReact('expands.virtualRule.windowType', (field, form1) => {
+            // console.log(field.value,111111111)
+            const value = (field as Field).value;
+            if (value) {
+              form1.setFieldState('expands.virtualRule.type', (state) => {
+                state.value = 'window';
+              });
+            }
+          });
           onFieldReact('expands.metrics.*.*', (field, form1) => {
             const type = field.query('valueType.type').take() as Field;
             const componentMap = {
@@ -489,14 +498,14 @@ const Edit = observer((props: Props) => {
             'x-component': 'Input',
             'x-decorator': 'FormItem',
             'x-hidden': true,
-            'x-reactions': {
-              dependencies: ['..virtualRule.windowType'],
-              fulfill: {
-                state: {
-                  value: "{{ $self.value?'window':'script'}}",
-                },
-              },
-            },
+            // 'x-reactions': {
+            //   dependencies: ['..virtualRule.windowType'],
+            //   fulfill: {
+            //     state: {
+            //       value: "{{ $self.value?'window':'script'}}",
+            //     },
+            //   },
+            // },
           },
           'virtualRule.script': {
             type: 'string',

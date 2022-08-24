@@ -29,7 +29,7 @@ interface Props {
 const FRuleEditor = observer((props: Props) => {
   const { value, onChange, property, virtualRule } = props;
   useEffect(() => {
-    console.log(virtualRule, 111111111);
+    // console.log(virtualRule, 111111111);
     State.property = property;
     const subscription = Store.subscribe('rule-editor-value', onChange);
     State.code = value;

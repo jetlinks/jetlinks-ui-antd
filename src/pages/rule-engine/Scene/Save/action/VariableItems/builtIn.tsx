@@ -103,10 +103,11 @@ export default (props: BuiltInProps) => {
 
   useEffect(() => {
     // console.log(props.value,11111)
+    // console.log(props.form.getFieldsValue(),2222)
     setSource(props.value?.source);
     setValue(props.value?.value);
     setUpperKey(props.value?.upperKey);
-  }, []);
+  }, [props.value]);
 
   const itemOnChange = useCallback(
     (_value: any) => {

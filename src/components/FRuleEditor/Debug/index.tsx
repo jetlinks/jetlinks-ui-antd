@@ -1,7 +1,7 @@
 import styles from './index.less';
 import { createSchemaField, observer } from '@formily/react';
 import { ArrayTable, Form, FormItem, Input, Select } from '@formily/antd';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
@@ -46,6 +46,7 @@ const Debug = observer((props: Props) => {
   const getProperty = async () => DB.getDB().table('properties').toArray();
   const virtualIdRef = useRef(new Date().getTime());
   const ws = useRef<any>();
+  const wsAgain = useRef<any>();
   const [isBeginning, setIsBeginning] = useState<any>(true);
 
   const schema: ISchema = {
@@ -151,6 +152,9 @@ const Debug = observer((props: Props) => {
       const _item = propertiesList.find((i) => i.id === item.id);
       return { ...item, type: _item?.valueType?.type };
     });
+    if (ws.current) {
+      ws.current.unsubscribe();
+    }
     ws.current = subscribeTopic?.(
       `virtual-property-debug-${State.property}-${new Date().getTime()}`,
       '/virtual-property-debug',
@@ -167,6 +171,40 @@ const Debug = observer((props: Props) => {
       setIsBeginning(true);
     });
   };
+  const runScriptAgain = async () => {
+    if (wsAgain.current) {
+      wsAgain.current.unsubscribe();
+    }
+    const propertiesList = await DB.getDB().table('properties').toArray();
+    const _properties = form.values?.properties.map((item: any) => {
+      const _item = propertiesList.find((i) => i.id === item.id);
+      return { ...item, type: _item?.valueType?.type };
+    });
+    wsAgain.current = subscribeTopic?.(
+      `virtual-property-debug-${State.property}-${new Date().getTime()}`,
+      '/virtual-property-debug',
+      {
+        virtualId: `${virtualIdRef.current}-virtual-id`,
+        property: State.property,
+        virtualRule: {
+          ...props.virtualRule,
+        },
+        properties: _properties || [],
+      },
+    )?.subscribe(() => {
+      setIsBeginning(true);
+    });
+  };
+  useEffect(() => {
+    return () => {
+      if (ws.current) {
+        ws.current.unsubscribe();
+      }
+      if (wsAgain.current) {
+        wsAgain.current.unsubscribe();
+      }
+    };
+  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -180,10 +218,10 @@ const Debug = observer((props: Props) => {
               <div
                 className={styles.action}
                 onClick={() => {
-                  runScript();
+                  runScriptAgain();
                 }}
               >
-                <a>发送数据</a>
+                <a style={{ marginLeft: 90 }}>发送数据</a>
               </div>
             )}
           </div>
@@ -213,7 +251,9 @@ const Debug = observer((props: Props) => {
                 <a
                   onClick={() => {
                     setIsBeginning(true);
-                    // ws.current && ws.current.unsubscribe();
+                    if (ws.current) {
+                      ws.current.unsubscribe();
+                    }
                   }}
                 >
                   停止运行
