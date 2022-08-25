@@ -20,6 +20,7 @@ export default (props: TableProps) => {
   const [selectKeys, setSelectKeys] = useState<string[]>([]);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [GrantKeys, setGrantKeys] = useState<string[] | undefined>(undefined);
 
   const grantCache = useRef<string[]>([]);
 
@@ -32,12 +33,32 @@ export default (props: TableProps) => {
     );
   };
 
+  const getApiGrant = useCallback(() => {
+    const param = new URLSearchParams(location.search);
+    const code = param.get('code');
+
+    if (props.isOpenGranted === false) {
+      service.apiOperations().then((resp: any) => {
+        if (resp.status === 200) {
+          setGrantKeys(resp.result);
+        }
+      });
+    } else {
+      service.getApiGranted(code!).then((resp: any) => {
+        if (resp.status === 200) {
+          setGrantKeys(resp.result);
+        }
+      });
+    }
+  }, [location, props.isOpenGranted]);
+
   /**
    * 获取已授权的接口ID
    */
   useEffect(() => {
     grantCache.current = props.grantKeys || [];
     setSelectKeys(props.grantKeys || []);
+    setGrantKeys(props.grantKeys);
   }, [props.grantKeys]);
 
   useEffect(() => {
@@ -107,12 +128,14 @@ export default (props: TableProps) => {
       const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
       const resp = await service.apiOperationsAdd(addGrant);
       if (resp.status === 200 || resp2.status === 200) {
+        getApiGrant();
         onlyMessage('操作成功');
       }
     } else {
-      const resp = await service.addApiGrant(code!, { operations: addOperations });
       const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
+      const resp = await service.addApiGrant(code!, { operations: addOperations });
       if (resp.status === 200 || resp2.status === 200) {
+        getApiGrant();
         onlyMessage('操作成功');
       }
     }
@@ -171,7 +194,7 @@ export default (props: TableProps) => {
                       selectedRows
                         .filter((item) => !!item)
                         .map((item) => item.operationId)
-                        .concat(props.grantKeys),
+                        .concat(GrantKeys),
                     );
                   } else {
                     setSelectKeys([]);

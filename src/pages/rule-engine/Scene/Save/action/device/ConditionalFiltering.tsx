@@ -206,7 +206,7 @@ export default (props: ConditionalFilteringProps) => {
         noStyle
         dependencies={[props.name, 'terms', 0, 'column']}
         shouldUpdate={(prevValues, curValues) => {
-          console.log(['actions', `${props.name}`, 'terms', '0', 'column']);
+          // console.log(['actions', `${props.name}`, 'terms', '0', 'column']);
           const pValue = getFormValueByName(
             ['actions', `${props.name}`, 'terms', '0', 'column'],
             prevValues,

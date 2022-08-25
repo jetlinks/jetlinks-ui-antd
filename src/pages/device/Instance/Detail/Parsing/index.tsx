@@ -72,20 +72,13 @@ const Parsing = (props: Props) => {
   const getDeviceCode = (productId: string, deviceId: string) => {
     service.deviceCode(productId, deviceId).then((res) => {
       if (res.status === 200) {
-        // console.log(res.result)
-        if (res.result) {
-          setValue(res.result?.configuration?.script);
-          // setData(res.result);
-        }
         if (res.result?.deviceId) {
           setReadOnly(false);
           setTopTitle('rest');
         } else {
           setReadOnly(true);
           setTopTitle('edit');
-          setValue(
-            '//解码函数\r\nfunction decode(context) {\r\n    //原始报文\r\n    var buffer = context.payload();\r\n    // 转为json\r\n    // var json = context.json();\r\n    //mqtt 时通过此方法获取topic\r\n    // var topic = context.topic();\r\n\r\n    // 提取变量\r\n    // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n    //温度属性\r\n    var temperature = buffer.getShort(3) * 10;\r\n    //湿度属性\r\n    var humidity = buffer.getShort(6) * 10;\r\n    return {\r\n        "temperature": temperature,\r\n        "humidity": humidity\r\n    };\r\n}\r\n',
-          );
+          setValue(res.result?.configuration?.script);
         }
       }
     });
@@ -97,7 +90,6 @@ const Parsing = (props: Props) => {
         onlyMessage('保存成功');
         getDeviceCode(props.data.productId, props.data.id);
       }
-      // console.log(res.result)
     });
   };
   //保存产品解析规则
@@ -170,10 +162,6 @@ const Parsing = (props: Props) => {
       setReadOnly(false);
     }
   }, []);
-
-  // useEffect(() => {
-  //   console.log(value);
-  // }, [value]);
 
   return (
     <Card className="parsing" style={{ minHeight }}>

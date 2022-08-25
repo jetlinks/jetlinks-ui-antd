@@ -20,6 +20,7 @@ import MediaDevice from '@/components/ProTableCard/CardItems/mediaDevice';
 import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import Service from './service';
 import { onlyMessage } from '@/utils/util';
+import encodeQuery from '@/utils/encodeQuery';
 
 export const service = new Service('media/device');
 
@@ -136,7 +137,13 @@ const Device = () => {
       valueType: 'select',
       hideInTable: false,
       request: async () => {
-        const res = await service.getProductList();
+        const res = await service.getProductList(
+          encodeQuery({
+            terms: {
+              messageProtocol$in: ['gb28181-2016', 'fixed-media'],
+            },
+          }),
+        );
         if (res.status === 200) {
           return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
         }
