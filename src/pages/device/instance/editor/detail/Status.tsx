@@ -27,7 +27,7 @@ const Status: React.FC<Props> = props => {
     const [properties$, setProperties$] = useState<any[]>([]);
     const [propertiesList, setPropertiesList] = useState<string[]>([]);
     const events = metadata.events
-        .map((item: any) => {
+        ?.map((item: any) => {
             item.listener = [];
             item.subscribe = (callback: Function) => {
                 item.listener.push(callback)
@@ -40,7 +40,7 @@ const Status: React.FC<Props> = props => {
             return item;
         });
     const [properties, setProperties] = useState<any[]>(metadata.properties
-        .map((item: any) => {
+        ?.map((item: any) => {
             item.listener = [];
             item.subscribe = (callback: Function) => {
                 item.listener.push(callback)
