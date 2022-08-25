@@ -7,7 +7,7 @@ import {
   UserList,
 } from '@/pages/rule-engine/Scene/Save/action/VariableItems';
 import { InputFile } from '@/pages/rule-engine/Scene/Save/components';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 interface MessageContentProps {
   name: number;
@@ -104,7 +104,11 @@ export default (props: MessageContentProps) => {
     },
     [props.notifyType],
   );
-
+  useEffect(() => {
+    // console.log(props.template,'messageContent')
+    // console.log(props.triggerRef?.getTriggerData(),'triggerRef')
+    console.log(props.form.getFieldValue('actions'), 'message');
+  }, []);
   return (
     <>
       {props.template && (

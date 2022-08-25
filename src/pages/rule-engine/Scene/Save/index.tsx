@@ -68,7 +68,10 @@ export default () => {
         setIsEdit(true);
         const _data: any = resp.result;
         FormModel = _data;
+        console.log(_data.actions, 'initdata');
+
         form.setFieldsValue(_data);
+        // debugger;
         setParallel(_data.parallel);
 
         setTriggerValue({ trigger: _data.terms || [] });
@@ -82,6 +85,7 @@ export default () => {
         }
 
         if (_data.actions) {
+          console.log(_data.actions, 'detail');
           setActionsData(_data.actions);
         }
       }
@@ -225,6 +229,7 @@ export default () => {
               preserve={false}
               className={'scene-save'}
               onValuesChange={(changeValue, allValues) => {
+                console.log(changeValue);
                 if (changeValue.trigger) {
                   if (changeValue.trigger.device) {
                     if (
@@ -256,6 +261,8 @@ export default () => {
                   }
                 }
                 if (allValues.actions) {
+                  // debugger;
+                  console.log(allValues.actions, 'onValuesChange');
                   setActionsData(allValues.actions);
                 }
                 FormModel = { ...allValues };
