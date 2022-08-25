@@ -242,7 +242,12 @@ const PermissionList: React.FC<Props> = props => {
                 columns={columns}
                 rowKey="id"
                 onSearch={(params: any) => {
-                  handleSearch({ ...params, terms: searchParam.terms, sorts: searchParam.sorts });
+                  handleSearch({ ...params, 
+                    terms: {
+                      ...searchParam.terms,
+                      ...params.terms
+                    }, 
+                    sorts: searchParam.sorts });
                 }}
                 paginationConfig={result}
               />

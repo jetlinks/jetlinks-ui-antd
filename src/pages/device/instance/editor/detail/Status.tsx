@@ -69,7 +69,7 @@ const Status: React.FC<Props> = props => {
     properties.forEach(item => propertiesMap[item.id] = item);
 
     let eventsMap = {};
-    events.forEach((item: any) => eventsMap[item.id] = item);
+    events?.forEach((item: any) => eventsMap[item.id] = item);
 
     const [index, setIndex] = useState<number>(15);
 
@@ -167,12 +167,17 @@ const Status: React.FC<Props> = props => {
                 />
               </Col>
             ))
-            const eventCard = events.map((item: any) => (
-                <Col {...topColResponsiveProps} key={item.id}>
-                    <EventCard item={item} device={device} key={item.id} />
-                </Col>
-            ));
-            return [...propertyCard, ...eventCard].splice(0, index)
+            if(events){
+                const eventCard = events?.map((item: any) => (
+                    <Col {...topColResponsiveProps} key={item.id}>
+                        <EventCard item={item} device={device} key={item.id} />
+                    </Col>
+                ));
+                return [...propertyCard, ...eventCard].splice(0, index)
+            }else{
+                return propertyCard.splice(0, index)
+            }
+            
 
         }, [device, index]);
 
@@ -193,7 +198,7 @@ const Status: React.FC<Props> = props => {
 
     useEffect(() => {
         ref.current = properties$;
-    })
+    },[])
 
     useEffect(() => {
         return () => {
