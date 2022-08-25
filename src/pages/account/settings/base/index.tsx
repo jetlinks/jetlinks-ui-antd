@@ -98,6 +98,12 @@ const BaseView: React.FC<Props> = (props) => {
                         <Form.Item label="邮箱">
                             {getFieldDecorator('email', {
                                 initialValue: user.email,
+                                rules: [
+                                    {
+                                        type: 'email',
+                                        message: '请输入正确邮箱格式!',
+                                    },
+                                ]
                             })(
                                 <Input />
                             )}
@@ -105,6 +111,9 @@ const BaseView: React.FC<Props> = (props) => {
                         <Form.Item label="联系电话">
                             {getFieldDecorator('telephone', {
                                 initialValue: user.telephone,
+                                rules: [
+                                    { pattern: /^1[0-9]{10}$/, message: '请输入正确手机号码' }
+                                ]
                             })(
                                 <Input />
                             )}
