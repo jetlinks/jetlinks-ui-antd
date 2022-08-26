@@ -83,7 +83,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="描述">
           {getFieldDecorator('describe', {
             initialValue: data.describe,
-          })(<Input.TextArea placeholder="描述" />)}
+          })(<Input.TextArea placeholder="描述" maxLength={200}/>)}
         </Form.Item>
       </Form>
     </Modal>

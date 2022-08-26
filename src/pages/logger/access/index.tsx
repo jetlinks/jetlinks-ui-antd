@@ -188,7 +188,7 @@ const AccessLoggerList: React.FC<Props> = props => {
                 },
                 {
                   label: 'IP',
-                  key: 'ip',
+                  key: 'ip$LIKE',
                   type: 'string',
                 },
 

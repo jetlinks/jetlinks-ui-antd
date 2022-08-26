@@ -136,7 +136,7 @@ const Save: React.FC<Props> = props => {
         <Form.Item key="description" label="描述">
           {getFieldDecorator('description', {
             initialValue: props.data.description,
-          })(<Input.TextArea rows={3}/>)}
+          })(<Input.TextArea rows={3} maxLength={200}/>)}
         </Form.Item>
       </Form>
     </Modal>

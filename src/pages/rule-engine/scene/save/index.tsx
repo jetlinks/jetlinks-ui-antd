@@ -59,6 +59,7 @@ const Save: React.FC<Props> = props => {
     if(data.name!=''&&data.id!=''&&triggers?.length>0){
       apis.scene.save({...items}).then(res => {
         if (res.status === 200) {
+          message.success('操作成功')
           props.save();
         }
       });

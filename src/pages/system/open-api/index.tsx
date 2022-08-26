@@ -48,7 +48,7 @@ const OpenApiList: React.FC<Props> = props => {
 
   const columns: ColumnProps<OpenApiItem>[] = [
     {
-      title: 'clientId',
+      title: '标识',
       dataIndex: 'id',
     },
     {
