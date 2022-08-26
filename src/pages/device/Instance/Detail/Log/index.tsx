@@ -36,6 +36,7 @@ const Log = () => {
       defaultSortOrder: 'descend',
       valueType: 'dateTime',
       sorter: true,
+      sortDirections: ['ascend', 'descend'],
     },
     {
       title: '内容',
@@ -107,8 +108,27 @@ const Log = () => {
         pagination={{
           pageSize: 10,
         }}
-        request={async (params) => {
-          return service.queryLog(InstanceModel.detail.id!, params);
+        request={async (params, sort) => {
+          const res = await service.queryLog(InstanceModel.detail.id!, {
+            ...params,
+            sorts: [
+              {
+                name: 'timestamp',
+                order: sort.timestamp === 'descend' ? 'desc' : 'asc',
+              },
+            ],
+          });
+          return {
+            code: res.message,
+            result: {
+              data: res.result.data,
+              pageIndex: res.result.pageIndex,
+              pageSize: res.result.pageSize,
+              total: res.result.total,
+            },
+            status: res.status,
+          };
+          // return service.queryLog(InstanceModel.detail.id!, params);
         }}
       />
     </Card>

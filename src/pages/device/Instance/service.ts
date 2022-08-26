@@ -117,7 +117,7 @@ class Service extends BaseService<DeviceInstance> {
     });
 
   public getEventCount = (deviceId: string, eventId: string, params: Record<string, unknown>) =>
-    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/event/${eventId}`, {
+    request(`/${SystemConst.API_BASE}/device-instance/${deviceId}/event/${eventId}?format=true`, {
       method: 'POST',
       data: params,
     });

@@ -104,6 +104,7 @@ const Access = () => {
       valueType: 'option',
       align: 'left',
       fixed: 'right',
+      width: 70,
       render: (text, record) => [
         <a
           key="editable"

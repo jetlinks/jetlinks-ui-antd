@@ -177,7 +177,6 @@ export default (props: FunctionProps) => {
   const handleDataSource = (data: any) => {
     const array = [];
     const properties = data.valueType ? data.valueType.properties : data.inputs;
-
     for (const datum of properties) {
       const type = datum.valueType ? datum.valueType.type : '-';
 
@@ -226,6 +225,7 @@ export default (props: FunctionProps) => {
   };
 
   useEffect(() => {
+    console.log(props.data);
     handleDataSource(props.data);
   }, [props.data]);
 

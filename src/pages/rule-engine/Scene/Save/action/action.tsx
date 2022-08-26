@@ -152,6 +152,7 @@ export default observer((props: ActionProps) => {
         setNotifyType(data.notify?.notifyType);
         setConfigId(data.notify?.notifierId);
         setTemplateId(data.notify?.templateId);
+        // console.log(props.form.getFieldsValue(),'actions')
       }
     }
   }, []);

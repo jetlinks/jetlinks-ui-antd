@@ -95,7 +95,7 @@ const EventLog = (props: Props) => {
             ({
               key: i.id,
               title: i.name,
-              dataIndex: i.id,
+              dataIndex: `${i.id}_format`,
               ellipsis: true,
               renderText: (text) => (typeof text === 'object' ? JSON.stringify(text) : text),
             } as ProColumns),

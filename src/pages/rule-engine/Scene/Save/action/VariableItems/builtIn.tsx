@@ -55,6 +55,7 @@ export default (props: BuiltInProps) => {
   const sourceChangeEvent = async () => {
     onChange(source, undefined);
     const data = props.form.getFieldsValue();
+    // console.log(data)
     const triggerData = await props.triggerRef?.getTriggerData();
     data.terms = triggerData?.trigger;
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
@@ -102,8 +103,7 @@ export default (props: BuiltInProps) => {
   }, [props.trigger?.trigger?.device?.productId, source]);
 
   useEffect(() => {
-    // console.log(props.value,11111)
-    // console.log(props.form.getFieldsValue(),2222)
+    // console.log(props.value,'value')
     setSource(props.value?.source);
     setValue(props.value?.value);
     setUpperKey(props.value?.upperKey);
