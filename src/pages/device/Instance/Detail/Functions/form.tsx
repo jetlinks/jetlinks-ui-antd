@@ -26,7 +26,7 @@ type FunctionTableDataType = {
 export default (props: FunctionProps) => {
   const intl = useIntl();
   const [dataSource, setDataSource] = useState<FunctionTableDataType[]>([]);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState<any>();
   const formRef = useRef<ProFormInstance<any>>();
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
 
@@ -225,7 +225,6 @@ export default (props: FunctionProps) => {
   };
 
   useEffect(() => {
-    console.log(props.data);
     handleDataSource(props.data);
   }, [props.data]);
 
@@ -271,7 +270,7 @@ export default (props: FunctionProps) => {
           })}
           ：
         </p>
-        <Input.TextArea value={result} rows={6} />
+        <Input.TextArea value={JSON.stringify(result?.[0])} rows={6} />
       </div>
     </div>
   );

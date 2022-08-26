@@ -30,7 +30,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Row, Tooltip } from 'antd';
 import { typeList } from '@/pages/notice';
 import { configService, service, state } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
@@ -49,6 +49,7 @@ import usePermissions from '@/hooks/permission';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import Webhook from './doc/Webhook';
 import { useModel } from '@@/plugin-model/useModel';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 export const docMap = {
   weixin: {
@@ -364,10 +365,10 @@ const Detail = observer(() => {
                   format.setValue('%s');
                 }
                 break;
-              case 'number':
+              case 'double':
                 format.setComponent(Input);
                 if (fieldModified) {
-                  format.setValue('%.xf');
+                  format.setValue('%.0f');
                 }
                 break;
               // case 'file':
@@ -1306,7 +1307,7 @@ const Detail = observer(() => {
                   enum: [
                     { label: '字符串', value: 'string' },
                     { label: '时间', value: 'date' },
-                    { label: '数字', value: 'number' },
+                    { label: '数字', value: 'double' },
                   ],
                 },
               },
@@ -1321,6 +1322,26 @@ const Detail = observer(() => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-reactions': {
+                    dependencies: ['.type'],
+                    when: "{{$deps[0]!=='string'}}",
+                    fulfill: {
+                      schema: {
+                        'x-component-props': {
+                          suffix: (
+                            <Tooltip title="格式为：%.xf   x代表数字保留的小数位数。当x=0时,代表格式为整数">
+                              <QuestionCircleOutlined />
+                            </Tooltip>
+                          ),
+                        },
+                      },
+                    },
+                    otherwise: {
+                      schema: {
+                        'x-component-props.suffix': '',
+                      },
+                    },
+                  },
                 },
               },
             },
