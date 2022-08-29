@@ -105,9 +105,8 @@ export default (props: MessageContentProps) => {
     [props.notifyType],
   );
   useEffect(() => {
-    // console.log(props.template,'messageContent')
-    // console.log(props.triggerRef?.getTriggerData(),'triggerRef')
-    console.log(props.form.getFieldValue('actions'), 'message');
+    // console.log(props.form.getFieldValue('actions'), 'message');
+    console.log(props.form.getFieldsValue(), 'message');
   }, []);
   return (
     <>

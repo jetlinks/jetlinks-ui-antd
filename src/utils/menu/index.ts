@@ -79,6 +79,13 @@ const extraRouteObj = {
   'system/Menu': {
     children: [{ code: 'Setting', name: '菜单配置' }],
   },
+  'system/Apply': {
+    children: [
+      { code: 'Api', name: '赋权' },
+      { code: 'View', name: 'Api详情' },
+      { code: 'Save', name: '详情' },
+    ],
+  },
 };
 //额外路由
 export const extraRouteArr = [

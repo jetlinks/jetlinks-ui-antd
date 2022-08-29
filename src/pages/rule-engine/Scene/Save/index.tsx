@@ -68,7 +68,7 @@ export default () => {
         setIsEdit(true);
         const _data: any = resp.result;
         FormModel = _data;
-        console.log(_data.actions, 'initdata');
+        console.log(_data);
 
         form.setFieldsValue(_data);
         // debugger;
@@ -85,7 +85,6 @@ export default () => {
         }
 
         if (_data.actions) {
-          console.log(_data.actions, 'detail');
           setActionsData(_data.actions);
         }
       }
@@ -229,7 +228,6 @@ export default () => {
               preserve={false}
               className={'scene-save'}
               onValuesChange={(changeValue, allValues) => {
-                console.log(changeValue);
                 if (changeValue.trigger) {
                   if (changeValue.trigger.device) {
                     if (

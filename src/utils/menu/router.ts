@@ -130,6 +130,7 @@ export enum MENUS_CODE {
   'system/Platforms/Api' = 'system/Platforms/Api',
   'system/Platforms/View' = 'system/Platforms/View',
   'system/Platforms/Setting' = 'system/Platforms/Setting',
+  'system/Apply' = 'system/Apply',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;

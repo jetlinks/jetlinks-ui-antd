@@ -152,7 +152,6 @@ export default observer((props: ActionProps) => {
         setNotifyType(data.notify?.notifyType);
         setConfigId(data.notify?.notifierId);
         setTemplateId(data.notify?.templateId);
-        // console.log(props.form.getFieldsValue(),'actions')
       }
     }
   }, []);
@@ -272,6 +271,7 @@ export default observer((props: ActionProps) => {
     if (type1 === 'notify') {
       queryMessageTypes();
     }
+    console.log(props.form.getFieldsValue(), 'action');
   }, [type1]);
 
   return (
