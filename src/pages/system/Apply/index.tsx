@@ -115,6 +115,8 @@ const Apply = () => {
           isPermission={permission.update}
           key="edit"
           onClick={() => {
+            // console.log(permission)
+            // console.log(rolePermission.add,permission.update)
             // setCurrent(record);
             // setVisible(true);
           }}

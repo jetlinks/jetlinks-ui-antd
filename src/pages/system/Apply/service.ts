@@ -11,6 +11,11 @@ class Service extends BaseService<ApplyItem> {
     request(`${SystemConst.API_BASE}/application/providers`, {
       method: 'GET',
     });
+  queryRoleList = (params?: any) =>
+    request(`${SystemConst.API_BASE}/role/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;
