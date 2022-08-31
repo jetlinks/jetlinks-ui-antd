@@ -16,6 +16,11 @@ class Service extends BaseService<ApplyItem> {
       method: 'GET',
       params,
     });
+  queryOrgList = (params?: any) =>
+    request(`${SystemConst.API_BASE}/organization/_all/tree`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;

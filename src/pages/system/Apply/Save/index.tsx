@@ -1,6 +1,6 @@
 import { PermissionButton } from '@/components';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Row, AutoComplete } from 'antd';
 import styles from './index.less';
 import {
   ArrayCollapse,
@@ -13,7 +13,11 @@ import {
   Checkbox,
   FormCollapse,
   FormGrid,
+  Switch,
+  TreeSelect,
+  ArrayTable,
 } from '@formily/antd';
+import { TreeSelect as ATreeSelect } from 'antd';
 import { useEffect, useState } from 'react';
 import { createSchemaField } from '@formily/react';
 import { createForm, Field, onFieldValueChange } from '@formily/core';
@@ -26,6 +30,7 @@ import usePermissions from '@/hooks/permission';
 
 const Save = () => {
   const { permission: rolePermission } = usePermissions('system/Role');
+  const { permission: deptPermission } = usePermissions('system/Department');
   const { permission } = PermissionButton.usePermission('system/Apply');
   const [view, setView] = useState<boolean>(false);
 
@@ -91,6 +96,10 @@ const Save = () => {
       ArrayCollapse,
       FormCollapse,
       FormGrid,
+      Switch,
+      TreeSelect,
+      ArrayTable,
+      AutoComplete,
     },
   });
 
@@ -105,6 +114,7 @@ const Save = () => {
     });
   };
   const getRole = () => service.queryRoleList();
+  const getOrg = () => service.queryOrgList();
 
   const useAsyncData = (api: any) => (fields: Field) => {
     fields.loading = true;
@@ -160,11 +170,21 @@ const Save = () => {
             break;
         }
       });
-      onFieldValueChange('integrationModes', (field) => {
+      onFieldValueChange('integrationModes', (field, form2) => {
         formCollapse.activeKeys = field.value;
-        // const modes = ['page','apiClient','apiServer','ssoClient']
-        // const items = modes.concat(field.value).filter(item=>!field.value.includes(item))
-        // console.log(items)
+        const modes = ['page', 'apiClient', 'apiServer', 'ssoClient'];
+        const items = modes.concat(field.value).filter((item) => !field.value.includes(item)); //未被选中
+        console.log(items);
+        items.forEach((i) => {
+          form2.setFieldState(`config.${i}`, (state) => {
+            state.visible = false;
+          });
+        });
+        field.value.forEach((parms: any) => {
+          form2.setFieldState(`config.${parms}`, (state) => {
+            state.visible = true;
+          });
+        });
       });
     },
   });
@@ -173,6 +193,308 @@ const Save = () => {
     const data = await form.submit();
     console.log(data);
   };
+
+  //单点登录
+  //独立应用
+  const ssoStandalone = {
+    'sso.configuration.oAuth2.authorizationUrl': {
+      type: 'string',
+      title: '授权地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+    },
+    'sso.configuration.oAuth2.redirectUri': {
+      type: 'string',
+      title: '回调地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+    },
+    'sso.configuration.oAuth2.clientId': {
+      type: 'string',
+      title: 'appId',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+    },
+    'sso.configuration.oAuth2.clientSecret': {
+      type: 'string',
+      title: 'appKey',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+    },
+    'sso.autoCreateUser': {
+      type: 'string',
+      title: '自动创建用户',
+      required: true,
+      default: false,
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Switch',
+    },
+  } as any;
+  // 微信/钉钉
+  const ssoConfig = {
+    'sso.configuration.appKey': {
+      type: 'string',
+      title: 'appKey',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-reactions': {
+        dependencies: ['provider'],
+        fulfill: {
+          state: {
+            visible: '{{$deps[0]==="wechat-webapp" }}',
+          },
+        },
+      },
+      required: true,
+      'x-component': 'Input',
+    },
+    'sso.configuration.appId': {
+      type: 'string',
+      title: 'appId',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-reactions': {
+        dependencies: ['provider'],
+        fulfill: {
+          state: {
+            visible: '{{$deps[0]==="dingtalk-ent-app"}}',
+          },
+        },
+      },
+    },
+    'sso.configuration.appSecret': {
+      type: 'string',
+      title: 'appSecret',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+    },
+    'sso.autoCreateUser': {
+      type: 'string',
+      title: '自动创建用户',
+      required: true,
+      default: false,
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Switch',
+    },
+  } as any;
+  //第三方平台
+  const ssoThird = {
+    'sso.configuration.oauth2.type': {
+      type: 'string',
+      title: '认证方式',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Select',
+      'x-component-props': {
+        placeholder: '请选择认证方式',
+      },
+      enum: [{ label: 'oauth2', value: 'oauth2' }],
+    },
+    'sso.configuration.oauth2.scope': {
+      type: 'string',
+      title: 'scope',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入scope',
+      },
+    },
+    'sso.configuration.oauth2.clientId': {
+      type: 'string',
+      title: 'client_id',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入client_id',
+      },
+    },
+    'sso.configuration.oauth2.clientSecret': {
+      type: 'string',
+      title: 'client_secret',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入client_secret',
+      },
+    },
+    'sso.configuration.oauth2.authorizationUrl': {
+      type: 'string',
+      title: '授权地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入授权地址',
+      },
+    },
+    'sso.configuration.oauth2.tokenUrl': {
+      type: 'string',
+      title: 'token地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入token地址',
+      },
+    },
+    'sso.configuration.oauth2.userInfoUrl': {
+      type: 'string',
+      title: '用户信息地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入用户信息地址',
+      },
+    },
+    'sso.configuration.oauth2.userProperty': {
+      type: 'object',
+      properties: {
+        userId: {
+          type: 'string',
+          title: '用户ID',
+          required: true,
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            gridSpan: 2,
+            layout: 'vertical',
+            labelAlign: 'left',
+            tooltip: '通过jsonpath表达式从授权结果中获取第三方平台用户的唯一标识',
+          },
+          'x-component': 'Input',
+          'x-component-props': {
+            placeholder: '输入从用户信息接口返回数据中的用户ID字段。示例:result.id',
+          },
+        },
+        username: {
+          type: 'string',
+          title: '用户名',
+          required: true,
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            gridSpan: 2,
+            layout: 'vertical',
+            labelAlign: 'left',
+          },
+          'x-component': 'Input',
+          'x-component-props': {
+            placeholder: '输入从用户信息接口返回数据中的用户名字段。示例:result.name',
+          },
+        },
+        avatar: {
+          type: 'string',
+          title: '头像',
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            gridSpan: 2,
+            layout: 'vertical',
+            labelAlign: 'left',
+          },
+          'x-component': 'Input',
+          'x-component-props': {
+            placeholder: '输入从用户信息接口返回数据中的用户头像字段。示例:result.avatar',
+          },
+        },
+      },
+    },
+    'sso.autoCreateUser': {
+      type: 'string',
+      title: '自动创建用户',
+      required: true,
+      default: false,
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'Switch',
+      'x-component-props': {
+        placeholder: '请输入',
+      },
+    },
+  } as any;
 
   const schema = {
     type: 'object',
@@ -240,7 +562,14 @@ const Save = () => {
           gridSpan: 2,
         },
         'x-component': 'FormCollapse',
-
+        'x-reactions': {
+          dependencies: ['integrationModes'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] && $deps[0].length!==0}}',
+            },
+          },
+        },
         'x-component-props': {
           formCollapse: '{{formCollapse}}',
         },
@@ -251,19 +580,10 @@ const Save = () => {
             'x-component-props': {
               header: 'API服务',
             },
-            // 'x-reactions':{
-            //   dependencies: ['integrationModes'],
-            //   fulfill: {
-            //     state: {
-            //       visible:
-            //         '{{$self.value.includes($deps[0])}}',
-            //     },
-            //   },
-            // },
             properties: {
               'apiServer.secureKey': {
                 type: 'string',
-                title: 'key',
+                title: 'secureKey',
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   gridSpan: 2,
@@ -272,6 +592,9 @@ const Save = () => {
                 },
                 required: true,
                 'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入secureKey',
+                },
               },
               'apiServer.roleIdList': {
                 title: '角色',
@@ -315,6 +638,50 @@ const Save = () => {
                       <PlusOutlined />
                     </PermissionButton>
                   ),
+                },
+              },
+              apiServerThird: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] && $deps[0]==="third-party"}}',
+                    },
+                  },
+                },
+                properties: {
+                  'apiServer.redirectUri': {
+                    type: 'string',
+                    title: 'redirectUrl',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                      tooltip: '授权后自动跳转的页面地址',
+                    },
+                    required: true,
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入redirectUrl',
+                    },
+                  },
+                  'apiServer.ipWhiteList': {
+                    type: 'string',
+                    title: 'IP白名单',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                    },
+                    'x-component': 'Input.TextArea',
+                    'x-component-props': {
+                      placeholder: '请输入IP白名单，多个地址回车分隔，不填默认均可访问',
+                      rows: 3,
+                    },
+                  },
                 },
               },
             },
@@ -404,7 +771,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '访问可视化集成的地址',
+                  tooltip: '填写访问其它平台的地址',
                 },
                 required: true,
                 'x-component': 'Input',
@@ -413,6 +780,14 @@ const Save = () => {
                 type: 'string',
                 title: '路由方式',
                 'x-decorator': 'FormItem',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="internal-integrated"}}',
+                    },
+                  },
+                },
                 'x-decorator-props': {
                   gridSpan: 2,
                   layout: 'vertical',
@@ -426,6 +801,79 @@ const Save = () => {
                   { label: 'history', value: 'history' },
                 ],
               },
+              'page.parameters': {
+                type: 'array',
+                default: [{}],
+                title: '参数',
+                'x-decorator': 'FormItem',
+                required: true,
+                'x-component': 'ArrayTable',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="third-party"}}',
+                    },
+                  },
+                },
+                'x-decorator-props': {
+                  gridSpan: 2,
+                  layout: 'vertical',
+                  labelAlign: 'left',
+                  tooltip: '自定义参数,格式${name}',
+                },
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      required: true,
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 100, title: 'key' },
+                      properties: {
+                        key: {
+                          required: true,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 100, title: 'value' },
+                      properties: {
+                        value: {
+                          required: true,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'AutoComplete',
+                          'x-component-props': {
+                            options: [{ value: '用户ID' }, { value: '用户名' }, { value: 'token' }],
+                          },
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 50 },
+                      properties: {
+                        remove: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Remove',
+                        },
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: '添加参数',
+                  },
+                },
+              },
             },
           },
           ssoClient: {
@@ -435,53 +883,176 @@ const Save = () => {
               header: '单点登录',
             },
             properties: {
-              'sso.configuration.oAuth2.authorizationUrl': {
-                type: 'string',
-                title: '授权地址',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
+              standaloneConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] && $deps[0]==="internal-standalone"}}',
+                    },
+                  },
                 },
-                required: true,
-                'x-component': 'Input',
+                properties: { ...ssoStandalone },
               },
-              'sso.configuration.oAuth2.redirectUri': {
-                type: 'string',
-                title: '回调地址',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
+              ssoConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="wechat-webapp" || $deps[0]==="dingtalk-ent-app"}}',
+                    },
+                  },
                 },
-                required: true,
-                'x-component': 'Input',
+                properties: { ...ssoConfig },
               },
-              'sso.configuration.oAuth2.clientId': {
-                type: 'string',
-                title: 'appId',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
+              thirdConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="third-party"}}',
+                    },
+                  },
                 },
-                required: true,
-                'x-component': 'Input',
+                properties: { ...ssoThird },
               },
-              'sso.configuration.oAuth2.clientSecret': {
-                type: 'string',
-                title: 'appKey',
-                'x-decorator': 'FormItem',
+              userConfig: {
+                type: 'void',
+                'x-decorator': 'FormGrid',
+                'x-hidden': true,
                 'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
+                  maxColumns: 2,
+                  minColumns: 2,
+                  columnGap: 24,
                 },
-                required: true,
-                'x-component': 'Input',
+                'x-reactions': {
+                  dependencies: ['sso.autoCreateUser'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]}}',
+                    },
+                  },
+                },
+                properties: {
+                  'sso.usernamePrefix': {
+                    type: 'string',
+                    title: '用户名前缀',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                    },
+                    required: true,
+                    'x-component': 'Input',
+                  },
+                  'sso.defaultPasswd': {
+                    type: 'string',
+                    title: '默认密码',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                    },
+                    required: true,
+                    'x-component': 'Input',
+                  },
+                  'sso.roleIdList': {
+                    title: '角色',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'Select',
+                    'x-component-props': {
+                      mode: 'multiple',
+                      showArrow: true,
+                      placeholder: '请选择角色',
+                      filterOption: (input: string, option: any) =>
+                        option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                    },
+                    'x-reactions': ['{{useAsyncData(getRole)}}'],
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                      addonAfter: (
+                        <PermissionButton
+                          type="link"
+                          style={{ padding: 0 }}
+                          isPermission={rolePermission.add}
+                          onClick={() => {
+                            console.log(rolePermission.add, permission.update);
+                            const tab: any = window.open(`${origin}/#/system/role?save=true`);
+                            tab!.onTabSaveSuccess = (value: any) => {
+                              form.setFieldState('roleIdList', async (state) => {
+                                state.dataSource = await getRole().then((resp) =>
+                                  resp.result?.map((item: Record<string, unknown>) => ({
+                                    ...item,
+                                    label: item.name,
+                                    value: item.id,
+                                  })),
+                                );
+                                state.value = [...(state.value || []), value.id];
+                              });
+                            };
+                          }}
+                        >
+                          <PlusOutlined />
+                        </PermissionButton>
+                      ),
+                    },
+                  },
+                  'sso.orgIdList': {
+                    title: '部门',
+                    'x-decorator': 'FormItem',
+                    'x-component': 'TreeSelect',
+                    'x-component-props': {
+                      multiple: true,
+                      showArrow: true,
+                      placeholder: '请选择部门',
+                      showCheckedStrategy: ATreeSelect.SHOW_ALL,
+                      filterOption: (input: string, option: any) =>
+                        option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                      fieldNames: {
+                        label: 'name',
+                        value: 'id',
+                      },
+                      treeNodeFilterProp: 'name',
+                    },
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                      addonAfter: (
+                        <PermissionButton
+                          type="link"
+                          style={{ padding: 0 }}
+                          isPermission={deptPermission.add}
+                          onClick={() => {
+                            const tab: any = window.open(`${origin}/#/system/department?save=true`);
+                            tab!.onTabSaveSuccess = (value: any) => {
+                              form.setFieldState('orgIdList', async (state) => {
+                                state.dataSource = await getOrg().then((resp) =>
+                                  resp.result?.map((item: Record<string, unknown>) => ({
+                                    ...item,
+                                    label: item.name,
+                                    value: item.id,
+                                  })),
+                                );
+                                state.value = [...(state.value || []), value.id];
+                              });
+                            };
+                          }}
+                        >
+                          <PlusOutlined />
+                        </PermissionButton>
+                      ),
+                    },
+                    'x-reactions': ['{{useAsyncData(getOrg)}}'],
+                  },
+                },
               },
             },
           },
@@ -503,8 +1074,6 @@ const Save = () => {
 
   useEffect(() => {
     setView(false);
-    // const { permission: rolePermission } = usePermissions('system/Role');
-    console.log(rolePermission);
   }, []);
   return (
     <PageContainer>
@@ -521,6 +1090,7 @@ const Save = () => {
                   useAsyncData,
                   getProvidersAll,
                   getRole,
+                  getOrg,
                 }}
               />
               <FormButtonGroup.Sticky>
