@@ -20,19 +20,22 @@ import {
 import { TreeSelect as ATreeSelect } from 'antd';
 import { useEffect, useState } from 'react';
 import { createSchemaField } from '@formily/react';
-import { createForm, Field, onFieldValueChange } from '@formily/core';
-import { useAsyncDataSource } from '@/utils/util';
+import { createForm, Field, onFieldValueChange, onFormInit } from '@formily/core';
+import { onlyMessage, randomString, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
 import { PlusOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import usePermissions from '@/hooks/permission';
+import { useLocation } from '@/hooks';
 
 const Save = () => {
+  const location = useLocation();
   const { permission: rolePermission } = usePermissions('system/Role');
   const { permission: deptPermission } = usePermissions('system/Department');
   const { permission } = PermissionButton.usePermission('system/Apply');
   const [view, setView] = useState<boolean>(false);
+  const [id, setId] = useState<string>('');
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -133,54 +136,73 @@ const Save = () => {
   const form = createForm({
     validateFirst: true,
     effects() {
+      onFormInit(async (formInit) => {
+        if (!id) return;
+        const resp = await service.detail(id);
+        const integrationModes = resp.result.integrationModes.map((item: any) => item.value);
+        console.log(integrationModes);
+        formInit.setInitialValues({
+          ...resp.result,
+          integrationModes,
+        });
+      });
       onFieldValueChange('provider', (field, form1) => {
         const value = field.value;
-        switch (value) {
-          case 'internal-standalone':
-            form1.setFieldState('integrationModes', (f1) => {
-              // field.hidden = false;
-              f1.value = [];
-            });
-            break;
-          case 'internal-integrated':
-            form1.setFieldState('integrationModes', (f2) => {
-              // field.hidden = true
-              f2.value = ['page'];
-            });
-            break;
-          case 'dingtalk-ent-app':
-            form1.setFieldState('integrationModes', (f3) => {
-              // field.hidden = true;
-              f3.value = ['ssoClient'];
-            });
-            break;
-          case 'wechat-webapp':
-            form1.setFieldState('integrationModes', (f4) => {
-              // field.hidden = true;
-              f4.value = ['ssoClient'];
-            });
-            break;
-          case 'third-party':
-            form1.setFieldState('integrationModes', (f5) => {
-              // field.hidden = false
-              f5.value = [];
-            });
-            break;
-          default:
-            break;
+        console.log(value);
+        if (field.modified) {
+          switch (value) {
+            case 'internal-standalone':
+              form1.setFieldState('integrationModes', (f1) => {
+                f1.hidden = false;
+                f1.value = [];
+                // console.log(f1.value)
+                // debugger;
+                // f1.value = [''];
+                // console.log(f1.value)
+                // debugger;
+                // console.log(f1.value)
+              });
+              break;
+            case 'internal-integrated':
+              form1.setFieldState('integrationModes', (f2) => {
+                f2.hidden = true;
+                f2.value = ['page'];
+              });
+              break;
+            case 'dingtalk-ent-app':
+              form1.setFieldState('integrationModes', (f3) => {
+                f3.hidden = true;
+                f3.value = ['ssoClient'];
+              });
+              break;
+            case 'wechat-webapp':
+              form1.setFieldState('integrationModes', (f4) => {
+                f4.hidden = true;
+                f4.value = ['ssoClient'];
+              });
+              break;
+            case 'third-party':
+              form1.setFieldState('integrationModes', (f5) => {
+                f5.hidden = false;
+                f5.value = [];
+              });
+              break;
+            default:
+              break;
+          }
         }
       });
       onFieldValueChange('integrationModes', (field, form2) => {
         formCollapse.activeKeys = field.value;
         const modes = ['page', 'apiClient', 'apiServer', 'ssoClient'];
-        const items = modes.concat(field.value).filter((item) => !field.value.includes(item)); //未被选中
-        console.log(items);
+        const items = modes.concat(field.value).filter((item) => !field.value?.includes(item)); //未被选中
+        // console.log(items);
         items.forEach((i) => {
           form2.setFieldState(`config.${i}`, (state) => {
             state.visible = false;
           });
         });
-        field.value.forEach((parms: any) => {
+        field.value?.forEach((parms: any) => {
           form2.setFieldState(`config.${parms}`, (state) => {
             state.visible = true;
           });
@@ -190,7 +212,18 @@ const Save = () => {
   });
 
   const handleSave = async () => {
-    const data = await form.submit();
+    const data: any = await form.submit();
+    if (id) {
+      const resp: any = await service.modify(id, data);
+      if (resp.status === 200) {
+        onlyMessage('保存成功');
+      }
+    } else {
+      const res: any = await service.save(data);
+      if (res.status === 200) {
+        onlyMessage('保存成功');
+      }
+    }
     console.log(data);
   };
 
@@ -208,6 +241,9 @@ const Save = () => {
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入授权地址',
+      },
     },
     'sso.configuration.oAuth2.redirectUri': {
       type: 'string',
@@ -220,6 +256,9 @@ const Save = () => {
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入回调地址',
+      },
     },
     'sso.configuration.oAuth2.clientId': {
       type: 'string',
@@ -232,6 +271,9 @@ const Save = () => {
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appId',
+      },
     },
     'sso.configuration.oAuth2.clientSecret': {
       type: 'string',
@@ -244,6 +286,9 @@ const Save = () => {
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appKey',
+      },
     },
     'sso.autoCreateUser': {
       type: 'string',
@@ -274,12 +319,15 @@ const Save = () => {
         dependencies: ['provider'],
         fulfill: {
           state: {
-            visible: '{{$deps[0]==="wechat-webapp" }}',
+            visible: '{{$deps[0]==="dingtalk-ent-app" }}',
           },
         },
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appKey',
+      },
     },
     'sso.configuration.appId': {
       type: 'string',
@@ -292,11 +340,14 @@ const Save = () => {
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appId',
+      },
       'x-reactions': {
         dependencies: ['provider'],
         fulfill: {
           state: {
-            visible: '{{$deps[0]==="dingtalk-ent-app"}}',
+            visible: '{{$deps[0]==="wechat-webapp"}}',
           },
         },
       },
@@ -312,6 +363,9 @@ const Save = () => {
       },
       required: true,
       'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appSecret',
+      },
     },
     'sso.autoCreateUser': {
       type: 'string',
@@ -495,6 +549,300 @@ const Save = () => {
       },
     },
   } as any;
+  //内部独立应用-客户端
+  const clientStandalone = {
+    'apiClient.baseUrl': {
+      type: 'string',
+      title: '接口地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+        tooltip: '访问Api服务的地址',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入接口地址',
+      },
+    },
+    'apiClient.authConfig.type': {
+      type: 'string',
+      title: '认证方式',
+      'x-hidden': true,
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+      default: 'oauth2',
+    },
+    'apiClient.authConfig.oAuth2.authorizationUrl': {
+      type: 'string',
+      title: '授权地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入授权地址',
+      },
+    },
+    'apiClient.authConfig.oAuth2.redirectUri': {
+      type: 'string',
+      title: '回调地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入回调地址',
+      },
+    },
+    'apiClient.authConfig.oAuth2.clientId': {
+      type: 'string',
+      title: 'appId',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appId',
+      },
+    },
+    'apiClient.authConfig.oAuth2.clientSecret': {
+      type: 'string',
+      title: 'appKey',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入appKey',
+      },
+    },
+  } as any;
+  //第三方平台-客户端
+  const clientThird = {
+    apiClient: {
+      type: 'object',
+      properties: {
+        baseUrl: {
+          type: 'string',
+          title: '接口地址',
+          'x-decorator': 'FormItem',
+          'x-decorator-props': {
+            gridSpan: 2,
+            layout: 'vertical',
+            labelAlign: 'left',
+            tooltip: '访问iot平台接口的地址',
+          },
+          required: true,
+          'x-component': 'Input',
+          'x-component-props': {
+            placeholder: '请输入接口地址',
+          },
+        },
+        authConfig: {
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              title: '认证方式',
+              'x-decorator': 'FormItem',
+              'x-decorator-props': {
+                gridSpan: 2,
+                layout: 'vertical',
+                labelAlign: 'left',
+              },
+              required: true,
+              'x-component': 'Select',
+              default: 'oauth2',
+              enum: [
+                { label: 'OAuth2', value: 'oauth2' },
+                { label: '基本认证', value: 'basic' },
+                { label: 'bearer认证', value: 'bearer' },
+              ],
+            },
+            bearer: {
+              type: 'object',
+              'x-reactions': {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] ==="bearer"}}',
+                  },
+                },
+              },
+              properties: {
+                token: {
+                  type: 'string',
+                  title: 'token',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Input',
+                  'x-component-props': {
+                    placeholder: '请输入token',
+                  },
+                },
+              },
+            },
+            basic: {
+              type: 'object',
+              'x-reactions': {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] ==="basic"}}',
+                  },
+                },
+              },
+              properties: {
+                username: {
+                  type: 'string',
+                  title: '用户名',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Input',
+                  'x-component-props': {
+                    placeholder: '请输入用户名',
+                  },
+                },
+                password: {
+                  type: 'string',
+                  title: '密码',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Input',
+                  'x-component-props': {
+                    placeholder: '请输入密码',
+                  },
+                },
+              },
+            },
+            oAuth2: {
+              type: 'object',
+              'x-reactions': {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] ==="oauth2"}}',
+                  },
+                },
+              },
+              properties: {
+                authorizationUrl: {
+                  type: 'string',
+                  title: '授权地址',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Input',
+                },
+                tokenRequestType: {
+                  type: 'string',
+                  title: '请求方式',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Select',
+                  default: 'POST_BODY',
+                  enum: [
+                    { label: '请求体', value: 'POST_BODY' },
+                    { label: '请求头', value: 'POST_URI' },
+                  ],
+                },
+                // tokenRequest: {
+                //   type: 'string',
+                //   title: '请求类型',
+                //   'x-decorator': 'FormItem',
+                //   'x-decorator-props': {
+                //     gridSpan: 2,
+                //     layout: 'vertical',
+                //     labelAlign: 'left',
+                //   },
+                //   required: true,
+                //   'x-component': 'Select',
+                //   default: 'POST_BODY',
+                //   enum: [
+                //     { label: '请求体', value: 'POST_BODY' },
+                //     { label: '请求头', value: 'POST_URI' },
+                //   ]
+                // },
+                clientId: {
+                  type: 'string',
+                  title: 'client_id',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Input',
+                },
+                clientSecret: {
+                  type: 'string',
+                  title: 'client_secret',
+                  'x-decorator': 'FormItem',
+                  'x-decorator-props': {
+                    gridSpan: 2,
+                    layout: 'vertical',
+                    labelAlign: 'left',
+                  },
+                  required: true,
+                  'x-component': 'Input',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  } as any;
 
   const schema = {
     type: 'object',
@@ -584,6 +932,7 @@ const Save = () => {
               'apiServer.secureKey': {
                 type: 'string',
                 title: 'secureKey',
+                default: randomString(),
                 'x-decorator': 'FormItem',
                 'x-decorator-props': {
                   gridSpan: 2,
@@ -693,66 +1042,151 @@ const Save = () => {
               header: 'API客户端',
             },
             properties: {
-              'apiClient.baseUrl': {
-                type: 'string',
-                title: '接口地址',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
-                  tooltip: '访问Api服务的地址',
+              standaloneConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] && $deps[0]==="internal-standalone"}}',
+                    },
+                  },
                 },
-                required: true,
-                'x-component': 'Input',
+                properties: { ...clientStandalone },
               },
-              'apiClient.authConfig.oAuth2.authorizationUrl': {
-                type: 'string',
-                title: '授权地址',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
+              thirdConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="third-party"}}',
+                    },
+                  },
                 },
-                required: true,
-                'x-component': 'Input',
+                properties: { ...clientThird },
               },
-              'apiClient.authConfig.oAuth2.redirectUri': {
-                type: 'string',
-                title: '回调地址',
+              'apiClient.headers': {
+                type: 'array',
+                default: [{}],
+                title: '请求头',
                 'x-decorator': 'FormItem',
+                required: true,
+                'x-component': 'ArrayTable',
                 'x-decorator-props': {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
                 },
-                required: true,
-                'x-component': 'Input',
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      required: true,
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 100, title: 'key' },
+                      properties: {
+                        key: {
+                          required: true,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 100, title: 'value' },
+                      properties: {
+                        value: {
+                          required: true,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 30 },
+                      properties: {
+                        remove: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Remove',
+                        },
+                      },
+                    },
+                  },
+                },
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: '添加请求头',
+                  },
+                },
               },
-              'apiClient.authConfig.oAuth2.clientId': {
-                type: 'string',
-                title: 'appId',
+              'apiClient.parameters': {
+                type: 'array',
+                default: [{}],
+                title: '参数',
                 'x-decorator': 'FormItem',
+                required: true,
+                'x-component': 'ArrayTable',
                 'x-decorator-props': {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
                 },
-                required: true,
-                'x-component': 'Input',
-              },
-              'apiClient.authConfig.oAuth2.clientSecret': {
-                type: 'string',
-                title: 'appKey',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
+                items: {
+                  type: 'object',
+                  properties: {
+                    column1: {
+                      type: 'void',
+                      required: true,
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 100, title: 'key' },
+                      properties: {
+                        key: {
+                          required: true,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column2: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 100, title: 'value' },
+                      properties: {
+                        value: {
+                          required: true,
+                          'x-decorator': 'FormItem',
+                          'x-component': 'Input',
+                        },
+                      },
+                    },
+                    column3: {
+                      type: 'void',
+                      'x-component': 'ArrayTable.Column',
+                      'x-component-props': { width: 30 },
+                      properties: {
+                        remove: {
+                          type: 'void',
+                          'x-component': 'ArrayTable.Remove',
+                        },
+                      },
+                    },
+                  },
                 },
-                required: true,
-                'x-component': 'Input',
+                properties: {
+                  add: {
+                    type: 'void',
+                    'x-component': 'ArrayTable.Addition',
+                    title: '添加参数',
+                  },
+                },
               },
             },
           },
@@ -775,6 +1209,9 @@ const Save = () => {
                 },
                 required: true,
                 'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入接入地址',
+                },
               },
               'page.routeType': {
                 type: 'string',
@@ -948,6 +1385,9 @@ const Save = () => {
                     },
                     required: true,
                     'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入用户名前缀',
+                    },
                   },
                   'sso.defaultPasswd': {
                     type: 'string',
@@ -960,6 +1400,9 @@ const Save = () => {
                     },
                     required: true,
                     'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入默认密码',
+                    },
                   },
                   'sso.roleIdList': {
                     title: '角色',
@@ -1074,7 +1517,13 @@ const Save = () => {
 
   useEffect(() => {
     setView(false);
-  }, []);
+    const params = new URLSearchParams(location.search);
+    const item = params.get('id');
+    console.log(id);
+    if (item) {
+      setId(item);
+    }
+  }, [location]);
   return (
     <PageContainer>
       <Card>

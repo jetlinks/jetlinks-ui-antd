@@ -2,7 +2,7 @@ import BaseService from '@/utils/BaseService';
 import { request } from 'umi';
 import SystemConst from '@/utils/const';
 
-class Service extends BaseService<ApplyItem> {
+class Service extends BaseService<any> {
   getAppInfo = (id: string) =>
     request(`${SystemConst.API_BASE}/application/${id}/info`, {
       method: 'GET',

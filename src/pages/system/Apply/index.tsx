@@ -115,10 +115,8 @@ const Apply = () => {
           isPermission={permission.update}
           key="edit"
           onClick={() => {
-            // console.log(permission)
-            // console.log(rolePermission.add,permission.update)
-            // setCurrent(record);
-            // setVisible(true);
+            const url = getMenuPathByCode('system/Apply/Save');
+            history.push(`${url}?id=${record.id}`);
           }}
           type={'link'}
           style={{ padding: 0 }}
@@ -245,8 +243,8 @@ const Apply = () => {
                 isPermission={permission.update}
                 key="edit"
                 onClick={() => {
-                  // setCurrent(record);
-                  // setVisible(true);
+                  const url = getMenuPathByCode('system/Apply/Save');
+                  history.push(`${url}?id=${record.id}`);
                 }}
                 type={'link'}
                 style={{ padding: 0 }}
@@ -296,18 +294,18 @@ const Apply = () => {
                   title: '确认删除',
                   disabled: record.state !== 'disabled',
                   onConfirm: async () => {
-                    // const resp: any = await service.remove(record.id);
-                    // if (resp.status === 200) {
-                    //     onlyMessage(
-                    //         intl.formatMessage({
-                    //             id: 'pages.data.option.success',
-                    //             defaultMessage: '操作成功!',
-                    //         }),
-                    //     );
-                    //     actionRef.current?.reload();
-                    // } else {
-                    //     onlyMessage(resp?.message || '操作失败', 'error');
-                    // }
+                    const resp: any = await service.remove(record.id);
+                    if (resp.status === 200) {
+                      onlyMessage(
+                        intl.formatMessage({
+                          id: 'pages.data.option.success',
+                          defaultMessage: '操作成功!',
+                        }),
+                      );
+                      actionRef.current?.reload();
+                    } else {
+                      onlyMessage(resp?.message || '操作失败', 'error');
+                    }
                   },
                 }}
                 key="delete"
