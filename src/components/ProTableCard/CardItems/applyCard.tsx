@@ -21,7 +21,7 @@ providerType.set('third-party', '第三方应用');
 export default (props: DeviceCardProps) => {
   return (
     <TableCard
-      showMask={false}
+      // showMask={false}
       detail={props.detail}
       actions={props.actions}
       status={props.state}
