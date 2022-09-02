@@ -9,7 +9,7 @@ class Service extends BaseService<platformsType> {
       params,
     });
 
-  getDetail = (id: string) => request(`${this.uri}/${id}/detail`, { method: 'GET' });
+  getDetail = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
 
   edit = (data: any) => request(`${this.uri}/${data.id}`, { method: 'PUT', data });
 
@@ -46,32 +46,32 @@ class Service extends BaseService<platformsType> {
    * @param data
    */
   saveApiGrant = (id: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/api-client/${id}/grant`, { method: 'POST', data });
+    request(`/${SystemConst.API_BASE}/application/${id}/grant`, { method: 'POST', data });
 
   addApiGrant = (id: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/api-client/${id}/grant/_add`, { method: 'POST', data });
+    request(`/${SystemConst.API_BASE}/application/${id}/grant/_add`, { method: 'POST', data });
 
   removeApiGrant = (id: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/api-client/${id}/grant/_delete`, { method: 'POST', data });
+    request(`/${SystemConst.API_BASE}/application/${id}/grant/_delete`, { method: 'POST', data });
 
   /**
    * 获取已授权的接口ID
    * @param id 第三方平台的ID
    */
   getApiGranted = (id: string) =>
-    request(`/${SystemConst.API_BASE}/api-client/${id}/granted`, { method: 'GET' });
+    request(`/${SystemConst.API_BASE}/application/${id}/granted`, { method: 'GET' });
 
   /**
    * 获取可授权的接口ID
    */
   apiOperations = () =>
-    request(`/${SystemConst.API_BASE}/api-client/operations`, { method: 'GET' });
+    request(`/${SystemConst.API_BASE}/application/operations`, { method: 'GET' });
 
   /**
    * 新增可授权的接口ID
    */
   apiOperationsAdd = (data?: any) =>
-    request(`/${SystemConst.API_BASE}/api-client/operations/_batch`, {
+    request(`/${SystemConst.API_BASE}/application/operations/_batch`, {
       method: 'PATCH',
       data: data || [],
     });
@@ -80,7 +80,7 @@ class Service extends BaseService<platformsType> {
    * 删除可授权的接口ID
    */
   apiOperationsRemove = (data?: any) =>
-    request(`/${SystemConst.API_BASE}/api-client/operations/_batch`, {
+    request(`/${SystemConst.API_BASE}/application/operations/_batch`, {
       method: 'DELETE',
       data: data || [],
     });

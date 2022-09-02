@@ -1,4 +1,4 @@
-import { PermissionButton, ProTableCard } from '@/components';
+import { AIcon, PermissionButton, ProTableCard } from '@/components';
 import ApplyCard from '@/components/ProTableCard/CardItems/applyCard';
 import SearchComponent from '@/components/SearchComponent';
 import useHistory from '@/hooks/route/useHistory';
@@ -7,6 +7,7 @@ import { onlyMessage } from '@/utils/util';
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
@@ -43,6 +44,11 @@ const Apply = () => {
         onlyMessage('操作失败', 'error');
       }
     });
+  };
+
+  const isApiService = (params: any[]) => {
+    const res = params?.map((item) => item.value).includes('apiServer');
+    return res;
   };
 
   const columns: ProColumns<any>[] = [
@@ -129,6 +135,40 @@ const Apply = () => {
         >
           <EditOutlined />
         </PermissionButton>,
+        isApiService(record.integrationModes) ? (
+          <PermissionButton
+            key={'empowerment'}
+            type={'link'}
+            style={{ padding: 0 }}
+            isPermission={permission.empowerment}
+            tooltip={{
+              title: '赋权',
+            }}
+            onClick={() => {
+              const url = getMenuPathByCode('system/Apply/Api');
+              history.push(`${url}?code=${record.id}`);
+            }}
+          >
+            <AIcon type={'icon-fuquan'} />
+          </PermissionButton>
+        ) : null,
+        isApiService(record.integrationModes) ? (
+          <PermissionButton
+            key={'api'}
+            type={'link'}
+            style={{ padding: 0 }}
+            isPermission={permission.api}
+            tooltip={{
+              title: '查看API',
+            }}
+            onClick={() => {
+              const url = getMenuPathByCode('system/Apply/View');
+              history.push(`${url}?code=${record.id}`);
+            }}
+          >
+            <AIcon type={'icon-chakanAPI'} />
+          </PermissionButton>
+        ) : null,
         <PermissionButton
           isPermission={permission.action}
           key="action"
@@ -238,6 +278,20 @@ const Apply = () => {
         cardRender={(record) => (
           <ApplyCard
             {...record}
+            detail={
+              <PermissionButton
+                key={'view'}
+                type={'link'}
+                style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                isPermission={permission.view}
+                onClick={() => {
+                  const url = getMenuPathByCode('system/Apply/Save');
+                  history.push(`${url}?id=${record.id}`, { view: true });
+                }}
+              >
+                <EyeOutlined />
+              </PermissionButton>
+            }
             actions={[
               <PermissionButton
                 isPermission={permission.update}
@@ -258,6 +312,42 @@ const Apply = () => {
                 <EditOutlined />
                 编辑
               </PermissionButton>,
+              isApiService(record.integrationModes) ? (
+                <PermissionButton
+                  key={'empowerment'}
+                  type={'link'}
+                  style={{ padding: 0 }}
+                  isPermission={permission.empowerment}
+                  tooltip={{
+                    title: '赋权',
+                  }}
+                  onClick={() => {
+                    const url = getMenuPathByCode('system/Apply/Api');
+                    history.push(`${url}?code=${record.id}`);
+                  }}
+                >
+                  <AIcon type={'icon-fuquan'} />
+                  赋权
+                </PermissionButton>
+              ) : null,
+              isApiService(record.integrationModes) ? (
+                <PermissionButton
+                  key={'api'}
+                  type={'link'}
+                  style={{ padding: 0 }}
+                  isPermission={permission.api}
+                  tooltip={{
+                    title: '查看API',
+                  }}
+                  onClick={() => {
+                    const url = getMenuPathByCode('system/Apply/View');
+                    history.push(`${url}?code=${record.id}`);
+                  }}
+                >
+                  <AIcon type={'icon-chakanAPI'} />
+                  查看API
+                </PermissionButton>
+              ) : null,
               <PermissionButton
                 isPermission={permission.action}
                 key="action"

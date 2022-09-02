@@ -1,0 +1,80 @@
+@import '~antd/es/style/themes/default.less';
+
+.platforms-api {
+  display: flex;
+  padding: 24px;
+  background-color: #fff;
+
+  .platforms-api-tree {
+    width: 320px;
+    padding-right: 12px;
+    border-right: 1px solid #e9e9e9;
+  }
+
+  .platforms-api-table {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 0;
+    margin-left: 24px;
+
+    .platforms-api-save {
+      margin-top: 12px;
+    }
+  }
+
+  .platforms-api-swagger {
+    flex: 1;
+    margin-left: 24px;
+
+    .platforms-api-swagger-back {
+      margin-bottom: 24px;
+    }
+
+    .platforms-api-swagger-content {
+      .swagger-content-title {
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .swagger-content-item,
+      .swagger-content-url {
+        margin-top: 24px;
+      }
+
+      .swagger-content-url .url-method {
+        color: #fff;
+        border: none;
+
+        &.put {
+          background-color: @orange-6;
+        }
+
+        &.delete {
+          background-color: @red-6;
+        }
+
+        &.post {
+          background-color: @green-6;
+        }
+
+        &.get {
+          background-color: @blue-6;
+        }
+
+        &.patch {
+          background-color: @lime-6;
+        }
+      }
+
+      .swagger-content-request-type {
+        display: flex;
+        justify-content: space-between;
+
+        > span:nth-child(odd) {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}

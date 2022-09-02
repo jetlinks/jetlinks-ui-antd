@@ -21,7 +21,7 @@ import { getMenuPathByCode } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 
-export const service = new Service('api-client');
+export const service = new Service('application');
 
 export default () => {
   const actionRef = useRef<ActionType>();

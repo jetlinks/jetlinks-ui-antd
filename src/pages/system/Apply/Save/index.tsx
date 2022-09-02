@@ -581,7 +581,7 @@ const Save = () => {
       'x-component': 'Input',
       default: 'oauth2',
     },
-    'apiClient.authConfig.oAuth2.authorizationUrl': {
+    'apiClient.authConfig.oauth2.authorizationUrl': {
       type: 'string',
       title: '授权地址',
       'x-decorator': 'FormItem',
@@ -596,7 +596,7 @@ const Save = () => {
         placeholder: '请输入授权地址',
       },
     },
-    'apiClient.authConfig.oAuth2.redirectUri': {
+    'apiClient.authConfig.oauth2.redirectUri': {
       type: 'string',
       title: '回调地址',
       'x-decorator': 'FormItem',
@@ -611,7 +611,7 @@ const Save = () => {
         placeholder: '请输入回调地址',
       },
     },
-    'apiClient.authConfig.oAuth2.clientId': {
+    'apiClient.authConfig.oauth2.clientId': {
       type: 'string',
       title: 'appId',
       'x-decorator': 'FormItem',
@@ -626,7 +626,7 @@ const Save = () => {
         placeholder: '请输入appId',
       },
     },
-    'apiClient.authConfig.oAuth2.clientSecret': {
+    'apiClient.authConfig.oauth2.clientSecret': {
       type: 'string',
       title: 'appKey',
       'x-decorator': 'FormItem',
@@ -1519,9 +1519,12 @@ const Save = () => {
     setView(false);
     const params = new URLSearchParams(location.search);
     const item = params.get('id');
-    console.log(id);
+    // console.log(id);
     if (item) {
       setId(item);
+    }
+    if (location && location.state) {
+      setView(location.state.view);
     }
   }, [location]);
   return (
