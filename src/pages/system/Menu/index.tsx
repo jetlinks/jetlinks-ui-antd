@@ -41,7 +41,7 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const { minHeight } = useDomFullHeight(`.menu`, 24);
-  const [param, setParam] = useState({});
+  const [param, setParam] = useState<any>({});
   const history = useHistory();
   const { permission } = PermissionButton.usePermission('system/Menu');
 
@@ -265,8 +265,39 @@ export default observer(() => {
         search={false}
         params={param}
         request={async (params) => {
+          console.log(params);
           const response = await service.queryMenuThree({
             ...params,
+            // terms: [
+            //   ...param?.terms,
+            //   {
+            //     "terms": [
+            //       {
+            //         "terms": [
+            //           {
+            //             "column": "owner",
+            //             "termType": "eq",
+            //             "value": "iot"
+            //           }
+            //         ]
+            //       },
+            //       {
+            //         "terms": [
+            //           {
+            //             "column": "owner",
+            //             "termType": "notnull"
+            //           },
+            //           {
+            //             "column": "appId",
+            //             "termType": "notnull",
+            //             "type": "and"
+            //           }
+            //         ],
+            //         "type": "or"
+            //       }
+            //     ]
+            //   },
+            // ],
             sorts: [{ name: 'sortIndex', order: 'asc' }],
             paging: false,
           });

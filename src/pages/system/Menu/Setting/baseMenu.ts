@@ -968,6 +968,28 @@ export default [
                 permissions: [{ permission: 'rule-scene', actions: ['query', 'delete'] }],
               },
               {
+                id: 'tigger',
+                name: '手动触发',
+                description: null,
+                permissions: [
+                  {
+                    permission: 'rule-scene',
+                    actions: ['execute'],
+                  },
+                ],
+              },
+              {
+                id: 'view',
+                name: '查看',
+                description: null,
+                permissions: [
+                  {
+                    permission: 'rule-scene',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
                 id: 'action',
                 name: '启用/禁用',
                 permissions: [{ permission: 'rule-scene', actions: ['query', 'save', 'execute'] }],

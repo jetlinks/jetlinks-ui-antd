@@ -376,10 +376,10 @@ export function render(oldRender: any) {
       if (res && res.status === 200) {
         if (isDev) {
           res.result.push({
-            code: 'demo',
-            id: 'demo',
+            code: 'iframe',
+            id: 'iframe',
             name: '例子',
-            url: '/demo',
+            url: '/iframe',
           });
         }
         extraRoutes = handleRoutes([...res.result, ...extraRouteArr]);
