@@ -362,17 +362,44 @@ export function patchRoutes(routes: any) {
 
 export function render(oldRender: any) {
   if (![loginPath, bindPath].includes(history.location.pathname)) {
-    // SystemConfigService.getAMapKey().then((res) => {
-    //   if (res && res.status === 200 && res.result) {
-    //     localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);
-    //   }
-    // });
+    //过滤非集成的菜单
+    const params = [
+      {
+        terms: [
+          {
+            terms: [
+              {
+                column: 'owner',
+                termType: 'eq',
+                value: 'iot',
+              },
+            ],
+          },
+          {
+            terms: [
+              {
+                column: 'owner',
+                termType: 'notnull',
+                value: '1',
+              },
+              {
+                column: 'appId',
+                termType: 'notnull',
+                value: '1',
+                type: 'and',
+              },
+            ],
+            type: 'or',
+          },
+        ],
+      },
+    ];
     Service.settingDetail('api').then((res) => {
       if (res && res.status === 200 && res.result) {
         localStorage.setItem(SystemConst.AMAP_KEY, res.result.api);
       }
     });
-    MenuService.queryOwnThree({ paging: false }).then((res) => {
+    MenuService.queryOwnThree({ paging: false, terms: params }).then((res) => {
       if (res && res.status === 200) {
         if (isDev) {
           res.result.push({

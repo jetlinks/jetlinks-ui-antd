@@ -21,6 +21,11 @@ class Service extends BaseService<any> {
       method: 'GET',
       params,
     });
+  queryOwner = (data: any) =>
+    request(`${SystemConst.API_BASE}/menu/owner`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

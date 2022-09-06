@@ -269,7 +269,7 @@ const Login: React.FC = () => {
                             localStorage.setItem('onLogin', 'no');
                             //  window.open(`/#/account/center/bind`);
                             window.open(
-                              `/${SystemConst.API_BASE}/application/sso/${item.id}/login?redirect=/account/center/bind`,
+                              `/${SystemConst.API_BASE}/application/sso/${item.id}/login`,
                             );
                             window.onstorage = (e) => {
                               if (e.newValue) {
