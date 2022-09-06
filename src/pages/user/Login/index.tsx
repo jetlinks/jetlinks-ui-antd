@@ -26,6 +26,8 @@ const Login: React.FC = () => {
   iconMap.set('dingtalk-ent-app', require('/public/images/bind/dingtalk.png'));
   iconMap.set('wechat-webapp', require('/public/images/bind/wechat-webapp.png'));
 
+  const defaultImg = require('/public/images/apply/provider1.png');
+
   const fetchUserInfo = async () => {
     const userInfo = (await initialState?.fetchUserInfo?.()) as UserInfo;
     if (userInfo) {
@@ -276,7 +278,11 @@ const Login: React.FC = () => {
                             };
                           }}
                         >
-                          <img src={iconMap.get(item.provider)} />
+                          <img
+                            style={{ width: 32, height: 33 }}
+                            alt={item.name}
+                            src={iconMap.get(item.provider) || defaultImg}
+                          />
                         </Button>
                       ))}
                     </div>

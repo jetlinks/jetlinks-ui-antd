@@ -27,10 +27,12 @@ import { PlusOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import usePermissions from '@/hooks/permission';
-import { useLocation } from '@/hooks';
+import { useHistory, useLocation } from '@/hooks';
+import { getMenuPathByCode } from '@/utils/menu';
 
 const Save = () => {
   const location = useLocation();
+  const history = useHistory();
   const { permission: rolePermission } = usePermissions('system/Role');
   const { permission: deptPermission } = usePermissions('system/Department');
   const { permission } = PermissionButton.usePermission('system/Apply');
@@ -217,14 +219,18 @@ const Save = () => {
       const resp: any = await service.modify(id, data);
       if (resp.status === 200) {
         onlyMessage('保存成功');
+        const url = getMenuPathByCode('system/Apply');
+        history.push(url);
       }
     } else {
       const res: any = await service.save(data);
       if (res.status === 200) {
         onlyMessage('保存成功');
+        const url = getMenuPathByCode('system/Apply');
+        history.push(url);
       }
     }
-    console.log(data);
+    // console.log(data);
   };
 
   //单点登录
@@ -755,7 +761,7 @@ const Save = () => {
                 },
               },
             },
-            oAuth2: {
+            oauth2: {
               type: 'object',
               'x-reactions': {
                 dependencies: ['.type'],

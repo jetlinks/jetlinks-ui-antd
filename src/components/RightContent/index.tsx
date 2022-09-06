@@ -57,7 +57,7 @@ const GlobalHeaderRight: React.FC = () => {
       <span
         className={styles.action}
         onClick={() => {
-          window.open('http://doc.jetlinks.cn');
+          window.open('http://doc.v2.jetlinks.cn');
         }}
       >
         <QuestionCircleOutlined />
