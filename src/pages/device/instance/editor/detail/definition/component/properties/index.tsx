@@ -81,6 +81,13 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'enum') {
         data.valueType.elements = enumData;
       }
+      if (dataType === 'boolean') {
+        data.valueType = {
+          ...data.valueType,
+          falseValue: data.valueType.falseValue === 'false' ? false : data.valueType.falseValue,
+          trueValue: data.valueType.trueValue === 'true' ? true : data.valueType.trueValue
+        }
+      }
       if (dataType === 'object') {
         data.valueType.properties = properties;
       }

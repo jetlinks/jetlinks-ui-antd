@@ -303,7 +303,7 @@ const Action: React.FC<Props> = props => {
         </Col>
       );
     } else if (propertiesData.valueType.type === 'boolean') {
-      if (!propertiesData.valueType.trueValue || !propertiesData.valueType.falseValue) {
+      if (!propertiesData.valueType.trueValue || propertiesData.valueType.falseValue === undefined) {
         return (
           <Col span={6} style={{paddingBottom: 10}}>
             <Input key='value' placeholder='填写属性值'
@@ -319,18 +319,18 @@ const Action: React.FC<Props> = props => {
         return (
           <Col span={6} style={{paddingBottom: 10}}>
             <Select placeholder="选择属性值"
-                    defaultValue={actionData.configuration.message?.properties[propertiesData.id] || undefined}
+                    defaultValue={actionData.configuration.message?.properties[propertiesData.id]}
                     onChange={(value: string) => {
                       actionData.configuration.message.properties[propertiesData.id] = value;
                       setActionData({...actionData});
                       submitData();
                     }}
             >
-              <Select.Option key={propertiesData.valueType.trueValue}>
-                {`${propertiesData.valueType.trueText}（${propertiesData.valueType.trueValue}）`}
+              <Select.Option key={propertiesData.valueType.trueValue} value={propertiesData.valueType.trueValue}>
+                {`${propertiesData.valueType.trueText}（${String(propertiesData.valueType.trueValue)}）`}
               </Select.Option>
-              <Select.Option key={propertiesData.valueType.falseValue}>
-                {`${propertiesData.valueType.falseText}（${propertiesData.valueType.falseValue}）`}
+              <Select.Option key={propertiesData.valueType.falseValue} value={propertiesData.valueType.falseValue}>
+                {`${propertiesData.valueType.falseText}（${String(propertiesData.valueType.falseValue)}）`}
               </Select.Option>
             </Select>
           </Col>
