@@ -120,7 +120,6 @@ const Save = () => {
   };
   const getRole = () => service.queryRoleList();
   const getOrg = () => service.queryOrgList();
-  const getOwner = (data: any) => service.queryOwner(data);
 
   const useAsyncData = (api: any) => (fields: Field) => {
     fields.loading = true;
@@ -158,12 +157,6 @@ const Save = () => {
               form1.setFieldState('integrationModes', (f1) => {
                 f1.hidden = false;
                 f1.value = [];
-                // console.log(f1.value)
-                // debugger;
-                // f1.value = [''];
-                // console.log(f1.value)
-                // debugger;
-                // console.log(f1.value)
               });
               break;
             case 'internal-integrated':
@@ -1204,28 +1197,6 @@ const Save = () => {
               header: '页面集成',
             },
             properties: {
-              'page.owner': {
-                type: 'string',
-                title: '所属系统',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
-                },
-                required: true,
-                'x-component': 'Select',
-                'x-component-props': {
-                  placeholder: '请输入接入地址',
-                },
-                // 'x-reactions': '{{useAsyncDataSource(getOwner(["iot"]))}}',
-                // 'x-reactions': {
-                //   dependencies: ['configId'],
-                //   fulfill: {
-                //     run: '{{useAsyncDataSource(getAliyunSigns($deps[0]))}}',
-                //   },
-                // },
-              },
               'page.baseUrl': {
                 type: 'string',
                 title: '接入地址',
@@ -1572,7 +1543,6 @@ const Save = () => {
                   getProvidersAll,
                   getRole,
                   getOrg,
-                  getOwner,
                 }}
               />
               <FormButtonGroup.Sticky>

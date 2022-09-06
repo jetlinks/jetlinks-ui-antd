@@ -23,10 +23,13 @@ const Bind = () => {
   const Vector = require('/public/images/bind/Vector.png');
   const Rectangle = require('/public/images/bind/Rectangle.png');
   const logo = require('/public/images/bind/jetlinksLogo.png');
+  // const defaultImg = require('/public/images/apply/provider1.png');
 
   const iconMap = new Map();
   iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));
   iconMap.set('wechat-webapp', require('/public/images/notice/wechat.png'));
+  iconMap.set('internal-standalone', require('/public/images/apply/provider1.png'));
+  iconMap.set('third-party', require('/public/images/apply/provider5.png')); //三方
 
   const bindUserInfo = (params: any) => {
     service.bindUserInfo(params).then((res) => {
@@ -220,7 +223,7 @@ const Bind = () => {
                     <div style={{ height: 100, marginTop: 10, marginBottom: 10 }}>
                       <img
                         style={{ height: 70 }}
-                        src={iconMap.get(bindUser?.applicationProvider)}
+                        src={iconMap.get(bindUser?.applicationProvider) || defaultImg}
                       />
                     </div>
                     <p className={styles.fonts}>用户名：{bindUser?.result?.username || '-'}</p>

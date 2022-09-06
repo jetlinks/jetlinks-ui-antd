@@ -41,10 +41,12 @@ const Center = () => {
   const iconMap = new Map();
   iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));
   iconMap.set('wechat-webapp', require('/public/images/notice/wechat.png'));
+  iconMap.set('internal-standalone', require('/public/images/apply/provider1.png'));
+  iconMap.set('third-party', require('/public/images/apply/provider5.png'));
 
-  const nameMap = new Map();
-  nameMap.set('dingtalk-ent-app', '钉钉');
-  nameMap.set('wechat-webapp', '微信');
+  // const nameMap = new Map();
+  // nameMap.set('dingtalk-ent-app', '钉钉');
+  // nameMap.set('wechat-webapp', '微信');
 
   const bGroundMap = new Map();
   bGroundMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk-background.png'));
@@ -250,7 +252,10 @@ const Center = () => {
             <Col key={item.id}>
               <Card
                 style={{
-                  background: `url(${bGroundMap.get(item.provider)}) no-repeat`,
+                  background: `url(${
+                    bGroundMap.get(item.provider) ||
+                    require('/public/images/notice/dingtalk-background.png')
+                  }) no-repeat`,
                   backgroundSize: '100% 100%',
                   width: 415,
                 }}
@@ -275,7 +280,9 @@ const Center = () => {
                         </div>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '22px' }}>{nameMap.get(item.provider)}未绑定</div>
+                      <div style={{ fontSize: '22px', width: 150 }}>
+                        <Ellipsis title={`${item.name}未绑定`} />
+                      </div>
                     )}
                   </div>
                   <div>
