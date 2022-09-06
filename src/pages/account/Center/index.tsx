@@ -293,7 +293,7 @@ const Center = () => {
                         type="primary"
                         onClick={() => {
                           window.open(
-                            `/${SystemConst.API_BASE}/application/sso/${item.id}/login?autoCreateUser=false&redirect=/account/center/bind`,
+                            `/${SystemConst.API_BASE}/application/sso/${item.id}/login?autoCreateUser=false`,
                           );
                           // window.open(`/#/account/center/bind`);
                           localStorage.setItem('onBind', 'false');

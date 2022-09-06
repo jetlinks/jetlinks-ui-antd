@@ -266,51 +266,71 @@ export default observer(() => {
         params={param}
         request={async (params) => {
           console.log(params);
-          const response = await service.queryMenuThree({
-            ...params,
-            // terms: [
-            //   ...param?.terms,
-            //   {
-            //     "terms": [
-            //       {
-            //         "terms": [
-            //           {
-            //             "column": "owner",
-            //             "termType": "eq",
-            //             "value": "iot"
-            //           }
-            //         ]
-            //       },
-            //       {
-            //         "terms": [
-            //           {
-            //             "column": "owner",
-            //             "termType": "notnull"
-            //           },
-            //           {
-            //             "column": "appId",
-            //             "termType": "notnull",
-            //             "type": "and"
-            //           }
-            //         ],
-            //         "type": "or"
-            //       }
-            //     ]
-            //   },
-            // ],
-            sorts: [{ name: 'sortIndex', order: 'asc' }],
-            paging: false,
-          });
-          return {
-            code: response.message,
-            result: {
-              data: response.result,
-              pageIndex: 0,
-              pageSize: 0,
-              total: 0,
-            },
-            status: response.status,
+          //过滤非集成的菜单
+          const item = {
+            terms: [
+              {
+                terms: [
+                  {
+                    column: 'owner',
+                    termType: 'eq',
+                    value: 'iot',
+                  },
+                ],
+              },
+              {
+                terms: [
+                  {
+                    column: 'owner',
+                    termType: 'notnull',
+                    value: '1',
+                  },
+                  {
+                    column: 'appId',
+                    termType: 'notnull',
+                    value: '1',
+                    type: 'and',
+                  },
+                ],
+                type: 'or',
+              },
+            ],
           };
+          if (params.terms && params.length !== 0) {
+            const response = await service.queryMenuThree({
+              ...params,
+              terms: [...param.terms, item],
+              sorts: [{ name: 'sortIndex', order: 'asc' }],
+              paging: false,
+            });
+            return {
+              code: response.message,
+              result: {
+                data: response.result,
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: response.status,
+            };
+          } else {
+            const response = await service.queryMenuThree({
+              ...params,
+              terms: [item],
+              sorts: [{ name: 'sortIndex', order: 'asc' }],
+              paging: false,
+            });
+            return {
+              code: response.message,
+              result: {
+                data: response.result,
+                pageIndex: 0,
+                pageSize: 0,
+                total: 0,
+              },
+              status: response.status,
+            };
+          }
         }}
         headerTitle={[
           <PermissionButton
