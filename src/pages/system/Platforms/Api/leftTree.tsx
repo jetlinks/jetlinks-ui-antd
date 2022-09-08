@@ -95,7 +95,7 @@ export default (props: LeftTreeType) => {
               }
               return undefined;
             }),
-            map((resp: any) => resp && updateTreeData(resp, item)),
+            map((resp: any) => updateTreeData(resp, item)),
           ),
         ),
       );

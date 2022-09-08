@@ -225,7 +225,7 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
  * @param level 路由层级
  */
 const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
-  console.log(extraRoutes, 1111111111);
+  // console.log(extraRoutes, 1111111111);
   const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
   return extraRoutes.map((route) => {
     const component = allComponents[route.code] || null;

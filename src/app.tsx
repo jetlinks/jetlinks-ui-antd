@@ -375,22 +375,6 @@ export function render(oldRender: any) {
               },
             ],
           },
-          {
-            terms: [
-              {
-                column: 'owner',
-                termType: 'notnull',
-                value: '1',
-              },
-              {
-                column: 'appId',
-                termType: 'notnull',
-                value: '1',
-                type: 'and',
-              },
-            ],
-            type: 'or',
-          },
         ],
       },
     ];

@@ -20,7 +20,7 @@ import {
 import { TreeSelect as ATreeSelect } from 'antd';
 import { useEffect, useState } from 'react';
 import { createSchemaField } from '@formily/react';
-import { createForm, Field, onFieldValueChange, onFormInit } from '@formily/core';
+import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
 import { onlyMessage, randomString, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
 import { PlusOutlined } from '@ant-design/icons';
@@ -155,32 +155,34 @@ const Save = () => {
           switch (value) {
             case 'internal-standalone':
               form1.setFieldState('integrationModes', (f1) => {
-                f1.hidden = false;
                 f1.value = [];
+                f1.dataSource = integrationModesList;
               });
               break;
             case 'internal-integrated':
               form1.setFieldState('integrationModes', (f2) => {
-                f2.hidden = true;
-                f2.value = ['page'];
+                f2.value = [];
+                f2.dataSource = integrationModesList?.filter(
+                  (item) => item.value === 'apiClient' || item.value === 'page',
+                );
               });
               break;
             case 'dingtalk-ent-app':
               form1.setFieldState('integrationModes', (f3) => {
-                f3.hidden = true;
                 f3.value = ['ssoClient'];
+                f3.dataSource = integrationModesList?.filter((item) => item.value === 'ssoClient');
               });
               break;
             case 'wechat-webapp':
               form1.setFieldState('integrationModes', (f4) => {
-                f4.hidden = true;
                 f4.value = ['ssoClient'];
+                f4.dataSource = integrationModesList?.filter((item) => item.value === 'ssoClient');
               });
               break;
             case 'third-party':
               form1.setFieldState('integrationModes', (f5) => {
-                f5.hidden = false;
                 f5.value = [];
+                f5.dataSource = integrationModesList;
               });
               break;
             default:
@@ -189,10 +191,11 @@ const Save = () => {
         }
       });
       onFieldValueChange('integrationModes', (field, form2) => {
+        const value = field.value;
         formCollapse.activeKeys = field.value;
         const modes = ['page', 'apiClient', 'apiServer', 'ssoClient'];
-        const items = modes.concat(field.value).filter((item) => !field.value?.includes(item)); //未被选中
-        // console.log(items);
+        const items = modes.concat(field.value).filter((item) => !value?.includes(item)); //未被选中
+        // console.log(value);
         items.forEach((i) => {
           form2.setFieldState(`config.${i}`, (state) => {
             state.visible = false;
@@ -203,12 +206,43 @@ const Save = () => {
             state.visible = true;
           });
         });
+        // const array = ['apiClient', 'apiServer'];
+        // const isSome = array.length ===value.length&& array.filter(t=>!value.includes(t))
+        // if(isSome){
+        //   // console.log(isSome,value)
+        //   console.log(11111)
+        //   form2.setFieldState('config.apiServer.appId',(state)=>{
+        //     state.visible=true
+        //   })
+        // }
+      });
+      onFieldReact('apiClient.authConfig.oauth2.clientId', (filed) => {
+        const parms = filed.query('provider').get('value');
+        console.log(parms);
+        if (id && parms === 'internal-standalone') {
+          filed.componentProps = {
+            disabled: true,
+          };
+        }
       });
     },
   });
 
   const handleSave = async () => {
     const data: any = await form.submit();
+
+    //独立应用-api客户端 id?clientId:appId
+    if (data.provider === 'internal-standalone') {
+      if (data.integrationModes.includes('apiClient')) {
+        data.id = data.apiClient.authConfig.oauth2.clientId;
+      }
+      if (
+        data.integrationModes.includes('apiServer') &&
+        !data.integrationModes.includes('apiClient')
+      ) {
+        data.id = data.apiServer.appId;
+      }
+    }
     if (id) {
       const resp: any = await service.modify(id, data);
       if (resp.status === 200) {
@@ -224,7 +258,7 @@ const Save = () => {
         history.push(url);
       }
     }
-    // console.log(data);
+    console.log(data);
   };
 
   //单点登录
@@ -929,6 +963,30 @@ const Save = () => {
               header: 'API服务',
             },
             properties: {
+              'apiServer.appId': {
+                type: 'string',
+                title: 'appId',
+                default: randomString(16),
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  gridSpan: 2,
+                  layout: 'vertical',
+                  labelAlign: 'left',
+                },
+                required: true,
+                'x-component': 'Input',
+                'x-component-props': {
+                  disabled: true,
+                },
+                'x-reactions': {
+                  dependencies: ['integrationModes'],
+                  fulfill: {
+                    state: {
+                      visible: '{{!$deps[0].includes("apiClient")}}',
+                    },
+                  },
+                },
+              },
               'apiServer.secureKey': {
                 type: 'string',
                 title: 'secureKey',
@@ -943,6 +1001,21 @@ const Save = () => {
                 'x-component': 'Input',
                 'x-component-props': {
                   placeholder: '请输入secureKey',
+                },
+              },
+              'apiServer.redirectUri': {
+                type: 'string',
+                title: '回调地址',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  gridSpan: 2,
+                  layout: 'vertical',
+                  labelAlign: 'left',
+                },
+                required: true,
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入回调地址',
                 },
               },
               'apiServer.roleIdList': {
@@ -1066,13 +1139,51 @@ const Save = () => {
                 },
                 properties: { ...clientThird },
               },
+              integratedConfig: {
+                type: 'void',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="internal-integrated"}}',
+                    },
+                  },
+                },
+                properties: {
+                  'apiClient.baseUrl': {
+                    type: 'string',
+                    title: '接口地址',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      gridSpan: 2,
+                      layout: 'vertical',
+                      labelAlign: 'left',
+                      tooltip: '访问Api服务的地址',
+                    },
+                    required: true,
+                    'x-component': 'Input',
+                    'x-component-props': {
+                      placeholder: '请输入接口地址',
+                    },
+                  },
+                },
+              },
+
               'apiClient.headers': {
                 type: 'array',
                 default: [{}],
                 title: '请求头',
                 'x-decorator': 'FormItem',
-                required: true,
+                // required: true,
                 'x-component': 'ArrayTable',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] && $deps[0]!=="internal-integrated"}}',
+                    },
+                  },
+                },
                 'x-decorator-props': {
                   gridSpan: 2,
                   layout: 'vertical',
@@ -1083,12 +1194,12 @@ const Save = () => {
                   properties: {
                     column1: {
                       type: 'void',
-                      required: true,
+                      // required: true,
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': { width: 100, title: 'key' },
                       properties: {
                         key: {
-                          required: true,
+                          // required: true,
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                         },
@@ -1100,7 +1211,7 @@ const Save = () => {
                       'x-component-props': { width: 100, title: 'value' },
                       properties: {
                         value: {
-                          required: true,
+                          // required: true,
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                         },
@@ -1131,8 +1242,16 @@ const Save = () => {
                 type: 'array',
                 default: [{}],
                 title: '参数',
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] && $deps[0]!=="internal-integrated"}}',
+                    },
+                  },
+                },
                 'x-decorator': 'FormItem',
-                required: true,
+                // required: true,
                 'x-component': 'ArrayTable',
                 'x-decorator-props': {
                   gridSpan: 2,
@@ -1144,12 +1263,12 @@ const Save = () => {
                   properties: {
                     column1: {
                       type: 'void',
-                      required: true,
+                      // required: true,
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': { width: 100, title: 'key' },
                       properties: {
                         key: {
-                          required: true,
+                          // required: true,
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                         },
@@ -1161,7 +1280,7 @@ const Save = () => {
                       'x-component-props': { width: 100, title: 'value' },
                       properties: {
                         value: {
-                          required: true,
+                          // required: true,
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                         },
@@ -1264,12 +1383,12 @@ const Save = () => {
                   properties: {
                     column1: {
                       type: 'void',
-                      required: true,
+                      // required: true,
                       'x-component': 'ArrayTable.Column',
                       'x-component-props': { width: 100, title: 'key' },
                       properties: {
                         key: {
-                          required: true,
+                          // required: true,
                           'x-decorator': 'FormItem',
                           'x-component': 'Input',
                         },
@@ -1281,7 +1400,7 @@ const Save = () => {
                       'x-component-props': { width: 100, title: 'value' },
                       properties: {
                         value: {
-                          required: true,
+                          // required: true,
                           'x-decorator': 'FormItem',
                           'x-component': 'AutoComplete',
                           'x-component-props': {

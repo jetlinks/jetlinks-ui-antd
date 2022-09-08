@@ -151,36 +151,22 @@ export default observer(() => {
   };
 
   const getSystemMenu = () => {
-    const item = {
-      terms: [
-        {
-          terms: [
-            {
-              column: 'owner',
-              termType: 'eq',
-              value: 'iot',
-            },
-          ],
-        },
-        {
-          terms: [
-            {
-              column: 'owner',
-              termType: 'notnull',
-              value: '1',
-            },
-            {
-              column: 'appId',
-              termType: 'notnull',
-              value: '1',
-              type: 'and',
-            },
-          ],
-          type: 'or',
-        },
-      ],
-    };
-    service.queryMenuThree({ paging: false, terms: [item] }).then((res) => {
+    const item = [
+      {
+        terms: [
+          {
+            terms: [
+              {
+                column: 'owner',
+                termType: 'eq',
+                value: 'iot',
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    service.queryMenuThree({ paging: false, terms: item }).then((res) => {
       if (res.status === 200) {
         MenuSettingModel.menuData = [...res.result];
         MenuSettingModel.notDragKeys = getKeys(res.result);

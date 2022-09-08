@@ -278,22 +278,6 @@ export default observer(() => {
                   },
                 ],
               },
-              {
-                terms: [
-                  {
-                    column: 'owner',
-                    termType: 'notnull',
-                    value: '1',
-                  },
-                  {
-                    column: 'appId',
-                    termType: 'notnull',
-                    value: '1',
-                    type: 'and',
-                  },
-                ],
-                type: 'or',
-              },
             ],
           };
           if (params.terms && params.length !== 0) {

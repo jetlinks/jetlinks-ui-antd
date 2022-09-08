@@ -7,16 +7,20 @@ import { onlyMessage } from '@/utils/util';
 import {
   DeleteOutlined,
   EditOutlined,
+  ExclamationCircleOutlined,
   EyeOutlined,
+  MenuUnfoldOutlined,
   PlayCircleOutlined,
   PlusOutlined,
+  SmallDashOutlined,
   StopOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Badge } from 'antd';
+import { Badge, Dropdown, Menu } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from 'umi';
+import MenuPage from './Menu';
 import Service from './service';
 
 export const service = new Service('application');
@@ -27,6 +31,8 @@ const Apply = () => {
   const [searchParams, setSearchParams] = useState<any>({});
   const { permission } = PermissionButton.usePermission('system/Apply');
   const intl = useIntl();
+  const [menuVisiable, setMenuVisiable] = useState<boolean>(false);
+  const [data, setData] = useState<any>({});
 
   const providerType = new Map();
   providerType.set('internal-standalone', '内部独立应用');
@@ -35,8 +41,8 @@ const Apply = () => {
   providerType.set('dingtalk-ent-app', '钉钉企业内部应用');
   providerType.set('third-party', '第三方应用');
 
-  const _action = (id: string, data: any) => {
-    service.modify(id, data).then((res) => {
+  const _action = (id: string, parms: any) => {
+    service.modify(id, parms).then((res) => {
       if (res.status === 200) {
         onlyMessage('操作成功');
         actionRef.current?.reload();
@@ -48,6 +54,10 @@ const Apply = () => {
 
   const isApiService = (params: any[]) => {
     const res = params?.map((item) => item.value).includes('apiServer');
+    return res;
+  };
+  const isPage = (params: any[]) => {
+    const res = params?.map((item) => item.value).includes('page');
     return res;
   };
 
@@ -135,6 +145,23 @@ const Apply = () => {
         >
           <EditOutlined />
         </PermissionButton>,
+        isPage(record.integrationModes) ? (
+          <PermissionButton
+            isPermission={permission.update}
+            key="edit"
+            onClick={() => {
+              setData(record);
+              setMenuVisiable(true);
+            }}
+            type={'link'}
+            style={{ padding: 0 }}
+            tooltip={{
+              title: '集成菜单',
+            }}
+          >
+            <MenuUnfoldOutlined />
+          </PermissionButton>
+        ) : null,
         isApiService(record.integrationModes) ? (
           <PermissionButton
             key={'empowerment'}
@@ -233,9 +260,9 @@ const Apply = () => {
       <SearchComponent
         field={columns}
         target="Apply"
-        onSearch={(data) => {
+        onSearch={(item) => {
           actionRef.current?.reset?.();
-          setSearchParams(data);
+          setSearchParams(item);
         }}
       />
       <ProTableCard
@@ -273,6 +300,18 @@ const Apply = () => {
           >
             新增
           </PermissionButton>,
+          <div
+            style={{
+              paddingLeft: 24,
+              background: '#fff',
+              fontSize: 14,
+            }}
+          >
+            <span style={{ marginRight: 8, fontSize: 16 }}>
+              <ExclamationCircleOutlined />
+            </span>
+            应用管理将多个应用系统的登录简化为一次登录，实现多处访问、集中管控的业务场景。
+          </div>,
         ]}
         gridColumn={3}
         cardRender={(record) => (
@@ -312,42 +351,6 @@ const Apply = () => {
                 <EditOutlined />
                 编辑
               </PermissionButton>,
-              isApiService(record.integrationModes) ? (
-                <PermissionButton
-                  key={'empowerment'}
-                  type={'link'}
-                  style={{ padding: 0 }}
-                  isPermission={permission.empowerment}
-                  tooltip={{
-                    title: '赋权',
-                  }}
-                  onClick={() => {
-                    const url = getMenuPathByCode('system/Apply/Api');
-                    history.push(`${url}?code=${record.id}`);
-                  }}
-                >
-                  <AIcon type={'icon-fuquan'} />
-                  赋权
-                </PermissionButton>
-              ) : null,
-              isApiService(record.integrationModes) ? (
-                <PermissionButton
-                  key={'api'}
-                  type={'link'}
-                  style={{ padding: 0 }}
-                  isPermission={permission.api}
-                  tooltip={{
-                    title: '查看API',
-                  }}
-                  onClick={() => {
-                    const url = getMenuPathByCode('system/Apply/View');
-                    history.push(`${url}?code=${record.id}`);
-                  }}
-                >
-                  <AIcon type={'icon-chakanAPI'} />
-                  查看API
-                </PermissionButton>
-              ) : null,
               <PermissionButton
                 isPermission={permission.action}
                 key="action"
@@ -374,6 +377,81 @@ const Apply = () => {
                 {record.state !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
                 {record.state !== 'disabled' ? '禁用' : '启用'}
               </PermissionButton>,
+              (isPage(record.integrationModes) || isApiService(record.integrationModes)) && (
+                <Dropdown
+                  key={'more'}
+                  placement="bottom"
+                  overlay={
+                    <Menu>
+                      {isPage(record.integrationModes) && (
+                        <Menu.Item key="menu">
+                          <PermissionButton
+                            isPermission={permission.update}
+                            key="edit"
+                            onClick={() => {
+                              setData(record);
+                              setMenuVisiable(true);
+                            }}
+                            type={'link'}
+                            style={{ padding: 0 }}
+                            tooltip={{
+                              title: '集成菜单',
+                            }}
+                          >
+                            <MenuUnfoldOutlined />
+                            集成菜单
+                          </PermissionButton>
+                        </Menu.Item>
+                      )}
+                      {isApiService(record.integrationModes) && (
+                        <Menu.Item key="empowerment">
+                          <PermissionButton
+                            key={'empowerment'}
+                            type={'link'}
+                            style={{ padding: 0 }}
+                            isPermission={permission.empowerment}
+                            tooltip={{
+                              title: '赋权',
+                            }}
+                            onClick={() => {
+                              const url = getMenuPathByCode('system/Apply/Api');
+                              history.push(`${url}?code=${record.id}`);
+                            }}
+                          >
+                            <AIcon type={'icon-fuquan'} />
+                            赋权
+                          </PermissionButton>
+                        </Menu.Item>
+                      )}
+                      {isApiService(record.integrationModes) && (
+                        <Menu.Item key="empowerment">
+                          <PermissionButton
+                            key={'api'}
+                            type={'link'}
+                            style={{ padding: 0 }}
+                            isPermission={permission.api}
+                            tooltip={{
+                              title: '查看API',
+                            }}
+                            onClick={() => {
+                              const url = getMenuPathByCode('system/Apply/View');
+                              history.push(`${url}?code=${record.id}`);
+                            }}
+                          >
+                            <AIcon type={'icon-chakanAPI'} />
+                            查看API
+                          </PermissionButton>
+                        </Menu.Item>
+                      )}
+                    </Menu>
+                  }
+                >
+                  <PermissionButton type={'link'} isPermission={true} key="other">
+                    <SmallDashOutlined />
+                    其他
+                  </PermissionButton>
+                </Dropdown>
+              ),
               <PermissionButton
                 isPermission={permission.delete}
                 tooltip={{
@@ -407,6 +485,14 @@ const Apply = () => {
           />
         )}
       />
+      {menuVisiable && (
+        <MenuPage
+          data={data}
+          close={() => {
+            setMenuVisiable(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };
