@@ -356,7 +356,7 @@ export function patchRoutes(routes: any) {
       ],
     };
     basePath.routes = [...basePath.routes, baseRedirect];
-    console.log(basePath.routes);
+    // console.log(basePath.routes);
   }
 }
 
@@ -374,22 +374,6 @@ export function render(oldRender: any) {
                 value: 'iot',
               },
             ],
-          },
-          {
-            terms: [
-              {
-                column: 'owner',
-                termType: 'notnull',
-                value: '1',
-              },
-              {
-                column: 'appId',
-                termType: 'notnull',
-                value: '1',
-                type: 'and',
-              },
-            ],
-            type: 'or',
           },
         ],
       },

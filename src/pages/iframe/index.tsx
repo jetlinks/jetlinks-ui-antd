@@ -1,6 +1,11 @@
 import { PageContainer } from '@ant-design/pro-layout';
+import { useEffect } from 'react';
+import { useLocation } from 'umi';
 
 const Iframe = () => {
+  const location = useLocation();
+  console.log(location, 22222);
+  useEffect(() => {}, []);
   return (
     <PageContainer>
       <iframe

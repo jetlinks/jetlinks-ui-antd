@@ -57,10 +57,8 @@ export default (props: EditProps) => {
   const saveData = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      // formData.options = {
-      //   switch: show,
-      // };
-
+      formData.owner = 'iot';
+      // console.log(formData)
       setLoading(true);
       const response: any = !formData.id
         ? await service.save(formData)

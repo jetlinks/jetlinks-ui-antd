@@ -26,6 +26,11 @@ class Service extends BaseService<any> {
       method: 'POST',
       data,
     });
+  queryOwnerTree = (owner: string) =>
+    request(`${SystemConst.API_BASE}/menu/owner/tree/${owner}`, {
+      method: 'POST',
+      data: {},
+    });
 }
 
 export default Service;
