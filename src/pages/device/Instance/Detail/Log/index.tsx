@@ -109,12 +109,18 @@ const Log = () => {
           pageSize: 10,
         }}
         request={async (params, sort) => {
+          let sorts;
+          if (sort.timestamp) {
+            sorts = sort.timestamp === 'descend' ? 'desc' : 'asc';
+          } else {
+            sorts = 'desc';
+          }
           const res = await service.queryLog(InstanceModel.detail.id!, {
             ...params,
             sorts: [
               {
                 name: 'timestamp',
-                order: sort.timestamp === 'descend' ? 'desc' : 'asc',
+                order: sorts,
               },
             ],
           });
