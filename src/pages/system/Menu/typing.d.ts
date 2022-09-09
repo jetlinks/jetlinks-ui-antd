@@ -60,6 +60,7 @@ export type MenuItem = {
   redirect?: string;
   children?: MenuItem[];
   accessSupport?: { text: string; value: string };
+  appId?: string; //应用id
 };
 
 /**

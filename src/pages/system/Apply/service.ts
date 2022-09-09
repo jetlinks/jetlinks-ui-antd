@@ -31,6 +31,11 @@ class Service extends BaseService<any> {
       method: 'POST',
       data: {},
     });
+  saveOwnerTree = (owner: string, appId: string, data: any) =>
+    request(`${SystemConst.API_BASE}/menu/owner/${owner}/${appId}/_all`, {
+      method: 'PATCH',
+      data,
+    });
 }
 
 export default Service;

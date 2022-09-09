@@ -146,6 +146,7 @@ const Save = () => {
         formInit.setInitialValues({
           ...resp.result,
           integrationModes,
+          'apiServer.appId': id,
         });
       });
       onFieldValueChange('provider', (field, form1) => {
@@ -206,15 +207,6 @@ const Save = () => {
             state.visible = true;
           });
         });
-        // const array = ['apiClient', 'apiServer'];
-        // const isSome = array.length ===value.length&& array.filter(t=>!value.includes(t))
-        // if(isSome){
-        //   // console.log(isSome,value)
-        //   console.log(11111)
-        //   form2.setFieldState('config.apiServer.appId',(state)=>{
-        //     state.visible=true
-        //   })
-        // }
       });
       onFieldReact('apiClient.authConfig.oauth2.clientId', (filed) => {
         const parms = filed.query('provider').get('value');

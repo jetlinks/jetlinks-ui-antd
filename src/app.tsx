@@ -385,14 +385,14 @@ export function render(oldRender: any) {
     });
     MenuService.queryOwnThree({ paging: false, terms: params }).then((res) => {
       if (res && res.status === 200) {
-        if (isDev) {
-          res.result.push({
-            code: 'iframe',
-            id: 'iframe',
-            name: '例子',
-            url: '/iframe',
-          });
-        }
+        // if (isDev) {
+        //   res.result.push({
+        //     code: 'iframe',
+        //     id: 'iframe',
+        //     name: '例子',
+        //     url: '/iframe',
+        //   });
+        // }
         extraRoutes = handleRoutes([...res.result, ...extraRouteArr]);
         saveMenusCache(extraRoutes);
       }

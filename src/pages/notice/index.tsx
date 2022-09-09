@@ -99,7 +99,7 @@ const Type = observer(() => {
     {
       type: 'webhook',
       name: 'webhook',
-      describe: '支持websocket消息通知',
+      describe: '支持Http消息通知',
     },
   ];
 
