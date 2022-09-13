@@ -225,16 +225,27 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
  * @param level 路由层级
  */
 const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
-  // console.log(extraRoutes, 1111111111);
   const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
   return extraRoutes.map((route) => {
-    const component = allComponents[route.code] || null;
-    const _route: IRouteProps = {
-      key: route.url,
-      name: route.name,
-      path: route.url,
-    };
+    let component;
+    let _route: IRouteProps;
+    if (route.appId) {
+      component = allComponents['iframe'];
+      _route = {
+        key: `${route.url}`,
+        name: route.name,
+        path: `${route.url}`,
+      };
+    } else {
+      component = allComponents[route.code] || null;
+      _route = {
+        key: route.url,
+        name: route.name,
+        path: route.url,
+      };
+    }
 
+    // console.log(_route)
     if (route.children && route.children.length) {
       const flatRoutes = getRoutes(flatRoute(route.children || []), level + 1);
       const redirect = flatRoutes.filter((r) => r.component)[0]?.path;
@@ -250,13 +261,12 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
         : flatRoutes;
     } else if (component) {
       _route.component = component;
-      // console.log(component)
     }
 
     if (level !== 1) {
       _route.exact = true;
     }
-
+    // console.log(_route);
     return _route;
   });
 };

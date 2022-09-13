@@ -31,6 +31,21 @@ class Service extends BaseService<any> {
       method: 'POST',
       data: {},
     });
+  saveOwnerTree = (owner: string, appId: string, data: any) =>
+    request(`${SystemConst.API_BASE}/menu/owner/${owner}/${appId}/_all`, {
+      method: 'PATCH',
+      data,
+    });
+  queryOwnerStandalone = (api: string, data: any) =>
+    request(`${api}/menu/owner`, {
+      method: 'POST',
+      data,
+    });
+  queryOwnerTreeStandalone = (api: string, owner: string) =>
+    request(`${api}/menu/owner/tree/${owner}`, {
+      method: 'POST',
+      data: {},
+    });
 }
 
 export default Service;

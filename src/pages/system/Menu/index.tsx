@@ -276,6 +276,12 @@ export default observer(() => {
                     termType: 'eq',
                     value: 'iot',
                   },
+                  {
+                    column: 'owner',
+                    termType: 'isnull',
+                    value: '1',
+                    type: 'or',
+                  },
                 ],
               },
             ],
