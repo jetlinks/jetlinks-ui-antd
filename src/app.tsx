@@ -373,6 +373,12 @@ export function render(oldRender: any) {
                 termType: 'eq',
                 value: 'iot',
               },
+              {
+                column: 'owner',
+                termType: 'isnull',
+                value: '1',
+                type: 'or',
+              },
             ],
           },
         ],

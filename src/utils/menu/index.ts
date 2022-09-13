@@ -266,7 +266,7 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
     if (level !== 1) {
       _route.exact = true;
     }
-    console.log(_route);
+    // console.log(_route);
     return _route;
   });
 };

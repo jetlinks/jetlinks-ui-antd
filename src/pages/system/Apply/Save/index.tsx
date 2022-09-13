@@ -68,7 +68,7 @@ const Save = () => {
       value: 'apiServer',
     },
     {
-      label: '单点登陆',
+      label: '单点登录',
       value: 'ssoClient',
     },
   ];

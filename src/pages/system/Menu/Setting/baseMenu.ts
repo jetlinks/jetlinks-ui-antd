@@ -3,6 +3,7 @@ export default [
   {
     code: 'iot',
     name: '物联网',
+    owner: 'iot',
     id: '1',
     url: '/iot',
     icon: 'icon-wulianwang',
@@ -17,6 +18,7 @@ export default [
       {
         code: 'home',
         name: '首页',
+        owner: 'iot',
         parentId: '1',
         id: '1-1',
         url: '/iot/home',
@@ -31,6 +33,7 @@ export default [
       {
         code: 'notice',
         name: '通知管理',
+        owner: 'iot',
         parentId: '1',
         id: '1-2',
         url: '/iot/notice/Type',
@@ -57,6 +60,7 @@ export default [
       {
         code: 'device',
         name: '设备管理',
+        owner: 'iot',
         parentId: '1',
         id: '1-3',
         url: '/iot/device',
@@ -67,6 +71,7 @@ export default [
           {
             code: 'device/DashBoard',
             name: '仪表盘',
+            owner: 'iot',
             parentId: '1-3',
             id: '1-3-1',
             url: '/iot/device/DashBoard',
@@ -82,6 +87,7 @@ export default [
           {
             code: 'device/Product',
             name: '产品',
+            owner: 'iot',
             parentId: '1-3',
             id: '1-3-2',
             url: '/iot/device/Product',
@@ -157,6 +163,7 @@ export default [
           {
             code: 'device/Instance',
             name: '设备',
+            owner: 'iot',
             parentId: '1-3',
             id: '1-3-3',
             url: '/iot/device/Instance',
@@ -234,6 +241,7 @@ export default [
           {
             code: 'device/Category',
             name: '产品分类',
+            owner: 'iot',
             parentId: '1-3',
             id: '1-3-4',
             sortIndex: 4,
@@ -271,6 +279,7 @@ export default [
       {
         code: 'link',
         name: '运维管理',
+        owner: 'iot',
         parentId: '1',
         id: '1-4',
         url: '/iot/link',
@@ -693,6 +702,7 @@ export default [
       {
         code: 'rule-engine/Alarm',
         name: '告警中心',
+        owner: 'iot',
         parentId: '1',
         id: '1-5',
         sortIndex: 1,
@@ -812,6 +822,7 @@ export default [
       {
         code: 'Northbound',
         name: '北向输出',
+        owner: 'iot',
         parentId: '1',
         id: '1-6',
         sortIndex: 6,
@@ -892,6 +903,7 @@ export default [
       {
         code: 'rule-engine',
         name: '规则引擎',
+        owner: 'iot',
         parentId: '1',
         id: '1-7',
         sortIndex: 7,
@@ -1015,6 +1027,7 @@ export default [
   {
     code: 'media',
     name: '视频中心',
+    owner: 'iot',
     id: '2',
     url: '/media',
     icon: 'icon-shipinwangguan',
@@ -1027,6 +1040,7 @@ export default [
       {
         code: 'media/Home',
         name: '首页',
+        owner: 'iot',
         parentId: '2',
         id: '2-1',
         sortIndex: 1,
@@ -1038,6 +1052,7 @@ export default [
       {
         code: 'media/DashBoard',
         name: '仪表盘',
+        owner: 'iot',
         parentId: '2',
         id: '2-2',
         sortIndex: 2,
@@ -1049,6 +1064,7 @@ export default [
       {
         code: 'media/Device',
         name: '视频设备',
+        owner: 'iot',
         parentId: '2',
         id: '2-3',
         sortIndex: 3,
@@ -1114,6 +1130,7 @@ export default [
       {
         code: 'media/SplitScreen',
         name: '分屏展示',
+        owner: 'iot',
         parentId: '2',
         id: '2-4',
         sortIndex: 4,
@@ -1137,6 +1154,7 @@ export default [
       {
         code: 'media/Cascade',
         name: '国标级联',
+        owner: 'iot',
         parentId: '2',
         id: '2-5',
         sortIndex: 5,
@@ -1208,6 +1226,7 @@ export default [
   {
     code: 'system',
     name: '系统管理',
+    owner: 'iot',
     id: '3',
     url: '/system',
     icon: 'icon-xitongguanli1',
@@ -1218,6 +1237,7 @@ export default [
       {
         code: 'system/Basis',
         name: '基础配置',
+        owner: 'iot',
         parentId: '3',
         id: '3-1',
         sortIndex: 1,
@@ -1238,6 +1258,7 @@ export default [
       {
         code: 'system/User',
         name: '用户管理',
+        owner: 'iot',
         parentId: '3',
         id: '3-2',
         sortIndex: 2,
@@ -1295,6 +1316,7 @@ export default [
       {
         code: 'system/Department',
         name: '部门管理',
+        owner: 'iot',
         parentId: '3',
         id: '3-3',
         sortIndex: 3,
@@ -1316,6 +1338,16 @@ export default [
             id: 'view',
             name: '查看',
             permissions: [{ permission: 'organization', actions: ['query'] }],
+          },
+          {
+            id: 'bind',
+            name: '资产编辑',
+            permissions: [{ permission: 'assets-bind', actions: ['permission'] }],
+          },
+          {
+            id: 'bind',
+            name: '资产解绑',
+            permissions: [{ permission: 'assets-bind', actions: ['bind', 'unbind'] }],
           },
           {
             id: 'bind-user',
@@ -1355,6 +1387,7 @@ export default [
       {
         code: 'system/Role',
         name: '角色管理',
+        owner: 'iot',
         parentId: '3',
         id: '3-4',
         sortIndex: 4,
@@ -1398,6 +1431,7 @@ export default [
       {
         code: 'system/Menu',
         name: '菜单管理',
+        owner: 'iot',
         parentId: '3',
         id: '3-5',
         sortIndex: 5,
@@ -1451,6 +1485,7 @@ export default [
       {
         code: 'system/Permission',
         name: '权限管理',
+        owner: 'iot',
         parentId: '3',
         id: '3-6',
         sortIndex: 6,
@@ -1506,6 +1541,7 @@ export default [
       {
         code: 'system/Platforms',
         name: '第三方平台',
+        owner: 'iot',
         parentId: '3',
         id: '3-7',
         sortIndex: 7,
@@ -1516,10 +1552,13 @@ export default [
           {
             id: 'empowerment',
             name: '赋权',
-            permissions: [{ permission: 'user-third-party-manager', actions: ['save'] }],
+            permissions: [
+              { permission: 'user-third-party-manager', actions: ['save'] },
+              { permission: 'open-api', actions: ['save'] },
+            ],
           },
           {
-            id: 'action',
+            id: 'password',
             name: '重置密码',
             permissions: [{ permission: 'open-api', actions: ['save'] }],
           },
@@ -1539,6 +1578,7 @@ export default [
       {
         code: 'system/Relationship',
         name: '关系配置',
+        owner: 'iot',
         parentId: '3',
         id: '3-8',
         sortIndex: 8,
@@ -1567,6 +1607,7 @@ export default [
       {
         code: 'system/DataSource',
         name: '数据源管理',
+        owner: 'iot',
         parentId: '3',
         id: '3-9',
         sortIndex: 9,
@@ -1604,6 +1645,7 @@ export default [
       {
         code: 'system/Platforms/Setting',
         name: 'API配置',
+        owner: 'iot',
         parentId: '3',
         id: '3-10',
         sortIndex: 10,
@@ -1611,6 +1653,103 @@ export default [
         icon: 'icon-rizhifuwu',
         permissions: [{ permission: 'open-api', actions: ['query'] }],
         buttons: [],
+      },
+      {
+        code: 'system/Apply',
+        name: '应用管理',
+        owner: 'iot',
+        parentId: '3',
+        id: '3-11',
+        sortIndex: 11,
+        url: '/system/Apply',
+        icon: 'icon-wangguanzishebei',
+        permissions: [],
+        buttons: [
+          {
+            id: 'delete',
+            name: '删除',
+            description: null,
+            permissions: [
+              {
+                permission: 'application',
+                actions: ['delete'],
+              },
+            ],
+            options: null,
+          },
+          {
+            id: 'add',
+            name: '新增',
+            description: null,
+            permissions: [
+              {
+                permission: 'application',
+                actions: ['query', 'save'],
+              },
+            ],
+            options: null,
+          },
+          {
+            id: 'update',
+            name: '编辑',
+            description: null,
+            permissions: [
+              {
+                permission: 'application',
+                actions: ['query', 'save'],
+              },
+            ],
+            options: null,
+          },
+          {
+            id: 'empowerment',
+            name: '赋权',
+            description: null,
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query', 'save', 'delete'],
+              },
+            ],
+            options: null,
+          },
+          {
+            id: 'api',
+            name: '查看api',
+            description: null,
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query', 'save'],
+              },
+            ],
+            options: null,
+          },
+          {
+            id: 'view',
+            name: '查看',
+            description: null,
+            permissions: [
+              {
+                permission: 'application',
+                actions: ['query'],
+              },
+            ],
+            options: null,
+          },
+          {
+            id: 'action',
+            name: '启/禁用',
+            description: null,
+            permissions: [
+              {
+                permission: 'application',
+                actions: ['save'],
+              },
+            ],
+            options: null,
+          },
+        ],
       },
     ],
   },

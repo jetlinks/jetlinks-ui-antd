@@ -15,17 +15,18 @@ const MenuPage = (props: Props) => {
   const [keys, setKeys] = useState<any>([]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [half, setHalf] = useState<string[]>([]);
-  const [owner, setOwner] = useState<string>('iot');
+  // const [owner, setOwner] = useState<string>('iot');
   const [ownerList, setOwenrList] = useState<any>([]);
   // const [menu,setMenu] = useState<string>('')
 
   const getTree = async () => {
     const res = await service.queryOwner(['iot']);
     if (res.status === 200) {
-      if (data.provider !== 'internal-standalone') {
-        setOwner(res.result?.[0]);
-        setOwenrList(res.result);
-      }
+      setOwenrList(res.result);
+      console.log(res.result);
+      // if (data.provider !== 'internal-standalone') {
+      //   setOwner(res.result?.[0])
+      // }
       const resp = await service.queryOwnerTree(res.result?.[0]);
       if (resp.status === 200) {
         setTreeData(resp.result);
@@ -35,8 +36,15 @@ const MenuPage = (props: Props) => {
     }
   };
 
+  // const getMenu = async ()=>{
+  //   const res = await service.queryOwner(['iot']);
+  //   if(res.status === 200){
+  //     setOwenrList(res.result)
+  //   }
+  // }
+
   const save = async (datalist: any) => {
-    const res = await service.saveOwnerTree(owner, data.id, datalist);
+    const res = await service.saveOwnerTree('iot', data.id, datalist);
     if (res?.status === 200) {
       onlyMessage('操作成功');
     }
@@ -59,7 +67,7 @@ const MenuPage = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
     getTree();
   }, []);
 
@@ -84,10 +92,14 @@ const MenuPage = (props: Props) => {
       <Select
         style={{ width: 200, marginBottom: 20 }}
         placeholder="请选择集成系统"
-        defaultValue={owner}
+        onChange={(value) => {
+          console.log(value);
+        }}
       >
         {ownerList.map((item: any) => (
-          <Option value={item}>{item}</Option>
+          <Option value={item} key={item}>
+            {item}
+          </Option>
         ))}
       </Select>
       <Tree
