@@ -356,7 +356,7 @@ export function patchRoutes(routes: any) {
       ],
     };
     basePath.routes = [...basePath.routes, baseRedirect];
-    // console.log(basePath.routes);
+    console.log(basePath.routes, 'basePath.routes,');
   }
 }
 

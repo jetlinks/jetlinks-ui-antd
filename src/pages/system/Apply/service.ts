@@ -36,15 +36,20 @@ class Service extends BaseService<any> {
       method: 'PATCH',
       data,
     });
-  queryOwnerStandalone = (api: string, data: any) =>
-    request(`${api}/menu/owner`, {
+  queryOwnerStandalone = (appId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/application/${appId}/_/api/menu/owner`, {
       method: 'POST',
       data,
     });
-  queryOwnerTreeStandalone = (api: string, owner: string) =>
-    request(`${api}/menu/owner/tree/${owner}`, {
+  queryOwnerTreeStandalone = (appId: string, owner: string) =>
+    request(`{/${SystemConst.API_BASE}/application/${appId}/_/api/menu/owner/${owner}`, {
       method: 'POST',
       data: {},
+    });
+  queryTree = (data: any) =>
+    request(`${SystemConst.API_BASE}/menu/_all/tree`, {
+      method: 'POST',
+      data,
     });
 }
 
