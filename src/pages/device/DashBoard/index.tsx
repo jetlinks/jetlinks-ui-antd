@@ -180,8 +180,8 @@ const DeviceBoard = () => {
       },
     ]);
     if (res.status === 200) {
-      const thisMonth = res.result.find((item: any) => item.group === 'thisMonth').data.value;
-      const oneDay = res.result.find((item: any) => item.group === 'oneday').data.value;
+      const thisMonth = res.result.find((item: any) => item.group === 'thisMonth')?.data.value;
+      const oneDay = res.result.find((item: any) => item.group === 'oneday')?.data.value;
       setDay(oneDay);
       setMonth(thisMonth);
       const today = res.result.filter((item: any) => item.group === 'today');
