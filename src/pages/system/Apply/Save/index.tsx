@@ -1328,14 +1328,14 @@ const Save = () => {
                 type: 'string',
                 title: '路由方式',
                 'x-decorator': 'FormItem',
-                'x-reactions': {
-                  dependencies: ['provider'],
-                  fulfill: {
-                    state: {
-                      visible: '{{$deps[0]==="internal-integrated"}}',
-                    },
-                  },
-                },
+                // 'x-reactions': {
+                //   dependencies: ['provider'],
+                //   fulfill: {
+                //     state: {
+                //       visible: '{{$deps[0]==="internal-integrated"}}',
+                //     },
+                //   },
+                // },
                 'x-decorator-props': {
                   gridSpan: 2,
                   layout: 'vertical',

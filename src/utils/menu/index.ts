@@ -217,7 +217,7 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
         item.level = level;
 
         if (item.appId) {
-          item.url = `/iframe${item.url}`;
+          item.url = `/${item.appId}${item.url}`;
         }
         return item;
       })
@@ -242,9 +242,10 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
       component = allComponents['iframe'];
     } else {
       component = allComponents[route.code] || null;
+      // _route.layout=false
     }
 
-    // console.log(_route)
+    // console.log(_route,'layout')
     if (route.children && route.children.length) {
       const flatRoutes = getRoutes(flatRoute(route.children || []), level + 1);
       const redirect = flatRoutes.filter((r) => r.component)[0]?.path;
