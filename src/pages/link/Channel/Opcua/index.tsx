@@ -195,15 +195,9 @@ const NewOpc = () => {
             }),
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
-                await service.editPoint(record.id, {
-                  ...record,
-                  state: 'enabled',
-                });
+                await service._enable([record.id]);
               } else {
-                await service.editPoint(record.id, {
-                  ...record,
-                  state: 'disabled',
-                });
+                await service._disabled([record.id]);
               }
               onlyMessage(
                 intl.formatMessage({
@@ -367,7 +361,7 @@ const NewOpc = () => {
                 isPermission={permission.add}
                 key="add"
                 icon={<PlusOutlined />}
-                type="default"
+                type="primary"
                 style={{ width: '100%', marginTop: 16, marginBottom: 16 }}
               >
                 新增

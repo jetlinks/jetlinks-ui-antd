@@ -6,7 +6,13 @@ import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { model } from '@formily/reactive';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
@@ -33,6 +39,21 @@ const Stream = () => {
       dataIndex: 'name',
       title: '名称',
       ellipsis: true,
+    },
+    {
+      dataIndex: 'state',
+      title: '状态',
+      valueType: 'select',
+      valueEnum: {
+        disabled: {
+          text: '禁用',
+          status: 'disabled',
+        },
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
+      },
     },
   ];
 
@@ -118,6 +139,36 @@ const Stream = () => {
                           >
                             <EditOutlined />
                             编辑
+                          </PermissionButton>,
+                          <PermissionButton
+                            isPermission={permission.action}
+                            key="action"
+                            type={'link'}
+                            popConfirm={{
+                              title: `确认${item?.state?.value === 'enabled' ? '禁用' : '启用'}?`,
+                              onConfirm: async () => {
+                                if (item?.state?.value === 'enabled') {
+                                  const res = await service.disable(item.id);
+                                  if (res.status === 200) {
+                                    onlyMessage('操作成功');
+                                    handleSearch(param);
+                                  }
+                                } else {
+                                  const res = await service.enalbe(item.id);
+                                  if (res.status === 200) {
+                                    onlyMessage('操作成功');
+                                    handleSearch(param);
+                                  }
+                                }
+                              },
+                            }}
+                          >
+                            {item?.state?.value === 'enabled' ? (
+                              <CloseCircleOutlined />
+                            ) : (
+                              <PlayCircleOutlined />
+                            )}
+                            {item?.state?.value === 'enabled' ? '禁用' : '启用'}
                           </PermissionButton>,
                           <PermissionButton
                             isPermission={permission.delete}

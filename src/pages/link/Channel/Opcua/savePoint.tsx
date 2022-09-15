@@ -183,16 +183,16 @@ const SavePoint = (props: Props) => {
                 <Select.Option value="pull" key={'pull'}>
                   拉取
                 </Select.Option>
-                <Select.Option value="pullChange" key={'pullChange'}>
+                <Select.Option value="pullChanged" key={'pullChanged'}>
                   拉取变更值
                 </Select.Option>
-                <Select.Option value="pullPassive" key={'pullPassive'}>
+                <Select.Option value="active" key={'active'}>
                   被动读取
                 </Select.Option>
               </Select>
             </Form.Item>
           </Col>
-          {dataMode !== 'pullPassive' && (
+          {dataMode !== 'active' && (
             <Col span={12}>
               {dataMode === 'sub' && (
                 <Form.Item
@@ -217,7 +217,7 @@ const SavePoint = (props: Props) => {
                   />
                 </Form.Item>
               )}
-              {(dataMode === 'pullChange' || dataMode === 'pull') && (
+              {(dataMode === 'pullChanged' || dataMode === 'pull') && (
                 <Form.Item
                   label="拉取频率"
                   name="interval"

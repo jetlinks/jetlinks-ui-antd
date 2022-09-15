@@ -12,4 +12,8 @@ type StreamItem = {
     dynamicRtpPort: boolean;
     dynamicRtpPortRange: number[];
   };
+  state: {
+    value: string;
+    text: string;
+  };
 };

@@ -510,6 +510,11 @@ export default [
                 name: '新增',
                 permissions: [{ permission: 'certificate', actions: ['save'] }],
               },
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [{ permission: 'certificate', actions: ['query'] }],
+              },
             ],
           },
           {
@@ -536,6 +541,11 @@ export default [
                 id: 'update',
                 name: '编辑',
                 permissions: [{ permission: 'media-server', actions: ['query', 'save'] }],
+              },
+              {
+                id: 'action',
+                name: '启/禁用',
+                permissions: [{ permission: 'media-server', actions: ['save'] }],
               },
               {
                 id: 'add',

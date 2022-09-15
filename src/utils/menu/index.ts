@@ -270,6 +270,42 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
     return _route;
   });
 };
+export const getRoutesLayout = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
+  const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
+  return extraRoutes.map((route) => {
+    const component = allComponents[route.code] || null;
+    const _route: IRouteProps = {
+      key: route.url,
+      name: route.name,
+      path: route.url,
+      layout: false,
+    };
+
+    // console.log(_route,'layout')
+    if (route.children && route.children.length) {
+      const flatRoutes = getRoutes(flatRoute(route.children || []), level + 1);
+      const redirect = flatRoutes.filter((r) => r.component)[0]?.path;
+      _route.children = redirect
+        ? [
+            ...flatRoutes,
+            {
+              path: _route.path,
+              exact: true,
+              redirect: redirect,
+            },
+          ]
+        : flatRoutes;
+    } else if (component) {
+      _route.component = component;
+    }
+
+    if (level !== 1) {
+      _route.exact = true;
+    }
+    // console.log(_route);
+    return _route;
+  });
+};
 
 export const getMenus = (extraRoutes: IRouteProps[]): any[] => {
   return extraRoutes.map((route) => {

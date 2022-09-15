@@ -37,6 +37,16 @@ class Service extends BaseService<OpaUa> {
       method: 'POST',
       data: params,
     });
+  _enable = (params: any) =>
+    request(`${SystemConst.API_BASE}/opc/point/_enable`, {
+      method: 'POST',
+      data: params,
+    });
+  _disabled = (params: any) =>
+    request(`${SystemConst.API_BASE}/opc/point/_disable`, {
+      method: 'POST',
+      data: params,
+    });
   PointList = (params: any) =>
     request(`${SystemConst.API_BASE}/opc/point/_query`, {
       method: 'POST',

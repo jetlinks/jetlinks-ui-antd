@@ -19,6 +19,7 @@ import getRoutes, {
   getMenus,
   handleRoutes,
   saveMenusCache,
+  getRoutesLayout,
 } from '@/utils/menu';
 import { AIcon } from '@/components';
 import React from 'react';
@@ -282,7 +283,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      console.log(location, 'location');
       if (
         !initialState?.currentUser &&
         location.pathname !== loginPath &&
@@ -298,7 +298,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     menuItemRender: (menuItemProps, defaultDom) => {
       return MenuItemIcon(menuItemProps, defaultDom, {
         onClick: () => {
-          console.log('menuItemProps', menuItemProps);
           history.push(menuItemProps.path!);
         },
       });
@@ -348,7 +347,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 };
 
 export function patchRoutes(routes: any) {
-  // console.log(routes,'11111111111')
+  console.log(routes);
   if (extraRoutes && extraRoutes.length) {
     const basePath = routes.routes.find((_route: any) => _route.path === '/')!;
 
@@ -417,10 +416,26 @@ export function render(oldRender: any) {
   }
 }
 
-// export function onRouteChange({ routes, location }) {
-//   console.log(routes,location,'onRouteChange')
-//   // const route = matchRoutes(clientRoutes, location.pathname)?.pop()?.route
-//   // if (route) {
-//   //   document.title = route.title || '';
-//   // }
-// }
+export function onRouteChange({ routes, location }: any) {
+  // console.log(11111111111)
+  // debugger;
+  if (location.query && location.query.layout === 'false') {
+    // console.log(routes, 'onRouteChange')
+    const basePath = routes.find((_route: any) => _route.path === '/')!;
+    const _routes = getRoutesLayout(extraRoutes);
+    const baseRedirect = {
+      path: '/',
+      layout: false,
+      routes: [
+        ..._routes,
+        {
+          path: '/',
+          layout: false,
+          redirect: _routes[0].path,
+        },
+      ],
+    };
+    // debugger
+    basePath.routes = [...basePath.routes, baseRedirect];
+  }
+}
