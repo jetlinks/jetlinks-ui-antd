@@ -192,10 +192,12 @@ const findExtraRoutes = (baseCode: string, children: any[], url: string) => {
  * @param level
  */
 export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
+  // console.log(routes)
   return routes
     ? routes.map((item) => {
         // 判断当前是否有额外子路由
         const extraRoutes = extraRouteObj[item.code];
+
         if (extraRoutes) {
           if (extraRoutes.children) {
             const eRoutes = findExtraRoutes(item.code, extraRoutes.children, item.url);
@@ -214,6 +216,9 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
         }
         item.level = level;
 
+        if (item.appId) {
+          item.url = `/${item.appId}${item.url}`;
+        }
         return item;
       })
     : [];
@@ -228,24 +233,19 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
   const allComponents = findComponents(require.context('@/pages', true, /index(\.tsx)$/));
   return extraRoutes.map((route) => {
     let component;
-    let _route: IRouteProps;
+    const _route: IRouteProps = {
+      key: route.url,
+      name: route.name,
+      path: route.url,
+    };
     if (route.appId) {
       component = allComponents['iframe'];
-      _route = {
-        key: `${route.url}`,
-        name: route.name,
-        path: `${route.url}`,
-      };
     } else {
       component = allComponents[route.code] || null;
-      _route = {
-        key: route.url,
-        name: route.name,
-        path: route.url,
-      };
+      // _route.layout=false
     }
 
-    // console.log(_route)
+    // console.log(_route,'layout')
     if (route.children && route.children.length) {
       const flatRoutes = getRoutes(flatRoute(route.children || []), level + 1);
       const redirect = flatRoutes.filter((r) => r.component)[0]?.path;
@@ -274,7 +274,6 @@ const getRoutes = (extraRoutes: MenuItem[], level = 1): IRouteProps[] => {
 export const getMenus = (extraRoutes: IRouteProps[]): any[] => {
   return extraRoutes.map((route) => {
     const children = route.children && route.children.length ? route.children : [];
-
     return {
       key: route.url,
       name: route.name,

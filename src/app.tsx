@@ -172,7 +172,7 @@ export const request: RequestConfig = {
     const { response } = error;
     if (response.status === 401) {
       history.push('/user/login');
-      return;
+      return {};
     }
     if (
       response.status === 400 ||
@@ -282,6 +282,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
+      console.log(location, 'location');
       if (
         !initialState?.currentUser &&
         location.pathname !== loginPath &&
@@ -297,10 +298,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     menuItemRender: (menuItemProps, defaultDom) => {
       return MenuItemIcon(menuItemProps, defaultDom, {
         onClick: () => {
+          console.log('menuItemProps', menuItemProps);
           history.push(menuItemProps.path!);
         },
       });
     },
+    // menuRender:(props,defaultDom)=>{
+    //   console.log(defaultDom,'11111111111111')
+    //   return true
+    // },
+    // headerRender:false,
     links: isDev
       ? [
           <Link key={1} to="/umi/plugin/openapi" target="_blank">
@@ -341,6 +348,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 };
 
 export function patchRoutes(routes: any) {
+  // console.log(routes,'11111111111')
   if (extraRoutes && extraRoutes.length) {
     const basePath = routes.routes.find((_route: any) => _route.path === '/')!;
 
@@ -356,7 +364,7 @@ export function patchRoutes(routes: any) {
       ],
     };
     basePath.routes = [...basePath.routes, baseRedirect];
-    // console.log(basePath.routes);
+    // console.log(basePath.routes, 'basePath.routes,');
   }
 }
 
@@ -408,3 +416,11 @@ export function render(oldRender: any) {
     oldRender();
   }
 }
+
+// export function onRouteChange({ routes, location }) {
+//   console.log(routes,location,'onRouteChange')
+//   // const route = matchRoutes(clientRoutes, location.pathname)?.pop()?.route
+//   // if (route) {
+//   //   document.title = route.title || '';
+//   // }
+// }

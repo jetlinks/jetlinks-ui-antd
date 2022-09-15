@@ -15,19 +15,52 @@ const MenuPage = (props: Props) => {
   const [keys, setKeys] = useState<any>([]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [half, setHalf] = useState<string[]>([]);
-  // const [owner, setOwner] = useState<string>('iot');
   const [ownerList, setOwenrList] = useState<any>([]);
-  // const [menu,setMenu] = useState<string>('')
+  const [owner, setOwner] = useState<any>();
 
-  const getTree = async () => {
-    const res = await service.queryOwner(['iot']);
+  //获取集成菜单
+  const getMenus = async () => {
+    const res = await service.queryTree({
+      terms: [
+        {
+          column: 'appId',
+          value: data.id,
+        },
+      ],
+    });
     if (res.status === 200) {
-      setOwenrList(res.result);
       console.log(res.result);
-      // if (data.provider !== 'internal-standalone') {
-      //   setOwner(res.result?.[0])
-      // }
-      const resp = await service.queryOwnerTree(res.result?.[0]);
+      setTreeData(res.result);
+      const pid = res.result.map((item: any) => item.id);
+      setExpandedKeys(pid);
+      setKeys(pid);
+    }
+  };
+  //获取所属系统
+  const getOwner = async () => {
+    if (data.provider !== 'internal-standalone') {
+      const res = await service.queryOwner(['iot']);
+      if (res.status === 200) {
+        setOwenrList(res.result);
+      }
+    } else {
+      const resp = await service.queryOwnerStandalone(data.id, ['iot']);
+      if (resp.status === 200) {
+        setOwenrList(resp.result);
+      }
+    }
+  };
+  //获取对应系统菜单树
+  const getTree = async (parms: any) => {
+    if (data.provider !== 'internal-standalone') {
+      const res = await service.queryOwnerTree(parms);
+      if (res.status === 200) {
+        setTreeData(res.result);
+        const pid = res.result.map((item: any) => item.id);
+        setExpandedKeys(pid);
+      }
+    } else {
+      const resp = await service.queryOwnerTreeStandalone(data.id, parms);
       if (resp.status === 200) {
         setTreeData(resp.result);
         const pid = resp.result.map((item: any) => item.id);
@@ -35,13 +68,6 @@ const MenuPage = (props: Props) => {
       }
     }
   };
-
-  // const getMenu = async ()=>{
-  //   const res = await service.queryOwner(['iot']);
-  //   if(res.status === 200){
-  //     setOwenrList(res.result)
-  //   }
-  // }
 
   const save = async (datalist: any) => {
     const res = await service.saveOwnerTree('iot', data.id, datalist);
@@ -67,8 +93,8 @@ const MenuPage = (props: Props) => {
   };
 
   useEffect(() => {
-    // console.log(data);
-    getTree();
+    getOwner();
+    getMenus();
   }, []);
 
   return (
@@ -82,10 +108,14 @@ const MenuPage = (props: Props) => {
       }}
       onOk={() => {
         const items = filterTree(treeData, [...keys, ...half]);
-        if (items && items.length !== 0) {
-          save(items);
+        if (owner) {
+          if (items && items.length !== 0) {
+            save(items);
+          } else {
+            onlyMessage('请勾选配置菜单', 'warning');
+          }
         } else {
-          onlyMessage('请勾选配置菜单', 'warning');
+          onlyMessage('请选择所属系统', 'warning');
         }
       }}
     >
@@ -93,7 +123,10 @@ const MenuPage = (props: Props) => {
         style={{ width: 200, marginBottom: 20 }}
         placeholder="请选择集成系统"
         onChange={(value) => {
-          console.log(value);
+          setOwner(value);
+          if (value) {
+            getTree(value);
+          }
         }}
       >
         {ownerList.map((item: any) => (
