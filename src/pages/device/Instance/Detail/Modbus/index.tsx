@@ -222,7 +222,7 @@ export default (props: Props) => {
     });
   }, []);
   useEffect(() => {
-    const metadata = JSON.parse(data.metadata).properties?.map((item: any) => ({
+    const metadata = JSON.parse(data.metadata || '{}').properties?.map((item: any) => ({
       metadataId: item.id,
       metadataName: `${item.name}(${item.id})`,
       metadataType: 'property',
