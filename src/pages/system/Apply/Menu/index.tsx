@@ -93,9 +93,12 @@ const MenuPage = (props: Props) => {
   };
 
   useEffect(() => {
-    getOwner();
-    getMenus();
-  }, []);
+    console.log(data);
+    if (data.id) {
+      getOwner();
+      getMenus();
+    }
+  }, [data]);
 
   return (
     <Modal
@@ -135,6 +138,7 @@ const MenuPage = (props: Props) => {
           </Option>
         ))}
       </Select>
+      <div>{treeData.length !== 0 ? '当前集成菜单' : ''}</div>
       <Tree
         fieldNames={{
           title: 'name',

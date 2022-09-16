@@ -51,11 +51,9 @@ const NewOpc = () => {
   const [currentData, setCurrentData] = useState<any>({});
 
   const collectMap = new Map();
-  collectMap.set('good', 'success');
-  collectMap.set('failed', 'error');
-  collectMap.set('bad', 'warning');
-  collectMap.set('uncertain', 'default');
-  collectMap.set('unknown', 'default');
+  collectMap.set('running', 'success');
+  collectMap.set('error', 'error');
+  collectMap.set('stopped', 'warning');
 
   const menu = (
     <Menu>

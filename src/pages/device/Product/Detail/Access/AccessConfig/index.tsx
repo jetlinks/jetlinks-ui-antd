@@ -84,6 +84,7 @@ const AccessConfig = (props: Props) => {
     };
     service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
       setDataSource(resp?.result);
+      setCurrrent(resp?.result?.data?.[0]);
     });
   };
 

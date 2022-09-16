@@ -32,7 +32,7 @@ import {
   FileTypeList,
   PropertySource,
 } from '@/pages/device/data';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
@@ -63,9 +63,6 @@ interface Props {
 const Edit = observer((props: Props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState<boolean>(false);
-  useEffect(() => {
-    console.log(props.tabs);
-  }, []);
   const form = useMemo(
     () =>
       createForm({

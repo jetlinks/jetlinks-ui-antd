@@ -23,7 +23,7 @@ const Bind = () => {
   const Vector = require('/public/images/bind/Vector.png');
   const Rectangle = require('/public/images/bind/Rectangle.png');
   const logo = require('/public/images/bind/jetlinksLogo.png');
-  // const defaultImg = require('/public/images/apply/provider1.png');
+  const defaultImg = require('/public/images/apply/provider1.png');
 
   const iconMap = new Map();
   iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));

@@ -15,6 +15,7 @@ const SavePoint = (props: Props) => {
 
   const handleSave = async () => {
     const formData = await form.validateFields();
+    console.log(formData, 'formData');
     if (props.data.id) {
       service
         .editPoint(props.data.id, {
@@ -43,7 +44,6 @@ const SavePoint = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(props.data);
     if (props.data.id) {
       setDataMode(props.data.dataMode?.value);
     }
@@ -200,9 +200,10 @@ const SavePoint = (props: Props) => {
                   name="interval"
                   tooltip="OPC UA服务器采样点位数据发生变化的频率"
                   rules={[
+                    { required: true, message: '采集频率必填' },
                     ({}) => ({
                       validator(_, value) {
-                        if (value !== 0 || /(^[1-9]\d*$)/.test(value)) {
+                        if (value > 0 || /(^[1-9]\d*$)/.test(value)) {
                           return Promise.resolve();
                         }
                         return Promise.reject(new Error('请输入正整数'));
@@ -222,9 +223,10 @@ const SavePoint = (props: Props) => {
                   label="拉取频率"
                   name="interval"
                   rules={[
+                    { required: true, message: '拉取频率必填' },
                     ({}) => ({
                       validator(_, value) {
-                        if (value !== 0 || /(^[1-9]\d*$)/.test(value)) {
+                        if (value > 0 || /(^[1-9]\d*$)/.test(value)) {
                           return Promise.resolve();
                         }
                         return Promise.reject(new Error('请输入正整数'));

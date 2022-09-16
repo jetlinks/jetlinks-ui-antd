@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Form, FormGrid, FormItem, Input, Select } from '@formily/antd';
-import { createForm } from '@formily/core';
+import { createForm, onFieldReact } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
@@ -23,6 +23,14 @@ const Save = (props: Props) => {
       createForm({
         validateFirst: true,
         initialValues: data,
+        effects: () => {
+          onFieldReact('topicProvider', (field: any) => {
+            const list = field.dataSource;
+            if (list && list.length !== 0) {
+              field.dataSource = list?.filter((item: any) => item.value === 'alarm');
+            }
+          });
+        },
       }),
     [],
   );

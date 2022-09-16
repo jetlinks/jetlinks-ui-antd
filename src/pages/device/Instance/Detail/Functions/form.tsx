@@ -270,7 +270,10 @@ export default (props: FunctionProps) => {
           })}
           ：
         </p>
-        <Input.TextArea value={JSON.stringify(result?.[0])} rows={6} />
+        <Input.TextArea
+          value={Array.isArray(result) ? JSON.stringify(result?.[0]) : JSON.stringify(result)}
+          rows={6}
+        />
       </div>
     </div>
   );
