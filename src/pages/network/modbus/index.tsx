@@ -61,8 +61,8 @@ const Modbus = () => {
         },
         {
             title: '操作',
+            width: '250px',
             key: 'action',
-            align: 'center',
             render: (text: any, record: any) => (
                 <span>
                     <a onClick={() => {
@@ -90,17 +90,21 @@ const Modbus = () => {
                     >
                         <a>{record.state.value === 'enabled' ? '禁用' : '启用'}</a>
                     </Popconfirm>
-                    <Divider type="vertical" />
-                    <Popconfirm title="确认删除" onConfirm={() => {
-                        apis.modbus.removeChanel(record.id).then(resp => {
-                            if (resp.status === 200) {
-                                message.success('操作成功！')
-                                handleSearch(searchParams)
-                            }
-                        })
-                    }}>
-                        <a>删除</a>
-                    </Popconfirm>
+                    {record.state.value === 'enabled' ? null : (
+                        <>
+                            <Divider type="vertical" />
+                            <Popconfirm title="确认删除" onConfirm={() => {
+                                apis.modbus.removeChanel(record.id).then(resp => {
+                                    if (resp.status === 200) {
+                                        message.success('操作成功！')
+                                        handleSearch(searchParams)
+                                    }
+                                })
+                            }}>
+                                <a>删除</a>
+                            </Popconfirm>
+                        </>
+                    )}
                 </span>
             ),
         }
