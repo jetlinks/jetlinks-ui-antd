@@ -26,15 +26,20 @@ const Export = (props: Props) => {
   });
 
   useEffect(() => {
-    service.noPagingOpcua({ paging: false }).then((resp) => {
-      if (resp.status === 200) {
-        const items = resp.result.map((item: { name: any; id: any }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setList(items);
-      }
-    });
+    service
+      .noPagingOpcua({
+        paging: false,
+        sorts: [{ name: 'createTime', order: 'desc' }],
+      })
+      .then((resp) => {
+        if (resp.status === 200) {
+          const items = resp.result.map((item: { name: any; id: any }) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setList(items);
+        }
+      });
   }, []);
 
   const form = createForm();

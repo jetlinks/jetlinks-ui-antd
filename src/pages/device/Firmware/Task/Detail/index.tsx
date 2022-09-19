@@ -194,6 +194,7 @@ const Detail = observer(() => {
       ellipsis: true,
       dataIndex: 'productId',
       valueType: 'select',
+      hideInSearch: true,
       render: (text: any, record: any) => record?.productName,
       request: async () => {
         const res: any = await service.queryProduct({
@@ -209,6 +210,7 @@ const Detail = observer(() => {
     {
       title: '创建时间',
       ellipsis: true,
+      hideInSearch: true,
       dataIndex: 'createTime',
       valueType: 'dateTime',
       // render: (text: any) => moment(text).format('YYYY-MM-DD HH:mm:ss'),

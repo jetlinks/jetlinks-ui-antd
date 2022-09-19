@@ -290,7 +290,10 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.componentType = 'DatePicker';
                     state.componentProps = { showTime: true, allowClear: true };
                   });
-                  console.log(isModified);
+                  f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                    state.value = 'gte';
+                  });
+                  // console.log(isModified);
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'gte';

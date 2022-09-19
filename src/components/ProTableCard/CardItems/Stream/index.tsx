@@ -2,6 +2,7 @@ import React from 'react';
 import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import './index.less';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export interface StreamCardProps extends StreamItem {
   detail?: React.ReactNode;
@@ -16,8 +17,12 @@ export default (props: StreamCardProps) => {
     <TableCard
       detail={props.detail}
       actions={props.actions}
-      showStatus={false}
-      showMask={false}
+      status={props?.state?.value}
+      statusText={props?.state?.text}
+      statusNames={{
+        enabled: StatusColorEnum.success,
+        disabled: StatusColorEnum.error,
+      }}
       className={'stream-card-item'}
     >
       <div className="context-stream">

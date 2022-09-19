@@ -29,6 +29,7 @@ import type { Response } from '@/utils/typings';
 import usePermissions from '@/hooks/permission';
 import { useHistory, useLocation } from '@/hooks';
 import { getMenuPathByCode } from '@/utils/menu';
+import MenuPage from '../Menu';
 
 const Save = () => {
   const location = useLocation();
@@ -38,6 +39,8 @@ const Save = () => {
   const { permission } = PermissionButton.usePermission('system/Apply');
   const [view, setView] = useState<boolean>(false);
   const [id, setId] = useState<string>('');
+  const [visible, setVisiable] = useState<boolean>(false);
+  const [detail, setDetail] = useState<any>({});
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -142,7 +145,6 @@ const Save = () => {
         if (!id) return;
         const resp = await service.detail(id);
         const integrationModes = resp.result.integrationModes.map((item: any) => item.value);
-        console.log(integrationModes);
         formInit.setInitialValues({
           ...resp.result,
           integrationModes,
@@ -151,7 +153,7 @@ const Save = () => {
       });
       onFieldValueChange('provider', (field, form1) => {
         const value = field.value;
-        console.log(value);
+        // console.log(value);
         if (field.modified) {
           switch (value) {
             case 'internal-standalone':
@@ -210,7 +212,7 @@ const Save = () => {
       });
       onFieldReact('apiClient.authConfig.oauth2.clientId', (filed) => {
         const parms = filed.query('provider').get('value');
-        console.log(parms);
+        // console.log(parms);
         if (id && parms === 'internal-standalone') {
           filed.componentProps = {
             disabled: true,
@@ -235,22 +237,43 @@ const Save = () => {
         data.id = data.apiServer.appId;
       }
     }
-    if (id) {
-      const resp: any = await service.modify(id, data);
-      if (resp.status === 200) {
-        onlyMessage('保存成功');
-        const url = getMenuPathByCode('system/Apply');
-        history.push(url);
-      }
+    //独立应用，单点登录需要api配置和单点登录配置
+    if (
+      data.provider === 'internal-standalone' &&
+      data.integrationModes.includes('ssoClient') &&
+      data.integrationModes.length === 1
+    ) {
+      onlyMessage('配置单点登录需同时配置api配置', 'warning');
     } else {
-      const res: any = await service.save(data);
-      if (res.status === 200) {
-        onlyMessage('保存成功');
-        const url = getMenuPathByCode('system/Apply');
-        history.push(url);
+      if (id) {
+        const resp: any = await service.modify(id, data);
+        if (resp.status === 200) {
+          const isPage = data.integrationModes.includes('page');
+          if (isPage) {
+            setVisiable(true);
+            setDetail(data);
+          } else {
+            onlyMessage('保存成功');
+            const url = getMenuPathByCode('system/Apply');
+            history.push(url);
+          }
+        }
+      } else {
+        const res: any = await service.save(data);
+        if (res.status === 200) {
+          const isPage = data.integrationModes.includes('page');
+          if (isPage) {
+            setVisiable(true);
+            setDetail(data);
+          } else {
+            onlyMessage('保存成功');
+            const url = getMenuPathByCode('system/Apply');
+            history.push(url);
+          }
+        }
       }
     }
-    console.log(data);
+    // console.log(data);
   };
 
   //单点登录
@@ -1033,7 +1056,6 @@ const Save = () => {
                       style={{ padding: 0 }}
                       isPermission={rolePermission.add}
                       onClick={() => {
-                        console.log(rolePermission.add, permission.update);
                         const tab: any = window.open(`${origin}/#/system/role?save=true`);
                         tab!.onTabSaveSuccess = (value: any) => {
                           form.setFieldState('roleIdList', async (state) => {
@@ -1537,7 +1559,6 @@ const Save = () => {
                           style={{ padding: 0 }}
                           isPermission={rolePermission.add}
                           onClick={() => {
-                            console.log(rolePermission.add, permission.update);
                             const tab: any = window.open(`${origin}/#/system/role?save=true`);
                             tab!.onTabSaveSuccess = (value: any) => {
                               form.setFieldState('roleIdList', async (state) => {
@@ -1676,6 +1697,14 @@ const Save = () => {
           </Col>
         </Row>
       </Card>
+      {visible && (
+        <MenuPage
+          data={detail}
+          close={() => {
+            setVisiable(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

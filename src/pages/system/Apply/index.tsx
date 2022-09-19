@@ -148,7 +148,7 @@ const Apply = () => {
         isPage(record.integrationModes) ? (
           <PermissionButton
             isPermission={permission.update}
-            key="edit"
+            key="page"
             onClick={() => {
               setData(record);
               setMenuVisiable(true);

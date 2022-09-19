@@ -29,7 +29,7 @@ const DingTalk = () => {
       <div> 使用固定的通知配置发送此通知模板</div>
       <h2> 2、Agentid</h2>
       <div> 应用唯一标识</div>
-      <div> 获取路径：“钉钉开发平台”--“应用开发”--“查看应用”</div>
+      <div> 获取路径：“钉钉开放平台”--“应用开发”--“查看应用”</div>
       <div className="image">
         <Image width="100%" src={agentId} />
       </div>

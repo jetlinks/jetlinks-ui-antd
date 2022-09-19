@@ -17,6 +17,7 @@ import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { onlyMessage } from '@/utils/util';
+import _ from 'lodash';
 
 export const service = new Service('firmware');
 
@@ -64,20 +65,14 @@ const Firmware = observer(() => {
         service
           .queryProduct({
             paging: false,
-            // terms: [
-            //   {
-            //     column: 'state',
-            //     value: 1,
-            //   },
-            // ],
             sorts: [{ name: 'name', order: 'desc' }],
           })
-          .then((resp: any) =>
-            (resp?.result || []).map((item: any) => ({
-              label: item.name,
-              value: item.id,
-            })),
-          ),
+          .then((resp: any) => {
+            const _data = resp.result.filter((it: any) => {
+              return _.map(it?.features || [], 'id').includes('supportFirmware');
+            });
+            return _data.map((item: any) => ({ label: item.name, value: item.id }));
+          }),
     },
     {
       title: intl.formatMessage({

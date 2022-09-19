@@ -319,7 +319,7 @@ const Instance = () => {
     },
     {
       title: '网关类型',
-      dataIndex: 'productId$product-info',
+      dataIndex: 'accessProvider',
       width: 150,
       ellipsis: true,
       valueType: 'select',
@@ -586,6 +586,11 @@ const Instance = () => {
                 column: 'productId$product-info',
                 value: [e],
               };
+            } else if (e.column === 'accessProvider') {
+              return {
+                ...e,
+                column: 'productId$product-info',
+              };
             } else {
               return e;
             }
@@ -596,6 +601,11 @@ const Instance = () => {
                 return {
                   column: 'productId$product-info',
                   value: [e],
+                };
+              } else if (e.column === 'accessProvider') {
+                return {
+                  ...e,
+                  column: 'productId$product-info',
                 };
               } else {
                 return e;

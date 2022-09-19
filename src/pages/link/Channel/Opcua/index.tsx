@@ -51,11 +51,9 @@ const NewOpc = () => {
   const [currentData, setCurrentData] = useState<any>({});
 
   const collectMap = new Map();
-  collectMap.set('good', 'success');
-  collectMap.set('failed', 'error');
-  collectMap.set('bad', 'warning');
-  collectMap.set('uncertain', 'default');
-  collectMap.set('unknown', 'default');
+  collectMap.set('running', 'success');
+  collectMap.set('error', 'error');
+  collectMap.set('stopped', 'warning');
 
   const menu = (
     <Menu>
@@ -195,15 +193,9 @@ const NewOpc = () => {
             }),
             onConfirm: async () => {
               if (record.state.value === 'disabled') {
-                await service.editPoint(record.id, {
-                  ...record,
-                  state: 'enabled',
-                });
+                await service._enable([record.id]);
               } else {
-                await service.editPoint(record.id, {
-                  ...record,
-                  state: 'disabled',
-                });
+                await service._disabled([record.id]);
               }
               onlyMessage(
                 intl.formatMessage({
@@ -367,7 +359,7 @@ const NewOpc = () => {
                 isPermission={permission.add}
                 key="add"
                 icon={<PlusOutlined />}
-                type="default"
+                type="primary"
                 style={{ width: '100%', marginTop: 16, marginBottom: 16 }}
               >
                 新增
