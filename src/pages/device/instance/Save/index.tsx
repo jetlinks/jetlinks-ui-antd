@@ -161,7 +161,7 @@ const Save: React.FC<Props> = props => {
           </Form.Item>
           <Form.Item key="productId" label="产品">
             {getFieldDecorator('productId', {
-              rules: [{required: true}],
+              rules: [{required: true, message: '请选择产品'}],
               initialValue: props.data.productId,
             })(
               <Select
