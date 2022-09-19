@@ -63,7 +63,7 @@ export default (props: OrgProps) => {
           });
         }
       }}
-      placeholder={'请选择部门'}
+      placeholder={'请选择组织'}
     />
   );
 };

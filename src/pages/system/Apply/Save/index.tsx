@@ -1580,13 +1580,13 @@ const Save = () => {
                     },
                   },
                   'sso.orgIdList': {
-                    title: '部门',
+                    title: '组织',
                     'x-decorator': 'FormItem',
                     'x-component': 'TreeSelect',
                     'x-component-props': {
                       multiple: true,
                       showArrow: true,
-                      placeholder: '请选择部门',
+                      placeholder: '请选择组织',
                       showCheckedStrategy: ATreeSelect.SHOW_ALL,
                       filterOption: (input: string, option: any) =>
                         option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,

@@ -203,6 +203,15 @@ export default (props: EditProps) => {
                   </Form.Item>
                 </Col>
               </Row>
+              {props.data.appId && (
+                <Row gutter={[24, 0]}>
+                  <Col span={12}>
+                    <Form.Item name="appId" label="appId">
+                      <Input disabled />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )}
             </Col>
             <Col span={24}>
               <Form.Item name={'describe'} label={'说明'}>
@@ -211,127 +220,130 @@ export default (props: EditProps) => {
             </Col>
           </Row>
         </Card>
-        <Card style={{ marginTop: 24 }}>
-          <Title
-            title={'权限配置'}
-            // toolbarRender={
-            //   <Switch
-            //     disabled={disabled}
-            //     checkedChildren="开启"
-            //     unCheckedChildren="关闭"
-            //     checked={show}
-            //     onChange={(checked) => {
-            //       setShow(checked);
-            //     }}
-            //   />
-            // }
-          />
-          {show && (
-            <Row gutter={[0, 10]}>
-              <Col span={24}>
-                <Form.Item
-                  label={'数据权限控制'}
-                  tooltip={'此菜单页面数据所对应的资产类型'}
-                  name={'accessSupport'}
-                  required
-                >
-                  <Radio.Group
-                    onChange={(e) => {
-                      setAccessSupport(e.target.value);
-                    }}
-                    // disabled={disabled}
-                  >
-                    <Radio value={'unsupported'}>不支持</Radio>
-                    <Radio value={'support'}>支持</Radio>
-                    <Radio value={'indirect'}>
-                      间接控制
-                      <Tooltip
-                        placement="topLeft"
-                        title={'此菜单内的数据基于其他菜单的数据权限控制'}
-                      >
-                        <QuestionCircleFilled style={{ marginLeft: 8 }} />
-                      </Tooltip>
-                    </Radio>
-                  </Radio.Group>
-                </Form.Item>
-                {accessSupport === 'support' && (
-                  <Form.Item
-                    name={'assetType'}
-                    rules={[{ required: true, message: '请选择资产类型' }]}
-                  >
-                    <Select
-                      style={{ width: 500 }}
-                      // disabled={disabled}
-                      placeholder={'请选择资产类型'}
-                      options={
-                        assetsType
-                          ? assetsType.map((item: any) => ({ label: item.name, value: item.id }))
-                          : []
-                      }
-                    />
-                  </Form.Item>
-                )}
-                {accessSupport === 'indirect' && (
-                  <Form.Item
-                    name={'indirectMenus'}
-                    rules={[{ required: true, message: '请选择关联菜单' }]}
-                  >
-                    <TreeSelect
-                      style={{ width: 400 }}
-                      // disabled={disabled}
-                      multiple
-                      placeholder={'请选择关联菜单'}
-                      fieldNames={{ label: 'name', value: 'id' }}
-                      treeData={menuThree}
-                    />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label={intl.formatMessage({
-                    id: 'page.system.menu.permissions',
-                    defaultMessage: '权限',
-                  })}
-                >
-                  <Input
-                    allowClear
-                    onChange={debounce(filterThree, 500)}
-                    style={{ width: 300, marginBottom: 12 }}
-                    placeholder={'请输入权限名称'}
-                  />
-                  <Form.Item name="permissions" noStyle>
-                    <Permission
-                      title={intl.formatMessage({
-                        id: 'page.system.menu.permissions.operate',
-                        defaultMessage: '权限操作',
-                      })}
-                      // disabled={disabled}
-                      data={permissions}
-                    />
-                  </Form.Item>
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-          <PermissionButton
-            type="primary"
-            onClick={() => {
-              // if (disabled) {
-              //   setDisabled(false);
-              // } else {
-              //   saveData();
+        {!props.data.appId && (
+          <Card style={{ marginTop: 24 }}>
+            <Title
+              title={'权限配置'}
+              // toolbarRender={
+              //   <Switch
+              //     disabled={disabled}
+              //     checkedChildren="开启"
+              //     unCheckedChildren="关闭"
+              //     checked={show}
+              //     onChange={(checked) => {
+              //       setShow(checked);
+              //     }}
+              //   />
               // }
-              saveData();
-            }}
-            loading={loading}
-            isPermission={getOtherPermission(['add', 'update'])}
-          >
-            {intl.formatMessage({
-              // id: `pages.data.option.${disabled ? 'edit' : 'save'}`,
-              id: `pages.data.option.save`,
-              defaultMessage: '编辑',
-            })}
-          </PermissionButton>
-        </Card>
+            />
+            {show && (
+              <Row gutter={[0, 10]}>
+                <Col span={24}>
+                  <Form.Item
+                    label={'数据权限控制'}
+                    tooltip={'此菜单页面数据所对应的资产类型'}
+                    name={'accessSupport'}
+                    required
+                  >
+                    <Radio.Group
+                      onChange={(e) => {
+                        setAccessSupport(e.target.value);
+                      }}
+                      // disabled={disabled}
+                    >
+                      <Radio value={'unsupported'}>不支持</Radio>
+                      <Radio value={'support'}>支持</Radio>
+                      <Radio value={'indirect'}>
+                        间接控制
+                        <Tooltip
+                          placement="topLeft"
+                          title={'此菜单内的数据基于其他菜单的数据权限控制'}
+                        >
+                          <QuestionCircleFilled style={{ marginLeft: 8 }} />
+                        </Tooltip>
+                      </Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                  {accessSupport === 'support' && (
+                    <Form.Item
+                      name={'assetType'}
+                      rules={[{ required: true, message: '请选择资产类型' }]}
+                    >
+                      <Select
+                        style={{ width: 500 }}
+                        // disabled={disabled}
+                        placeholder={'请选择资产类型'}
+                        options={
+                          assetsType
+                            ? assetsType.map((item: any) => ({ label: item.name, value: item.id }))
+                            : []
+                        }
+                      />
+                    </Form.Item>
+                  )}
+                  {accessSupport === 'indirect' && (
+                    <Form.Item
+                      name={'indirectMenus'}
+                      rules={[{ required: true, message: '请选择关联菜单' }]}
+                    >
+                      <TreeSelect
+                        style={{ width: 400 }}
+                        // disabled={disabled}
+                        multiple
+                        placeholder={'请选择关联菜单'}
+                        fieldNames={{ label: 'name', value: 'id' }}
+                        treeData={menuThree}
+                      />
+                    </Form.Item>
+                  )}
+                  <Form.Item
+                    label={intl.formatMessage({
+                      id: 'page.system.menu.permissions',
+                      defaultMessage: '权限',
+                    })}
+                  >
+                    <Input
+                      allowClear
+                      onChange={debounce(filterThree, 500)}
+                      style={{ width: 300, marginBottom: 12 }}
+                      placeholder={'请输入权限名称'}
+                    />
+                    <Form.Item name="permissions" noStyle>
+                      <Permission
+                        title={intl.formatMessage({
+                          id: 'page.system.menu.permissions.operate',
+                          defaultMessage: '权限操作',
+                        })}
+                        // disabled={disabled}
+                        data={permissions}
+                      />
+                    </Form.Item>
+                  </Form.Item>
+                </Col>
+              </Row>
+            )}
+            <PermissionButton
+              type="primary"
+              onClick={() => {
+                // if (disabled) {
+                //   setDisabled(false);
+                // } else {
+                //   saveData();
+                // }
+                saveData();
+              }}
+              loading={loading}
+              isPermission={getOtherPermission(['add', 'update'])}
+            >
+              {intl.formatMessage({
+                // id: `pages.data.option.${disabled ? 'edit' : 'save'}`,
+                id: `pages.data.option.save`,
+                defaultMessage: '编辑',
+              })}
+            </PermissionButton>
+          </Card>
+        )}
+
         <Form.Item hidden name={'id'}>
           <Input />
         </Form.Item>

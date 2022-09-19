@@ -1325,7 +1325,7 @@ export default [
       },
       {
         code: 'system/Department',
-        name: '部门管理',
+        name: '组织管理',
         owner: 'iot',
         parentId: '3',
         id: '3-3',

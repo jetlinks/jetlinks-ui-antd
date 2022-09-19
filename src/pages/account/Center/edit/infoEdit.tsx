@@ -69,8 +69,8 @@ const InfoEdit = (props: Props) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="部门" name="org">
-              <Input placeholder="请输入部门" disabled />
+            <Form.Item label="组织" name="org">
+              <Input placeholder="请输入组织" disabled />
             </Form.Item>
           </Col>
         </Row>

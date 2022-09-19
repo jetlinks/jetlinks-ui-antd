@@ -47,7 +47,7 @@ const Configuration = () => {
         const map = {
           product: '产品',
           device: '设备',
-          org: '部门',
+          org: '组织',
           other: '其他',
         };
         return map[text];
@@ -63,7 +63,7 @@ const Configuration = () => {
           status: 'device',
         },
         org: {
-          text: '部门',
+          text: '组织',
           status: 'org',
         },
         other: {

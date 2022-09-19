@@ -185,7 +185,7 @@ export default observer((props: TriggerProps) => {
                     options={[
                       { label: '全部设备', value: 'all' },
                       { label: '固定设备', value: 'fixed' },
-                      { label: '按部门', value: 'org' },
+                      { label: '按组织', value: 'org' },
                     ]}
                     // fieldNames={{ label: 'name', value: 'id' }}
                     onSelect={(key: string) => {
@@ -211,12 +211,12 @@ export default observer((props: TriggerProps) => {
                 {selector === 'org' && (
                   <Form.Item
                     name={['trigger', 'device', 'selectorValues']}
-                    rules={[{ required: true, message: '请选择部门' }]}
+                    rules={[{ required: true, message: '请选择组织' }]}
                   >
                     <OrgTreeSelect
                       productId={productId}
                       fieldNames={{ label: 'name', value: 'id' }}
-                      placeholder={'请选择部门'}
+                      placeholder={'请选择组织'}
                       style={{ width: '100%' }}
                     />
                   </Form.Item>

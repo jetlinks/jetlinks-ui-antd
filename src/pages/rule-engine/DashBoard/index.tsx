@@ -250,7 +250,7 @@ const Dashboard = observer(() => {
     } else if (params.targetType === 'product') {
       tip = '产品';
     } else if (params.targetType === 'org') {
-      tip = '部门';
+      tip = '组织';
     }
 
     if (resp?.status === 200) {
@@ -412,7 +412,7 @@ const Dashboard = observer(() => {
                 options={[
                   { label: '设备', value: 'device' },
                   { label: '产品', value: 'product' },
-                  { label: '部门', value: 'org' },
+                  { label: '组织', value: 'org' },
                   { label: '其它', value: 'other' },
                 ]}
               />

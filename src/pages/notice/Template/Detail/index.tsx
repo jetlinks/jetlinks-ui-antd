@@ -588,7 +588,7 @@ const Detail = observer(() => {
                         },
                       },
                       toParty: {
-                        title: '收信部门',
+                        title: '收信组织',
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         // 'x-decorator-props': {
@@ -596,7 +596,7 @@ const Detail = observer(() => {
                         //   gridSpan: 1,
                         // },
                         'x-component-props': {
-                          placeholder: '请选择收信部门',
+                          placeholder: '请选择收信组织',
                         },
                       },
                     },
@@ -794,7 +794,7 @@ const Detail = observer(() => {
                     },
                     properties: {
                       departmentIdList: {
-                        title: '收信部门',
+                        title: '收信组织',
                         // required: true,
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
@@ -803,7 +803,7 @@ const Detail = observer(() => {
                         //   gridSpan: 1,
                         // },
                         'x-component-props': {
-                          placeholder: '请选择收信部门',
+                          placeholder: '请选择收信组织',
                         },
                         // 'x-reactions': {
                         //   dependencies: ['configId'],
