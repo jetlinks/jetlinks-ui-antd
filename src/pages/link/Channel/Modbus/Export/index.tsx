@@ -26,15 +26,25 @@ const Export = (props: Props) => {
   });
 
   useEffect(() => {
-    service.queryMaster({ paging: false }).then((resp) => {
-      if (resp.status === 200) {
-        const items = resp.result.map((item: { name: any; id: any }) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setList(items);
-      }
-    });
+    service
+      .queryMaster({
+        paging: false,
+        sorts: [
+          {
+            name: 'createTime',
+            order: 'desc',
+          },
+        ],
+      })
+      .then((resp) => {
+        if (resp.status === 200) {
+          const items = resp.result.map((item: { name: any; id: any }) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setList(items);
+        }
+      });
   }, []);
 
   const form = createForm();

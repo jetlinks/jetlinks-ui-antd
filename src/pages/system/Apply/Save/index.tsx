@@ -435,6 +435,7 @@ const Save = () => {
     'sso.configuration.oauth2.type': {
       type: 'string',
       title: '认证方式',
+      required: true,
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         gridSpan: 2,
@@ -464,6 +465,7 @@ const Save = () => {
     'sso.configuration.oauth2.clientId': {
       type: 'string',
       title: 'client_id',
+      required: true,
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         gridSpan: 2,
@@ -478,6 +480,7 @@ const Save = () => {
     'sso.configuration.oauth2.clientSecret': {
       type: 'string',
       title: 'client_secret',
+      required: true,
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         gridSpan: 2,
@@ -492,6 +495,7 @@ const Save = () => {
     'sso.configuration.oauth2.authorizationUrl': {
       type: 'string',
       title: '授权地址',
+      required: true,
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         gridSpan: 2,
@@ -506,6 +510,7 @@ const Save = () => {
     'sso.configuration.oauth2.tokenUrl': {
       type: 'string',
       title: 'token地址',
+      required: true,
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         gridSpan: 2,
@@ -520,6 +525,7 @@ const Save = () => {
     'sso.configuration.oauth2.userInfoUrl': {
       type: 'string',
       title: '用户信息地址',
+      required: true,
       'x-decorator': 'FormItem',
       'x-decorator-props': {
         gridSpan: 2,

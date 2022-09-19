@@ -62,8 +62,19 @@ export default (props: LeftTreeType) => {
     if (!data || !(data && Object.keys(data).length)) {
       return [];
     }
-    const newArr = data.tags.map((item: any) => ({ id: item.name, name: item.name, isLeaf: true }));
+    const array: any = [];
+    Object.keys(data.paths).forEach((a: any) => {
+      Object.keys(data.paths[a]).forEach((b) => {
+        const { tags } = data.paths[a][b];
+        array.push(tags[0]);
+      });
+    });
 
+    const newArr: any = [...new Set(array)].map((item: any) => ({
+      id: item,
+      name: item,
+      isLeaf: true,
+    }));
     Object.keys(data.paths).forEach((a: any) => {
       Object.keys(data.paths[a]).forEach((b) => {
         const { tags, ...extraData } = data.paths[a][b];
@@ -79,6 +90,7 @@ export default (props: LeftTreeType) => {
         }
       });
     });
+    // console.log(newArr)
     return newArr;
   };
 

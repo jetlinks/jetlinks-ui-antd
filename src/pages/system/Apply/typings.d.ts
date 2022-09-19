@@ -7,7 +7,7 @@ type ApplyItem = {
   page?: Record<string, unknown>;
   apiServer?: Record<string, unknown>;
   sso?: Record<string, unknown>;
-  state: string;
+  state: any;
   creatorId: string;
   createTime: number;
 };

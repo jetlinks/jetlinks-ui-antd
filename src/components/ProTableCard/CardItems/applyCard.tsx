@@ -24,8 +24,8 @@ export default (props: DeviceCardProps) => {
       // showMask={false}
       detail={props.detail}
       actions={props.actions}
-      status={props.state}
-      statusText={props.state === 'disabled' ? '禁用' : '正常'}
+      status={props.state?.value}
+      statusText={props.state?.value === 'disabled' ? '禁用' : '正常'}
       statusNames={{
         enabled: StatusColorEnum.success,
         disabled: StatusColorEnum.error,

@@ -226,7 +226,7 @@ const Debug = observer((props: Props) => {
                   runScriptAgain();
                 }}
               >
-                <a style={{ marginLeft: 90 }}>发送数据</a>
+                <a style={{ marginLeft: 75 }}>发送数据</a>
               </div>
             )}
           </div>
