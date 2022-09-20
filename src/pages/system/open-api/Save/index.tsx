@@ -130,13 +130,15 @@ const Save: React.FC<Props> = props => {
         <Form.Item key="ipWhiteList" label="IP白名单">
           {getFieldDecorator('ipWhiteList', {
             initialValue: props.data.ipWhiteList,
+            rules: [{max: 200, message: 'IP白名单不超过200个字符'}],
           })(<Input.TextArea rows={3} placeholder="请输入"/>)}
         </Form.Item>
 
         <Form.Item key="description" label="描述">
           {getFieldDecorator('description', {
             initialValue: props.data.description,
-          })(<Input.TextArea rows={3} maxLength={200}/>)}
+            rules: [{max: 200, message: '描述不超过200个字符'}],
+          })(<Input.TextArea rows={3} />)}
         </Form.Item>
       </Form>
     </Modal>

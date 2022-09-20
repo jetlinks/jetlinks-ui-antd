@@ -149,6 +149,7 @@ const Access = (props: Props) => {
         },
         {
             title: '操作',
+            width: '250px',
             key: 'action',
             render: (text: any, record: any) => (
                 <span>
@@ -173,17 +174,21 @@ const Access = (props: Props) => {
                     >
                         <a>{record.state.value === 'enabled' ? '禁用' : '启用'}</a>
                     </Popconfirm>
-                    <Divider type="vertical" />
-                    <Popconfirm title="确认删除" onConfirm={() => {
-                        apis.modbus.removeMetadataConfig(record.id).then(resp => {
-                            if (resp.status === 200) {
-                                message.success('操作成功！')
-                                queryMetadataList(device, searchParams)
-                            }
-                        })
-                    }}>
-                        <a>删除</a>
-                    </Popconfirm>
+                    {record.state.value === 'enabled' ? null : (
+                        <>
+                            <Divider type="vertical" />
+                            <Popconfirm title="确认删除" onConfirm={() => {
+                                apis.modbus.removeMetadataConfig(record.id).then(resp => {
+                                    if (resp.status === 200) {
+                                        message.success('操作成功！')
+                                        queryMetadataList(device, searchParams)
+                                    }
+                                })
+                            }}>
+                                <a>删除</a>
+                            </Popconfirm>
+                        </>
+                    )}
                 </span>
             ),
         }
