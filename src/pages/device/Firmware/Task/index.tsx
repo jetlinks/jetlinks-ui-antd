@@ -115,6 +115,7 @@ const Task = observer(() => {
       ellipsis: true,
       hideInSearch: true,
       dataIndex: 'progress',
+      renderText: (text) => <>{text}%</>,
       // valueType: 'digit',
     },
     {
