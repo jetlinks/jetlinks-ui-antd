@@ -12,11 +12,11 @@ const Iframe = () => {
     let menuUrl: any = url;
     if (res.status === 200) {
       if (res.result.page.routeType === 'hash') {
-        menuUrl = `/#/${url}`;
+        menuUrl = `/#/${url}?layout=false`;
       }
       if (res.result.provider === 'internal-standalone') {
         //{baseUrl}/api/application/sso/{appId}/login?redirect={menuUrl}
-        const urlStandalone = `${res.result.page}/api/application/sso/${appId}/login?redirect=${menuUrl}`;
+        const urlStandalone = `${res.result.page}/api/application/sso/${appId}/login?redirect=${menuUrl}?layout=false`;
         setIframeUrl(urlStandalone);
       } else {
         const urlOther = `${res.result.page}/${menuUrl}`;

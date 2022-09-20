@@ -23,6 +23,15 @@ const Save = (props: Props) => {
   const devices = useRef<DeviceInstance[]>([]);
 
   useEffect(() => {
+    console.log(data);
+    if (data && data.id) {
+      setMode(data.mode.value);
+    }
+    if (data?.deviceId) {
+      setReleaseType('part');
+    } else {
+      setReleaseType('all');
+    }
     service.queryDevice().then((resp) => {
       if (resp.status === 200) {
         devices.current = resp.result;
@@ -68,7 +77,16 @@ const Save = (props: Props) => {
       onOk={() => save()}
       visible
     >
-      <Form form={form} name="basic" layout="vertical">
+      <Form
+        form={form}
+        name="basic"
+        layout="vertical"
+        initialValues={{
+          ...data,
+          releaseType: data?.deviceId ? 'part' : 'all',
+          deviceId: data?.deviceId?.map((item: any) => ({ id: item, name: item })),
+        }}
+      >
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item
@@ -85,7 +103,7 @@ const Save = (props: Props) => {
                 },
               ]}
             >
-              <Input placeholder="请输入任务名称" />
+              <Input placeholder="请输入任务名称" disabled={!!data?.id} />
             </Form.Item>
           </Col>
           <Col span={24}>
@@ -101,6 +119,7 @@ const Save = (props: Props) => {
             >
               <Select
                 placeholder="请选择推送方式"
+                disabled={!!data?.id}
                 onChange={(value) => {
                   setMode(value);
                 }}
@@ -129,7 +148,11 @@ const Save = (props: Props) => {
                     },
                   ]}
                 >
-                  <InputNumber style={{ width: '100%' }} placeholder="请输入响应超时时间(秒)" />
+                  <InputNumber
+                    style={{ width: '100%' }}
+                    placeholder="请输入响应超时时间(秒)"
+                    disabled={!!data?.id}
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -149,7 +172,11 @@ const Save = (props: Props) => {
                     },
                   ]}
                 >
-                  <InputNumber style={{ width: '100%' }} placeholder="请请输入升级超时时间(秒)" />
+                  <InputNumber
+                    style={{ width: '100%' }}
+                    placeholder="请请输入升级超时时间(秒)"
+                    disabled={!!data?.id}
+                  />
                 </Form.Item>
               </Col>
             </>
@@ -172,7 +199,11 @@ const Save = (props: Props) => {
                   },
                 ]}
               >
-                <InputNumber style={{ width: '100%' }} placeholder="请请输入升级超时时间(秒)" />
+                <InputNumber
+                  style={{ width: '100%' }}
+                  placeholder="请请输入升级超时时间(秒)"
+                  disabled={!!data?.id}
+                />
               </Form.Item>
             </Col>
           )}
@@ -190,6 +221,7 @@ const Save = (props: Props) => {
                   ]}
                 >
                   <Radio.Group
+                    disabled={!!data?.id}
                     onChange={(e) => {
                       setReleaseType(e.target.value);
                     }}
@@ -211,7 +243,7 @@ const Save = (props: Props) => {
                       },
                     ]}
                   >
-                    <FSelectDevices productId={ids?.productId || ''} />
+                    <FSelectDevices productId={ids?.productId || ''} disabled={!!data?.id} />
                   </Form.Item>
                 </Col>
               )}
@@ -219,7 +251,13 @@ const Save = (props: Props) => {
           )}
           <Col span={24}>
             <Form.Item label="说明" name="description">
-              <Input.TextArea rows={3} maxLength={200} showCount={true} placeholder="请输入说明" />
+              <Input.TextArea
+                rows={3}
+                maxLength={200}
+                showCount={true}
+                placeholder="请输入说明"
+                disabled={!!data?.id}
+              />
             </Form.Item>
           </Col>
         </Row>

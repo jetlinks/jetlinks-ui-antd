@@ -12,6 +12,8 @@ type FirmwareItem = {
   url: string;
   version: string;
   versionOrder: number;
+  mode: any;
+  deviceId: any;
 };
 
 type TaskItem = {

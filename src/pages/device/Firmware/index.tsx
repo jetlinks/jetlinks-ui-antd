@@ -129,6 +129,9 @@ const Firmware = observer(() => {
           isPermission={permission.action}
           key="upgrade"
           onClick={() => {
+            //缓存路由参数
+            localStorage.setItem('TaskId', record.id);
+            localStorage.setItem('TaskProductId', record.productId);
             const url = `${getMenuPathByParams(MENUS_CODE['device/Firmware/Task'])}`;
             history.push(`${url}?id=${record?.id}&productId=${record?.productId}`);
           }}

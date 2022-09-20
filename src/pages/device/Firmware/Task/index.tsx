@@ -17,7 +17,7 @@ import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import Save from './Save';
 import { onlyMessage } from '@/utils/util';
-import { PermissionButton } from '@/components';
+import { PermissionButton, AIcon } from '@/components';
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
@@ -76,8 +76,8 @@ const Task = observer(() => {
   const [param, setParam] = useState({});
   const history = useHistory<Record<string, string>>();
   const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id || '';
-  const productId = (location as any).query?.productId || '';
+  const id = (location as any).query?.id || localStorage.getItem('TaskId');
+  const productId = (location as any).query?.productId || localStorage.getItem('TaskProductId');
 
   const columns: ProColumns<any>[] = [
     {
@@ -126,20 +126,29 @@ const Task = observer(() => {
       width: 200,
       fixed: 'right',
       render: (text, record) => [
-        <a
+        <PermissionButton
+          key={'api'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={true}
+          tooltip={{
+            title: '详情',
+          }}
           onClick={() => {
             const url = getMenuPathByParams(MENUS_CODE['device/Firmware/Task/Detail'], record?.id);
             history.push(url);
           }}
+        >
+          <AIcon type={'icon-details'} />
+        </PermissionButton>,
+        <a
+          onClick={() => {
+            state.visible = true;
+            state.current = record;
+          }}
           key="link"
         >
-          <Tooltip
-            title={intl.formatMessage({
-              id: 'pages.data.option.detail',
-              defaultMessage: '查看',
-            })}
-            key={'detail'}
-          >
+          <Tooltip title="查看" key={'detail'}>
             <EyeOutlined />
           </Tooltip>
         </a>,
@@ -208,6 +217,7 @@ const Task = observer(() => {
             <PermissionButton
               onClick={() => {
                 state.visible = true;
+                state.current = undefined;
               }}
               isPermission={permission.add}
               key="button"
