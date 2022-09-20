@@ -170,7 +170,7 @@ const SyncUser = observer(() => {
               <Input.Search
                 onSearch={(value) => getDepartment(value)}
                 style={{ marginBottom: 8 }}
-                placeholder="请输入部门名称"
+                placeholder="请输入组织名称"
               />
               {treeData && treeData.length !== 0 ? (
                 <Tree

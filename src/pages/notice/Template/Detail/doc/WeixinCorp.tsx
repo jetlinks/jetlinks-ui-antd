@@ -29,12 +29,12 @@ const WeixinCorp = () => {
         <div className="image">
           <Image width="100%" src={agentId} />
         </div>
-        <h2> 3、收信人ID、收信部门ID、标签推送</h2>
+        <h2> 3、收信人ID、收信组织ID、标签推送</h2>
         <div>
           接收通知的3种方式，3个字段若在此页面都没有填写，则在模板调试和配置告警通知时需要手动填写
         </div>
         <div> 收信人ID获取路径：【通讯录】-{'>'}【成员信息】查看成员账号</div>
-        <div> 收信部门ID获取路径：【通讯录】-{'>'}【部门信息】查看部门ID</div>
+        <div> 收信组织ID获取路径：【通讯录】-{'>'}【部门信息】查看部门ID</div>
         <div className="image">
           <Image width="100%" src={userId} />
           <Image width="100%" src={toDept} />

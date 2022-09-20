@@ -173,7 +173,7 @@ export const getDetailNameByCode = {
   'device/Product/Detail': '产品详情',
   'device/Instance/Detail': '设备详情',
   'device/Firmware/Task/Detail': '详情',
-  'system/Department/Detail': '部门详情',
+  'system/Department/Detail': '组织详情',
   'system/Role/Detail': '权限配置',
   'link/Type/Detail': '网络组件详情',
   'link/AccessConfig/Detail': '配置详情',

@@ -43,7 +43,7 @@ const Config = () => {
       key: 'targetType',
       name: '告警类型',
       type: 'string',
-      desc: '告警所属的业务类型，具体有产品、设备、部门、其他',
+      desc: '告警所属的业务类型，具体有产品、设备、组织、其他',
     },
     {
       key: 'targetId',

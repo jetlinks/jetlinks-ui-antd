@@ -166,10 +166,15 @@ const Debug = observer((props: Props) => {
         },
         properties: _properties || [],
       },
-    )?.subscribe((data: WebsocketPayload) => {
-      State.log.push({ time: new Date().getTime(), content: JSON.stringify(data.payload) });
-      setIsBeginning(true);
-    });
+    )?.subscribe(
+      (data: WebsocketPayload) => {
+        State.log.push({ time: new Date().getTime(), content: JSON.stringify(data.payload) });
+      },
+      // () => { },
+      // () => {
+      //   setIsBeginning(true);
+      // }
+    );
   };
   const runScriptAgain = async () => {
     if (wsAgain.current) {
@@ -192,7 +197,7 @@ const Debug = observer((props: Props) => {
         properties: _properties || [],
       },
     )?.subscribe(() => {
-      setIsBeginning(true);
+      // setIsBeginning(true);
     });
   };
   useEffect(() => {
@@ -221,7 +226,7 @@ const Debug = observer((props: Props) => {
                   runScriptAgain();
                 }}
               >
-                <a style={{ marginLeft: 90 }}>发送数据</a>
+                <a style={{ marginLeft: 75 }}>发送数据</a>
               </div>
             )}
           </div>

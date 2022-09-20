@@ -31,7 +31,7 @@ const titleMap = new Map();
 titleMap.set('product', '产品');
 titleMap.set('device', '设备');
 titleMap.set('other', '其他');
-titleMap.set('org', '部门');
+titleMap.set('org', '组织');
 
 const colorMap = new Map();
 colorMap.set(1, '#E50012');
@@ -107,7 +107,7 @@ const TabComponent = observer((props: Props) => {
   const orgCol: ProColumns<any>[] = [
     ...columns,
     {
-      title: '部门名称',
+      title: '组织名称',
       dataIndex: 'targetName',
       width: 200,
       ellipsis: true,

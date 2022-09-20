@@ -224,13 +224,13 @@ const Apply = () => {
         <PermissionButton
           isPermission={permission.delete}
           tooltip={{
-            title: record.state !== 'disabled' ? '删除' : '请先禁用该应用，再删除',
+            title: record.state.value !== 'disabled' ? '删除' : '请先禁用该应用，再删除',
           }}
           style={{ padding: 0 }}
-          disabled={record.state !== 'disabled'}
+          disabled={record.state.value !== 'disabled'}
           popConfirm={{
             title: '确认删除',
-            disabled: record.state !== 'disabled',
+            disabled: record.state.value !== 'disabled',
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
@@ -357,12 +357,12 @@ const Apply = () => {
                 type={'link'}
                 style={{ padding: 0 }}
                 tooltip={{
-                  title: record.state !== 'disabled' ? '禁用' : '启用',
+                  title: record.state.value !== 'disabled' ? '禁用' : '启用',
                 }}
                 popConfirm={{
-                  title: `确认${record.state !== 'disabled' ? '禁用' : '启用'}`,
+                  title: `确认${record.state.value !== 'disabled' ? '禁用' : '启用'}`,
                   onConfirm: () => {
-                    if (record.state === 'disabled') {
+                    if (record.state.value === 'disabled') {
                       _action(record.id, {
                         state: 'enabled',
                       });
@@ -374,8 +374,8 @@ const Apply = () => {
                   },
                 }}
               >
-                {record.state !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
-                {record.state !== 'disabled' ? '禁用' : '启用'}
+                {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+                {record.state.value !== 'disabled' ? '禁用' : '启用'}
               </PermissionButton>,
               (isPage(record.integrationModes) || isApiService(record.integrationModes)) && (
                 <Dropdown

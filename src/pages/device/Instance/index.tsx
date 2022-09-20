@@ -367,7 +367,7 @@ const Instance = () => {
     },
     {
       dataIndex: 'id$dim-assets',
-      title: '所属部门',
+      title: '所属组织',
       valueType: 'treeSelect',
       hideInTable: true,
       fieldProps: {

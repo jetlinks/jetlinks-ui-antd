@@ -183,7 +183,7 @@ const Center = () => {
               <Descriptions.Item label="电话">{data?.telephone || '-'}</Descriptions.Item>
               <Descriptions.Item label="姓名">{data?.name}</Descriptions.Item>
               <Descriptions.Item label="角色">{data?.roleList[0]?.name || '-'}</Descriptions.Item>
-              <Descriptions.Item label="部门">{data?.orgList[0]?.name || '-'}</Descriptions.Item>
+              <Descriptions.Item label="组织">{data?.orgList[0]?.name || '-'}</Descriptions.Item>
               <Descriptions.Item label="邮箱">{data?.email || '-'}</Descriptions.Item>
             </Descriptions>
           </div>

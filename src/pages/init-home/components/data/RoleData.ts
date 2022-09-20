@@ -72,13 +72,13 @@ export default {
         { supportId: 'creator', name: '自己创建的', enabled: false, granted: false },
         {
           supportId: 'org',
-          name: '所在部门',
+          name: '所在组织',
           enabled: false,
           granted: false,
         },
         {
           supportId: 'org-include-children',
-          name: '所在部门及下级部门',
+          name: '所在组织及下级组织',
           enabled: false,
           granted: false,
         },
@@ -134,13 +134,13 @@ export default {
         { supportId: 'creator', name: '自己创建的', enabled: false, granted: false },
         {
           supportId: 'org',
-          name: '所在部门',
+          name: '所在组织',
           enabled: false,
           granted: false,
         },
         {
           supportId: 'org-include-children',
-          name: '所在部门及下级部门',
+          name: '所在组织及下级组织',
           enabled: false,
           granted: false,
         },
@@ -480,13 +480,13 @@ export default {
         { supportId: 'creator', name: '自己创建的', enabled: false, granted: false },
         {
           supportId: 'org',
-          name: '所在部门',
+          name: '所在组织',
           enabled: false,
           granted: false,
         },
         {
           supportId: 'org-include-children',
-          name: '所在部门及下级部门',
+          name: '所在组织及下级组织',
           enabled: false,
           granted: false,
         },
@@ -542,13 +542,13 @@ export default {
         { supportId: 'creator', name: '自己创建的', enabled: false, granted: false },
         {
           supportId: 'org',
-          name: '所在部门',
+          name: '所在组织',
           enabled: false,
           granted: false,
         },
         {
           supportId: 'org-include-children',
-          name: '所在部门及下级部门',
+          name: '所在组织及下级组织',
           enabled: false,
           granted: false,
         },

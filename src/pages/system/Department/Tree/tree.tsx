@@ -102,7 +102,7 @@ export default (props: TreeProps) => {
     properties: {
       parentId: {
         type: 'string',
-        title: '上级部门',
+        title: '上级组织',
         'x-decorator': 'FormItem',
         'x-component': 'TreeSelect',
         'x-component-props': {
@@ -110,7 +110,7 @@ export default (props: TreeProps) => {
             label: 'name',
             value: 'id',
           },
-          placeholder: '请选择上级部门',
+          placeholder: '请选择上级组织',
         },
         enum: treeData,
       },
@@ -188,7 +188,7 @@ export default (props: TreeProps) => {
         </div>
       )}
       <Input
-        placeholder={'请输入部门名称'}
+        placeholder={'请输入组织名称'}
         className={'left-tree-search'}
         suffix={<SearchOutlined />}
         onChange={debounce(onSearchChange, 500)}
@@ -280,7 +280,7 @@ export default (props: TreeProps) => {
                       tooltip={{
                         title: intl.formatMessage({
                           id: 'pages.system.department.option.add',
-                          defaultMessage: '新增子部门',
+                          defaultMessage: '新增子组织',
                         }),
                       }}
                       type="link"

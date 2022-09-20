@@ -55,13 +55,15 @@ export default () => {
           }),
           key: 'detail',
         },
-        {
-          tab: intl.formatMessage({
-            id: 'pages.system.menu.buttons',
-            defaultMessage: '按钮管理',
-          }),
-          key: 'buttons',
-        },
+        data?.appId
+          ? {}
+          : {
+              tab: intl.formatMessage({
+                id: 'pages.system.menu.buttons',
+                defaultMessage: '按钮管理',
+              }),
+              key: 'buttons',
+            },
       ]}
       onTabChange={(key) => {
         setTabKey(key);

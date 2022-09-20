@@ -24,7 +24,7 @@ const Log = observer(() => {
     },
     {
       key: 'org',
-      tab: '部门',
+      tab: '组织',
     },
     {
       key: 'other',
