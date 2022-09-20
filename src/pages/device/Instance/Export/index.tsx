@@ -65,7 +65,6 @@ const Export = (props: Props) => {
             'x-component-props': {
               allowClear: true,
               showSearch: true,
-              allowClear: true,
               showArrow: true,
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,

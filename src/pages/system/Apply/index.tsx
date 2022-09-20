@@ -460,7 +460,7 @@ const Apply = () => {
                 disabled={record.state.value !== 'disabled'}
                 popConfirm={{
                   title: '确认删除',
-                  disabled: record.state !== 'disabled',
+                  disabled: record.state.value !== 'disabled',
                   onConfirm: async () => {
                     const resp: any = await service.remove(record.id);
                     if (resp.status === 200) {
