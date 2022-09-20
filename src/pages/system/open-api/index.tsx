@@ -70,6 +70,7 @@ const OpenApiList: React.FC<Props> = props => {
     },
     {
       title: '操作',
+      width: 200,
       render: (text, record) => (
         <Fragment>
           <a
