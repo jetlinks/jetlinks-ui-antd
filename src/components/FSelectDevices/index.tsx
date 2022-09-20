@@ -17,6 +17,7 @@ interface Props {
   value?: Partial<DeviceInstance>[];
   onChange?: (data: Partial<DeviceInstance>[]) => void;
   productId?: string;
+  disabled?: boolean;
 }
 
 const deviceStatus = new Map();
@@ -117,7 +118,11 @@ const FSelectDevices = observer((props: Props) => {
         addonAfter={
           <EditOutlined
             onClick={() => {
-              State.visible = true;
+              if (props.disabled) {
+                State.visible = false;
+              } else {
+                State.visible = true;
+              }
             }}
           />
         }

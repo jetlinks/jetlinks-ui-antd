@@ -6,6 +6,146 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "15550803",
+      "name": "details",
+      "font_class": "details",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "31733005",
+      "name": "文件",
+      "font_class": "wenjian",
+      "unicode": "e6bc",
+      "unicode_decimal": 59068
+    },
+    {
+      "icon_id": "31733006",
+      "name": "上传文件",
+      "font_class": "shangchuanwenjian",
+      "unicode": "e6bd",
+      "unicode_decimal": 59069
+    },
+    {
+      "icon_id": "31732723",
+      "name": "导入",
+      "font_class": "daoru",
+      "unicode": "e6b6",
+      "unicode_decimal": 59062
+    },
+    {
+      "icon_id": "31732724",
+      "name": "导出",
+      "font_class": "daochu",
+      "unicode": "e6b7",
+      "unicode_decimal": 59063
+    },
+    {
+      "icon_id": "31732725",
+      "name": "激活",
+      "font_class": "jihuo",
+      "unicode": "e6b8",
+      "unicode_decimal": 59064
+    },
+    {
+      "icon_id": "31732726",
+      "name": "停用",
+      "font_class": "tingyong1",
+      "unicode": "e6b9",
+      "unicode_decimal": 59065
+    },
+    {
+      "icon_id": "31732727",
+      "name": "同步",
+      "font_class": "tongbu",
+      "unicode": "e6ba",
+      "unicode_decimal": 59066
+    },
+    {
+      "icon_id": "31732728",
+      "name": "充值",
+      "font_class": "chongzhi",
+      "unicode": "e6bb",
+      "unicode_decimal": 59067
+    },
+    {
+      "icon_id": "31721952",
+      "name": "停用",
+      "font_class": "tingyong",
+      "unicode": "e6b5",
+      "unicode_decimal": 59061
+    },
+    {
+      "icon_id": "12754515",
+      "name": "关机",
+      "font_class": "guanji_huaban",
+      "unicode": "e643",
+      "unicode_decimal": 58947
+    },
+    {
+      "icon_id": "31698834",
+      "name": "物联卡",
+      "font_class": "wulianka",
+      "unicode": "e6b1",
+      "unicode_decimal": 59057
+    },
+    {
+      "icon_id": "31698835",
+      "name": "平台对接",
+      "font_class": "pingtaiduijie",
+      "unicode": "e6b2",
+      "unicode_decimal": 59058
+    },
+    {
+      "icon_id": "31698836",
+      "name": "物联卡管理",
+      "font_class": "wuliankaguanli",
+      "unicode": "e6b3",
+      "unicode_decimal": 59059
+    },
+    {
+      "icon_id": "31698837",
+      "name": "充值管理",
+      "font_class": "chongzhiguanli",
+      "unicode": "e6b4",
+      "unicode_decimal": 59060
+    },
+    {
+      "icon_id": "10199180",
+      "name": "绑定",
+      "font_class": "bangding",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "7055661",
+      "name": "协议模版",
+      "font_class": "xieyimoban",
+      "unicode": "e732",
+      "unicode_decimal": 59186
+    },
+    {
+      "icon_id": "31302320",
+      "name": "应用管理",
+      "font_class": "yingyongguanli",
+      "unicode": "e6b0",
+      "unicode_decimal": 59056
+    },
+    {
+      "icon_id": "997408",
+      "name": "警告",
+      "font_class": "jinggao",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "11372710",
+      "name": "提示",
+      "font_class": "tishi",
+      "unicode": "e8ba",
+      "unicode_decimal": 59578
+    },
+    {
       "icon_id": "29728797",
       "name": "查看API",
       "font_class": "chakanAPI",
