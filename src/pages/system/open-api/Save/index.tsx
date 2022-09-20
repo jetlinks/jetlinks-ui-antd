@@ -91,6 +91,7 @@ const Save: React.FC<Props> = props => {
               {getFieldDecorator('username', {
                 rules: [{required: true}],
                 initialValue: props.data.username,
+                rules: [{max: 32, message: '用户名不超过32个字符'}],
               })(<Input placeholder="请输入" disabled={!!props.data.id}/>)}
             </Form.Item>
           </Col>
