@@ -58,15 +58,23 @@ const OpenApiList: React.FC<Props> = props => {
     {
       title: '用户名',
       dataIndex: 'username',
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       title: '状态',
+      width: 80,
       dataIndex: 'status',
       render: text => <Tag color={text.value === 1 ? '#108ee9' : '#f50'}>{text.text}</Tag>,
     },
     {
       title: '说明',
+      width: 500,
       dataIndex: 'description',
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       title: '操作',
