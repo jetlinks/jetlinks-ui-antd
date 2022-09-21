@@ -73,7 +73,7 @@ const Config: React.FC<Props> = props => {
 
   const onSearch = (type?: string[], name?: string) => {
     const tempType = type || filterType;
-    const tempName = name || filterName;
+    const tempName = name
     const param = {
       paging: false,
       sorts: {
@@ -209,8 +209,15 @@ const Config: React.FC<Props> = props => {
                   <Form.Item {...formItemLayout} label="配置名称">
                     <Input
                       onChange={e => {
-                        setFilterName(e.target.value);
-                        onSearch(undefined, e.target.value);
+                        console.log(e.target.value)
+                        if(e.target.value){
+                          setFilterName(e.target.value);
+                          onSearch(undefined, e.target.value);
+                        }else{
+                          setFilterName('');
+                          onSearch(undefined, '');    
+                        }
+                        
                       }}
                     />
                   </Form.Item>

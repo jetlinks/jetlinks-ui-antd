@@ -321,6 +321,7 @@ const Info: React.FC<Props> = props => {
           }}
           close={() => {
             setAddVisible(false);
+            props.refresh();
             // setCurrentItem({});
           }}
         />

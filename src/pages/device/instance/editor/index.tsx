@@ -302,7 +302,8 @@ const Editor: React.FC<Props> = props => {
         data={data}
         configuration={config}
         refresh={() => {
-          getInfo(data.id);
+          // getInfo(data.id);
+          getInfo(deviceId!);
         }}
       />
     ),

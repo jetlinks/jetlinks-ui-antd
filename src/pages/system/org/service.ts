@@ -60,3 +60,10 @@ export async function bindUserList(id: string, params: any) {
     data: params,
   });
 }
+
+export async function isOrg() {
+  return request(`/jetlinks/assets/dimensions `, {
+    method: 'GET',
+  });
+}
+

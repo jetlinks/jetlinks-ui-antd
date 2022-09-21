@@ -14,6 +14,7 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import apis from "@/services";
+import _ from 'lodash';
 // import encodeQueryParam from "@/utils/encodeParam";
 // import { DeviceInstance } from '@/pages/device/instance/data';
 // import { getAccessToken } from '@/utils/authority';
@@ -21,6 +22,7 @@ import apis from "@/services";
 interface Props extends FormComponentProps {
   close: Function;
   update: Function;
+  metaData?: any;
 }
 
 interface State {
@@ -44,7 +46,7 @@ const QuickImport: React.FC<Props> = props => {
   } = props;
 
   // const [deviceList, setDeviceList] = useState(initState.deviceList);
-  const [metaData, setMetaData] = useState<string>();
+  const [metaData, setMetaData] = useState<string>('');
   const [operateType, setOperateType] = useState(initState.operateType);
   const [modelFormat, setModelFormat] = useState(initState.modelFormat);
   const [modelId, setModelId] = useState(initState.modelId);
@@ -58,6 +60,7 @@ const QuickImport: React.FC<Props> = props => {
     //   })
     //   .catch(() => {
     //   });
+    console.log(JSON.parse(props.metaData))
     apis.deviceProdcut
       .getModelFormat().then(res => {
         setModelFormat(res.result)
@@ -65,6 +68,31 @@ const QuickImport: React.FC<Props> = props => {
       .catch(() => {
       });
   }, []);
+
+  const operateLimits = (mdata: any) => {
+    const obj: any = { ...mdata };
+    const old = JSON.parse(props.metaData || '{}');
+    const fid = _.map(props.metaData || [], 'id');
+    if (fid.includes('eventNotModifiable')) {
+      obj.events = old?.events || [];
+    }
+    if (fid.includes('propertyNotModifiable')) {
+      obj.properties = old?.properties || [];
+    }
+    (obj?.events || []).map((item: any, index: number) => {
+      return { ...item, sortsIndex: index };
+    });
+    (obj?.properties || []).map((item: any, index: number) => {
+      return { ...item, sortsIndex: index };
+    });
+    (obj?.functions || []).map((item: any, index: number) => {
+      return { ...item, sortsIndex: index };
+    });
+    (obj?.tags || []).map((item: any, index: number) => {
+      return { ...item, sortsIndex: index };
+    });
+    return JSON.stringify(obj);
+  };
 
   const submitData = () => {
     let data: string = '';
@@ -84,14 +112,16 @@ const QuickImport: React.FC<Props> = props => {
     if (modelId !== '') {
       apis.deviceProdcut.getModel(modelId, metaData).then(res => {
         if (res.status === 200) {
-          data = JSON.stringify(res.result)
+          data = operateLimits(res.result)
           props.update(data);
         }
       })
     } else {
       // message.error('物模型不能为空')
-      data = metaData;
-      props.update(data);
+      data =operateLimits(JSON.parse(metaData))
+      props.update(data)
+      // console.log(data)
+      // props.update(JSON.stringify);
     }
     // }
   };

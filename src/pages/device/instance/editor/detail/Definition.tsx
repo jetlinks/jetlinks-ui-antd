@@ -173,6 +173,7 @@ const Definition: React.FC<Props> = props => {
               setSpinning(true);
               updateModel({ metadata: item });
             }}
+            metaData={basicInfo.metadata}
           />
         )}
       </Spin>
