@@ -27,7 +27,14 @@ interface State {
 
 const DeviceGatewayBind: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: { pageSize: 10, terms: { 'parentId$not@or': props.gatewayId } },
+    searchParam: { 
+      pageSize: 10, 
+      terms: { 'parentId$not@or': props.gatewayId },
+      sorts: {
+        field: 'registryTime',
+        order: 'desc',
+      },
+     },
     deviceData: {},
     deviceId: [],
   };
@@ -60,13 +67,16 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   }, []);
 
   const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>) => {
+    if(sorter.field){
+      searchParam.sorts.order = sorter.order
+    }    
     apis.deviceInstance
       .list(
         encodeQueryParam({
           terms: searchParam.terms,
           pageIndex: Number(pagination.current) - 1,
           pageSize: pagination.pageSize,
-          sorts: sorter,
+          sorts: sorter.field ? sorter : searchParam.sorter,
         }),
       )
       .then(response => {
@@ -146,7 +156,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
               if (props.selectionType === 'checkbox') {
                 // params['parentId$isnull'] = 1;
                 handleSearch({
-                  sorter: searchParam.sorter, 
+                  sorts: searchParam.sorts, 
                   pageSize: 10,
                   terms:{
                     ...params,
@@ -156,7 +166,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
                 })
               }else{
                 handleSearch({
-                  sorter: searchParam.sorter, 
+                  sorts: searchParam.sorts, 
                   pageSize: 10,
                   terms:{
                     ...params,
