@@ -175,7 +175,7 @@ const DeviceGateway: React.FC<Props> = () => {
                       bordered={false} title={item.id}
                       avatar={<img style={{width: 48, height: 48}} src={gateway} alt="indicator"/>}
                       action={
-                        <Tooltip title='绑定子设备'>
+                        <Tooltip title='选择设备'>
                           <Icon
                             type="plus" style={{fontSize: 20}}
                             onClick={() => {
