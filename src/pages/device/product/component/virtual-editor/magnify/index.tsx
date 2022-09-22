@@ -178,11 +178,11 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             subs.unsubscribe()
         }
         const ws = getWebsocket(
-            `virtual-property-debug-${props.data.id}-${new Date().getTime()}`,
+            `virtual-property-debug-${props.data.id || props.formData.id}-${new Date().getTime()}`,
             `/virtual-property-debug`,
             {
                 virtualId: virtualId,
-                property: props.data.id,
+                property: props.data.id || props.formData.id,
                 virtualRule: {
                     ...virtualRule,
                     script: script
@@ -223,11 +223,11 @@ const MagnifyComponent: React.FC<Props> = (props) => {
             sub.unsubscribe()
         }
         const ws = getWebsocket(
-            `virtual-property-debug-${props.data.id}-${new Date().getTime()}`,
+            `virtual-property-debug-${props.data.id || props.formData.id}-${new Date().getTime()}`,
             `/virtual-property-debug`,
             {
                 virtualId: virtualId,
-                property: props.data.id,
+                property: props.data.id || props.formData.id,
                 virtualRule: {
                     ...virtualRule,
                     script: script
@@ -249,6 +249,7 @@ const MagnifyComponent: React.FC<Props> = (props) => {
 
 
     useEffect(() => {
+        console.log(props.formData,'111111111')
         let formData = props.formData.expands?.virtualRule || {
             windows: []
         };

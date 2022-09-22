@@ -182,13 +182,19 @@ const VirtualEditorComponent: React.FC<Props> = props => {
                 editorDidMount={(editor, monaco) => editorDidMountHandle(editor, monaco)}
             /> */}
             {isMagnify && (
-                <MagnifyComponent formData={
+                <MagnifyComponent 
+                formData={
                     props.formData
-                }metaDataList={props.metaDataList} data={{
+                }
+                metaDataList={props.metaDataList} 
+                data={{
                     isAssign: isAssign,
                     script: script,
                     ...props.data
-                }} close={(data: any) => { setIsMagnify(false); setScript(data) }} />
+                }} close={(data: any) => { 
+                    props.scriptValue(data);
+                    setIsMagnify(false); 
+                    setScript(data) }} />
             )}
             <Drawer title="快速添加" visible={isQuickInsert} width={400} onClose={() => { setIsQuickInsert(false); }}>
                 <QuickInsertComponent insertContent={(data: string) => { insertContent(data) }} metaDataList={props.metaDataList} close={() => { setIsQuickInsert(false); }} />

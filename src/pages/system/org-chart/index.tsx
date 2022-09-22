@@ -158,7 +158,7 @@ const OrgChart = () => {
                             绑定用户
                     </a>
                     </Menu.Item>
-                    {org.includes('org') && <Menu.Item>
+                    {!org.includes('org') && <Menu.Item>
                         <a
                             target="_blank"
                             rel="noopener noreferrer"
