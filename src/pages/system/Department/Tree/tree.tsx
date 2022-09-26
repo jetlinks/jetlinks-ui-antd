@@ -168,7 +168,7 @@ export default (props: TreeProps) => {
       setData({ sortIndex: treeData && treeData.length + 1 });
       setVisible(true);
     }
-  }, [location]);
+  }, [location, treeData]);
 
   useEffect(() => {
     queryTreeData();
