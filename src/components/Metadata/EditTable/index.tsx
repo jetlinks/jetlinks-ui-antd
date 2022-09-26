@@ -130,6 +130,8 @@ export const Editable: ComposedEditable = observer((props) => {
 
 Editable.Popover = observer((props) => {
   const field = useField<Field>();
+  //   console.log(field.path.segments)
+  //   console.log(field.form.query(field.path).pattern.segments)
   const pattern = useParentPattern();
   let title = props.title || field.title;
   const [visible, setVisible] = useState(false);
@@ -150,9 +152,7 @@ Editable.Popover = observer((props) => {
     setVisible(true);
   };
   if (field.title === '配置参数' && !props.title) {
-    const path = field.form
-      .query(field.path)
-      .pattern.segments.filter((key: any) => key !== 'config');
+    const path = field.path.segments.filter((key: any) => key !== 'config');
     const value = get(field.form.values, path)?.name;
     title = value || '配置参数';
   }
