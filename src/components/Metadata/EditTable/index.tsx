@@ -156,10 +156,24 @@ Editable.Popover = observer((props) => {
     const value = get(field.form.values, path)?.name;
     title = value || '配置参数';
   }
+
+  const headTitle = () => {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>{props.title || field.title}</div>
+        <CloseOutlined
+          onClick={() => {
+            setVisible(false);
+          }}
+        />
+      </div>
+    );
+  };
+
   return (
     <Popover
       {...props}
-      title={props.title || field.title}
+      title={headTitle()}
       visible={visible}
       className={cls(prefixCls, props.className)}
       content={props.children}
