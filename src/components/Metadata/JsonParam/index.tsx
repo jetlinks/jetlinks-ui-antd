@@ -1,12 +1,4 @@
-import {
-  ArrayItems,
-  Editable,
-  FormItem,
-  FormLayout,
-  Input,
-  NumberPicker,
-  Select,
-} from '@formily/antd';
+import { ArrayItems, FormItem, FormLayout, Input, NumberPicker, Select } from '@formily/antd';
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
@@ -18,6 +10,7 @@ import BooleanEnum from '@/components/Metadata/BooleanParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
 import { useIntl } from '@/.umi/plugin-locale/localeExports';
+import Editable from '../EditTable';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
