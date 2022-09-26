@@ -149,9 +149,25 @@ const TabComponent = observer((props: Props) => {
         terms: [...terms],
         sorts: [{ name: 'alarmTime', order: 'desc' }],
       })
-      .then((resp) => {
+      .then(async (resp) => {
         if (resp.status === 200) {
-          setDataSource(resp.result);
+          const res = await service.getOrgList();
+          if (res.status === 200) {
+            resp.result.data.map((item) => {
+              if (item.targetType === 'org') {
+                res.result.forEach((item2) => {
+                  if (item2.id === item.targetId) {
+                    item.targetName = item2.name;
+                  }
+                  //targetName处理之后的
+                  if (item.targetId === item.targetName) {
+                    item.targetName = '无';
+                  }
+                });
+              }
+            });
+            setDataSource(resp.result);
+          }
         }
       });
   };
