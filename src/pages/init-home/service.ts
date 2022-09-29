@@ -83,6 +83,11 @@ class Service extends BaseService<any> {
     request(`/${SystemConst.API_BASE}/device-product/${id}/deploy`, {
       method: 'POST',
     });
+  //获取当前系统权限信息
+  getSystemPermission = () =>
+    request(`${SystemConst.API_BASE}/system/resources/permission`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

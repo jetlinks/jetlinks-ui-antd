@@ -227,7 +227,7 @@ const BaseInfo = (props: BaseInfoProps) => {
                   }
                 }}
               >
-                {productModel.current?.transportProtocol}
+                {productModel.current?.accessName}
               </Button>
             ) : (
               <Button
