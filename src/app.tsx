@@ -1,6 +1,6 @@
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
-import { notification } from 'antd';
+import { notification, Modal } from 'antd';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
@@ -30,7 +30,9 @@ moment.locale('zh-cn');
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 const bindPath = '/account/center/bind';
+const licensePath = '/init-license';
 let extraRoutes: any[] = [];
+// const { permission: userPermission } = usePermissions('system/License');
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -73,7 +75,11 @@ export async function getInitialState(): Promise<{
   };
 
   // 如果是登录页面，不执行
-  if (history.location.pathname !== loginPath && history.location.pathname !== bindPath) {
+  if (
+    history.location.pathname !== loginPath &&
+    history.location.pathname !== bindPath &&
+    history.location.pathname !== licensePath
+  ) {
     const currentUser = await fetchUserInfo();
     const settings = await getSettings();
     return {
@@ -191,6 +197,32 @@ export const request: RequestConfig = {
               key: 'error',
               message: JSON.parse(resp || '{}').message || '服务器内部错误！',
             });
+            if (JSON.parse(resp || '{}').code === 'license required') {
+              //判读按钮权限
+              let buttons = {};
+              const buttonString = localStorage.getItem('MENUS_BUTTONS_CACHE');
+              buttons = JSON.parse(buttonString || '{}');
+              // console.log(buttons['system/License'].includes('update'))
+              Modal.error({
+                title: 'License已到期或者错误',
+                content: (
+                  <>
+                    {buttons['system/License'].includes('update') ? (
+                      <a
+                        onClick={() => {
+                          Modal.destroyAll();
+                          window.location.href = '/#/init-license';
+                        }}
+                      >
+                        请更新License
+                      </a>
+                    ) : (
+                      '请联系管理员更新license'
+                    )}
+                  </>
+                ),
+              });
+            }
           } else {
             response
               .clone()
@@ -286,7 +318,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       if (
         !initialState?.currentUser &&
         location.pathname !== loginPath &&
-        location.pathname !== bindPath
+        location.pathname !== bindPath &&
+        location.pathname !== licensePath
       ) {
         history.push(loginPath);
       }
@@ -368,7 +401,7 @@ export function patchRoutes(routes: any) {
 }
 
 export function render(oldRender: any) {
-  if (![loginPath, bindPath].includes(history.location.pathname)) {
+  if (![loginPath, bindPath, licensePath].includes(history.location.pathname)) {
     //过滤非集成的菜单
     const params = [
       {

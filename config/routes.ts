@@ -42,6 +42,17 @@
       },
     ],
   },
+  {
+    path: '/init-license',
+    layout: false,
+    routes: [
+      {
+        name: '初始化License',
+        path: '/init-license',
+        component: './system/License/init',
+      },
+    ],
+  },
   // {
   //   path: '/analysis',
   //   name: 'analysis',
