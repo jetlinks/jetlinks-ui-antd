@@ -1024,21 +1024,21 @@ const Save = () => {
                   placeholder: '请输入secureKey',
                 },
               },
-              'apiServer.redirectUri': {
-                type: 'string',
-                title: '回调地址',
-                'x-decorator': 'FormItem',
-                'x-decorator-props': {
-                  gridSpan: 2,
-                  layout: 'vertical',
-                  labelAlign: 'left',
-                },
-                required: true,
-                'x-component': 'Input',
-                'x-component-props': {
-                  placeholder: '请输入回调地址',
-                },
-              },
+              // 'apiServer.redirectUri': {
+              //   type: 'string',
+              //   title: '回调地址',
+              //   'x-decorator': 'FormItem',
+              //   'x-decorator-props': {
+              //     gridSpan: 2,
+              //     layout: 'vertical',
+              //     labelAlign: 'left',
+              //   },
+              //   required: true,
+              //   'x-component': 'Input',
+              //   'x-component-props': {
+              //     placeholder: '请输入回调地址',
+              //   },
+              // },
               'apiServer.roleIdList': {
                 title: '角色',
                 'x-decorator': 'FormItem',

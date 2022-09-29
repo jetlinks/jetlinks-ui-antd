@@ -275,18 +275,18 @@ const Product = observer(() => {
     },
     {
       title: '接入方式',
-      dataIndex: 'accessId',
+      dataIndex: 'accessName',
       width: 150,
       ellipsis: true,
       valueType: 'select',
-      render: (_, row) => {
-        return row.protocolName;
-      },
+      // render: (_, row) => {
+      //   return row.protocolName;
+      // },
       request: () =>
         service.queryGatewayList().then((resp: any) =>
           resp.result.map((item: any) => ({
             label: item.name,
-            value: item.id,
+            value: item.name,
           })),
         ),
     },

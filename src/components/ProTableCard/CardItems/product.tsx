@@ -137,7 +137,7 @@ export default (props: ProductCardProps) => {
             </div>
             <div>
               <label>接入方式</label>
-              <Ellipsis title={props.protocolName || '未接入'} />
+              <Ellipsis title={props.accessName || '未接入'} />
             </div>
           </div>
         </div>
