@@ -1761,6 +1761,44 @@ export default [
           },
         ],
       },
+      {
+        code: 'system/License',
+        name: 'License管理',
+        owner: 'iot',
+        parentId: '3',
+        id: '3-11',
+        sortIndex: 11,
+        url: '/system/License',
+        icon: 'icon-zidingyiguize',
+        permissions: [],
+        buttons: [
+          {
+            id: 'update',
+            name: '编辑',
+            description: null,
+            permissions: [
+              {
+                permission: 'license',
+                actions: ['query', 'save'],
+              },
+            ],
+            options: null,
+          },
+
+          {
+            id: 'view',
+            name: '查看',
+            description: null,
+            permissions: [
+              {
+                permission: 'license"',
+                actions: ['query'],
+              },
+            ],
+            options: null,
+          },
+        ],
+      },
     ],
   },
 ];
