@@ -290,6 +290,7 @@ export default [
           {
             code: 'link/DashBoard',
             name: '仪表盘',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-1',
             sortIndex: 1,
@@ -303,6 +304,7 @@ export default [
           {
             code: 'link/AccessConfig',
             name: '设备接入网关',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-2',
             sortIndex: 2,
@@ -372,6 +374,7 @@ export default [
           {
             code: 'link/Protocol',
             name: '协议管理',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-3',
             sortIndex: 3,
@@ -426,6 +429,7 @@ export default [
           {
             code: 'Log',
             name: '日志管理',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-4',
             sortIndex: 4,
@@ -449,6 +453,7 @@ export default [
           {
             code: 'link/Type',
             name: '网络组件',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-5',
             sortIndex: 5,
@@ -488,6 +493,7 @@ export default [
           {
             code: 'link/Certificate',
             name: '证书管理',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-6',
             sortIndex: 6,
@@ -520,6 +526,7 @@ export default [
           {
             code: 'media/Stream',
             name: '流媒体服务',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-7',
             sortIndex: 7,
@@ -557,6 +564,7 @@ export default [
           {
             code: 'link/Channel',
             name: '通道配置',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-8',
             sortIndex: 8,
@@ -567,6 +575,7 @@ export default [
               {
                 code: 'link/Channel/Opcua',
                 name: 'OPC UA',
+                owner: 'iot',
                 parentId: '1-4-8',
                 id: '1-4-8-1',
                 sortIndex: 1,
@@ -627,6 +636,7 @@ export default [
               {
                 code: 'link/Channel/Modbus',
                 name: 'Modbus',
+                owner: 'iot',
                 parentId: '1-4-8',
                 id: '1-4-8-2',
                 sortIndex: 2,
@@ -669,6 +679,7 @@ export default [
           {
             code: 'device/Firmware',
             name: '远程升级',
+            owner: 'iot',
             parentId: '1-4',
             id: '1-4-9',
             sortIndex: 9,
@@ -724,6 +735,7 @@ export default [
           {
             code: 'rule-engine/DashBoard',
             name: '仪表盘',
+            owner: 'iot',
             parentId: '1-5',
             id: '1-5-1',
             sortIndex: 1,
@@ -739,6 +751,7 @@ export default [
           {
             code: 'rule-engine/Alarm/Config',
             name: '基础配置',
+            owner: 'iot',
             parentId: '1-5',
             id: '1-5-3',
             sortIndex: 2,
@@ -759,6 +772,7 @@ export default [
           {
             code: 'rule-engine/Alarm/Configuration',
             name: '告警配置',
+            owner: 'iot',
             parentId: '1-5',
             id: '1-5-2',
             sortIndex: 3,
@@ -807,6 +821,7 @@ export default [
           {
             code: 'rule-engine/Alarm/Log',
             name: '告警记录',
+            owner: 'iot',
             parentId: '1-5',
             id: '1-5-4',
             sortIndex: 4,
@@ -844,6 +859,7 @@ export default [
           {
             code: 'Northbound/DuerOS',
             name: 'DuerOS',
+            owner: 'iot',
             parentId: '1-6',
             id: '1-6-1',
             sortIndex: 1,
@@ -878,6 +894,7 @@ export default [
           {
             code: 'Northbound/AliCloud',
             name: '阿里云',
+            owner: 'iot',
             parentId: '1-6',
             id: '1-6-2',
             sortIndex: 2,
@@ -925,6 +942,7 @@ export default [
           {
             code: 'rule-engine/Instance',
             name: '规则编排',
+            owner: 'iot',
             parentId: '1-7',
             id: '1-7-1',
             sortIndex: 1,
@@ -977,6 +995,7 @@ export default [
           {
             code: 'rule-engine/Scene',
             name: '场景联动',
+            owner: 'iot',
             parentId: '1-7',
             id: '1-7-2',
             sortIndex: 2,

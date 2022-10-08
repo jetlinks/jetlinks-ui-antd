@@ -52,7 +52,7 @@ class Service extends BaseService<DeviceInstance> {
 
   // 批量注销设备
   public batchUndeployDevice = (params: any) =>
-    request(`/${SystemConst.API_BASE}/device-instance/batch/_undeploy`, {
+    request(`/${SystemConst.API_BASE}/device-instance/batch/_unDeploy`, {
       method: 'PUT',
       data: params,
     });
