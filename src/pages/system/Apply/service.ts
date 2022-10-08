@@ -42,7 +42,7 @@ class Service extends BaseService<any> {
       data,
     });
   queryOwnerTreeStandalone = (appId: string, owner: string) =>
-    request(`{/${SystemConst.API_BASE}/application/${appId}/_/api/menu/owner/tree/${owner}`, {
+    request(`/${SystemConst.API_BASE}/application/${appId}/_/api/menu/owner/tree/${owner}`, {
       method: 'POST',
       data: {},
     });
