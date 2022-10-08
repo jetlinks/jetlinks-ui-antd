@@ -16,10 +16,10 @@ const Iframe = () => {
       }
       if (res.result.provider === 'internal-standalone') {
         //{baseUrl}/api/application/sso/{appId}/login?redirect={menuUrl}
-        const urlStandalone = `${res.result.page}/api/application/sso/${appId}/login?redirect=${menuUrl}?layout=false`;
+        const urlStandalone = `${res.result.page.baseUrl}/api/application/sso/${appId}/login?redirect=${menuUrl}?layout=false`;
         setIframeUrl(urlStandalone);
       } else {
-        const urlOther = `${res.result.page}/${menuUrl}`;
+        const urlOther = `${res.result.page.baseUrl}/${menuUrl}`;
         setIframeUrl(urlOther);
       }
     }
@@ -28,9 +28,8 @@ const Iframe = () => {
   useEffect(() => {
     const params = location.pathname.split('/')?.[1];
     const url = location.pathname.split('/').slice(2).join('/');
-    // console.log(url)
+    console.log(params, url);
     handle(params, url);
-    // console.log(location)
   }, [location, iframeUrl]);
 
   return (
