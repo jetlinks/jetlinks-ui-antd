@@ -42,7 +42,7 @@ const Menu = forwardRef((props: { onChange?: (menu: any) => void }, ref) => {
   const getSystemPermissions = async () => {
     const resp = await service.getSystemPermission();
     if (resp.status === 200) {
-      // console.log(resp.result.map((item: any) => JSON.parse(item).id))
+      console.log(resp.result.map((item: any) => JSON.parse(item).id));
       const newTree = filterMenu(
         resp.result.map((item: any) => JSON.parse(item).id),
         BaseMenu,

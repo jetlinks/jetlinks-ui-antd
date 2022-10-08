@@ -1350,7 +1350,7 @@ export default [
             permissions: [{ permission: 'organization', actions: ['query'] }],
           },
           {
-            id: 'bind',
+            id: 'edit',
             name: '资产编辑',
             permissions: [{ permission: 'assets-bind', actions: ['permission'] }],
           },
@@ -1548,43 +1548,43 @@ export default [
           },
         ],
       },
-      {
-        code: 'system/Platforms',
-        name: '第三方平台',
-        owner: 'iot',
-        parentId: '3',
-        id: '3-7',
-        sortIndex: 7,
-        url: '/system/platforms',
-        icon: 'icon-xitongguanli1',
-        permissions: [{ permission: 'open-api', actions: ['query', 'save', 'delete'] }],
-        buttons: [
-          {
-            id: 'empowerment',
-            name: '赋权',
-            permissions: [
-              { permission: 'user-third-party-manager', actions: ['save'] },
-              { permission: 'open-api', actions: ['save'] },
-            ],
-          },
-          {
-            id: 'password',
-            name: '重置密码',
-            permissions: [{ permission: 'open-api', actions: ['save'] }],
-          },
-          {
-            id: 'delete',
-            name: '删除',
-            permissions: [{ permission: 'open-api', actions: ['delete'] }],
-          },
-          {
-            id: 'update',
-            name: '编辑',
-            permissions: [{ permission: 'open-api', actions: ['save'] }],
-          },
-          { id: 'add', name: '新增', permissions: [{ permission: 'open-api', actions: ['save'] }] },
-        ],
-      },
+      // {
+      //   code: 'system/Platforms',
+      //   name: '第三方平台',
+      //   owner: 'iot',
+      //   parentId: '3',
+      //   id: '3-7',
+      //   sortIndex: 7,
+      //   url: '/system/platforms',
+      //   icon: 'icon-xitongguanli1',
+      //   permissions: [{ permission: 'open-api', actions: ['query', 'save', 'delete'] }],
+      //   buttons: [
+      //     {
+      //       id: 'empowerment',
+      //       name: '赋权',
+      //       permissions: [
+      //         { permission: 'user-third-party-manager', actions: ['save'] },
+      //         { permission: 'open-api', actions: ['save'] },
+      //       ],
+      //     },
+      //     {
+      //       id: 'password',
+      //       name: '重置密码',
+      //       permissions: [{ permission: 'open-api', actions: ['save'] }],
+      //     },
+      //     {
+      //       id: 'delete',
+      //       name: '删除',
+      //       permissions: [{ permission: 'open-api', actions: ['delete'] }],
+      //     },
+      //     {
+      //       id: 'update',
+      //       name: '编辑',
+      //       permissions: [{ permission: 'open-api', actions: ['save'] }],
+      //     },
+      //     { id: 'add', name: '新增', permissions: [{ permission: 'open-api', actions: ['save'] }] },
+      //   ],
+      // },
       {
         code: 'system/Relationship',
         name: '关系配置',
@@ -1623,7 +1623,9 @@ export default [
         sortIndex: 9,
         url: '/system/DataSource',
         icon: 'icon-shebei',
-        permissions: [],
+        permissions: [
+          { permission: 'datasource-config', actions: ['query', 'save', 'rdb-ddl', 'delete'] },
+        ],
         buttons: [
           {
             id: 'manage',
@@ -1673,7 +1675,16 @@ export default [
         sortIndex: 11,
         url: '/system/Apply',
         icon: 'icon-wangguanzishebei',
-        permissions: [],
+        permissions: [
+          {
+            permission: 'application',
+            actions: ['query', 'save', 'delete'],
+          },
+          {
+            permission: 'open-api',
+            actions: ['query', 'save', 'delete'],
+          },
+        ],
         buttons: [
           {
             id: 'delete',
@@ -1770,7 +1781,12 @@ export default [
         sortIndex: 12,
         url: '/system/License',
         icon: 'icon-zidingyiguize',
-        permissions: [],
+        permissions: [
+          {
+            permission: 'license',
+            actions: ['query', 'save'],
+          },
+        ],
         buttons: [
           {
             id: 'update',

@@ -94,6 +94,29 @@ const Save = () => {
     );
   };
 
+  const providerList = [
+    {
+      label: createImageLabel(providerType.get('internal-standalone'), '内部独立应用'),
+      value: 'internal-standalone',
+    },
+    {
+      label: createImageLabel(providerType.get('internal-integrated'), '内部集成应用'),
+      value: 'internal-integrated',
+    },
+    {
+      label: createImageLabel(providerType.get('wechat-webapp'), '微信网站应用'),
+      value: 'wechat-webapp',
+    },
+    {
+      label: createImageLabel(providerType.get('dingtalk-ent-app'), '钉钉企业内部应用'),
+      value: 'dingtalk-ent-app',
+    },
+    {
+      label: createImageLabel(providerType.get('third-party'), '第三方应用'),
+      value: 'third-party',
+    },
+  ];
+
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -111,16 +134,16 @@ const Save = () => {
     },
   });
 
-  const getProvidersAll = () => {
-    return service.getProvidersAll().then((res) => {
-      if (res.status === 200) {
-        return res.result.map((item: any) => ({
-          label: createImageLabel(providerType.get(item.provider), item.name),
-          value: item.provider,
-        }));
-      }
-    });
-  };
+  // const getProvidersAll = () => {
+  //   return service.getProvidersAll().then((res) => {
+  //     if (res.status === 200) {
+  //       return res.result.map((item: any) => ({
+  //         label: createImageLabel(providerType.get(item.provider), item.name),
+  //         value: item.provider,
+  //       }));
+  //     }
+  //   });
+  // };
   const getRole = () => service.queryRoleList();
   const getOrg = () => service.queryOrgList();
 
@@ -293,6 +316,14 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入授权地址',
       },
+      'x-reactions': {
+        dependencies: ['integrationModes'],
+        fulfill: {
+          state: {
+            visible: '{{$deps[0] && !$deps[0].includes("apiClient")}}',
+          },
+        },
+      },
     },
     'sso.configuration.oAuth2.redirectUri': {
       type: 'string',
@@ -307,6 +338,14 @@ const Save = () => {
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入回调地址',
+      },
+      'x-reactions': {
+        dependencies: ['integrationModes'],
+        fulfill: {
+          state: {
+            visible: '{{$deps[0] && !$deps[0].includes("apiClient")}}',
+          },
+        },
       },
     },
     'sso.configuration.oAuth2.clientId': {
@@ -323,6 +362,14 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入appId',
       },
+      'x-reactions': {
+        dependencies: ['integrationModes'],
+        fulfill: {
+          state: {
+            visible: '{{$deps[0] && !$deps[0].includes("apiClient")}}',
+          },
+        },
+      },
     },
     'sso.configuration.oAuth2.clientSecret': {
       type: 'string',
@@ -337,6 +384,14 @@ const Save = () => {
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入appKey',
+      },
+      'x-reactions': {
+        dependencies: ['integrationModes'],
+        fulfill: {
+          state: {
+            visible: '{{$deps[0] && !$deps[0].includes("apiClient")}}',
+          },
+        },
       },
     },
     'sso.autoCreateUser': {
@@ -931,11 +986,12 @@ const Save = () => {
           placeholder: '请选择应用',
         },
         required: true,
-        'x-reactions': '{{useAsyncDataSource(getProvidersAll)}}',
+        // 'x-reactions': '{{useAsyncDataSource(getProvidersAll)}}',
         'x-decorator-props': {
           gridSpan: 1,
         },
         default: 'internal-standalone',
+        enum: providerList,
         'x-validator': [
           {
             required: true,
@@ -1678,7 +1734,7 @@ const Save = () => {
                   formCollapse,
                   useAsyncDataSource,
                   useAsyncData,
-                  getProvidersAll,
+                  // getProvidersAll,
                   getRole,
                   getOrg,
                 }}

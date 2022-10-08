@@ -12,7 +12,7 @@ import Service from './service';
 const License = () => {
     const { minHeight } = useDomFullHeight(`.license`);
     const service = new Service('license');
-    const [info, setInfo] = useState<any>([])
+    const [info, setInfo] = useState<any>()
     const [license, setLicens] = useState<any>()
     const [value, setValue] = useState<any>()
     const { permission: userPermission } = usePermissions('system/License');
@@ -51,10 +51,11 @@ const License = () => {
                 <TitleComponent data={'基础信息'} />
                 <div >
                     <Descriptions bordered column={4}>
-                        {info.map((item: any) => (
+                        <Descriptions.Item label="Host" span={4}>{info?.host}</Descriptions.Item>
+                        {info?.modules.map((item: any) => (
                             <>
                                 <Descriptions.Item label="IP" span={2}>{item.ip}</Descriptions.Item>
-                                <Descriptions.Item label="mac" span={2}>{item.mac}</Descriptions.Item>
+                                <Descriptions.Item label="Mac" span={2}>{item.mac}</Descriptions.Item>
                             </>)
                         )}
                     </Descriptions>
