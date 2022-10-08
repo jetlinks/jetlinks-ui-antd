@@ -93,6 +93,10 @@ export default observer((props: ApiPageProps) => {
     getApiGrant();
   }, []);
 
+  useEffect(() => {
+    console.log(ApiModel.data);
+  }, [ApiModel.data]);
+
   return (
     <div className={'platforms-api'} style={{ minHeight }}>
       <div className={'platforms-api-tree'}>
@@ -111,7 +115,7 @@ export default observer((props: ApiPageProps) => {
       </div>
       {ApiModel.showTable ? (
         <>
-          {ApiModel.data ? (
+          {ApiModel.data && ApiModel.data.length !== 0 ? (
             <Table
               data={ApiModel.data}
               operations={operations}

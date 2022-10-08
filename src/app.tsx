@@ -198,30 +198,46 @@ export const request: RequestConfig = {
               message: JSON.parse(resp || '{}').message || '服务器内部错误！',
             });
             if (JSON.parse(resp || '{}').code === 'license required') {
-              //判读按钮权限
+              //判断按钮权限
               let buttons = {};
               const buttonString = localStorage.getItem('MENUS_BUTTONS_CACHE');
               buttons = JSON.parse(buttonString || '{}');
-              // console.log(buttons['system/License'].includes('update'))
-              Modal.error({
-                title: 'License已到期或者错误',
-                content: (
-                  <>
-                    {buttons['system/License'].includes('update') ? (
-                      <a
-                        onClick={() => {
-                          Modal.destroyAll();
-                          window.location.href = '/#/init-license';
-                        }}
-                      >
-                        请更新License
-                      </a>
-                    ) : (
-                      '请联系管理员更新license'
-                    )}
-                  </>
-                ),
-              });
+              //判读是否是退出登录状态
+              if (Object.keys(buttons) && Object.keys(buttons).length !== 0) {
+                Modal.error({
+                  title: 'License已到期或者错误',
+                  content: (
+                    <>
+                      {buttons['system/License']?.includes('update') ? (
+                        <a
+                          onClick={() => {
+                            Modal.destroyAll();
+                            window.location.href = '/#/init-license';
+                          }}
+                        >
+                          请更新License
+                        </a>
+                      ) : (
+                        '请联系管理员更新license'
+                      )}
+                    </>
+                  ),
+                });
+              } else {
+                Modal.error({
+                  title: 'License已到期或者错误',
+                  content: (
+                    <a
+                      onClick={() => {
+                        Modal.destroyAll();
+                        window.location.href = '/#/init-license';
+                      }}
+                    >
+                      请更新License
+                    </a>
+                  ),
+                });
+              }
             }
           } else {
             response
