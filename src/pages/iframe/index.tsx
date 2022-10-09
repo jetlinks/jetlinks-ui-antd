@@ -28,7 +28,7 @@ const Iframe = () => {
   useEffect(() => {
     const params = location.pathname.split('/')?.[1];
     const url = location.pathname.split('/').slice(2).join('/');
-    console.log(params, url);
+    // console.log(params, url);
     handle(params, url);
   }, [location, iframeUrl]);
 
