@@ -70,6 +70,7 @@ const Instance = () => {
   const [current, setCurrent] = useState<Partial<DeviceInstance>>({});
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('device/Instance');
 
@@ -530,9 +531,13 @@ const Instance = () => {
             type="primary"
             danger
             popConfirm={{
-              title: '确认删除选中设备?',
+              title: '已启用的设备无法删除，确认删除选中的禁用状态设备？',
               onConfirm: () => {
-                service.batchDeleteDevice(bindKeys).then((resp) => {
+                const list = (selectedRows || [])
+                  .filter((item) => item.state?.value === 'notActive')
+                  .map((i) => i.id);
+                if (!list.length) return;
+                service.batchDeleteDevice(list).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
                     actionRef.current?.reset?.();
@@ -646,8 +651,9 @@ const Instance = () => {
         pagination={{ pageSize: 10 }}
         rowSelection={{
           selectedRowKeys: bindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            setBindKeys(selectedRows.map((item) => item.id));
+          onChange: (selectedRowKeys, selectedRow) => {
+            setBindKeys(selectedRowKeys);
+            setSelectedRows(selectedRow);
           },
         }}
         headerTitle={[
