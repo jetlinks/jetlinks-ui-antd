@@ -53,6 +53,17 @@
       },
     ],
   },
+  {
+    path: '/oauth',
+    layout: false,
+    routes: [
+      {
+        name: '授权页',
+        path: '/oauth',
+        component: './oauth',
+      },
+    ],
+  },
   // {
   //   path: '/analysis',
   //   name: 'analysis',

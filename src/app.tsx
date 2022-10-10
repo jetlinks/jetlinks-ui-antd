@@ -31,6 +31,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 const bindPath = '/account/center/bind';
 const licensePath = '/init-license';
+const oauthPath = '/oauth';
 let extraRoutes: any[] = [];
 // const { permission: userPermission } = usePermissions('system/License');
 
@@ -78,7 +79,8 @@ export async function getInitialState(): Promise<{
   if (
     history.location.pathname !== loginPath &&
     history.location.pathname !== bindPath &&
-    history.location.pathname !== licensePath
+    history.location.pathname !== licensePath &&
+    history.location.pathname !== oauthPath
   ) {
     const currentUser = await fetchUserInfo();
     const settings = await getSettings();
@@ -335,7 +337,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         !initialState?.currentUser &&
         location.pathname !== loginPath &&
         location.pathname !== bindPath &&
-        location.pathname !== licensePath
+        location.pathname !== licensePath &&
+        location.pathname !== oauthPath
       ) {
         history.push(loginPath);
       }
@@ -417,7 +420,7 @@ export function patchRoutes(routes: any) {
 }
 
 export function render(oldRender: any) {
-  if (![loginPath, bindPath, licensePath].includes(history.location.pathname)) {
+  if (![loginPath, bindPath, licensePath, oauthPath].includes(history.location.pathname)) {
     //过滤非集成的菜单
     const params = [
       {
