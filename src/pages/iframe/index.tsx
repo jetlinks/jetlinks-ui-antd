@@ -13,7 +13,7 @@ const Iframe = () => {
     if (res.status === 200) {
       console.log(res.result);
       if (res.result.page.routeType === 'hash') {
-        menuUrl = `/${url}`;
+        menuUrl = `${url}`;
       }
       if (res.result.provider === 'internal-standalone') {
         //{baseUrl}/api/application/sso/{appId}/login?redirect={menuUrl}

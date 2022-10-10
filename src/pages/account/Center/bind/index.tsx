@@ -148,7 +148,7 @@ const Bind = () => {
     // const params = '5c021c8892d4afffd8fd42439c4e2382'
     setCode(params);
     bindUserInfo(params);
-    if (localStorage.getItem('onLogin') === 'yes') {
+    if (localStorage.getItem('onLogin') === 'yes' || isLogin === 'yes') {
       getDetail();
     }
     if (localStorage.getItem('onLogin')) {

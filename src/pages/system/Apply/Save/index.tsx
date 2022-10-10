@@ -30,6 +30,7 @@ import usePermissions from '@/hooks/permission';
 import { useHistory, useLocation } from '@/hooks';
 import { getMenuPathByCode } from '@/utils/menu';
 import MenuPage from '../Menu';
+import _ from 'lodash';
 
 const Save = () => {
   const location = useLocation();
@@ -247,6 +248,10 @@ const Save = () => {
 
   const handleSave = async () => {
     const data: any = await form.submit();
+    const list = integrationModesList.map((item) => item.value);
+    _.difference(list, data.integrationModes).forEach((item) => {
+      delete data[item];
+    });
 
     //独立应用-api客户端 id?clientId:appId
     if (data.provider === 'internal-standalone') {
