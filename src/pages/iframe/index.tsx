@@ -11,13 +11,15 @@ const Iframe = () => {
     const res = await service.detail(appId);
     let menuUrl: any = url;
     if (res.status === 200) {
+      console.log(res.result);
       if (res.result.page.routeType === 'hash') {
-        menuUrl = `/#/${url}?layout=false`;
+        menuUrl = `/${url}`;
       }
       if (res.result.provider === 'internal-standalone') {
         //{baseUrl}/api/application/sso/{appId}/login?redirect={menuUrl}
         const urlStandalone = `${res.result.page.baseUrl}/api/application/sso/${appId}/login?redirect=${menuUrl}?layout=false`;
         setIframeUrl(urlStandalone);
+        console.log(urlStandalone);
       } else {
         const urlOther = `${res.result.page.baseUrl}/${menuUrl}`;
         setIframeUrl(urlOther);
@@ -28,7 +30,7 @@ const Iframe = () => {
   useEffect(() => {
     const params = location.pathname.split('/')?.[1];
     const url = location.pathname.split('/').slice(2).join('/');
-    console.log(params, url);
+    // console.log(params, url);
     handle(params, url);
   }, [location, iframeUrl]);
 

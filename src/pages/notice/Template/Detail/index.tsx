@@ -953,7 +953,7 @@ const Detail = observer(() => {
                     properties: {
                       ttsCode: {
                         title: '模版ID',
-                        'x-component': 'Select',
+                        'x-component': 'Input',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
                           tooltip: '阿里云内部分配的唯一ID标识',

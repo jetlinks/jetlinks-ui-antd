@@ -1,7 +1,7 @@
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from '@formily/react';
 import { Input, Upload } from 'antd';
 import type { UploadChangeParam } from 'antd/lib/upload/interface';
@@ -29,6 +29,10 @@ const FUpload = connect((props: Props) => {
       props.onChange(f);
     }
   };
+
+  useEffect(() => {
+    setUrl(props.value?.url);
+  }, [props.value]);
 
   return (
     <Upload

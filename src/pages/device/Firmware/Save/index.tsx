@@ -34,9 +34,17 @@ const Save = (props: Props) => {
         if (!data?.id) return;
         form1.setInitialValues({ ...data, upload: { url: data?.url } });
       });
-      onFieldValueChange('signMethod', (field) => {
+      onFieldValueChange('signMethod', (field, f) => {
         const value = (field as Field).value;
         signMethod.current = value;
+        if (field.modified) {
+          f.setFieldState('sign', (state) => {
+            state.value = undefined;
+          });
+          f.setFieldState('upload', (state1) => {
+            state1.value = undefined;
+          });
+        }
       });
       onFieldValueChange('upload', (field) => {
         const value = (field as Field).value;
@@ -410,7 +418,20 @@ const Save = (props: Props) => {
       width="50vw"
       title={data?.id ? '编辑' : '新增'}
       onCancel={() => close()}
-      onOk={() => save()}
+      onOk={async () => {
+        if (data?.id) {
+          const res: any = await service.task({
+            terms: [{ terms: [{ column: 'firmwareId', value: data.id }] }],
+          });
+          if (res.status === 200 && res.result.data && res.result.data.length !== 0) {
+            onlyMessage('该固件有升级任务，不可编辑', 'warning');
+          } else {
+            save();
+          }
+        } else {
+          save();
+        }
+      }}
       visible={visible}
     >
       <Form form={form} labelCol={5} wrapperCol={16} layout="vertical">

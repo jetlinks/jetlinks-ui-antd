@@ -360,7 +360,11 @@ const Save = (props: Props) => {
         props.close();
       }}
       onOk={() => {
-        handleSave();
+        if (props.data.id && props.data.typeId === 'rdb') {
+          handleSave();
+        } else {
+          onlyMessage('该类型数据库不可以编辑', 'warning');
+        }
       }}
     >
       <Form form={form} layout="vertical">

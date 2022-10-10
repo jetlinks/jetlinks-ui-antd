@@ -66,6 +66,16 @@ const Service = {
       method: 'GET',
     }),
   initPage: () => request(`/${SystemConst.API_BASE}/user/settings/init`, { method: 'GET' }),
+
+  getOAuth2: (params?: any) =>
+    request(`/${SystemConst.API_BASE}/oauth2/authorize`, {
+      method: 'GET',
+      params,
+    }),
+  initApplication: (clientId: any) =>
+    request(`/${SystemConst.API_BASE}/application/${clientId}/info`, {
+      method: 'GET',
+    }),
 };
 
 export default Service;

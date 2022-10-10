@@ -1,0 +1,78 @@
+.oauth {
+  .oauth-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    font-size: 26px;
+    background-color: #fff;
+
+    .oauth-header-left {
+      margin-left: 10%;
+    }
+
+    .oauth-header-right {
+      display: flex;
+      width: 200px;
+      margin-right: 10%;
+      font-size: 14px;
+
+      .oauth-header-right-text {
+        color: rgb(0 0 0 / 70%);
+      }
+
+      // .oauth-header-right-connect {
+      //     padding: 0 10px;
+      // }
+    }
+  }
+
+  .oauth-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 370px;
+    height: 380px;
+    margin: 0 auto;
+    margin-top: 5%;
+    background: #fff;
+    box-shadow: 0 5px 5px #d4d4d4;
+
+    .oauth-content-header {
+      width: 60px;
+      height: 60px;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .oauth-content-content {
+      height: 150px;
+      .oauth-content-content-text {
+        margin: 15px 15px;
+        font-size: 16px;
+        line-height: 22px;
+      }
+
+      ul {
+        color: #00000085;
+        list-style: inherit;
+        li {
+          padding-top: 10px;
+        }
+      }
+    }
+
+    .oauth-content-button {
+      display: flex;
+      justify-content: space-around;
+      width: 200px;
+    }
+    .oauth-content-login {
+      max-width: 300px;
+    }
+  }
+}
