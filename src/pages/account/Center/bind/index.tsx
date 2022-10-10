@@ -148,11 +148,12 @@ const Bind = () => {
     // const params = '5c021c8892d4afffd8fd42439c4e2382'
     setCode(params);
     bindUserInfo(params);
-    if (localStorage.getItem('onLogin') === 'yes' || isLogin === 'yes') {
-      getDetail();
-    }
+    // getDetail();
     if (localStorage.getItem('onLogin')) {
       setIslogin(localStorage.getItem('onLogin'));
+      if (localStorage.getItem('onLogin') === 'yes' || isLogin === 'yes') {
+        getDetail();
+      }
     }
     service.settingDetail('front').then((res) => {
       if (res.status === 200) {
@@ -165,7 +166,13 @@ const Bind = () => {
         }
       }
     });
-  }, []);
+  }, [window.location.href]);
+
+  useEffect(() => {
+    if (isLogin === 'yes') {
+      getDetail();
+    }
+  }, [isLogin]);
   useEffect(getCode, []);
 
   return (
