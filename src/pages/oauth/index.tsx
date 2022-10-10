@@ -73,21 +73,7 @@ const Oauth = () => {
       getCode();
     }
   };
-  const doLogin = async (data: LoginParam) => {
-    // setIsLogin(true)
-    const res = await Service.login2({
-      expires: loginRef.current.expires,
-      verifyKey: captcha.key,
-      ...data,
-    });
-    if (res.status === 200) {
-      const token = res.result.token;
-      localStorage.setItem('X-Access-Token', token);
-      goOAuth2();
-    } else {
-      getCode();
-    }
-  };
+
   const schema = {
     type: 'object',
     properties: {
@@ -133,28 +119,6 @@ const Oauth = () => {
     },
   };
 
-  //未登录状态
-  const loginPage = () => {
-    return (
-      <>
-        <div className="oauth-content-header">
-          <img src={headerImg} />
-        </div>
-        <div className="oauth-content-login">
-          <Form form={loginForm} layout="horizontal" size="large" onAutoSubmit={doLogin}>
-            <SchemaField schema={schema} />
-            <Submit block size="large">
-              {intl.formatMessage({
-                id: 'pages.login.submit',
-                defaultMessage: '登录',
-              })}
-            </Submit>
-          </Form>
-        </div>
-      </>
-    );
-  };
-
   const initApplication = async () => {
     const res: any = await Service.initApplication(params.client_id);
     if (res.status === 200) {
@@ -192,6 +156,23 @@ const Oauth = () => {
     return '';
   };
 
+  const doLogin = async (data: LoginParam) => {
+    // setIsLogin(true)
+    const res = await Service.login2({
+      expires: loginRef.current.expires,
+      verifyKey: captcha.key,
+      ...data,
+    });
+    if (res.status === 200) {
+      getLoginUser();
+      const token = res.result.token;
+      localStorage.setItem('X-Access-Token', token);
+      goOAuth2();
+    } else {
+      getCode();
+    }
+  };
+
   useEffect(() => {
     document.title = 'OAuth授权-jetlinks';
     getCode();
@@ -211,7 +192,30 @@ const Oauth = () => {
     setLinternal(item);
     setParams(items);
     console.log(items);
+    console.log(window.location);
   }, [window.location]);
+
+  //未登录状态
+  const loginPage = () => {
+    return (
+      <>
+        <div className="oauth-content-header">
+          <img src={headerImg} />
+        </div>
+        <div className="oauth-content-login">
+          <Form form={loginForm} layout="horizontal" size="large" onAutoSubmit={doLogin}>
+            <SchemaField schema={schema} />
+            <Submit block size="large">
+              {intl.formatMessage({
+                id: 'pages.login.submit',
+                defaultMessage: '登录',
+              })}
+            </Submit>
+          </Form>
+        </div>
+      </>
+    );
+  };
 
   return (
     <div
@@ -228,8 +232,8 @@ const Oauth = () => {
           <img src={logo} />
         </div>
         <div className="oauth-header-right">
-          <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
-          {/* <div className="oauth-header-right-connect">|</div>
+          {/* <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
+          <div className="oauth-header-right-connect">|</div>
                     <a
                         style={{ color: 'rgb(0 0 0 / 70%)' }}
                         onClick={(() => {
@@ -249,7 +253,7 @@ const Oauth = () => {
                 {`您正在授权登录,${appName || '-'}将获得以下权限:`}
               </div>
               <ul>
-                <li>关联jetlinks账号</li>
+                <li>{`关联${userName}账号`}</li>
                 <li>获取您的个人信息 </li>
               </ul>
             </div>
