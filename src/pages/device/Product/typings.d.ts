@@ -29,6 +29,7 @@ export type ProductItem = {
   photoUrl?: string;
   storePolicy?: string;
   accessProvider?: string;
+  modifyTime?: string;
 };
 
 export type ConfigProperty = {

@@ -65,10 +65,11 @@ const Oauth = () => {
         // setLoading(false);
       });
   };
-  const goOAuth2 = async () => {
-    const res = await Service.getOAuth2(params);
+  const goOAuth2 = async (data?: any) => {
+    const res = await Service.getOAuth2(params || data);
     if (res.status === 200) {
       window.location.href = res.result;
+      console.log(res.result);
     } else {
       getCode();
     }
@@ -133,7 +134,7 @@ const Oauth = () => {
       setIsLogin(true);
       initApplication(data.client_id || params.client_id);
       if (data.internal === 'true' || internal === 'true') {
-        goOAuth2();
+        goOAuth2(data);
       }
     } else if (res.status === 401) {
       setIsLogin(false);
