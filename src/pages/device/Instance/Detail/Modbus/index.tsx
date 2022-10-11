@@ -314,9 +314,9 @@ export default (props: Props) => {
         );
         if ((field as Field).modified) {
           const readIndex = field.query(path).get('value');
-          const dataLength = field.query(path).get('dataSource')?.length - 1;
+          const dataLength = field.query(path).get('dataSource')?.length;
           const length = lengthMap.get(value) + readIndex;
-          console.log(length, dataLength);
+          console.log(length, dataLength, readIndex);
           if (length > dataLength) {
             field.selfErrors = '数据类型对应的长度和起始位置加起来不能超过数据长度';
           } else {
