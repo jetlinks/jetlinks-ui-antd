@@ -27,14 +27,14 @@ interface State {
 
 const DeviceGatewayBind: React.FC<Props> = props => {
   const initState: State = {
-    searchParam: { 
-      pageSize: 10, 
+    searchParam: {
+      pageSize: 10,
       terms: { 'parentId$not@or': props.gatewayId },
       sorts: {
         field: 'registryTime',
         order: 'desc',
       },
-     },
+    },
     deviceData: {},
     deviceId: [],
   };
@@ -56,7 +56,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           setDeviceData(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   useEffect(() => {
@@ -67,9 +67,9 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   }, []);
 
   const onTableChange = (pagination: PaginationConfig, filters: any, sorter: SorterResult<any>) => {
-    if(sorter.field){
+    if (sorter.field) {
       searchParam.sorts.order = sorter.order
-    }    
+    }
     apis.deviceInstance
       .list(
         encodeQueryParam({
@@ -84,7 +84,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           setDeviceData(response.result);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const rowSelection = {
@@ -153,25 +153,28 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           <Search
             search={(params: any) => {
               setSearchParam(params);
+              console.log(params)
               if (props.selectionType === 'checkbox') {
                 // params['parentId$isnull'] = 1;
                 handleSearch({
-                  sorts: searchParam.sorts, 
+                  sorts: searchParam.sorts,
                   pageSize: 10,
-                  terms:{
+                  terms: {
                     ...params,
-                    parentId$isnull:1,
-                    'parentId$not@or':props.gatewayId
+                    terms: {
+                      parentId$isnull: 1,
+                      'parentId$not@or': props.gatewayId
+                    }
                   },
                 })
-              }else{
+              } else {
                 handleSearch({
-                  sorts: searchParam.sorts, 
+                  sorts: searchParam.sorts,
                   pageSize: 10,
-                  terms:{
+                  terms: {
                     ...params,
                     // parentId$isnull:1,
-                    'parentId$not@or':props.gatewayId
+                    'parentId$not@or': props.gatewayId
                   },
                 })
               }

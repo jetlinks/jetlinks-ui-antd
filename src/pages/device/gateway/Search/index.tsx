@@ -28,6 +28,7 @@ const Search: React.FC<Props> = props => {
 
   const search = () => {
     const data = form.getFieldsValue();
+    console.log(data)
     // TODO 查询数据
     props.search(data);
   };
