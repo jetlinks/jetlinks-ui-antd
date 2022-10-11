@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts/core';
 import type { ECharts, EChartsOption } from 'echarts';
 import {
@@ -57,6 +57,8 @@ export { echarts };
 
 export default (props: EchartsProps) => {
   const chartsRef = useRef<any>(null);
+  const chartsDom = useRef<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const initEcharts = (dom: HTMLDivElement) => {
     chartsRef.current = chartsRef.current || echarts.init(dom);
@@ -94,16 +96,19 @@ export default (props: EchartsProps) => {
     }
   }, [props.options, chartsRef.current]);
 
-  return (
-    <div
-      className={classNames(Style['content'], props.className)}
-      ref={(ref) => {
-        if (ref) {
-          setTimeout(() => {
-            initEcharts(ref);
-          }, 100);
-        }
-      }}
-    />
-  );
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => {
+        initEcharts(chartsDom.current);
+      }, 100);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (chartsDom.current) {
+      setLoading(true);
+    }
+  }, [chartsDom.current]);
+
+  return <div className={classNames(Style['content'], props.className)} ref={chartsDom} />;
 };
