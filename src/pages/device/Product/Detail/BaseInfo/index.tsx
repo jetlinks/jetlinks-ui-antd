@@ -257,11 +257,11 @@ const BaseInfo = (props: BaseInfoProps) => {
         </Descriptions.Item>
         <Descriptions.Item
           label={intl.formatMessage({
-            id: 'pages.device.productDetail.updateTime',
+            id: 'pages.device.productDetail.modifyTime',
             defaultMessage: '更新时间',
           })}
         >
-          {getDateFormat(productModel.current?.updateTime)}
+          {getDateFormat(productModel.current?.modifyTime)}
         </Descriptions.Item>
         <Descriptions.Item
           span={3}
