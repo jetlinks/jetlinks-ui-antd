@@ -66,10 +66,10 @@ const Oauth = () => {
       });
   };
   const goOAuth2 = async (data?: any) => {
-    const res = await Service.getOAuth2(params || data);
+    const res = await Service.getOAuth2(data || params);
     if (res.status === 200) {
       window.location.href = res.result;
-      console.log(res.result);
+      console.log(res.result, '222222222222');
     } else {
       getCode();
     }
