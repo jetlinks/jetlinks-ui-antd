@@ -69,6 +69,7 @@ const Oauth = () => {
     const res = await Service.getOAuth2(params || data);
     if (res.status === 200) {
       window.location.href = res.result;
+      console.log(res.result);
     } else {
       getCode();
     }
