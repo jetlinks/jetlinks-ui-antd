@@ -119,26 +119,26 @@ const Oauth = () => {
     },
   };
 
-  const initApplication = async () => {
-    const res: any = await Service.initApplication(params.client_id);
+  const initApplication = async (cilentId: string) => {
+    const res: any = await Service.initApplication(cilentId);
     if (res.status === 200) {
       setAppName(res.result?.name);
     }
   };
 
-  const getLoginUser = async () => {
+  const getLoginUser = async (data?: any) => {
     const res = await Service.queryCurrent();
     if (res && res.status === 200) {
       setUerName(res.result.user.name);
       setIsLogin(true);
-      initApplication();
-      if (internal === 'true') {
+      initApplication(data.client_id || params.client_id);
+      if (data.internal === 'true' || internal === 'true') {
         goOAuth2();
       }
     } else if (res.status === 401) {
       setIsLogin(false);
       getCode();
-      initApplication();
+      initApplication(data.client_id || params.client_id);
     } else {
       setIsLogin(false);
     }
@@ -176,7 +176,6 @@ const Oauth = () => {
   useEffect(() => {
     document.title = 'OAuth授权-jetlinks';
     getCode();
-    getLoginUser();
   }, []);
 
   useEffect(() => {
@@ -189,10 +188,13 @@ const Oauth = () => {
       scope: getQueryVariable('scope'),
     };
     const item = getQueryVariable('internal');
+    getLoginUser({
+      ...items,
+      internal: getQueryVariable('internal'),
+    });
     setLinternal(item);
     setParams(items);
-    console.log(items);
-    console.log(window.location);
+    console.log(item, items, 'oauth');
   }, [window.location]);
 
   //未登录状态

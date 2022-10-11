@@ -11,7 +11,7 @@ const Iframe = () => {
     const res = await service.detail(appId);
     let menuUrl: any = url;
     if (res.status === 200) {
-      console.log(res.result);
+      // console.log(res.result);
       if (res.result.page.routeType === 'hash') {
         menuUrl = `${url}`;
       }
@@ -19,7 +19,7 @@ const Iframe = () => {
         //{baseUrl}/api/application/sso/{appId}/login?redirect={menuUrl}
         const urlStandalone = `${res.result.page.baseUrl}/api/application/sso/${appId}/login?redirect=${menuUrl}?layout=false`;
         setIframeUrl(urlStandalone);
-        console.log(urlStandalone);
+        // console.log(urlStandalone);
       } else {
         const urlOther = `${res.result.page.baseUrl}/${menuUrl}`;
         setIframeUrl(urlOther);
