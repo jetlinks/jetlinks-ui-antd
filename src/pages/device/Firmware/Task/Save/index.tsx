@@ -67,14 +67,20 @@ const Save = (props: Props) => {
     <Modal
       maskClosable={false}
       width="50vw"
-      title={data?.id ? '编辑任务' : '新增任务'}
+      title={data?.id ? '查看任务' : '新增任务'}
       onCancel={() => {
         form.resetFields();
         close();
         setMode(undefined);
         setReleaseType(undefined);
       }}
-      onOk={() => save()}
+      onOk={() => {
+        if (data?.id) {
+          close();
+        } else {
+          save();
+        }
+      }}
       visible
     >
       <Form
