@@ -12,7 +12,7 @@ import Service from '@/pages/system/Department/Assets/service';
 import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import { difference } from 'lodash';
-import { isNoCommunity, onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 
 export const service = new Service<ProductCategoryItem>('assets');
@@ -280,24 +280,20 @@ export default observer((props: { parentId: string }) => {
           );
         }}
         toolBarRender={() => [
-          <>
-            {isNoCommunity && (
-              <Button
-                onClick={() => {
-                  Models.bind = true;
-                }}
-                icon={<PlusOutlined />}
-                type="primary"
-                disabled={!props.parentId}
-                key="bind"
-              >
-                {intl.formatMessage({
-                  id: 'pages.data.option.assets',
-                  defaultMessage: '资产分配',
-                })}
-              </Button>
-            )}
-          </>,
+          <Button
+            onClick={() => {
+              Models.bind = true;
+            }}
+            icon={<PlusOutlined />}
+            type="primary"
+            disabled={!props.parentId}
+            key="bind"
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.assets',
+              defaultMessage: '资产分配',
+            })}
+          </Button>,
           <Popconfirm
             title={intl.formatMessage({
               id: 'pages.system.role.option.unBindUser',

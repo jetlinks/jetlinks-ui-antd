@@ -132,7 +132,9 @@ const Center = () => {
 
   useEffect(() => {
     getDetail();
-    getBindInfo();
+    if (isNoCommunity) {
+      getBindInfo();
+    }
   }, []);
 
   useEffect(() => {

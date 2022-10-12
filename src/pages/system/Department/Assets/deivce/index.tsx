@@ -12,7 +12,7 @@ import Bind from './bind';
 import SearchComponent from '@/components/SearchComponent';
 import { ExtraDeviceCard, handlePermissionsMap } from '@/components/ProTableCard/CardItems/device';
 import { PermissionButton, ProTableCard } from '@/components';
-import { isNoCommunity, onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 import UpdateModal from '@/pages/system/Department/Assets/updateModal';
 import encodeQuery from '@/utils/encodeQuery';
@@ -398,25 +398,21 @@ export default observer((props: { parentId: string }) => {
           />
         )}
         toolBarRender={() => [
-          <>
-            {isNoCommunity && (
-              <PermissionButton
-                onClick={() => {
-                  Models.bind = true;
-                }}
-                icon={<PlusOutlined />}
-                type="primary"
-                key="bind"
-                disabled={!props.parentId}
-                isPermission={permission.assert}
-              >
-                {intl.formatMessage({
-                  id: 'pages.data.option.assets',
-                  defaultMessage: '资产分配',
-                })}
-              </PermissionButton>
-            )}
-          </>,
+          <PermissionButton
+            onClick={() => {
+              Models.bind = true;
+            }}
+            icon={<PlusOutlined />}
+            type="primary"
+            key="bind"
+            disabled={!props.parentId}
+            isPermission={permission.assert}
+          >
+            {intl.formatMessage({
+              id: 'pages.data.option.assets',
+              defaultMessage: '资产分配',
+            })}
+          </PermissionButton>,
           <PermissionButton
             icon={<DisconnectOutlined />}
             key="unBind"

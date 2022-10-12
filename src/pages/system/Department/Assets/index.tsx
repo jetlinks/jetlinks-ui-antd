@@ -8,6 +8,7 @@ import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 // import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
+import { isNoCommunity } from '@/utils/util';
 
 interface AssetsProps {
   parentId: string;
@@ -25,11 +26,13 @@ export const AssetsModel = model<{
   bindModal: boolean;
   parentId: string;
   params: any;
+  tabsArray: any[];
 }>({
   tabsIndex: ASSETS_TABS_ENUM.Product,
   bindModal: false,
   parentId: '',
   params: {},
+  tabsArray: [],
 });
 
 const Assets = observer((props: AssetsProps) => {
@@ -64,6 +67,23 @@ const Assets = observer((props: AssetsProps) => {
   ];
 
   useEffect(() => {
+    if (isNoCommunity) {
+      AssetsModel.tabsIndex = ASSETS_TABS_ENUM.Product;
+      AssetsModel.tabsArray = [...TabsArray];
+    } else {
+      AssetsModel.tabsIndex = ASSETS_TABS_ENUM.User;
+      AssetsModel.tabsArray = [
+        {
+          intlTitle: '1',
+          defaultMessage: '用户',
+          key: ASSETS_TABS_ENUM.User,
+          components: Member,
+        },
+      ];
+    }
+  }, []);
+
+  useEffect(() => {
     AssetsModel.parentId = props.parentId;
   }, [props.parentId]);
 
@@ -79,7 +99,7 @@ const Assets = observer((props: AssetsProps) => {
           AssetsModel.tabsIndex = key;
         }}
       >
-        {TabsArray.map((item) => (
+        {(AssetsModel?.tabsArray || []).map((item) => (
           <Tabs.TabPane
             tab={intl.formatMessage({
               id: item.intlTitle,
