@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { TitleComponent } from '@/components';
 import { Button, Card, Col, Row, Tooltip } from 'antd';
 import styles from './index.less';
+import { isNoCommunity } from '@/utils/util';
 
 interface Props {
   data: any[];
@@ -12,7 +13,6 @@ const Provider = (props: Props) => {
   const [dataSource, setDataSource] = useState<any[]>([]);
 
   useEffect(() => {
-    console.log(props.data);
     const media: any[] = [];
     const network: any[] = [];
     const cloud: any[] = [];
@@ -28,29 +28,48 @@ const Provider = (props: Props) => {
         network.push(item);
       }
     });
-
-    setDataSource([
-      {
-        type: 'network',
-        list: [...network],
-        title: '自定义设备接入',
-      },
-      {
-        type: 'media',
-        list: [...media],
-        title: '视频类设备接入',
-      },
-      {
-        type: 'cloud',
-        list: [...cloud],
-        title: '云平台接入',
-      },
-      {
-        type: 'channel',
-        list: [...channel],
-        title: '通道类设备接入',
-      },
-    ]);
+    if (!isNoCommunity) {
+      const list = network.filter(
+        (item) =>
+          item.id &&
+          [
+            'mqtt-server-gateway',
+            'http-server-gateway',
+            'mqtt-client-gateway',
+            'tcp-server-gateway',
+          ].includes(item.id),
+      );
+      setDataSource([
+        {
+          type: 'network',
+          list: [...list],
+          title: '自定义设备接入',
+        },
+      ]);
+    } else {
+      setDataSource([
+        {
+          type: 'network',
+          list: [...network],
+          title: '自定义设备接入',
+        },
+        {
+          type: 'media',
+          list: [...media],
+          title: '视频类设备接入',
+        },
+        {
+          type: 'cloud',
+          list: [...cloud],
+          title: '云平台接入',
+        },
+        {
+          type: 'channel',
+          list: [...channel],
+          title: '通道类设备接入',
+        },
+      ]);
+    }
   }, [props.data]);
 
   const backMap = new Map();

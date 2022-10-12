@@ -7,6 +7,7 @@ import TagModal from './tagModal';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 import RelationSelect from './relationSelect';
 import encodeQuery from '@/utils/encodeQuery';
+import { isNoCommunity } from '@/utils/util';
 
 interface DeviceProps {
   name: number;
@@ -86,11 +87,15 @@ export default (props: DeviceProps) => {
 
   useEffect(() => {
     if (props.triggerType === 'device') {
-      setSourceList([
-        ...DefaultSourceOptions,
-        { label: '按关系', value: SourceEnum.relation },
-        { label: '按标签', value: SourceEnum.tag },
-      ]);
+      if (isNoCommunity) {
+        setSourceList([
+          ...DefaultSourceOptions,
+          { label: '按关系', value: SourceEnum.relation },
+          { label: '按标签', value: SourceEnum.tag },
+        ]);
+      } else {
+        setSourceList([...DefaultSourceOptions, { label: '按标签', value: SourceEnum.tag }]);
+      }
     } else {
       setSourceList(DefaultSourceOptions);
     }

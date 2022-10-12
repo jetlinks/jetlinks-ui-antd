@@ -3,6 +3,7 @@ import type { Field, FieldDataSource } from '@formily/core';
 import { action } from '@formily/reactive';
 import Token from '@/utils/token';
 import { message } from 'antd';
+import SystemConst from '@/utils/const';
 /**
  * 下载文件
  * @param url 下载链接
@@ -127,3 +128,5 @@ export const onlyMessage = (
     content: msg,
     key: key,
   });
+
+export const isNoCommunity = !(localStorage.getItem(SystemConst.Version_Code) === 'community');

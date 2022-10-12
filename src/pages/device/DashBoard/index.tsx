@@ -13,6 +13,7 @@ import { AMap } from '@/components';
 import { Marker } from 'react-amap';
 import { EnvironmentOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
+import { isNoCommunity } from '@/utils/util';
 
 type RefType = {
   getValues: Function;
@@ -401,7 +402,9 @@ const DeviceBoard = () => {
     productStatus();
     getOnline();
     getDevice();
-    geo({});
+    if (isNoCommunity) {
+      geo({});
+    }
   }, []);
 
   useEffect(() => {
@@ -488,7 +491,7 @@ const DeviceBoard = () => {
           showTimeTool={true}
           onParamsChange={getEcharts}
         />
-        {amapKey && (
+        {amapKey && isNoCommunity && (
           <Card style={{ marginTop: 10 }}>
             <div
               style={{

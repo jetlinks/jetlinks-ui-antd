@@ -61,6 +61,7 @@ export type MenuItem = {
   children?: MenuItem[];
   accessSupport?: { text: string; value: string };
   appId?: string; //应用id
+  isShow?: boolean;
 };
 
 /**

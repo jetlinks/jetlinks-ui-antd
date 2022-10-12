@@ -45,12 +45,12 @@ const Permission = () => {
 
   const getDataList: any = (data1: any[]) => {
     if (Array.isArray(data1) && data1.length > 0) {
-      return data1
+      return (data1 || [])
         .filter(
           (i) =>
             i.check === 1 ||
             (i?.buttons || []).filter((it: any) => it.granted).length > 0 ||
-            (i?.assetAccesses).filter((it: any) => it.granted).length > 0,
+            (i?.assetAccesses || []).filter((it: any) => it.granted).length > 0,
         )
         .map((item) => {
           const check = item.check;
