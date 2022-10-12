@@ -12,7 +12,7 @@ import React from 'react';
 
 const Oauth = () => {
   const intl = useIntl();
-  const logo = require('/public/logo.svg');
+  // const logo = require('/public/logo.svg');
   const bindPage = require('/public/images/bind/bindPage.png');
   const headerImg = require('/public/logo.png');
 
@@ -230,21 +230,21 @@ const Oauth = () => {
         backgroundSize: '100% 100%',
       }}
     >
-      <div className="oauth-header">
+      {/* <div className="oauth-header">
         <div className="oauth-header-left">
           <img src={logo} />
         </div>
         <div className="oauth-header-right">
-          {/* <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
+          <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
           <div className="oauth-header-right-connect">|</div>
                     <a
                         style={{ color: 'rgb(0 0 0 / 70%)' }}
                         onClick={(() => {
                             setIsLogin(false)
                         })}
-                    >切换账号</a> */}
+                    >切换账号</a>
         </div>
-      </div>
+      </div> */}
       <div className="oauth-content">
         {isLogin ? (
           <>

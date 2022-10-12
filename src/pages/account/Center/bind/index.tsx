@@ -38,6 +38,14 @@ const Bind = () => {
       }
     });
   };
+  const goRedirect = () => {
+    const url = window.location.href.split('redirect=')?.[1];
+    console.log(url);
+    if (url) {
+      window.location.href = url;
+    }
+  };
+
   const getDetail = () => {
     service.getUserDetail().subscribe((res) => {
       setUser(res?.result);
@@ -130,6 +138,7 @@ const Bind = () => {
         await fetchUserInfo();
         localStorage.setItem('onLogin', 'yes');
         onlyMessage('登录成功');
+        goRedirect();
         setTimeout(() => window.close(), 1000);
       },
       error: () => {
@@ -267,6 +276,7 @@ const Bind = () => {
                   service.bind(code).then((res) => {
                     if (res.status === 200) {
                       onlyMessage('绑定成功');
+                      goRedirect();
                       localStorage.setItem('onBind', 'true');
                       setTimeout(() => window.close(), 1000);
                     } else {

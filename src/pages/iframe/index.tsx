@@ -36,7 +36,14 @@ const Iframe = () => {
 
   return (
     <PageContainer>
-      <iframe style={{ width: '100%', height: '800px' }} src={iframeUrl} frameBorder="0"></iframe>
+      <iframe
+        style={{
+          width: '100%',
+          height: 'calc(100vh - 80px)',
+        }}
+        src={iframeUrl}
+        frameBorder="0"
+      ></iframe>
     </PageContainer>
   );
 };
