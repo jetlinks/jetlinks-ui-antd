@@ -3,6 +3,7 @@ import { Checkbox, Radio, Select, Tooltip } from 'antd';
 import type { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
+import { isNoCommunity } from '@/utils/util';
 
 interface Props {
   value: any;
@@ -93,8 +94,10 @@ const MenuPermission = (props: Props) => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            width: `calc(50% - ${(props?.level || 0) * 5}px)`,
-            borderRight: '1px solid #f0f0f0',
+            width: isNoCommunity
+              ? `calc(50% - ${(props?.level || 0) * 5}px)`
+              : `calc(100% - ${(props?.level || 0) * 5}px)`,
+            borderRight: isNoCommunity ? '1px solid #f0f0f0' : 'none',
           }}
         >
           <div>
@@ -222,92 +225,94 @@ const MenuPermission = (props: Props) => {
             )}
           </div>
         </div>
-        <div
-          style={{
-            width: `calc(50% - ${(props?.level || 0) * 10}px - 20px)`,
-            padding: '10px 0 10px 20px',
-          }}
-        >
-          {value.id === 'menu-permission' ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <span style={{ fontWeight: value.id === 'menu-permission' ? 600 : 400 }}>
-                数据权限
-                <Tooltip title="勾选任意数据权限均能看到自己创建的数据权限">
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </span>
-              <Checkbox
-                checked={checkbox}
-                style={{ margin: '0 10px' }}
-                onChange={(e) => {
-                  setCheckbox(e.target.checked);
-                  setCheckValue('');
-                }}
-              >
-                批量设置
-              </Checkbox>
-              {checkbox && (
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="请选择"
-                  optionFilterProp="children"
-                  style={{ width: 200 }}
-                  onChange={(val: string) => {
-                    setCheckValue(val);
-                    if (props.checkChange) {
-                      props.checkChange(val);
-                    }
-                  }}
-                  filterOption={(input: any, option: any) =>
-                    (option?.children || '').toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
-                >
-                  {(props?.assetsList || []).map((item) => (
-                    <Select.Option key={`${item?.supportId}`} value={item?.supportId}>
-                      {item?.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              )}
-            </div>
-          ) : (
-            <div>
-              {value?.accessSupport?.value !== 'support' ? (
-                <div>
-                  {value?.accessDescription
-                    ? `${value?.accessDescription}`
-                    : '不支持数据权限配置，默认可查看全部数据'}
-                </div>
-              ) : (
-                <Radio.Group
-                  defaultValue={'creator'}
-                  value={checkValue}
+        {isNoCommunity && (
+          <div
+            style={{
+              width: `calc(50% - ${(props?.level || 0) * 10}px - 20px)`,
+              padding: '10px 0 10px 20px',
+            }}
+          >
+            {value.id === 'menu-permission' ? (
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ fontWeight: value.id === 'menu-permission' ? 600 : 400 }}>
+                  数据权限
+                  <Tooltip title="勾选任意数据权限均能看到自己创建的数据权限">
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                </span>
+                <Checkbox
+                  checked={checkbox}
+                  style={{ margin: '0 10px' }}
                   onChange={(e) => {
-                    setCheckValue(e.target.value);
-                    const access = (value?.assetAccesses || []).map((i: any) => {
-                      return {
-                        ...i,
-                        granted: i.supportId === e.target.value,
-                      };
-                    });
-                    const d = {
-                      ...value,
-                      assetAccesses: [...access],
-                    };
-                    props.change(d);
+                    setCheckbox(e.target.checked);
+                    setCheckValue('');
                   }}
                 >
-                  {value?.assetAccesses.map((item: any) => (
-                    <Radio value={item?.supportId} key={item?.supportId}>
-                      {item?.name}
-                    </Radio>
-                  ))}
-                </Radio.Group>
-              )}
-            </div>
-          )}
-        </div>
+                  批量设置
+                </Checkbox>
+                {checkbox && (
+                  <Select
+                    showSearch
+                    allowClear
+                    placeholder="请选择"
+                    optionFilterProp="children"
+                    style={{ width: 200 }}
+                    onChange={(val: string) => {
+                      setCheckValue(val);
+                      if (props.checkChange) {
+                        props.checkChange(val);
+                      }
+                    }}
+                    filterOption={(input: any, option: any) =>
+                      (option?.children || '').toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {(props?.assetsList || []).map((item) => (
+                      <Select.Option key={`${item?.supportId}`} value={item?.supportId}>
+                        {item?.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                )}
+              </div>
+            ) : (
+              <div>
+                {value?.accessSupport?.value !== 'support' ? (
+                  <div>
+                    {value?.accessDescription
+                      ? `${value?.accessDescription}`
+                      : '不支持数据权限配置，默认可查看全部数据'}
+                  </div>
+                ) : (
+                  <Radio.Group
+                    defaultValue={'creator'}
+                    value={checkValue}
+                    onChange={(e) => {
+                      setCheckValue(e.target.value);
+                      const access = (value?.assetAccesses || []).map((i: any) => {
+                        return {
+                          ...i,
+                          granted: i.supportId === e.target.value,
+                        };
+                      });
+                      const d = {
+                        ...value,
+                        assetAccesses: [...access],
+                      };
+                      props.change(d);
+                    }}
+                  >
+                    {value?.assetAccesses.map((item: any) => (
+                      <Radio value={item?.supportId} key={item?.supportId}>
+                        {item?.name}
+                      </Radio>
+                    ))}
+                  </Radio.Group>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
       {visible &&
         value?.children &&

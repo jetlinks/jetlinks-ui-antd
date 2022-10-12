@@ -8,6 +8,7 @@ import Api from './Api';
 import Service from './service';
 import { Skeleton } from 'antd';
 import { useModel } from '@@/plugin-model/useModel';
+import { isNoCommunity } from '@/utils/util';
 
 export const service = new Service();
 const Home = () => {
@@ -50,40 +51,42 @@ const Home = () => {
     });
   }, []);
   useEffect(() => {
-    service.userDetail().then((res) => {
-      if (res.status === 200) {
-        //三方用户
-        service
-          .apiDetail({
-            terms: [
-              {
-                column: 'userId',
-                value: res.result.id,
-              },
-            ],
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              setDetail(response.result?.data);
-              service.queryViews().then((resp) => {
-                setLoading(false);
-                if (resp.status === 200) {
-                  if (resp.result) {
-                    setCurrent(resp.result?.content);
-                  } else {
-                    if (res.result.username === 'admin') {
-                      setCurrent('comprehensive');
-                      adminView();
+    if (isNoCommunity) {
+      service.userDetail().then((res) => {
+        if (res.status === 200) {
+          //三方用户
+          service
+            .apiDetail({
+              terms: [
+                {
+                  column: 'userId',
+                  value: res.result.id,
+                },
+              ],
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                setDetail(response.result?.data);
+                service.queryViews().then((resp) => {
+                  setLoading(false);
+                  if (resp.status === 200) {
+                    if (resp.result) {
+                      setCurrent(resp.result?.content);
                     } else {
-                      setCurrent('init');
+                      if (res.result.username === 'admin') {
+                        setCurrent('comprehensive');
+                        adminView();
+                      } else {
+                        setCurrent('init');
+                      }
                     }
                   }
-                }
-              });
-            }
-          });
-      }
-    });
+                });
+              }
+            });
+        }
+      });
+    }
   }, []);
 
   return (

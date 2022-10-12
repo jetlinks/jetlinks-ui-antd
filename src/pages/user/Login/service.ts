@@ -61,6 +61,10 @@ const Service = {
     request(`/${SystemConst.API_BASE}/system/config/${scopes}`, {
       method: 'GET',
     }),
+  getSystemVersion: () =>
+    request(`/${SystemConst.API_BASE}/system/version`, {
+      method: 'GET',
+    }),
   userDetail: () =>
     request(`/${SystemConst.API_BASE}/user/detail`, {
       method: 'GET',

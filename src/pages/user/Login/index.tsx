@@ -87,9 +87,16 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     localStorage.clear();
-    Service.bindInfo().then((res) => {
-      if (res.status === 200) {
-        setBindings(res.result);
+    Service.getSystemVersion().then((resp) => {
+      if (resp && resp.status === 200 && resp.result) {
+        localStorage.setItem(SystemConst.Version_Code, resp.result.edition);
+        if (resp.result.edition !== 'community') {
+          Service.bindInfo().then((res) => {
+            if (res.status === 200) {
+              setBindings(res.result);
+            }
+          });
+        }
       }
     });
     Service.settingDetail('front').then((res) => {

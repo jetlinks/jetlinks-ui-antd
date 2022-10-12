@@ -24,7 +24,7 @@ import moment from 'moment';
 import { useModel } from 'umi';
 import usePermissions from '@/hooks/permission';
 import { Ellipsis, PermissionButton } from '@/components';
-import { onlyMessage } from '@/utils/util';
+import { isNoCommunity, onlyMessage } from '@/utils/util';
 import AccountInit from '@/pages/home/init/accountInit';
 
 export const service = new Service();
@@ -132,7 +132,9 @@ const Center = () => {
 
   useEffect(() => {
     getDetail();
-    getBindInfo();
+    if (isNoCommunity) {
+      getBindInfo();
+    }
   }, []);
 
   useEffect(() => {
@@ -238,90 +240,92 @@ const Center = () => {
           </div>
         </div>
       </Card>
-      <Card
-        className={styles.info}
-        title={
-          <div style={{ fontSize: '22px' }}>
-            <Divider type="vertical" style={{ backgroundColor: '#2F54EB', width: 3 }} />
-            绑定三方账号
-          </div>
-        }
-      >
-        <Row gutter={[24, 24]}>
-          {bindList.map((item: any) => (
-            <Col key={item.id}>
-              <Card
-                style={{
-                  background: `url(${
-                    bGroundMap.get(item.provider) ||
-                    require('/public/images/notice/dingtalk-background.png')
-                  }) no-repeat`,
-                  backgroundSize: '100% 100%',
-                  width: 415,
-                }}
-              >
-                <div className={styles.bind}>
-                  <div>
-                    <img style={{ height: 56 }} src={iconMap.get(item.provider)} />
-                  </div>
-                  <div>
-                    {item.bound ? (
-                      <div>
-                        <div style={{ fontSize: '22px' }}>绑定名:{item.others.name}</div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            lineHeight: '20px',
-                            marginTop: '5px',
-                            color: '#00000073',
+      {isNoCommunity && (
+        <Card
+          className={styles.info}
+          title={
+            <div style={{ fontSize: '22px' }}>
+              <Divider type="vertical" style={{ backgroundColor: '#2F54EB', width: 3 }} />
+              绑定三方账号
+            </div>
+          }
+        >
+          <Row gutter={[24, 24]}>
+            {bindList.map((item: any) => (
+              <Col key={item.id}>
+                <Card
+                  style={{
+                    background: `url(${
+                      bGroundMap.get(item.provider) ||
+                      require('/public/images/notice/dingtalk-background.png')
+                    }) no-repeat`,
+                    backgroundSize: '100% 100%',
+                    width: 415,
+                  }}
+                >
+                  <div className={styles.bind}>
+                    <div>
+                      <img style={{ height: 56 }} src={iconMap.get(item.provider)} />
+                    </div>
+                    <div>
+                      {item.bound ? (
+                        <div>
+                          <div style={{ fontSize: '22px' }}>绑定名:{item.others.name}</div>
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              lineHeight: '20px',
+                              marginTop: '5px',
+                              color: '#00000073',
+                            }}
+                          >
+                            绑定时间: {moment(item.bindTime).format('YYYY-MM-DD HH:mm:ss')}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '22px', width: 150 }}>
+                          <Ellipsis title={`${item.name}未绑定`} />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      {item.bound ? (
+                        <Popconfirm
+                          title="确认解除绑定嘛?"
+                          onConfirm={() => {
+                            unBind(item.id);
                           }}
                         >
-                          绑定时间: {moment(item.bindTime).format('YYYY-MM-DD HH:mm:ss')}
-                        </div>
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: '22px', width: 150 }}>
-                        <Ellipsis title={`${item.name}未绑定`} />
-                      </div>
-                    )}
+                          <Button>解除绑定</Button>
+                        </Popconfirm>
+                      ) : (
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            window.open(
+                              `/${SystemConst.API_BASE}/application/sso/${item.id}/login?autoCreateUser=false`,
+                            );
+                            // window.open(`/#/account/center/bind`);
+                            localStorage.setItem('onBind', 'false');
+                            localStorage.setItem('onLogin', 'yes');
+                            window.onstorage = (e) => {
+                              if (e.newValue) {
+                                getBindInfo();
+                              }
+                            };
+                          }}
+                        >
+                          立即绑定
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    {item.bound ? (
-                      <Popconfirm
-                        title="确认解除绑定嘛?"
-                        onConfirm={() => {
-                          unBind(item.id);
-                        }}
-                      >
-                        <Button>解除绑定</Button>
-                      </Popconfirm>
-                    ) : (
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          window.open(
-                            `/${SystemConst.API_BASE}/application/sso/${item.id}/login?autoCreateUser=false`,
-                          );
-                          // window.open(`/#/account/center/bind`);
-                          localStorage.setItem('onBind', 'false');
-                          localStorage.setItem('onLogin', 'yes');
-                          window.onstorage = (e) => {
-                            if (e.newValue) {
-                              getBindInfo();
-                            }
-                          };
-                        }}
-                      >
-                        立即绑定
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Card>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Card>
+      )}
       <Card
         style={{ marginTop: 15 }}
         title={

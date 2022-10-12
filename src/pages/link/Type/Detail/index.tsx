@@ -20,7 +20,7 @@ import { onFormInit } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card, Col, Row } from 'antd';
 import styles from './index.less';
-import { onlyMessage, useAsyncDataSource } from '@/utils/util';
+import { isNoCommunity, onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
 import _ from 'lodash';
 import FAutoComplete from '@/components/FAutoComplete';
@@ -94,7 +94,7 @@ const Save = observer(() => {
           value: item.id,
         }));
         Store.set('resources-cluster', _data);
-        return _data.filter((j: any) => !checked.includes(j.value));
+        return (_data || []).filter((j: any) => !checked.includes(j.value));
       });
     }
   };
@@ -868,10 +868,12 @@ const Save = observer(() => {
             'x-component': 'Radio.Group',
             required: true,
             default: true,
-            enum: [
-              { label: '共享配置', value: true },
-              { label: '独立配置', value: false },
-            ],
+            enum: isNoCommunity
+              ? [
+                  { label: '共享配置', value: true },
+                  { label: '独立配置', value: false },
+                ]
+              : [{ label: '共享配置', value: true }],
             'x-component-props': {
               buttonStyle: 'solid',
               optionType: 'button',

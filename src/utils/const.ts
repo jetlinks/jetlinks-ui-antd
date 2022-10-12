@@ -28,6 +28,8 @@ class SystemConst {
   static REFRESH_DEVICE = 'refresh_device';
 
   static AMAP_KEY = 'amap_key';
+
+  static Version_Code = 'version_code';
 }
 
 export default SystemConst;

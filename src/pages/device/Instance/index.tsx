@@ -50,6 +50,7 @@ export const InstanceModel = model<{
   metadataItem: MetadataItem;
   params: Set<string>; // 处理无限循环Card
   active?: string; // 当前编辑的Card
+  selectedRows: Map<string, any>;
 }>({
   current: {},
   detail: {},
@@ -57,6 +58,7 @@ export const InstanceModel = model<{
   metadataItem: {},
   active: 'detail',
   params: new Set<string>(['test']),
+  selectedRows: new Map(),
 });
 export const service = new Service('device-instance');
 const Instance = () => {
@@ -70,7 +72,6 @@ const Instance = () => {
   const [current, setCurrent] = useState<Partial<DeviceInstance>>({});
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const history = useHistory<Record<string, string>>();
   const { permission } = PermissionButton.usePermission('device/Instance');
 
@@ -533,11 +534,13 @@ const Instance = () => {
             popConfirm={{
               title: '已启用的设备无法删除，确认删除选中的禁用状态设备？',
               onConfirm: () => {
-                const list = (selectedRows || [])
-                  .filter((item) => item.state?.value === 'notActive')
-                  .map((i) => i.id);
-                if (!list.length) return;
-                service.batchDeleteDevice(list).then((resp) => {
+                InstanceModel.selectedRows.forEach((value, key) => {
+                  if (value !== 'notActive') {
+                    InstanceModel.selectedRows.delete(key);
+                  }
+                });
+                if (!InstanceModel.selectedRows.size) return;
+                service.batchDeleteDevice([...InstanceModel.selectedRows.keys()]).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
                     actionRef.current?.reset?.();
@@ -651,9 +654,28 @@ const Instance = () => {
         pagination={{ pageSize: 10 }}
         rowSelection={{
           selectedRowKeys: bindKeys,
-          onChange: (selectedRowKeys, selectedRow) => {
-            setBindKeys(selectedRowKeys);
-            setSelectedRows(selectedRow);
+          // onChange: (selectedRowKeys) => {
+          //   setBindKeys(selectedRowKeys);
+          // },
+          onSelect: (record, selected) => {
+            if (selected) {
+              InstanceModel.selectedRows.set(record.id, record?.state?.value);
+            } else {
+              InstanceModel.selectedRows.delete(record.id);
+            }
+            setBindKeys([...InstanceModel.selectedRows.keys()]);
+          },
+          onSelectAll: (selected, _, changeRows) => {
+            if (selected) {
+              changeRows.forEach((item) => {
+                InstanceModel.selectedRows.set(item.id, item?.state?.value);
+              });
+            } else {
+              changeRows.forEach((item) => {
+                InstanceModel.selectedRows.delete(item.id);
+              });
+            }
+            setBindKeys([...InstanceModel.selectedRows.keys()]);
           },
         }}
         headerTitle={[

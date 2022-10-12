@@ -60,6 +60,9 @@ const TopEchartsItemNode = (props: TopEchartsItemNodeType) => {
           width: 30,
           padding: [6, -4, 0, -4],
           formatter: (value: number) => {
+            if (value === 0) {
+              formatterCount = 0;
+            }
             formatterCount += 1;
             if ([1, 3, 6, 9, 11].includes(formatterCount)) {
               return value + (props.formatter || '%');

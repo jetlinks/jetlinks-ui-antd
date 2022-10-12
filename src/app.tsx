@@ -399,7 +399,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 };
 
 export function patchRoutes(routes: any) {
-  // console.log(routes);
   if (extraRoutes && extraRoutes.length) {
     const basePath = routes.routes.find((_route: any) => _route.path === '/')!;
 
@@ -448,20 +447,18 @@ export function render(oldRender: any) {
         localStorage.setItem(SystemConst.AMAP_KEY, res.result.api);
       }
     });
-    MenuService.queryOwnThree({ paging: false, terms: params }).then((res) => {
-      if (res && res.status === 200) {
-        // if (isDev) {
-        //   res.result.push({
-        //     code: 'iframe',
-        //     id: 'iframe',
-        //     name: '例子',
-        //     url: '/iframe',
-        //   });
-        // }
-        extraRoutes = handleRoutes([...res.result, ...extraRouteArr]);
-        saveMenusCache(extraRoutes);
+    Service.getSystemVersion().then((resp) => {
+      if (resp && resp.status === 200 && resp.result) {
+        localStorage.setItem(SystemConst.Version_Code, resp.result.edition);
+        const isCommunity = resp.result?.edition === 'community';
+        MenuService.queryOwnThree({ paging: false, terms: params }).then((res) => {
+          if (res && res.status === 200) {
+            extraRoutes = handleRoutes([...res.result, ...extraRouteArr], isCommunity);
+            saveMenusCache(extraRoutes);
+          }
+          oldRender();
+        });
       }
-      oldRender();
     });
   } else {
     oldRender();

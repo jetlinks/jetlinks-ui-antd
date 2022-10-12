@@ -2,7 +2,7 @@
 import type { IRouteProps } from 'umi';
 import type { MenuItem } from '@/pages/system/Menu/typing';
 import type { BUTTON_PERMISSION, MENUS_CODE_TYPE } from './router';
-import { getDetailNameByCode, MENUS_CODE } from './router';
+import { getDetailNameByCode, MENUS_CODE, CommunityCodeList } from './router';
 
 /** localStorage key */
 export const MENUS_DATA_CACHE = 'MENUS_DATA_CACHE';
@@ -191,10 +191,10 @@ const findExtraRoutes = (baseCode: string, children: any[], url: string) => {
  * @param routes
  * @param level
  */
-export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
-  // console.log(routes)
-  return routes
-    ? routes.map((item) => {
+export const handleRoutes = (routes?: MenuItem[], isCommunity?: boolean, level = 1): MenuItem[] => {
+  if (routes) {
+    const list = routes
+      .map((item) => {
         // 判断当前是否有额外子路由
         const extraRoutes = extraRouteObj[item.code];
 
@@ -212,7 +212,11 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         if (item.children) {
-          item.children = handleRoutes(item.children, level + 1);
+          const children = handleRoutes(item.children, isCommunity, level + 1);
+          item.children = children;
+          item.isShow = !!children.filter((i) => i.isShow).length;
+        } else {
+          item.isShow = !(isCommunity && !CommunityCodeList.includes(item.code));
         }
         item.level = level;
 
@@ -221,7 +225,10 @@ export const handleRoutes = (routes?: MenuItem[], level = 1): MenuItem[] => {
         }
         return item;
       })
-    : [];
+      .filter((item) => item.isShow);
+    return list;
+  }
+  return [];
 };
 
 /**
