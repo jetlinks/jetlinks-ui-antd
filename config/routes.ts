@@ -586,7 +586,7 @@ export const routes = [
             name: '云云对接',
             icon: 'cloud',
             version: 'pro',
-            authority: ['dueros-product', 'aliyun-bridge', 'onenet-product', 'ctwing-product', 'onelink-product', 'ctwingCmp', 'Unicom'],
+            authority: ['dueros-product', 'aliyun-bridge', 'onenet-product', 'ctwing-product', 'onelink', 'ctwingCmp', 'unicomCmp'],
             routes: [
               {
                 path: '/cloud/duer',
@@ -616,7 +616,7 @@ export const routes = [
                 path: '/cloud/onelink',
                 name: '移动OneLink',
                 version: 'pro',
-                authority: ['onelink-product'],
+                authority: ['onelink'],
                 icon: 'mobile',
                 component: './cloud/onelink',
               },
@@ -640,7 +640,7 @@ export const routes = [
                 path: '/cloud/unicom',
                 name: '联通Unicom',
                 version: 'pro',
-                authority: ['Unicom'],
+                authority: ['unicomCmp'],
                 icon: 'mobile',
                 component: './cloud/unicomCmp',
               },
