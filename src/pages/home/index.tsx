@@ -86,6 +86,15 @@ const Home = () => {
             });
         }
       });
+    } else {
+      service.queryViews().then((resp) => {
+        setLoading(false);
+        if (resp.status === 200) {
+          if (resp.result) {
+            setCurrent(resp.result?.content);
+          }
+        }
+      });
     }
   }, []);
 

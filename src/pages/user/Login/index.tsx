@@ -14,6 +14,7 @@ import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
 import Footer from '@/components/Footer';
+import { isNoCommunity } from '@/utils/util';
 
 const Login: React.FC = () => {
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
@@ -264,36 +265,38 @@ const Login: React.FC = () => {
                       defaultMessage: '登录',
                     })}
                   </Submit>
-                  <div style={{ marginTop: 20 }}>
-                    <Divider plain style={{ height: 12 }}>
-                      <div style={{ color: '#807676d9', fontSize: 12 }}>其他方式登录</div>
-                    </Divider>
-                    <div style={{ position: 'relative', bottom: '10px' }}>
-                      {bindings.map((item: any) => (
-                        <Button
-                          type="link"
-                          onClick={() => {
-                            localStorage.setItem('onLogin', 'no');
-                            //  window.open(`/#/account/center/bind`);
-                            window.open(
-                              `/${SystemConst.API_BASE}/application/sso/${item.id}/login`,
-                            );
-                            window.onstorage = (e) => {
-                              if (e.newValue) {
-                                window.location.href = '/';
-                              }
-                            };
-                          }}
-                        >
-                          <img
-                            style={{ width: 32, height: 33 }}
-                            alt={item.name}
-                            src={iconMap.get(item.provider) || defaultImg}
-                          />
-                        </Button>
-                      ))}
+                  {isNoCommunity && (
+                    <div style={{ marginTop: 20 }}>
+                      <Divider plain style={{ height: 12 }}>
+                        <div style={{ color: '#807676d9', fontSize: 12 }}>其他方式登录</div>
+                      </Divider>
+                      <div style={{ position: 'relative', bottom: '10px' }}>
+                        {bindings.map((item: any) => (
+                          <Button
+                            type="link"
+                            onClick={() => {
+                              localStorage.setItem('onLogin', 'no');
+                              //  window.open(`/#/account/center/bind`);
+                              window.open(
+                                `/${SystemConst.API_BASE}/application/sso/${item.id}/login`,
+                              );
+                              window.onstorage = (e) => {
+                                if (e.newValue) {
+                                  window.location.href = '/';
+                                }
+                              };
+                            }}
+                          >
+                            <img
+                              style={{ width: 32, height: 33 }}
+                              alt={item.name}
+                              src={iconMap.get(item.provider) || defaultImg}
+                            />
+                          </Button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </Form>
               </div>
             </div>

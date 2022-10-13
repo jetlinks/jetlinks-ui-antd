@@ -11,7 +11,7 @@ import Icons from '../components/Icons';
 import { QuestionCircleFilled } from '@ant-design/icons';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton } from '@/components';
-import { onlyMessage } from '@/utils/util';
+import { isNoCommunity, onlyMessage } from '@/utils/util';
 
 type EditProps = {
   data: MenuItem;
@@ -85,7 +85,9 @@ export default (props: EditProps) => {
     }
     queryPermissions({ paging: false });
     queryMenuThree({ paging: false });
-    queryAssetsType();
+    if (isNoCommunity) {
+      queryAssetsType();
+    }
     /* eslint-disable */
   }, []);
 
@@ -239,31 +241,33 @@ export default (props: EditProps) => {
             {show && (
               <Row gutter={[0, 10]}>
                 <Col span={24}>
-                  <Form.Item
-                    label={'数据权限控制'}
-                    tooltip={'此菜单页面数据所对应的资产类型'}
-                    name={'accessSupport'}
-                    required
-                  >
-                    <Radio.Group
-                      onChange={(e) => {
-                        setAccessSupport(e.target.value);
-                      }}
-                      // disabled={disabled}
+                  {isNoCommunity && (
+                    <Form.Item
+                      label={'数据权限控制'}
+                      tooltip={'此菜单页面数据所对应的资产类型'}
+                      name={'accessSupport'}
+                      required
                     >
-                      <Radio value={'unsupported'}>不支持</Radio>
-                      <Radio value={'support'}>支持</Radio>
-                      <Radio value={'indirect'}>
-                        间接控制
-                        <Tooltip
-                          placement="topLeft"
-                          title={'此菜单内的数据基于其他菜单的数据权限控制'}
-                        >
-                          <QuestionCircleFilled style={{ marginLeft: 8 }} />
-                        </Tooltip>
-                      </Radio>
-                    </Radio.Group>
-                  </Form.Item>
+                      <Radio.Group
+                        onChange={(e) => {
+                          setAccessSupport(e.target.value);
+                        }}
+                        // disabled={disabled}
+                      >
+                        <Radio value={'unsupported'}>不支持</Radio>
+                        <Radio value={'support'}>支持</Radio>
+                        <Radio value={'indirect'}>
+                          间接控制
+                          <Tooltip
+                            placement="topLeft"
+                            title={'此菜单内的数据基于其他菜单的数据权限控制'}
+                          >
+                            <QuestionCircleFilled style={{ marginLeft: 8 }} />
+                          </Tooltip>
+                        </Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  )}
                   {accessSupport === 'support' && (
                     <Form.Item
                       name={'assetType'}

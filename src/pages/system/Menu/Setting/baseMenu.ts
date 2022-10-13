@@ -172,9 +172,10 @@ export default [
             accessSupport: 'support',
             assetType: 'device',
             permissions: [
-              { permission: 'transparent-codec', actions: ['query'] },
-              { permission: 'device-api', actions: ['query-device-events'] },
-              { permission: 'things-collector', actions: ['save', 'delete'] },
+              { permission: 'device-instance', actions: ['query', 'save', 'delete'] },
+              // { permission: 'transparent-codec', actions: ['query'] },
+              // { permission: 'device-api', actions: ['query-device-events'] },
+              // { permission: 'things-collector', actions: ['save', 'delete'] },
             ],
             buttons: [
               {
