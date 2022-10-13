@@ -66,7 +66,8 @@ const BindUser = (props: Props) => {
         roleService.bindUser(props.data.id, selectedRowKeys).subscribe((resp) => {
           if (resp.status === 200) {
             onlyMessage('操作成功！');
-            actionRef.current?.reload();
+            // actionRef.current?.reload();
+            props.cancel();
           }
         });
         setSelectedRowKeys([]);
