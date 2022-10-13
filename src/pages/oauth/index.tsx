@@ -12,7 +12,7 @@ import React from 'react';
 
 const Oauth = () => {
   const intl = useIntl();
-  // const logo = require('/public/logo.svg');
+  const logo = require('/public/logo.svg');
   const bindPage = require('/public/images/bind/bindPage.png');
   const headerImg = require('/public/logo.png');
 
@@ -69,7 +69,6 @@ const Oauth = () => {
     const res = await Service.getOAuth2(data || params);
     if (res.status === 200) {
       window.location.href = res.result;
-      console.log(res.result, '222222222222');
     } else {
       getCode();
     }
@@ -146,6 +145,7 @@ const Oauth = () => {
   };
 
   const getQueryVariable = (variable: any) => {
+    // console.log(window.location.search)
     const query = window.location.search.substring(1);
     const vars = query.split('&');
     for (let i = 0; i < vars.length; i++) {
@@ -180,8 +180,9 @@ const Oauth = () => {
   }, []);
 
   useEffect(() => {
+    let redirectUrl;
     const items = {
-      code: getQueryVariable('code'),
+      // code: getQueryVariable('code'),
       client_id: getQueryVariable('client_id'),
       state: getQueryVariable('state'),
       redirect_uri: decodeURIComponent(getQueryVariable('redirect_uri')),
@@ -189,13 +190,24 @@ const Oauth = () => {
       scope: getQueryVariable('scope'),
     };
     const item = getQueryVariable('internal');
+    if (items.redirect_uri) {
+      // console.log(items.redirect_uri,'params')
+      const orgin = items.redirect_uri.split('/').slice(0, 3);
+      // console.log(orgin)
+      const url = `${orgin.join('/')}/%23/${items.redirect_uri?.split('redirect=')[1]}`;
+      redirectUrl = `${items.redirect_uri?.split('redirect=')[0]}redirect=${url}`;
+    }
     getLoginUser({
       ...items,
       internal: getQueryVariable('internal'),
+      redirect_uri: redirectUrl,
     });
     setLinternal(item);
-    setParams(items);
-    console.log(item, items, 'oauth');
+    setParams({
+      ...items,
+      redirect_uri: redirectUrl,
+    });
+    // console.log(items, '11111111111')
   }, [window.location]);
 
   //未登录状态
@@ -230,11 +242,11 @@ const Oauth = () => {
         backgroundSize: '100% 100%',
       }}
     >
-      {/* <div className="oauth-header">
+      <div className="oauth-header">
         <div className="oauth-header-left">
           <img src={logo} />
         </div>
-        <div className="oauth-header-right">
+        {/* <div className="oauth-header-right">
           <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
           <div className="oauth-header-right-connect">|</div>
                     <a
@@ -243,8 +255,8 @@ const Oauth = () => {
                             setIsLogin(false)
                         })}
                     >切换账号</a>
-        </div>
-      </div> */}
+        </div> */}
+      </div>
       <div className="oauth-content">
         {isLogin ? (
           <>
