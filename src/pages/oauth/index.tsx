@@ -140,14 +140,14 @@ const Oauth = () => {
       setIsLogin(false);
       getCode();
       initApplication(data.client_id || params.client_id);
-      // setTimeout(()=>{
-      //   loadingRef.current=false
-      // })
+      setTimeout(() => {
+        loadingRef.current = false;
+      });
     } else {
       setIsLogin(false);
-      // setTimeout(()=>{
-      //   loadingRef.current=false
-      // })
+      setTimeout(() => {
+        loadingRef.current = false;
+      });
     }
   };
 
@@ -187,10 +187,10 @@ const Oauth = () => {
   }, []);
 
   useEffect(() => {
-    // console.log('..............')
+    console.log('..............');
     const init = async () => {
       await Promise.resolve().then(() => {
-        // console.log(1, loadingRef.current)
+        console.log(1, loadingRef.current);
         let redirectUrl;
         const items = {
           client_id: getQueryVariable('client_id'),
@@ -217,12 +217,12 @@ const Oauth = () => {
         });
       });
       // debugger;
-      await Promise.resolve().then(() => {
-        // console.log(2, loadingRef.current)
-        // debugger;
-        loadingRef.current = false;
-        // console.log(3, loadingRef.current)
-      });
+      // await Promise.resolve().then(() => {
+      //   console.log(2, loadingRef.current)
+      //   // debugger;
+      //   loadingRef.current = false;
+      //   console.log(3, loadingRef.current)
+      // });
     };
     init();
   }, [window.location]);

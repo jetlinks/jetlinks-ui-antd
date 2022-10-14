@@ -250,6 +250,9 @@ const Save = () => {
     const data: any = await form.submit();
     const list = integrationModesList.map((item) => item.value);
     _.difference(list, data.integrationModes).forEach((item) => {
+      if (item === 'ssoClient') {
+        delete data['sso'];
+      }
       delete data[item];
     });
 
