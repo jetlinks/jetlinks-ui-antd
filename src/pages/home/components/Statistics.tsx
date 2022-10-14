@@ -6,6 +6,7 @@ type StatisticsItem = {
   name: string;
   value: number | string;
   children: React.ReactNode | string;
+  permission?: any;
 };
 
 interface StatisticsProps {
@@ -26,7 +27,7 @@ const Statistics = (props: StatisticsProps) => {
         {props.data.map((item) => (
           <div className={'home-guide-item'} key={item.name}>
             <div className={'item-english'}>{item.name}</div>
-            <div className={'item-title'}>{item.value}</div>
+            <div className={'item-title'}>{item.permission ? item.permission : item.value}</div>
             {typeof item.children === 'string' ? (
               <div className={`item-index`}>
                 <img src={item.children || defaultImage} />

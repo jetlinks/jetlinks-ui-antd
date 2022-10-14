@@ -26,7 +26,9 @@ const Comprehensive = () => {
   const linkPermission = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
 
   const [productCount, setProductCount] = useState<number>(0);
+  const [productMessage, setProductMessage] = useState<string>();
   const [deviceCount, setDeviceCount] = useState<number>(0);
+  const [deviceMessage, setDeviceMessage] = useState<string>();
   const [cpuValue, setCpuValue] = useState<number>(0);
   const [jvmValue, setJvmValue] = useState<number>(0);
   const [productVisible, setProductVisible] = useState<boolean>(false);
@@ -49,12 +51,18 @@ const Comprehensive = () => {
     if (resp.status === 200) {
       setProductCount(resp.result);
     }
+    if (resp.status === 403) {
+      setProductMessage('暂无产品权限');
+    }
   };
 
   const getDeviceCount = async () => {
     const resp = await service.deviceCount();
     if (resp.status === 200) {
       setDeviceCount(resp.result);
+    }
+    if (resp.status === 403) {
+      setDeviceMessage('暂无设备权限');
     }
   };
 
@@ -184,11 +192,13 @@ const Comprehensive = () => {
                   name: '产品数量',
                   value: productCount,
                   children: require('/public/images/home/top-2.png'),
+                  permission: productMessage,
                 },
                 {
                   name: '设备数量',
                   value: deviceCount,
                   children: '',
+                  permission: deviceMessage,
                 },
               ]}
               title="设备统计"

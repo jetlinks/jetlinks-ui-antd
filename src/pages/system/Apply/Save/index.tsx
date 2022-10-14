@@ -344,7 +344,7 @@ const Save = () => {
         layout: 'vertical',
         labelAlign: 'left',
       },
-      required: true,
+      // required: true,
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入回调地址',
@@ -725,7 +725,7 @@ const Save = () => {
         layout: 'vertical',
         labelAlign: 'left',
       },
-      required: true,
+      // required: true,
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入回调地址',
@@ -1099,7 +1099,7 @@ const Save = () => {
                   layout: 'vertical',
                   labelAlign: 'left',
                 },
-                required: true,
+                // required: true,
                 'x-component': 'Input',
                 'x-component-props': {
                   placeholder: '请输入回调地址',
@@ -1177,7 +1177,7 @@ const Save = () => {
                       labelAlign: 'left',
                       tooltip: '授权后自动跳转的页面地址',
                     },
-                    required: true,
+                    // required: true,
                     'x-component': 'Input',
                     'x-component-props': {
                       placeholder: '请输入redirectUrl',
