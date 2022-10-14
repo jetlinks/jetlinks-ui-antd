@@ -451,7 +451,7 @@ const Save = (props: Props) => {
       onOk={save}
       width="35vw"
       permissionCode={'system/User'}
-      permission={['add', 'edit']}
+      permission={['update']}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getRole, getOrg }} />

@@ -39,12 +39,12 @@ const Home = () => {
   };
 
   useEffect(() => {
-    service.settingDetail(['front']).then((res) => {
+    service.settingDetail('front').then((res) => {
       if (res.status === 200) {
         setInitialState({
           ...initialState,
           settings: {
-            ...res.result[0].properties,
+            ...res.result,
           },
         });
       }
