@@ -265,6 +265,11 @@ const Save = () => {
         data.id = data.apiServer.appId;
       }
     }
+    //api客户端  accessTokenProperty grantType 默认参数
+    // if(data.integrationModes.includes('apiClient')){
+    //   data.apiClient.authConfig.grantType='authorization_code'
+    //   data.apiClient.authConfig.accessTokenProperty='access_token'
+    // }
     //独立应用，单点登录需要api配置和单点登录配置
     if (
       data.provider === 'internal-standalone' &&
@@ -770,7 +775,7 @@ const Save = () => {
             gridSpan: 2,
             layout: 'vertical',
             labelAlign: 'left',
-            tooltip: '访问iot平台接口的地址',
+            tooltip: '访问第三方平台接口的地址',
           },
           required: true,
           'x-component': 'Input',
@@ -1098,6 +1103,14 @@ const Save = () => {
                 'x-component': 'Input',
                 'x-component-props': {
                   placeholder: '请输入回调地址',
+                },
+                'x-reactions': {
+                  dependencies: ['provider'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0] && $deps[0]!=="third-party"}}',
+                    },
+                  },
                 },
               },
               'apiServer.roleIdList': {

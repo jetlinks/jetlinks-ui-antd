@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import Service from './service';
@@ -11,13 +11,14 @@ import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import ProTable from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
-import { useDomFullHeight } from '@/hooks';
+import { useDomFullHeight, useLocation } from '@/hooks';
 import Save from './Save';
 
 export const service = new Service('role');
 
 const Role: React.FC = observer(() => {
   const intl = useIntl();
+  const location = useLocation();
   const actionRef = useRef<ActionType>();
   const permissionCode = 'system/Role';
   const { permission } = PermissionButton.usePermission(permissionCode);
@@ -140,6 +141,11 @@ const Role: React.FC = observer(() => {
   ];
 
   const [param, setParam] = useState({});
+  useEffect(() => {
+    if ((location as any).query?.save === 'true') {
+      setMode('add');
+    }
+  }, [location]);
 
   return (
     <PageContainer>

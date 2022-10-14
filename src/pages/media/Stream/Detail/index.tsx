@@ -6,6 +6,7 @@ import { useParams } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import SipComponent from '@/components/SipComponent';
 import { onlyMessage, testIP } from '@/utils/util';
+import useLocation from '@/hooks/route/useLocation';
 
 interface RTPComponentProps {
   onChange?: (data: any) => void;
@@ -126,6 +127,14 @@ const Detail = () => {
   const params = useParams<{ id: string }>();
   const [form] = Form.useForm();
   const [providers, setProviders] = useState<any[]>([]);
+  const locations = useLocation();
+  const [view, setView] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (locations && locations.state) {
+      setView(locations.state.view);
+    }
+  }, [locations]);
 
   useEffect(() => {
     service.queryProviders().then((resp) => {
@@ -347,9 +356,11 @@ const Detail = () => {
             </Col>
             <Col span={24}>
               <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  保存
-                </Button>
+                {!view && (
+                  <Button type="primary" htmlType="submit">
+                    保存
+                  </Button>
+                )}
               </Form.Item>
             </Col>
           </Row>

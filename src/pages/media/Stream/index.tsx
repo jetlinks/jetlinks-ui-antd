@@ -5,11 +5,12 @@ import { Card, Col, Empty, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { useHistory } from 'umi';
+import useHistory from '@/hooks/route/useHistory';
 import {
   CloseCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
@@ -28,7 +29,7 @@ export const StreamModel = model<{
 });
 
 const Stream = () => {
-  const history = useHistory<Record<string, string>>();
+  const history = useHistory();
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const permissionCode = 'media/Stream';
   const { permission } = PermissionButton.usePermission(permissionCode);
@@ -122,6 +123,26 @@ const Stream = () => {
                     <Col key={item.id} span={12}>
                       <StreamCard
                         {...item}
+                        detail={
+                          <PermissionButton
+                            type="link"
+                            isPermission={permission.view}
+                            style={{ padding: 0, fontSize: 24, color: '#fff' }}
+                            key="view"
+                            onClick={() => {
+                              history.push(
+                                `${getMenuPathByParams(
+                                  MENUS_CODE['media/Stream/Detail'],
+                                  item.id,
+                                )}`,
+                                { view: true },
+                              );
+                              StreamModel.current = { ...item };
+                            }}
+                          >
+                            <EyeOutlined />
+                          </PermissionButton>
+                        }
                         actions={[
                           <PermissionButton
                             isPermission={permission.update}
