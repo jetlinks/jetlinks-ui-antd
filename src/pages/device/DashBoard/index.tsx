@@ -517,14 +517,14 @@ const DeviceBoard = () => {
                       longitude: item.geometry.coordinates?.[0],
                       latitude: item.geometry.coordinates?.[1],
                     }}
+                    offset={[-10, -34]}
                   >
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div>
                       <div
                         style={{
                           backgroundColor: '#666666',
                           color: 'white',
                           textAlign: 'center',
-                          marginBottom: 5,
                         }}
                       >
                         {item.properties.deviceName}

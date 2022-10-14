@@ -47,6 +47,10 @@ class Service {
     request(`/${SystemConst.API_BASE}/system/config/${scopes}`, {
       method: 'GET',
     });
+  queryCurrent = () =>
+    request(`/${SystemConst.API_BASE}/authorize/me`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
