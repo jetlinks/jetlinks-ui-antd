@@ -22,6 +22,7 @@ const Oauth = () => {
   const [appName, setAppName] = useState<string>('');
   const [params, setParams] = useState<any>({});
   const [internal, setLinternal] = useState<any>();
+  const loadingRef = useRef<boolean>(true);
 
   const loginRef = useRef<Partial<LoginParam>>({});
   const loginForm = useMemo(
@@ -139,8 +140,14 @@ const Oauth = () => {
       setIsLogin(false);
       getCode();
       initApplication(data.client_id || params.client_id);
+      // setTimeout(()=>{
+      //   loadingRef.current=false
+      // })
     } else {
       setIsLogin(false);
+      // setTimeout(()=>{
+      //   loadingRef.current=false
+      // })
     }
   };
 
@@ -180,34 +187,44 @@ const Oauth = () => {
   }, []);
 
   useEffect(() => {
-    let redirectUrl;
-    const items = {
-      // code: getQueryVariable('code'),
-      client_id: getQueryVariable('client_id'),
-      state: getQueryVariable('state'),
-      redirect_uri: decodeURIComponent(getQueryVariable('redirect_uri')),
-      response_type: getQueryVariable('response_type'),
-      scope: getQueryVariable('scope'),
+    // console.log('..............')
+    const init = async () => {
+      await Promise.resolve().then(() => {
+        // console.log(1, loadingRef.current)
+        let redirectUrl;
+        const items = {
+          client_id: getQueryVariable('client_id'),
+          state: getQueryVariable('state'),
+          redirect_uri: decodeURIComponent(getQueryVariable('redirect_uri')),
+          response_type: getQueryVariable('response_type'),
+          scope: getQueryVariable('scope'),
+        };
+        const item = getQueryVariable('internal');
+        if (items.redirect_uri) {
+          const orgin = items.redirect_uri.split('/').slice(0, 3);
+          const url = `${orgin.join('/')}/%23/${items.redirect_uri?.split('redirect=')[1]}`;
+          redirectUrl = `${items.redirect_uri?.split('redirect=')[0]}redirect=${url}`;
+        }
+        getLoginUser({
+          ...items,
+          internal: getQueryVariable('internal'),
+          redirect_uri: redirectUrl,
+        });
+        setLinternal(item);
+        setParams({
+          ...items,
+          redirect_uri: redirectUrl,
+        });
+      });
+      // debugger;
+      await Promise.resolve().then(() => {
+        // console.log(2, loadingRef.current)
+        // debugger;
+        loadingRef.current = false;
+        // console.log(3, loadingRef.current)
+      });
     };
-    const item = getQueryVariable('internal');
-    if (items.redirect_uri) {
-      // console.log(items.redirect_uri,'params')
-      const orgin = items.redirect_uri.split('/').slice(0, 3);
-      // console.log(orgin)
-      const url = `${orgin.join('/')}/%23/${items.redirect_uri?.split('redirect=')[1]}`;
-      redirectUrl = `${items.redirect_uri?.split('redirect=')[0]}redirect=${url}`;
-    }
-    getLoginUser({
-      ...items,
-      internal: getQueryVariable('internal'),
-      redirect_uri: redirectUrl,
-    });
-    setLinternal(item);
-    setParams({
-      ...items,
-      redirect_uri: redirectUrl,
-    });
-    // console.log(items, '11111111111')
+    init();
   }, [window.location]);
 
   //未登录状态
@@ -233,69 +250,75 @@ const Oauth = () => {
   };
 
   return (
-    <div
-      className="oauth"
-      style={{
-        width: '100%',
-        height: '100vh',
-        background: `url(${bindPage}) no-repeat`,
-        backgroundSize: '100% 100%',
-      }}
-    >
-      <div className="oauth-header">
-        <div className="oauth-header-left">
-          <img src={logo} />
+    <>
+      {loadingRef.current ? (
+        <></>
+      ) : (
+        <div
+          className="oauth"
+          style={{
+            width: '100%',
+            height: '100vh',
+            background: `url(${bindPage}) no-repeat`,
+            backgroundSize: '100% 100%',
+          }}
+        >
+          <div className="oauth-header">
+            <div className="oauth-header-left">
+              <img src={logo} />
+            </div>
+            {/* <div className="oauth-header-right">
+        <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
+        <div className="oauth-header-right-connect">|</div>
+                  <a
+                      style={{ color: 'rgb(0 0 0 / 70%)' }}
+                      onClick={(() => {
+                          setIsLogin(false)
+                      })}
+                  >切换账号</a>
+      </div> */}
+          </div>
+          <div className="oauth-content">
+            {isLogin ? (
+              <>
+                <div className="oauth-content-header">
+                  <img src={headerImg} />
+                </div>
+                <div className="oauth-content-content">
+                  <div className="oauth-content-content-text">
+                    {`您正在授权登录,${appName || '-'}将获得以下权限:`}
+                  </div>
+                  <ul>
+                    <li>{`关联${userName}账号`}</li>
+                    <li>获取您的个人信息 </li>
+                  </ul>
+                </div>
+                <div className="oauth-content-button">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      goOAuth2();
+                    }}
+                  >
+                    同意授权
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      localStorage.removeItem('X-Access-Token');
+                      setIsLogin(false);
+                    }}
+                  >
+                    切换账号
+                  </Button>
+                </div>
+              </>
+            ) : (
+              loginPage()
+            )}
+          </div>
         </div>
-        {/* <div className="oauth-header-right">
-          <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
-          <div className="oauth-header-right-connect">|</div>
-                    <a
-                        style={{ color: 'rgb(0 0 0 / 70%)' }}
-                        onClick={(() => {
-                            setIsLogin(false)
-                        })}
-                    >切换账号</a>
-        </div> */}
-      </div>
-      <div className="oauth-content">
-        {isLogin ? (
-          <>
-            <div className="oauth-content-header">
-              <img src={headerImg} />
-            </div>
-            <div className="oauth-content-content">
-              <div className="oauth-content-content-text">
-                {`您正在授权登录,${appName || '-'}将获得以下权限:`}
-              </div>
-              <ul>
-                <li>{`关联${userName}账号`}</li>
-                <li>获取您的个人信息 </li>
-              </ul>
-            </div>
-            <div className="oauth-content-button">
-              <Button
-                type="primary"
-                onClick={() => {
-                  goOAuth2();
-                }}
-              >
-                同意授权
-              </Button>
-              <Button
-                onClick={() => {
-                  localStorage.removeItem('X-Access-Token');
-                  setIsLogin(false);
-                }}
-              >
-                切换账号
-              </Button>
-            </div>
-          </>
-        ) : (
-          loginPage()
-        )}
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 export default Oauth;
