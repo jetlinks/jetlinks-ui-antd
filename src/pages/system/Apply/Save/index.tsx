@@ -1824,7 +1824,7 @@ const Save = () => {
             </Form>
           </Col>
           <Col span={10} className={styles.apply}>
-            <div className={styles.doc}>文档</div>
+            <div className={styles.doc}></div>
           </Col>
         </Row>
       </Card>
