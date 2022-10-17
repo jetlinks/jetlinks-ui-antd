@@ -198,6 +198,7 @@ export const CommunityCodeList = [
   'system/Menu/Detail',
   'system/Menu/Setting',
   'system/Permission',
+  'system/Relationship',
   'home',
   'rule-engine/DashBoard',
   'rule-engine/Alarm/Configuration',
