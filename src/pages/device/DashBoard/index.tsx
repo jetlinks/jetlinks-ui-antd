@@ -607,22 +607,14 @@ const DeviceBoard = () => {
                       longitude: item.geometry.coordinates?.[0],
                       latitude: item.geometry.coordinates?.[1],
                     }}
-                    offset={[-10, -34]}
+                    offset={[-10, -20]}
+                    label={{
+                      content: `<div class='amap'>${item.properties.deviceName}</div>`,
+                      direction: 'top',
+                    }}
+                    // icon={''}
                   >
-                    <div>
-                      <div
-                        style={{
-                          backgroundColor: '#666666',
-                          color: 'white',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {item.properties.deviceName}
-                      </div>
-                      <div>
-                        <EnvironmentOutlined style={{ color: 'blue', fontSize: 22 }} />
-                      </div>
-                    </div>
+                    <EnvironmentOutlined style={{ color: 'blue', fontSize: 22 }} />
                   </Marker>
                 ))}
               </AMap>
