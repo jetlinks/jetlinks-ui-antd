@@ -1159,6 +1159,54 @@ const Save = () => {
                   ),
                 },
               },
+              'apiServer.orgIdList': {
+                title: '组织',
+                'x-decorator': 'FormItem',
+                'x-component': 'TreeSelect',
+                'x-component-props': {
+                  multiple: true,
+                  showArrow: true,
+                  placeholder: '请选择组织',
+                  showCheckedStrategy: ATreeSelect.SHOW_ALL,
+                  filterOption: (input: string, option: any) =>
+                    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+                  fieldNames: {
+                    label: 'name',
+                    value: 'id',
+                  },
+                  treeNodeFilterProp: 'name',
+                },
+                'x-decorator-props': {
+                  gridSpan: 2,
+                  layout: 'vertical',
+                  labelAlign: 'left',
+                  addonAfter: (
+                    <PermissionButton
+                      type="link"
+                      style={{ padding: 0 }}
+                      isPermission={deptPermission.add}
+                      onClick={() => {
+                        const tab: any = window.open(`${origin}/#/system/department?save=true`);
+                        tab!.onTabSaveSuccess = (value: any) => {
+                          form.setFieldState('orgIdList', async (state) => {
+                            state.dataSource = await getOrg().then((resp) =>
+                              resp.result?.map((item: Record<string, unknown>) => ({
+                                ...item,
+                                label: item.name,
+                                value: item.id,
+                              })),
+                            );
+                            state.value = [...(state.value || []), value.id];
+                          });
+                        };
+                      }}
+                    >
+                      <PlusOutlined />
+                    </PermissionButton>
+                  ),
+                },
+                'x-reactions': ['{{useAsyncData(getOrg)}}'],
+              },
               apiServerThird: {
                 type: 'void',
                 'x-reactions': {
