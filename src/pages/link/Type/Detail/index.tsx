@@ -887,8 +887,9 @@ const Save = observer(() => {
             },
             'x-decorator-props': {
               gridSpan: 2,
-              tooltip:
-                '共享配置:集群下所有节点共用同一配置\r\n' + '独立配置:集群下不同节点使用不同配置',
+              tooltip: isNoCommunity
+                ? '共享配置:集群下所有节点共用同一配置\r\n' + '独立配置:集群下不同节点使用不同配置'
+                : '',
             },
           },
           configuration: {

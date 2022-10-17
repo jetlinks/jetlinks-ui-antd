@@ -193,12 +193,31 @@ const Dashboard = observer(() => {
   }, []);
 
   const getEcharts = async (params: any) => {
+    // let time = '1h';
+    // let format = 'HH';
+    // if (params.time.type === 'week' || params.time.type === 'month') {
+    //   time = '1d';
+    //   format = 'M月dd日';
+    // } else if (params.time.type === 'year') {
+    //   time = '1M';
+    //   format = 'yyyy年-M月';
+    // }
     let time = '1h';
     let format = 'HH';
-    if (params.time.type === 'week' || params.time.type === 'month') {
+    let limit = 12;
+    const dt = params.time.end - params.time.start;
+    const hour = 60 * 60 * 1000;
+    const day = hour * 24;
+    const month = day * 30;
+    const year = 365 * day;
+    if (dt <= day) {
+      limit = Math.abs(Math.ceil(dt / hour));
+    } else if (dt > day && dt < year) {
+      limit = Math.abs(Math.ceil(dt / day)) + 1;
       time = '1d';
       format = 'M月dd日';
-    } else if (params.time.type === 'year') {
+    } else if (dt >= year) {
+      limit = Math.abs(Math.floor(dt / month));
       time = '1M';
       format = 'yyyy年-M月';
     }
@@ -216,7 +235,7 @@ const Dashboard = observer(() => {
         time: time,
         // from: 'now-1y', // now-1d、now-1w、now-1M、now-1y
         // to: 'now',
-        limit: 12,
+        limit: limit, // 12
         // time: params.time.type === 'today' ? '1h' : '1d',
         from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
         to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
@@ -262,47 +281,112 @@ const Dashboard = observer(() => {
           xData.push(item.data.timeString);
           sData.push(item.data.value);
         });
+      // setOptions({
+      //   tooltip: {
+      //     trigger: 'axis',
+      //     // axisPointer: {
+      //     //   type: 'shadow',
+      //     // },
+      //   },
+      //   grid: {
+      //     left: 0,
+      //     right: '1%',
+      //     bottom: 0,
+      //     top: '2%',
+      //     containLabel: true,
+      //   },
+      //   xAxis: [
+      //     {
+      //       type: 'category',
+      //       data: xData.reverse(),
+      //       axisTick: {
+      //         alignWithLabel: true,
+      //       },
+      //     },
+      //   ],
+      //   yAxis: [
+      //     {
+      //       type: 'value',
+      //     },
+      //   ],
+      //   color: ['#979AFF'],
+      //   series: [
+      //     {
+      //       name: tip,
+      //       type: 'line',
+      //       // barWidth: '30%',
+      //       // itemStyle: {
+      //       //   color: '#2F54EB',
+      //       // },
+      //       areaStyle: {
+      //         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      //           {
+      //             offset: 1,
+      //             color: 'rgba(151, 154, 255, 0)'
+      //           },
+      //           {
+      //             offset: 0,
+      //             color: 'rgba(151, 154, 255, .24)'
+      //           }
+      //         ])
+      //       },
+      //       smooth: true,
+      //       data: sData.reverse(),
+      //     },
+      //   ],
+      // });
+
       setOptions({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: xData.reverse(),
+        },
+        yAxis: {
+          type: 'value',
+        },
         tooltip: {
           trigger: 'axis',
-          axisPointer: {
-            type: 'shadow',
-          },
+          // axisPointer: {
+          //   type: 'shadow',
+          // },
         },
         grid: {
-          left: 0,
-          right: '1%',
-          bottom: 0,
           top: '2%',
-          containLabel: true,
+          bottom: '5%',
+          left: '50px',
+          right: '50px',
         },
-        xAxis: [
-          {
-            type: 'category',
-            data: xData.reverse(),
-            axisTick: {
-              alignWithLabel: true,
-            },
-          },
-        ],
-        yAxis: [
-          {
-            type: 'value',
-          },
-        ],
         series: [
           {
             name: tip,
-            type: 'bar',
-            barWidth: '30%',
-            itemStyle: {
-              color: '#2F54EB',
-            },
             data: sData.reverse(),
+            type: 'line',
+            smooth: true,
+            color: '#685DEB',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: '#685DEB', // 100% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: '#FFFFFF', //   0% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
           },
         ],
       });
-
       state.ranking = resp.result
         ?.filter((item: any) => item.group === 'alarmRank')
         .map((d: { data: { value: any } }) => d.data?.value)
@@ -401,6 +485,7 @@ const Dashboard = observer(() => {
           title="告警统计"
           height={600}
           showTimeTool={true}
+          showTime
           options={options}
           initialValues={{
             targetType: 'device',
