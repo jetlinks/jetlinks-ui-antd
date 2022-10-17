@@ -219,4 +219,8 @@ export const CommunityCodeList = [
   'link/Certificate/Detail',
   'rule-engine/Scene',
   'rule-engine/Scene/Save',
+  'notice/Config',
+  'notice/Config/Detail',
+  'notice/Template',
+  'notice/Template/Detail',
 ];

@@ -244,150 +244,240 @@ const DeviceBoard = () => {
 
   const getEcharts = async () => {
     const data = ref.current!.getValues();
-    if (data && data.time.type !== 'today') {
-      const res = await service.dashboard([
-        {
-          dashboard: 'device',
-          object: 'message',
-          measurement: 'quantity',
-          dimension: 'agg',
-          group: 'device_msg',
-          params: {
-            time: '1d',
-            format: 'yyyy.MM.dd',
-            limit: Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1),
-            // from: moment(data.time.start).format('yyyy-MM-DD HH:MM:SS'),
-            // to: moment(data.time.end).format('yyyy-MM-DD HH:MM:SS'),
-            from: data.time.start,
-            to: data.time.end,
-          },
-        },
-      ]);
-      if (res.status === 200) {
-        const x = res.result.map((item: any) => item.data.timeString).reverse();
-        const y = res.result.map((item: any) => item.data.value).reverse();
-        setOptions({
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: x,
-          },
-          yAxis: {
-            type: 'value',
-          },
-          tooltip: {
-            trigger: 'axis',
-            // axisPointer: {
-            //   type: 'shadow',
-            // },
-          },
-          grid: {
-            top: '2%',
-            bottom: '5%',
-            left: '50px',
-            right: '50px',
-          },
-          series: [
-            {
-              name: '消息量',
-              data: y,
-              type: 'line',
-              smooth: true,
-              color: '#685DEB',
-              areaStyle: {
-                color: {
-                  type: 'linear',
-                  x: 0,
-                  y: 0,
-                  x2: 0,
-                  y2: 1,
-                  colorStops: [
-                    {
-                      offset: 0,
-                      color: '#685DEB', // 100% 处的颜色
-                    },
-                    {
-                      offset: 1,
-                      color: '#FFFFFF', //   0% 处的颜色
-                    },
-                  ],
-                  global: false, // 缺省为 false
-                },
-              },
-            },
-          ],
-        });
-      }
-    } else {
-      const res = await service.dashboard([
-        {
-          dashboard: 'device',
-          object: 'message',
-          measurement: 'quantity',
-          dimension: 'agg',
-          group: 'device_msg',
-          params: {
-            time: '1h',
-            format: 'yyyy.MM.dd HH:MM:SS',
-            limit: 24,
-            from: data.time.start,
-            to: data.time.end,
-          },
-        },
-      ]);
-      if (res.status === 200) {
-        const x = res.result.map((item: any) => item.data.timeString).reverse();
-        const y = res.result.map((item: any) => item.data.value).reverse();
-        setOptions({
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: x,
-          },
-          yAxis: {
-            type: 'value',
-          },
-          tooltip: {
-            trigger: 'axis',
-          },
-          grid: {
-            top: '2%',
-            bottom: '5%',
-            left: '2%',
-            right: '2%',
-          },
-          series: [
-            {
-              name: '消息量',
-              data: y,
-              type: 'line',
-              smooth: true,
-              color: '#685DEB',
-              areaStyle: {
-                color: {
-                  type: 'linear',
-                  x: 0,
-                  y: 0,
-                  x2: 0,
-                  y2: 1,
-                  colorStops: [
-                    {
-                      offset: 0,
-                      color: '#685DEB', // 100% 处的颜色
-                    },
-                    {
-                      offset: 1,
-                      color: '#FFFFFF', //   0% 处的颜色
-                    },
-                  ],
-                  global: false, // 缺省为 false
-                },
-              },
-            },
-          ],
-        });
-      }
+    let _time = '1h';
+    let format = 'HH';
+    let limit = 12;
+    const dt = data.time.end - data.time.start;
+    const hour = 60 * 60 * 1000;
+    const days = hour * 24;
+    const months = days * 30;
+    const year = 365 * days;
+    if (dt <= days) {
+      limit = Math.abs(Math.ceil(dt / hour));
+    } else if (dt > days && dt < year) {
+      limit = Math.abs(Math.ceil(dt / days)) + 1;
+      _time = '1d';
+      format = 'M月dd日';
+    } else if (dt >= year) {
+      limit = Math.abs(Math.floor(dt / months));
+      _time = '1M';
+      format = 'yyyy年-M月';
     }
+    const res = await service.dashboard([
+      {
+        dashboard: 'device',
+        object: 'message',
+        measurement: 'quantity',
+        dimension: 'agg',
+        group: 'device_msg',
+        params: {
+          time: _time,
+          format: format,
+          limit: limit,
+          from: data.time.start,
+          to: data.time.end,
+        },
+      },
+    ]);
+    if (res.status === 200) {
+      const x = res.result.map((item: any) => item.data.timeString).reverse();
+      const y = res.result.map((item: any) => item.data.value).reverse();
+      setOptions({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: x,
+        },
+        yAxis: {
+          type: 'value',
+        },
+        tooltip: {
+          trigger: 'axis',
+          // axisPointer: {
+          //   type: 'shadow',
+          // },
+        },
+        grid: {
+          top: '2%',
+          bottom: '5%',
+          left: '50px',
+          right: '50px',
+        },
+        series: [
+          {
+            name: '消息量',
+            data: y,
+            type: 'line',
+            smooth: true,
+            color: '#685DEB',
+            areaStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: '#685DEB', // 100% 处的颜色
+                  },
+                  {
+                    offset: 1,
+                    color: '#FFFFFF', //   0% 处的颜色
+                  },
+                ],
+                global: false, // 缺省为 false
+              },
+            },
+          },
+        ],
+      });
+    }
+    // if (data && data.time.type !== 'today') {
+    //   const res = await service.dashboard([
+    //     {
+    //       dashboard: 'device',
+    //       object: 'message',
+    //       measurement: 'quantity',
+    //       dimension: 'agg',
+    //       group: 'device_msg',
+    //       params: {
+    //         time: '1d',
+    //         format: 'yyyy.MM.dd',
+    //         limit: Math.ceil((data.time.end - data.time.start) / (1 * 24 * 3600 * 1000) + 1),
+    //         // from: moment(data.time.start).format('yyyy-MM-DD HH:MM:SS'),
+    //         // to: moment(data.time.end).format('yyyy-MM-DD HH:MM:SS'),
+    //         from: data.time.start,
+    //         to: data.time.end,
+    //       },
+    //     },
+    //   ]);
+    //   if (res.status === 200) {
+    //     const x = res.result.map((item: any) => item.data.timeString).reverse();
+    //     const y = res.result.map((item: any) => item.data.value).reverse();
+    //     setOptions({
+    //       xAxis: {
+    //         type: 'category',
+    //         boundaryGap: false,
+    //         data: x,
+    //       },
+    //       yAxis: {
+    //         type: 'value',
+    //       },
+    //       tooltip: {
+    //         trigger: 'axis',
+    //         // axisPointer: {
+    //         //   type: 'shadow',
+    //         // },
+    //       },
+    //       grid: {
+    //         top: '2%',
+    //         bottom: '5%',
+    //         left: '50px',
+    //         right: '50px',
+    //       },
+    //       series: [
+    //         {
+    //           name: '消息量',
+    //           data: y,
+    //           type: 'line',
+    //           smooth: true,
+    //           color: '#685DEB',
+    //           areaStyle: {
+    //             color: {
+    //               type: 'linear',
+    //               x: 0,
+    //               y: 0,
+    //               x2: 0,
+    //               y2: 1,
+    //               colorStops: [
+    //                 {
+    //                   offset: 0,
+    //                   color: '#685DEB', // 100% 处的颜色
+    //                 },
+    //                 {
+    //                   offset: 1,
+    //                   color: '#FFFFFF', //   0% 处的颜色
+    //                 },
+    //               ],
+    //               global: false, // 缺省为 false
+    //             },
+    //           },
+    //         },
+    //       ],
+    //     });
+    //   }
+    // } else {
+    //   const res = await service.dashboard([
+    //     {
+    //       dashboard: 'device',
+    //       object: 'message',
+    //       measurement: 'quantity',
+    //       dimension: 'agg',
+    //       group: 'device_msg',
+    //       params: {
+    //         time: '1h',
+    //         format: 'yyyy.MM.dd HH:MM:SS',
+    //         limit: 24,
+    //         from: data.time.start,
+    //         to: data.time.end,
+    //       },
+    //     },
+    //   ]);
+    //   if (res.status === 200) {
+    //     const x = res.result.map((item: any) => item.data.timeString).reverse();
+    //     const y = res.result.map((item: any) => item.data.value).reverse();
+    //     setOptions({
+    //       xAxis: {
+    //         type: 'category',
+    //         boundaryGap: false,
+    //         data: x,
+    //       },
+    //       yAxis: {
+    //         type: 'value',
+    //       },
+    //       tooltip: {
+    //         trigger: 'axis',
+    //       },
+    //       grid: {
+    //         top: '2%',
+    //         bottom: '5%',
+    //         left: '2%',
+    //         right: '2%',
+    //       },
+    //       series: [
+    //         {
+    //           name: '消息量',
+    //           data: y,
+    //           type: 'line',
+    //           smooth: true,
+    //           color: '#685DEB',
+    //           areaStyle: {
+    //             color: {
+    //               type: 'linear',
+    //               x: 0,
+    //               y: 0,
+    //               x2: 0,
+    //               y2: 1,
+    //               colorStops: [
+    //                 {
+    //                   offset: 0,
+    //                   color: '#685DEB', // 100% 处的颜色
+    //                 },
+    //                 {
+    //                   offset: 1,
+    //                   color: '#FFFFFF', //   0% 处的颜色
+    //                 },
+    //               ],
+    //               global: false, // 缺省为 false
+    //             },
+    //           },
+    //         },
+    //       ],
+    //     });
+    //   }
+    // }
   };
   //地图数据
   const geo = async (data?: any) => {

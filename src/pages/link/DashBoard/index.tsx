@@ -713,6 +713,7 @@ export default () => {
             timeToolOptions={timeToolOptions}
             height={400}
             closeInitialParams={true}
+            showTime
             showTimeTool={true}
             extraParams={{
               key: 'type',

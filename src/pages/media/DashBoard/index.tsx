@@ -68,21 +68,40 @@ export default () => {
     }
   };
 
-  const getInterval = (type: string) => {
-    switch (type) {
-      case 'year':
-        return '30d';
-      case 'month':
-      case 'week':
-        return '1d';
-      case 'hour':
-        return '1m';
-      default:
-        return '1h';
-    }
-  };
+  // const getInterval = (type: string) => {
+  //   switch (type) {
+  //     case 'year':
+  //       return '30d';
+  //     case 'month':
+  //     case 'week':
+  //       return '1d';
+  //     case 'hour':
+  //       return '1m';
+  //     default:
+  //       return '1h';
+  //   }
+  // };
 
   const getEcharts = async (params: any) => {
+    let _time = '1h';
+    let format = 'HH';
+    let limit = 12;
+    const dt = params.time.end - params.time.start;
+    const hour = 60 * 60 * 1000;
+    const day = hour * 24;
+    const month = day * 30;
+    const year = 365 * day;
+    if (dt <= day) {
+      limit = Math.abs(Math.ceil(dt / hour));
+    } else if (dt > day && dt < year) {
+      limit = Math.abs(Math.ceil(dt / day)) + 1;
+      _time = '1d';
+      format = 'M月dd日';
+    } else if (dt >= year) {
+      limit = Math.abs(Math.floor(dt / month));
+      _time = '1M';
+      format = 'yyyy年-M月';
+    }
     const resp = await service.getMulti([
       {
         dashboard: 'media_stream',
@@ -91,10 +110,11 @@ export default () => {
         dimension: 'agg',
         group: 'playCount',
         params: {
-          time: getInterval(params.time.type),
+          time: _time, // getInterval(params.time.type),
           from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
           to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
-          limit: 30,
+          limit: limit,
+          format: format,
         },
       },
     ]);
@@ -245,6 +265,7 @@ export default () => {
         </DashBoardTopCard>
         <DashBoard
           showTimeTool={true}
+          showTime
           className={'media-dash-board-body'}
           title={'播放数量(人次)'}
           options={options}
