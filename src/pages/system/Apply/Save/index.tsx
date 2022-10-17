@@ -1133,6 +1133,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '为API用户分配角色',
                   addonAfter: (
                     <PermissionButton
                       type="link"
@@ -1180,6 +1181,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '为API用户分组所属组织',
                   addonAfter: (
                     <PermissionButton
                       type="link"
