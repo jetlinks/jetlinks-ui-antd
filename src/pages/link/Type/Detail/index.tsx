@@ -82,20 +82,27 @@ const Save = observer(() => {
   const getResourcesClusters = () => {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     const checked = form.getValuesIn('cluster')?.map((i: any) => i?.serverId) || [];
-    // cache resourcesCluster
-    if (Store.get('resources-cluster')?.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const share = form.getValuesIn('shareCluster');
+    if (share) {
       return new Promise((resolve) => {
-        resolve(Store.get('resources-cluster').filter((j: any) => !checked.includes(j.value)));
+        resolve([]);
       });
     } else {
-      return service.getResourceClusters().then((resp) => {
-        const _data = resp.result?.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        Store.set('resources-cluster', _data);
-        return (_data || []).filter((j: any) => !checked.includes(j.value));
-      });
+      if (Store.get('resources-cluster')?.length > 0) {
+        return new Promise((resolve) => {
+          resolve(Store.get('resources-cluster').filter((j: any) => !checked.includes(j.value)));
+        });
+      } else {
+        return service.getResourceClusters().then((resp) => {
+          const _data = resp.result?.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          Store.set('resources-cluster', _data);
+          return (_data || []).filter((j: any) => !checked.includes(j.value));
+        });
+      }
     }
   };
   const getCertificates = () =>

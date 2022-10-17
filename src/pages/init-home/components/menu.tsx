@@ -1,7 +1,23 @@
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import BaseMenu from '@/pages/system/Menu/Setting/baseMenu';
 import { service } from '../index';
-
+/**
+ * 根据权限过滤菜单
+ */
+export const filterMenu = (permissions: string[], menus: any[]) => {
+  return menus.filter((item) => {
+    let isShow = false;
+    if (item.showPage && item.showPage.length) {
+      isShow = item.showPage.every((pItem: any) => {
+        return permissions.includes(pItem);
+      });
+    }
+    if (item.children) {
+      item.children = filterMenu(permissions, item.children);
+    }
+    return isShow || !!item.children?.length;
+  });
+};
 const Menu = forwardRef((props: { onChange?: (menu: any) => void }, ref) => {
   const [count, setCount] = useState(0);
   const menuRef = useRef<any[]>();
@@ -17,32 +33,12 @@ const Menu = forwardRef((props: { onChange?: (menu: any) => void }, ref) => {
   };
 
   /**
-   * 根据权限过滤菜单
-   */
-  const filterMenu = (permissions: string[], menus: any[]) => {
-    return menus.filter((item) => {
-      let isPermissions = true;
-      if (item.permissions && item.permissions.length) {
-        isPermissions = item.permissions.some((pItem: any) =>
-          permissions.includes(pItem.permission),
-        );
-      }
-
-      if (item.children) {
-        item.children = filterMenu(permissions, item.children);
-      }
-
-      return isPermissions || !!item.children?.length;
-    });
-  };
-
-  /**
    * 获取当前系统所有权限
    */
   const getSystemPermissions = async () => {
     const resp = await service.getSystemPermission();
     if (resp.status === 200) {
-      console.log(resp.result.map((item: any) => JSON.parse(item).id));
+      // console.log(resp.result.map((item: any) => JSON.parse(item).id));
       const newTree = filterMenu(
         resp.result.map((item: any) => JSON.parse(item).id),
         BaseMenu,

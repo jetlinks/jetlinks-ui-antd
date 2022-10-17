@@ -211,7 +211,7 @@ export const handleRoutes = (routes?: MenuItem[], isCommunity?: boolean, level =
         }
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        if (item.children) {
+        if (item.children && item.children.length) {
           const children = handleRoutes(item.children, isCommunity, level + 1);
           item.children = children;
           item.isShow = !!children.filter((i) => i.isShow).length;

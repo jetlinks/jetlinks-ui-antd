@@ -17,6 +17,7 @@ import { observable } from '@formily/reactive';
 import { Observer, observer } from '@formily/react';
 import { service } from '../index';
 import type { TreeProps, DataNode } from 'antd/es/tree';
+import { filterMenu } from '@/pages/init-home/components/menu';
 
 type MenuSettingModelType = {
   menuData: any[];
@@ -30,7 +31,7 @@ export const MenuSettingModel = observable<MenuSettingModelType>({
 
 export default observer(() => {
   const { minHeight } = useDomFullHeight(`.menu-setting-warp`);
-  const [baseMenu, setBaseMenu] = useState<any[]>(BaseTreeData);
+  const [baseMenu, setBaseMenu] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -182,7 +183,15 @@ export default observer(() => {
 
   useEffect(() => {
     getSystemMenu();
-    setBaseMenu(BaseTreeData);
+    service.getSystemPermission().then((resp) => {
+      if (resp.status === 200) {
+        const newTree = filterMenu(
+          resp.result.map((item: any) => JSON.parse(item).id),
+          BaseTreeData,
+        );
+        setBaseMenu(newTree);
+      }
+    });
   }, []);
 
   const updateMenu = () => {
