@@ -37,6 +37,13 @@ const User = observer(() => {
   };
 
   const [reset, setReset] = useState<boolean>(false);
+
+  const typeMap = new Map();
+  typeMap.set('1', 'red');
+  typeMap.set('2', 'gold');
+  typeMap.set('3', 'blue');
+  typeMap.set('4', 'purple');
+
   const columns: ProColumns<UserItem>[] = [
     {
       title: intl.formatMessage({
@@ -84,6 +91,13 @@ const User = observer(() => {
       },
       hideInSearch: false,
     },
+    // {
+    //   title: '用户类型',
+    //   dataIndex: 'type',
+    //   render: (_, record) => (
+    //     <Tag color={typeMap.get('name')}>{record.name}</Tag>
+    //   ),
+    // },
     {
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',

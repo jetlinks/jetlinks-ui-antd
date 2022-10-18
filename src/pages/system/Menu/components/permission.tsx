@@ -148,6 +148,7 @@ export default (props: PermissionType) => {
   };
 
   useEffect(() => {
+    console.log(props.value, 3333333);
     checkKeysRef.clear();
   }, []);
 

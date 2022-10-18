@@ -333,7 +333,8 @@ const Config = observer(() => {
             </PermissionButton>
           </Space>
         }
-        gridColumn={3}
+        // gridColumn={3}
+        gridColumns={[2, 2, 3]}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }

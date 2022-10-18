@@ -70,7 +70,11 @@ const Center = () => {
       if (!isJpgOrPng) {
         message.error('请上传.png.jpg格式的文件');
       }
-      return isJpgOrPng;
+      const isSize = file.size / 1024 / 1024 < 4;
+      if (!isSize) {
+        message.error(`图片大小必须小于4M`);
+      }
+      return isJpgOrPng && isSize;
     },
     onChange(info) {
       if (info.file.status === 'uploading') {

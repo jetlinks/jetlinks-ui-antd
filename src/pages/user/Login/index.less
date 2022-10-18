@@ -33,6 +33,7 @@
       display: flex;
       flex-direction: row-reverse;
       justify-content: center;
+      padding: 0 0 15% 0;
 
       .top {
         width: 100%;
@@ -164,6 +165,50 @@
     line-height: 17px;
     letter-spacing: 0.19em;
     text-transform: uppercase;
+  }
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 11%;
+  border-top: 1px solid #e0e4e8;
+
+  .view {
+    width: 247px;
+    height: 20px;
+    margin-right: 10%;
+    margin-bottom: 10px;
+    padding-top: 2px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-family: 'PingFang SC';
+  }
+
+  .url {
+    display: flex;
+    align-items: center;
+    margin-right: 10%;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+
+    a {
+      position: relative;
+      left: 60px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 7px;
+      line-height: 20px;
+      border: 1px solid #2f54eb;
+      border-radius: 2px;
+    }
   }
 }
 
