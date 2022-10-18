@@ -69,7 +69,7 @@ export default () => {
         setTabKey(key);
       }}
     >
-      {tabKey === 'detail' ? (
+      {tabKey === 'detail' && data ? (
         <BaseDetail
           data={{
             ...data,

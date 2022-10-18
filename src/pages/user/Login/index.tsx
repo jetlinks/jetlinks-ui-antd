@@ -13,7 +13,6 @@ import { useModel } from '@@/plugin-model/useModel';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { SelectLang } from '@@/plugin-locale/SelectLang';
-import Footer from '@/components/Footer';
 import { isNoCommunity } from '@/utils/util';
 
 const Login: React.FC = () => {
@@ -28,6 +27,7 @@ const Login: React.FC = () => {
   iconMap.set('wechat-webapp', require('/public/images/bind/wechat-webapp.png'));
 
   const defaultImg = require('/public/images/apply/provider1.png');
+  const viewLogo = require('/public/images/view-logo.png');
 
   const fetchUserInfo = async () => {
     const userInfo = (await initialState?.fetchUserInfo?.()) as UserInfo;
@@ -301,8 +301,17 @@ const Login: React.FC = () => {
               </div>
             </div>
           </div>
-          <div>
-            <Footer />
+
+          <div className={styles.bottom}>
+            <div className={styles.view}>JETLINKS团队全新力作可视化大屏系统</div>
+            <div className={styles.url}>
+              <div style={{ height: 33 }}>
+                <img src={viewLogo} />
+              </div>
+              <a href={'http://47.108.170.157:9010/'} target="_blank" rel="noopener noreferrer">
+                体验DEMO
+              </a>
+            </div>
           </div>
         </div>
         <div className={styles.right}>
