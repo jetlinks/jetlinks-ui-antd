@@ -102,7 +102,6 @@ export default (props: EditProps) => {
   };
 
   useEffect(() => {
-    console.log(props.data, 'edit');
     if (form) {
       form.setFieldsValue({
         ...props.data,
