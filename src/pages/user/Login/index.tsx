@@ -308,7 +308,7 @@ const Login: React.FC = () => {
               <div style={{ height: 33 }}>
                 <img src={viewLogo} />
               </div>
-              <a href={'http://47.108.170.157:9010/'} target="_blank" rel="noopener noreferrer">
+              <a href={'https://view.jetlinks.cn/'} target="_blank" rel="noopener noreferrer">
                 体验DEMO
               </a>
             </div>
