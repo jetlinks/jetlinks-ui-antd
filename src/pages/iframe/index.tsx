@@ -2,6 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'umi';
 import { service } from '../system/Apply';
+import Token from '@/utils/token';
 
 const Iframe = () => {
   const [iframeUrl, setIframeUrl] = useState<string>('');
@@ -20,6 +21,9 @@ const Iframe = () => {
         const urlStandalone = `${res.result.page.baseUrl}/api/application/sso/${appId}/login?redirect=${menuUrl}?layout=false`;
         setIframeUrl(urlStandalone);
         // console.log(urlStandalone);
+      } else if (res.result.provider === 'internal-integrated') {
+        const tokenUrl = `${res.result.page.baseUrl}?X-Access-Token=${Token.get()}`;
+        setIframeUrl(tokenUrl);
       } else {
         const urlOther = `${res.result.page.baseUrl}/${menuUrl}`;
         setIframeUrl(urlOther);
