@@ -148,7 +148,6 @@ export default (props: PermissionType) => {
   };
 
   useEffect(() => {
-    console.log(props.value, 3333333);
     checkKeysRef.clear();
   }, []);
 
@@ -246,6 +245,7 @@ export default (props: PermissionType) => {
    * @param data
    */
   const initialState = (data: PermissionDataType[]) => {
+    console.log(props.value, 'init');
     props.value?.forEach((item) => {
       checkKeysRef.set(item.permission, item);
     });
@@ -274,6 +274,10 @@ export default (props: PermissionType) => {
     }
     /* eslint-disable */
   }, [props.data, props.disabled]);
+
+  useEffect(() => {
+    console.log(props.value, 'value');
+  }, [props.value]);
 
   return (
     <div className="permission-container">

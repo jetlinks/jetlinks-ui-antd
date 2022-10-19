@@ -49,8 +49,9 @@ class Service extends BaseService<any> {
     request(`${SystemConst.API_BASE}/permission/_query/no-paging?paging=false`);
 
   // 更新全部菜单
-  updateMenus = (data: any) =>
-    request(`${SystemConst.API_BASE}/menu/_all`, { method: 'PATCH', data });
+  // updateMenus = (data: any) =>
+  //   request(`${SystemConst.API_BASE}/menu/_all`, { method: 'PATCH', data });
+  updateMenus = (data: any) => request(`${SystemConst.API_BASE}/menu`, { method: 'PATCH', data });
 
   // 添加角色
   addRole = (data: any) => request(`/${SystemConst.API_BASE}/role`, { method: 'POST', data });
