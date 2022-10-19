@@ -152,19 +152,19 @@ export default observer((props: { parentId: string }) => {
       // onFilter: true,
       valueType: 'select',
       valueEnum: {
-        onLine: {
+        online: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.onLine',
             defaultMessage: '在线',
           }),
-          status: 'onLine',
+          status: 'online',
         },
-        offLine: {
+        offline: {
           text: intl.formatMessage({
             id: 'pages.device.instance.status.offLine',
             defaultMessage: '离线',
           }),
-          status: 'offLine',
+          status: 'offline',
         },
         notActive: {
           text: intl.formatMessage({

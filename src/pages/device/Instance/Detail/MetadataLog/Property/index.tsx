@@ -231,7 +231,7 @@ const PropertyLog = (props: Props) => {
         return (
           <Table
             size="small"
-            rowKey={'id'}
+            rowKey={(_, index) => `${index}`}
             onChange={(page) => {
               handleSearch(
                 {
@@ -242,7 +242,7 @@ const PropertyLog = (props: Props) => {
                 end,
               );
             }}
-            dataSource={dataSource?.data || []}
+            dataSource={dataSource?.data}
             columns={data?.valueType?.type === 'geoPoint' ? geoColumns : columns}
             pagination={{
               current: (dataSource?.pageIndex || 0) + 1,
