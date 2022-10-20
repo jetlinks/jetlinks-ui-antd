@@ -24,7 +24,7 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Empty, Menu, Popover, Typography } from 'antd';
+import { Button, Card, Dropdown, Empty, Menu, Popconfirm, Popover, Typography } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -503,10 +503,28 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     <Menu className={styles.history}>
       {history.length > 0 ? (
         history.map((item: SearchHistory) => (
-          <Menu.Item onClick={() => handleHistory(item)} key={item.id || randomString(9)}>
+          <Menu.Item key={item.id || randomString(9)}>
             <div className={styles.list}>
-              <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
-              <DeleteOutlined
+              <Typography.Text
+                ellipsis={{ tooltip: item.name }}
+                onClick={() => handleHistory(item)}
+              >
+                {item.name}
+              </Typography.Text>
+              <Popconfirm
+                title="确定删除嘛"
+                onConfirm={async () => {
+                  const response = await service.history.remove(`${target}-search`, item.key);
+                  if (response.status === 200) {
+                    onlyMessage('操作成功');
+                    const temp = history.filter((h: any) => h.key !== item.key);
+                    setHistory(temp);
+                  }
+                }}
+              >
+                <DeleteOutlined />
+              </Popconfirm>
+              {/* <DeleteOutlined
                 onClick={async (e) => {
                   e?.stopPropagation();
                   const response = await service.history.remove(`${target}-search`, item.key);
@@ -516,7 +534,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     setHistory(temp);
                   }
                 }}
-              />
+              /> */}
             </div>
           </Menu.Item>
         ))
