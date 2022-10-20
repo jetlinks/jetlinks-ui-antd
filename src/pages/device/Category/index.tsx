@@ -27,7 +27,7 @@ export const state = model<{
 });
 
 export const getSortIndex = (data: CategoryItem[], pId?: string): number => {
-  let sortIndex = 0;
+  let sortIndex = 1;
   if (data.length) {
     if (!pId) {
       return data.sort((a, b) => b.sortIndex - a.sortIndex)[0].sortIndex + 1;
@@ -120,12 +120,16 @@ const Category = observer(() => {
           type="link"
           isPermission={permission.add}
           onClick={() => {
-            state.visible = true;
-            const sortIndex = getSortIndex(treeData, record.id);
-            state.parentId = record.id;
-            state.current = {
-              sortIndex,
-            };
+            if (record.level <= 5) {
+              state.visible = true;
+              const sortIndex = getSortIndex(treeData, record.id);
+              state.parentId = record.id;
+              state.current = {
+                sortIndex,
+              };
+            } else {
+              onlyMessage('最多可添加5层', 'error');
+            }
           }}
         >
           <PlusCircleOutlined />

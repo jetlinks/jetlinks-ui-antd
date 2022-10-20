@@ -3,21 +3,17 @@ import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { Col, message, Row, Tooltip } from 'antd';
 import Body from '../components/Body';
-// import Guide from '../components/Guide';
-import Statistics from '../components/Statistics';
+import BaseStatistics from '../components/BaseStatistics';
 import Steps from '../components/Steps';
 import { service } from '..';
 import { useEffect, useState } from 'react';
-import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
-import { map } from 'rxjs';
-import Pie from '../components/Pie';
+import Statistics from '../components/Statistics';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import ProductChoose from '../components/ProductChoose';
 import DeviceChoose from '../components/DeviceChoose';
 import GuideHome from '../components/GuideHome';
 
 const Comprehensive = () => {
-  const [subscribeTopic] = useSendWebsocketMessage();
   const productPermission = PermissionButton.usePermission('device/Product').permission;
   const devicePermission = PermissionButton.usePermission('device/Instance').permission;
   const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
@@ -29,8 +25,6 @@ const Comprehensive = () => {
   const [productMessage, setProductMessage] = useState<string>();
   const [deviceCount, setDeviceCount] = useState<number>(0);
   const [deviceMessage, setDeviceMessage] = useState<string>();
-  const [cpuValue, setCpuValue] = useState<number>(0);
-  const [jvmValue, setJvmValue] = useState<number>(0);
   const [productVisible, setProductVisible] = useState<boolean>(false);
   const [deviceVisible, setDeviceVisible] = useState<boolean>(false);
   // const [StatisticsList] = useState([
@@ -69,41 +63,6 @@ const Comprehensive = () => {
   useEffect(() => {
     getProductCount();
     getDeviceCount();
-  }, []);
-
-  useEffect(() => {
-    const cpuRealTime = subscribeTopic!(
-      `operations-statistics-system-info-cpu-realTime`,
-      `/dashboard/systemMonitor/stats/info/realTime`,
-      {
-        type: 'cpu',
-        interval: '2s',
-        agg: 'avg',
-      },
-    )
-      ?.pipe(map((res) => res.payload))
-      .subscribe((payload: any) => {
-        setCpuValue(payload.value?.systemUsage || 0);
-      });
-
-    const jvmRealTime = subscribeTopic!(
-      `operations-statistics-system-info-memory-realTime`,
-      `/dashboard/systemMonitor/stats/info/realTime`,
-      {
-        type: 'memory',
-        interval: '2s',
-        agg: 'avg',
-      },
-    )
-      ?.pipe(map((res) => res.payload))
-      .subscribe((payload: any) => {
-        setJvmValue(payload.value?.jvmHeapUsage || 0);
-      });
-
-    return () => {
-      cpuRealTime?.unsubscribe();
-      jvmRealTime?.unsubscribe();
-    };
   }, []);
 
   const history = useHistory();
@@ -221,37 +180,7 @@ const Comprehensive = () => {
             />
           </Col>
           <Col span={12}>
-            <Statistics
-              data={[
-                {
-                  name: 'CPU使用率',
-                  value: String(cpuValue) + '%',
-                  children: <Pie value={cpuValue} />,
-                },
-                {
-                  name: 'JVM内存',
-                  value: String(jvmValue) + '%',
-                  children: <Pie value={jvmValue} />,
-                },
-              ]}
-              title="基础统计"
-              extra={
-                <div style={{ fontSize: 14, fontWeight: 400 }}>
-                  <a
-                    onClick={() => {
-                      const url = getMenuPathByCode(MENUS_CODE['link/DashBoard']);
-                      if (!!url) {
-                        history.push(`${url}`);
-                      } else {
-                        message.warning('暂无权限，请联系管理员');
-                      }
-                    }}
-                  >
-                    详情
-                  </a>
-                </div>
-              }
-            />
+            <BaseStatistics />
           </Col>
         </Row>
         <Row gutter={24}>
