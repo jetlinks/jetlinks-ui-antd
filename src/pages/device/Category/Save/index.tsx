@@ -20,7 +20,6 @@ import * as ICONS from '@ant-design/icons';
 import { Modal } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import type { ISchema } from '@formily/json-schema';
-import type { CategoryItem } from '@/pages/visualization/Category/typings';
 import { service, state } from '@/pages/device/Category';
 import type { Response } from '@/utils/typings';
 import { onlyMessage } from '@/utils/util';
@@ -111,7 +110,16 @@ const Save = (props: Props) => {
         'x-component-props': {
           placeholder: '请输入名称',
         },
-        required: true,
+        'x-validator': [
+          {
+            required: true,
+            message: '请输入名称',
+          },
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+        ],
         name: 'name',
       },
       sortIndex: {
@@ -138,6 +146,8 @@ const Save = (props: Props) => {
         'x-component-props': {
           rows: 3,
           placeholder: '请输入说明',
+          showCount: true,
+          maxLength: 200,
         },
         name: 'description',
       },

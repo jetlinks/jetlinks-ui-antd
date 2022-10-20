@@ -84,7 +84,7 @@ export default () => {
 
   const getEcharts = async (params: any) => {
     let _time = '1h';
-    let format = 'HH';
+    // let format = 'HH';
     let limit = 12;
     const dt = params.time.end - params.time.start;
     const hour = 60 * 60 * 1000;
@@ -96,11 +96,11 @@ export default () => {
     } else if (dt > day && dt < year) {
       limit = Math.abs(Math.ceil(dt / day)) + 1;
       _time = '1d';
-      format = 'M月dd日';
+      // format = 'M月dd日';
     } else if (dt >= year) {
       limit = Math.abs(Math.floor(dt / month));
       _time = '1M';
-      format = 'yyyy年-M月';
+      // format = 'yyyy年-M月';
     }
     const resp = await service.getMulti([
       {
@@ -114,7 +114,7 @@ export default () => {
           from: moment(params.time.start).format('YYYY-MM-DD HH:mm:ss'),
           to: moment(params.time.end).format('YYYY-MM-DD HH:mm:ss'),
           limit: limit,
-          format: format,
+          // format: format,
         },
       },
     ]);

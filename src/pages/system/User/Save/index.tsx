@@ -215,14 +215,14 @@ const Save = (props: Props) => {
         ],
         name: 'password',
         'x-validator': [
-          // {
-          //   max: 128,
-          //   message: '密码最多可输入128位',
-          // },
-          // {
-          //   min: 8,
-          //   message: '密码不能少于8位',
-          // },
+          {
+            max: 64,
+            message: '密码最多可输入64位',
+          },
+          {
+            min: 8,
+            message: '密码不能少于8位',
+          },
           {
             required: model === 'add',
             message: '请输入密码',
@@ -243,14 +243,14 @@ const Save = (props: Props) => {
         },
         'x-visible': model === 'add',
         'x-validator': [
-          // {
-          //   max: 128,
-          //   message: '密码最多可输入128位',
-          // },
-          // {
-          //   min: 8,
-          //   message: '密码不能少于6位',
-          // },
+          {
+            max: 64,
+            message: '密码最多可输入64位',
+          },
+          {
+            min: 8,
+            message: '密码不能少于8位',
+          },
           {
             required: model === 'add',
             message: '请输入确认密码',
