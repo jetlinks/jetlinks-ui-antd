@@ -4,6 +4,7 @@ import type { FormInstance } from 'antd';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { ItemGroup } from '@/pages/rule-engine/Scene/Save/components';
 import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
+import { useLocation } from 'umi';
 
 import moment from 'moment';
 
@@ -36,6 +37,7 @@ export default (props: BuiltInProps) => {
   const [builtInList, setBuiltInList] = useState<any[]>([]);
 
   const [isEdit, setIsEdit] = useState(false);
+  const location = useLocation();
 
   const onChange = (_source: string = 'fixed', _value?: any, _upperKey?: string) => {
     const obj: ChangeType = {
@@ -53,7 +55,7 @@ export default (props: BuiltInProps) => {
   };
 
   const sourceChangeEvent = async () => {
-    onChange(source, undefined);
+    // onChange(source, undefined);
     const data = props.form.getFieldsValue();
     // console.log(data)
     const triggerData = await props.triggerRef?.getTriggerData();
@@ -103,7 +105,20 @@ export default (props: BuiltInProps) => {
   }, [props.trigger?.trigger?.device?.productId, source]);
 
   useEffect(() => {
+    if (props.trigger?.trigger?.device?.productId !== undefined) {
+      onChange(source, undefined);
+    }
+  }, [props.trigger?.trigger?.device?.productId]);
+
+  useEffect(() => {
+    if (!location.query?.id) {
+      onChange(source, undefined);
+    }
+  }, [props.trigger]);
+
+  useEffect(() => {
     // console.log(props.value,'value')
+    console.log('builtIn-effect', props.value);
     setSource(props.value?.source);
     setValue(props.value?.value);
     setUpperKey(props.value?.upperKey);

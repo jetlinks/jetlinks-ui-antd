@@ -8,6 +8,7 @@ import {
   queryRelationUsers,
   queryWechatUsers,
 } from '@/pages/rule-engine/Scene/Save/action/service';
+import { useLocation } from 'umi';
 
 type ChangeType = {
   source?: string;
@@ -31,6 +32,8 @@ export default (props: UserProps) => {
   const [treeData, setTreeData] = useState([
     { name: '平台用户', id: 'p1', selectable: false, children: [] },
   ]);
+
+  const location = useLocation();
 
   useEffect(() => {
     setSource(props.value?.source);
@@ -186,7 +189,9 @@ export default (props: UserProps) => {
         }
       }
 
-      onchange(props.value?.source, '');
+      if (!location.query?.id) {
+        onchange(props.value?.source, '');
+      }
     }
   }, [props.type, source]);
 
