@@ -566,6 +566,12 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入AgentID',
                     },
+                    'x-validator': [
+                      {
+                        max: 64,
+                        message: '最多可输入64个字符',
+                      },
+                    ],
                   },
                   layout: {
                     type: 'void',
@@ -610,7 +616,7 @@ const Detail = observer(() => {
                         '本企业微信的标签ID列表,最多支持100个,如果不填写该字段,将在使用此模版发送通知时进行指定',
                     },
                     'x-component-props': {
-                      placeholder: '请输入标签推送，多个标签用,号分隔',
+                      placeholder: '请选择标签推送，多个标签用,号分隔',
                     },
                   },
                 },
@@ -753,6 +759,12 @@ const Detail = observer(() => {
                       tooltip: '服务号消息模版标题',
                     },
                     'x-disabled': true,
+                    'x-validator': [
+                      {
+                        max: 64,
+                        message: '最多可输入64个字符',
+                      },
+                    ],
                   },
                 },
                 'x-reactions': {
@@ -784,6 +796,12 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入AgentID',
                     },
+                    'x-validator': [
+                      {
+                        max: 64,
+                        message: '最多可输入64个字符',
+                      },
+                    ],
                   },
                   layout: {
                     type: 'void',
@@ -975,6 +993,12 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请输入被叫号码',
                         },
+                        'x-validator': [
+                          {
+                            max: 64,
+                            message: '最多可输入64个字符',
+                          },
+                        ],
                       },
                     },
                   },
@@ -988,6 +1012,12 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请输入被叫显号',
                     },
+                    'x-validator': [
+                      {
+                        max: 64,
+                        message: '最多可输入64个字符',
+                      },
+                    ],
                   },
                   PlayTimes: {
                     title: '播放次数',
@@ -1093,6 +1123,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入标题',
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               sendTo: {
                 'x-component': 'Select',
@@ -1249,6 +1285,12 @@ const Detail = observer(() => {
           rows: 5,
           placeholder: '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
         },
+        'x-validator': [
+          {
+            max: 500,
+            message: '最多可输入500个字符',
+          },
+        ],
       },
       variableDefinitions: {
         type: 'array',
@@ -1291,6 +1333,12 @@ const Detail = observer(() => {
                   'x-decorator': 'FormItem',
                   required: true,
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                  ],
                 },
               },
             },
@@ -1355,6 +1403,12 @@ const Detail = observer(() => {
         'x-component-props': {
           rows: 4,
         },
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
         // 'x-decorator-props': {
         //   style: {
         //     zIndex: 998,
