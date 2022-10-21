@@ -938,13 +938,13 @@ const Detail = observer(() => {
                         'x-decorator': 'FormItem',
                         'x-component-props': {
                           placeholder: '请输入标题',
-                          'x-validator': [
-                            {
-                              max: 64,
-                              message: '最多可输入64个字符',
-                            },
-                          ],
                         },
+                        'x-validator': [
+                          {
+                            max: 64,
+                            message: '最多可输入64个字符',
+                          },
+                        ],
                       },
                       '{url:picUrl}': {
                         title: '图片链接',
