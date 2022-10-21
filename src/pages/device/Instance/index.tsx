@@ -207,6 +207,7 @@ const Instance = () => {
               }),
             );
             actionRef.current?.reload();
+            setBindKeys([]);
           } else {
             onlyMessage(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }), 'error');
           }
