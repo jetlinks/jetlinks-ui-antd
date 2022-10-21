@@ -212,12 +212,7 @@ const Save = (props: Props) => {
               rules={[
                 {
                   required: true,
-                  message: intlFormat(
-                    'pages.form.tip.select.props',
-                    '请选择所属产品',
-                    'pages.device.instanceDetail.deviceType',
-                    '设备类型',
-                  ),
+                  message: '请选择所属产品',
                 },
               ]}
               tooltip={'只能选择“正常”状态的产品'}

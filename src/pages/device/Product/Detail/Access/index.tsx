@@ -499,7 +499,18 @@ const Access = () => {
         ...itemSchema,
         storePolicy: {
           type: 'string',
-          title: <TitleComponent data={'存储策略'} />,
+          title: (
+            <TitleComponent
+              data={
+                <div className="config">
+                  存储策略
+                  <Tooltip title="若修改存储策略，需要手动做数据迁移，平台只能搜索最新存储策略中的数据">
+                    <QuestionCircleOutlined />
+                  </Tooltip>
+                </div>
+              }
+            />
+          ),
           'x-decorator': 'FormItem',
           'x-component': 'Select',
           'x-component-props': {

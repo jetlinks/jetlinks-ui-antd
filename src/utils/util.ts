@@ -41,9 +41,9 @@ export const downloadFile = (url: string, params?: Record<string, any>) => {
 export const downloadObject = (record: Record<string, any>, fileName: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
-  ghostLink.download = `${fileName}-${
-    record?.name || moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
-  }.json`;
+  ghostLink.download = `${record?.name}${fileName}_${moment(new Date()).format(
+    'YYYY/MM/DD HH:mm:ss',
+  )}.json`;
   ghostLink.style.display = 'none';
   //字符串内容转成Blob地址
   const blob = new Blob([JSON.stringify(record)]);
@@ -130,3 +130,15 @@ export const onlyMessage = (
   });
 
 export const isNoCommunity = !(localStorage.getItem(SystemConst.Version_Code) === 'community');
+/**
+ * 座机号+手机号校验
+ * @param value
+ * @returns {boolean}
+ */
+export const phoneRegEx = (value: string) => {
+  const phone = new RegExp(
+    '^(((\\+86)|(\\+86-))|((86)|(86\\-))|((0086)|(0086\\-)))?1[3|5|7|8]\\d{9}$',
+  );
+  const mobile = /(0[0-9]{2,3})([2-9][0-9]{6,7})+([0-9]{8,11})?$/;
+  return phone.test(value) || mobile.test(value);
+};

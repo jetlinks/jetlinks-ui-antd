@@ -7,6 +7,7 @@ import { Store } from 'jetlinks-store';
 import JsonParam from '@/components/Metadata/JsonParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
+import { registerValidateRules } from '@formily/core';
 
 const ArrayParam = () => {
   const SchemaField = createSchemaField({
@@ -21,6 +22,24 @@ const ArrayParam = () => {
       ArrayParam,
       EnumParam,
       BooleanEnum,
+    },
+  });
+
+  registerValidateRules({
+    checkLength(value) {
+      if (String(value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      }
+      if (!(value % 1 === 0)) {
+        return {
+          type: 'error',
+          message: '请输入非0正整数',
+        };
+      }
+      return '';
     },
   });
 
@@ -53,6 +72,14 @@ const ArrayParam = () => {
             title: '精度',
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
+            'x-component-props': {
+              min: 1,
+            },
+            'x-validator': [
+              {
+                checkLength: true,
+              },
+            ],
             'x-reactions': {
               dependencies: ['.type'],
               fulfill: {
@@ -105,9 +132,17 @@ const ArrayParam = () => {
                 title: '最大长度',
                 'x-decorator': 'FormItem',
                 'x-component': 'NumberPicker',
+                'x-component-props': {
+                  min: 1,
+                },
                 'x-decorator-props': {
                   tooltip: '字节',
                 },
+                'x-validator': [
+                  {
+                    checkLength: true,
+                  },
+                ],
                 'x-reactions': {
                   dependencies: ['..type'],
                   fulfill: {

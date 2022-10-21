@@ -34,7 +34,7 @@ import { Card, Col, Row, Tooltip } from 'antd';
 import { typeList } from '@/pages/notice';
 import { configService, service, state } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
-import { onlyMessage, useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, phoneRegEx, useAsyncDataSource } from '@/utils/util';
 import WeixinCorp from '@/pages/notice/Template/Detail/doc/WeixinCorp';
 import WeixinApp from '@/pages/notice/Template/Detail/doc/WeixinApp';
 import DingTalk from '@/pages/notice/Template/Detail/doc/DingTalk';
@@ -1017,7 +1017,7 @@ const Detail = observer(() => {
                           placeholder: '请输入模版ID',
                         },
                       },
-                      calledShowNumbers: {
+                      calledNumber: {
                         title: '被叫号码',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
@@ -1033,11 +1033,22 @@ const Detail = observer(() => {
                             max: 64,
                             message: '最多可输入64个字符',
                           },
+                          {
+                            validator: (value: string) => {
+                              return new Promise((resolve) => {
+                                if (!value) resolve('');
+                                if (!phoneRegEx(value)) {
+                                  resolve('请输入有效号码');
+                                }
+                                resolve('');
+                              });
+                            },
+                          },
                         ],
                       },
                     },
                   },
-                  calledNumber: {
+                  calledShowNumbers: {
                     title: '被叫显号',
                     'x-component': 'Input',
                     'x-decorator': 'FormItem',
@@ -1051,6 +1062,17 @@ const Detail = observer(() => {
                       {
                         max: 64,
                         message: '最多可输入64个字符',
+                      },
+                      {
+                        validator: (value: string) => {
+                          return new Promise((resolve) => {
+                            if (!value) resolve('');
+                            if (!phoneRegEx(value)) {
+                              resolve('请输入有效号码');
+                            }
+                            resolve('');
+                          });
+                        },
                       },
                     ],
                   },

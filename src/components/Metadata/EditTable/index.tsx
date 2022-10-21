@@ -8,6 +8,7 @@ import { PopoverProps } from 'antd/lib/popover';
 import { useClickAway, usePrefixCls } from '@formily/antd/lib/__builtins__';
 import cls from 'classnames';
 import { get } from 'lodash';
+import { Ellipsis } from '@/components';
 /**
  * 默认Inline展示
  */
@@ -160,7 +161,9 @@ Editable.Popover = observer((props) => {
   const headTitle = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>{props.title || field.title}</div>
+        <div style={{ width: 150 }}>
+          <Ellipsis title={props.title || field.title} />
+        </div>
         <CloseOutlined
           onClick={() => {
             setVisible(false);

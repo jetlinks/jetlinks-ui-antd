@@ -1,7 +1,7 @@
 import { TreeSelect as ATreeSelect } from 'antd';
 import { useIntl } from 'umi';
 import type { Field } from '@formily/core';
-import { createForm } from '@formily/core';
+import { createForm, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
@@ -56,6 +56,18 @@ const Save = (props: Props) => {
       }),
     );
   };
+
+  registerValidateRules({
+    checkStrength(value: string) {
+      if (/^[0-9]+$/.test(value) || /^[a-zA-Z]+$/.test(value) || /^[~!@#$%^&*]+$/.test(value)) {
+        return {
+          type: 'error',
+          message: '密码强度不够',
+        };
+      }
+      return true;
+    },
+  });
 
   const getUser = async () => {
     if (props.data.id) {
@@ -227,6 +239,9 @@ const Save = (props: Props) => {
             required: model === 'add',
             message: '请输入密码',
           },
+          {
+            checkStrength: true,
+          },
         ],
       },
       confirmPassword: {
@@ -276,6 +291,9 @@ const Save = (props: Props) => {
                   });
               });
             },
+          },
+          {
+            checkStrength: true,
           },
         ],
 

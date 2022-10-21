@@ -237,7 +237,6 @@ const Template = observer(() => {
               isPermission={templatePermission.add}
               onClick={() => {
                 state.current = undefined;
-                console.log(id);
                 history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
               }}
               key="button"

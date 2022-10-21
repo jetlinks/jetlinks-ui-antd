@@ -11,6 +11,7 @@ import EnumParam from '@/components/Metadata/EnumParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
 import { useIntl } from '@/.umi/plugin-locale/localeExports';
 import Editable from '../EditTable';
+import { registerValidateRules } from '@formily/core';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
@@ -44,6 +45,24 @@ const JsonParam = observer((props: Props) => {
       Store.set('units', _data);
       return _data;
     });
+
+  registerValidateRules({
+    checkLength(value) {
+      if (String(value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      }
+      if (!(value % 1 === 0)) {
+        return {
+          type: 'error',
+          message: '请输入非0正整数',
+        };
+      }
+      return '';
+    },
+  });
 
   const schema: ISchema = {
     type: 'object',
@@ -100,6 +119,16 @@ const JsonParam = observer((props: Props) => {
                   required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入名称',
+                    },
+                  ],
                 },
                 valueType: {
                   type: 'object',
@@ -232,6 +261,14 @@ const JsonParam = observer((props: Props) => {
                               defaultMessage: '字节',
                             }),
                           },
+                          'x-component-props': {
+                            min: 1,
+                          },
+                          'x-validator': [
+                            {
+                              checkLength: true,
+                            },
+                          ],
                           'x-reactions': {
                             dependencies: ['..type'],
                             fulfill: {
@@ -251,6 +288,14 @@ const JsonParam = observer((props: Props) => {
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-visible': false,
+                  'x-validator': [
+                    {
+                      checkLength: true,
+                    },
+                  ],
+                  'x-component-props': {
+                    min: 1,
+                  },
                   'x-reactions': {
                     dependencies: ['..valueType.type'],
                     fulfill: {
