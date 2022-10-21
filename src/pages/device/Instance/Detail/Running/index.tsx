@@ -13,7 +13,8 @@ const Running = () => {
   const { minHeight } = useDomFullHeight(`.device-detail-running`);
 
   useEffect(() => {
-    setList(metadata?.events || []);
+    // setList(metadata?.events || []);
+    setList([{ id: 'properties', name: '属性' }, ...(metadata?.events || [])]);
   }, [InstanceModel.detail?.metadata]);
 
   const operations = () => (
@@ -22,14 +23,16 @@ const Running = () => {
       allowClear
       placeholder="请输入名称"
       onSearch={(value: string) => {
+        console.log(list);
         if (value) {
           const li = list.filter((i) => {
             return i?.name.indexOf(value) !== -1;
           });
-          console.log(li, value);
+          console.log(list, value);
           setList(li);
         } else {
-          setList(metadata?.events || []);
+          // setList(metadata?.events || []);
+          setList([{ id: 'properties', name: '属性' }, ...(metadata?.events || [])]);
         }
       }}
     />
@@ -48,12 +51,16 @@ const Running = () => {
       ) : (
         <div className="tabs-full-active">
           <Tabs defaultActiveKey="1" tabPosition="left" tabBarExtraContent={{ left: operations() }}>
-            <Tabs.TabPane tab="属性" key="1">
+            {/* <Tabs.TabPane tab="属性" key="1">
               <Property data={metadata?.properties || []} />
-            </Tabs.TabPane>
+            </Tabs.TabPane> */}
             {list?.map((item) => (
               <Tabs.TabPane tab={item.name} key={item.id}>
-                <Event data={item} />
+                {item.id === 'properties' ? (
+                  <Property data={metadata?.properties || []} />
+                ) : (
+                  <Event data={item} />
+                )}
               </Tabs.TabPane>
             ))}
           </Tabs>

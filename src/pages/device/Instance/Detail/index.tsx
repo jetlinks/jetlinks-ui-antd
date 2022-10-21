@@ -27,7 +27,7 @@ import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
-import { onlyMessage } from '@/utils/util';
+import { onlyMessage, isNoCommunity } from '@/utils/util';
 import Parsing from './Parsing';
 
 export const deviceStatus = new Map();
@@ -171,11 +171,13 @@ const InstanceDetail = observer(() => {
         InstanceModel.detail?.accessProvider &&
         pList.includes(InstanceModel.detail?.accessProvider)
       ) {
-        datalist.push({
-          key: 'metadata-map',
-          tab: '物模型映射',
-          component: <MetadataMap type="device" />,
-        });
+        if (isNoCommunity) {
+          datalist.push({
+            key: 'metadata-map',
+            tab: '物模型映射',
+            component: <MetadataMap type="device" />,
+          });
+        }
       }
       const paring = response.result?.features?.find((item: any) => item.id === 'transparentCodec');
       if (paring) {
