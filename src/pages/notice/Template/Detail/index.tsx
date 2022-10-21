@@ -327,6 +327,29 @@ const Detail = observer(() => {
               form1.setValuesIn('variableDefinitions', _result);
             }
           });
+          onFieldValueChange('template.body', (field, form1) => {
+            const value = (field as Field).value;
+            console.log(value);
+            const idList = value.match(pattern)?.filter((i: string) => i);
+            form1.setFieldState('variableDefinitions', (state1) => {
+              state1.visible = !!idList && idList.length > 0;
+            });
+            if (form1.modified) {
+              // 获取缓存的KEY；
+              const oldKey = variableDefinitionsRef.current?.map((i) => i.id);
+              const newKey = [...new Set(idList)];
+              const _result = newKey.map((item: any) =>
+                oldKey?.includes(item)
+                  ? variableDefinitionsRef.current?.find((i) => i.id === item)
+                  : {
+                      id: item,
+                      type: 'string',
+                      format: '%s',
+                    },
+              );
+              form1.setValuesIn('variableDefinitions', _result);
+            }
+          });
           onFieldValueChange('variableDefinitions.*.*', (field) => {
             // 缓存编辑后的数据
             variableDefinitionsRef.current = field.query('variableDefinitions').value();
@@ -888,6 +911,12 @@ const Detail = observer(() => {
                         'x-component-props': {
                           placeholder: '请输入标题',
                         },
+                        'x-validator': [
+                          {
+                            max: 64,
+                            message: '最多可输入64个字符',
+                          },
+                        ],
                       },
                     },
                     'x-reactions': {
@@ -909,6 +938,12 @@ const Detail = observer(() => {
                         'x-decorator': 'FormItem',
                         'x-component-props': {
                           placeholder: '请输入标题',
+                          'x-validator': [
+                            {
+                              max: 64,
+                              message: '最多可输入64个字符',
+                            },
+                          ],
                         },
                       },
                       '{url:picUrl}': {
@@ -1348,13 +1383,18 @@ const Detail = observer(() => {
             column2: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '名称', width: '120px' },
+              'x-component-props': { title: '名称', minWidth: '120px' },
               properties: {
                 name: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   required: true,
                   'x-component': 'Input',
+                  'x-component-props': {
+                    style: {
+                      width: 100,
+                    },
+                  },
                   'x-validator': [
                     {
                       max: 64,

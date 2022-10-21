@@ -218,6 +218,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               switch (_field?.valueType) {
                 case 'select':
                   let __option: { label: any; value: any }[] | FieldDataSource | undefined = [];
+                  f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                    state.value = 'eq';
+                  });
                   if (_field?.valueEnum) {
                     __option = Object.values(_field?.valueEnum || {}).map((item) => ({
                       label: item.text,
@@ -503,9 +506,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     <Menu className={styles.history}>
       {history.length > 0 ? (
         history.map((item: SearchHistory) => (
-          <Menu.Item onClick={() => handleHistory(item)} key={item.id || randomString(9)}>
+          <Menu.Item key={item.id || randomString(9)}>
             <div className={styles.list}>
-              <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
               <Typography.Text
                 ellipsis={{ tooltip: item.name }}
                 onClick={() => handleHistory(item)}

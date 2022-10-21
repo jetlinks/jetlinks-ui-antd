@@ -42,11 +42,11 @@ const Debug = observer(() => {
 
           onFieldReact('variableDefinitions.*.type', async (field) => {
             const value = (field as Field).value;
+
             const format = field.query('.value').take() as Field;
             const _id = field.query('.id').take() as Field;
 
             const configId = field.query('configId');
-
             if (format && value) {
               switch (value) {
                 case 'date':
@@ -78,6 +78,7 @@ const Debug = observer(() => {
             }
             if (variableRef.current) {
               const a = variableRef.current?.find((i: any) => i.id === _id.value);
+              console.log(a, 'a');
               const _configId = configId.value();
               const businessType = a?.expands?.businessType;
               if (id === 'dingTalk' || id === 'weixin') {
@@ -100,6 +101,11 @@ const Debug = observer(() => {
                       const tagList = await service[id].getTags(_configId);
                       format.setComponent(Select);
                       format.setDataSource(tagList);
+                      break;
+                    case 'file':
+                      format.setComponent(FUpload, {
+                        type: 'file',
+                      });
                       break;
                   }
                 } else if (['tag', 'org', 'user'].includes(businessType)) {

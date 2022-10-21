@@ -51,7 +51,7 @@ class Service extends BaseService<any> {
   // 更新全部菜单
   // updateMenus = (data: any) =>
   //   request(`${SystemConst.API_BASE}/menu/_all`, { method: 'PATCH', data });
-  updateMenus = (data: any) => request(`${SystemConst.API_BASE}/menu`, { method: 'PATCH', data });
+  updateMenus = (data: any) => request(`${this.uri}/iot/_all`, { method: 'PATCH', data });
 
   // 添加角色
   addRole = (data: any) => request(`/${SystemConst.API_BASE}/role`, { method: 'POST', data });

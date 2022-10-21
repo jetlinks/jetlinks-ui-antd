@@ -232,15 +232,17 @@ const Debug = observer(() => {
     const resp = await service.debug(
       state?.current.id,
       templateId,
-      data.variableDefinitions?.reduce(
-        (previousValue: any, currentValue: { id: any; value: any }) => {
-          return {
-            ...previousValue,
-            [currentValue.id]: currentValue.value,
-          };
-        },
-        {},
-      ),
+      data.variableDefinitions
+        ? data.variableDefinitions?.reduce(
+            (previousValue: any, currentValue: { id: any; value: any }) => {
+              return {
+                ...previousValue,
+                [currentValue.id]: currentValue.value,
+              };
+            },
+            {},
+          )
+        : {},
     );
     if (resp.status === 200) {
       onlyMessage('操作成功!');

@@ -26,6 +26,7 @@ const Running = () => {
           const li = list.filter((i) => {
             return i?.name.indexOf(value) !== -1;
           });
+          console.log(li, value);
           setList(li);
         } else {
           setList(metadata?.events || []);

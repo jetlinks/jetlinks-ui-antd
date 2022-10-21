@@ -172,6 +172,10 @@ const Save = (props: Props) => {
                 required: true,
                 message: '请输入名称',
               },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
             ],
           },
           targetType: {

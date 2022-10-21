@@ -58,8 +58,8 @@ const AccessConfig = (props: Props) => {
                 terms: [
                   {
                     column: 'provider',
-                    termType: 'eq',
-                    value: 'child-device',
+                    termType: 'in',
+                    value: 'child-device,edge-child-device',
                   },
                   {
                     column: 'state',
@@ -162,7 +162,7 @@ const AccessConfig = (props: Props) => {
             messageProtocol: currrent.protocol,
           };
           const metatdata = JSON.parse(productModel.current?.metadata || '{}');
-          if (obj.accessProvider === 'gb28181-2016') {
+          if (!productModel.current?.metadata) {
             const response = await service.getConfigView(
               obj?.messageProtocol || '',
               obj?.transportProtocol || '',

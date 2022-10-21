@@ -168,6 +168,14 @@ export default (props: FunctionProps) => {
       title: '值',
       dataIndex: 'value',
       align: 'center',
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            message: '此项是必填项',
+          },
+        ],
+      },
       renderFormItem: (_, row: any) => {
         return getItemNode(row.record);
       },

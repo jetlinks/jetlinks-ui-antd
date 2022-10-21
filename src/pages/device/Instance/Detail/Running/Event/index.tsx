@@ -128,7 +128,7 @@ const EventLog = (props: Props) => {
         // }}
       />
       <ProTable
-        size="small"
+        // size="small"
         rowKey="id"
         actionRef={actionRef}
         search={false}
