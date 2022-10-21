@@ -16,6 +16,7 @@ import { ISchema } from '@formily/json-schema';
 import { DepartmentItem } from '@/pages/system/Department/typings';
 import { onlyMessage } from '@/utils/util';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 interface TreeProps {
   onSelect: (id: string) => void;
@@ -45,6 +46,7 @@ export const getSortIndex = (data: DepartmentItem[], pId?: string): number => {
 export default (props: TreeProps) => {
   const intl = useIntl();
   const [treeData, setTreeData] = useState<undefined | any[]>(undefined);
+  const [treeDataList, setTreeDataList] = useState<undefined | any[]>(undefined);
   const [loading, setLoading] = useState(false);
   const [keys, setKeys] = useState<any[]>([]);
   const [visible, setVisible] = useState(false);
@@ -77,6 +79,27 @@ export default (props: TreeProps) => {
         setKeys([resp.result[0].id]);
       }
     }
+  };
+
+  const queryList = (list: any, id: string, flag?: boolean) => {
+    if (list && Array.isArray(list) && list.length) {
+      return list.map((item) => {
+        if (item.id === id || flag) {
+          item.disabled = true;
+        }
+        if (item.children && Array.isArray(item.children) && item.children.length) {
+          item.children = queryList(item.children, id, item.id === id || flag);
+        }
+        return item;
+      });
+    } else {
+      return [];
+    }
+  };
+
+  const updateOrg = (id: string) => {
+    const list = _.cloneDeep(treeData);
+    setTreeDataList(queryList(list, id));
   };
 
   const deleteItem = async (id: string) => {
@@ -112,7 +135,7 @@ export default (props: TreeProps) => {
           },
           placeholder: '请选择上级组织',
         },
-        enum: treeData,
+        enum: treeDataList,
       },
       name: {
         type: 'string',
@@ -167,6 +190,7 @@ export default (props: TreeProps) => {
     if ((location as any).query?.save === 'true') {
       setData({ sortIndex: treeData && treeData.length + 1 });
       setVisible(true);
+      setTreeDataList(treeData);
     }
   }, [location, treeData]);
 
@@ -201,6 +225,7 @@ export default (props: TreeProps) => {
         onClick={() => {
           setData({ sortIndex: treeData && treeData.length + 1 });
           setVisible(true);
+          setTreeDataList(treeData);
         }}
       >
         新增
@@ -266,6 +291,7 @@ export default (props: TreeProps) => {
                       type="link"
                       onClick={(e) => {
                         e.stopPropagation();
+                        updateOrg(nodeData.id);
                         setData({
                           ...nodeData,
                         });

@@ -120,15 +120,15 @@ const Category = observer(() => {
           type="link"
           isPermission={permission.add}
           onClick={() => {
-            if (record.level <= 5) {
+            if (record.level >= 5) {
+              onlyMessage('最多可添加5层', 'error');
+            } else {
               state.visible = true;
               const sortIndex = getSortIndex(treeData, record.id);
               state.parentId = record.id;
               state.current = {
                 sortIndex,
               };
-            } else {
-              onlyMessage('最多可添加5层', 'error');
             }
           }}
         >

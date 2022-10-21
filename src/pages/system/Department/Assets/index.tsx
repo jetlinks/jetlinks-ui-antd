@@ -67,20 +67,8 @@ const Assets = observer((props: AssetsProps) => {
   ];
 
   useEffect(() => {
-    if (isNoCommunity) {
-      AssetsModel.tabsIndex = ASSETS_TABS_ENUM.Product;
-      AssetsModel.tabsArray = [...TabsArray];
-    } else {
-      AssetsModel.tabsIndex = ASSETS_TABS_ENUM.User;
-      AssetsModel.tabsArray = [
-        {
-          intlTitle: '1',
-          defaultMessage: '用户',
-          key: ASSETS_TABS_ENUM.User,
-          components: Member,
-        },
-      ];
-    }
+    AssetsModel.tabsIndex = ASSETS_TABS_ENUM.Product;
+    AssetsModel.tabsArray = [...TabsArray];
   }, []);
 
   useEffect(() => {
@@ -93,24 +81,28 @@ const Assets = observer((props: AssetsProps) => {
         <ExclamationCircleOutlined style={{ marginRight: 12 }} />
         部门拥有的资产为所有类型资产的并集
       </div> */}
-      <Tabs
-        activeKey={AssetsModel.tabsIndex}
-        onChange={(key) => {
-          AssetsModel.tabsIndex = key;
-        }}
-      >
-        {(AssetsModel?.tabsArray || []).map((item) => (
-          <Tabs.TabPane
-            tab={intl.formatMessage({
-              id: item.intlTitle,
-              defaultMessage: item.defaultMessage,
-            })}
-            key={item.key}
-          >
-            <item.components parentId={props.parentId} />
-          </Tabs.TabPane>
-        ))}
-      </Tabs>
+      {isNoCommunity ? (
+        <Tabs
+          activeKey={AssetsModel.tabsIndex}
+          onChange={(key) => {
+            AssetsModel.tabsIndex = key;
+          }}
+        >
+          {(AssetsModel?.tabsArray || []).map((item) => (
+            <Tabs.TabPane
+              tab={intl.formatMessage({
+                id: item.intlTitle,
+                defaultMessage: item.defaultMessage,
+              })}
+              key={item.key}
+            >
+              <item.components parentId={props.parentId} />
+            </Tabs.TabPane>
+          ))}
+        </Tabs>
+      ) : (
+        <Member parentId={props.parentId} />
+      )}
     </div>
   );
 });
