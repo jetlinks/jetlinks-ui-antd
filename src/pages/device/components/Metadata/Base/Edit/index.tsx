@@ -13,7 +13,6 @@ import {
   ArrayItems,
   Checkbox,
   DatePicker,
-  Editable,
   Form,
   FormGrid,
   FormItem,
@@ -37,7 +36,6 @@ import { productModel } from '@/pages/device/Product';
 import { service } from '@/pages/device/components/Metadata';
 import { Store } from 'jetlinks-store';
 import type { MetadataItem } from '@/pages/device/Product/typings';
-
 import JsonParam from '@/components/Metadata/JsonParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
 import EnumParam from '@/components/Metadata/EnumParam';
@@ -54,6 +52,7 @@ import FIndicators from '@/components/FIndicators';
 import { action } from '@formily/reactive';
 import { asyncUpdateMedata, updateMetadata } from '../../metadata';
 import { onlyMessage } from '@/utils/util';
+import Editable from '@/components/Metadata/EditTable';
 
 interface Props {
   type: 'product' | 'device';
@@ -209,6 +208,21 @@ const Edit = observer((props: Props) => {
       const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
       return reg.exec(value) ? '' : 'ID只能由数字、字母、下划线、中划线组成';
     },
+    checkLength(value) {
+      if (String(value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      }
+      if (!(value % 1 === 0)) {
+        return {
+          type: 'error',
+          message: '请输入非0正整数',
+        };
+      }
+      return '';
+    },
   });
   const valueTypeConfig = {
     type: 'object',
@@ -216,7 +230,12 @@ const Edit = observer((props: Props) => {
     properties: {
       type: {
         title: schemaTitleMapping[MetadataModel.type].title,
-        required: true,
+        'x-validator': [
+          {
+            required: true,
+            message: `请选择${schemaTitleMapping[MetadataModel.type].title}`,
+          },
+        ],
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         default: MetadataModel.type === 'events' ? 'object' : null,
@@ -342,6 +361,14 @@ const Edit = observer((props: Props) => {
                 defaultMessage: '字节',
               }),
             },
+            'x-component-props': {
+              min: 1,
+            },
+            'x-validator': [
+              {
+                checkLength: true,
+              },
+            ],
             'x-reactions': {
               dependencies: ['..type'],
               fulfill: {
@@ -448,7 +475,7 @@ const Edit = observer((props: Props) => {
         },
         {
           required: true,
-          message: '请输入姓名',
+          message: '请输入名称',
         },
       ],
     },
@@ -483,7 +510,12 @@ const Edit = observer((props: Props) => {
               defaultMessage: '来源',
             }),
             'x-disabled': MetadataModel.action === 'edit',
-            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: `请选择来源`,
+              },
+            ],
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: PropertySource,
@@ -666,7 +698,12 @@ const Edit = observer((props: Props) => {
           },
           type: {
             title: MetadataModel.type === 'tags' ? '标签类型' : '读写类型',
-            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: `请输入${MetadataModel.type === 'tags' ? '标签类型' : '读写类型'}`,
+              },
+            ],
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
@@ -720,7 +757,7 @@ const Edit = observer((props: Props) => {
             'x-decorator-props': {
               tooltip: '场景联动页面可引用指标配置作为触发条件',
             },
-            'x-visible': props.type === 'product',
+            // 'x-visible': props.type === 'product',
             items: {
               type: 'object',
               'x-decorator': 'ArrayItems.Item',
@@ -808,11 +845,12 @@ const Edit = observer((props: Props) => {
                         layout: 'vertical',
                       },
                       'x-reactions': {
-                        dependencies: ['valueType.type'],
+                        dependencies: ['valueType.type', 'valueType'],
                         fulfill: {
                           state: {
                             componentProps: {
                               type: '{{$deps[0]}}',
+                              enum: '{{$deps[1]}}',
                             },
                           },
                         },
@@ -829,7 +867,7 @@ const Edit = observer((props: Props) => {
                                 return Promise.reject(new Error('请输入指标值'));
                               }
                             } else {
-                              if (value?.value && !value?.value[0]) {
+                              if (value?.value !== undefined && value?.value[0] === undefined) {
                                 return Promise.reject(new Error('请输入指标值'));
                               }
                             }
@@ -1050,7 +1088,12 @@ const Edit = observer((props: Props) => {
               id: 'pages.device.productDetail.metadata.level',
               defaultMessage: 'level',
             }),
-            required: true,
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择级别',
+              },
+            ],
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: EventLevel,

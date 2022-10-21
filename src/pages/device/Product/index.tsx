@@ -22,7 +22,7 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { PermissionButton, ProTableCard } from '@/components';
 import ProductCard from '@/components/ProTableCard/CardItems/product';
-import { downloadObject, onlyMessage } from '@/utils/util';
+import { downloadObject, isNoCommunity, onlyMessage } from '@/utils/util';
 import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
 import { omit } from 'lodash';
@@ -267,10 +267,26 @@ const Product = observer(() => {
       hideInTable: true,
       request: () =>
         service.getProviders().then((resp: any) => {
-          return (resp?.result || []).map((item: any) => ({
-            label: item.name,
-            value: item.id,
-          }));
+          if (isNoCommunity) {
+            return (resp?.result || []).map((item: any) => ({
+              label: item.name,
+              value: item.id,
+            }));
+          } else {
+            return (resp?.result || [])
+              .filter((i: any) =>
+                [
+                  'mqtt-server-gateway',
+                  'http-server-gateway',
+                  'mqtt-client-gateway',
+                  'tcp-server-gateway',
+                ].includes(i.id),
+              )
+              .map((item: any) => ({
+                label: item.name,
+                value: item.id,
+              }));
+          }
         }),
     },
     {

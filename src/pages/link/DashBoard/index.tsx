@@ -10,6 +10,7 @@ import './index.less';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
 import Echarts, { echarts } from '@/components/DashBoard/echarts';
+import { isNoCommunity } from '@/utils/util';
 
 type RefType = {
   getValues: Function;
@@ -193,8 +194,9 @@ export default () => {
 
   const [subscribeTopic] = useSendWebsocketMessage();
 
-  const { data: serverNode } = useRequest(service.serverNode, {
+  const { data: serverNode, run: serverNodeRun } = useRequest(service.serverNode, {
     formatResult: (res) => res.result.map((item: any) => ({ label: item.name, value: item.id })),
+    manual: true,
   });
 
   const arrayReverse = (data: any[]): any[] => {
@@ -658,6 +660,12 @@ export default () => {
       sub?.unsubscribe();
     };
   }, [serverId]);
+
+  useEffect(() => {
+    if (isNoCommunity) {
+      serverNodeRun();
+    }
+  }, []);
 
   useEffect(() => {
     if (serverNode && serverNode.length) {

@@ -14,6 +14,7 @@ import encodeQuery from '@/utils/encodeQuery';
 import useHistory from '@/hooks/route/useHistory';
 import { getMenuPathByCode } from '@/utils/menu';
 import { Empty } from '@/components';
+import { isNoCommunity } from '@/utils/util';
 
 const service = new Service();
 export const state = model<{
@@ -494,12 +495,20 @@ const Dashboard = observer(() => {
             key: 'targetType',
             Children: (
               <Select
-                options={[
-                  { label: '设备', value: 'device' },
-                  { label: '产品', value: 'product' },
-                  { label: '组织', value: 'org' },
-                  { label: '其它', value: 'other' },
-                ]}
+                options={
+                  isNoCommunity
+                    ? [
+                        { label: '设备', value: 'device' },
+                        { label: '产品', value: 'product' },
+                        { label: '组织', value: 'org' },
+                        { label: '其它', value: 'other' },
+                      ]
+                    : [
+                        { label: '设备', value: 'device' },
+                        { label: '产品', value: 'product' },
+                        { label: '其它', value: 'other' },
+                      ]
+                }
               />
             ),
           }}
