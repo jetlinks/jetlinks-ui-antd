@@ -153,6 +153,7 @@ const Debug = observer(() => {
         title: '通知模版',
         type: 'string',
         'x-decorator': 'FormItem',
+        required: true,
         'x-component': 'Select',
         'x-reactions': '{{useAsyncDataSource(getTemplate)}}',
       },

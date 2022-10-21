@@ -194,6 +194,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入corpId',
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               corpSecret: {
                 title: 'corpSecret',
@@ -211,6 +217,12 @@ const Detail = observer(() => {
                     },
                   },
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               appId: {
                 title: 'appID',
@@ -269,6 +281,12 @@ const Detail = observer(() => {
                     },
                   },
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               appSecret: {
                 title: 'AppSecret',
@@ -278,6 +296,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入AppSecret',
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -295,6 +319,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入webhook',
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -319,6 +349,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               accessKeyId: {
                 title: 'AccessKeyId',
@@ -328,6 +364,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               secret: {
                 title: 'Secret',
@@ -337,6 +379,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
             },
           },
@@ -482,6 +530,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               headers: {
                 title: '请求头',
@@ -502,8 +556,15 @@ const Detail = observer(() => {
                       properties: {
                         key: {
                           type: 'string',
-                          // 'x-decorator': 'Editable',
+                          'x-decorator': 'FormItem',
                           'x-component': 'Input',
+                          required: true,
+                          'x-validator': [
+                            {
+                              max: 64,
+                              message: '最多可输入64个字符',
+                            },
+                          ],
                         },
                       },
                     },
@@ -514,8 +575,15 @@ const Detail = observer(() => {
                       properties: {
                         value: {
                           type: 'string',
-                          // 'x-decorator': 'Editable',
+                          'x-decorator': 'FormItem',
                           'x-component': 'Input',
+                          required: true,
+                          'x-validator': [
+                            {
+                              max: 64,
+                              message: '最多可输入64个字符',
+                            },
+                          ],
                         },
                       },
                     },
