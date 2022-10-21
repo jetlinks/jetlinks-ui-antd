@@ -41,9 +41,9 @@ export const downloadFile = (url: string, params?: Record<string, any>) => {
 export const downloadObject = (record: Record<string, any>, fileName: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
-  ghostLink.download = `${fileName}-${
-    record?.name || moment(new Date()).format('YYYY/MM/DD HH:mm:ss')
-  }.json`;
+  ghostLink.download = `${record?.name}${fileName}_${moment(new Date()).format(
+    'YYYY/MM/DD HH:mm:ss',
+  )}.json`;
   ghostLink.style.display = 'none';
   //字符串内容转成Blob地址
   const blob = new Blob([JSON.stringify(record)]);

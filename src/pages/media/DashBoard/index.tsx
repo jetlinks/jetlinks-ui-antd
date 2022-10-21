@@ -139,13 +139,13 @@ export default () => {
         },
         yAxis: {
           type: 'value',
-          minInterval: 1,
+          // minInterval: 1,
         },
-        grid: {
-          left: '4%',
-          right: '2%',
-          top: '2%',
-        },
+        // grid: {
+        //   left: '4%',
+        //   right: '2%',
+        //   top: '2%',
+        // },
         color: ['#2F54EB'],
         series: [
           {

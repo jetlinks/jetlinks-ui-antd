@@ -498,6 +498,7 @@ const Product = observer(() => {
                     onlyMessage('请上传json格式文件', 'error');
                     return false;
                   }
+                  delete data.state;
                   const res = await service.update(data);
                   if (res.status === 200) {
                     onlyMessage('操作成功');

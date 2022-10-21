@@ -100,6 +100,16 @@ const JsonParam = observer((props: Props) => {
                   required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入名称',
+                    },
+                  ],
                 },
                 valueType: {
                   type: 'object',

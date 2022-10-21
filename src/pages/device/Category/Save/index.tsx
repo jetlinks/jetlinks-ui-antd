@@ -134,6 +134,12 @@ const Save = (props: Props) => {
           min: 1,
         },
         name: 'sortIndex',
+        'x-validator': [
+          {
+            format: 'integer',
+            message: '请输入非0正整数',
+          },
+        ],
       },
       description: {
         type: 'string',

@@ -1,6 +1,7 @@
 import { createSchemaField } from '@formily/react';
-import { ArrayItems, Editable, FormItem, FormLayout, Input } from '@formily/antd';
+import { ArrayItems, FormItem, FormLayout, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
+import Editable from '../EditTable';
 
 const EnumParam = () => {
   const SchemaField = createSchemaField({
@@ -42,22 +43,40 @@ const EnumParam = () => {
                 text: {
                   type: 'string',
                   title: 'Text',
-                  required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
                     placeholder: '标识',
                   },
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入标识',
+                    },
+                  ],
                 },
                 value: {
                   type: 'string',
                   title: 'Value',
-                  required: true,
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
                     placeholder: '对该枚举项的描述',
                   },
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入描述',
+                    },
+                  ],
                 },
               },
             },

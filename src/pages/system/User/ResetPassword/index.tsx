@@ -4,7 +4,7 @@ import { Form, FormItem, Password } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
 import { useIntl } from 'umi';
 import { useMemo } from 'react';
-import { createForm } from '@formily/core';
+import { createForm, registerValidateRules } from '@formily/core';
 import { service } from '@/pages/system/User';
 import { onlyMessage } from '@/utils/util';
 
@@ -20,6 +20,18 @@ const ResetPassword = (props: Props) => {
     components: {
       FormItem,
       Password,
+    },
+  });
+
+  registerValidateRules({
+    checkStrength(value: string) {
+      if (/^[0-9]+$/.test(value) || /^[a-zA-Z]+$/.test(value) || /^[~!@#$%^&*]+$/.test(value)) {
+        return {
+          type: 'error',
+          message: '密码强度不够',
+        };
+      }
+      return true;
     },
   });
 
@@ -52,14 +64,14 @@ const ResetPassword = (props: Props) => {
         ],
         name: 'password',
         'x-validator': [
-          // {
-          //   max: 128,
-          //   message: '密码最多可输入128位',
-          // },
-          // {
-          //   min: 8,
-          //   message: '密码不能少于8位',
-          // },
+          {
+            max: 64,
+            message: '密码最多可输入64位',
+          },
+          {
+            min: 8,
+            message: '密码不能少于8位',
+          },
           {
             required: true,
             message: '请输入密码',
@@ -86,6 +98,9 @@ const ResetPassword = (props: Props) => {
               });
             },
           },
+          {
+            checkStrength: true,
+          },
         ],
       },
       confirmPassword: {
@@ -101,14 +116,14 @@ const ResetPassword = (props: Props) => {
           placeholder: '请再次输入密码',
         },
         'x-validator': [
-          // {
-          //   max: 128,
-          //   message: '密码最多可输入128位',
-          // },
-          // {
-          //   min: 8,
-          //   message: '密码不能少于8位',
-          // },
+          {
+            max: 64,
+            message: '密码最多可输入64位',
+          },
+          {
+            min: 8,
+            message: '密码不能少于8位',
+          },
           {
             required: true,
             message: '请输入确认密码',
@@ -134,6 +149,9 @@ const ResetPassword = (props: Props) => {
                   });
               });
             },
+          },
+          {
+            checkStrength: true,
           },
         ],
         'x-reactions': [
