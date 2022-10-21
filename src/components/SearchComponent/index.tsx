@@ -24,7 +24,7 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Empty, Menu, Popover, Typography } from 'antd';
+import { Button, Card, Dropdown, Empty, Menu, Popconfirm, Popover, Typography } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -506,9 +506,15 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           <Menu.Item onClick={() => handleHistory(item)} key={item.id || randomString(9)}>
             <div className={styles.list}>
               <Typography.Text ellipsis={{ tooltip: item.name }}>{item.name}</Typography.Text>
-              <DeleteOutlined
-                onClick={async (e) => {
-                  e?.stopPropagation();
+              <Typography.Text
+                ellipsis={{ tooltip: item.name }}
+                onClick={() => handleHistory(item)}
+              >
+                {item.name}
+              </Typography.Text>
+              <Popconfirm
+                title="确定删除嘛"
+                onConfirm={async () => {
                   const response = await service.history.remove(`${target}-search`, item.key);
                   if (response.status === 200) {
                     onlyMessage('操作成功');
@@ -516,7 +522,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     setHistory(temp);
                   }
                 }}
-              />
+              >
+                <DeleteOutlined />
+              </Popconfirm>
             </div>
           </Menu.Item>
         ))

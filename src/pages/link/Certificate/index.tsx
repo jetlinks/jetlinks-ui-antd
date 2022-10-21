@@ -102,14 +102,16 @@ const Certificate = () => {
           popConfirm={{
             title: '确认删除？',
             onConfirm: async () => {
-              await service.remove(record.id);
-              onlyMessage(
-                intl.formatMessage({
-                  id: 'pages.data.option.success',
-                  defaultMessage: '操作成功!',
-                }),
-              );
-              actionRef.current?.reload();
+              const res: any = await service.remove(record.id);
+              if (res.status === 200) {
+                onlyMessage(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
             },
           }}
           tooltip={{
