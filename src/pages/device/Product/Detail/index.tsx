@@ -17,7 +17,7 @@ import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { onlyMessage } from '@/utils/util';
+import { isNoCommunity, onlyMessage } from '@/utils/util';
 import Parsing from '../../Instance/Detail/Parsing';
 
 export const ModelEnum = {
@@ -157,11 +157,13 @@ const ProductDetail = observer(() => {
       productModel.current?.accessProvider &&
       pList.includes(productModel.current?.accessProvider)
     ) {
-      initList.push({
-        key: 'metadata-map',
-        tab: '物模型映射',
-        component: <MetadataMap type="product" />,
-      });
+      if (isNoCommunity) {
+        initList.push({
+          key: 'metadata-map',
+          tab: '物模型映射',
+          component: <MetadataMap type="product" />,
+        });
+      }
     }
     if (productModel.current?.messageProtocol) {
       const res = await service.getProtocolDetail(productModel.current?.messageProtocol);
