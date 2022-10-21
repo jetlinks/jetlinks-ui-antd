@@ -30,7 +30,7 @@ class Service extends BaseService<MenuItem> {
 
   // 更新全部菜单
   // updateMenus = (data: any) => request(`${this.uri}/_all`, { method: 'PATCH', data });
-  updateMenus = (data: any) => request(`${this.uri}`, { method: 'PATCH', data });
+  updateMenus = (data: any) => request(`${this.uri}/iot/_all`, { method: 'PATCH', data });
 
   getSystemPermission = () =>
     request(`${SystemConst.API_BASE}/system/resources/permission`, {

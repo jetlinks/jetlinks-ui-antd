@@ -407,7 +407,7 @@ const Configuration = () => {
               <PermissionButton
                 type="link"
                 tooltip={{
-                  title: record.state?.value === 'disabled' ? '删除' : '已启用，不能删除',
+                  title: record.state?.value === 'disabled' ? '删除' : '请先禁用该告警，再删除',
                 }}
                 disabled={record.state?.value !== 'disabled'}
                 popConfirm={{

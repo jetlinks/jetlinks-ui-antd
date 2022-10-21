@@ -534,9 +534,11 @@ const Instance = () => {
             popConfirm={{
               title: '已启用的设备无法删除，确认删除选中的禁用状态设备？',
               onConfirm: () => {
+                const array: any = [];
                 InstanceModel.selectedRows.forEach((value, key) => {
                   if (value !== 'notActive') {
                     InstanceModel.selectedRows.delete(key);
+                    array.push(key);
                   }
                 });
                 if (!InstanceModel.selectedRows.size) return;
@@ -544,6 +546,7 @@ const Instance = () => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
                     actionRef.current?.reset?.();
+                    setBindKeys(array);
                   }
                 });
               },
@@ -651,12 +654,24 @@ const Instance = () => {
         }
         rowKey="id"
         search={false}
+        tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
+        tableAlertOptionRender={() => {
+          return (
+            <a
+              onClick={() => {
+                setBindKeys([]);
+              }}
+            >
+              取消选择
+            </a>
+          );
+        }}
         pagination={{ pageSize: 10 }}
         rowSelection={{
           selectedRowKeys: bindKeys,
-          // onChange: (selectedRowKeys) => {
-          //   setBindKeys(selectedRowKeys);
-          // },
+          onChange: (selectedRowKeys) => {
+            setBindKeys(selectedRowKeys);
+          },
           onSelect: (record, selected) => {
             if (selected) {
               InstanceModel.selectedRows.set(record.id, record?.state?.value);
