@@ -329,10 +329,19 @@ const Instance = () => {
       hideInTable: true,
       request: () =>
         service.getProviders().then((resp: any) => {
-          return (resp?.result || []).map((item: any) => ({
-            label: item.name,
-            value: `accessProvider is ${item.id}`,
-          }));
+          return (resp?.result || [])
+            .filter((i: any) =>
+              [
+                'mqtt-server-gateway',
+                'http-server-gateway',
+                'mqtt-client-gateway',
+                'tcp-server-gateway',
+              ].includes(i.id),
+            )
+            .map((item: any) => ({
+              label: item.name,
+              value: `accessProvider is ${item.id}`,
+            }));
         }),
     },
     {
