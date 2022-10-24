@@ -191,6 +191,7 @@ export const getDetailNameByCode = {
 export const CommunityCodeList = [
   'account/Center',
   'account/NotificationSubscription',
+  'account/NotificationRecord',
   'system/Basis',
   'system/User',
   'system/Department',

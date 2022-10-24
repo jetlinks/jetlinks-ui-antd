@@ -55,7 +55,7 @@ const Reation = () => {
           </span>
         }
       >
-        {(data || [])?.map((item: any) => (
+        {(data.reverse() || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={item.relationName} key={item.objectId}>
             <Ellipsis
               title={item?.related ? _.map(item?.related || [], 'name').join(',') : ''}

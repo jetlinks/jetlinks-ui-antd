@@ -511,12 +511,12 @@ const DeviceBoard = () => {
             value={productTotal}
             footer={[
               {
-                title: '已发布',
+                title: '正常',
                 value: productPublish,
                 status: 'success',
               },
               {
-                title: '未发布',
+                title: '禁用',
                 value: productUnPublish,
                 status: 'error',
               },

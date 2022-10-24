@@ -294,12 +294,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.componentProps = { showTime: true, allowClear: true };
                   });
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                    state.value = 'gte';
+                    state.value = 'eq';
                   });
                   // console.log(isModified);
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'gte';
+                      state.value = 'eq';
                     });
                   }
 
