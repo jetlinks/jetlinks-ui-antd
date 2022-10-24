@@ -117,14 +117,15 @@ const UserManage = () => {
         search={false}
         tableAlertOptionRender={() => (
           <Space size={16}>
-            <a
-              onClick={() => {
+            <Popconfirm
+              title="确认解绑嘛"
+              onConfirm={() => {
                 setSelectedRowKeys([]);
                 unBindUser(params.id, [...selectedRowKeys]);
               }}
             >
-              批量解绑
-            </a>
+              <a>批量解绑</a>
+            </Popconfirm>
           </Space>
         )}
         columnEmptyText={''}
