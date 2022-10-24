@@ -47,6 +47,7 @@ const Bind = () => {
   };
 
   const getDetail = () => {
+    if (!localStorage.getItem('X-Access-Token')) return;
     service.getUserDetail().subscribe((res) => {
       setUser(res?.result);
     });
@@ -178,7 +179,7 @@ const Bind = () => {
   }, [window.location.href]);
 
   useEffect(() => {
-    if (isLogin === 'yes' && localStorage.getItem('X-Access-Token')) {
+    if (isLogin === 'yes') {
       getDetail();
     }
   }, [isLogin]);
