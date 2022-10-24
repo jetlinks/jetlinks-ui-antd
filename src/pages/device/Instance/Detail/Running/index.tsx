@@ -1,10 +1,10 @@
 import { InstanceModel } from '@/pages/device/Instance';
-import { Card, Input, Tabs } from 'antd';
+import { Card, Empty, Input, Tabs } from 'antd';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import Property from '@/pages/device/Instance/Detail/Running/Property';
 import Event from '@/pages/device/Instance/Detail/Running/Event';
 import { useEffect, useState } from 'react';
-import Empty from '@/pages/device/components/Empty';
+import Emptys from '@/pages/device/components/Empty';
 import { useDomFullHeight } from '@/hooks';
 
 const Running = () => {
@@ -46,7 +46,7 @@ const Running = () => {
             height: minHeight - 150,
           }}
         >
-          <Empty />
+          <Emptys />
         </div>
       ) : (
         <div className="tabs-full-active">
@@ -64,6 +64,7 @@ const Running = () => {
               </Tabs.TabPane>
             ))}
           </Tabs>
+          {list.length === 0 && <Empty description="暂无数据" style={{ marginTop: '10%' }} />}
         </div>
       )}
     </Card>
