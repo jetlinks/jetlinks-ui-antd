@@ -132,6 +132,10 @@ const PropertiesDefin: React.FC<Props> = props => {
       if (dataType === 'object') {
         data.valueType.properties = properties;
       }
+      if (dataType === 'array' && data.valueType.elementType.type === 'enum') {
+        data.valueType.elementType.elements = arrayEnumData;
+        console.log(data)
+      }
       if (dataType === 'array' && data.valueType.elementType.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
@@ -548,7 +552,7 @@ const PropertiesDefin: React.FC<Props> = props => {
       case 'array':
         return (
           <div>
-            <Form.Item label="元素类型">
+            <Form.Item label="元素类型11111">
               {getFieldDecorator('valueType.elementType.type', {
                 rules: [{ required: true, message: '请选择' }],
                 initialValue: initState.data.valueType?.elementType?.type,
