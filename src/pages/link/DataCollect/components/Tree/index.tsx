@@ -25,7 +25,12 @@ const TreeModel = model<{
   current: {},
 });
 interface Props {
-  change: (key: string, type: 'channel' | 'device', provider: 'OPC_UA' | 'MODBUS_TCP') => void;
+  change: (
+    key: string,
+    type: 'channel' | 'device',
+    provider: 'OPC_UA' | 'MODBUS_TCP',
+    data?: any,
+  ) => void;
 }
 
 export default observer((props: Props) => {
@@ -58,6 +63,7 @@ export default observer((props: Props) => {
       <div>
         <Input.Search
           placeholder="搜索"
+          allowClear
           onSearch={(val) => {
             TreeModel.param = {
               terms: [{ column: 'name', value: `%${val}%`, termType: 'like' }],
@@ -135,7 +141,7 @@ export default observer((props: Props) => {
                           className={styles.title}
                           onClick={() => {
                             TreeModel.selectedKeys = [i.id];
-                            props.change(i.id, 'device', item.provider);
+                            props.change(i.id, 'device', item.provider, i);
                           }}
                         >
                           <img width={'20px'} style={{ marginRight: 5 }} src={deviceImg} />

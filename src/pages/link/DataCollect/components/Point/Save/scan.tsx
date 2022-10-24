@@ -1,96 +1,141 @@
-import { Button, Modal, Transfer, Tree } from 'antd';
-import type { TransferDirection, TransferItem } from 'antd/es/transfer';
-import { DataNode } from 'antd/es/tree';
+import { Button, Empty, Modal, Transfer, Tree } from 'antd';
+import type { TransferDirection } from 'antd/es/transfer';
 import { useEffect, useState } from 'react';
+import service from '@/pages/link/DataCollect/service';
+import './scan.less';
+import { CloseOutlined } from '@ant-design/icons';
 
 interface Props {
-  // data: Partial<PointItem>;
+  channelId?: string;
   close: () => void;
   reload: () => void;
 }
 
 interface TreeTransferProps {
-  dataSource: DataNode[];
+  dataSource: any[];
   targetKeys: string[];
   onChange: (targetKeys: string[], direction: TransferDirection, moveKeys: string[]) => void;
+  channelId?: string;
 }
 
-const TreeTransfer = ({ dataSource, targetKeys, ...restProps }: TreeTransferProps) => {
-  const transferDataSource: TransferItem[] = [];
-  function flatten(list: DataNode[] = []) {
-    list.forEach((item) => {
-      transferDataSource.push(item as TransferItem);
-      flatten(item.children);
-    });
-  }
-  useEffect(() => {
-    flatten(dataSource);
-  }, [dataSource]);
+const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeTransferProps) => {
+  const [transferDataSource, setTransferDataSource] = useState<any[]>(dataSource);
 
-  // Customize Table Transfer
   const isChecked = (selectedKeys: (string | number)[], eventKey: string | number) =>
     selectedKeys.includes(eventKey);
 
-  const generateTree = (treeNodes: DataNode[] = [], checkedKeys: string[] = []): DataNode[] =>
+  const generateTree = (treeNodes: any[] = [], checkedKeys: string[] = []): any[] =>
     treeNodes.map(({ children, ...props }) => ({
       ...props,
       disabled: checkedKeys.includes(props.key as string),
       children: generateTree(children, checkedKeys),
     }));
 
-  // const queryTree = (treeNodes: DataNode[] = [], key: string) => {
-  //   treeNodes.forEach(item => {
-  //     if(item.key === key){
-  //       return item
-  //     }
-  //     if (item.children) {
-  //       return queryTree(item.children)
-  //     }
-  //     return {}
-  //   })
-  //   return {}
-  // }
-  //
-  // const generateTargetTree = (treeNodes: DataNode[] = []) => {
-  //   return targetKeys.map(item => {
-  //     const obj = {}
-  //     const obj = treeNodes.find(i => item === i.key)
-  //     return obj
-  //   })
-  // }
+  const queryDataByID = (list: any[] = [], key: string): any => {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].key === key) {
+        return list[i];
+      }
+      if (list[i].children) {
+        return queryDataByID(list[i].children, key);
+      }
+    }
+  };
 
-  console.log(targetKeys);
+  const generateTargetTree = (treeNodes: any[] = []): any[] => {
+    return treeNodes.map((item) => queryDataByID(transferDataSource, item));
+  };
+
+  const updateTreeData = (list: any[], key: React.Key, children: any[]): any[] =>
+    list.map((node) => {
+      if (node.key === key) {
+        return {
+          ...node,
+          children,
+        };
+      }
+      if (node.children) {
+        return {
+          ...node,
+          children: updateTreeData(node.children, key, children),
+        };
+      }
+      return node;
+    });
+
+  const onLoadData = ({ key, children }: any) =>
+    new Promise<void>(async (resolve) => {
+      if (children) {
+        resolve();
+        return;
+      }
+      const resp = await service.scanOpcUAList({
+        id: channelId,
+        nodeId: key,
+      });
+      if (resp.status === 200) {
+        setTransferDataSource((origin) => updateTreeData(origin, key, resp.result));
+      }
+      resolve();
+    });
 
   return (
     <Transfer
       {...restProps}
       targetKeys={targetKeys}
       dataSource={transferDataSource}
-      className="tree-transfer"
       render={(item) => item.title!}
       showSelectAll={false}
+      titles={['源数据', '目标数据']}
+      oneWay
     >
-      {({ direction, onItemSelect, selectedKeys }) => {
+      {({ direction, onItemSelect, selectedKeys, onItemRemove }) => {
         if (direction === 'left') {
           const checkedKeys = [...selectedKeys, ...targetKeys];
           return (
-            <Tree
-              blockNode
-              checkable
-              checkStrictly
-              defaultExpandAll
-              checkedKeys={checkedKeys}
-              treeData={generateTree(dataSource, targetKeys)}
-              onCheck={(_, { node: { key } }) => {
-                onItemSelect(key as string, !isChecked(checkedKeys, key));
-              }}
-              onSelect={(_, { node: { key } }) => {
-                onItemSelect(key as string, !isChecked(checkedKeys, key));
-              }}
-            />
+            <div style={{ margin: '10px 0' }}>
+              <Tree
+                blockNode
+                checkable
+                checkStrictly
+                checkedKeys={checkedKeys}
+                height={250}
+                treeData={generateTree(dataSource, targetKeys)}
+                onCheck={(_, { node: { key } }) => {
+                  onItemSelect(key as string, !isChecked(checkedKeys, key));
+                }}
+                onSelect={(_, { node: { key } }) => {
+                  onItemSelect(key as string, !isChecked(checkedKeys, key));
+                }}
+                loadData={onLoadData}
+              />
+            </div>
           );
         } else {
-          return <Tree blockNode defaultExpandAll treeData={[]} />;
+          if (targetKeys.length) {
+            return (
+              <div>
+                {generateTargetTree(targetKeys).map((item) => {
+                  return (
+                    <div className={'right-item'} key={item.key}>
+                      <div>{item.title || item.key}</div>
+                      <div>
+                        <CloseOutlined
+                          onClick={() => {
+                            if (onItemRemove) {
+                              onItemRemove([item.key]);
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          } else {
+            return <Empty style={{ marginTop: 10 }} />;
+          }
         }
       }}
     </Transfer>
@@ -99,22 +144,32 @@ const TreeTransfer = ({ dataSource, targetKeys, ...restProps }: TreeTransferProp
 
 export default (props: Props) => {
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
+  const [treeData, setTreeData] = useState<any[]>([]);
+  // const [treeData, setTreeData] = useState<any[]>([]);
   const onChange = (keys: string[]) => {
     setTargetKeys(keys);
   };
 
-  const treeData: DataNode[] = [
-    { key: '0-0', title: '0-0' },
-    {
-      key: '0-1',
-      title: '0-1',
-      children: [
-        { key: '0-1-0', title: '0-1-0' },
-        { key: '0-1-1', title: '0-1-1' },
-      ],
-    },
-    { key: '0-2', title: '0-3' },
-  ];
+  useEffect(() => {
+    if (props.channelId) {
+      service
+        .scanOpcUAList({
+          id: props.channelId,
+        })
+        .then((resp) => {
+          if (resp.status === 200) {
+            const list = resp.result.map((item: any) => {
+              return {
+                ...item,
+                key: item.id,
+                title: item.name,
+              };
+            });
+            setTreeData(list);
+          }
+        });
+    }
+  }, [props.channelId]);
 
   return (
     <Modal
@@ -138,7 +193,12 @@ export default (props: Props) => {
         </Button>,
       ]}
     >
-      <TreeTransfer dataSource={treeData} targetKeys={targetKeys} onChange={onChange} />;
+      <TreeTransfer
+        channelId={props.channelId}
+        dataSource={treeData}
+        targetKeys={targetKeys}
+        onChange={onChange}
+      />
     </Modal>
   );
 };

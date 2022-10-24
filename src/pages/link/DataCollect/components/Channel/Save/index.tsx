@@ -243,12 +243,12 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入用户名',
             },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入用户名',
-              },
-            ],
+            // 'x-validator': [
+            //   {
+            //     required: true,
+            //     message: '请输入用户名',
+            //   },
+            // ],
             'x-reactions': {
               dependencies: ['..provider'],
               fulfill: {
@@ -268,12 +268,12 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入密码',
             },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入密码',
-              },
-            ],
+            // 'x-validator': [
+            //   {
+            //     required: true,
+            //     message: '请输入密码',
+            //   },
+            // ],
             'x-reactions': {
               dependencies: ['..provider'],
               fulfill: {

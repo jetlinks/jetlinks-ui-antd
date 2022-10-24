@@ -43,6 +43,7 @@ class Service extends BaseService<NotifitionSubscriptionItem> {
     request(`/${SystemConst.API_BASE}/alarm/config/_query/no-paging`, {
       method: 'POST',
       data: {
+        sorts: [{ name: 'createTime', order: 'desc' }],
         paging: false,
       },
     }).then((resp: any) => {

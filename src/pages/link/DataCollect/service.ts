@@ -94,6 +94,19 @@ class Service {
       method: 'POST',
       data: params,
     });
+  public scanOpcUAList = (params: any) =>
+    request(
+      `/${SystemConst.API_BASE}/data-collect/opc/channel/${params.id}/nodes?nodeId=${
+        params?.nodeId || ''
+      }`,
+      {
+        method: 'GET',
+      },
+    );
+  public queryCodecProvider = () =>
+    request(`/${SystemConst.API_BASE}/things/collector/codecs`, {
+      method: 'GET',
+    });
 }
 
 const service = new Service();

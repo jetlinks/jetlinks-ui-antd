@@ -3,11 +3,20 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
-import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
+import {
+  Form,
+  FormGrid,
+  FormItem,
+  Input,
+  Select,
+  NumberPicker,
+  Password,
+  Checkbox,
+} from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-// import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/link/DataCollect/service';
 import { PermissionButton } from '@/components';
-// import { onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   data: Partial<PointItem>;
@@ -36,6 +45,7 @@ export default (props: Props) => {
       NumberPicker,
       Password,
       FormGrid,
+      Checkbox,
     },
     scope: {
       icon(name: any) {
@@ -232,11 +242,25 @@ export default (props: Props) => {
                 width: '100%',
               },
             },
-            enum: [],
             'x-validator': [
               {
                 required: true,
                 message: '请输入采集频率',
+              },
+            ],
+          },
+          features: {
+            title: '采集特性',
+            type: 'array',
+            'x-component': 'Checkbox.Group',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            enum: [
+              {
+                label: '只推送变化的数据',
+                value: 'changedOnly',
               },
             ],
           },
@@ -246,18 +270,14 @@ export default (props: Props) => {
   };
 
   const save = async () => {
-    // const value = await form.submit<ProtocolItem>();
-    // const response: any = props.data?.id
-    //   ? await service.savePatch({ ...props.data, ...value })
-    //   : await service.save({ ...props.data, ...value });
-    // if (response && response?.status === 200) {
-    //   onlyMessage('操作成功');
-    //   props.reload();
-    //   if ((window as any).onTabSaveSuccess) {
-    //     (window as any).onTabSaveSuccess(response);
-    //     setTimeout(() => window.close(), 300);
-    //   }
-    // }
+    const value = await form.submit<PointItem>();
+    const response: any = props.data?.id
+      ? await service.updatePoint(props.data?.id, { ...props.data, ...value })
+      : await service.savePoint({ ...props.data, ...value });
+    if (response && response?.status === 200) {
+      onlyMessage('操作成功');
+      props.reload();
+    }
   };
 
   return (

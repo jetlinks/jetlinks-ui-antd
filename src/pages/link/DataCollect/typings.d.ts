@@ -30,8 +30,8 @@ type PointItem = {
     maxConsecutiveErrors?: string;
   };
   features?: string[];
-  accessModes: string[];
-  configuration: ModbusItem | OpcuaItem;
+  accessModes: any[];
+  configuration: any; //ModbusItem | OpcuaItem;
   state?: {
     text: string;
     value: string;
