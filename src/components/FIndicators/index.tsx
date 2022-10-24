@@ -120,10 +120,10 @@ const FIndicators = (props: Props) => {
         <>
           <Input
             value={value?.value ? value?.value[0] : ''}
-            onChange={(val) => {
+            onChange={(e) => {
               onChange({
                 ...value,
-                value: [val, value?.value && value?.value[1]],
+                value: [e.target.value, value?.value && value?.value[1]],
               });
             }}
           />
@@ -132,10 +132,10 @@ const FIndicators = (props: Props) => {
               ~
               <Input
                 value={value?.value ? value?.value[1] : ''}
-                onChange={(val) => {
+                onChange={(e) => {
                   onChange({
                     ...value,
-                    value: [value?.value && value?.value[0], val],
+                    value: [value?.value && value?.value[0], e.target.value],
                   });
                 }}
               />

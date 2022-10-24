@@ -606,12 +606,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     _terms.terms1 = filterTerms(_terms.terms1);
     _terms.terms2 = filterTerms(_terms.terms2);
     const _temp = formatValue(_terms);
+    uiParamRef.current = ui2Server(value);
     if (
       (_terms.terms1 && _terms.terms1.length > 1) ||
       (_terms.terms2 && _terms.terms2.length > 1)
     ) {
       // 展开高级搜索
-      uiParamRef.current = ui2Server(value);
       setExpand(false);
       handleForm(true);
     }
