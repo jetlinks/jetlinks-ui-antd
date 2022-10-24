@@ -178,7 +178,7 @@ const Bind = () => {
   }, [window.location.href]);
 
   useEffect(() => {
-    if (isLogin === 'yes') {
+    if (isLogin === 'yes' && Token.get()) {
       getDetail();
     }
   }, [isLogin]);
