@@ -178,7 +178,7 @@ const Bind = () => {
   }, [window.location.href]);
 
   useEffect(() => {
-    if (isLogin === 'yes' && Token.get()) {
+    if (isLogin === 'yes' && localStorage.getItem('X-Access-Token')) {
       getDetail();
     }
   }, [isLogin]);
