@@ -15,7 +15,6 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { action } from '@formily/reactive';
 
@@ -26,7 +25,6 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const { permission } = PermissionButton.usePermission('link/Protocol');
   const [data, setData] = useState<Partial<PointItem>>(props.data);
 
   useEffect(() => {
@@ -113,7 +111,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择数据类型',
             },
-            'x-reactions': '{{useAsyncDataSource(getSecurityPolicyList)}}',
+            'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
             'x-validator': [
               {
                 required: true,
@@ -213,7 +211,6 @@ export default (props: Props) => {
           onClick={() => {
             saveData();
           }}
-          disabled={props.data?.id ? !permission.update : !permission.add}
         >
           确定
         </Button>,

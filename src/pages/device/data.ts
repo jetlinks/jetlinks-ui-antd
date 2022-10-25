@@ -1,3 +1,5 @@
+import { isNoCommunity } from '@/utils/util';
+
 export const DataTypeList: { label: string; value: string }[] = [
   {
     value: 'int',
@@ -53,20 +55,31 @@ export const DataTypeList: { label: string; value: string }[] = [
   },
 ];
 
-export const PropertySource: { label: string; value: string }[] = [
-  {
-    value: 'device',
-    label: '设备',
-  },
-  {
-    value: 'manual',
-    label: '手动',
-  },
-  {
-    value: 'rule',
-    label: '规则',
-  },
-];
+export const PropertySource: { label: string; value: string }[] = isNoCommunity
+  ? [
+      {
+        value: 'device',
+        label: '设备',
+      },
+      {
+        value: 'manual',
+        label: '手动',
+      },
+      {
+        value: 'rule',
+        label: '规则',
+      },
+    ]
+  : [
+      {
+        value: 'device',
+        label: '设备',
+      },
+      {
+        value: 'manual',
+        label: '手动',
+      },
+    ];
 
 export const FileTypeList: { label: string; value: string }[] = [
   {

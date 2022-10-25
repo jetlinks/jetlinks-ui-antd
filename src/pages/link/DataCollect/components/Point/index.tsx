@@ -1,7 +1,7 @@
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDomFullHeight } from '@/hooks';
 import service from '@/pages/link/DataCollect/service';
 import CollectorCard from './CollectorCard/index';
@@ -10,6 +10,8 @@ import { Card, Col, Pagination, Row } from 'antd';
 import { model } from '@formily/reactive';
 import ModbusSave from '@/pages/link/DataCollect/components/Point/Save/modbus';
 import Scan from '@/pages/link/DataCollect/components/Point/Save/scan';
+import { map } from 'rxjs/operators';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
@@ -28,12 +30,14 @@ const PointModel = model<{
 });
 
 export default observer((props: Props) => {
+  const [subscribeTopic] = useSendWebsocketMessage();
   const { minHeight } = useDomFullHeight(`.data-collect-point`, 24);
   const [param, setParam] = useState({
     terms: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
   const { permission } = PermissionButton.usePermission('device/Instance');
+  const [propertyValue, setPropertyValue] = useState<any>({});
   const [dataSource, setDataSource] = useState<any>({
     data: [],
     pageSize: 10,
@@ -81,6 +85,21 @@ export default observer((props: Props) => {
       },
     },
   ];
+
+  const subRef = useRef<any>(null);
+
+  const subscribeProperty = (list: any) => {
+    const id = `collector-${props.data?.channelId}-${props.data?.id}-data-${list.join('-')}`;
+    const topic = `/collector/${props.data?.channelId}/${props.data?.id}/data`;
+    subRef.current = subscribeTopic!(id, topic, {
+      pointId: list.join(','),
+    })
+      ?.pipe(map((res) => res.payload))
+      .subscribe((payload: any) => {
+        propertyValue[payload?.pointId] = { ...payload };
+        setPropertyValue([...propertyValue]);
+      });
+  };
   const handleSearch = (params: any) => {
     setLoading(true);
     setParam(params);
@@ -98,6 +117,7 @@ export default observer((props: Props) => {
       .then((resp) => {
         if (resp.status === 200) {
           setDataSource(resp.result);
+          subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
         }
         setLoading(false);
       });
@@ -106,6 +126,13 @@ export default observer((props: Props) => {
   useEffect(() => {
     handleSearch(param);
   }, [props.data?.id]);
+
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      subRef.current && subRef.current?.unsubscribe();
+    };
+  }, []);
 
   return (
     <div>
@@ -149,6 +176,7 @@ export default observer((props: Props) => {
                     <Col key={record.id} span={12}>
                       <CollectorCard
                         item={record}
+                        wsValue={propertyValue[record.id]}
                         reload={() => {
                           handleSearch(param);
                         }}
@@ -214,7 +242,7 @@ export default observer((props: Props) => {
           close={() => {
             PointModel.p_add_visible = false;
           }}
-          channelId={props.data?.channelId}
+          collector={props.data}
           reload={() => {
             PointModel.p_add_visible = false;
             handleSearch(param);

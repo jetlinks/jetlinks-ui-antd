@@ -1,12 +1,14 @@
-import { Button, Empty, Modal, Transfer, Tree } from 'antd';
+import { Button, Empty, Modal, Spin, Transfer, Tree } from 'antd';
 import type { TransferDirection } from 'antd/es/transfer';
 import { useEffect, useState } from 'react';
 import service from '@/pages/link/DataCollect/service';
 import './scan.less';
 import { CloseOutlined } from '@ant-design/icons';
+import { Ellipsis } from '@/components';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
-  channelId?: string;
+  collector?: any;
   close: () => void;
   reload: () => void;
 }
@@ -16,10 +18,21 @@ interface TreeTransferProps {
   targetKeys: string[];
   onChange: (targetKeys: string[], direction: TransferDirection, moveKeys: string[]) => void;
   channelId?: string;
+  arrChange: (arr: any[]) => void;
 }
 
-const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeTransferProps) => {
+const TreeTransfer = ({
+  dataSource,
+  targetKeys,
+  channelId,
+  arrChange,
+  ...restProps
+}: TreeTransferProps) => {
   const [transferDataSource, setTransferDataSource] = useState<any[]>(dataSource);
+
+  useEffect(() => {
+    setTransferDataSource([...dataSource]);
+  }, [dataSource]);
 
   const isChecked = (selectedKeys: (string | number)[], eventKey: string | number) =>
     selectedKeys.includes(eventKey);
@@ -27,7 +40,7 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
   const generateTree = (treeNodes: any[] = [], checkedKeys: string[] = []): any[] =>
     treeNodes.map(({ children, ...props }) => ({
       ...props,
-      disabled: checkedKeys.includes(props.key as string),
+      disabled: checkedKeys.includes(props.key as string) || props?.folder,
       children: generateTree(children, checkedKeys),
     }));
 
@@ -43,18 +56,19 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
   };
 
   const generateTargetTree = (treeNodes: any[] = []): any[] => {
-    return treeNodes.map((item) => queryDataByID(transferDataSource, item));
+    const arr = treeNodes.map((item) => queryDataByID(transferDataSource, item));
+    return arr;
   };
 
-  const updateTreeData = (list: any[], key: React.Key, children: any[]): any[] =>
-    list.map((node) => {
+  const updateTreeData = (list: any[], key: string, children: any[]): any[] => {
+    const arr = list.map((node) => {
       if (node.key === key) {
         return {
           ...node,
           children,
         };
       }
-      if (node.children) {
+      if (node?.children && node.children.length) {
         return {
           ...node,
           children: updateTreeData(node.children, key, children),
@@ -62,19 +76,35 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
       }
       return node;
     });
+    return arr;
+  };
 
-  const onLoadData = ({ key, children }: any) =>
+  useEffect(() => {
+    arrChange(generateTargetTree(targetKeys));
+  }, [targetKeys]);
+
+  const onLoadData = (node: any) =>
     new Promise<void>(async (resolve) => {
-      if (children) {
+      if (node.children.length || !node?.folder) {
         resolve();
         return;
       }
       const resp = await service.scanOpcUAList({
         id: channelId,
-        nodeId: key,
+        nodeId: node.key,
       });
       if (resp.status === 200) {
-        setTransferDataSource((origin) => updateTreeData(origin, key, resp.result));
+        const list = resp.result.map((item: any) => {
+          return {
+            ...item,
+            key: item.id,
+            title: item.name,
+            disabled: item?.folder,
+            isLeaf: !item?.folder,
+          };
+        });
+        const arr = updateTreeData(transferDataSource, node.key, [...list]);
+        setTransferDataSource([...arr]);
       }
       resolve();
     });
@@ -84,7 +114,7 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
       {...restProps}
       targetKeys={targetKeys}
       dataSource={transferDataSource}
-      render={(item) => item.title!}
+      render={(item) => item?.title}
       showSelectAll={false}
       titles={['源数据', '目标数据']}
       oneWay
@@ -93,14 +123,14 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
         if (direction === 'left') {
           const checkedKeys = [...selectedKeys, ...targetKeys];
           return (
-            <div style={{ margin: '10px 0' }}>
+            <div style={{ margin: '10px' }}>
               <Tree
                 blockNode
                 checkable
                 checkStrictly
                 checkedKeys={checkedKeys}
                 height={250}
-                treeData={generateTree(dataSource, targetKeys)}
+                treeData={generateTree(transferDataSource, targetKeys)}
                 onCheck={(_, { node: { key } }) => {
                   onItemSelect(key as string, !isChecked(checkedKeys, key));
                 }}
@@ -118,8 +148,10 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
                 {generateTargetTree(targetKeys).map((item) => {
                   return (
                     <div className={'right-item'} key={item.key}>
-                      <div>{item.title || item.key}</div>
-                      <div>
+                      <div style={{ width: 'calc(100% - 30px)' }}>
+                        <Ellipsis title={item?.title || item.key} />
+                      </div>
+                      <div style={{ width: 20, marginLeft: 10 }}>
                         <CloseOutlined
                           onClick={() => {
                             if (onItemRemove) {
@@ -145,16 +177,19 @@ const TreeTransfer = ({ dataSource, targetKeys, channelId, ...restProps }: TreeT
 export default (props: Props) => {
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
-  // const [treeData, setTreeData] = useState<any[]>([]);
-  const onChange = (keys: string[]) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [spinning, setSpinning] = useState<boolean>(false);
+  const [arr, setArr] = useState<any[]>([]);
+  const onChange = (keys: any[]) => {
     setTargetKeys(keys);
   };
 
   useEffect(() => {
-    if (props.channelId) {
+    if (props.collector?.channelId) {
+      setLoading(true);
       service
         .scanOpcUAList({
-          id: props.channelId,
+          id: props.collector?.channelId,
         })
         .then((resp) => {
           if (resp.status === 200) {
@@ -163,13 +198,15 @@ export default (props: Props) => {
                 ...item,
                 key: item.id,
                 title: item.name,
+                disabled: item?.folder,
               };
             });
             setTreeData(list);
           }
+          setLoading(false);
         });
     }
-  }, [props.channelId]);
+  }, [props.collector?.channelId]);
 
   return (
     <Modal
@@ -185,20 +222,41 @@ export default (props: Props) => {
         <Button
           type="primary"
           key={2}
-          onClick={() => {
-            // save();
+          loading={spinning}
+          onClick={async () => {
+            const list = arr.map((item) => {
+              return {
+                id: item.key,
+                name: item.title,
+                type: item.type,
+              };
+            });
+            setSpinning(true);
+            const resp = await service.savePointBatch(props.collector?.id, props.collector?.name, [
+              ...list,
+            ]);
+            if (resp.status === 200) {
+              onlyMessage('操作成功');
+              props.reload();
+            }
+            setSpinning(false);
           }}
         >
           确定
         </Button>,
       ]}
     >
-      <TreeTransfer
-        channelId={props.channelId}
-        dataSource={treeData}
-        targetKeys={targetKeys}
-        onChange={onChange}
-      />
+      <Spin spinning={loading}>
+        <TreeTransfer
+          channelId={props.collector?.channelId}
+          dataSource={treeData}
+          targetKeys={targetKeys}
+          onChange={onChange}
+          arrChange={(li) => {
+            setArr(li);
+          }}
+        />
+      </Spin>
     </Modal>
   );
 };
