@@ -55,7 +55,7 @@ const Detail = (props: Props) => {
           {data?.description || ''}
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
-          {data?.alarmInfo || ''}
+          {JSON.stringify(props.data?.detailJson || '') || ''}
         </Descriptions.Item>
       </Descriptions>
     </Modal>
