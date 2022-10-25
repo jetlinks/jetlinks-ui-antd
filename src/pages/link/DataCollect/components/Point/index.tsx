@@ -4,28 +4,25 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useState } from 'react';
 import { useDomFullHeight } from '@/hooks';
 import service from '@/pages/link/DataCollect/service';
-import CollectorCard from '@/components/ProTableCard/CardItems/DataCollect/device';
+import CollectorCard from './CollectorCard/index';
 import { Empty, PermissionButton } from '@/components';
 import { Card, Col, Pagination, Row } from 'antd';
 import { model } from '@formily/reactive';
 import ModbusSave from '@/pages/link/DataCollect/components/Point/Save/modbus';
-import OpcUASave from '@/pages/link/DataCollect/components/Point/Save/opc-ua';
 import Scan from '@/pages/link/DataCollect/components/Point/Save/scan';
 
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
-  id?: Partial<string>;
+  data?: Partial<CollectorItem>;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
 const PointModel = model<{
   m_visible: boolean;
-  p_visible: boolean;
   p_add_visible: boolean;
   current: Partial<PointItem>;
 }>({
   m_visible: false,
-  p_visible: false,
   p_add_visible: false,
   current: {},
 });
@@ -48,15 +45,40 @@ export default observer((props: Props) => {
     {
       title: 'ID',
       dataIndex: 'id',
-      width: 100,
-      ellipsis: true,
-      fixed: 'left',
     },
     {
       title: '名称',
       dataIndex: 'name',
-      ellipsis: true,
-      width: 200,
+    },
+    {
+      title: '通讯协议',
+      dataIndex: 'provider',
+      valueType: 'select',
+      valueEnum: {
+        OPC_UA: {
+          text: 'OPC_UA',
+          status: 'OPC_UA',
+        },
+        MODBUS_TCP: {
+          text: 'MODBUS_TCP',
+          status: 'MODBUS_TCP',
+        },
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      valueType: 'select',
+      valueEnum: {
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
+        disabled: {
+          text: '禁用',
+          status: 'disabled',
+        },
+      },
     },
   ];
   const handleSearch = (params: any) => {
@@ -68,7 +90,7 @@ export default observer((props: Props) => {
         terms: [
           ...params?.terms,
           {
-            terms: [{ column: 'collectorId', value: props.id }],
+            terms: [{ column: 'collectorId', value: props.data?.id }],
           },
         ],
         sorts: [{ name: 'createTime', order: 'desc' }],
@@ -83,7 +105,7 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(param);
-  }, [props.id]);
+  }, [props.data?.id]);
 
   return (
     <div>
@@ -120,12 +142,17 @@ export default observer((props: Props) => {
                 </PermissionButton>
               </div>
             )}
-            {dataSource?.data.length > 0 ? (
+            {dataSource?.data.length ? (
               <>
                 <Row gutter={[18, 18]} style={{ marginTop: 10 }}>
                   {(dataSource?.data || []).map((record: any) => (
-                    <Col key={record.id} span={props.type ? 8 : 12}>
-                      <CollectorCard {...record} />
+                    <Col key={record.id} span={12}>
+                      <CollectorCard
+                        item={record}
+                        reload={() => {
+                          handleSearch(param);
+                        }}
+                      />
                     </Col>
                   ))}
                 </Row>
@@ -182,24 +209,12 @@ export default observer((props: Props) => {
           }}
         />
       )}
-      {PointModel.p_visible && (
-        <OpcUASave
-          data={PointModel.current}
-          // channelId={props.id}
-          close={() => {
-            PointModel.p_visible = false;
-          }}
-          reload={() => {
-            PointModel.p_visible = false;
-            handleSearch(param);
-          }}
-        />
-      )}
       {PointModel.p_add_visible && (
         <Scan
           close={() => {
             PointModel.p_add_visible = false;
           }}
+          channelId={props.data?.channelId}
           reload={() => {
             PointModel.p_add_visible = false;
             handleSearch(param);

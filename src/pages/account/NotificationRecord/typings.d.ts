@@ -9,4 +9,5 @@ type NotifitionRecord = {
   subscriberType: string;
   topicName: string;
   dataId: string;
+  detailJson: string;
 };

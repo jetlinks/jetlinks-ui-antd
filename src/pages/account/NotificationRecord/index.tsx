@@ -76,11 +76,18 @@ const NotificationRecord = observer(() => {
       },
       valueType: 'select',
       request: () =>
-        service.getProvidersList().then((resp: any) =>
-          resp.map((item: any) => ({
-            label: item.label,
-            value: item.value,
-          })),
+        service.getProvidersList().then(
+          (resp: any) =>
+            resp
+              .filter((items: any) => items.value === 'alarm')
+              .map((item: any) => ({
+                label: item.label,
+                value: item.value,
+              })),
+          // resp.map((item: any) => ({
+          //   label: item.label,
+          //   value: item.value,
+          // })),
         ),
     },
     {

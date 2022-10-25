@@ -90,7 +90,7 @@ const Dashboard = observer(() => {
     params: {
       time: '1d',
       format: 'yyyy-MM-dd',
-      targetType: 'product',
+      // targetType: 'product',
       from: 'now-15d',
       to: 'now',
       limit: 15,

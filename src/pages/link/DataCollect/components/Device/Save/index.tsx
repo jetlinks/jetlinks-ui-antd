@@ -88,6 +88,14 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入从机地址',
             },
+            'x-reactions': {
+              dependencies: ['..provider'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="MODBUS_TCP"}}',
+                },
+              },
+            },
             'x-validator': [
               {
                 required: true,

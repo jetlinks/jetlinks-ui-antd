@@ -1,13 +1,23 @@
 import { Button, Modal } from 'antd';
-import { createForm } from '@formily/core';
+import { createForm, Field } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
-import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
+import {
+  Form,
+  FormGrid,
+  FormItem,
+  Input,
+  Select,
+  NumberPicker,
+  Password,
+  Checkbox,
+} from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-// import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/link/DataCollect/service';
 import { PermissionButton } from '@/components';
-// import { onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
+import { action } from '@formily/reactive';
 
 interface Props {
   data: Partial<PointItem>;
@@ -36,6 +46,7 @@ export default (props: Props) => {
       NumberPicker,
       Password,
       FormGrid,
+      Checkbox,
     },
     scope: {
       icon(name: any) {
@@ -43,6 +54,21 @@ export default (props: Props) => {
       },
     },
   });
+
+  const getCodecProvider = () => service.queryCodecProvider();
+
+  const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
+    field.loading = true;
+    services(field).then(
+      action.bound!((resp: any) => {
+        field.dataSource = (resp?.result || []).map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
 
   const schema: ISchema = {
     type: 'object',
@@ -87,7 +113,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择数据类型',
             },
-            enum: [],
+            'x-reactions': '{{useAsyncDataSource(getSecurityPolicyList)}}',
             'x-validator': [
               {
                 required: true,
@@ -132,11 +158,25 @@ export default (props: Props) => {
                 width: '100%',
               },
             },
-            enum: [],
             'x-validator': [
               {
                 required: true,
                 message: '请输入采集频率',
+              },
+            ],
+          },
+          features: {
+            title: '采集特性',
+            type: 'array',
+            'x-component': 'Checkbox.Group',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            enum: [
+              {
+                label: '只推送变化的数据',
+                value: 'changedOnly',
               },
             ],
           },
@@ -145,19 +185,15 @@ export default (props: Props) => {
     },
   };
 
-  const save = async () => {
-    // const value = await form.submit<ProtocolItem>();
-    // const response: any = props.data?.id
-    //   ? await service.savePatch({ ...props.data, ...value })
-    //   : await service.save({ ...props.data, ...value });
-    // if (response && response?.status === 200) {
-    //   onlyMessage('操作成功');
-    //   props.reload();
-    //   if ((window as any).onTabSaveSuccess) {
-    //     (window as any).onTabSaveSuccess(response);
-    //     setTimeout(() => window.close(), 300);
-    //   }
-    // }
+  const saveData = async () => {
+    const value = await form.submit<PointItem>();
+    const response: any = props.data?.id
+      ? await service.updatePoint(props.data?.id, { ...props.data, ...value })
+      : await service.savePoint({ ...props.data, ...value });
+    if (response && response?.status === 200) {
+      onlyMessage('操作成功');
+      props.reload();
+    }
   };
 
   return (
@@ -175,7 +211,7 @@ export default (props: Props) => {
           type="primary"
           key={2}
           onClick={() => {
-            save();
+            saveData();
           }}
           disabled={props.data?.id ? !permission.update : !permission.add}
         >
@@ -184,7 +220,7 @@ export default (props: Props) => {
       ]}
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} />
+        <SchemaField schema={schema} scope={{ useAsyncDataSource, getCodecProvider }} />
       </Form>
     </Modal>
   );

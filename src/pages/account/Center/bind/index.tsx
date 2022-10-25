@@ -39,14 +39,17 @@ const Bind = () => {
     });
   };
   const goRedirect = () => {
-    const url = window.location.href.split('redirect=')?.[1];
-    console.log(url);
-    if (url) {
-      window.location.href = url;
+    const urlParams = new URLSearchParams(window.location.hash);
+    const redirectUrl = urlParams.get('redirect');
+    // const url = window.location.href.split('redirect=')?.[1];
+    console.log(redirectUrl);
+    if (redirectUrl) {
+      window.location.href = redirectUrl;
     }
   };
 
   const getDetail = () => {
+    if (!localStorage.getItem('X-Access-Token')) return;
     service.getUserDetail().subscribe((res) => {
       setUser(res?.result);
     });
