@@ -40,7 +40,7 @@ const Bind = () => {
   };
   const goRedirect = () => {
     const urlParams = new URLSearchParams(window.location.hash);
-    const redirectUrl = urlParams.get('redirect');
+    const redirectUrl = urlParams.get('redirect') || window.location.href.split('redirect=')?.[1];
     // const url = window.location.href.split('redirect=')?.[1];
     console.log(redirectUrl);
     if (redirectUrl) {

@@ -137,6 +137,12 @@ export enum MENUS_CODE {
   'system/Apply/Api' = 'system/Apply/Api',
   'system/Apply/View' = 'system/Apply/View',
   'system/License' = 'system/License',
+  'iot-card/Home' = 'iot-card/Home',
+  'iot-card/Platform' = 'iot-card/Platform',
+  'iot-card/Recharge' = 'iot-card/Recharge',
+  'iot-card/Dashboard' = 'iot-card/Dashboard',
+  'iot-card/CardManagement' = 'iot-card/CardManagement',
+  'iot-card/Record' = 'iot-card/Record',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;
