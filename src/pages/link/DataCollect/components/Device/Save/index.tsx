@@ -6,7 +6,6 @@ import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 
 interface Props {
@@ -17,7 +16,6 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const { permission } = PermissionButton.usePermission('link/Protocol');
   const [data, setData] = useState<Partial<ChannelItem>>(props.data);
 
   useEffect(() => {
@@ -195,7 +193,6 @@ export default (props: Props) => {
           onClick={() => {
             save();
           }}
-          disabled={props.data?.id ? !permission.update : !permission.add}
         >
           确定
         </Button>,

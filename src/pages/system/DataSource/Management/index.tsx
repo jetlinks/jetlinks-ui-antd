@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Card, Input, message, Spin, Tooltip, Tree, Empty } from 'antd';
+import { Card, Input, message, Spin, Tooltip, Tree } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/system/DataSource';
 import { useLocation } from 'umi';
@@ -10,6 +10,7 @@ import EditTable from './EditTable';
 import _ from 'lodash';
 import { useDomFullHeight } from '@/hooks';
 import { Store } from 'jetlinks-store';
+import { Empty } from '@/components';
 
 const Management = () => {
   const location = useLocation<{ id: string }>();
@@ -154,7 +155,7 @@ const Management = () => {
               </div>
             </div>
             <div className={styles.right}>
-              {defaultSelectedKeys.length > 0 ? (
+              {defaultSelectedKeys.length && !!defaultSelectedKeys[0] ? (
                 <EditTable
                   table={{ id, table: defaultSelectedKeys[0] }}
                   data={tableList}

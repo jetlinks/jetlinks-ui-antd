@@ -178,6 +178,7 @@ export default (props: Props) => {
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [spinning, setSpinning] = useState<boolean>(false);
   const [arr, setArr] = useState<any[]>([]);
   const onChange = (keys: any[]) => {
     setTargetKeys(keys);
@@ -221,6 +222,7 @@ export default (props: Props) => {
         <Button
           type="primary"
           key={2}
+          loading={spinning}
           onClick={async () => {
             const list = arr.map((item) => {
               return {
@@ -229,6 +231,7 @@ export default (props: Props) => {
                 type: item.type,
               };
             });
+            setSpinning(true);
             const resp = await service.savePointBatch(props.collector?.id, props.collector?.name, [
               ...list,
             ]);
@@ -236,6 +239,7 @@ export default (props: Props) => {
               onlyMessage('操作成功');
               props.reload();
             }
+            setSpinning(false);
           }}
         >
           确定
