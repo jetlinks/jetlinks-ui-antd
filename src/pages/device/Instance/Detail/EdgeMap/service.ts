@@ -32,6 +32,16 @@ class Service extends BaseService<any> {
         data,
       },
     );
+  getMap = (deviceId: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${deviceId}/device-collector-list/invoke`, {
+      method: 'POST',
+      data,
+    });
+  removeMap = (deviceId: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${deviceId}/device-collector-delete/invoke`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

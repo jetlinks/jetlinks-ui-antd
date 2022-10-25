@@ -8,18 +8,15 @@ import './index.less';
 
 interface Props {
   metaData: Record<string, string>[];
+  deviceId: string;
 }
 
 const MapTable = (props: Props) => {
-  const { metaData } = props;
+  const { metaData, deviceId } = props;
 
   const Render = (propsName: any) => {
     const text = metaData.find((item: any) => item.metadataId === propsName.value);
-    return (
-      <>
-        {text?.metadataName}({text?.metadataId})
-      </>
-    );
+    return <>{text?.metadataName}</>;
   };
   const StatusRender = (propsRender: any) => {
     if (propsRender.value) {
@@ -43,6 +40,7 @@ const MapTable = (props: Props) => {
           title: '确认解绑',
           disabled: !record(index)?.id,
           onConfirm: async () => {
+            console.log(deviceId);
             // deteleMaster(item.id)
             // remove([record(index)?.id]);
           },
@@ -66,7 +64,11 @@ const MapTable = (props: Props) => {
       StatusRender,
     },
   });
-  const form = createForm({});
+  const form = createForm({
+    values: {
+      requestList: metaData,
+    },
+  });
 
   const schema = {
     type: 'object',
@@ -87,7 +89,7 @@ const MapTable = (props: Props) => {
             column1: {
               type: 'void',
               'x-component': 'ArrayTable.Column',
-              'x-component-props': { width: 120, title: '名称' },
+              'x-component-props': { width: 200, title: '名称' },
               properties: {
                 metadataId: {
                   type: 'string',
@@ -143,7 +145,7 @@ const MapTable = (props: Props) => {
                     filterOption: (input: string, option: any) =>
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
-                  'x-reactions': ['{{useAsyncDataSource(getName)}}'],
+                  // 'x-reactions': ['{{useAsyncDataSource(getName)}}'],
                 },
               },
             },
@@ -164,7 +166,7 @@ const MapTable = (props: Props) => {
                     filterOption: (input: string, option: any) =>
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
-                  'x-reactions': ['{{useAsyncDataSource(getName)}}'],
+                  // 'x-reactions': ['{{useAsyncDataSource(getName)}}'],
                 },
               },
             },
