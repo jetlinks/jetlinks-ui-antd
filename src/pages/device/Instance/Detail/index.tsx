@@ -29,6 +29,7 @@ import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage, isNoCommunity } from '@/utils/util';
 import Parsing from './Parsing';
+// import EdgeMap from './EdgeMap';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -212,6 +213,13 @@ const InstanceDetail = observer(() => {
           component: <ChildDevice />,
         });
       }
+      // if(response.result){
+      //   datalist.push({
+      //     key: 'edge-map',
+      //     tab: '边缘端映射',
+      //     component: <EdgeMap />,
+      //   })
+      // }
       setList(datalist);
       // 写入物模型数据
       const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
