@@ -113,7 +113,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择数据类型',
             },
-            'x-reactions': '{{useAsyncDataSource(getSecurityPolicyList)}}',
+            'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
             'x-validator': [
               {
                 required: true,

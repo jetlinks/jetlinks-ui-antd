@@ -13,6 +13,11 @@ class Service {
       method: 'POST',
       data: params,
     });
+  public queryPointCount = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/_count`, {
+      method: 'POST',
+      data: params,
+    });
   public queryPointByID = (id: string) =>
     request(`/${SystemConst.API_BASE}/data-collect/point/${id}`, {
       method: 'GET',
@@ -27,7 +32,7 @@ class Service {
       method: 'POST',
       data,
     });
-  public writePoint = (collectorId: string, data: string[]) =>
+  public writePoint = (collectorId: string, data: any[]) =>
     request(`/${SystemConst.API_BASE}data-collect/collector/${collectorId}/points/_write`, {
       method: 'POST',
       data,
@@ -44,6 +49,11 @@ class Service {
     });
   public queryCollector = (params: any) =>
     request(`/${SystemConst.API_BASE}/data-collect/collector/_query`, {
+      method: 'POST',
+      data: params,
+    });
+  public queryCollectorCount = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/collector/_count`, {
       method: 'POST',
       data: params,
     });
@@ -68,6 +78,11 @@ class Service {
     });
   public queryChannel = (params: any) =>
     request(`/${SystemConst.API_BASE}/data-collect/channel/_query`, {
+      method: 'POST',
+      data: params,
+    });
+  public queryChannelCount = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/channel/_count`, {
       method: 'POST',
       data: params,
     });
@@ -106,6 +121,21 @@ class Service {
   public queryCodecProvider = () =>
     request(`/${SystemConst.API_BASE}/things/collector/codecs`, {
       method: 'GET',
+    });
+
+  public savePointBatch = (collectorId: string, collectorName: string, params: any[]) =>
+    request(
+      `/${SystemConst.API_BASE}/data-collect/opc/point/_batch?collectorId=${collectorId}&collectorName=${collectorName}`,
+      {
+        method: 'POST',
+        data: params,
+      },
+    );
+
+  public dashboard = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/dashboard/_multi`, {
+      method: 'POST',
+      data,
     });
 }
 
