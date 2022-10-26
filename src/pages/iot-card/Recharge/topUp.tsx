@@ -1,10 +1,12 @@
-import { createForm } from '@formily/core';
+import { createForm, Field } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { Modal } from '@/components';
 // import { onlyMessage } from '@/utils/util';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { action } from '@formily/reactive';
+import { service } from '.';
 
 interface Props {
   data: any;
@@ -23,7 +25,40 @@ const TopUp = (props: Props) => {
       NumberPicker,
     },
   });
+  const useAsyncDataSource = (ser: (arg0: any) => Promise<any>) => (field: Field) => {
+    field.loading = true;
+    ser(field).then(
+      action.bound?.((data) => {
+        field.dataSource = (data.result || []).map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
 
+  const queryProvidersList = () =>
+    service.queryPlatformNoPage({
+      paging: false,
+      terms: [
+        {
+          terms: [
+            {
+              column: 'operatorName',
+              termType: 'eq',
+              value: 'onelink',
+            },
+            {
+              column: 'state',
+              termType: 'eq',
+              value: 'enabled',
+              type: 'and',
+            },
+          ],
+        },
+      ],
+    });
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -47,7 +82,7 @@ const TopUp = (props: Props) => {
             'x-component-props': {
               placeholder: '请输入平台对接',
             },
-
+            'x-reactions': '{{useAsyncDataSource(queryProvidersList)}}',
             'x-validator': [
               {
                 max: 64,
@@ -127,6 +162,7 @@ const TopUp = (props: Props) => {
                 message: '请选择支付方式',
               },
             ],
+            enum: [],
           },
         },
       },
@@ -162,7 +198,7 @@ const TopUp = (props: Props) => {
         暂只支持移动OneLink平台
       </div>
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} scope={{}} />
+        <SchemaField schema={schema} scope={{ useAsyncDataSource, queryProvidersList }} />
       </Form>
     </Modal>
   );

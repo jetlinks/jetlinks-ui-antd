@@ -8,15 +8,18 @@ import { Tooltip } from 'antd';
 import moment from 'moment';
 import { useRef, useState } from 'react';
 import Service from '../CardManagement/service';
+import Detail from './detail';
 import TopUp from './topUp';
 
-export const service = new Service('');
+export const service = new Service('network/card');
 
 const Recharge = () => {
   const { minHeight } = useDomFullHeight(`.record`, 24);
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const [visible, setVisible] = useState<boolean>(false);
+  const [detail, setDetail] = useState<boolean>(false);
+  const [current, setCurrent] = useState<any>({});
 
   const columns: ProColumns<any>[] = [
     // {
@@ -66,9 +69,10 @@ const Recharge = () => {
         <a
           key="editable"
           onClick={() => {
-            console.log(record);
+            // console.log(record);
+            setDetail(true);
             // setVisible(true);
-            // setCurrent(record);
+            setCurrent(record);
           }}
         >
           <Tooltip title="查看">
@@ -134,6 +138,14 @@ const Recharge = () => {
           data={{}}
           close={() => {
             setVisible(false);
+          }}
+        />
+      )}
+      {detail && (
+        <Detail
+          data={current}
+          close={() => {
+            setDetail(false);
           }}
         />
       )}
