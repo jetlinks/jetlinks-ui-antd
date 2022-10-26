@@ -62,6 +62,47 @@ class BaseService<T> implements IBaseService<T> {
   getUri() {
     return this.uri;
   }
+
+  POST(url: string, data: Partial<T> = {}, params?: any, options?: any) {
+    return request(url, {
+      method: 'POST',
+      data,
+      params,
+      ...options,
+    });
+  }
+
+  GET(url: string, params?: Partial<T>, options?: any) {
+    return request(url, {
+      method: 'GET',
+      params,
+      ...options,
+    });
+  }
+
+  PATCH(url: string, data?: Partial<T>, options?: any) {
+    return request(url, {
+      method: 'PATCH',
+      data,
+      ...options,
+    });
+  }
+
+  DELETE(url: string, params?: Partial<T>, options?: any) {
+    return request(url, {
+      method: 'DELETE',
+      params,
+      ...options,
+    });
+  }
+
+  PUT(url: string, data?: Partial<T>, options?: any) {
+    return request(url, {
+      method: 'PUT',
+      data,
+      ...options,
+    });
+  }
 }
 
 export default BaseService;
