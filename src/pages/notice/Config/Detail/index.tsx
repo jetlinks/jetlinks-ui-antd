@@ -319,12 +319,7 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入webhook',
                 },
-                'x-validator': [
-                  {
-                    max: 64,
-                    message: '最多可输入64个字符',
-                  },
-                ],
+
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
