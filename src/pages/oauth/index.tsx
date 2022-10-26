@@ -203,7 +203,7 @@ const Oauth = () => {
         if (items.redirect_uri) {
           const orgin = items.redirect_uri.split('/').slice(0, 3);
           const url = `${orgin.join('/')}/%23/${items.redirect_uri?.split('redirect=')[1]}`;
-          redirectUrl = `${items.redirect_uri?.split('redirect=')[0]}redirect=${url}`;
+          redirectUrl = `${items.redirect_uri?.split('redirect=')[0]}?redirect=${url}`;
         }
         getLoginUser({
           ...items,
