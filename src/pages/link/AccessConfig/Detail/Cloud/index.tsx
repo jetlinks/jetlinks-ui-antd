@@ -2,10 +2,10 @@ import { Button, Card, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import OneNet from './OneNet';
-import CTWing from './CTWing';
-import Protocol from './Protocol';
-import Finish from './Finish';
+import OneNet from '../components/OneNet';
+import CTWing from '../components/CTWing';
+import Protocol from '../components/Protocol';
+import Finish from '../components/Finish';
 
 interface Props {
   change: () => void;
@@ -18,7 +18,7 @@ const Cloud = (props: Props) => {
   const [current, setCurrent] = useState<number>(0);
   const [steps] = useState<string[]>(['接入配置', '消息协议', '完成']);
   const [config, setConfig] = useState<any>({});
-  const [procotolCurrent, setProcotolCurrent] = useState<string>('');
+  const [protocolCurrent, setProtocolCurrent] = useState<string>('');
 
   const prev = () => {
     setCurrent(current - 1);
@@ -32,7 +32,7 @@ const Cloud = (props: Props) => {
   useEffect(() => {
     setCurrent(0);
     setConfig(props.data?.configuration || {});
-    setProcotolCurrent(props.data?.protocol);
+    setProtocolCurrent(props.data?.protocol);
   }, [props.data]);
 
   const renderSteps = (cur: number) => {
@@ -63,11 +63,11 @@ const Cloud = (props: Props) => {
             </div>
             <div style={{ marginTop: 10 }}>
               <Protocol
-                data={procotolCurrent}
+                data={protocolCurrent}
                 provider={props.provider}
                 view={props.view}
                 next={(param: string) => {
-                  setProcotolCurrent(param);
+                  setProtocolCurrent(param);
                   setCurrent(current + 1);
                 }}
                 prev={prev}
@@ -78,11 +78,14 @@ const Cloud = (props: Props) => {
       case 2:
         return (
           <Finish
-            procotol={procotolCurrent}
             provider={props.provider}
             data={props.data}
-            config={config}
+            config={{
+              config,
+              protocol: protocolCurrent,
+            }}
             prev={prev}
+            type={'cloud'}
             view={props.view}
           />
         );
