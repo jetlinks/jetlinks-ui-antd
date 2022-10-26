@@ -319,7 +319,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入webhook',
                 },
-
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -525,12 +530,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                // 'x-validator': [
-                //   {
-                //     max: 64,
-                //     message: '最多可输入64个字符',
-                //   },
-                // ],
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                ],
               },
               headers: {
                 title: '请求头',

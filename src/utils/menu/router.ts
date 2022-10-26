@@ -171,6 +171,8 @@ export enum BUTTON_PERMISSION_ENUM {
   'password' = 'password', //重置密码
   'api' = 'api', //查看api
   'manage' = 'manage', //数据源-管理
+  'stop' = 'stop',
+  'restart' = 'restart',
 }
 
 // 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥
