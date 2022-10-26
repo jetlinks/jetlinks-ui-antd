@@ -14,6 +14,7 @@ import {
   CheckCircleOutlined,
 } from '@ant-design/icons';
 import SaveModal from './SaveModal';
+import ExportModal from '@/pages/iot-card/CardManagement/ExportModal';
 import Service from './service';
 
 export const service = new Service('network/card');
@@ -234,6 +235,14 @@ const CardManagementNode = () => {
           onOk={() => {
             setVisible(false);
             actionRef.current?.reload();
+          }}
+        />
+      )}
+      {exportVisible && (
+        <ExportModal
+          keys={bindKeys}
+          onCancel={() => {
+            setExportVisible(false);
           }}
         />
       )}

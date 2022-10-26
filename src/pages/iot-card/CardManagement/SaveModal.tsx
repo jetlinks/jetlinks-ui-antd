@@ -24,7 +24,7 @@ const Save = (props: SaveType) => {
 
   useEffect(() => {
     platformRun({
-      sorts: [{ order: 'desc' }],
+      sorts: [{ name: 'createTime', order: 'desc' }],
       terms: [{ column: 'state', value: 'enabled' }],
     });
     // if (props.type === 'edit' && form) {
