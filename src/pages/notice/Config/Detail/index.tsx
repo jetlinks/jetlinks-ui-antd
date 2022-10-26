@@ -525,12 +525,12 @@ const Detail = observer(() => {
                 },
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
-                'x-validator': [
-                  {
-                    max: 64,
-                    message: '最多可输入64个字符',
-                  },
-                ],
+                // 'x-validator': [
+                //   {
+                //     max: 64,
+                //     message: '最多可输入64个字符',
+                //   },
+                // ],
               },
               headers: {
                 title: '请求头',
