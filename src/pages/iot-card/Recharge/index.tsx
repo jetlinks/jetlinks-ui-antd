@@ -22,12 +22,6 @@ const Recharge = () => {
   const [current, setCurrent] = useState<any>({});
 
   const columns: ProColumns<any>[] = [
-    // {
-    //   title: '充值类型',
-    //   dataIndex: 'rechargeType',
-    //   ellipsis: true,
-    //   hideInSearch: true
-    // },
     {
       title: '充值金额',
       dataIndex: 'chargeMoney',
@@ -69,9 +63,7 @@ const Recharge = () => {
         <a
           key="editable"
           onClick={() => {
-            // console.log(record);
             setDetail(true);
-            // setVisible(true);
             setCurrent(record);
           }}
         >
@@ -129,15 +121,16 @@ const Recharge = () => {
             </div>
           </>
         }
-        // request={async (params) =>
-        //   service.getList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-        // }
+        request={async (params) =>
+          service.queryRechargeList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+        }
       />
       {visible && (
         <TopUp
           data={{}}
           close={() => {
             setVisible(false);
+            actionRef.current?.reload();
           }}
         />
       )}

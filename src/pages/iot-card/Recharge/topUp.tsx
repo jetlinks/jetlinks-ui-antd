@@ -6,7 +6,8 @@ import { Modal } from '@/components';
 // import { onlyMessage } from '@/utils/util';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
-import { service } from '.';
+import { service } from './index';
+import { PaymentMethod } from '../data';
 
 interface Props {
   data: any;
@@ -162,7 +163,7 @@ const TopUp = (props: Props) => {
                 message: '请选择支付方式',
               },
             ],
-            enum: [],
+            enum: PaymentMethod,
           },
         },
       },
