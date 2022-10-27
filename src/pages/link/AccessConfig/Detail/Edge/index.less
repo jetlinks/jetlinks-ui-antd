@@ -1,0 +1,81 @@
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 30px;
+}
+
+.steps {
+  width: 100%;
+}
+
+.content {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.action {
+  width: 100%;
+}
+
+.title {
+  width: 100%;
+  overflow: hidden;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.desc {
+  width: 100%;
+  margin-top: 10px;
+  overflow: hidden;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  color: rgba(0, 0, 0, 0.55);
+
+  .item {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.config {
+  padding: 10px 20px 20px 20px;
+  color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.04);
+
+  .title {
+    width: 100%;
+    margin: 10px 0;
+    font-weight: 600;
+  }
+
+  .item {
+    margin-bottom: 10px;
+
+    .context {
+      margin: 5px 0;
+      color: rgba(0, 0, 0, 0.8);
+    }
+  }
+}
+
+.alert {
+  height: 40px;
+  padding-left: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 40px;
+  background-color: #f6f6f6;
+}
