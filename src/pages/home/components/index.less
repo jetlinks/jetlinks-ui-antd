@@ -26,6 +26,29 @@
   background: linear-gradient(135.62deg, #f6f7fd 22.27%, rgba(255, 255, 255, 0.86) 91.82%);
   border-radius: 2px;
   box-shadow: 0 4px 18px #efefef;
+  .state {
+    position: relative;
+    padding-left: 8px;
+    &::before {
+      position: absolute;
+      top: 7px;
+      left: 0;
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 2px;
+      content: '';
+    }
+    &.normal::before {
+      background: #85a5ff;
+    }
+    &.notActive::before {
+      background: #f29b55;
+    }
+    &.stopped::before {
+      background: #c4c4c4;
+    }
+  }
 
   &.pointer {
     cursor: pointer;

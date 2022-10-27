@@ -139,6 +139,7 @@ export enum MENUS_CODE {
   'system/License' = 'system/License',
   'iot-card/Home' = 'iot-card/Home',
   'iot-card/Platform' = 'iot-card/Platform',
+  'iot-card/Platform/Detail' = 'iot-card/Platform/Detail',
   'iot-card/Recharge' = 'iot-card/Recharge',
   'iot-card/Dashboard' = 'iot-card/Dashboard',
   'iot-card/CardManagement' = 'iot-card/CardManagement',
@@ -193,6 +194,7 @@ export const getDetailNameByCode = {
   'rule-engine/Alarm/Log/Detail': '告警日志',
   'Northbound/AliCloud/Detail': '阿里云详情',
   'link/Certificate/Detail': '证书详情',
+  'iot-card/Platform/Detail': '平台对接详情',
 };
 
 // 开源版路由

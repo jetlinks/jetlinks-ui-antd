@@ -10,6 +10,7 @@ interface RadioCardItem {
   label: string;
   value: string;
   imgUrl?: string;
+  imgSize?: number[];
 }
 
 export interface RadioCardProps {
@@ -80,7 +81,15 @@ export default (props: RadioCardProps) => {
               }
             }}
           >
-            {item.imgUrl && <img width={32} height={32} src={item.imgUrl} alt={''} />}
+            {item.imgUrl && (
+              <img
+                width={32}
+                height={32}
+                src={item.imgUrl}
+                alt={''}
+                style={{ width: item.imgSize?.[0], height: item.imgSize?.[1] }}
+              />
+            )}
             <span>{item.label}</span>
             <div className={'checked-icon'}>
               <div>
