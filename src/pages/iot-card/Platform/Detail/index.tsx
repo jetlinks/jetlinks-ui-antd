@@ -1,19 +1,20 @@
 import { RadioCard, TitleComponent } from '@/components';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
-import { createForm, onFormInit } from '@formily/core';
+import { createForm, Field, onFieldReact, onFormInit } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import { Button, Card, Col, Row } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'umi';
-import { useAsyncDataSource } from '@/utils/util';
-// import './index.less';
-import { service } from '@/pages/Northbound/AliCloud';
+import { onlyMessage, useAsyncDataSource } from '@/utils/util';
+import { service } from '../index';
 import { useModel } from '@@/plugin-model/useModel';
+import Doc from '../doc';
 
 const Detail = observer(() => {
   const params = useParams<{ id: string }>();
   const { initialState } = useModel('@@initialState');
+  const [docType, setDocType] = useState('');
 
   const form = useMemo(
     () =>
@@ -23,7 +24,14 @@ const Detail = observer(() => {
           onFormInit(async (form1) => {
             if (params.id === ':id') return;
             const resp = await service.detail(params.id);
-            form1.setInitialValues(resp.result);
+            if (resp.status === 200) {
+              form1.setValues(resp.result);
+            }
+          });
+          onFieldReact('operatorName', (field) => {
+            const value = (field as Field).value;
+            setDocType(value);
+            // console.log(value)
           });
         },
       }),
@@ -49,13 +57,13 @@ const Detail = observer(() => {
         'x-decorator-props': {
           gridSpan: 1,
         },
-        default: 'onelink',
+        default: params.id === ':id' ? 'onelink' : undefined,
         'x-component-props': {
           model: 'singular',
           itemStyle: {
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
+            justifyContent: 'space-around',
             minWidth: '130px',
           },
           options: [
@@ -106,7 +114,235 @@ const Detail = observer(() => {
           },
         ],
       },
-      description: {
+      onelink: {
+        type: 'void',
+        'x-reactions': {
+          dependencies: ['.operatorName'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] ==="onelink"}}',
+            },
+          },
+        },
+        properties: {
+          config: {
+            type: 'object',
+            properties: {
+              appId: {
+                type: 'string',
+                title: 'App ID',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入App ID',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入App ID',
+                  },
+                ],
+              },
+              passWord: {
+                type: 'string',
+                title: 'Password',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入Password',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入App ID',
+                  },
+                ],
+              },
+              apiAddr: {
+                type: 'string',
+                title: '接口地址',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入接口地址',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入接口地址',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      ctwing: {
+        type: 'void',
+        'x-reactions': {
+          dependencies: ['.operatorName'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] ==="ctwing"}}',
+            },
+          },
+        },
+
+        properties: {
+          config: {
+            type: 'object',
+            properties: {
+              userId: {
+                type: 'string',
+                title: '用户id',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入用户id',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入用户id',
+                  },
+                ],
+              },
+              passWord: {
+                type: 'string',
+                title: 'Password',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入Password',
+                },
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请输入Password',
+                  },
+                ],
+              },
+              secretKey: {
+                type: 'string',
+                title: 'secretKey',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入secretKey',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入secretKey',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      unicom: {
+        type: 'void',
+        'x-reactions': {
+          dependencies: ['.operatorName'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] ==="unicom"}}',
+            },
+          },
+        },
+
+        properties: {
+          config: {
+            type: 'object',
+            properties: {
+              appId: {
+                type: 'string',
+                title: 'App ID',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入App ID',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入App ID',
+                  },
+                ],
+              },
+              appSecret: {
+                type: 'string',
+                title: 'App Secret',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入App Secret',
+                },
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请输入App Secret',
+                  },
+                ],
+              },
+              openId: {
+                type: 'string',
+                title: '创建者ID',
+                required: true,
+                'x-decorator': 'FormItem',
+                'x-component': 'Input',
+                'x-component-props': {
+                  placeholder: '请输入创建者ID',
+                },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入创建者ID',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      explain: {
         title: '说明',
         'x-component': 'Input.TextArea',
         'x-decorator': 'FormItem',
@@ -116,12 +352,22 @@ const Detail = observer(() => {
           maxLength: 200,
           placeholder: '请输入说明',
         },
+        'x-validator': [
+          {
+            max: 200,
+            message: '最多可输入200个字符',
+          },
+        ],
       },
     },
   };
 
   const handleSave = async () => {
     const data: any = await form.submit();
+    const res: any = params.id === ':id' ? await service.save(data) : await service.update(data);
+    if (res.status === 200) {
+      onlyMessage('保存成功');
+    }
     console.log(data);
   };
 
@@ -139,7 +385,7 @@ const Detail = observer(() => {
     <PageContainer>
       <Card>
         <Row gutter={24}>
-          <Col span={12}>
+          <Col span={14}>
             <TitleComponent data={'详情'} />
             <Form form={form} layout="vertical">
               <SchemaField
@@ -157,7 +403,9 @@ const Detail = observer(() => {
               </FormButtonGroup.Sticky>
             </Form>
           </Col>
-          <Col span={12} className="aliyun"></Col>
+          <Col span={10}>
+            <Doc type={docType} />
+          </Col>
         </Row>
       </Card>
     </PageContainer>

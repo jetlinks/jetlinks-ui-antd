@@ -17,7 +17,7 @@ import { useRef, useState } from 'react';
 import Service from './service';
 import { useHistory } from '@/hooks';
 
-export const service = new Service('network/card/platfrom');
+export const service = new Service('network/card/platform');
 
 const Platform = () => {
   const { minHeight } = useDomFullHeight(`.record`, 24);
@@ -95,7 +95,10 @@ const Platform = () => {
         <PermissionButton
           isPermission={true}
           key="edit"
-          onClick={() => {}}
+          onClick={() => {
+            const url = `${getMenuPathByParams(MENUS_CODE['iot-card/Platform/Detail'], record.id)}`;
+            history.push(url);
+          }}
           type={'link'}
           style={{ padding: 0 }}
           tooltip={{
@@ -138,7 +141,7 @@ const Platform = () => {
         <PermissionButton
           isPermission={true}
           tooltip={{
-            title: record.state.value !== 'enabled' ? '删除' : '请先禁用该协议，再删除',
+            title: record.state.value !== 'enabled' ? '删除' : '请先禁用再删除',
           }}
           style={{ padding: 0 }}
           disabled={record.state.value === 'enabled'}

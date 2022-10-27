@@ -3,14 +3,13 @@ import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { Modal } from '@/components';
-// import { onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
 import { service } from './index';
 import { PaymentMethod } from '../data';
 
 interface Props {
-  data: any;
   close: () => void;
 }
 
@@ -172,7 +171,16 @@ const TopUp = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<any>();
-    console.log(value);
+    const res: any = await service.recharge(value);
+    if (res.status === 200) {
+      if (res.result === '失败') {
+        onlyMessage('缴费失败', 'error');
+        props.close();
+      } else {
+        window.open(res.result);
+        props.close();
+      }
+    }
   };
 
   return (

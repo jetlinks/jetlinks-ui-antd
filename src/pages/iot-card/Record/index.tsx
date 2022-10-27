@@ -57,7 +57,7 @@ const Record = () => {
         columnEmptyText={''}
         tableStyle={{ minHeight }}
         request={async (params) =>
-          service.getList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.getList({ ...params, sorts: [{ name: 'time', order: 'desc' }] })
         }
       />
     </PageContainer>
