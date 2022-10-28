@@ -210,7 +210,11 @@ export default () => {
           />
         </Col>
         <Col span={24}>
-          <Body title={'平台架构图'} english={'PLATFORM ARCHITECTURE DIAGRAM'} />
+          <Body
+            title={'平台架构图'}
+            english={'PLATFORM ARCHITECTURE DIAGRAM'}
+            url={require('/public/images/iot-card/iotcard-home.png')}
+          />
         </Col>
       </Row>
     </PageContainer>

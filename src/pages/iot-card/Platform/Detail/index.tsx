@@ -367,8 +367,9 @@ const Detail = observer(() => {
     const res: any = params.id === ':id' ? await service.save(data) : await service.update(data);
     if (res.status === 200) {
       onlyMessage('保存成功');
+      history.back();
     }
-    console.log(data);
+    // console.log(data);
   };
 
   useEffect(() => {

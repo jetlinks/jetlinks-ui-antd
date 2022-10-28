@@ -127,6 +127,7 @@ const TopUp = (props: Props) => {
             },
             'x-component-props': {
               placeholder: '请输入充值金额',
+              precision: 2,
             },
 
             'x-validator': [
