@@ -27,9 +27,9 @@ import ExportModal from '@/pages/iot-card/CardManagement/ExportModal';
 import ImportModal from '@/pages/iot-card/CardManagement/ImportModal';
 import BindDeviceModal from '@/pages/iot-card/CardManagement/BindDevice';
 import moment from 'moment';
-import { useDomFullHeight } from '@/hooks';
+import { useDomFullHeight, useLocation } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
-import { useHistory, useLocation } from 'umi';
+import { useHistory } from 'umi';
 import { getMenuPathByParams } from '@/utils/menu';
 
 export const service = new Service('network/card');

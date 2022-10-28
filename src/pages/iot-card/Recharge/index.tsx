@@ -20,6 +20,7 @@ const Recharge = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [detail, setDetail] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
+  const { permission } = PermissionButton.usePermission('iot-card/Recharge');
 
   const columns: ProColumns<any>[] = [
     {
@@ -120,7 +121,7 @@ const Recharge = () => {
               onClick={() => {
                 setVisible(true);
               }}
-              isPermission={true}
+              isPermission={permission.pay}
               key="button"
               type="primary"
             >

@@ -24,6 +24,7 @@ const Platform = () => {
   const actionRef = useRef<ActionType>();
   const [param, setParam] = useState({});
   const history = useHistory();
+  const { permission } = PermissionButton.usePermission('iot-card/Platform');
 
   const statusUpdate = async (data: any) => {
     const res = await service.update(data);
@@ -93,7 +94,7 @@ const Platform = () => {
       fixed: 'right',
       render: (text, record) => [
         <PermissionButton
-          isPermission={true}
+          isPermission={permission.update}
           key="edit"
           onClick={() => {
             const url = `${getMenuPathByParams(MENUS_CODE['iot-card/Platform/Detail'], record.id)}`;
@@ -108,7 +109,7 @@ const Platform = () => {
           <EditOutlined />
         </PermissionButton>,
         <PermissionButton
-          isPermission={true}
+          isPermission={permission.action}
           key="action"
           type={'link'}
           style={{ padding: 0 }}
@@ -139,7 +140,7 @@ const Platform = () => {
           {record.state === 'enabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
-          isPermission={true}
+          isPermission={permission.delete}
           tooltip={{
             title: record.state.value !== 'enabled' ? '删除' : '请先禁用再删除',
           }}
@@ -193,7 +194,7 @@ const Platform = () => {
                 history.push(url);
               }}
               style={{ marginRight: 12 }}
-              isPermission={true}
+              isPermission={permission.update}
               key="button"
               icon={<PlusOutlined />}
               type="primary"
