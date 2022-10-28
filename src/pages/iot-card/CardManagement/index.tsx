@@ -19,6 +19,7 @@ import {
   EditOutlined,
   LinkOutlined,
   EyeOutlined,
+  DisconnectOutlined,
 } from '@ant-design/icons';
 import ProTable from '@jetlinks/pro-table';
 import Service from './service';
@@ -44,7 +45,7 @@ const CardManagementNode = () => {
   const [current, setCurrent] = useState<Partial<CardManagement>>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const { minHeight } = useDomFullHeight(`.iot-card-management`, 24);
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('iot-card/CardManagement');
   const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
@@ -126,24 +127,28 @@ const CardManagementNode = () => {
       title: '总流量',
       dataIndex: 'totalFlow',
       width: 120,
+      hideInSearch: true,
       render: (_, record) => (record.totalFlow ? record.totalFlow.toFixed(2) + ' M' : ''),
     },
     {
       title: '使用流量',
       dataIndex: 'usedFlow',
       width: 120,
+      hideInSearch: true,
       render: (_, record) => (record.usedFlow ? record.usedFlow.toFixed(2) + ' M' : ''),
     },
     {
       title: '剩余流量',
       dataIndex: 'residualFlow',
       width: 120,
+      hideInSearch: true,
       render: (_, record) => (record.residualFlow ? record.residualFlow.toFixed(2) + ' M' : ''),
     },
     {
       title: '激活日期',
       dataIndex: 'activationDate',
       width: 200,
+      valueType: 'dateTime',
       render: (_, record) =>
         record.activationDate ? moment(record.activationDate).format('YYYY-MM-DD HH:mm:ss') : '',
     },
@@ -151,6 +156,7 @@ const CardManagementNode = () => {
       title: '更新时间',
       dataIndex: 'updateTime',
       width: 200,
+      valueType: 'dateTime',
       render: (_, record) =>
         record.updateTime ? moment(record.updateTime).format('YYYY-MM-DD HH:mm:ss') : '',
     },
@@ -215,13 +221,30 @@ const CardManagementNode = () => {
             key="bindDevice"
             style={{ padding: 0 }}
             isPermission={permission.delete}
-            tooltip={{ title: '绑定设备' }}
+            tooltip={{ title: record.deviceId ? '解绑设备' : '绑定设备' }}
+            popConfirm={
+              record.deviceId
+                ? {
+                    title: '确认解绑设备？',
+                    onConfirm: () => {
+                      service.unbind(record.id).then((resp) => {
+                        if (resp.status === 200) {
+                          message.success('操作成功');
+                          actionRef.current?.reload();
+                        }
+                      });
+                    },
+                  }
+                : undefined
+            }
             onClick={() => {
-              setCurrent(record);
-              setBindDeviceVisible(true);
+              if (!record.deviceId) {
+                setCurrent(record);
+                setBindDeviceVisible(true);
+              }
             }}
           >
-            <LinkOutlined />
+            {record.deviceId ? <DisconnectOutlined /> : <LinkOutlined />}
           </PermissionButton>,
           record.cardStateType?.value === 'toBeActivated' ? (
             <PermissionButton

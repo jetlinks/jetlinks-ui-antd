@@ -62,8 +62,8 @@ const Dashboard = () => {
 
   const getDataTotal = () => {
     const dTime = [
-      moment().subtract(1, 'days').startOf('day').valueOf(),
-      moment().subtract(1, 'days').endOf('day').valueOf(),
+      moment(new Date()).startOf('day').valueOf(),
+      moment(new Date()).endOf('day').valueOf(),
     ];
     const mTime = [moment().startOf('month').valueOf(), moment().endOf('month').valueOf()];
     const yTime = [moment().startOf('year').valueOf(), moment().endOf('year').valueOf()];
@@ -263,8 +263,8 @@ const Dashboard = () => {
     getEcharts(echartsRef?.current?.getValues());
 
     const dTime = [
-      moment().subtract(1, 'days').startOf('day').valueOf(),
-      moment().subtract(6, 'days').endOf('day').valueOf(),
+      moment().subtract(6, 'days').startOf('day').valueOf(),
+      moment().endOf('day').valueOf(),
     ];
     getTopRang(dTime[0], dTime[1]);
   }, []);
@@ -324,6 +324,11 @@ const Dashboard = () => {
             options={options}
             onParamsChange={getEcharts}
             defaultTime={'week'}
+            timeToolOptions={[
+              { label: '昨日', value: 'yesterday' },
+              { label: '近一周', value: 'week' },
+              { label: '近一月', value: 'month' },
+            ]}
           />
         </Col>
         <Col flex={'520px'}>
@@ -334,10 +339,8 @@ const Dashboard = () => {
                 {
                   // @ts-ignore
                   <DatePicker.RangePicker
-                    defaultPickerValue={[
-                      moment().subtract(1, 'days').startOf('day'),
-                      moment().subtract(1, 'days').endOf('day'),
-                    ]}
+                    defaultValue={[moment().subtract(6, 'days'), moment(new Date(), 'YYYY-MM-DD')]}
+                    format={'YYYY-MM-DD'}
                     onChange={(dates) => {
                       getTopRang(dates?.[0].valueOf(), dates?.[1].valueOf());
                     }}
@@ -361,6 +364,7 @@ const Dashboard = () => {
                           strokeColor={'#ADC6FF'}
                           trailColor={'#E0E4E8'}
                           strokeLinecap="butt"
+                          showInfo={false}
                           percent={Math.ceil((item.value / topTotal) * 100)}
                         />
                       </div>

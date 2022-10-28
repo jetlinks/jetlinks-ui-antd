@@ -102,7 +102,8 @@ const CardDetail = () => {
       bottom: 0,
     };
     getData(dTime[0], dTime[1]).then((resp) => {
-      setTotal(resp.data.reduce((r, n) => r + n, 0));
+      const _total = resp.data.reduce((r, n) => r + n, 0);
+      setTotal(_total ? _total.toFixed(2) : 0);
       setDayOptions({
         ...DefaultEchartsOptions,
         grid,
@@ -142,7 +143,8 @@ const CardDetail = () => {
       });
     });
     getData(mTime[0], mTime[1]).then((resp) => {
-      setMonthTotal(resp.data.reduce((r, n) => r + n, 0));
+      const _total = resp.data.reduce((r, n) => r + n, 0);
+      setMonthTotal(_total ? _total.toFixed(2) : 0);
       setMonthOptions({
         ...DefaultEchartsOptions,
         grid,
@@ -182,7 +184,8 @@ const CardDetail = () => {
       });
     });
     getData(yTime[0], yTime[1]).then((resp) => {
-      setYearTotal(resp.data.reduce((r, n) => r + n, 0));
+      const _total = resp.data.reduce((r, n) => r + n, 0);
+      setYearTotal(_total ? _total.toFixed(2) : 0);
       setYearOptions({
         ...DefaultEchartsOptions,
         grid,
@@ -345,13 +348,18 @@ const CardDetail = () => {
                 title={'流量统计'}
                 options={options}
                 defaultTime={'week'}
+                timeToolOptions={[
+                  { label: '昨日', value: 'yesterday' },
+                  { label: '近一周', value: 'week' },
+                  { label: '近一月', value: 'month' },
+                ]}
                 showTime={true}
                 showTimeTool={true}
                 height={500}
                 onParamsChange={getEcharts}
               />
             </Col>
-            <Col flex={'480px'}>
+            <Col flex={'520px'}>
               <Card>
                 <div
                   style={{

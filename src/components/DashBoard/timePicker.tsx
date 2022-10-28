@@ -6,6 +6,7 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 export enum TimeKey {
   'hour' = 'hour',
   'today' = 'today',
+  'yesterday' = 'yesterday',
   'week' = 'week',
   'month' = 'month',
   'year' = 'year',
@@ -61,8 +62,12 @@ export default forwardRef((props: ExtraTimePickerProps, ref) => {
   };
 
   const timeChange = (type: TimeType) => {
-    const endTime = moment(new Date()).valueOf();
-    const startTime: number = getTimeByType(type);
+    let endTime = moment(new Date()).valueOf();
+    let startTime: number = getTimeByType(type);
+    if (type === TimeKey.yesterday) {
+      startTime = moment().subtract(1, 'days').startOf('day').valueOf();
+      endTime = moment().subtract(1, 'days').endOf('day').valueOf();
+    }
     setRadioValue(type);
     change(startTime, endTime, type);
   };
