@@ -137,7 +137,7 @@ const Platform = () => {
             },
           }}
         >
-          {record.state === 'enabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+          {record.state.value === 'enabled' ? <StopOutlined /> : <PlayCircleOutlined />}
         </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
