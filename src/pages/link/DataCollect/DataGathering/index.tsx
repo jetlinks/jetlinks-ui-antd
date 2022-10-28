@@ -6,6 +6,7 @@ import { observer } from '@formily/reactive-react';
 import { model } from '@formily/reactive';
 import Device from '../components/Device';
 import Point from '../components/Point';
+import { Empty } from '@/components';
 
 const DataCollectModel = model<{
   id: Partial<string>;
@@ -40,7 +41,11 @@ export default observer(() => {
               }}
             />
           </div>
-          <div className={styles.right}>{obj[DataCollectModel.type]}</div>
+          {DataCollectModel?.id ? (
+            <div className={styles.right}>{obj[DataCollectModel.type]}</div>
+          ) : (
+            <Empty style={{ marginTop: 100 }} />
+          )}
         </div>
       </Card>
     </PageContainer>

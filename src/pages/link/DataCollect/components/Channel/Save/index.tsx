@@ -17,7 +17,7 @@ interface Props {
 
 export default (props: Props) => {
   const [data, setData] = useState<Partial<ChannelItem>>(props.data);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.data?.id) {
@@ -41,8 +41,8 @@ export default (props: Props) => {
     services(field).then(
       action.bound!((resp: any) => {
         field.dataSource = (resp?.result || []).map((item: any) => ({
-          label: item.name,
-          value: item.id,
+          label: item,
+          value: item,
         }));
         field.loading = false;
       }),
@@ -302,11 +302,11 @@ export default (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<ChannelItem>();
-    setLoading(true);
+    // setLoading(true);
     const response: any = props.data?.id
       ? await service.updateChannel(props.data?.id, { ...props.data, ...value })
       : await service.saveChannel({ ...props.data, ...value });
-    setLoading(false);
+    // setLoading(false);
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();
@@ -330,7 +330,7 @@ export default (props: Props) => {
           onClick={() => {
             save();
           }}
-          loading={loading}
+          // loading={loading}
         >
           确定
         </Button>,
