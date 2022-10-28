@@ -285,7 +285,7 @@ const Dashboard = () => {
       <div className={'iot-card-dash-board'}>
         <DashBoardTopCard>
           <DashBoardTopCard.Item
-            title="今日流量消耗"
+            title="昨日流量消耗"
             value={
               <>
                 <span>{dayTotal.toFixed(2)}</span>
