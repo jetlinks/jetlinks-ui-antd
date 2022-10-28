@@ -1,3 +1,4 @@
+import { Ellipsis } from '@/components';
 import { Modal, Descriptions } from 'antd';
 import moment from 'moment';
 
@@ -15,7 +16,7 @@ const Detail = (props: Props) => {
       visible
       onCancel={props.close}
       onOk={props.close}
-      width="35vw"
+      width="600px"
     >
       <Descriptions bordered column={2}>
         <Descriptions.Item label="充值金额">{data.chargeMoney}</Descriptions.Item>
@@ -23,7 +24,14 @@ const Detail = (props: Props) => {
         <Descriptions.Item label="平台对接">{data.configName}</Descriptions.Item>
         <Descriptions.Item label="订单号">{data.orderNumber}</Descriptions.Item>
         <Descriptions.Item label="支付方式">{data.paymentType}</Descriptions.Item>
-        <Descriptions.Item label="支付URL">{data.url ? data.url : ''}</Descriptions.Item>
+        <Descriptions.Item label="支付URL">
+          {/* {data.url ? data.url : ''} */}
+          <Ellipsis
+            title={data.url ? data.url : ''}
+            tooltip={{ placement: 'topLeft' }}
+            maxWidth={'90%'}
+          />
+        </Descriptions.Item>
         <Descriptions.Item label="订单时间">
           {data.createTime ? moment(data.createTime).format('YYYY-MM-DD HH:mm:ss') : '-'}
         </Descriptions.Item>

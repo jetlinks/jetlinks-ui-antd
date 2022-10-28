@@ -31,25 +31,25 @@ const Recharge = () => {
       title: '支付方式',
       dataIndex: 'paymentType',
       ellipsis: true,
-      valueType: 'select',
-      valueEnum: {
-        ALIPAY_WAP: {
-          text: '支付宝手机网站支付',
-          status: 'ALIPAY_WAP',
-        },
-        ALIPAY_WEB: {
-          text: '支付宝网页及时到账支付',
-          status: 'ALIPAY_WEB',
-        },
-        WEIXIN_JSAPI: {
-          text: '微信公众号支付',
-          status: 'WEIXIN_JSAPI',
-        },
-        WEIXIN_NATIVE: {
-          text: '微信扫码支付',
-          status: 'WEIXIN_NATIVE',
-        },
-      },
+      // valueType: 'select',
+      // valueEnum: {
+      //   ALIPAY_WAP: {
+      //     text: '支付宝手机网站支付',
+      //     status: 'ALIPAY_WAP',
+      //   },
+      //   ALIPAY_WEB: {
+      //     text: '支付宝网页及时到账支付',
+      //     status: 'ALIPAY_WEB',
+      //   },
+      //   WEIXIN_JSAPI: {
+      //     text: '微信公众号支付',
+      //     status: 'WEIXIN_JSAPI',
+      //   },
+      //   WEIXIN_NATIVE: {
+      //     text: '微信扫码支付',
+      //     status: 'WEIXIN_NATIVE',
+      //   },
+      // },
     },
     {
       title: '订单号',
