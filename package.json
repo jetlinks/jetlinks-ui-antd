@@ -58,7 +58,7 @@
     "@ant-design/pro-card": "^1.16.2",
     "@ant-design/pro-descriptions": "^1.6.8",
     "@ant-design/pro-form": "^1.18.3",
-    "@ant-design/pro-layout": "^6.27.2",
+    "@ant-design/pro-layout": "6.27.2",
     "@ant-design/pro-list": "^1.21.61",
     "@formily/antd": "2.1.6",
     "@formily/core": "2.1.6",
