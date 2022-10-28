@@ -1,0 +1,103 @@
+@import '~antd/es/style/themes/default.less';
+.network {
+  position: relative;
+  width: 100%;
+}
+
+.content {
+  height: 500px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.title {
+  width: calc(100% - 88px);
+  overflow: hidden;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.desc {
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  color: rgba(0, 0, 0, 0.55);
+
+  .item {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert {
+  height: 40px;
+  padding-left: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  line-height: 40px;
+  background-color: #f6f6f6;
+}
+
+.cardRender {
+  width: 100%;
+  overflow: hidden;
+  background: url('/images/access.png') no-repeat;
+  background-size: 100% 100%;
+
+  .checkedIcon {
+    position: absolute;
+    right: -22px;
+    bottom: -22px;
+    z-index: 2;
+    display: none;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    background-color: red;
+    background-color: @primary-color-active;
+    transform: rotate(-45deg);
+
+    > div {
+      position: relative;
+      height: 100%;
+      transform: rotate(45deg);
+
+      > span {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        font-size: 12px;
+      }
+    }
+  }
+  &.checked {
+    position: relative;
+    color: #2f54eb;
+    border-color: #2f54eb;
+
+    .checkedIcon {
+      display: block;
+    }
+  }
+}
+
+.action {
+  width: 100%;
+  margin-top: 20px;
+  background: white;
+}
