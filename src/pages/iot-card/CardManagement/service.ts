@@ -8,6 +8,8 @@ const basePath = `/${SystemConst.API_BASE}`;
 class Service extends BaseService<CardManagement> {
   add = (data: any) => this.PATCH(`${this.uri}`, data);
 
+  edit = (data: any) => this.PUT(`${this.uri}/${data.id}`, data);
+
   queryById = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
 
   queryDeviceList = (data: any) =>

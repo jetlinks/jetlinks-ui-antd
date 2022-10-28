@@ -89,6 +89,7 @@ const Dashboard = () => {
             data: resp.data,
             type: 'line',
             color: '#FBA500',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -129,6 +130,7 @@ const Dashboard = () => {
             data: resp.data,
             type: 'line',
             color: '#498BEF',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -169,6 +171,7 @@ const Dashboard = () => {
             data: resp.data,
             type: 'line',
             color: '#58E1D3',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -196,7 +199,14 @@ const Dashboard = () => {
   };
 
   const getEcharts = (data: any) => {
-    getData(data.time.start, data.time.end).then((resp) => {
+    console.log(data);
+    let startTime = data.time.start;
+    let endTime = data.time.end;
+    if (data.time.type === 'week' || data.time.type === 'month') {
+      startTime = moment(data.time.start).startOf('days').valueOf();
+      endTime = moment(data.time.end).startOf('days').valueOf();
+    }
+    getData(startTime, endTime).then((resp) => {
       setOptions({
         ...DefaultEchartsOptions,
         xAxis: {
@@ -209,6 +219,7 @@ const Dashboard = () => {
             data: resp.data,
             type: 'line',
             color: '#498BEF',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -342,7 +353,10 @@ const Dashboard = () => {
                     defaultValue={[moment().subtract(6, 'days'), moment(new Date(), 'YYYY-MM-DD')]}
                     format={'YYYY-MM-DD'}
                     onChange={(dates) => {
-                      getTopRang(dates?.[0].valueOf(), dates?.[1].valueOf());
+                      getTopRang(
+                        dates?.[0].startOf('days').valueOf(),
+                        dates?.[1].endOf('days').valueOf(),
+                      );
                     }}
                   />
                 }
