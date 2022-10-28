@@ -49,6 +49,9 @@ const CardManagementNode = () => {
   const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
+  const deleteItems = useRef<any>();
+
+  deleteItems.current = new Map();
 
   useEffect(() => {
     const { state } = location;
@@ -464,9 +467,10 @@ const CardManagementNode = () => {
             popConfirm={{
               title: '确认删除吗?',
               onConfirm: async () => {
-                service.removeCards(bindKeys).then((res) => {
+                service.removeCards([...deleteItems.current.values()]).then((res) => {
                   if (res.status === 200) {
                     setBindKeys([]);
+                    deleteItems.current.clear();
                     message.success('操作成功');
                     actionRef?.current?.reload();
                   }
@@ -578,25 +582,25 @@ const CardManagementNode = () => {
           onChange: (selectedRowKeys) => {
             setBindKeys(selectedRowKeys);
           },
-          onSelect: (_, selected) => {
+          onSelect: (record, selected) => {
             if (selected) {
-              // InstanceModel.selectedRows.set(record.id, record?.state?.value);
+              deleteItems.current.set(record.id, record);
             } else {
-              // InstanceModel.selectedRows.delete(record.id);
+              deleteItems.current.delete(record.id);
             }
-            // setBindKeys([...InstanceModel.selectedRows.keys()]);
+            setBindKeys([...deleteItems.current.keys()]);
           },
           onSelectAll: (selected, _, changeRows) => {
             if (selected) {
-              changeRows.forEach(() => {
-                // InstanceModel.selectedRows.set(item.id, item?.state?.value);
+              changeRows.forEach((item: any) => {
+                deleteItems.current.set(item.id, item);
               });
             } else {
-              changeRows.forEach(() => {
-                // InstanceModel.selectedRows.delete(item.id);
+              changeRows.forEach((item: any) => {
+                deleteItems.current.delete(item.id);
               });
             }
-            // setBindKeys([...InstanceModel.selectedRows.keys()]);
+            setBindKeys([...deleteItems.current.keys()]);
           },
         }}
         headerTitle={[
