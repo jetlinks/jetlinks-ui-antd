@@ -315,17 +315,15 @@ const Dashboard = () => {
       </div>
       <Row gutter={24}>
         <Col flex={'auto'}>
-          <Card>
-            <DashBoard
-              title="流量统计"
-              height={560}
-              showTimeTool={true}
-              ref={echartsRef}
-              options={options}
-              onParamsChange={getEcharts}
-              defaultTime={'week'}
-            />
-          </Card>
+          <DashBoard
+            title="流量统计"
+            height={604}
+            showTimeTool={true}
+            ref={echartsRef}
+            options={options}
+            onParamsChange={getEcharts}
+            defaultTime={'week'}
+          />
         </Col>
         <Col flex={'520px'}>
           <Card>
