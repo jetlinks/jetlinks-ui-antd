@@ -16,20 +16,20 @@ const Save = (props: SaveType) => {
   const [form] = Form.useForm();
 
   const { data: platformList, run: platformRun } = useRequest(service.queryPlatformNoPage, {
-    manual: false,
+    manual: true,
     formatResult(result) {
-      return result.data;
+      return result.result;
     },
   });
 
   useEffect(() => {
     platformRun({
-      sorts: [{ order: 'desc' }],
+      sorts: [{ name: 'createTime', order: 'desc' }],
       terms: [{ column: 'state', value: 'enabled' }],
     });
-    // if (props.type === 'edit' && form) {
-    //   form.setFieldsValue(props.data)
-    // }
+    if (props.type === 'edit' && form) {
+      form.setFieldsValue(props.data);
+    }
   }, []);
 
   const submit = async () => {

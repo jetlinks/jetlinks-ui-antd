@@ -63,7 +63,7 @@ class BaseService<T> implements IBaseService<T> {
     return this.uri;
   }
 
-  POST(url: string, data: Partial<T> = {}, params?: any, options?: any) {
+  POST(url: string, data: Partial<T> = {}, params?: any, options?: any): Promise<any> {
     return request(url, {
       method: 'POST',
       data,
@@ -72,7 +72,7 @@ class BaseService<T> implements IBaseService<T> {
     });
   }
 
-  GET(url: string, params?: Partial<T>, options?: any) {
+  GET(url: string, params?: Partial<T>, options?: any): Promise<any> {
     return request(url, {
       method: 'GET',
       params,
@@ -80,7 +80,7 @@ class BaseService<T> implements IBaseService<T> {
     });
   }
 
-  PATCH(url: string, data?: Partial<T>, options?: any) {
+  PATCH(url: string, data?: Partial<T>, options?: any): Promise<any> {
     return request(url, {
       method: 'PATCH',
       data,
@@ -88,7 +88,7 @@ class BaseService<T> implements IBaseService<T> {
     });
   }
 
-  DELETE(url: string, params?: Partial<T>, options?: any) {
+  DELETE(url: string, params?: Partial<T>, options?: any): Promise<any> {
     return request(url, {
       method: 'DELETE',
       params,
@@ -96,7 +96,7 @@ class BaseService<T> implements IBaseService<T> {
     });
   }
 
-  PUT(url: string, data?: Partial<T>, options?: any) {
+  PUT(url: string, data?: Partial<T>, options?: any): Promise<any> {
     return request(url, {
       method: 'PUT',
       data,

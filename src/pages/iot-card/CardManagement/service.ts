@@ -20,10 +20,19 @@ class Service extends BaseService<CardManagement> {
   unbind = (cardId: string) => this.GET(`${this.uri}/${cardId}/_unbind`);
 
   recharge = (data: any) => this.POST(`${this.uri}/_recharge`, data);
-
+  // 激活待激活物联卡
+  changeDeploy = (cardId: string) => this.GET(`/${this.uri}/${cardId}/_activation`);
+  // 停用已激活物联卡
   unDeploy = (cardId: string) => this.GET(`${this.uri}/${cardId}/_deactivate`);
-
+  // 复机已停机物联卡
   resumption = (cardId: string) => this.GET(`${this.uri}/${cardId}/_resumption`);
+
+  // 激活待激活物联卡
+  changeDeployBatch = (data: any) => this.GET(`/${this.uri}/_activation/_bitch`, data);
+  // 停用已激活物联卡
+  unDeployBatch = (data: any) => this.GET(`${this.uri}/_deactivate/_bitch`, data);
+  // 复机已停机物联卡
+  resumptionBatch = (data: any) => this.GET(`${this.uri}/_resumption/_bitch`, data);
 
   sync = () => this.GET(`${this.uri}/state/_sync`);
 
@@ -36,7 +45,7 @@ class Service extends BaseService<CardManagement> {
 
   // 根据id批量导出
   _export = (format: string, params: any) =>
-    this.POST(`${this.uri}/download.${format}/_query`, {}, params, { responseType: 'blob' });
+    this.POST(`${this.uri}/download.${format}/_query`, params, {}, { responseType: 'blob' });
 
   // 批量删除物联卡
   removeCards = (data: any) => this.POST(`${this.uri}/batch/_delete`, data);
@@ -55,6 +64,12 @@ class Service extends BaseService<CardManagement> {
   queryUnbounded = (data: any) => this.POST(`${this.uri}/unbounded/device/_query`, data);
 
   queryCardNoPage = () => this.GET(`${this.uri}/_query/no-paging?paging=false`);
+
+  // 查询特定天数流量数据
+  queryFlow = (beginTime: number, endTime: number, data: any) =>
+    this.POST(`${basePath}/network/flow/_query/${beginTime}/${endTime}`, data);
+  // 查询对应状态物联卡数量
+  queryState = (status: string) => this.GET(`${this.uri}/${status}/state/_count`);
 }
 
 export default Service;

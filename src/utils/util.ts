@@ -33,6 +33,17 @@ export const downloadFile = (url: string, params?: Record<string, any>) => {
   formElement.submit();
   document.body.removeChild(formElement);
 };
+
+export const downloadFileByUrl = (url: string, name: string, type: string) => {
+  const downNode = document.createElement('a');
+  downNode.style.display = 'none';
+  downNode.download = `${name}.${type}`;
+  downNode.href = url;
+  document.body.appendChild(downNode);
+  downNode.click();
+  document.body.removeChild(downNode);
+};
+
 /**
  * 把数据下载成JSON
  * @param record
