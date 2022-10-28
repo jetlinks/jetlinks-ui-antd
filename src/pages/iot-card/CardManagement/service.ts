@@ -6,6 +6,8 @@ import SystemConst from '@/utils/const';
 const basePath = `/${SystemConst.API_BASE}`;
 
 class Service extends BaseService<CardManagement> {
+  add = (data: any) => this.PATCH(`${this.uri}`, data);
+
   queryById = (id: string) => request(`${this.uri}/${id}`, { method: 'GET' });
 
   queryDeviceList = (data: any) =>

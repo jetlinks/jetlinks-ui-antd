@@ -111,7 +111,7 @@ const CardManagementNode = () => {
       width: 120,
       valueType: 'select',
       render(_, record) {
-        return record.cardType.text;
+        return record.cardType?.text;
       },
       request: async () => {
         return [
@@ -217,12 +217,13 @@ const CardManagementNode = () => {
             isPermission={permission.delete}
             tooltip={{ title: '绑定设备' }}
             onClick={() => {
+              setCurrent(record);
               setBindDeviceVisible(true);
             }}
           >
             <LinkOutlined />
           </PermissionButton>,
-          record.cardStateType.value === 'toBeActivated' ? (
+          record.cardStateType?.value === 'toBeActivated' ? (
             <PermissionButton
               type="link"
               key="activation"
@@ -249,11 +250,11 @@ const CardManagementNode = () => {
               key="activation"
               style={{ padding: 0 }}
               isPermission={permission.action}
-              tooltip={{ title: record.cardStateType.value === 'deactivate' ? '复机' : '停用' }}
+              tooltip={{ title: record.cardStateType?.value === 'deactivate' ? '复机' : '停用' }}
               popConfirm={{
-                title: record.cardStateType.value === 'deactivate' ? '确认复机？' : '确认停用?',
+                title: record.cardStateType?.value === 'deactivate' ? '确认复机？' : '确认停用?',
                 onConfirm: async () => {
-                  if (record.cardStateType.value === 'deactivate') {
+                  if (record.cardStateType?.value === 'deactivate') {
                     service.resumption(record.id).then((resp) => {
                       if (resp.status === 200) {
                         message.success('操作成功');
@@ -271,7 +272,7 @@ const CardManagementNode = () => {
                 },
               }}
             >
-              {record.cardStateType.value === 'deactivate' ? (
+              {record.cardStateType?.value === 'deactivate' ? (
                 <PoweroffOutlined />
               ) : (
                 <StopOutlined />
@@ -463,6 +464,7 @@ const CardManagementNode = () => {
         <SaveModal
           type={current.id ? 'edit' : 'add'}
           onCancel={() => {
+            setCurrent({});
             setVisible(false);
           }}
           data={current}
@@ -495,9 +497,11 @@ const CardManagementNode = () => {
         <BindDeviceModal
           cardId={current.id!}
           onCancel={() => {
+            setCurrent({});
             setBindDeviceVisible(false);
           }}
           onOk={() => {
+            setCurrent({});
             setBindDeviceVisible(false);
             actionRef.current?.reload();
           }}

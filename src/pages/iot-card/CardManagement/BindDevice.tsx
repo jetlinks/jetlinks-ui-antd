@@ -18,7 +18,7 @@ type BindDeviceType = {
 const BindDevice = (props: BindDeviceType) => {
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});
-  const [bindKey, setBindKey] = useState<any>('');
+  const [bindKeys, setBindKeys] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const columns: ProColumns<DeviceInstance>[] = [
@@ -72,18 +72,18 @@ const BindDevice = (props: BindDeviceType) => {
 
   const submit = useCallback(async () => {
     setLoading(true);
-    const resp = await service.bind(props.cardId, bindKey[0]);
+    const resp = await service.bind(props.cardId, bindKeys[0]);
     setLoading(false);
     if (resp.status === 200) {
       message.success('操作成功');
       props?.onOk();
     }
-  }, [bindKey]);
+  }, [bindKeys]);
 
   return (
     <Modal
       title={'选择设备'}
-      width={1000}
+      width={1100}
       visible={true}
       confirmLoading={loading}
       onCancel={props.onCancel}
@@ -115,11 +115,23 @@ const BindDevice = (props: BindDeviceType) => {
         rowKey="id"
         search={false}
         pagination={{ pageSize: 10 }}
+        tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
+        tableAlertOptionRender={() => {
+          return (
+            <a
+              onClick={() => {
+                setBindKeys([]);
+              }}
+            >
+              取消选择
+            </a>
+          );
+        }}
         rowSelection={{
           type: 'radio',
-          selectedRowKeys: [bindKey],
+          selectedRowKeys: bindKeys,
           onSelect: (record) => {
-            setBindKey(record.id);
+            setBindKeys([record.id]);
           },
         }}
       />

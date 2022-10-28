@@ -1,5 +1,5 @@
 import { Form, Input, message, Modal, Select } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { service } from './index';
 import { useRequest } from 'ahooks';
@@ -14,6 +14,7 @@ type SaveType = {
 
 const Save = (props: SaveType) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const { data: platformList, run: platformRun } = useRequest(service.queryPlatformNoPage, {
     manual: true,
@@ -35,9 +36,10 @@ const Save = (props: SaveType) => {
   const submit = async () => {
     const formData = await form.validateFields();
     if (formData) {
+      setLoading(true);
       const resp =
-        props.type === 'add' ? await service.save(formData) : await service.update(formData);
-
+        props.type === 'add' ? await service.add(formData) : await service.update(formData);
+      setLoading(false);
       if (resp.status === 200) {
         message.success('操作成功');
         props?.onOk();
@@ -51,6 +53,7 @@ const Save = (props: SaveType) => {
       width={600}
       onCancel={props.onCancel}
       onOk={submit}
+      confirmLoading={loading}
     >
       <Form
         form={form}
