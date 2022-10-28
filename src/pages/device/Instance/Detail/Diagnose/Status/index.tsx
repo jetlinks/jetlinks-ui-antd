@@ -247,6 +247,8 @@ const Status = observer((props: Props) => {
           } else {
             resolve({});
           }
+        } else {
+          console.error('设备不含accessId');
         }
       }
     });
