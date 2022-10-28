@@ -875,12 +875,11 @@ const Save = observer(() => {
             'x-component': 'Radio.Group',
             required: true,
             default: true,
-            enum: isNoCommunity
-              ? [
-                  { label: '共享配置', value: true },
-                  { label: '独立配置', value: false },
-                ]
-              : [{ label: '共享配置', value: true }],
+            'x-hidden': !isNoCommunity,
+            enum: [
+              { label: '共享配置', value: true },
+              { label: '独立配置', value: false },
+            ],
             'x-component-props': {
               buttonStyle: 'solid',
               optionType: 'button',

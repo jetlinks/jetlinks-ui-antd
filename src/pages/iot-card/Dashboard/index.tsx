@@ -7,6 +7,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/iot-card/CardManagement';
 import type { EChartsOption } from 'echarts';
+import classNames from 'classnames';
 
 const DefaultEchartsOptions: any = {
   yAxis: {
@@ -14,8 +15,9 @@ const DefaultEchartsOptions: any = {
     show: false,
   },
   grid: {
-    top: '5%',
+    top: '7%',
     left: '2%',
+    right: '5%',
     bottom: 20,
   },
   tooltip: {
@@ -34,7 +36,7 @@ const Dashboard = () => {
   const [dayTotal, setDayTotal] = useState(0);
   const [monthTotal, setMonthTotal] = useState(0);
   const [yearTotal, setYearTotal] = useState(0);
-  const [topList, setTopList] = useState([]);
+  const [topList, setTopList] = useState<any[]>([]);
   const [topTotal, setTotal] = useState(0);
   const echartsRef = useRef<any>();
 
@@ -243,6 +245,14 @@ const Dashboard = () => {
           const arr = resp.result.slice(0, 10).sort((a: any, b: any) => b.value - a.value);
           setTotal(arr.length ? arr[0].value : 0);
           setTopList(arr);
+          // const testArr = new Array(10).fill(1).map((item, index) => {
+          //   return {
+          //     cardNum: '123123123123' + index,
+          //     value: 50 + index
+          //   }
+          // })
+          // setTotal(60)
+          // setTopList(testArr as any[]);
         }
       });
   };
@@ -306,19 +316,17 @@ const Dashboard = () => {
       </div>
       <Row gutter={24}>
         <Col flex={'auto'}>
-          <Card>
-            <DashBoard
-              title="流量统计"
-              height={560}
-              showTimeTool={true}
-              ref={echartsRef}
-              options={options}
-              onParamsChange={getEcharts}
-              defaultTime={'week'}
-            />
-          </Card>
+          <DashBoard
+            title="流量统计"
+            height={604}
+            showTimeTool={true}
+            ref={echartsRef}
+            options={options}
+            onParamsChange={getEcharts}
+            defaultTime={'week'}
+          />
         </Col>
-        <Col flex={'480px'}>
+        <Col flex={'520px'}>
           <Card>
             <div className={styles.topName} style={{ height: 50 }}>
               <span>流量使用TOP10</span>
@@ -342,10 +350,19 @@ const Dashboard = () => {
                 topList.map((item: any, index) => {
                   return (
                     <div className={styles.rankItem} key={item.cardNum}>
-                      <div className={styles.number}>{index + 1}</div>
-                      <div>{item.cardNum}</div>
-                      <div>
-                        <Progress strokeLinecap="butt" percent={(item.value / topTotal) * 100} />
+                      <div
+                        className={classNames(styles.number, styles[`number-item-${index + 1}`])}
+                      >
+                        {index + 1}
+                      </div>
+                      <div className={styles.cardNum}>{item.cardNum}</div>
+                      <div className={styles.progress}>
+                        <Progress
+                          strokeColor={'#ADC6FF'}
+                          trailColor={'#E0E4E8'}
+                          strokeLinecap="butt"
+                          percent={Math.ceil((item.value / topTotal) * 100)}
+                        />
                       </div>
                       <div className={styles.total}>{item?.value?.toFixed(2)} M</div>
                     </div>
