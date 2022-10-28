@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Col, Descriptions, Row } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import { PermissionButton, DashBoard } from '@/components';
+import { PermissionButton, DashBoard, Ellipsis } from '@/components';
 import SaveModal from '../SaveModal';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CardManagement } from '@/pages/iot-card/CardManagement/typing';
@@ -20,6 +20,7 @@ const DefaultEchartsOptions: any = {
   grid: {
     top: '5%',
     left: '2%',
+    right: '3%',
     bottom: 20,
   },
   tooltip: {
@@ -118,6 +119,7 @@ const CardDetail = () => {
             data: resp.data,
             type: 'line',
             color: '#FBA500',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -159,6 +161,7 @@ const CardDetail = () => {
             data: resp.data,
             type: 'line',
             color: '#498BEF',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -200,6 +203,7 @@ const CardDetail = () => {
             data: resp.data,
             type: 'line',
             color: '#58E1D3',
+            smooth: true,
             areaStyle: {
               color: {
                 type: 'linear',
@@ -229,7 +233,13 @@ const CardDetail = () => {
   const getEcharts = useCallback(
     (data: any) => {
       if (!params.id) return;
-      getData(data.time.start, data.time.end).then((resp) => {
+      let startTime = data.time.start;
+      let endTime = data.time.end;
+      if (data.time.type === 'week' || data.time.type === 'month') {
+        startTime = moment(data.time.start).startOf('days').valueOf();
+        endTime = moment(data.time.end).startOf('days').valueOf();
+      }
+      getData(startTime, endTime).then((resp) => {
         setOptions({
           ...DefaultEchartsOptions,
           xAxis: {
@@ -242,6 +252,7 @@ const CardDetail = () => {
               data: resp.data,
               type: 'line',
               color: '#498BEF',
+              smooth: true,
               areaStyle: {
                 color: {
                   type: 'linear',
@@ -287,7 +298,8 @@ const CardDetail = () => {
             setVisible(false);
           }}
           onOk={() => {
-            getDetail();
+            getDetail(params.id);
+            setVisible(false);
           }}
         />
       )}
@@ -336,7 +348,14 @@ const CardDetail = () => {
                 {detail.residualFlow ? detail.residualFlow.toFixed(2) + ' M' : ''}
               </Descriptions.Item>
               <Descriptions.Item label={'状态'}>{detail?.cardState?.text}</Descriptions.Item>
-              <Descriptions.Item label={'说明'}>{detail?.describe}</Descriptions.Item>
+              <Descriptions.Item label={'说明'}>
+                <Ellipsis
+                  title={detail?.describe}
+                  tooltip={{ placement: 'topLeft' }}
+                  style={{ maxWidth: 300 }}
+                  limitWidth={300}
+                />
+              </Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
@@ -359,7 +378,7 @@ const CardDetail = () => {
                 onParamsChange={getEcharts}
               />
             </Col>
-            <Col flex={'520px'}>
+            <Col flex={'550px'}>
               <Card>
                 <div
                   style={{
