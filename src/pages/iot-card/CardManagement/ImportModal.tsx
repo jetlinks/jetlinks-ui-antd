@@ -1,4 +1,4 @@
-import { Button, Form, message, Modal, Radio, Select, Upload } from 'antd';
+import { Button, Form, message, Modal, Radio, Select, Space, Upload } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { useRequest } from 'ahooks';
 import { service } from '@/pages/iot-card/CardManagement/index';
@@ -9,26 +9,30 @@ import { CheckOutlined } from '@ant-design/icons';
 
 type ImportModalType = {
   onCancel: () => void;
+  onOk: () => void;
 };
 
 const ImportModal = (props: ImportModalType) => {
   const [fileType, setFileType] = useState('xlsx');
   const [configId, setConfigId] = useState('');
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const { data: platformList, run: platformRun } = useRequest(service.queryPlatformNoPage, {
-    manual: false,
+    manual: true,
     formatResult(result) {
-      return result.data;
+      return result.result;
     },
   });
 
   const submitData = useCallback(
     (result: any) => {
       service._import(configId, { fileUrl: result }).then((resp) => {
+        setLoading(false);
         if (resp.status === 200) {
           setTotal(resp.result.total);
           message.success('导入成功');
+          props.onOk();
         } else {
           message.error(resp.message || '导入失败');
         }
@@ -38,8 +42,9 @@ const ImportModal = (props: ImportModalType) => {
   );
 
   const fileChange = (info: any) => {
+    setLoading(true);
     if (info.file.status === 'done') {
-      const resp = info.file.result || { result: '' };
+      const resp = info.file.response || { result: '' };
       submitData(resp.result);
     }
   };
@@ -102,21 +107,23 @@ const ImportModal = (props: ImportModalType) => {
                 showUploadList={false}
                 onChange={fileChange}
               >
-                <Button>上传文件</Button>
+                <Button loading={loading}>上传文件</Button>
               </Upload>
             </Form.Item>
             <Form.Item label={'下载模板'}>
-              <Button icon={'file'} onClick={() => downFileFn('xlsx')}>
-                .xlsx
-              </Button>
-              <Button icon={'file'} onClick={() => downFileFn('csv')}>
-                .csv
-              </Button>
+              <Space>
+                <Button icon={'file'} onClick={() => downFileFn('xlsx')}>
+                  .xlsx
+                </Button>
+                <Button icon={'file'} onClick={() => downFileFn('csv')}>
+                  .csv
+                </Button>
+              </Space>
             </Form.Item>
           </>
         )}
       </Form>
-      {total && (
+      {!!total && (
         <div>
           <CheckOutlined style={{ color: '#2F54EB', marginRight: 8 }} />
           已完成 总数量 <span style={{ color: '#2F54EB' }}>{total}</span>

@@ -16,3 +16,4 @@ export { default as GeoPoint } from './GeoPoint';
 export { default as MetadataJsonInput } from './FormItems/MetadataJsonInput';
 export { default as Ellipsis } from './Ellipsis';
 export { default as FDatePicker } from './FDatePicker';
+export { default as DashBoard } from './DashBoard';
