@@ -15,8 +15,9 @@ const DefaultEchartsOptions: any = {
     show: false,
   },
   grid: {
-    top: '5%',
+    top: '7%',
     left: '2%',
+    right: '5%',
     bottom: 20,
   },
   tooltip: {
