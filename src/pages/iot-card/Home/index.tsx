@@ -44,6 +44,7 @@ export default () => {
   ]);
 
   const { permission: paltformPermission } = PermissionButton.usePermission('iot-card/Platform');
+  const { permission: cardPermission } = PermissionButton.usePermission('iot-card/CardManagement');
 
   const history = useHistory();
 
@@ -144,14 +145,14 @@ export default () => {
       key: 'EQUIPMENT',
       name: '平台对接',
       english: 'STEP1',
-      auth: !!paltformPermission.update,
+      auth: !!paltformPermission.add,
       url: platformUrl,
     },
     {
       key: 'SCREEN',
       name: '物联卡管理',
       english: 'STEP2',
-      auth: !!cardUrl,
+      auth: !!cardPermission.add,
       url: cardUrl,
       param: { save: true },
     },

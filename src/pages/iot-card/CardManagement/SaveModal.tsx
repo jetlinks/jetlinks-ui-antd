@@ -38,7 +38,7 @@ const Save = (props: SaveType) => {
     if (formData) {
       setLoading(true);
       const resp =
-        props.type === 'add' ? await service.add(formData) : await service.update(formData);
+        props.type === 'add' ? await service.add(formData) : await service.edit(formData);
       setLoading(false);
       if (resp.status === 200) {
         message.success('操作成功');

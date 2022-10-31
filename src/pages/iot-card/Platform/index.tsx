@@ -194,7 +194,7 @@ const Platform = () => {
                 history.push(url);
               }}
               style={{ marginRight: 12 }}
-              isPermission={permission.update}
+              isPermission={permission.add}
               key="button"
               icon={<PlusOutlined />}
               type="primary"
