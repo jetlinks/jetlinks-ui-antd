@@ -18,7 +18,7 @@ export const service = new Service('media');
 
 export default () => {
   const dashBoardUrl = getMenuPathByCode('media/DashBoard');
-  const deviceUrl = getMenuPathByCode('media/Device');
+  const deviceUrl = getMenuPathByCode('media/Device/Save');
   const channelUrl = getMenuPathByCode('media/Device/Channel');
   const cascadeUrl = getMenuPathByCode('media/Cascade');
   const splitScreenUrl = getMenuPathByCode('media/SplitScreen');

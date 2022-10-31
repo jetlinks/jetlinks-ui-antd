@@ -22,7 +22,7 @@ const DataCollectModel = model<{
 
 export default observer(() => {
   const obj = {
-    channel: <Device type={false} id={DataCollectModel.id} />,
+    channel: <Device type={false} id={DataCollectModel.id} provider={DataCollectModel.provider} />,
     device: (
       <Point type={false} provider={DataCollectModel.provider} data={DataCollectModel.data} />
     ),

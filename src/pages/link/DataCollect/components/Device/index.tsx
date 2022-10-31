@@ -16,6 +16,7 @@ import Save from '@/pages/link/DataCollect/components/Device/Save/index';
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   id?: any;
+  provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
 const CollectorModel = model<{
@@ -292,6 +293,7 @@ export default observer((props: Props) => {
         <Save
           data={CollectorModel.current}
           channelId={props.id}
+          provider={props.provider}
           close={() => {
             CollectorModel.visible = false;
           }}
