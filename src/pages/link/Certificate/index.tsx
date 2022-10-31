@@ -47,7 +47,7 @@ const Certificate = () => {
     {
       dataIndex: 'description',
       title: '说明',
-      ellipsis: true,
+      // ellipsis: true,
       render: (text: any) => (
         <div style={{ width: '100%' }} className="ellipsis">
           <Tooltip placement="topLeft" title={text}>

@@ -55,7 +55,7 @@ const EnumParam = () => {
                     },
                     {
                       required: true,
-                      message: '请输入标识',
+                      message: '请输入Text',
                     },
                   ],
                 },
@@ -74,7 +74,7 @@ const EnumParam = () => {
                     },
                     {
                       required: true,
-                      message: '请输入描述',
+                      message: '请输入Value',
                     },
                   ],
                 },
