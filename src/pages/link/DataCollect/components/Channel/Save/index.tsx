@@ -68,14 +68,14 @@ export default (props: Props) => {
 
   registerValidateRules({
     testHost(val: string) {
-      if (val) return '';
-      if (!testIP(val) || !testIPv6(val) || !testDomain(val)) {
+      if (!(testIP(val) || testIPv6(val) || testDomain(val))) {
         return {
           type: 'error',
           message: '请输入正确格式的IP地址',
         };
+      } else {
+        return true;
       }
-      return '';
     },
   });
 
@@ -140,6 +140,7 @@ export default (props: Props) => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
+              tooltip: '支持ipv4、ipv6、域名',
             },
             'x-component-props': {
               placeholder: '请输入Modbus主机IP',

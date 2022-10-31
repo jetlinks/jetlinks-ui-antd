@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { useHistory } from 'umi';
+import { useHistory, useModel } from 'umi';
 import SearchComponent from '@/components/SearchComponent';
 import Service from './service';
 import type { MenuItem } from './typing';
@@ -44,6 +44,7 @@ export default observer(() => {
   const [param, setParam] = useState<any>({});
   const history = useHistory();
   const { permission } = PermissionButton.usePermission('system/Menu');
+  const { initialState } = useModel('@@initialState');
 
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
@@ -337,15 +338,17 @@ export default observer(() => {
               defaultMessage: '新增',
             })}
           </PermissionButton>,
-          <PermissionButton
-            style={{ marginLeft: 12 }}
-            isPermission={permission.setting}
-            onClick={() => {
-              history.push(getMenuPathByCode('system/Menu/Setting'));
-            }}
-          >
-            菜单配置
-          </PermissionButton>,
+          initialState?.currentUser?.user?.username === 'admin' && (
+            <PermissionButton
+              style={{ marginLeft: 12 }}
+              isPermission={true}
+              onClick={() => {
+                history.push(getMenuPathByCode('system/Menu/Setting'));
+              }}
+            >
+              菜单配置
+            </PermissionButton>
+          ),
         ]}
       />
     </PageContainer>

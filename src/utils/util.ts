@@ -108,7 +108,7 @@ export const testIPv6 = (str: string) => {
 };
 
 export const testDomain = (str: string) => {
-  const re = /^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$/;
+  const re = /([0-9a-z-]{2,}\.[0-9a-z-]{2,3}\.[0-9a-z-]{2,3}|[0-9a-z-]{2,}\.[0-9a-z-]{2,3})$/i;
   return re.test(str);
 };
 
