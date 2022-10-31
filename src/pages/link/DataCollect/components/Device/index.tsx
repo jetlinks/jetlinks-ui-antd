@@ -29,24 +29,18 @@ const CollectorModel = model<{
 
 export default observer((props: Props) => {
   const { minHeight } = useDomFullHeight(`.data-collect-collector`, 24);
-  const [param, setParam] = useState({
-    terms: [],
-  });
+  const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const intl = useIntl();
   const { permission } = PermissionButton.usePermission('device/Instance');
   const [dataSource, setDataSource] = useState<any>({
     data: [],
-    pageSize: 10,
+    pageSize: 12,
     pageIndex: 0,
     total: 0,
   });
 
   const columns: ProColumns<CollectorItem>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -271,7 +265,7 @@ export default observer((props: Props) => {
                         pageSize: size,
                       });
                     }}
-                    pageSizeOptions={[10, 20, 50, 100]}
+                    pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
                     showTotal={(num) => {
                       const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
