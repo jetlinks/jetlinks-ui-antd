@@ -25,7 +25,9 @@ const Reation = () => {
 
   useEffect(() => {
     if (id) {
-      setData(InstanceModel.detail?.relations || []);
+      const item = InstanceModel.detail?.relations?.reverse();
+      setData(item || []);
+      // console.log(InstanceModel.detail?.relations?.reverse() )
     }
   }, [InstanceModel.detail?.relations]);
 
@@ -55,7 +57,7 @@ const Reation = () => {
           </span>
         }
       >
-        {(data.reverse() || [])?.map((item: any) => (
+        {(data || [])?.map((item: any) => (
           <Descriptions.Item span={1} label={item.relationName} key={item.objectId}>
             <Ellipsis
               title={item?.related ? _.map(item?.related || [], 'name').join(',') : ''}

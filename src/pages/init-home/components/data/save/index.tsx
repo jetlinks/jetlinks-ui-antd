@@ -117,7 +117,13 @@ const Save = (props: Props) => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-validator': ['ipv4'],
+            'x-validator': [
+              'ipv4',
+              {
+                required: true,
+                message: '请输入域名或IP',
+              },
+            ],
             'x-component-props': {
               placeholder: '请输入公网地址',
             },
@@ -144,6 +150,10 @@ const Save = (props: Props) => {
               {
                 min: 1,
                 message: '请输入1-65535之间的正整数',
+              },
+              {
+                required: true,
+                message: '请输入公网端口',
               },
             ],
           },

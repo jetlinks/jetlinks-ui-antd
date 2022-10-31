@@ -64,7 +64,12 @@ const Running = () => {
               </Tabs.TabPane>
             ))}
           </Tabs>
-          {list.length === 0 && <Empty description="暂无数据" style={{ marginTop: '10%' }} />}
+          {list.length === 0 && (
+            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Empty description="暂无数据" style={{ marginTop: '10%' }} />
+              <Empty description="暂无数据" style={{ marginTop: '10%', marginLeft: '30%' }} />
+            </div>
+          )}
         </div>
       )}
     </Card>

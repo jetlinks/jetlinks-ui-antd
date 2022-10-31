@@ -313,6 +313,7 @@ const Save = (props: Props) => {
             >
               <RadioCard
                 model={'singular'}
+                disabled={!!props.data?.accessId}
                 options={[
                   {
                     label: intlFormat('pages.device.type.device', '直连设备'),

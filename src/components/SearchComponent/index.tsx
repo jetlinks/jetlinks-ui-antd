@@ -212,7 +212,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               }
               f.setFieldState(typeFiled.query('.value'), async (state) => {
                 state.componentType = 'Input';
-                state.componentProps = { allowClear: true };
+                state.componentProps = {
+                  allowClear: true,
+                  // onchange:(event:any)=>{
+                  //   console.log(event.target?.value)
+                  // }
+                };
               });
             } else {
               switch (_field?.valueType) {
@@ -710,6 +715,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               handleSearch(false);
             }}
             type="primary"
+            htmlType={'submit'}
           >
             搜索
           </Button>
@@ -732,6 +738,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         }}
         type="primary"
         overlay={historyDom}
+        htmlType={'submit'}
       >
         搜索
       </Dropdown.Button>
@@ -784,7 +791,13 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
 
   return (
     <Card bordered={false} className={styles.container}>
-      <Form form={form} className={styles.form} labelCol={4} wrapperCol={18}>
+      <Form
+        form={form}
+        className={styles.form}
+        labelCol={4}
+        wrapperCol={18}
+        onAutoSubmit={() => (SearchBtn.advance ? handleSearch : handleSearch(false))}
+      >
         <div className={expand && styles.simple}>
           <SchemaField schema={expand ? simpleSchema : schema} />
           <div className={styles.action} style={{ marginTop: expand ? 0 : -12 }}>
