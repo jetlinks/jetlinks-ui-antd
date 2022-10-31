@@ -97,7 +97,7 @@ const EventDefin: React.FC<Props> = props => {
       } else if (type === 'enum') {
         data.valueType.elements = enumData;
       }
-      if (dataType === 'array' && data.valueType.elementType.type === 'object') {
+      if (dataType === 'array' && data.valueType.elementType?.type === 'object') {
         data.valueType.elementType.properties = arrayProperties;
       }
       props.save({ ...data });
