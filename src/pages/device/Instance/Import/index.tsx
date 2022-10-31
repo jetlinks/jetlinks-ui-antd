@@ -273,11 +273,11 @@ const Import = (props: Props) => {
       title="导入"
       onOk={() => close()}
       footer={[
-        <Button key="cancel" onClick={() => close()}>
-          取消
-        </Button>,
+        // <Button key="cancel" onClick={() => close()}>
+        //   取消
+        // </Button>,
         <Button key="ok" type="primary" onClick={() => close()}>
-          确认
+          关闭
         </Button>,
       ]}
     >
