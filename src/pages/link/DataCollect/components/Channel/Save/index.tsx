@@ -1,12 +1,12 @@
 import { Button, Modal } from 'antd';
-import { createForm, Field } from '@formily/core';
+import { createForm, Field, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { onlyMessage } from '@/utils/util';
+import { onlyMessage, testDomain, testIP, testIPv6 } from '@/utils/util';
 import { action } from '@formily/reactive';
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 export default (props: Props) => {
   const [data, setData] = useState<Partial<ChannelItem>>(props.data);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.data?.id) {
@@ -35,14 +35,15 @@ export default (props: Props) => {
   });
 
   const getSecurityPolicyList = () => service.querySecurityPolicyList({});
+  const getAuthTypeList = () => service.queryAuthTypeList({});
 
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
     field.loading = true;
     services(field).then(
       action.bound!((resp: any) => {
         field.dataSource = (resp?.result || []).map((item: any) => ({
-          label: item.name,
-          value: item.id,
+          label: item?.text || item,
+          value: item?.value || item,
         }));
         field.loading = false;
       }),
@@ -62,6 +63,19 @@ export default (props: Props) => {
       icon(name: any) {
         return React.createElement(ICONS[name]);
       },
+    },
+  });
+
+  registerValidateRules({
+    testHost(val: string) {
+      if (val) return '';
+      if (!testIP(val) || !testIPv6(val) || !testDomain(val)) {
+        return {
+          type: 'error',
+          message: '请输入正确格式的IP地址',
+        };
+      }
+      return '';
     },
   });
 
@@ -108,6 +122,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择通讯协议',
             },
+            'x-disabled': props.data?.id,
             enum: [
               { label: 'OPC_UA', value: 'OPC_UA' },
               { label: 'MODBUS_TCP', value: 'MODBUS_TCP' },
@@ -133,6 +148,9 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请输入Modbus主机IP',
+              },
+              {
+                testHost: true,
               },
             ],
             'x-reactions': {
@@ -162,11 +180,11 @@ export default (props: Props) => {
               },
               {
                 max: 65535,
-                message: '请输入0-65535之间的整整数',
+                message: '请输入0-65535之间的正整数',
               },
               {
                 min: 0,
-                message: '请输入0-65535之间的整整数',
+                message: '请输入0-65535之间的正整数',
               },
             ],
             'x-reactions': {
@@ -231,6 +249,34 @@ export default (props: Props) => {
               },
             ],
           },
+          'configuration.authType': {
+            title: '权限认证',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择权限认证',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择权限认证',
+              },
+            ],
+            'x-reactions': [
+              '{{useAsyncDataSource(getAuthTypeList)}}',
+              {
+                dependencies: ['..provider'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="OPC_UA"}}',
+                  },
+                },
+              },
+            ],
+          },
           'configuration.username': {
             title: '用户名',
             'x-component': 'Input',
@@ -241,17 +287,21 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入用户名',
             },
-            // 'x-validator': [
-            //   {
-            //     required: true,
-            //     message: '请输入用户名',
-            //   },
-            // ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入用户名',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
             'x-reactions': {
-              dependencies: ['..provider'],
+              dependencies: ['.authType'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]==="OPC_UA"}}',
+                  visible: '{{$deps[0]==="username"}}',
                 },
               },
             },
@@ -266,17 +316,21 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入密码',
             },
-            // 'x-validator': [
-            //   {
-            //     required: true,
-            //     message: '请输入密码',
-            //   },
-            // ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入密码',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
             'x-reactions': {
-              dependencies: ['..provider'],
+              dependencies: ['.authType'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]==="OPC_UA"}}',
+                  visible: '{{$deps[0]==="username"}}',
                 },
               },
             },
@@ -302,11 +356,11 @@ export default (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<ChannelItem>();
-    setLoading(true);
+    // setLoading(true);
     const response: any = props.data?.id
       ? await service.updateChannel(props.data?.id, { ...props.data, ...value })
       : await service.saveChannel({ ...props.data, ...value });
-    setLoading(false);
+    // setLoading(false);
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();
@@ -330,14 +384,17 @@ export default (props: Props) => {
           onClick={() => {
             save();
           }}
-          loading={loading}
+          // loading={loading}
         >
           确定
         </Button>,
       ]}
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} scope={{ useAsyncDataSource, getSecurityPolicyList }} />
+        <SchemaField
+          schema={schema}
+          scope={{ useAsyncDataSource, getSecurityPolicyList, getAuthTypeList }}
+        />
       </Form>
     </Modal>
   );

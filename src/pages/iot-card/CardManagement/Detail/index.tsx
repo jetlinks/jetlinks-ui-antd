@@ -360,8 +360,8 @@ const CardDetail = () => {
           </Card>
         </Col>
         <Col span={24}>
-          <Row gutter={24}>
-            <Col flex={'auto'}>
+          <div className={'iot-card-detail-total'}>
+            <div className={'iot-card-detail-total-left'}>
               <DashBoard
                 ref={echartsRef}
                 title={'流量统计'}
@@ -377,70 +377,78 @@ const CardDetail = () => {
                 height={500}
                 onParamsChange={getEcharts}
               />
-            </Col>
-            <Col flex={'550px'}>
-              <Card>
-                <div
-                  style={{
-                    marginBottom: 20,
-                    color: '#323130',
-                    fontSize: 16,
-                    fontWeight: 600,
-                  }}
-                >
-                  数据统计
-                </div>
-                <div className={'iot-card-detail-total-item'}>
-                  <Row>
-                    <Col flex={'auto'}>
-                      <div className={'detail-total-item-name'}>昨日流量消耗</div>
-                      <div className={'detail-total-item-content'}>
-                        <span className={'detail-total-item-value'}>{dayTotal}</span>
-                        <span>M</span>
-                      </div>
-                    </Col>
-                    <Col flex={'240px'}>
-                      <div style={{ height: 83 }}>
-                        <Echarts options={dayOptions} />
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-                <div className={'iot-card-detail-total-item'}>
-                  <Row>
-                    <Col flex={'auto'}>
-                      <div className={'detail-total-item-name'}>当月流量消耗</div>
-                      <div className={'detail-total-item-content'}>
-                        <span className={'detail-total-item-value'}>{monthTotal}</span>
-                        <span>M</span>
-                      </div>
-                    </Col>
-                    <Col flex={'240px'}>
-                      <div style={{ height: 83 }}>
-                        <Echarts options={monthOptions} />
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-                <div className={'iot-card-detail-total-item'}>
-                  <Row>
-                    <Col flex={'auto'}>
-                      <div className={'detail-total-item-name'}>本年流量消耗</div>
-                      <div className={'detail-total-item-content'}>
-                        <span className={'detail-total-item-value'}>{yearTotal}</span>
-                        <span>M</span>
-                      </div>
-                    </Col>
-                    <Col flex={'240px'}>
-                      <div style={{ height: 84 }}>
-                        <Echarts options={yearOptions} />
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-              </Card>
-            </Col>
-          </Row>
+            </div>
+            <div className={'iot-card-detail-total-right'}>
+              <div
+                style={{
+                  marginBottom: 20,
+                  color: '#323130',
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}
+              >
+                数据统计
+              </div>
+              <div className={'iot-card-detail-total-item'}>
+                <Row>
+                  <Col flex={'auto'}>
+                    <div className={'detail-total-item-name'}>昨日流量消耗</div>
+                    <div className={'detail-total-item-content'}>
+                      <span className={'detail-total-item-value'}>{dayTotal}</span>
+                      <span>M</span>
+                    </div>
+                  </Col>
+                  <Col flex={'240px'}>
+                    <div style={{ height: 83 }}>
+                      <Echarts options={dayOptions} />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div className={'iot-card-detail-total-item'}>
+                <Row>
+                  <Col flex={'auto'}>
+                    <div className={'detail-total-item-name'}>当月流量消耗</div>
+                    <div className={'detail-total-item-content'}>
+                      <span className={'detail-total-item-value'}>{monthTotal}</span>
+                      <span>M</span>
+                    </div>
+                  </Col>
+                  <Col flex={'240px'}>
+                    <div style={{ height: 83 }}>
+                      <Echarts options={monthOptions} />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+              <div className={'iot-card-detail-total-item'}>
+                <Row>
+                  <Col flex={'auto'}>
+                    <div className={'detail-total-item-name'}>本年流量消耗</div>
+                    <div className={'detail-total-item-content'}>
+                      <span className={'detail-total-item-value'}>{yearTotal}</span>
+                      <span>M</span>
+                    </div>
+                  </Col>
+                  <Col flex={'240px'}>
+                    <div style={{ height: 84 }}>
+                      <Echarts options={yearOptions} />
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+          </div>
+          {/*<Row gutter={24}>*/}
+          {/*  <Col flex={'auto'}>*/}
+          {/*    */}
+          {/*  </Col>*/}
+          {/*  <Col flex={'550px'}>*/}
+          {/*    <Card>*/}
+          {/*      */}
+          {/*    </Card>*/}
+          {/*  </Col>*/}
+          {/*</Row>*/}
         </Col>
       </Row>
     </PageContainer>

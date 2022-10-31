@@ -104,11 +104,18 @@ class Service {
       method: 'POST',
       data: params,
     });
-  public querySecurityPolicyList = (params: any) =>
-    request(`/${SystemConst.API_BASE}/edge/operations/local/opcua-security-policies/invoke`, {
-      method: 'POST',
-      data: params,
+  public querySecurityPolicyList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/security-policies`, {
+      method: 'GET',
+      params,
     });
+
+  public queryAuthTypeList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/auth-types`, {
+      method: 'GET',
+      params,
+    });
+
   public scanOpcUAList = (params: any) =>
     request(
       `/${SystemConst.API_BASE}/data-collect/opc/channel/${params.id}/nodes?nodeId=${
