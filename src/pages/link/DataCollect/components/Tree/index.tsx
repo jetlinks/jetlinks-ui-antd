@@ -75,7 +75,6 @@ export default observer((props: Props) => {
       <div style={{ margin: '16px 0' }}>
         <Button
           type="primary"
-          ghost
           style={{ width: '100%' }}
           icon={<PlusOutlined />}
           onClick={() => {
@@ -166,6 +165,7 @@ export default observer((props: Props) => {
           }}
           reload={() => {
             TreeModel.visible = false;
+            handleSearch(TreeModel.param);
           }}
         />
       )}

@@ -1,12 +1,12 @@
 import { Button, Modal } from 'antd';
-import { createForm, Field } from '@formily/core';
+import { createForm, Field, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { onlyMessage } from '@/utils/util';
+import { onlyMessage, testDomain, testIP, testIPv6 } from '@/utils/util';
 import { action } from '@formily/reactive';
 
 interface Props {
@@ -65,6 +65,19 @@ export default (props: Props) => {
     },
   });
 
+  registerValidateRules({
+    testHost(val: string) {
+      if (val) return '';
+      if (!testIP(val) || !testIPv6(val) || !testDomain(val)) {
+        return {
+          type: 'error',
+          message: '请输入正确格式的IP地址',
+        };
+      }
+      return '';
+    },
+  });
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -108,6 +121,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择通讯协议',
             },
+            'x-disabled': props.data?.id,
             enum: [
               { label: 'OPC_UA', value: 'OPC_UA' },
               { label: 'MODBUS_TCP', value: 'MODBUS_TCP' },
@@ -133,6 +147,9 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请输入Modbus主机IP',
+              },
+              {
+                testHost: true,
               },
             ],
             'x-reactions': {
@@ -162,11 +179,11 @@ export default (props: Props) => {
               },
               {
                 max: 65535,
-                message: '请输入0-65535之间的整整数',
+                message: '请输入0-65535之间的正整数',
               },
               {
                 min: 0,
-                message: '请输入0-65535之间的整整数',
+                message: '请输入0-65535之间的正整数',
               },
             ],
             'x-reactions': {
@@ -217,6 +234,34 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请选择安全策略',
+              },
+            ],
+            'x-reactions': [
+              '{{useAsyncDataSource(getSecurityPolicyList)}}',
+              {
+                dependencies: ['..provider'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="OPC_UA"}}',
+                  },
+                },
+              },
+            ],
+          },
+          'configuration.authType': {
+            title: '权限认证',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择权限认证',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择权限认证',
               },
             ],
             'x-reactions': [

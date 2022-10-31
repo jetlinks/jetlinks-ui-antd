@@ -94,11 +94,11 @@ const Save = (props: Props) => {
             'x-validator': [
               {
                 max: 65535,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
               },
               {
                 min: 1,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
               },
             ],
           },
@@ -139,11 +139,11 @@ const Save = (props: Props) => {
             'x-validator': [
               {
                 max: 65535,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
               },
               {
                 min: 1,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
               },
             ],
           },

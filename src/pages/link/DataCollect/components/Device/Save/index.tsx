@@ -13,6 +13,7 @@ interface Props {
   data: Partial<CollectorItem>;
   close: () => void;
   reload: () => void;
+  provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
 export default (props: Props) => {
@@ -86,14 +87,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入从机地址',
             },
-            'x-reactions': {
-              dependencies: ['..provider'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0]==="MODBUS_TCP"}}',
-                },
-              },
-            },
+            'x-visible': props.provider === 'MODBUS_TCP',
             'x-validator': [
               {
                 required: true,
@@ -101,11 +95,11 @@ export default (props: Props) => {
               },
               {
                 max: 255,
-                message: '请输入0-255之间的整整数',
+                message: '请输入0-255之间的正整数',
               },
               {
                 min: 0,
-                message: '请输入0-255之间的整整数',
+                message: '请输入0-255之间的正整数',
               },
             ],
           },
@@ -163,8 +157,10 @@ export default (props: Props) => {
           const obj = {
             ...value,
             provider: resp.result.provider,
-            channelId: resp.result.channelId,
-            configuration: {},
+            channelId: props.channelId,
+            configuration: {
+              ...value.configuration,
+            },
           };
           response = await service.saveCollector({ ...obj });
         }
