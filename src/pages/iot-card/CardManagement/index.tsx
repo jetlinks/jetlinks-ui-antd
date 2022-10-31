@@ -49,9 +49,7 @@ const CardManagementNode = () => {
   const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
-  const deleteItems = useRef<any>();
-
-  deleteItems.current = new Map();
+  const deleteItems = useRef<any>(new Map());
 
   useEffect(() => {
     const { state } = location;
@@ -467,6 +465,7 @@ const CardManagementNode = () => {
             popConfirm={{
               title: '确认删除吗?',
               onConfirm: async () => {
+                console.log(deleteItems.current.values());
                 service.removeCards([...deleteItems.current.values()]).then((res) => {
                   if (res.status === 200) {
                     setBindKeys([]);
@@ -570,6 +569,7 @@ const CardManagementNode = () => {
             <a
               onClick={() => {
                 setBindKeys([]);
+                deleteItems.current.clear();
               }}
             >
               取消选择
@@ -588,7 +588,9 @@ const CardManagementNode = () => {
             } else {
               deleteItems.current.delete(record.id);
             }
+            console.log(deleteItems.current.values());
             setBindKeys([...deleteItems.current.keys()]);
+            console.log(deleteItems.current.values());
           },
           onSelectAll: (selected, _, changeRows) => {
             if (selected) {

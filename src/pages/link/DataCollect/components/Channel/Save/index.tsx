@@ -35,14 +35,15 @@ export default (props: Props) => {
   });
 
   const getSecurityPolicyList = () => service.querySecurityPolicyList({});
+  const getAuthTypeList = () => service.queryAuthTypeList({});
 
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
     field.loading = true;
     services(field).then(
       action.bound!((resp: any) => {
         field.dataSource = (resp?.result || []).map((item: any) => ({
-          label: item,
-          value: item,
+          label: item?.text || item,
+          value: item?.value || item,
         }));
         field.loading = false;
       }),
@@ -265,7 +266,7 @@ export default (props: Props) => {
               },
             ],
             'x-reactions': [
-              '{{useAsyncDataSource(getSecurityPolicyList)}}',
+              '{{useAsyncDataSource(getAuthTypeList)}}',
               {
                 dependencies: ['..provider'],
                 fulfill: {
@@ -286,17 +287,21 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入用户名',
             },
-            // 'x-validator': [
-            //   {
-            //     required: true,
-            //     message: '请输入用户名',
-            //   },
-            // ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入用户名',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
             'x-reactions': {
-              dependencies: ['..provider'],
+              dependencies: ['.authType'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]==="OPC_UA"}}',
+                  visible: '{{$deps[0]==="username"}}',
                 },
               },
             },
@@ -311,17 +316,21 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入密码',
             },
-            // 'x-validator': [
-            //   {
-            //     required: true,
-            //     message: '请输入密码',
-            //   },
-            // ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入密码',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
             'x-reactions': {
-              dependencies: ['..provider'],
+              dependencies: ['.authType'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]==="OPC_UA"}}',
+                  visible: '{{$deps[0]==="username"}}',
                 },
               },
             },
@@ -382,7 +391,10 @@ export default (props: Props) => {
       ]}
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} scope={{ useAsyncDataSource, getSecurityPolicyList }} />
+        <SchemaField
+          schema={schema}
+          scope={{ useAsyncDataSource, getSecurityPolicyList, getAuthTypeList }}
+        />
       </Form>
     </Modal>
   );
