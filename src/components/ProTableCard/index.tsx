@@ -174,7 +174,7 @@ const ProTableCard = <
         }
         columnEmptyText={''}
         className={'pro-table-card-body'}
-        options={model === ModelEnum.CARD ? false : props.options}
+        options={model === ModelEnum.CARD ? false : { ...props.options, fullScreen: false }}
         request={async (param, sort, filter) => {
           if (request) {
             const resp = await request(param, sort, filter);
