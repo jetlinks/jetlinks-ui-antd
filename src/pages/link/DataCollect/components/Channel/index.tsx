@@ -73,6 +73,10 @@ export default observer((props: Props) => {
         },
       },
     },
+    {
+      title: '说明',
+      dataIndex: 'description',
+    },
   ];
 
   const handleSearch = (params: any) => {

@@ -36,14 +36,16 @@ export default (props: Props) => {
 
   const getSecurityPolicyList = () => service.querySecurityPolicyList({});
   const getAuthTypeList = () => service.queryAuthTypeList({});
+  const getSecurityModesList = () => service.querySecurityModesList({});
+  const getCertificateList = () => service.queryCertificateList({});
 
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
     field.loading = true;
     services(field).then(
       action.bound!((resp: any) => {
         field.dataSource = (resp?.result || []).map((item: any) => ({
-          label: item?.text || item,
-          value: item?.value || item,
+          label: item?.text || item?.name || item,
+          value: item?.value || item?.id || item,
         }));
         field.loading = false;
       }),
@@ -71,7 +73,7 @@ export default (props: Props) => {
       if (!(testIP(val) || testIPv6(val) || testDomain(val))) {
         return {
           type: 'error',
-          message: '请输入正确格式的IP地址',
+          message: '请输入正确格式的Modbus主机IP地址',
         };
       } else {
         return true;
@@ -212,6 +214,10 @@ export default (props: Props) => {
                 required: true,
                 message: '请输入端点url',
               },
+              // {
+              //   format: 'url',
+              //   message: '请输入正确的端点url',
+              // },
             ],
             'x-reactions': {
               dependencies: ['..provider'],
@@ -245,6 +251,62 @@ export default (props: Props) => {
                 fulfill: {
                   state: {
                     visible: '{{$deps[0]==="OPC_UA"}}',
+                  },
+                },
+              },
+            ],
+          },
+          'configuration.securityMode': {
+            title: '安全模式',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择安全模式',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择安全模式',
+              },
+            ],
+            'x-reactions': [
+              '{{useAsyncDataSource(getSecurityModesList)}}',
+              {
+                dependencies: ['..provider'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="OPC_UA"}}',
+                  },
+                },
+              },
+            ],
+          },
+          'configuration.certificate': {
+            title: '证书',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择证书',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择证书',
+              },
+            ],
+            'x-reactions': [
+              '{{useAsyncDataSource(getCertificateList)}}',
+              {
+                dependencies: ['.securityMode'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="SingAndEncrypt" || $deps[0]==="Sign"}}',
                   },
                 },
               },
@@ -394,7 +456,13 @@ export default (props: Props) => {
       <Form form={form} layout="vertical">
         <SchemaField
           schema={schema}
-          scope={{ useAsyncDataSource, getSecurityPolicyList, getAuthTypeList }}
+          scope={{
+            useAsyncDataSource,
+            getSecurityPolicyList,
+            getAuthTypeList,
+            getSecurityModesList,
+            getCertificateList,
+          }}
         />
       </Form>
     </Modal>
