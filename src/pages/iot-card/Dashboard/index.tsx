@@ -1,6 +1,6 @@
 import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import Echarts from '@/components/DashBoard/echarts';
-import { Card, Col, DatePicker, Row, Progress, Empty } from 'antd';
+import { DatePicker, Progress, Empty } from 'antd';
 import moment from 'moment';
 import styles from './index.less';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -325,8 +325,8 @@ const Dashboard = () => {
           </DashBoardTopCard.Item>
         </DashBoardTopCard>
       </div>
-      <Row gutter={24}>
-        <Col flex={'auto'}>
+      <div className={styles['total-echarts']}>
+        <div className={styles['total-echarts-left']}>
           <DashBoard
             title="流量统计"
             height={604}
@@ -341,58 +341,54 @@ const Dashboard = () => {
               { label: '近一月', value: 'month' },
             ]}
           />
-        </Col>
-        <Col flex={'520px'}>
-          <Card>
-            <div className={styles.topName} style={{ height: 50 }}>
-              <span>流量使用TOP10</span>
-              <div>
-                {
-                  // @ts-ignore
-                  <DatePicker.RangePicker
-                    defaultValue={[moment().subtract(6, 'days'), moment(new Date(), 'YYYY-MM-DD')]}
-                    format={'YYYY-MM-DD'}
-                    onChange={(dates) => {
-                      getTopRang(
-                        dates?.[0].startOf('days').valueOf(),
-                        dates?.[1].endOf('days').valueOf(),
-                      );
-                    }}
-                  />
-                }
-              </div>
+        </div>
+        <div className={styles['total-echarts-right']}>
+          <div className={styles.topName} style={{ height: 50 }}>
+            <span>流量使用TOP10</span>
+            <div>
+              {
+                // @ts-ignore
+                <DatePicker.RangePicker
+                  defaultValue={[moment().subtract(6, 'days'), moment(new Date(), 'YYYY-MM-DD')]}
+                  format={'YYYY-MM-DD'}
+                  onChange={(dates) => {
+                    getTopRang(
+                      dates?.[0].startOf('days').valueOf(),
+                      dates?.[1].endOf('days').valueOf(),
+                    );
+                  }}
+                />
+              }
             </div>
-            <div className={styles.rankingList} style={{ height: 490 }}>
-              {topList.length ? (
-                topList.map((item: any, index) => {
-                  return (
-                    <div className={styles.rankItem} key={item.cardNum}>
-                      <div
-                        className={classNames(styles.number, styles[`number-item-${index + 1}`])}
-                      >
-                        {index + 1}
-                      </div>
-                      <div className={styles.cardNum}>{item.cardNum}</div>
-                      <div className={styles.progress}>
-                        <Progress
-                          strokeColor={'#ADC6FF'}
-                          trailColor={'#E0E4E8'}
-                          strokeLinecap="butt"
-                          showInfo={false}
-                          percent={Math.ceil((item.value / topTotal) * 100)}
-                        />
-                      </div>
-                      <div className={styles.total}>{item?.value?.toFixed(2)} M</div>
+          </div>
+          <div className={styles.rankingList} style={{ height: 490 }}>
+            {topList.length ? (
+              topList.map((item: any, index) => {
+                return (
+                  <div className={styles.rankItem} key={item.cardNum}>
+                    <div className={classNames(styles.number, styles[`number-item-${index + 1}`])}>
+                      {index + 1}
                     </div>
-                  );
-                })
-              ) : (
-                <Empty />
-              )}
-            </div>
-          </Card>
-        </Col>
-      </Row>
+                    <div className={styles.cardNum}>{item.cardNum}</div>
+                    <div className={styles.progress}>
+                      <Progress
+                        strokeColor={'#ADC6FF'}
+                        trailColor={'#E0E4E8'}
+                        strokeLinecap="butt"
+                        showInfo={false}
+                        percent={Math.ceil((item.value / topTotal) * 100)}
+                      />
+                    </div>
+                    <div className={styles.total}>{item?.value?.toFixed(2)} M</div>
+                  </div>
+                );
+              })
+            ) : (
+              <Empty />
+            )}
+          </div>
+        </div>
+      </div>
     </PageContainer>
   );
 };
