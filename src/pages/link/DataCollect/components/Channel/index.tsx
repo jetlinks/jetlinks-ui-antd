@@ -140,11 +140,19 @@ export default observer((props: Props) => {
                             isPermission={permission.delete}
                             type={'link'}
                             style={{ padding: 0 }}
+                            disabled={record?.state?.value !== 'disabled'}
+                            tooltip={
+                              record?.state?.value !== 'disabled'
+                                ? {
+                                    title: '正常的通道不能删除',
+                                  }
+                                : undefined
+                            }
                             popConfirm={{
                               title: intl.formatMessage({
                                 id: 'pages.data.option.remove.tips',
+                                defaultMessage: '是否删除?',
                               }),
-                              disabled: record?.state?.value !== 'disabled',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
                                 onlyMessage(
