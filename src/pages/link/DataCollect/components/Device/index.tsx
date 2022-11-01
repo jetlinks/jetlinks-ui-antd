@@ -206,9 +206,7 @@ export default observer((props: Props) => {
                             tooltip={
                               record?.state?.value !== 'disabled'
                                 ? {
-                                    title: intl.formatMessage({
-                                      id: 'pages.device.instance.deleteTip',
-                                    }),
+                                    title: '正常的采集器不能删除',
                                   }
                                 : undefined
                             }

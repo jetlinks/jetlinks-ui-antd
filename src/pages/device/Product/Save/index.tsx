@@ -17,6 +17,8 @@ interface Props {
   model: 'add' | 'edit';
 }
 
+const defaultImage = require('/public/images/device-product.png');
+
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const intl = useIntl();
@@ -31,13 +33,19 @@ const Save = (props: Props) => {
   });
 
   const handleData = () => {
+    const obj = { ...data };
     // 特殊处理deviceType字段
-    if (data) {
-      if (typeof data.deviceType !== 'string') {
-        data.deviceTypeId = data.deviceType?.value;
+    if (obj) {
+      if (typeof obj.deviceType !== 'string') {
+        obj.deviceTypeId = obj.deviceType?.value;
+        obj.photoUrl = obj?.photoUrl || defaultImage;
       }
+    } else {
+      return {
+        photoUrl: defaultImage,
+      };
     }
-    return data;
+    return obj;
   };
 
   const intlFormat = (

@@ -103,7 +103,7 @@ export default () => {
       ellipsis: true,
     },
     {
-      dataIndex: 'state',
+      dataIndex: 'status',
       width: 90,
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
