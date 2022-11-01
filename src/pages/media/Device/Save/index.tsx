@@ -243,9 +243,13 @@ const Save = () => {
                     <Form.Item
                       label={'所属产品'}
                       required
-                      rules={[{ required: true, message: '请选择所属产品' }]}
+                      // rules={[{ required: true, message: '请选择所属产品' }]}
                     >
-                      <Form.Item name={'productId'} noStyle>
+                      <Form.Item
+                        name={'productId'}
+                        noStyle
+                        rules={[{ required: true, message: '请选择所属产品' }]}
+                      >
                         <Select
                           showSearch
                           allowClear

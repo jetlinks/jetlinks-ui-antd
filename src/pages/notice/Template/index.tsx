@@ -283,7 +283,7 @@ const Template = observer(() => {
 
             <PermissionButton
               popConfirm={{
-                title: '确认导出？',
+                title: '确定导出？',
                 onConfirm: async () => {
                   const resp: any = await service.queryNoPagingPost({ ...param, paging: false });
                   if (resp.status === 200) {
