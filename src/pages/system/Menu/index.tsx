@@ -45,6 +45,7 @@ export default observer(() => {
   const history = useHistory();
   const { permission } = PermissionButton.usePermission('system/Menu');
   const { initialState } = useModel('@@initialState');
+  const lastIndex = useRef(0);
 
   const deleteItem = async (id: string) => {
     const response: any = await service.remove(id);
@@ -65,12 +66,26 @@ export default observer(() => {
    * @param pId
    * @param basePath
    */
-  const pageJump = (id?: string, pId?: string, basePath?: string) => {
+  const pageJump = (id?: string, pId?: string, basePath?: string, record?: MenuItem) => {
+    const params = new URLSearchParams();
+    params.set('pId', pId || '');
+    params.set('basePath', basePath || '');
+    // 新增
+    if (!id) {
+      if (record) {
+        // 新增子级,并且有子级的情况下
+        if (record.children && record.children.length) {
+          params.set('sortIndex', record.children[record.children.length - 1].sortIndex + 1 + '');
+        } else {
+          params.set('sortIndex', '1');
+        }
+      } else {
+        params.set('sortIndex', lastIndex.current + '');
+      }
+    }
     // 跳转详情
     history.push(
-      `${getMenuPathByParams(MENUS_CODE['system/Menu/Detail'], id)}?pId=${pId || ''}&basePath=${
-        basePath || ''
-      }`,
+      `${getMenuPathByParams(MENUS_CODE['system/Menu/Detail'], id)}?${params.toString()}`,
     );
   };
 
@@ -150,7 +165,7 @@ export default observer(() => {
           key="view"
           style={{ padding: 0 }}
           onClick={() => {
-            pageJump(record.id, record.parentId || '');
+            pageJump(record.id, record.parentId || '', '', record);
           }}
         >
           <Tooltip
@@ -178,7 +193,7 @@ export default observer(() => {
               parentId: record.id,
             };
             // State.visible = true;
-            pageJump('', record.id, record.url);
+            pageJump('', record.id, record.url, record);
           }}
         >
           <PlusCircleOutlined />
@@ -287,41 +302,25 @@ export default observer(() => {
               },
             ],
           };
-          if (params.terms && params.length !== 0) {
-            const response = await service.queryMenuThree({
-              ...params,
-              terms: [...param.terms, item],
-              sorts: [{ name: 'sortIndex', order: 'asc' }],
-              paging: false,
-            });
-            return {
-              code: response.message,
-              result: {
-                data: response.result,
-                pageIndex: 0,
-                pageSize: 0,
-                total: 0,
-              },
-              status: response.status,
-            };
-          } else {
-            const response = await service.queryMenuThree({
-              ...params,
-              terms: [item],
-              sorts: [{ name: 'sortIndex', order: 'asc' }],
-              paging: false,
-            });
-            return {
-              code: response.message,
-              result: {
-                data: response.result,
-                pageIndex: 0,
-                pageSize: 0,
-                total: 0,
-              },
-              status: response.status,
-            };
-          }
+          const response = await service.queryMenuThree({
+            ...params,
+            terms: params.terms && params.length !== 0 ? [...param.terms, item] : [item],
+            sorts: [{ name: 'sortIndex', order: 'asc' }],
+            paging: false,
+          });
+          const lastItem = response.result[response.result.length - 1];
+
+          lastIndex.current = lastItem ? lastItem.sortIndex + 1 : 1;
+          return {
+            code: response.message,
+            result: {
+              data: response.result,
+              pageIndex: 0,
+              pageSize: 0,
+              total: 0,
+            },
+            status: response.status,
+          };
         }}
         headerTitle={[
           <PermissionButton

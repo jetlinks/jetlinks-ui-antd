@@ -15,6 +15,7 @@ export default () => {
   const intl = useIntl();
   const [tabKey, setTabKey] = useState('detail');
   const [pId, setPid] = useState<string | null>(null);
+  const [sortIndex, setSortIndex] = useState<string | null>(null);
   const location = useLocation<LocationType>();
   const params: any = new URLSearchParams(location.search);
   const param = useParams<{ id?: string }>();
@@ -32,11 +33,15 @@ export default () => {
   const queryDetail = (editId?: string) => {
     const id = editId || param.id;
     const _pId = params.get('pId');
+    const _sortIndex = params.get('sortIndex');
     if (id && id !== ':id') {
       queryData(id);
     }
     if (_pId) {
       setPid(_pId);
+    }
+    if (_sortIndex) {
+      setSortIndex(_sortIndex);
     }
   };
 
@@ -74,6 +79,7 @@ export default () => {
           data={{
             ...data,
             parentId: pId,
+            sortIndex: sortIndex,
           }}
           basePath={params.get('basePath')}
           onLoad={queryDetail}
