@@ -110,6 +110,18 @@ class Service {
       params,
     });
 
+  public querySecurityModesList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/security-modes`, {
+      method: 'GET',
+      params,
+    });
+
+  public queryCertificateList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/network/certificate/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
+
   public queryAuthTypeList = (params?: any) =>
     request(`/${SystemConst.API_BASE}/data-collect/opc/auth-types`, {
       method: 'GET',

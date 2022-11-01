@@ -1,7 +1,7 @@
 import { Button, Modal } from 'antd';
-import { createForm } from '@formily/core';
+import { createForm, Field, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
@@ -17,15 +17,35 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const [data, setData] = useState<Partial<ChannelItem>>(props.data);
-
-  useEffect(() => {
-    setData(props.data);
-  }, [props.data]);
-
   const form = createForm({
     validateFirst: true,
-    initialValues: data || {},
+    initialValues: Object.keys(props.data).length
+      ? props.data
+      : {
+          circuitBreaker: {
+            type: 'LowerFrequency',
+          },
+        },
+    effects: () => {
+      onFieldReact('circuitBreaker.type', async (field, f) => {
+        const func = (field as Field).value;
+        f.setFieldState('circuitBreaker.type', (state) => {
+          let tooltip = '';
+          if (func === 'LowerFrequency') {
+            tooltip =
+              '连续20次异常，降低连接频率至原有频率的1/10（重试间隔不超过1分钟），故障处理后自动恢复至设定连接频率';
+          } else if (func === 'Break') {
+            tooltip = '连续10分钟异常，停止采集数据进入熔断状态，设备重新启用后恢复采集状态';
+          } else if (func === 'Ignore') {
+            tooltip = '忽略异常，保持原采集频率超时时间为5s';
+          }
+          state.decoratorProps = {
+            tooltip: tooltip,
+            gridSpan: 2,
+          };
+        });
+      });
+    },
   });
 
   const SchemaField = createSchemaField({

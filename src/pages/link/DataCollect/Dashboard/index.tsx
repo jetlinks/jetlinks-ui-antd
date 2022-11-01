@@ -83,17 +83,44 @@ const DeviceBoard = () => {
       setErrorPoint(errorPointRes.result);
     }
   };
-  const getInterval = (type: string) => {
-    switch (type) {
-      case 'year':
-        return '30d';
-      case 'month':
+
+  const getParams = (dt: any) => {
+    switch (dt.type) {
+      case 'today':
+        return {
+          limit: 24,
+          interval: '1h',
+        };
       case 'week':
-        return '1d';
+        return {
+          limit: 7,
+          interval: '1d',
+        };
       case 'hour':
-        return '1m';
+        return {
+          limit: 60,
+          interval: '1m',
+        };
       default:
-        return '1h';
+        const time = dt.end - dt.start;
+        const hour = 60 * 60 * 1000;
+        const days = hour * 24;
+        if (time <= hour) {
+          return {
+            limit: Math.abs(Math.ceil(time / (60 * 60))),
+            interval: '1m',
+          };
+        } else if (time > hour && time <= days) {
+          return {
+            limit: Math.abs(Math.ceil(time / hour)),
+            interval: '1h',
+          };
+        } else {
+          return {
+            limit: Math.abs(Math.ceil(dt / days)) + 1,
+            interval: '1d',
+          };
+        }
     }
   };
 
@@ -106,10 +133,10 @@ const DeviceBoard = () => {
         measurement: 'quantity',
         dimension: 'agg',
         params: {
-          limit: 15,
+          limit: getParams(data.time).limit,
           from: data.time.start,
           to: data.time.end,
-          interval: getInterval(data.time.type),
+          interval: getParams(data.time).interval,
           format: 'HH:mm',
         },
       },

@@ -91,7 +91,7 @@ export default observer((props: Props) => {
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
         propertyValue[payload?.pointId] = { ...payload };
-        setPropertyValue([...propertyValue]);
+        setPropertyValue({ ...propertyValue });
       });
   };
   const handleSearch = (params: any) => {
