@@ -4,6 +4,8 @@ import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/a
 import { createForm } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
 import { Badge, Button, Tooltip } from 'antd';
+import { useState } from 'react';
+import MapTree from '../mapTree';
 import './index.less';
 
 interface Props {
@@ -13,6 +15,8 @@ interface Props {
 
 const MapTable = (props: Props) => {
   const { metaData, deviceId } = props;
+
+  const [visible, setVisible] = useState<boolean>(false);
 
   const Render = (propsName: any) => {
     const text = metaData.find((item: any) => item.metadataId === propsName.value);
@@ -217,7 +221,14 @@ const MapTable = (props: Props) => {
   return (
     <div>
       <div className="top-button">
-        <Button style={{ marginRight: 10 }}>批量映射</Button>
+        <Button
+          style={{ marginRight: 10 }}
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          批量映射
+        </Button>
         <Button type="primary">保存</Button>
       </div>
       <div>
@@ -225,6 +236,13 @@ const MapTable = (props: Props) => {
           <SchemaField schema={schema} scope={{}} />
         </FormProvider>
       </div>
+      {visible && (
+        <MapTree
+          close={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </div>
   );
 };
