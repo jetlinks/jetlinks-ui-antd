@@ -5,6 +5,7 @@ import Echarts from './echarts';
 import Style from './index.less';
 import classNames from 'classnames';
 import React, { forwardRef, useEffect, useState } from 'react';
+import { Empty } from '@/components';
 
 interface BaseCardProps extends HeaderProps, EchartsProps {
   height: number;
@@ -30,7 +31,11 @@ export default forwardRef((props: BaseCardProps, ref) => {
     >
       <Header ref={ref} {...formProps} />
       <div className={Style['echarts-content']}>
-        <Echarts options={myOptions} className={Style['echarts']} />
+        {!!myOptions?.series?.[0]?.data?.length ? (
+          <Echarts options={myOptions} className={Style['echarts']} />
+        ) : (
+          <Empty />
+        )}
         {props.echartsAfter}
       </div>
     </div>
