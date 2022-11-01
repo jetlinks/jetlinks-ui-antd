@@ -241,6 +241,7 @@ const MapTable = (props: Props) => {
           close={() => {
             setVisible(false);
           }}
+          deviceId={deviceId}
         />
       )}
     </div>

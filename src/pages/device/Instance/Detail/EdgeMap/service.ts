@@ -42,6 +42,14 @@ class Service extends BaseService<any> {
       method: 'POST',
       data,
     });
+  treeMap = (deviceId: string, data?: any) =>
+    request(
+      `/${SystemConst.API_BASE}/edge/operations/${deviceId}/data-collector-channel-tree/invoke`,
+      {
+        method: 'POST',
+        data,
+      },
+    );
 }
 
 export default Service;
