@@ -9,8 +9,8 @@ Language : 🇺🇸 | [🇨🇳](./README.zh-CN.md) | [🇷🇺](./README.ru-RU.
 ```bash
 $ git clone git@gitee.com:jetlinks-projects/smart-building-platform-ui.git
 $ cd <your-project-name>
-$ npm install
-$ npm start         # visit http://localhost:8000
+$ npm install / yarn install
+$ npm start / yarn start        # visit http://localhost:8000
 ```
 
 ### Use Gitpod

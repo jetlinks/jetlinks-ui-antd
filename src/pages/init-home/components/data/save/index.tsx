@@ -100,6 +100,10 @@ const Save = (props: Props) => {
                 min: 1,
                 message: '请输入1-65535之间的正整数',
               },
+              {
+                required: true,
+                message: '请选择本地端口',
+              },
             ],
           },
           publicHost: {
@@ -118,7 +122,10 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Input',
             'x-validator': [
-              'ipv4',
+              {
+                format: 'ipv4',
+                message: '请输入域名或IP',
+              },
               {
                 required: true,
                 message: '请输入域名或IP',
