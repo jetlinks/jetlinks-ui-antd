@@ -7,6 +7,7 @@ import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from 
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
+import { RadioCard } from '@/components';
 
 interface Props {
   channelId?: string;
@@ -56,6 +57,7 @@ export default (props: Props) => {
       NumberPicker,
       Password,
       FormGrid,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
@@ -124,21 +126,29 @@ export default (props: Props) => {
             ],
           },
           'circuitBreaker.type': {
-            title: '处理方式',
-            'x-component': 'Select',
+            title: '故障处理',
+            'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
             },
             'x-component-props': {
-              placeholder: '请选择处理方式',
+              placeholder: '请选择故障处理',
+              model: 'singular',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '降频', value: 'LowerFrequency' },
+                { label: '熔断', value: 'Break' },
+                { label: '忽略', value: 'Ignore' },
+              ],
             },
             default: 'LowerFrequency',
-            enum: [
-              { label: '降频', value: 'LowerFrequency' },
-              { label: '熔断', value: 'Break' },
-              { label: '忽略', value: 'Ignore' },
-            ],
             'x-validator': [
               {
                 required: true,

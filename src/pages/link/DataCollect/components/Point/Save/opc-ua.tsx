@@ -17,6 +17,7 @@ import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import { action } from '@formily/reactive';
+import { RadioCard } from '@/components';
 
 interface Props {
   data: Partial<PointItem>;
@@ -50,6 +51,7 @@ export default (props: Props) => {
       Password,
       FormGrid,
       Checkbox,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
@@ -145,20 +147,27 @@ export default (props: Props) => {
           accessModes: {
             title: '访问类型',
             type: 'array',
-            'x-component': 'Select',
+            'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
             },
             'x-component-props': {
               placeholder: '请选择访问类型',
-              mode: 'multiple',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '读', value: 'read' },
+                { label: '写', value: 'write' },
+                { label: '订阅', value: 'subscribe' },
+              ],
             },
-            enum: [
-              { label: '读', value: 'read' },
-              { label: '写', value: 'write' },
-              { label: '订阅', value: 'subscribe' },
-            ],
             'x-validator': [
               {
                 required: true,
@@ -175,7 +184,7 @@ export default (props: Props) => {
             },
             default: 3000,
             'x-reactions': {
-              dependencies: ['.accessModes'],
+              dependencies: ['..accessModes'],
               fulfill: {
                 state: {
                   visible: '{{($deps[0] || []).includes("subscribe")}}',
