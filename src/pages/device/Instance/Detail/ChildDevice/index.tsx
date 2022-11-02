@@ -13,6 +13,7 @@ import { Link } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+import SaveChild from './SaveChild';
 
 const statusMap = new Map();
 statusMap.set('online', 'success');
@@ -22,10 +23,10 @@ statusMap.set('notActive', 'warning');
 const ChildDevice = () => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
-
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
+  const [childVisible, setChildVisible] = useState<boolean>(false);
 
   const { minHeight } = useDomFullHeight(`.device-detail-childDevice`);
 
@@ -138,78 +139,98 @@ const ChildDevice = () => {
 
   return (
     <Card className={'device-detail-childDevice'} style={{ minHeight }}>
-      <SearchComponent<LogItem>
-        field={[...columns]}
-        target="child-device"
-        enableSave={false}
-        // pattern={'simple'}
-        defaultParam={[
-          { column: 'parentId', value: InstanceModel?.detail?.id || '', termType: 'eq' },
-        ]}
-        onSearch={(param) => {
-          actionRef.current?.reset?.();
-          setSearchParams(param);
-        }}
-        // onReset={() => {
-        //   // 重置分页及搜索参数
-        //   actionRef.current?.reset?.();
-        //   setSearchParams({});
-        // }}
-      />
-      <ProTable<LogItem>
-        search={false}
-        columns={columns}
-        size="small"
-        scroll={{ x: 1366 }}
-        actionRef={actionRef}
-        params={searchParams}
-        rowKey="id"
-        columnEmptyText={''}
-        rowSelection={{
-          selectedRowKeys: bindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            setBindKeys(selectedRows.map((item) => item.id));
-          },
-        }}
-        toolBarRender={() => [
-          <Button
-            onClick={() => {
-              setVisible(true);
-              actionRef.current?.reset?.();
-            }}
-            key="bind"
-            type="primary"
-          >
-            绑定
-          </Button>,
-          <Popconfirm
-            key="unbind"
-            onConfirm={async () => {
-              const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
-              if (resp.status === 200) {
-                onlyMessage('操作成功！');
-                setBindKeys([]);
-                actionRef.current?.reset?.();
-              }
-            }}
-            title={'确认解绑吗？'}
-          >
-            <Button>批量解绑</Button>
-          </Popconfirm>,
-        ]}
-        pagination={{
-          pageSize: 10,
-        }}
-        request={(params) => service.query(params)}
-      />
-      {visible && (
-        <BindChildDevice
-          data={{}}
-          onCancel={() => {
-            setVisible(false);
-            actionRef.current?.reload?.();
+      {childVisible ? (
+        <SaveChild
+          close={() => {
+            setChildVisible(false);
           }}
         />
+      ) : (
+        <>
+          <SearchComponent<LogItem>
+            field={[...columns]}
+            target="child-device"
+            enableSave={false}
+            // pattern={'simple'}
+            defaultParam={[
+              { column: 'parentId', value: InstanceModel?.detail?.id || '', termType: 'eq' },
+            ]}
+            onSearch={(param) => {
+              actionRef.current?.reset?.();
+              setSearchParams(param);
+            }}
+            // onReset={() => {
+            //   // 重置分页及搜索参数
+            //   actionRef.current?.reset?.();
+            //   setSearchParams({});
+            // }}
+          />
+          <ProTable<LogItem>
+            search={false}
+            columns={columns}
+            size="small"
+            scroll={{ x: 1366 }}
+            actionRef={actionRef}
+            params={searchParams}
+            rowKey="id"
+            columnEmptyText={''}
+            rowSelection={{
+              selectedRowKeys: bindKeys,
+              onChange: (selectedRowKeys, selectedRows) => {
+                setBindKeys(selectedRows.map((item) => item.id));
+              },
+            }}
+            toolBarRender={() => [
+              <Button
+                onClick={() => {
+                  // actionRef.current?.reset?.();
+                  setChildVisible(true);
+                }}
+                key="save"
+                type="primary"
+              >
+                新增并绑定
+              </Button>,
+              <Button
+                onClick={() => {
+                  setVisible(true);
+                  actionRef.current?.reset?.();
+                }}
+                key="bind"
+                type="primary"
+              >
+                绑定
+              </Button>,
+              <Popconfirm
+                key="unbind"
+                onConfirm={async () => {
+                  const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
+                  if (resp.status === 200) {
+                    onlyMessage('操作成功！');
+                    setBindKeys([]);
+                    actionRef.current?.reset?.();
+                  }
+                }}
+                title={'确认解绑吗？'}
+              >
+                <Button>批量解绑</Button>
+              </Popconfirm>,
+            ]}
+            pagination={{
+              pageSize: 10,
+            }}
+            request={(params) => service.query(params)}
+          />
+          {visible && (
+            <BindChildDevice
+              data={{}}
+              onCancel={() => {
+                setVisible(false);
+                actionRef.current?.reload?.();
+              }}
+            />
+          )}
+        </>
       )}
     </Card>
   );

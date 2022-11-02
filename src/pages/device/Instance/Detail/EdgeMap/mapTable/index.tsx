@@ -1,4 +1,5 @@
 import PermissionButton from '@/components/PermissionButton';
+import TitleComponent from '@/components/TitleComponent';
 import { DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
 import { createForm } from '@formily/core';
@@ -11,6 +12,8 @@ import './index.less';
 interface Props {
   metaData: Record<string, string>[];
   deviceId: string;
+  title?: string;
+  ref?: any;
 }
 
 const MapTable = (props: Props) => {
@@ -221,6 +224,7 @@ const MapTable = (props: Props) => {
   return (
     <div>
       <div className="top-button">
+        {props.title && <TitleComponent data={props.title} />}
         <Button
           style={{ marginRight: 10 }}
           onClick={() => {
@@ -229,7 +233,15 @@ const MapTable = (props: Props) => {
         >
           批量映射
         </Button>
-        <Button type="primary">保存</Button>
+        <Button
+          type="primary"
+          onClick={async () => {
+            const formData = await props.ref?.validateFields();
+            console.log(formData, props.ref);
+          }}
+        >
+          保存
+        </Button>
       </div>
       <div>
         <FormProvider form={form}>

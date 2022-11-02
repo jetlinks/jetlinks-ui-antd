@@ -39,6 +39,7 @@ const MapTree = (props: Props) => {
         {
           name: '设备2',
           id: '1-2',
+          parentId: '1',
         },
       ],
     },
@@ -56,6 +57,7 @@ const MapTree = (props: Props) => {
     return nodes.filter((item) => {
       if (lists.indexOf(item.id) > -1) {
         filterRef.current.push(item);
+        console.log(filterRef.current, 'filterRef.current');
         return false;
       }
       // 符合条件的保留，并且需要递归处理其子节点
@@ -68,15 +70,11 @@ const MapTree = (props: Props) => {
     const newTree = data.map((item: any) => {
       if (item.id === node.parentId) {
         item.collectors.push(node);
-        console.log(item, 'item');
       }
       return item;
     });
-    console.log(newTree, 'newTree');
     setData(newTree);
-    const array = filterRef.current.filter((element: any) => element.id !== node.id);
-    setList(array);
-    // console.log(list,'list')
+    filterRef.current = filterRef.current.filter((element: any) => element.id !== node.id);
   };
 
   useEffect(() => {
@@ -92,7 +90,6 @@ const MapTree = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    console.log(filterRef.current);
     setList(filterRef.current);
   }, [filterRef.current]);
 
