@@ -115,6 +115,7 @@ const Edit = (props: Props) => {
     });
     setInitData(obj);
     form.setValues(obj);
+    // console.log(props.data,obj)
   }, [props.data]);
 
   return (

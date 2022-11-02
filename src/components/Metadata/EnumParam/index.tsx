@@ -40,25 +40,6 @@ const EnumParam = () => {
               'x-reactions':
                 '{{(field)=>field.title = field.value && (field.value.text) || field.title}}',
               properties: {
-                text: {
-                  type: 'string',
-                  title: 'Text',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    placeholder: '标识',
-                  },
-                  'x-validator': [
-                    {
-                      max: 64,
-                      message: '最多可输入64个字符',
-                    },
-                    {
-                      required: true,
-                      message: '请输入Text',
-                    },
-                  ],
-                },
                 value: {
                   type: 'string',
                   title: 'Value',
@@ -75,6 +56,25 @@ const EnumParam = () => {
                     {
                       required: true,
                       message: '请输入Value',
+                    },
+                  ],
+                },
+                text: {
+                  type: 'string',
+                  title: 'Text',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                  'x-component-props': {
+                    placeholder: '请输入Text',
+                  },
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                    {
+                      required: true,
+                      message: '请输入Text',
                     },
                   ],
                 },
