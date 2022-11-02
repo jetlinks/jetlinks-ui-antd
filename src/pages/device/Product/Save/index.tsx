@@ -17,7 +17,7 @@ interface Props {
   model: 'add' | 'edit';
 }
 
-const defaultImage = require('/public/images/device-product.png');
+const defaultImage = '/images/device-product.png';
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;

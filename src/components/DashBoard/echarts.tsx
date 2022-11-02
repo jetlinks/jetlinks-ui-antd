@@ -61,6 +61,7 @@ export default (props: EchartsProps) => {
   const [loading, setLoading] = useState(false);
 
   const initEcharts = (dom: HTMLDivElement) => {
+    if (!dom) return;
     chartsRef.current = chartsRef.current || echarts.init(dom);
     // chartsRef.current.clear()
     if (props.options) {

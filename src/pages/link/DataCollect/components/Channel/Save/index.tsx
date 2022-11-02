@@ -8,6 +8,7 @@ import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
 import { onlyMessage, testDomain, testIP, testIPv6 } from '@/utils/util';
 import { action } from '@formily/reactive';
+import { RadioCard } from '@/components';
 
 interface Props {
   data: Partial<ChannelItem>;
@@ -17,7 +18,7 @@ interface Props {
 
 export default (props: Props) => {
   const [data, setData] = useState<Partial<ChannelItem>>(props.data);
-  // const [loading, setLoading] = useState<boolean>(false);
+  const [authTypeList, setAuthTypeList] = useState<any[]>([]);
 
   useEffect(() => {
     if (props.data?.id) {
@@ -27,6 +28,18 @@ export default (props: Props) => {
         }
       });
     }
+    service.queryAuthTypeList({}).then((resp) => {
+      if (resp.status === 200) {
+        setAuthTypeList(
+          (resp.result || []).map((item: any) => {
+            return {
+              label: item.text,
+              value: item.value,
+            };
+          }),
+        );
+      }
+    });
   }, [props.data]);
 
   const form = createForm({
@@ -35,7 +48,6 @@ export default (props: Props) => {
   });
 
   const getSecurityPolicyList = () => service.querySecurityPolicyList({});
-  const getAuthTypeList = () => service.queryAuthTypeList({});
   const getSecurityModesList = () => service.querySecurityModesList({});
   const getCertificateList = () => service.queryCertificateList({});
 
@@ -60,6 +72,7 @@ export default (props: Props) => {
       NumberPicker,
       Password,
       FormGrid,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
@@ -126,8 +139,8 @@ export default (props: Props) => {
             },
             'x-disabled': props.data?.id,
             enum: [
-              { label: 'OPC_UA', value: 'OPC_UA' },
-              { label: 'MODBUS_TCP', value: 'MODBUS_TCP' },
+              { label: 'OPC UA', value: 'OPC_UA' },
+              { label: 'MODBUS TCP', value: 'MODBUS_TCP' },
             ],
             'x-validator': [
               {
@@ -314,12 +327,19 @@ export default (props: Props) => {
           },
           'configuration.authType': {
             title: '权限认证',
-            'x-component': 'Select',
+            'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
             },
             'x-component-props': {
+              model: 'singular',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+              },
               placeholder: '请选择权限认证',
             },
             'x-validator': [
@@ -329,12 +349,24 @@ export default (props: Props) => {
               },
             ],
             'x-reactions': [
-              '{{useAsyncDataSource(getAuthTypeList)}}',
+              // '{{useAsyncDataSource(getAuthTypeList)}}',
               {
                 dependencies: ['..provider'],
                 fulfill: {
                   state: {
                     visible: '{{$deps[0]==="OPC_UA"}}',
+                    componentProps: {
+                      model: 'singular',
+                      itemStyle: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-around',
+                        minWidth: '130px',
+                        height: '50px',
+                      },
+                      placeholder: '请选择权限认证',
+                      options: [...authTypeList],
+                    },
                   },
                 },
               },
@@ -459,7 +491,7 @@ export default (props: Props) => {
           scope={{
             useAsyncDataSource,
             getSecurityPolicyList,
-            getAuthTypeList,
+            // getAuthTypeList,
             getSecurityModesList,
             getCertificateList,
           }}

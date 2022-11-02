@@ -159,7 +159,7 @@ export default observer((props: Props) => {
                   key="button"
                   type="primary"
                 >
-                  新增
+                  {props?.provider === 'OPC_UA' ? '扫描' : '新增'}
                 </PermissionButton>
               </div>
             )}

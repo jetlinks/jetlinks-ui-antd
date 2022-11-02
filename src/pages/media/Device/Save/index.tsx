@@ -12,7 +12,7 @@ import styles from '../../Cascade/Save/index.less';
 import { useDomFullHeight } from '@/hooks';
 
 const DefaultAccessType = 'gb28181-2016';
-const defaultImage = require('/public/images/device-media.png');
+const defaultImage = '/images/device-media.png';
 
 const Save = () => {
   const location: any = useLocation();
