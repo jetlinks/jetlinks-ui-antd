@@ -16,7 +16,7 @@ interface Props {
   data?: Partial<DeviceInstance>;
 }
 
-const defaultImage = require('/public/images/device-type-3-big.png');
+const defaultImage = '/images/device-product.png';
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;
