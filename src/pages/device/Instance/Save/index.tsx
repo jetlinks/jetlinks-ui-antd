@@ -25,7 +25,7 @@ const Save = (props: Props) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (visible && data) {
+    if (visible && data && Object.keys(data).length) {
       form.setFieldsValue({
         ...data,
       });
