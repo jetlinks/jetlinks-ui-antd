@@ -1,7 +1,7 @@
 import { Button, Card, Col, Form, Input, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/link/AccessConfig';
-import { ProcotoleMapping } from '../Cloud/Protocol';
+import { ProtocolMapping } from '../data';
 import TitleComponent from '@/components/TitleComponent';
 import { getButtonPermission } from '@/utils/menu';
 import ReactMarkdown from 'react-markdown';
@@ -20,7 +20,7 @@ const Media = (props: Props) => {
   const [config, setConfig] = useState<any>({});
   const history = useHistory();
 
-  const procotol = props.provider.id === 'modbus-tcp' ? 'modbus-tcp' : 'opc-ua';
+  const protocol = props.provider.id === 'modbus-tcp' ? 'modbus-tcp' : 'opc-ua';
   const name = props.provider.id === 'modbus-tcp' ? 'Modbus' : 'OPCUA';
 
   useEffect(() => {
@@ -31,8 +31,7 @@ const Media = (props: Props) => {
   }, [props.data]);
 
   useEffect(() => {
-    console.log(ProcotoleMapping);
-    service.getConfigView(procotol, ProcotoleMapping.get(props.provider?.id)).then((resp) => {
+    service.getConfigView(protocol, ProtocolMapping.get(props.provider?.id)).then((resp) => {
       if (resp.status === 200) {
         setConfig(resp.result);
       }
@@ -84,7 +83,7 @@ const Media = (props: Props) => {
                           ...props.data,
                           ...values,
                           provider: props.provider?.id,
-                          protocol: procotol,
+                          protocol: protocol,
                           transport: props.provider.id === 'modbus-tcp' ? 'MODBUS_TCP' : 'OPC_UA',
                           channel: props.provider.id === 'modbus-tcp' ? 'modbus' : 'opc-ua',
                         };
@@ -114,7 +113,7 @@ const Media = (props: Props) => {
               <div>
                 <p>接入方式：{props.provider?.name || ''}</p>
                 {props.provider?.description && <p>{props.provider?.description || ''}</p>}
-                <p>消息协议：{procotol}</p>
+                <p>消息协议：{protocol}</p>
                 {config?.document && (
                   <div>{<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}</div>
                 )}

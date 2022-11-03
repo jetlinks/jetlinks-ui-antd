@@ -12,6 +12,7 @@ import styles from '../../Cascade/Save/index.less';
 import { useDomFullHeight } from '@/hooks';
 
 const DefaultAccessType = 'gb28181-2016';
+const defaultImage = '/images/device-media.png';
 
 const Save = () => {
   const location: any = useLocation();
@@ -49,7 +50,10 @@ const Save = () => {
     if (id) {
       service.getDetail(id).then((res) => {
         if (res.status === 200) {
-          form.setFieldsValue(res.result);
+          form.setFieldsValue({
+            ...res.result,
+            photoUrl: res.result?.photoUrl || defaultImage,
+          });
           const _accessType = res.result?.provider || DefaultAccessType;
           setAccessType(_accessType);
           queryProduct(_accessType);
@@ -59,6 +63,7 @@ const Save = () => {
     } else {
       form.setFieldsValue({
         provider: DefaultAccessType,
+        photoUrl: defaultImage,
       });
       queryProduct(DefaultAccessType);
       setAccessType(DefaultAccessType);
@@ -147,6 +152,7 @@ const Save = () => {
                           console.log(key);
                           setAccessType(key);
                           queryProduct(key);
+                          form.resetFields(['id']);
                         }}
                         disabled={id}
                         options={[
@@ -237,9 +243,13 @@ const Save = () => {
                     <Form.Item
                       label={'所属产品'}
                       required
-                      rules={[{ required: true, message: '请选择所属产品' }]}
+                      // rules={[{ required: true, message: '请选择所属产品' }]}
                     >
-                      <Form.Item name={'productId'} noStyle>
+                      <Form.Item
+                        name={'productId'}
+                        noStyle
+                        rules={[{ required: true, message: '请选择所属产品' }]}
+                      >
                         <Select
                           showSearch
                           allowClear

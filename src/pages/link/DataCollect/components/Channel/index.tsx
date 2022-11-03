@@ -28,21 +28,17 @@ const ChannelModel = model<{
 export default observer((props: Props) => {
   const intl = useIntl();
   const { minHeight } = useDomFullHeight(`.data-collect-channel`, 24);
-  const [param, setParam] = useState({});
+  const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const { permission } = PermissionButton.usePermission('device/Instance');
   const [loading, setLoading] = useState<boolean>(true);
   const [dataSource, setDataSource] = useState<any>({
     data: [],
-    pageSize: 10,
+    pageSize: 12,
     pageIndex: 0,
     total: 0,
   });
 
   const columns: ProColumns<ChannelItem>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -72,10 +68,14 @@ export default observer((props: Props) => {
           status: 'enabled',
         },
         disabled: {
-          text: '禁用',
+          text: '异常',
           status: 'disabled',
         },
       },
+    },
+    {
+      title: '说明',
+      dataIndex: 'description',
     },
   ];
 
@@ -140,11 +140,19 @@ export default observer((props: Props) => {
                             isPermission={permission.delete}
                             type={'link'}
                             style={{ padding: 0 }}
+                            disabled={record?.state?.value !== 'disabled'}
+                            tooltip={
+                              record?.state?.value !== 'disabled'
+                                ? {
+                                    title: '正常的通道不能删除',
+                                  }
+                                : undefined
+                            }
                             popConfirm={{
                               title: intl.formatMessage({
                                 id: 'pages.data.option.remove.tips',
+                                defaultMessage: '是否删除?',
                               }),
-                              disabled: record?.state?.value !== 'disabled',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
                                 onlyMessage(
@@ -185,7 +193,7 @@ export default observer((props: Props) => {
                         pageSize: size,
                       });
                     }}
-                    pageSizeOptions={[10, 20, 50, 100]}
+                    pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
                     showTotal={(num) => {
                       const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;

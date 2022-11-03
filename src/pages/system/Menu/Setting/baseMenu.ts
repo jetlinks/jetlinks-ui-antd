@@ -1362,6 +1362,66 @@ export default [
               },
             ],
           },
+          {
+            code: 'link/DataCollect',
+            name: '数据采集',
+            owner: 'iot',
+            sortIndex: 10,
+            url: '/iot/link/DataCollect',
+            icon: 'icon-shuxingpeizhi',
+            showPage: [],
+            permissions: [],
+            children: [
+              {
+                code: 'link/DataCollect/Dashboard',
+                name: '仪表盘',
+                owner: 'iot',
+                sortIndex: 1,
+                url: '/iot/link/DataCollect/Dashboard',
+                icon: 'icon-shujumoni',
+                showPage: [
+                  'data-collect-channel',
+                  'data-collect-opc',
+                  'data-collector',
+                  'things-collector',
+                ],
+                permissions: [],
+                buttons: [],
+              },
+              {
+                code: 'link/DataCollect/DataGathering',
+                name: '数据采集',
+                owner: 'iot',
+                sortIndex: 2,
+                url: '/iot/link/DataCollect/DataGathering',
+                icon: 'icon-rizhifuwu',
+                showPage: [
+                  'data-collect-channel',
+                  'data-collect-opc',
+                  'data-collector',
+                  'things-collector',
+                ],
+                permissions: [],
+                buttons: [],
+              },
+              {
+                code: 'link/DataCollect/IntegratedQuery',
+                name: '综合查询',
+                owner: 'iot',
+                sortIndex: 3,
+                url: '/iot/link/DataCollect/IntegratedQuery',
+                icon: 'icon-zhilianshebei',
+                showPage: [
+                  'data-collect-channel',
+                  'data-collect-opc',
+                  'data-collector',
+                  'things-collector',
+                ],
+                permissions: [],
+                buttons: [],
+              },
+            ],
+          },
         ],
       },
       {
@@ -3141,6 +3201,276 @@ export default [
               },
             ],
             options: null,
+          },
+        ],
+      },
+    ],
+  },
+  //物联卡
+  {
+    path: '5Hpl',
+    sortIndex: 4,
+    level: 1,
+    owner: 'iot',
+    name: '物联卡',
+    code: 'iot-card',
+    url: '/iot-card',
+    icon: 'icon-yunyunjieru',
+    permissions: [],
+    children: [
+      {
+        path: '5Hpl-mghg',
+        sortIndex: 1,
+        level: 1,
+        owner: 'iot',
+        name: '首页',
+        code: 'iot-card/Home',
+        url: '/iot-card/Home',
+        icon: 'icon-shujumoni',
+        status: 1,
+        permissions: [
+          {
+            permission: 'network-flow',
+            actions: ['query'],
+          },
+        ],
+        accessSupport: {
+          text: '不支持',
+          value: 'unsupported',
+        },
+      },
+      {
+        path: '5Hpl-4VFS',
+        sortIndex: 2,
+        level: 1,
+        owner: 'iot',
+        name: '仪表盘',
+        code: 'iot-card/Dashboard',
+        url: '/iot-card/Dashboard',
+        icon: 'icon-keshihua',
+        permissions: [
+          {
+            permission: 'network-flow',
+            actions: ['query'],
+          },
+        ],
+      },
+      {
+        path: '5Hpl-O2m8',
+        sortIndex: 3,
+        level: 2,
+        owner: 'iot',
+        name: '物联卡管理',
+        code: 'iot-card/CardManagement',
+        url: '/iot-card/CardManagement',
+        icon: 'icon-chanpinfenlei',
+        status: 1,
+        permissions: [],
+        buttons: [
+          {
+            id: 'sync',
+            name: '同步',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['sync'],
+              },
+            ],
+          },
+          {
+            id: 'import',
+            name: '导入',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['import'],
+              },
+            ],
+          },
+          {
+            id: 'export',
+            name: '导出',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['export'],
+              },
+            ],
+          },
+          {
+            id: 'delete',
+            name: '删除',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['delete'],
+              },
+            ],
+          },
+          {
+            id: 'active',
+            name: '激活',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['active'],
+              },
+            ],
+          },
+          {
+            id: 'bind',
+            name: '绑定',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['action'],
+              },
+            ],
+          },
+          {
+            id: 'add',
+            name: '新增',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'action',
+            name: '启/禁用',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'update',
+            name: '编辑',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['query'],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: '5Hpl-ZjAG',
+        sortIndex: 4,
+        level: 2,
+        owner: 'iot',
+        name: '充值管理',
+        code: 'iot-card/Recharge',
+        url: '/iot-card/Recharge',
+        icon: 'icon-caidanguanli',
+        status: 1,
+        permissions: [],
+        buttons: [
+          {
+            id: 'pay',
+            name: '充值',
+            permissions: [
+              {
+                permission: 'IotCard-management',
+                actions: ['pay'],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: '5Hpl-eS9h',
+        sortIndex: 5,
+        level: 2,
+        owner: 'iot',
+        name: '平台接入',
+        code: 'iot-card/Platform',
+        url: '/iot-card/Platform',
+        icon: 'icon-wangguanzishebei',
+        status: 1,
+        permissions: [],
+        buttons: [
+          {
+            id: 'action',
+            name: '启/禁用',
+            permissions: [
+              {
+                permission: 'platform',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'delete',
+            name: '删除',
+            permissions: [
+              {
+                permission: 'platform',
+                actions: ['delete'],
+              },
+            ],
+          },
+          {
+            id: 'update',
+            name: '编辑',
+            permissions: [
+              {
+                permission: 'platform',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'add',
+            name: '新增',
+            permissions: [
+              {
+                permission: 'platform',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'platform',
+                actions: ['query'],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: '5Hpl-cL34',
+        sortIndex: 6,
+        level: 1,
+        owner: 'iot',
+        name: '操作记录',
+        code: 'iot-card/Record',
+        url: '/iot-card/Record',
+        icon: 'icon-rizhifuwu',
+        status: 1,
+        permissions: [
+          {
+            permission: 'network-card',
+            actions: ['query'],
           },
         ],
       },

@@ -137,6 +137,13 @@ export enum MENUS_CODE {
   'system/Apply/Api' = 'system/Apply/Api',
   'system/Apply/View' = 'system/Apply/View',
   'system/License' = 'system/License',
+  'iot-card/Home' = 'iot-card/Home',
+  'iot-card/Platform' = 'iot-card/Platform',
+  'iot-card/Platform/Detail' = 'iot-card/Platform/Detail',
+  'iot-card/Recharge' = 'iot-card/Recharge',
+  'iot-card/Dashboard' = 'iot-card/Dashboard',
+  'iot-card/CardManagement' = 'iot-card/CardManagement',
+  'iot-card/Record' = 'iot-card/Record',
 }
 
 export type MENUS_CODE_TYPE = keyof typeof MENUS_CODE | string;
@@ -165,6 +172,9 @@ export enum BUTTON_PERMISSION_ENUM {
   'password' = 'password', //重置密码
   'api' = 'api', //查看api
   'manage' = 'manage', //数据源-管理
+  'stop' = 'stop',
+  'restart' = 'restart',
+  'pay' = 'pay', //充值
 }
 
 // 调试按钮、通知记录、批量导出、批量导入、选择通道、推送、分配资产、绑定用户对应的ID是啥
@@ -185,6 +195,7 @@ export const getDetailNameByCode = {
   'rule-engine/Alarm/Log/Detail': '告警日志',
   'Northbound/AliCloud/Detail': '阿里云详情',
   'link/Certificate/Detail': '证书详情',
+  'iot-card/Platform/Detail': '平台对接详情',
 };
 
 // 开源版路由

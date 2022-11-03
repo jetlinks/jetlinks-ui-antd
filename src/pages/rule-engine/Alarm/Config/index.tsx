@@ -215,6 +215,12 @@ const Config = () => {
               'x-decorator-props': {
                 gridSpan: 23,
               },
+              'x-validator': [
+                {
+                  max: 64,
+                  message: '最多输入64个字符',
+                },
+              ],
             },
             // remove: {
             //   type: 'void',

@@ -17,6 +17,7 @@ const Provider = (props: Props) => {
     const network: any[] = [];
     const cloud: any[] = [];
     const channel: any[] = [];
+    const edge: any[] = [];
     (props?.data || []).map((item: any) => {
       if (item.id === 'fixed-media' || item.id === 'gb28181-2016') {
         media.push(item);
@@ -24,6 +25,8 @@ const Provider = (props: Props) => {
         cloud.push(item);
       } else if (item.id === 'modbus-tcp' || item.id === 'opc-ua') {
         channel.push(item);
+      } else if (item.id === 'official-edge-gateway' || item.id === 'edge-child-device') {
+        edge.push(item);
       } else {
         network.push(item);
       }
@@ -68,6 +71,11 @@ const Provider = (props: Props) => {
           list: [...channel],
           title: '通道类设备接入',
         },
+        {
+          type: 'edge',
+          list: [...edge],
+          title: '官方接入',
+        },
       ]);
     }
   }, [props.data]);
@@ -87,47 +95,11 @@ const Provider = (props: Props) => {
   backMap.set('OneNet', require('/public/images/access/onenet.png'));
   backMap.set('gb28181-2016', require('/public/images/access/gb28181.png'));
   backMap.set('mqtt-client-gateway', require('/public/images/access/mqtt-broke.png'));
+  backMap.set('edge-child-device', require('/public/images/access/child-device.png'));
+  backMap.set('official-edge-gateway', require('/public/images/access/edge.png'));
 
   return (
     <div>
-      {/* {dataSource.map((i) => (
-        <Card key={i.type} style={{ marginTop: 20 }}>
-          <TitleComponent data={i.title} />
-          <Row gutter={[24, 24]}>
-            {(i?.list || []).map((item: any) => (
-              <Col key={item.name} span={12}>
-                <div className={styles.provider}>
-                  <div className={styles.box}>
-                    <div className={styles.left}>
-                      <div className={styles.images}>
-                        <img src={backMap.get(item.id)} />
-                      </div>
-                      <div className={styles.context}>
-                        <div style={{ fontWeight: 600 }}>{item.name}</div>
-                        <div className={styles.desc}>
-                          <Tooltip title={item?.description || ''}>
-                            {item?.description || ''}
-                          </Tooltip>
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ width: '70px' }}>
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          props.change(item, i.type);
-                        }}
-                      >
-                        接入
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Col>
-            ))}
-          </Row>
-        </Card>
-      ))} */}
       {dataSource.map((i) => {
         if (i.list && i.list.length !== 0) {
           return (
@@ -135,7 +107,7 @@ const Provider = (props: Props) => {
               <TitleComponent data={i.title} />
               <Row gutter={[24, 24]}>
                 {(i?.list || []).map((item: any) => (
-                  <Col key={item.name} span={12}>
+                  <Col key={item.id} span={12}>
                     <div className={styles.provider}>
                       <div className={styles.box}>
                         <div className={styles.left}>

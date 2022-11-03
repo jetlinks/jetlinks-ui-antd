@@ -1,5 +1,5 @@
 import { DownOutlined, PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Input, Tree, Space, Popconfirm } from 'antd';
+import { Button, Input, Tree, Space, Popconfirm, Badge } from 'antd';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
 import { Empty } from '@/components';
@@ -75,7 +75,6 @@ export default observer((props: Props) => {
       <div style={{ margin: '16px 0' }}>
         <Button
           type="primary"
-          ghost
           style={{ width: '100%' }}
           icon={<PlusOutlined />}
           onClick={() => {
@@ -103,7 +102,10 @@ export default observer((props: Props) => {
                         }}
                       >
                         <img width={'20px'} style={{ marginRight: 5 }} src={channelImg} />
-                        <div className={'ellipsis'}>{item.name}</div>
+                        <div className={'ellipsis'}>
+                          <Badge status={item.state?.value === 'enabled' ? 'success' : 'error'} />
+                          {item.name}
+                        </div>
                       </div>
                       <div>
                         <Space className={styles.iconColor}>
@@ -166,6 +168,7 @@ export default observer((props: Props) => {
           }}
           reload={() => {
             TreeModel.visible = false;
+            handleSearch(TreeModel.param);
           }}
         />
       )}

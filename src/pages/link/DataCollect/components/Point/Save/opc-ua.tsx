@@ -1,5 +1,5 @@
 import { Button, Modal } from 'antd';
-import { createForm, Field } from '@formily/core';
+import { createForm, Field, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
@@ -15,9 +15,9 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { action } from '@formily/reactive';
+import { RadioCard } from '@/components';
 
 interface Props {
   data: Partial<PointItem>;
@@ -26,11 +26,15 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const { permission } = PermissionButton.usePermission('link/Protocol');
   const [data, setData] = useState<Partial<PointItem>>(props.data);
 
   useEffect(() => {
-    setData(props.data);
+    setData({
+      ...props.data,
+      accessModes: props.data?.accessModes
+        ? (props.data?.accessModes || []).map((item) => item.value)
+        : [],
+    });
   }, [props.data]);
 
   const form = createForm({
@@ -47,6 +51,7 @@ export default (props: Props) => {
       Password,
       FormGrid,
       Checkbox,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
@@ -69,6 +74,24 @@ export default (props: Props) => {
       }),
     );
   };
+
+  registerValidateRules({
+    checkLength(value) {
+      if (String(value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      }
+      if (!(value % 1 === 0)) {
+        return {
+          type: 'error',
+          message: '请输入非0正整数',
+        };
+      }
+      return '';
+    },
+  });
 
   const schema: ISchema = {
     type: 'object',
@@ -113,7 +136,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择数据类型',
             },
-            'x-reactions': '{{useAsyncDataSource(getSecurityPolicyList)}}',
+            'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
             'x-validator': [
               {
                 required: true,
@@ -123,19 +146,28 @@ export default (props: Props) => {
           },
           accessModes: {
             title: '访问类型',
-            'x-component': 'Select',
+            type: 'array',
+            'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
             },
             'x-component-props': {
               placeholder: '请选择访问类型',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '读', value: 'read' },
+                { label: '写', value: 'write' },
+                { label: '订阅', value: 'subscribe' },
+              ],
             },
-            enum: [
-              { label: '读', value: 'read' },
-              { label: '写', value: 'write' },
-              { label: '订阅', value: 'subscribe' },
-            ],
             'x-validator': [
               {
                 required: true,
@@ -150,10 +182,18 @@ export default (props: Props) => {
             'x-decorator-props': {
               gridSpan: 2,
             },
-            default: 3,
+            default: 3000,
+            'x-reactions': {
+              dependencies: ['..accessModes'],
+              fulfill: {
+                state: {
+                  visible: '{{($deps[0] || []).includes("subscribe")}}',
+                },
+              },
+            },
             'x-component-props': {
               placeholder: '请输入采集频率',
-              addonAfter: '秒',
+              addonAfter: '毫秒',
               style: {
                 width: '100%',
               },
@@ -163,15 +203,26 @@ export default (props: Props) => {
                 required: true,
                 message: '请输入采集频率',
               },
+              {
+                checkLength: true,
+              },
             ],
           },
           features: {
-            title: '采集特性',
+            title: '',
             type: 'array',
             'x-component': 'Checkbox.Group',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
+            },
+            'x-reactions': {
+              dependencies: ['.accessModes'],
+              fulfill: {
+                state: {
+                  visible: '{{($deps[0] || []).includes("subscribe")}}',
+                },
+              },
             },
             enum: [
               {
@@ -180,6 +231,20 @@ export default (props: Props) => {
               },
             ],
           },
+          description: {
+            title: '说明',
+            'x-component': 'Input.TextArea',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              rows: 3,
+              showCount: true,
+              maxLength: 200,
+              placeholder: '请输入说明',
+            },
+          },
         },
       },
     },
@@ -187,6 +252,7 @@ export default (props: Props) => {
 
   const saveData = async () => {
     const value = await form.submit<PointItem>();
+    console.log(value);
     const response: any = props.data?.id
       ? await service.updatePoint(props.data?.id, { ...props.data, ...value })
       : await service.savePoint({ ...props.data, ...value });
@@ -213,7 +279,6 @@ export default (props: Props) => {
           onClick={() => {
             saveData();
           }}
-          disabled={props.data?.id ? !permission.update : !permission.add}
         >
           确定
         </Button>,

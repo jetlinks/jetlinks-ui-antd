@@ -94,11 +94,15 @@ const Save = (props: Props) => {
             'x-validator': [
               {
                 max: 65535,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
               },
               {
                 min: 1,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
+              },
+              {
+                required: true,
+                message: '请选择本地端口',
               },
             ],
           },
@@ -117,7 +121,16 @@ const Save = (props: Props) => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-validator': ['ipv4'],
+            'x-validator': [
+              {
+                format: 'ipv4',
+                message: '请输入域名或IP',
+              },
+              {
+                required: true,
+                message: '请输入域名或IP',
+              },
+            ],
             'x-component-props': {
               placeholder: '请输入公网地址',
             },
@@ -139,11 +152,15 @@ const Save = (props: Props) => {
             'x-validator': [
               {
                 max: 65535,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
               },
               {
                 min: 1,
-                message: '请输入1-65535之间的整整数',
+                message: '请输入1-65535之间的正整数',
+              },
+              {
+                required: true,
+                message: '请输入公网端口',
               },
             ],
           },

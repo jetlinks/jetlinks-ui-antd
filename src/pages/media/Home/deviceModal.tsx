@@ -129,7 +129,7 @@ export default (props: DeviceModalProps) => {
         search={false}
         columnEmptyText={''}
         request={(params) =>
-          service.query({
+          service.getDevice({
             ...params,
             sorts: [
               {

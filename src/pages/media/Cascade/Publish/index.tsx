@@ -65,7 +65,7 @@ const Publish = (props: Props) => {
               <a
                 style={{ marginLeft: 20 }}
                 onClick={() => {
-                  downloadObject(errMessage, props.data.name + '-推送失败');
+                  downloadObject(errMessage || '', props.data.name + '-推送失败');
                 }}
               >
                 下载

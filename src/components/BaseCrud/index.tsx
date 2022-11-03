@@ -97,7 +97,7 @@ const BaseCrud = <T extends Record<string, any>>(props: Props<T>) => {
           actionRef={actionRef}
           scroll={scroll}
           columnEmptyText={''}
-          options={{ fullScreen: true }}
+          options={{ fullScreen: false }}
           request={
             request ||
             (async (params = {}) =>

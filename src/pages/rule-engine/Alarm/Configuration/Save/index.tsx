@@ -246,7 +246,12 @@ const Save = (props: Props) => {
               style={{ padding: 0 }}
               isPermission={permission.add}
               onClick={() => {
-                const tab: any = window.open(`${origin}/#/iot/rule-engine/scene/Save`);
+                const targetType = form.values.targetType;
+                let queryStr = '';
+                if (targetType && targetType !== 'other') {
+                  queryStr = '?targetType=device';
+                }
+                const tab: any = window.open(`${origin}/#/iot/rule-engine/scene/Save${queryStr}`);
                 tab!.onTabSaveSuccess = (value: any) => {
                   form.setFieldState('sceneId', async (state) => {
                     state.dataSource = await getScene();

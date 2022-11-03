@@ -1,32 +1,52 @@
 import { Button, Modal } from 'antd';
-import { createForm } from '@formily/core';
+import { createForm, Field, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
+import { RadioCard } from '@/components';
 
 interface Props {
   channelId?: string;
   data: Partial<CollectorItem>;
   close: () => void;
   reload: () => void;
+  provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
 export default (props: Props) => {
-  const { permission } = PermissionButton.usePermission('link/Protocol');
-  const [data, setData] = useState<Partial<ChannelItem>>(props.data);
-
-  useEffect(() => {
-    setData(props.data);
-  }, [props.data]);
-
   const form = createForm({
     validateFirst: true,
-    initialValues: data || {},
+    initialValues: Object.keys(props.data).length
+      ? props.data
+      : {
+          circuitBreaker: {
+            type: 'LowerFrequency',
+          },
+        },
+    effects: () => {
+      onFieldReact('circuitBreaker.type', async (field, f) => {
+        const func = (field as Field).value;
+        f.setFieldState('circuitBreaker.type', (state) => {
+          let tooltip = '';
+          if (func === 'LowerFrequency') {
+            tooltip =
+              '连续20次异常，降低连接频率至原有频率的1/10（重试间隔不超过1分钟），故障处理后自动恢复至设定连接频率';
+          } else if (func === 'Break') {
+            tooltip = '连续10分钟异常，停止采集数据进入熔断状态，设备重新启用后恢复采集状态';
+          } else if (func === 'Ignore') {
+            tooltip = '忽略异常，保持原采集频率超时时间为5s';
+          }
+          state.decoratorProps = {
+            tooltip: tooltip,
+            gridSpan: 2,
+          };
+        });
+      });
+    },
   });
 
   const SchemaField = createSchemaField({
@@ -37,6 +57,7 @@ export default (props: Props) => {
       NumberPicker,
       Password,
       FormGrid,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
@@ -88,14 +109,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入从机地址',
             },
-            'x-reactions': {
-              dependencies: ['..provider'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0]==="MODBUS_TCP"}}',
-                },
-              },
-            },
+            'x-visible': props.provider === 'MODBUS_TCP',
             'x-validator': [
               {
                 required: true,
@@ -103,30 +117,38 @@ export default (props: Props) => {
               },
               {
                 max: 255,
-                message: '请输入0-255之间的整整数',
+                message: '请输入0-255之间的正整数',
               },
               {
                 min: 0,
-                message: '请输入0-255之间的整整数',
+                message: '请输入0-255之间的正整数',
               },
             ],
           },
           'circuitBreaker.type': {
-            title: '处理方式',
-            'x-component': 'Select',
+            title: '故障处理',
+            'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
             },
             'x-component-props': {
-              placeholder: '请选择处理方式',
+              placeholder: '请选择故障处理',
+              model: 'singular',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '降频', value: 'LowerFrequency' },
+                { label: '熔断', value: 'Break' },
+                { label: '忽略', value: 'Ignore' },
+              ],
             },
             default: 'LowerFrequency',
-            enum: [
-              { label: '降频', value: 'LowerFrequency' },
-              { label: '熔断', value: 'Break' },
-              { label: '忽略', value: 'Ignore' },
-            ],
             'x-validator': [
               {
                 required: true,
@@ -165,8 +187,10 @@ export default (props: Props) => {
           const obj = {
             ...value,
             provider: resp.result.provider,
-            channelId: resp.result.channelId,
-            configuration: {},
+            channelId: props.channelId,
+            configuration: {
+              ...value.configuration,
+            },
           };
           response = await service.saveCollector({ ...obj });
         }
@@ -195,7 +219,6 @@ export default (props: Props) => {
           onClick={() => {
             save();
           }}
-          disabled={props.data?.id ? !permission.update : !permission.add}
         >
           确定
         </Button>,

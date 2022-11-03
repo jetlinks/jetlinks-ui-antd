@@ -1,6 +1,6 @@
 // Modal 弹窗，用于新增、修改数据
 import React, { useState } from 'react';
-import { createForm } from '@formily/core';
+import { createForm, Field, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import {
   ArrayTable,
@@ -68,9 +68,47 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
     },
   });
 
+  const findItemById = (id: string, options: any[] = []): any | undefined => {
+    let _item;
+    options.some((item) => {
+      if (id === item.id) {
+        _item = item;
+        return true;
+      }
+      if (item.children) {
+        _item = findItemById(id, item.children);
+        return !!_item;
+      }
+      return false;
+    });
+
+    return _item;
+  };
+
   const form = createForm({
     validateFirst: true,
     initialValues: data || {},
+    effects() {
+      onFieldReact('parentId', (typeFiled, f) => {
+        const isModified = (typeFiled as Field).modified;
+        if (isModified) {
+          const pId = (typeFiled as Field).value;
+          const options = (typeFiled as Field).getState().dataSource;
+          const item = findItemById(pId, options);
+          if (item) {
+            if (item.children && item.children.length) {
+              f.setFieldState(typeFiled.query('.sortIndex'), async (state) => {
+                state.value = item.children[item.children.length - 1].sortIndex + 1;
+              });
+            } else {
+              f.setFieldState(typeFiled.query('.sortIndex'), async (state) => {
+                state.value = 1;
+              });
+            }
+          }
+        }
+      });
+    },
   });
 
   /**
