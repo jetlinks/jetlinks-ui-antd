@@ -211,10 +211,10 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'child-device',
           tab: '子设备',
-          component: <ChildDevice data={InstanceModel.detail} />,
+          component: <ChildDevice />,
         });
       }
-      if (response.result) {
+      if (response.result.accessProvider === 'edge-child-device' && response.result.parentId) {
         datalist.push({
           key: 'edge-map',
           tab: '边缘端映射',

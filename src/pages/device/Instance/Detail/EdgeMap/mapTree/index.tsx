@@ -1,15 +1,17 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Modal, Tree, List, Popconfirm } from 'antd';
 import { useEffect, useRef, useState } from 'react';
-// import { service } from '..';
+import { service } from '..';
 import './index.less';
 
 interface Props {
   close: any;
   deviceId: string;
+  edgeId: string;
 }
 
 const MapTree = (props: Props) => {
+  const { deviceId, edgeId, close } = props;
   const [data, setData] = useState<any>([]);
   const [checked, setChecked] = useState<any>([]);
   const filterRef = useRef<any>([]);
@@ -78,14 +80,13 @@ const MapTree = (props: Props) => {
   };
 
   useEffect(() => {
-    // service.treeMap(props.deviceId).then(
-    //   res => {
-    //     if (res.status === 200) {
-    //       setData(res.result)
-    //     }
-    //   }
-    // )
-    setData(treeData);
+    console.log(close, deviceId);
+    service.treeMap(edgeId).then((res) => {
+      if (res.status === 200) {
+        setData(res.result?.[0]);
+      }
+    });
+    // setData(treeData);
     setExpandedKey([treeData?.[0].id]);
   }, []);
 

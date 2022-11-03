@@ -50,6 +50,11 @@ class Service extends BaseService<any> {
         data,
       },
     );
+  saveMap = (deviceId: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${deviceId}/device-collector-save/invoke`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

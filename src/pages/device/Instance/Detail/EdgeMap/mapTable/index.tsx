@@ -2,24 +2,41 @@ import PermissionButton from '@/components/PermissionButton';
 import TitleComponent from '@/components/TitleComponent';
 import { DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
-import { createForm } from '@formily/core';
+import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
+import type { Response } from '@/utils/typings';
 import { FormProvider, createSchemaField } from '@formily/react';
+import { action } from '@formily/reactive';
 import { Badge, Button, Tooltip } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MapTree from '../mapTree';
 import './index.less';
+import { service } from '..';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   metaData: Record<string, string>[];
   deviceId: string;
+  edgeId: string;
+  reload?: any;
   title?: string;
-  ref?: any;
+  form?: any;
 }
 
 const MapTable = (props: Props) => {
-  const { metaData, deviceId } = props;
-
+  const { metaData, deviceId, reload, edgeId } = props;
   const [visible, setVisible] = useState<boolean>(false);
+  const [channelList, setChannelList] = useState<any>([]);
+
+  const remove = async (params: any) => {
+    const res = await service.removeMap(edgeId, {
+      deviceId: deviceId,
+      idList: [params],
+    });
+    if (res.status === 200) {
+      onlyMessage('解绑成功');
+      reload('remove');
+    }
+  };
 
   const Render = (propsName: any) => {
     const text = metaData.find((item: any) => item.metadataId === propsName.value);
@@ -47,9 +64,7 @@ const MapTable = (props: Props) => {
           title: '确认解绑',
           disabled: !record(index)?.id,
           onConfirm: async () => {
-            console.log(deviceId);
-            // deteleMaster(item.id)
-            // remove([record(index)?.id]);
+            remove(record(index)?.id);
           },
         }}
         key="unbind"
@@ -59,6 +74,63 @@ const MapTable = (props: Props) => {
       </PermissionButton>
     );
   };
+
+  const useAsyncDataSource = (api: any) => (field: Field) => {
+    field.loading = true;
+    api(field)?.then(
+      action.bound!((resp: Response<any>) => {
+        field.dataSource = resp.result?.[0]?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        field.loading = false;
+      }),
+    );
+  };
+
+  const getCollector = async (field: Field) => {
+    const path = FormPath.transform(
+      field.path,
+      /\d+/,
+      (index) => `requestList.${parseInt(index)}.channelId`,
+    );
+    const channelId = field.query(path).get('value');
+    if (!channelId) return [];
+    return service.edgeCollector(edgeId, {
+      terms: [
+        {
+          terms: [
+            {
+              column: 'channelId',
+              value: channelId,
+            },
+          ],
+        },
+      ],
+    });
+  };
+  const getPoint = async (field: Field) => {
+    const path = FormPath.transform(
+      field.path,
+      /\d+/,
+      (index) => `requestList.${parseInt(index)}.collectorId`,
+    );
+    const collectorId = field.query(path).get('value');
+    if (!collectorId) return [];
+    return service.edgePoint(edgeId, {
+      terms: [
+        {
+          terms: [
+            {
+              column: 'collectorId',
+              value: collectorId,
+            },
+          ],
+        },
+      ],
+    });
+  };
+
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -71,9 +143,63 @@ const MapTable = (props: Props) => {
       StatusRender,
     },
   });
+
+  const save = async (item: any) => {
+    const res = await service.saveMap(edgeId, item);
+    if (res.status === 200) {
+      onlyMessage('保存成功');
+      reload('save');
+    }
+  };
+
   const form = createForm({
     values: {
       requestList: metaData,
+    },
+    effects: () => {
+      onFieldReact('requestList.*.channelId', async (field, f) => {
+        const value = (field as Field).value;
+        // console.log(field, 'provider')
+        if (value) {
+          const param = channelList.find((item: any) => item.value === value);
+          const providerPath = FormPath.transform(
+            field.path,
+            /\d+/,
+            (index) => `requestList.${parseInt(index)}.provider`,
+          );
+          f.setFieldState(providerPath, (state) => {
+            state.value = param?.provider;
+          });
+        }
+        const path = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `requestList.${parseInt(index)}.collectorId`,
+        );
+        const path1 = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `requestList.${parseInt(index)}.pointId`,
+        );
+        f.setFieldState(path, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
+        });
+        f.setFieldState(path1, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
+        });
+      });
     },
   });
 
@@ -109,7 +235,7 @@ const MapTable = (props: Props) => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { width: 200, title: '通道' },
               properties: {
-                collectorId: {
+                channelId: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
@@ -121,7 +247,7 @@ const MapTable = (props: Props) => {
                     filterOption: (input: string, option: any) =>
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
-                  // enum: masterList,
+                  enum: channelList,
                 },
               },
             },
@@ -140,7 +266,7 @@ const MapTable = (props: Props) => {
                 ),
               },
               properties: {
-                collectors: {
+                collectorId: {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
@@ -152,7 +278,13 @@ const MapTable = (props: Props) => {
                     filterOption: (input: string, option: any) =>
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
-                  // 'x-reactions': ['{{useAsyncDataSource(getName)}}'],
+                  'x-reactions': ['{{useAsyncDataSource(getCollector)}}'],
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请选择采集器',
+                    },
+                  ],
                 },
               },
             },
@@ -173,7 +305,20 @@ const MapTable = (props: Props) => {
                     filterOption: (input: string, option: any) =>
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
-                  // 'x-reactions': ['{{useAsyncDataSource(getName)}}'],
+                  'x-reactions': ['{{useAsyncDataSource(getPoint)}}'],
+                },
+              },
+            },
+            column5: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { width: 0 },
+              properties: {
+                provider: {
+                  type: 'string',
+                  'x-hidden': true,
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
                 },
               },
             },
@@ -221,6 +366,19 @@ const MapTable = (props: Props) => {
     },
   };
 
+  useEffect(() => {
+    service.edgeChannel(edgeId).then((res) => {
+      if (res.status === 200) {
+        const list = res.result?.[0].map((item: any) => ({
+          label: item.name,
+          value: item.id,
+          provider: item.provider,
+        }));
+        setChannelList(list);
+      }
+    });
+  }, []);
+
   return (
     <div>
       <div className="top-button">
@@ -236,8 +394,17 @@ const MapTable = (props: Props) => {
         <Button
           type="primary"
           onClick={async () => {
-            const formData = await props.ref?.validateFields();
-            console.log(formData, props.ref);
+            // const formData = await props.ref?.validateFields();
+            // console.log(formData, props.ref);
+            const value: any = await form.submit();
+            const array = value.requestList.filter((item: any) => item.channelId);
+            const submitData = {
+              deviceId: deviceId,
+              provider: array[0].provider,
+              requestList: array,
+            };
+            save(submitData);
+            console.log(submitData);
           }}
         >
           保存
@@ -245,7 +412,7 @@ const MapTable = (props: Props) => {
       </div>
       <div>
         <FormProvider form={form}>
-          <SchemaField schema={schema} scope={{}} />
+          <SchemaField schema={schema} scope={{ useAsyncDataSource, getCollector, getPoint }} />
         </FormProvider>
       </div>
       {visible && (
@@ -254,6 +421,7 @@ const MapTable = (props: Props) => {
             setVisible(false);
           }}
           deviceId={deviceId}
+          edgeId={edgeId}
         />
       )}
     </div>
