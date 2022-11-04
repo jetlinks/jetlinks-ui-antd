@@ -74,7 +74,7 @@ const Dashboard = () => {
       bottom: 0,
     };
     getData(dTime[0], dTime[1]).then((resp) => {
-      setDayTotal(resp.data.reduce((r, n) => r + n, 0));
+      setDayTotal(resp.data.reduce((r, n) => r + Number(n), 0).toFixed(2));
       setDayOptions({
         ...DefaultEchartsOptions,
         grid,
@@ -115,7 +115,7 @@ const Dashboard = () => {
       });
     });
     getData(mTime[0], mTime[1]).then((resp) => {
-      setMonthTotal(resp.data.reduce((r, n) => r + n, 0));
+      setMonthTotal(resp.data.reduce((r, n) => r + Number(n), 0).toFixed(2));
       setMonthOptions({
         ...DefaultEchartsOptions,
         grid,
@@ -156,7 +156,7 @@ const Dashboard = () => {
       });
     });
     getData(yTime[0], yTime[1]).then((resp) => {
-      setYearTotal(resp.data.reduce((r, n) => r + n, 0));
+      setYearTotal(resp.data.reduce((r, n) => r + Number(n), 0).toFixed(2));
       setYearOptions({
         ...DefaultEchartsOptions,
         grid,
@@ -288,7 +288,7 @@ const Dashboard = () => {
             title="昨日流量消耗"
             value={
               <>
-                <span>{dayTotal.toFixed(2)}</span>
+                <span>{dayTotal}</span>
                 <span>M</span>
               </>
             }
@@ -301,7 +301,7 @@ const Dashboard = () => {
             title="当月流量消耗"
             value={
               <>
-                <span>{monthTotal.toFixed(2)}</span>
+                <span>{monthTotal}</span>
                 <span>M</span>
               </>
             }
@@ -314,7 +314,7 @@ const Dashboard = () => {
             title="本年流量消耗"
             value={
               <>
-                <span>{yearTotal.toFixed(2)}</span>
+                <span>{yearTotal}</span>
                 <span>M</span>
               </>
             }
