@@ -53,7 +53,7 @@ const Dashboard = () => {
             );
             resolve({
               xValue: sortArray.map((item: any) => item.date),
-              data: sortArray.map((item: any) => item.value.toFixed(2)),
+              data: sortArray.map((item: any) => item.value && item.value.toFixed(2)),
             });
           }
         });
