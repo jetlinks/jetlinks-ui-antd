@@ -14,6 +14,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'GET',
       params,
     });
+  public getProductListNoPage = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'POST',
+      data: params,
+    });
 
   // 批量删除设备
   public batchDeleteDevice = (params: any) =>

@@ -1,3 +1,4 @@
+import { onlyMessage } from '@/utils/util';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Modal, Tree, List, Popconfirm } from 'antd';
 import { useEffect, useRef, useState } from 'react';
@@ -8,49 +9,16 @@ interface Props {
   close: any;
   deviceId: string;
   edgeId: string;
+  metaData: any;
 }
 
 const MapTree = (props: Props) => {
-  const { deviceId, edgeId, close } = props;
+  const { deviceId, edgeId, close, metaData } = props;
   const [data, setData] = useState<any>([]);
   const [checked, setChecked] = useState<any>([]);
   const filterRef = useRef<any>([]);
   const [expandedKey, setExpandedKey] = useState<any>();
   const [list, setList] = useState<any>([]);
-
-  const treeData = [
-    {
-      name: '通道1',
-      id: '1',
-      collectors: [
-        {
-          name: '设备1',
-          id: '1-1',
-          parentId: '1',
-          points: [
-            {
-              name: '点位1',
-              id: '1-1-1',
-            },
-            {
-              name: '点位2',
-              id: '1-1-2',
-            },
-          ],
-        },
-        {
-          name: '设备2',
-          id: '1-2',
-          parentId: '1',
-        },
-      ],
-    },
-    {
-      name: '通道2',
-      id: '2',
-      collectors: [],
-    },
-  ];
 
   const filterTree = (nodes: any[], lists: any[]) => {
     if (!nodes?.length) {
@@ -59,7 +27,7 @@ const MapTree = (props: Props) => {
     return nodes.filter((item) => {
       if (lists.indexOf(item.id) > -1) {
         filterRef.current.push(item);
-        console.log(filterRef.current, 'filterRef.current');
+        // console.log(filterRef.current, 'filterRef.current');
         return false;
       }
       // 符合条件的保留，并且需要递归处理其子节点
@@ -79,15 +47,43 @@ const MapTree = (props: Props) => {
     filterRef.current = filterRef.current.filter((element: any) => element.id !== node.id);
   };
 
+  const save = async () => {
+    // console.log(list,'list')
+    const params: any[] = [];
+    const metadataId = metaData.map((item: any) => item.metadataId);
+    list.forEach((item: any) => {
+      const array = item.points.map((element: any) => ({
+        channelId: item.parentId,
+        collectorId: element.collectorId,
+        pointId: element.id,
+        metadataType: 'property',
+        metadataId: metadataId.find((i: any) => i === element.id),
+        provider: data.find((it: any) => it.id === item.parentId).provider,
+      }));
+      params.push(...array);
+    });
+
+    // console.log(params)
+    const res = await service.saveMap(edgeId, {
+      deviceId: deviceId,
+      provider: params[0].provider,
+      requestList: params,
+    });
+    if (res.status === 200) {
+      onlyMessage('保存成功');
+      close();
+    }
+  };
+
   useEffect(() => {
-    console.log(close, deviceId);
+    console.log(metaData);
     service.treeMap(edgeId).then((res) => {
       if (res.status === 200) {
+        console.log(res.result?.[0], 'data');
         setData(res.result?.[0]);
+        setExpandedKey([res.result?.[0].id]);
       }
     });
-    // setData(treeData);
-    setExpandedKey([treeData?.[0].id]);
   }, []);
 
   useEffect(() => {
@@ -99,10 +95,11 @@ const MapTree = (props: Props) => {
       title="批量映射"
       visible
       onCancel={() => {
-        props.close();
+        close();
       }}
       onOk={() => {
-        props.close();
+        //  close();
+        save();
       }}
       width="900px"
     >

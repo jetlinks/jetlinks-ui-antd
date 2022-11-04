@@ -55,6 +55,16 @@ class Service extends BaseService<any> {
       method: 'POST',
       data,
     });
+  getProductListNoPage = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'POST',
+      data: params,
+    });
+  addDevice = (params: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance`, {
+      method: 'PATCH',
+      data: params,
+    });
 }
 
 export default Service;

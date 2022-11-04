@@ -15,15 +15,17 @@ import { onlyMessage } from '@/utils/util';
 
 interface Props {
   metaData: Record<string, string>[];
-  deviceId: string;
+  deviceId?: string;
   edgeId: string;
   reload?: any;
+  close?: any;
   title?: string;
-  form?: any;
+  formRef?: any;
+  productList?: any;
 }
 
 const MapTable = (props: Props) => {
-  const { metaData, deviceId, reload, edgeId } = props;
+  const { metaData, deviceId, reload, edgeId, productList } = props;
   const [visible, setVisible] = useState<boolean>(false);
   const [channelList, setChannelList] = useState<any>([]);
 
@@ -34,7 +36,11 @@ const MapTable = (props: Props) => {
     });
     if (res.status === 200) {
       onlyMessage('解绑成功');
-      reload('remove');
+      if (props.formRef) {
+        props.close();
+      } else {
+        reload('save');
+      }
     }
   };
 
@@ -148,7 +154,11 @@ const MapTable = (props: Props) => {
     const res = await service.saveMap(edgeId, item);
     if (res.status === 200) {
       onlyMessage('保存成功');
-      reload('save');
+      if (props.formRef) {
+        props.close();
+      } else {
+        reload('save');
+      }
     }
   };
 
@@ -202,6 +212,35 @@ const MapTable = (props: Props) => {
       });
     },
   });
+  const add = async () => {
+    const value = await props.formRef.validateFields();
+    const mapValue: any = await form.submit();
+    // console.log(value)
+    if (value && mapValue) {
+      if (mapValue.requestList.length === 0) {
+        onlyMessage('请配置物模型', 'warning');
+      } else {
+        const formData = {
+          ...value,
+          productName: productList.find((item: any) => item.id === value.productId).name,
+          parentId: edgeId,
+          id: deviceId ? deviceId : undefined,
+        };
+        console.log(formData);
+        const res = await service.addDevice(formData);
+        if (res.status === 200) {
+          const array = mapValue.requestList.filter((item: any) => item.channelId);
+          const submitData = {
+            deviceId: res.result.id,
+            provider: array?.[0]?.provider,
+            requestList: array,
+          };
+          save(submitData);
+        }
+      }
+      console.log(value, mapValue);
+    }
+  };
 
   const schema = {
     type: 'object',
@@ -394,17 +433,18 @@ const MapTable = (props: Props) => {
         <Button
           type="primary"
           onClick={async () => {
-            // const formData = await props.ref?.validateFields();
-            // console.log(formData, props.ref);
-            const value: any = await form.submit();
-            const array = value.requestList.filter((item: any) => item.channelId);
-            const submitData = {
-              deviceId: deviceId,
-              provider: array[0].provider,
-              requestList: array,
-            };
-            save(submitData);
-            console.log(submitData);
+            if (props.formRef) {
+              add();
+            } else {
+              const value: any = await form.submit();
+              const array = value.requestList.filter((item: any) => item.channelId);
+              const submitData = {
+                deviceId: deviceId,
+                provider: array[0].provider,
+                requestList: array,
+              };
+              save(submitData);
+            }
           }}
         >
           保存
@@ -419,9 +459,11 @@ const MapTable = (props: Props) => {
         <MapTree
           close={() => {
             setVisible(false);
+            reload('map');
           }}
-          deviceId={deviceId}
+          deviceId={deviceId || ''}
           edgeId={edgeId}
+          metaData={metaData}
         />
       )}
     </div>

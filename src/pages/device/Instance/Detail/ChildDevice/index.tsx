@@ -2,7 +2,7 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
 import { Badge, Button, Card, Popconfirm, Tooltip } from 'antd';
-import { DisconnectOutlined, SearchOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { useRef, useState } from 'react';
@@ -20,13 +20,18 @@ statusMap.set('online', 'success');
 statusMap.set('offline', 'error');
 statusMap.set('notActive', 'warning');
 
-const ChildDevice = () => {
+interface Props {
+  data: any;
+}
+
+const ChildDevice = (props: Props) => {
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const [searchParams, setSearchParams] = useState<any>({});
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const [childVisible, setChildVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<any>({});
 
   const { minHeight } = useDomFullHeight(`.device-detail-childDevice`);
 
@@ -133,6 +138,16 @@ const ChildDevice = () => {
             </Tooltip>
           </Popconfirm>
         </a>,
+        <a
+          onClick={() => {
+            setCurrent(record);
+            setChildVisible(true);
+          }}
+        >
+          <Tooltip title={'编辑'} key={'edit'}>
+            <EditOutlined />
+          </Tooltip>
+        </a>,
       ],
     },
   ];
@@ -141,6 +156,8 @@ const ChildDevice = () => {
     <Card className={'device-detail-childDevice'} style={{ minHeight }}>
       {childVisible ? (
         <SaveChild
+          data={props.data}
+          childData={current}
           close={() => {
             setChildVisible(false);
           }}
@@ -184,6 +201,7 @@ const ChildDevice = () => {
               <Button
                 onClick={() => {
                   // actionRef.current?.reset?.();
+                  setCurrent({});
                   setChildVisible(true);
                 }}
                 key="save"
