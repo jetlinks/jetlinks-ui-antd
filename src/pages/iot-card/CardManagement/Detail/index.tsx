@@ -103,7 +103,7 @@ const CardDetail = () => {
       bottom: 0,
     };
     getData(dTime[0], dTime[1]).then((resp) => {
-      const _total = resp.data.reduce((r, n) => r + n, 0);
+      const _total = resp.data.reduce((r, n) => r + Number(n), 0);
       setTotal(_total ? _total.toFixed(2) : 0);
       setDayOptions({
         ...DefaultEchartsOptions,
@@ -145,7 +145,7 @@ const CardDetail = () => {
       });
     });
     getData(mTime[0], mTime[1]).then((resp) => {
-      const _total = resp.data.reduce((r, n) => r + n, 0);
+      const _total = resp.data.reduce((r, n) => r + Number(n), 0);
       setMonthTotal(_total ? _total.toFixed(2) : 0);
       setMonthOptions({
         ...DefaultEchartsOptions,
@@ -187,7 +187,7 @@ const CardDetail = () => {
       });
     });
     getData(yTime[0], yTime[1]).then((resp) => {
-      const _total = resp.data.reduce((r, n) => r + n, 0);
+      const _total = resp.data.reduce((r, n) => r + Number(n), 0);
       setYearTotal(_total ? _total.toFixed(2) : 0);
       setYearOptions({
         ...DefaultEchartsOptions,
