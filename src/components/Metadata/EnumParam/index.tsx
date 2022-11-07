@@ -46,7 +46,7 @@ const EnumParam = () => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
-                    placeholder: '对该枚举项的描述',
+                    placeholder: '请输入标识',
                   },
                   'x-validator': [
                     {
@@ -65,7 +65,7 @@ const EnumParam = () => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
-                    placeholder: '请输入Text',
+                    placeholder: '对该枚举项的描述',
                   },
                   'x-validator': [
                     {
