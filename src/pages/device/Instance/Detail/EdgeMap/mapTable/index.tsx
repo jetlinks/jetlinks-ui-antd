@@ -28,6 +28,7 @@ const MapTable = (props: Props) => {
   const { metaData, deviceId, reload, edgeId, productList } = props;
   const [visible, setVisible] = useState<boolean>(false);
   const [channelList, setChannelList] = useState<any>([]);
+  const [deviceData, seyDeviceData] = useState<any>({});
 
   const remove = async (params: any) => {
     const res = await service.removeMap(edgeId, {
@@ -425,8 +426,18 @@ const MapTable = (props: Props) => {
         {props.title && <TitleComponent data={props.title} />}
         <Button
           style={{ marginRight: 10 }}
-          onClick={() => {
-            setVisible(true);
+          onClick={async () => {
+            const value = await props.formRef.validateFields();
+            if (value) {
+              const formData = {
+                ...value,
+                productName: productList.find((item: any) => item.id === value.productId).name,
+                parentId: edgeId,
+                // id: deviceId ? deviceId : undefined,
+              };
+              seyDeviceData(formData);
+              setVisible(true);
+            }
           }}
         >
           批量映射
@@ -460,11 +471,16 @@ const MapTable = (props: Props) => {
         <MapTree
           close={() => {
             setVisible(false);
-            reload('map');
+            if (props.formRef) {
+              props.close();
+            } else {
+              reload('map');
+            }
           }}
           deviceId={deviceId || ''}
           edgeId={edgeId}
           metaData={metaData}
+          addDevice={deviceData}
         />
       )}
     </div>

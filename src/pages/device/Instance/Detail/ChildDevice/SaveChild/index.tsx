@@ -26,7 +26,6 @@ const SaveChild = (props: Props) => {
   };
 
   useEffect(() => {
-    // console.log(props.childData)
     getProductList();
     if (props.childData?.id) {
       setVisible(true);

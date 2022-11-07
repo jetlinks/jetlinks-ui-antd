@@ -25,6 +25,7 @@ interface Props {
 }
 
 const ChildDevice = (props: Props) => {
+  console.log(props.data);
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
@@ -138,16 +139,20 @@ const ChildDevice = (props: Props) => {
             </Tooltip>
           </Popconfirm>
         </a>,
-        <a
-          onClick={() => {
-            setCurrent(record);
-            setChildVisible(true);
-          }}
-        >
-          <Tooltip title={'编辑'} key={'edit'}>
-            <EditOutlined />
-          </Tooltip>
-        </a>,
+        <>
+          {props.data.accessProvider === 'official-edge-gateway' && (
+            <a
+              onClick={() => {
+                setCurrent(record);
+                setChildVisible(true);
+              }}
+            >
+              <Tooltip title={'编辑'} key={'edit'}>
+                <EditOutlined />
+              </Tooltip>
+            </a>
+          )}
+        </>,
       ],
     },
   ];
@@ -198,17 +203,21 @@ const ChildDevice = (props: Props) => {
               },
             }}
             toolBarRender={() => [
-              <Button
-                onClick={() => {
-                  // actionRef.current?.reset?.();
-                  setCurrent({});
-                  setChildVisible(true);
-                }}
-                key="save"
-                type="primary"
-              >
-                新增并绑定
-              </Button>,
+              <>
+                {props.data.accessProvider === 'official-edge-gateway' && (
+                  <Button
+                    onClick={() => {
+                      // actionRef.current?.reset?.();
+                      setCurrent({});
+                      setChildVisible(true);
+                    }}
+                    key="save"
+                    type="primary"
+                  >
+                    新增并绑定
+                  </Button>
+                )}
+              </>,
               <Button
                 onClick={() => {
                   setVisible(true);

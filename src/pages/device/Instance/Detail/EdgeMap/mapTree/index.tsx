@@ -10,6 +10,7 @@ interface Props {
   deviceId: string;
   edgeId: string;
   metaData: any;
+  addDevice?: any;
 }
 
 const MapTree = (props: Props) => {
@@ -62,21 +63,38 @@ const MapTree = (props: Props) => {
       }));
       params.push(...array);
     });
-
-    // console.log(params)
-    const res = await service.saveMap(edgeId, {
-      deviceId: deviceId,
-      provider: params[0].provider,
-      requestList: params,
-    });
-    if (res.status === 200) {
-      onlyMessage('保存成功');
-      close();
+    const filterParms = params.filter((item) => !!item.metadataId);
+    if (deviceId) {
+      if (filterParms && filterParms.length !== 0) {
+        const res = await service.saveMap(edgeId, {
+          deviceId: deviceId,
+          provider: filterParms[0].provider,
+          requestList: filterParms,
+        });
+        if (res.status === 200) {
+          onlyMessage('保存成功');
+          close();
+        }
+      } else {
+        onlyMessage('暂无属性映射', 'warning');
+      }
+    } else {
+      const res = await service.addDevice(props.addDevice);
+      if (res.status === 200) {
+        const resp = await service.saveMap(edgeId, {
+          deviceId: res.result.id,
+          provider: filterParms[0].provider,
+          requestList: filterParms,
+        });
+        if (resp.status === 200) {
+          onlyMessage('保存成功');
+          close();
+        }
+      }
     }
   };
 
   useEffect(() => {
-    console.log(metaData);
     service.treeMap(edgeId).then((res) => {
       if (res.status === 200) {
         console.log(res.result?.[0], 'data');
@@ -98,7 +116,6 @@ const MapTree = (props: Props) => {
         close();
       }}
       onOk={() => {
-        //  close();
         save();
       }}
       width="900px"
@@ -136,6 +153,7 @@ const MapTree = (props: Props) => {
           </Card>
           <div>
             <Button
+              disabled={checked && checked.length === 0}
               onClick={() => {
                 const item = filterTree(data, checked);
                 setData(item);
