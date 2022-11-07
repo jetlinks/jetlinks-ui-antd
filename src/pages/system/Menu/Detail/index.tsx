@@ -40,7 +40,7 @@ export default () => {
     if (_pId) {
       setPid(_pId);
     }
-    if (_sortIndex) {
+    if (_sortIndex && id === ':id') {
       setSortIndex(_sortIndex);
     }
   };
@@ -77,9 +77,9 @@ export default () => {
       {tabKey === 'detail' && (param.id !== ':id' ? data : true) ? (
         <BaseDetail
           data={{
+            sortIndex: sortIndex,
             ...data,
             parentId: pId,
-            sortIndex: sortIndex,
           }}
           basePath={params.get('basePath')}
           onLoad={queryDetail}
