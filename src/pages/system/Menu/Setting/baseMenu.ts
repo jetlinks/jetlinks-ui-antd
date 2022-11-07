@@ -1762,6 +1762,20 @@ export default [
                 ],
               },
               {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'dueros-product',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'device-product',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
                 id: 'delete',
                 name: '删除',
                 permissions: [
