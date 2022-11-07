@@ -13,20 +13,34 @@ const DataCollectModel = model<{
   type: 'channel' | 'device';
   provider: 'OPC_UA' | 'MODBUS_TCP';
   data: any;
+  reload: boolean;
 }>({
   type: 'channel',
   id: '',
   provider: 'MODBUS_TCP',
   data: {},
+  reload: false,
 });
 
 export default observer(() => {
+  const onReload = () => {
+    DataCollectModel.reload = !DataCollectModel.reload;
+  };
+
   const obj = {
-    channel: <Device type={false} id={DataCollectModel.id} provider={DataCollectModel.provider} />,
+    channel: (
+      <Device
+        reload={onReload}
+        type={false}
+        id={DataCollectModel.id}
+        provider={DataCollectModel.provider}
+      />
+    ),
     device: (
       <Point type={false} provider={DataCollectModel.provider} data={DataCollectModel.data} />
     ),
   };
+
   return (
     <PageContainer>
       <Card bordered={false}>
@@ -39,6 +53,7 @@ export default observer(() => {
                 DataCollectModel.provider = provider;
                 DataCollectModel.data = data || {};
               }}
+              reload={DataCollectModel.reload}
             />
           </div>
           {DataCollectModel?.id ? (

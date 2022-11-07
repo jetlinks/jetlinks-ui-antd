@@ -1,14 +1,8 @@
 import { useState } from 'react';
-import { Ellipsis } from '@/components';
+import { Ellipsis, PermissionButton } from '@/components';
 import './index.less';
-import { Badge, Popconfirm, Spin } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  FormOutlined,
-  MinusOutlined,
-  RedoOutlined,
-} from '@ant-design/icons';
+import { Badge, Popconfirm, Spin, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, FormOutlined, RedoOutlined } from '@ant-design/icons';
 import OpcSave from '../Save/opc-ua';
 import ModbusSave from '../Save/modbus';
 import service from '@/pages/link/DataCollect/service';
@@ -30,6 +24,7 @@ export default (props: PointCardProps) => {
   const [editVisible, setEditVisible] = useState<boolean>(false);
   const [spinning, setSpinning] = useState<boolean>(false);
   const [writeVisible, setWriteVisible] = useState<boolean>(false);
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
 
   const read = async () => {
     if (item?.collectorId && item?.id) {
@@ -61,6 +56,7 @@ export default (props: PointCardProps) => {
         close={() => {
           setEditVisible(false);
         }}
+        collector={{}}
         reload={() => {
           setEditVisible(false);
         }}
@@ -98,6 +94,7 @@ export default (props: PointCardProps) => {
               <div className={'card-item-right-action'}>
                 <Popconfirm
                   title={'确认删除'}
+                  disabled={!permission.delete}
                   onConfirm={async () => {
                     if (item.id) {
                       const resp = await service.removePoint(item.id);
@@ -108,13 +105,19 @@ export default (props: PointCardProps) => {
                     }
                   }}
                 >
-                  <DeleteOutlined style={{ marginRight: 10 }} />
+                  <Tooltip title={!permission.delete ? '暂无权限，请联系管理员' : ''}>
+                    <DeleteOutlined style={{ marginRight: 10 }} />
+                  </Tooltip>
                 </Popconfirm>
-                <FormOutlined
-                  onClick={() => {
-                    setEditVisible(true);
-                  }}
-                />
+                <Tooltip title={!permission.update ? '暂无权限，请联系管理员' : ''}>
+                  <FormOutlined
+                    onClick={() => {
+                      if (permission.update) {
+                        setEditVisible(true);
+                      }
+                    }}
+                  />
+                </Tooltip>
               </div>
             </div>
             <div className={'card-item-content'}>
@@ -154,7 +157,9 @@ export default (props: PointCardProps) => {
               ) : (
                 <div className={'card-item-content-item'}>
                   <div className={'card-item-content-item-empty'}>
-                    <MinusOutlined className={'action'} />
+                    <span className={'action'} style={{ fontWeight: 600, color: '#000' }}>
+                      --
+                    </span>
                     <EditOutlined
                       className={'action'}
                       style={{ margin: '0 15px' }}

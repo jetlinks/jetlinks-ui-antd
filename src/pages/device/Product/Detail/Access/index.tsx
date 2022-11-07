@@ -283,7 +283,7 @@ const Access = () => {
     const driver = new Driver({
       allowClose: false,
       doneBtnText: '我知道了',
-      closeBtnText: '不在提示',
+      closeBtnText: '不再提示',
       nextBtnText: '下一步',
       prevBtnText: '上一步',
       onNext: () => {
@@ -305,7 +305,7 @@ const Access = () => {
     const driver1 = new Driver({
       allowClose: false,
       doneBtnText: '我知道了',
-      closeBtnText: '不在提示',
+      closeBtnText: '不再提示',
       nextBtnText: '下一步',
       prevBtnText: '上一步',
       onNext: () => {

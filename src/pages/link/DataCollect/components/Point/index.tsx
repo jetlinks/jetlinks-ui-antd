@@ -34,7 +34,7 @@ export default observer((props: Props) => {
   const { minHeight } = useDomFullHeight(`.data-collect-point`, 24);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [propertyValue, setPropertyValue] = useState<any>({});
   const [dataSource, setDataSource] = useState<any>({
     data: [],
@@ -78,13 +78,19 @@ export default observer((props: Props) => {
         },
       },
     },
+    {
+      title: '说明',
+      dataIndex: 'description',
+    },
   ];
 
   const subRef = useRef<any>(null);
 
   const subscribeProperty = (list: any) => {
-    const id = `collector-${props.data?.channelId}-${props.data?.id}-data-${list.join('-')}`;
-    const topic = `/collector/${props.data?.channelId}/${props.data?.id}/data`;
+    const id = `collector-${props.data?.channelId || 'channel'}-${
+      props.data?.id || 'point'
+    }-data-${list.join('-')}`;
+    const topic = `/collector/${props.data?.channelId || '*'}/${props.data?.id || '*'}/data`;
     subRef.current = subscribeTopic!(id, topic, {
       pointId: list.join(','),
     })
@@ -111,6 +117,7 @@ export default observer((props: Props) => {
       .then((resp) => {
         if (resp.status === 200) {
           setDataSource(resp.result);
+          console.log(resp.result);
           subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
         }
         setLoading(false);
@@ -135,7 +142,7 @@ export default observer((props: Props) => {
         target="data-collect-point"
         onSearch={(data) => {
           const dt = {
-            pageSize: 10,
+            pageSize: 12,
             terms: [...data?.terms],
           };
           handleSearch(dt);
@@ -221,7 +228,7 @@ export default observer((props: Props) => {
       {PointModel.m_visible && (
         <ModbusSave
           data={PointModel.current}
-          // channelId={props.id}
+          collector={props?.data || {}}
           close={() => {
             PointModel.m_visible = false;
           }}

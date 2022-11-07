@@ -29,7 +29,7 @@ export default observer((props: Props) => {
   const intl = useIntl();
   const { minHeight } = useDomFullHeight(`.data-collect-channel`, 24);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [loading, setLoading] = useState<boolean>(true);
   const [dataSource, setDataSource] = useState<any>({
     data: [],
@@ -37,6 +37,13 @@ export default observer((props: Props) => {
     pageIndex: 0,
     total: 0,
   });
+
+  const test = (value: string) => {
+    if (value === 'error') {
+      return '';
+    }
+    return value;
+  };
 
   const columns: ProColumns<ChannelItem>[] = [
     {
@@ -60,17 +67,24 @@ export default observer((props: Props) => {
     },
     {
       title: '状态',
-      dataIndex: 'state',
+      dataIndex: 'runningState',
       valueType: 'select',
       valueEnum: {
         enabled: {
           text: '正常',
-          status: 'enabled',
+          status: 'running',
         },
         disabled: {
-          text: '异常',
-          status: 'disabled',
+          text: '禁用',
+          status: 'stopped',
         },
+        error: {
+          text: '异常',
+          status: 'error',
+        },
+      },
+      search: {
+        transform: test,
       },
     },
     {
@@ -96,6 +110,30 @@ export default observer((props: Props) => {
     handleSearch(param);
   }, []);
 
+  const getState = (record: Partial<ChannelItem>) => {
+    if (record) {
+      if (record?.state?.value === 'enabled') {
+        if (record?.runningState?.value === 'running') {
+          return {
+            text: '正常',
+            value: 'enabled',
+          };
+        } else {
+          return {
+            text: '异常',
+            value: 'error',
+          };
+        }
+      } else {
+        return {
+          text: '禁用',
+          value: 'disabled',
+        };
+      }
+    } else {
+      return {};
+    }
+  };
   return (
     <div>
       <SearchComponent<ChannelItem>
@@ -103,7 +141,7 @@ export default observer((props: Props) => {
         target="data-collect-channel"
         onSearch={(data) => {
           const dt = {
-            pageSize: 10,
+            pageSize: 12,
             terms: [...data?.terms],
           };
           handleSearch(dt);
@@ -119,6 +157,7 @@ export default observer((props: Props) => {
                     <Col key={record.id} span={props.type ? 8 : 12}>
                       <ChannelCard
                         {...record}
+                        status={getState(record)}
                         actions={[
                           <PermissionButton
                             type={'link'}
@@ -140,19 +179,16 @@ export default observer((props: Props) => {
                             isPermission={permission.delete}
                             type={'link'}
                             style={{ padding: 0 }}
-                            disabled={record?.state?.value !== 'disabled'}
-                            tooltip={
-                              record?.state?.value !== 'disabled'
-                                ? {
-                                    title: '正常的通道不能删除',
-                                  }
-                                : undefined
-                            }
+                            // disabled={record?.state?.value !== 'disabled'}
+                            // tooltip={
+                            //   record?.state?.value !== 'disabled'
+                            //     ? {
+                            //         title: '正常的通道不能删除',
+                            //       }
+                            //     : undefined
+                            // }
                             popConfirm={{
-                              title: intl.formatMessage({
-                                id: 'pages.data.option.remove.tips',
-                                defaultMessage: '是否删除?',
-                              }),
+                              title: '该操作将会删除下属采集器与点位，确定删除？',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
                                 onlyMessage(

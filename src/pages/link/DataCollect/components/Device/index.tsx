@@ -17,6 +17,7 @@ interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   id?: any;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
+  reload?: () => void;
 }
 
 const CollectorModel = model<{
@@ -32,7 +33,7 @@ export default observer((props: Props) => {
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const intl = useIntl();
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [dataSource, setDataSource] = useState<any>({
     data: [],
     pageSize: 12,
@@ -40,42 +41,72 @@ export default observer((props: Props) => {
     total: 0,
   });
 
-  const columns: ProColumns<CollectorItem>[] = [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '通讯协议',
-      dataIndex: 'provider',
-      valueType: 'select',
-      valueEnum: {
-        OPC_UA: {
-          text: 'OPC_UA',
-          status: 'OPC_UA',
+  const columns: ProColumns<CollectorItem>[] = props.type
+    ? [
+        {
+          title: '名称',
+          dataIndex: 'name',
         },
-        MODBUS_TCP: {
-          text: 'MODBUS_TCP',
-          status: 'MODBUS_TCP',
+        {
+          title: '通讯协议',
+          dataIndex: 'provider',
+          valueType: 'select',
+          valueEnum: {
+            OPC_UA: {
+              text: 'OPC_UA',
+              status: 'OPC_UA',
+            },
+            MODBUS_TCP: {
+              text: 'MODBUS_TCP',
+              status: 'MODBUS_TCP',
+            },
+          },
         },
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      valueType: 'select',
-      valueEnum: {
-        enabled: {
-          text: '正常',
-          status: 'enabled',
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
         },
-        disabled: {
-          text: '禁用',
-          status: 'disabled',
+        {
+          title: '说明',
+          dataIndex: 'description',
         },
-      },
-    },
-  ];
+      ]
+    : [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ];
   const handleSearch = (params: any) => {
     setLoading(true);
     setParam(params);
@@ -109,7 +140,7 @@ export default observer((props: Props) => {
         target="data-collect-collector"
         onSearch={(data) => {
           const dt = {
-            pageSize: 10,
+            pageSize: 12,
             terms: [...data?.terms],
           };
           handleSearch(dt);
@@ -206,15 +237,13 @@ export default observer((props: Props) => {
                             tooltip={
                               record?.state?.value !== 'disabled'
                                 ? {
-                                    title: '正常的采集器不能删除',
+                                    title: '已启用的采集器不能删除',
                                   }
                                 : undefined
                             }
                             disabled={record?.state?.value !== 'disabled'}
                             popConfirm={{
-                              title: intl.formatMessage({
-                                id: 'pages.data.option.remove.tips',
-                              }),
+                              title: '该操作将会删除下属点位，确定删除？',
                               disabled: record?.state?.value !== 'disabled',
                               onConfirm: async () => {
                                 if (record?.state?.value === 'disabled') {
@@ -292,6 +321,9 @@ export default observer((props: Props) => {
           reload={() => {
             CollectorModel.visible = false;
             handleSearch(param);
+            if (props?.reload) {
+              props.reload();
+            }
           }}
         />
       )}

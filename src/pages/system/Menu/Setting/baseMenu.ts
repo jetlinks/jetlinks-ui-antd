@@ -1402,7 +1402,48 @@ export default [
                   'things-collector',
                 ],
                 permissions: [],
-                buttons: [],
+                buttons: [
+                  {
+                    id: 'add',
+                    name: '新增',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['save'],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'update',
+                    name: '编辑',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['add', 'query'],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'action',
+                    name: '禁用/启用',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['save', 'query'],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'delete',
+                    name: '删除',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['delete'],
+                      },
+                    ],
+                  },
+                ],
               },
               {
                 code: 'link/DataCollect/IntegratedQuery',
@@ -1418,7 +1459,48 @@ export default [
                   'things-collector',
                 ],
                 permissions: [],
-                buttons: [],
+                buttons: [
+                  {
+                    id: 'add',
+                    name: '新增',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['save'],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'update',
+                    name: '编辑',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['add', 'query'],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'action',
+                    name: '禁用/启用',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['save', 'query'],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'delete',
+                    name: '删除',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['delete'],
+                      },
+                    ],
+                  },
+                ],
               },
             ],
           },
@@ -1672,6 +1754,20 @@ export default [
                   {
                     permission: 'dueros-product',
                     actions: ['query', 'save'],
+                  },
+                  {
+                    permission: 'device-product',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'dueros-product',
+                    actions: ['query'],
                   },
                   {
                     permission: 'device-product',

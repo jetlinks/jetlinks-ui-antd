@@ -30,7 +30,8 @@ export default (props: ChannelCardProps) => {
       showMask={false}
       statusNames={{
         enabled: StatusColorEnum.success,
-        disabled: StatusColorEnum.error,
+        disabled: StatusColorEnum.default,
+        error: StatusColorEnum.error,
       }}
     >
       <div className={'pro-table-card-item'}>

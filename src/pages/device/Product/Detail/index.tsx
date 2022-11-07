@@ -13,11 +13,11 @@ import { Store } from 'jetlinks-store';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import encodeQuery from '@/utils/encodeQuery';
-import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
+// import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import SystemConst from '@/utils/const';
 import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { isNoCommunity, onlyMessage } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import Parsing from '../../Instance/Detail/Parsing';
 
 export const ModelEnum = {
@@ -93,15 +93,15 @@ const ProductDetail = observer(() => {
     },
   ];
 
-  const pList = [
-    'websocket-server',
-    'http-server-gateway',
-    'udp-device-gateway',
-    'coap-server-gateway',
-    'mqtt-client-gateway',
-    'mqtt-server-gateway',
-    'tcp-server-gateway',
-  ];
+  // const pList = [
+  //   'websocket-server',
+  //   'http-server-gateway',
+  //   'udp-device-gateway',
+  //   'coap-server-gateway',
+  //   'mqtt-client-gateway',
+  //   'mqtt-server-gateway',
+  //   'tcp-server-gateway',
+  // ];
   const [list, setList] = useState<any[]>([]);
 
   const { minHeight } = useDomFullHeight('.product-detail-body');
@@ -153,18 +153,18 @@ const ProductDetail = observer(() => {
     });
   };
   const getDetail = async () => {
-    if (
-      productModel.current?.accessProvider &&
-      pList.includes(productModel.current?.accessProvider)
-    ) {
-      if (isNoCommunity) {
-        initList.push({
-          key: 'metadata-map',
-          tab: '物模型映射',
-          component: <MetadataMap type="product" />,
-        });
-      }
-    }
+    // if (
+    //   productModel.current?.accessProvider &&
+    //   pList.includes(productModel.current?.accessProvider)
+    // ) {
+    //   if (isNoCommunity) {
+    //     initList.push({
+    //       key: 'metadata-map',
+    //       tab: '物模型映射',
+    //       component: <MetadataMap type="product" />,
+    //     });
+    //   }
+    // }
     if (productModel.current?.messageProtocol) {
       const res = await service.getProtocolDetail(productModel.current?.messageProtocol);
       if (res.status === 200) {
