@@ -547,7 +547,7 @@ const CardManagementNode = () => {
         tableStyle={{ minHeight }}
         actionRef={actionRef}
         params={searchParams}
-        options={{ fullScreen: true }}
+        options={{ fullScreen: false }}
         tableClassName={'iot-card-management'}
         columnEmptyText={''}
         request={(params) =>
