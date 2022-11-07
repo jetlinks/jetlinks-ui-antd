@@ -78,6 +78,10 @@ export default observer((props: Props) => {
         },
       },
     },
+    {
+      title: '说明',
+      dataIndex: 'description',
+    },
   ];
 
   const subRef = useRef<any>(null);

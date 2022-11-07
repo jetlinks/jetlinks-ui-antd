@@ -53,7 +53,7 @@ export default (props: CollectorCardProps) => {
             </div>
             <div>
               <label>所属通道</label>
-              <Ellipsis title={props?.channelName || ''} />
+              <Ellipsis title={props?.channelName || props?.channelId || ''} />
             </div>
           </div>
         </div>

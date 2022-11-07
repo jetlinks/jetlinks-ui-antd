@@ -64,7 +64,7 @@ export default observer((props: Props) => {
     <div>
       <div>
         <Input.Search
-          placeholder="搜索"
+          placeholder="请输入名称"
           allowClear
           onSearch={(val) => {
             TreeModel.param = {
@@ -122,7 +122,7 @@ export default observer((props: Props) => {
                             />
                           </Tooltip>
                           <Popconfirm
-                            title={'确认删除？'}
+                            title={'该操作将会删除下属采集器与点位，确定删除？'}
                             onConfirm={async () => {
                               const resp = await service.removeChannel(item.id);
                               if (resp.status === 200) {
