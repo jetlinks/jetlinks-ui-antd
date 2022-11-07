@@ -3228,12 +3228,8 @@ export default [
         url: '/iot-card/Home',
         icon: 'icon-shujumoni',
         status: 1,
-        permissions: [
-          {
-            permission: 'network-flow',
-            actions: ['query'],
-          },
-        ],
+        showPage: ['network-flow'],
+        permissions: [{ permission: 'network-flow', actions: ['query'] }],
         accessSupport: {
           text: '不支持',
           value: 'unsupported',
@@ -3248,12 +3244,8 @@ export default [
         code: 'iot-card/Dashboard',
         url: '/iot-card/Dashboard',
         icon: 'icon-keshihua',
-        permissions: [
-          {
-            permission: 'network-flow',
-            actions: ['query'],
-          },
-        ],
+        showPage: ['network-flow'],
+        permissions: [{ permission: 'network-flow', actions: ['query'] }],
       },
       {
         path: '5Hpl-O2m8',
@@ -3265,7 +3257,13 @@ export default [
         url: '/iot-card/CardManagement',
         icon: 'icon-chanpinfenlei',
         status: 1,
-        permissions: [],
+        showPage: ['network-card'],
+        permissions: [
+          {
+            permission: 'network-card',
+            actions: ['query', 'save', 'delete'],
+          },
+        ],
         buttons: [
           {
             id: 'sync',
@@ -3375,19 +3373,25 @@ export default [
         level: 2,
         owner: 'iot',
         name: '充值管理',
+        showPage: ['network-card'],
         code: 'iot-card/Recharge',
         url: '/iot-card/Recharge',
         icon: 'icon-caidanguanli',
         status: 1,
-        permissions: [],
+        permissions: [
+          {
+            permission: 'network-card',
+            actions: ['query', 'save'],
+          },
+        ],
         buttons: [
           {
             id: 'pay',
             name: '充值',
             permissions: [
               {
-                permission: 'IotCard-management',
-                actions: ['pay'],
+                permission: 'network-card',
+                actions: ['query', 'save'],
               },
             ],
           },
@@ -3403,7 +3407,13 @@ export default [
         url: '/iot-card/Platform',
         icon: 'icon-wangguanzishebei',
         status: 1,
-        permissions: [],
+        showPage: ['platform'],
+        permissions: [
+          {
+            permission: 'platform',
+            actions: ['save', 'delete', 'query'],
+          },
+        ],
         buttons: [
           {
             id: 'action',
@@ -3467,6 +3477,7 @@ export default [
         url: '/iot-card/Record',
         icon: 'icon-rizhifuwu',
         status: 1,
+        showPage: ['network-card'],
         permissions: [
           {
             permission: 'network-card',
