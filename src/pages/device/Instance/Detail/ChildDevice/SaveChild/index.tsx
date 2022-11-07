@@ -35,46 +35,48 @@ const SaveChild = (props: Props) => {
 
   useEffect(() => {
     if (props.childData.id) {
-      const item = productList.filter((i: any) => i.id === props.childData.productId)[0];
-      console.log(props.childData, item);
-      // const metadata = JSON.parse(item.metadata|| []).properties?.map((item: any) => ({
-      //   metadataId: item.id,
-      //   metadataName: `${item.name}(${item.id})`,
-      //   metadataType: 'property',
-      // }));
-      // if (metadata && metadata.length !== 0) {
-      //   service
-      //     .getMap(props.data.id, {
-      //       deviceId: props.childData.id,
-      //       query: {},
-      //     })
-      //     .then((res) => {
-      //       if (res.status === 200) {
-      //         // console.log(res.result)
-      //         //合并物模型
-      //         const array = res.result[0]?.reduce((x: any, y: any) => {
-      //           const metadataId = metadata.find((item: any) => item.metadataId === y.metadataId);
-      //           if (metadataId) {
-      //             Object.assign(metadataId, y);
-      //           } else {
-      //             x.push(y);
-      //           }
-      //           return x;
-      //         }, metadata);
-      //         //删除物模型
-      //         const items = array.filter((item: any) => item.metadataName);
-      //         setMetaData(items);
-      //         const delList = array.filter((a: any) => !a.metadataName).map((b: any) => b.id);
-      //         //删除后解绑
-      //         if (delList && delList.length !== 0) {
-      //           service.removeMap(props.data.id, {
-      //             deviceId: props.childData.id,
-      //             idList: [...delList],
-      //           });
-      //         }
-      //       }
-      //     });
-      // }
+      const product = productList.filter((i: any) => i.id === props.childData.productId)[0];
+      // console.log(JSON.parse(item.metadata || []));
+      if (product && product.metadata) {
+        const metadata = JSON.parse(product?.metadata || {})?.properties?.map((item: any) => ({
+          metadataId: item.id,
+          metadataName: `${item.name}(${item.id})`,
+          metadataType: 'property',
+        }));
+        if (metadata && metadata.length !== 0) {
+          service
+            .getMap(props.data.id, {
+              deviceId: props.childData.id,
+              query: {},
+            })
+            .then((res) => {
+              if (res.status === 200) {
+                // console.log(res.result)
+                //合并物模型
+                const array = res.result[0]?.reduce((x: any, y: any) => {
+                  const metadataId = metadata.find((item: any) => item.metadataId === y.metadataId);
+                  if (metadataId) {
+                    Object.assign(metadataId, y);
+                  } else {
+                    x.push(y);
+                  }
+                  return x;
+                }, metadata);
+                //删除物模型
+                const items = array.filter((item: any) => item.metadataName);
+                setMetaData(items);
+                const delList = array.filter((a: any) => !a.metadataName).map((b: any) => b.id);
+                //删除后解绑
+                if (delList && delList.length !== 0) {
+                  service.removeMap(props.data.id, {
+                    deviceId: props.childData.id,
+                    idList: [...delList],
+                  });
+                }
+              }
+            });
+        }
+      }
     }
   }, [productList]);
 
@@ -113,6 +115,7 @@ const SaveChild = (props: Props) => {
               rules={[{ required: true, message: '请选择产品名称' }]}
             >
               <Select
+                disabled={props.childData.id}
                 onChange={(e) => {
                   if (e) {
                     setVisible(true);

@@ -62,6 +62,11 @@ class Service extends BaseService<any> {
     });
   addDevice = (params: any) =>
     request(`/${SystemConst.API_BASE}/device-instance`, {
+      method: 'POST',
+      data: params,
+    });
+  editDevice = (params: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance`, {
       method: 'PATCH',
       data: params,
     });

@@ -226,19 +226,20 @@ const MapTable = (props: Props) => {
           parentId: edgeId,
           id: deviceId ? deviceId : undefined,
         };
-        console.log(formData);
-        const res = await service.addDevice(formData);
+        const res = deviceId
+          ? await service.editDevice(formData)
+          : await service.addDevice(formData);
         if (res.status === 200) {
           const array = mapValue.requestList.filter((item: any) => item.channelId);
           const submitData = {
-            deviceId: res.result.id,
+            deviceId: deviceId ? deviceId : res.result.id,
             provider: array?.[0]?.provider,
             requestList: array,
           };
           save(submitData);
         }
       }
-      console.log(value, mapValue);
+      // console.log(value, mapValue);
     }
   };
 
