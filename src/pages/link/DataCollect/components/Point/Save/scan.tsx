@@ -1,4 +1,4 @@
-import { Button, Empty, Modal, Spin, Transfer, Tree } from 'antd';
+import { Button, Empty, Modal, Popconfirm, Spin, Transfer, Tree } from 'antd';
 import type { TransferDirection } from 'antd/es/transfer';
 import { useEffect, useState } from 'react';
 import service from '@/pages/link/DataCollect/service';
@@ -152,13 +152,16 @@ const TreeTransfer = ({
                         <Ellipsis title={item?.title || item.key} />
                       </div>
                       <div style={{ width: 20, marginLeft: 10 }}>
-                        <CloseOutlined
-                          onClick={() => {
+                        <Popconfirm
+                          title={'确认删除？'}
+                          onConfirm={() => {
                             if (onItemRemove) {
                               onItemRemove([item.key]);
                             }
                           }}
-                        />
+                        >
+                          <CloseOutlined />
+                        </Popconfirm>
                       </div>
                     </div>
                   );
@@ -224,6 +227,10 @@ export default (props: Props) => {
           key={2}
           loading={spinning}
           onClick={async () => {
+            if (!arr.length) {
+              onlyMessage('请选择目标数据', 'error');
+              return;
+            }
             const list = arr.map((item) => {
               return {
                 id: item.key,

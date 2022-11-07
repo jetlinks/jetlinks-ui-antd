@@ -83,10 +83,28 @@ export default (props: Props) => {
           message: '最多可输入64个字符',
         };
       }
-      if (!(value % 1 === 0)) {
+      if (!(Number(value) % 1 === 0) || Number(value) <= 0) {
         return {
           type: 'error',
           message: '请输入非0正整数',
+        };
+      }
+      return '';
+    },
+    checkScaleFactor(value) {
+      if (String(value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      }
+      return '';
+    },
+    checkAddressLength(value) {
+      if (!(Number(value) % 1 === 0)) {
+        return {
+          type: 'error',
+          message: '请输入0~255之间的正整数',
         };
       }
       return '';
@@ -139,7 +157,7 @@ export default (props: Props) => {
             enum: [
               { label: '线圈寄存器', value: 'Coils' },
               { label: '保存寄存器', value: 'HoldingRegisters' },
-              { label: '输入寄存器', value: 'InputRegisters' },
+              { label: '输入寄存器', value: 'DiscreteInputs' },
             ],
             'x-validator': [
               {
@@ -150,7 +168,7 @@ export default (props: Props) => {
           },
           'configuration.parameter.address': {
             title: '地址',
-            'x-component': 'Input',
+            'x-component': 'NumberPicker',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
@@ -172,7 +190,7 @@ export default (props: Props) => {
                 message: '请输入0-255之间的正整数',
               },
               {
-                checkLength: true,
+                checkAddressLength: true,
               },
             ],
           },
@@ -185,6 +203,15 @@ export default (props: Props) => {
             },
             'x-component-props': {
               placeholder: '请输入起始位置',
+              stringMode: true,
+            },
+            'x-reactions': {
+              dependencies: ['...function'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0] === "HoldingRegisters"}}',
+                },
+              },
             },
             'x-validator': [
               {
@@ -192,7 +219,7 @@ export default (props: Props) => {
                 message: '请输入起始位置',
               },
               {
-                min: 0,
+                min: 1,
                 message: '请输入非0正整数',
               },
               {
@@ -209,14 +236,16 @@ export default (props: Props) => {
             },
             'x-component-props': {
               placeholder: '请输入寄存器数量',
+              stringMode: true,
             },
+            default: 1,
             'x-validator': [
               {
                 required: true,
                 message: '请输入寄存器数量',
               },
               {
-                min: 0,
+                min: 1,
                 message: '请输入非0正整数',
               },
               {
@@ -234,7 +263,17 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择数据类型',
             },
-            'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
+            'x-reactions': [
+              '{{useAsyncDataSource(getCodecProvider)}}',
+              {
+                dependencies: ['..function'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "HoldingRegisters"}}',
+                  },
+                },
+              },
+            ],
             'x-validator': [
               {
                 required: true,
@@ -252,11 +291,15 @@ export default (props: Props) => {
             default: 1,
             'x-component-props': {
               placeholder: '请输入缩放因子',
+              stringMode: true,
             },
             'x-validator': [
               {
                 required: true,
                 message: '请输入缩放因子',
+              },
+              {
+                checkScaleFactor: true,
               },
             ],
           },
@@ -281,7 +324,7 @@ export default (props: Props) => {
               options: [
                 { label: '读', value: 'read' },
                 { label: '写', value: 'write' },
-                { label: '订阅', value: 'subscribe' },
+                // { label: '订阅', value: 'subscribe' },
               ],
             },
             'x-validator': [
@@ -299,17 +342,10 @@ export default (props: Props) => {
               gridSpan: 2,
             },
             default: 3000,
-            'x-reactions': {
-              dependencies: ['..accessModes'],
-              fulfill: {
-                state: {
-                  visible: '{{($deps[0] || []).includes("subscribe")}}',
-                },
-              },
-            },
             'x-component-props': {
               placeholder: '请输入采集频率',
               addonAfter: '毫秒',
+              stringMode: true,
               style: {
                 width: '100%',
               },
@@ -318,6 +354,10 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请输入采集频率',
+              },
+              {
+                min: 1,
+                message: '请输入非0正整数',
               },
               {
                 checkLength: true,
@@ -332,14 +372,14 @@ export default (props: Props) => {
             'x-decorator-props': {
               gridSpan: 2,
             },
-            'x-reactions': {
-              dependencies: ['.accessModes'],
-              fulfill: {
-                state: {
-                  visible: '{{($deps[0] || []).includes("subscribe")}}',
-                },
-              },
-            },
+            // 'x-reactions': {
+            //   dependencies: ['.accessModes'],
+            //   fulfill: {
+            //     state: {
+            //       visible: '{{($deps[0] || []).includes("subscribe")}}',
+            //     },
+            //   },
+            // },
             enum: [
               {
                 label: '只推送变化的数据',

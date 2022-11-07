@@ -41,42 +41,72 @@ export default observer((props: Props) => {
     total: 0,
   });
 
-  const columns: ProColumns<CollectorItem>[] = [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '通讯协议',
-      dataIndex: 'provider',
-      valueType: 'select',
-      valueEnum: {
-        OPC_UA: {
-          text: 'OPC_UA',
-          status: 'OPC_UA',
+  const columns: ProColumns<CollectorItem>[] = props.type
+    ? [
+        {
+          title: '名称',
+          dataIndex: 'name',
         },
-        MODBUS_TCP: {
-          text: 'MODBUS_TCP',
-          status: 'MODBUS_TCP',
+        {
+          title: '通讯协议',
+          dataIndex: 'provider',
+          valueType: 'select',
+          valueEnum: {
+            OPC_UA: {
+              text: 'OPC_UA',
+              status: 'OPC_UA',
+            },
+            MODBUS_TCP: {
+              text: 'MODBUS_TCP',
+              status: 'MODBUS_TCP',
+            },
+          },
         },
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      valueType: 'select',
-      valueEnum: {
-        enabled: {
-          text: '正常',
-          status: 'enabled',
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
         },
-        disabled: {
-          text: '禁用',
-          status: 'disabled',
+        {
+          title: '说明',
+          dataIndex: 'description',
         },
-      },
-    },
-  ];
+      ]
+    : [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ];
   const handleSearch = (params: any) => {
     setLoading(true);
     setParam(params);
@@ -213,9 +243,7 @@ export default observer((props: Props) => {
                             }
                             disabled={record?.state?.value !== 'disabled'}
                             popConfirm={{
-                              title: intl.formatMessage({
-                                id: 'pages.data.option.remove.tips',
-                              }),
+                              title: '该操作将会删除下属点位，确定删除？',
                               disabled: record?.state?.value !== 'disabled',
                               onConfirm: async () => {
                                 if (record?.state?.value === 'disabled') {

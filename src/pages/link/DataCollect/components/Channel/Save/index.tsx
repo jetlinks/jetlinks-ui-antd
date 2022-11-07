@@ -319,7 +319,7 @@ export default (props: Props) => {
                 dependencies: ['.securityMode'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0]==="SingAndEncrypt" || $deps[0]==="Sign"}}',
+                    visible: '{{$deps[0]==="SignAndEncrypt" || $deps[0]==="Sign"}}',
                   },
                 },
               },
@@ -332,6 +332,7 @@ export default (props: Props) => {
             'x-decorator-props': {
               gridSpan: 2,
             },
+            default: 'anonymous',
             'x-component-props': {
               model: 'singular',
               itemStyle: {

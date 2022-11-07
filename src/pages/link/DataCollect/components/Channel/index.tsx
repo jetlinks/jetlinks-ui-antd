@@ -39,9 +39,10 @@ export default observer((props: Props) => {
   });
 
   const test = (value: string) => {
-    // (value) => ({ name$LIKE: value })
-    console.log(value);
-    return { runningState: value };
+    if (value === 'error') {
+      return '';
+    }
+    return value;
   };
 
   const columns: ProColumns<ChannelItem>[] = [
@@ -187,10 +188,7 @@ export default observer((props: Props) => {
                             //     : undefined
                             // }
                             popConfirm={{
-                              title: intl.formatMessage({
-                                id: 'pages.data.option.remove.tips',
-                                defaultMessage: '是否删除?',
-                              }),
+                              title: '该操作将会删除下属采集器与点位，确定删除？',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
                                 onlyMessage(
