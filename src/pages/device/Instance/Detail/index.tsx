@@ -12,7 +12,7 @@ import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
-import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
+// import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import Opcua from '@/pages/device/Instance/Detail/Opcua';
 import Modbus from '@/pages/device/Instance/Detail/Modbus';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -27,7 +27,7 @@ import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
-import { onlyMessage, isNoCommunity } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import Parsing from './Parsing';
 // import EdgeMap from './EdgeMap';
 
@@ -151,15 +151,15 @@ const InstanceDetail = observer(() => {
     },
   ];
 
-  const pList = [
-    'websocket-server',
-    'http-server-gateway',
-    'udp-device-gateway',
-    'coap-server-gateway',
-    'mqtt-client-gateway',
-    'mqtt-server-gateway',
-    'tcp-server-gateway',
-  ];
+  // const pList = [
+  //   'websocket-server',
+  //   'http-server-gateway',
+  //   'udp-device-gateway',
+  //   'coap-server-gateway',
+  //   'mqtt-client-gateway',
+  //   'mqtt-server-gateway',
+  //   'tcp-server-gateway',
+  // ];
   const [list, setList] =
     useState<{ key: string; tab: string | ReactNode; component: ReactNode }[]>(baseList);
 
@@ -168,18 +168,18 @@ const InstanceDetail = observer(() => {
     if (response.status === 200) {
       InstanceModel.detail = response?.result;
       const datalist = [...baseList];
-      if (
-        InstanceModel.detail?.accessProvider &&
-        pList.includes(InstanceModel.detail?.accessProvider)
-      ) {
-        if (isNoCommunity) {
-          datalist.push({
-            key: 'metadata-map',
-            tab: '物模型映射',
-            component: <MetadataMap type="device" />,
-          });
-        }
-      }
+      // if (
+      //   InstanceModel.detail?.accessProvider &&
+      //   pList.includes(InstanceModel.detail?.accessProvider)
+      // ) {
+      //   if (isNoCommunity) {
+      //     datalist.push({
+      //       key: 'metadata-map',
+      //       tab: '物模型映射',
+      //       component: <MetadataMap type="device" />,
+      //     });
+      //   }
+      // }
       const paring = response.result?.features?.find((item: any) => item.id === 'transparentCodec');
       if (paring) {
         datalist.push({
