@@ -18,7 +18,7 @@ import {
   ArrayTable,
 } from '@formily/antd';
 import { TreeSelect as ATreeSelect } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createSchemaField } from '@formily/react';
 import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
 import { onlyMessage, randomString, useAsyncDataSource } from '@/utils/util';
@@ -42,6 +42,7 @@ const Save = () => {
   const [id, setId] = useState<string>('');
   const [visible, setVisiable] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
+  const accessRef = useRef<any>([]);
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -169,6 +170,8 @@ const Save = () => {
         if (!id) return;
         const resp = await service.detail(id);
         const integrationModes = resp.result.integrationModes.map((item: any) => item.value);
+        // setAccess(integrationModes)
+        accessRef.current = integrationModes;
         formInit.setInitialValues({
           ...resp.result,
           integrationModes,
@@ -235,9 +238,7 @@ const Save = () => {
         });
       });
       onFieldReact('apiClient.authConfig.oauth2.clientId', (filed) => {
-        const parms = filed.query('provider').get('value');
-        // console.log(parms);
-        if (id && parms === 'internal-standalone') {
+        if (id && accessRef.current?.includes('apiClient')) {
           filed.componentProps = {
             disabled: true,
           };

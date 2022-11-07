@@ -7,7 +7,7 @@ const DingTalk = () => {
   return (
     <div className={'doc'}>
       <div className={'url'}>
-        钉钉管理后台：
+        钉钉开放后台：
         <a href="https://open-dev.dingtalk.com" target="_blank" rel="noopener noreferrer">
           https://open-dev.dingtalk.com
         </a>
