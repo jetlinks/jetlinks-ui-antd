@@ -16,7 +16,7 @@ interface Props {
   data?: Partial<DeviceInstance>;
 }
 
-const defaultImage = '/images/device-product.png';
+const defaultImage = '/images/device-type-3-big.png';
 
 const Save = (props: Props) => {
   const { visible, close, data } = props;

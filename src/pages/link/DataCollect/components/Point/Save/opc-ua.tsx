@@ -126,24 +126,24 @@ export default (props: Props) => {
               },
             ],
           },
-          'configuration.codec.provider': {
-            title: '数据类型',
-            'x-component': 'Select',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 2,
-            },
-            'x-component-props': {
-              placeholder: '请选择数据类型',
-            },
-            'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
-            'x-validator': [
-              {
-                required: true,
-                message: '请选择数据类型',
-              },
-            ],
-          },
+          // 'configuration.codec.provider': {
+          //   title: '数据类型',
+          //   'x-component': 'Select',
+          //   'x-decorator': 'FormItem',
+          //   'x-decorator-props': {
+          //     gridSpan: 2,
+          //   },
+          //   'x-component-props': {
+          //     placeholder: '请选择数据类型',
+          //   },
+          //   'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
+          //   'x-validator': [
+          //     {
+          //       required: true,
+          //       message: '请选择数据类型',
+          //     },
+          //   ],
+          // },
           accessModes: {
             title: '访问类型',
             type: 'array',

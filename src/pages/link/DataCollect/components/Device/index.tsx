@@ -17,6 +17,7 @@ interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   id?: any;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
+  reload?: () => void;
 }
 
 const CollectorModel = model<{
@@ -32,7 +33,7 @@ export default observer((props: Props) => {
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const intl = useIntl();
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [dataSource, setDataSource] = useState<any>({
     data: [],
     pageSize: 12,
@@ -109,7 +110,7 @@ export default observer((props: Props) => {
         target="data-collect-collector"
         onSearch={(data) => {
           const dt = {
-            pageSize: 10,
+            pageSize: 12,
             terms: [...data?.terms],
           };
           handleSearch(dt);
@@ -206,7 +207,7 @@ export default observer((props: Props) => {
                             tooltip={
                               record?.state?.value !== 'disabled'
                                 ? {
-                                    title: '正常的采集器不能删除',
+                                    title: '已启用的采集器不能删除',
                                   }
                                 : undefined
                             }
@@ -292,6 +293,9 @@ export default observer((props: Props) => {
           reload={() => {
             CollectorModel.visible = false;
             handleSearch(param);
+            if (props?.reload) {
+              props.reload();
+            }
           }}
         />
       )}

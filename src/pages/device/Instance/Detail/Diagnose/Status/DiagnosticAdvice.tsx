@@ -53,7 +53,7 @@ const DiagnosticAdvice = (props: Props) => {
                 title={
                   <div className="serverItem">
                     {(data?.info?.address || []).map((i: any) => (
-                      <div key={i.address} className="eellipsiss">
+                      <div key={i.address} className="ellipsis">
                         <Badge color={i.health === -1 ? 'red' : 'green'} />
                         {i.address}
                       </div>
@@ -63,7 +63,7 @@ const DiagnosticAdvice = (props: Props) => {
               >
                 <div className="serverItem">
                   {(data?.info?.address || []).slice(0, 1).map((i: any) => (
-                    <div key={i.address} className="eellipsiss">
+                    <div key={i.address} className="ellipsis">
                       <Badge color={i.health === -1 ? 'red' : 'green'} />
                       {i.address}
                     </div>

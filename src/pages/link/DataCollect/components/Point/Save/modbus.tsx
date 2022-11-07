@@ -23,6 +23,7 @@ interface Props {
   data: Partial<PointItem>;
   close: () => void;
   reload: () => void;
+  collector: Partial<CollectorItem>;
 }
 
 export default (props: Props) => {
@@ -136,7 +137,7 @@ export default (props: Props) => {
               placeholder: '请选择功能码',
             },
             enum: [
-              { label: '离散输入寄存器', value: 'DiscreteInputs' },
+              { label: '线圈寄存器', value: 'Coils' },
               { label: '保存寄存器', value: 'HoldingRegisters' },
               { label: '输入寄存器', value: 'InputRegisters' },
             ],
@@ -367,10 +368,13 @@ export default (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<PointItem>();
-    console.log(value);
+    const obj = {
+      provider: props?.collector?.provider || 'MODBUS_TCP',
+      collectorId: props?.collector?.id,
+    };
     const response: any = props.data?.id
       ? await service.updatePoint(props.data?.id, { ...props.data, ...value })
-      : await service.savePoint({ ...props.data, ...value });
+      : await service.savePoint({ ...obj, ...props.data, ...value });
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();

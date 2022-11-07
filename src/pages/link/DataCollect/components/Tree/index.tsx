@@ -1,8 +1,8 @@
 import { DownOutlined, PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Input, Tree, Space, Popconfirm, Badge } from 'antd';
+import { Button, Input, Tree, Space, Popconfirm, Badge, Tooltip } from 'antd';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Empty } from '@/components';
+import { Empty, PermissionButton } from '@/components';
 import styles from './index.less';
 import service from '@/pages/link/DataCollect/service';
 import { useEffect } from 'react';
@@ -31,11 +31,13 @@ interface Props {
     provider: 'OPC_UA' | 'MODBUS_TCP',
     data?: any,
   ) => void;
+  reload?: boolean;
 }
 
 export default observer((props: Props) => {
   const channelImg = require('/public/images/DataCollect/tree-channel.png');
   const deviceImg = require('/public/images/DataCollect/tree-device.png');
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
 
   const handleSearch = (params: any) => {
     TreeModel.loading = true;
@@ -56,7 +58,7 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(TreeModel.param);
-  }, [TreeModel.param]);
+  }, [TreeModel.param, props.reload]);
 
   return (
     <div>
@@ -109,12 +111,16 @@ export default observer((props: Props) => {
                       </div>
                       <div>
                         <Space className={styles.iconColor}>
-                          <FormOutlined
-                            onClick={() => {
-                              TreeModel.current = item;
-                              TreeModel.visible = true;
-                            }}
-                          />
+                          <Tooltip title={!permission.edit ? '暂无权限，请联系管理员' : ''}>
+                            <FormOutlined
+                              onClick={() => {
+                                if (permission.edit) {
+                                  TreeModel.current = item;
+                                  TreeModel.visible = true;
+                                }
+                              }}
+                            />
+                          </Tooltip>
                           <Popconfirm
                             title={'确认删除？'}
                             onConfirm={async () => {
@@ -126,7 +132,9 @@ export default observer((props: Props) => {
                               }
                             }}
                           >
-                            <DeleteOutlined />
+                            <Tooltip title={!permission.delete ? '暂无权限，请联系管理员' : ''}>
+                              <DeleteOutlined />
+                            </Tooltip>
                           </Popconfirm>
                         </Space>
                       </div>
