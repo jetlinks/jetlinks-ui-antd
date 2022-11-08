@@ -1411,6 +1411,14 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save'],
+                      },
                     ],
                   },
                   {
@@ -1419,7 +1427,15 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['add', 'query'],
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
                       },
                     ],
                   },
@@ -1431,6 +1447,14 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save', 'query'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
                     ],
                   },
                   {
@@ -1439,6 +1463,14 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
                         actions: ['delete'],
                       },
                     ],
@@ -1468,6 +1500,14 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save'],
+                      },
                     ],
                   },
                   {
@@ -1476,7 +1516,15 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['add', 'query'],
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
                       },
                     ],
                   },
@@ -1488,6 +1536,14 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save', 'query'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
                     ],
                   },
                   {
@@ -1496,6 +1552,14 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
                         actions: ['delete'],
                       },
                     ],

@@ -188,6 +188,7 @@ export default (props: Props) => {
             ...value,
             provider: resp.result.provider,
             channelId: props.channelId,
+            channelName: resp.result.name,
             configuration: {
               ...value.configuration,
             },

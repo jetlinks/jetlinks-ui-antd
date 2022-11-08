@@ -254,6 +254,7 @@ export default observer((props: Props) => {
                                       defaultMessage: '操作成功!',
                                     }),
                                   );
+                                  handleSearch(param);
                                 } else {
                                   onlyMessage(
                                     intl.formatMessage({ id: 'pages.device.instance.deleteTip' }),

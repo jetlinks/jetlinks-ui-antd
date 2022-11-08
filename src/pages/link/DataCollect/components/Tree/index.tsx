@@ -111,10 +111,10 @@ export default observer((props: Props) => {
                       </div>
                       <div>
                         <Space className={styles.iconColor}>
-                          <Tooltip title={!permission.edit ? '暂无权限，请联系管理员' : ''}>
+                          <Tooltip title={!permission.update ? '暂无权限，请联系管理员' : ''}>
                             <FormOutlined
                               onClick={() => {
-                                if (permission.edit) {
+                                if (permission.update) {
                                   TreeModel.current = item;
                                   TreeModel.visible = true;
                                 }
