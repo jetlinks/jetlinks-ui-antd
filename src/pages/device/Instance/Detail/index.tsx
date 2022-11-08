@@ -29,6 +29,7 @@ import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
 import Parsing from './Parsing';
+import EdgeMap from './EdgeMap';
 // import EdgeMap from './EdgeMap';
 
 export const deviceStatus = new Map();
@@ -210,16 +211,16 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'child-device',
           tab: '子设备',
-          component: <ChildDevice />,
+          component: <ChildDevice data={InstanceModel.detail} />,
         });
       }
-      // if(response.result){
-      //   datalist.push({
-      //     key: 'edge-map',
-      //     tab: '边缘端映射',
-      //     component: <EdgeMap />,
-      //   })
-      // }
+      if (response.result.accessProvider === 'edge-child-device' && response.result.parentId) {
+        datalist.push({
+          key: 'edge-map',
+          tab: '边缘端映射',
+          component: <EdgeMap data={InstanceModel.detail} />,
+        });
+      }
       setList(datalist);
       // 写入物模型数据
       const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');
