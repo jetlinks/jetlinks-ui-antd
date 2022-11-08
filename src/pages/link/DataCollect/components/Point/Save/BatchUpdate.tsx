@@ -27,6 +27,17 @@ export default (props: Props) => {
 
   const form = createForm({
     initialValues: { array: [] },
+    effects: () => {
+      // onFieldValueChange('array.*.accessModes', (field, form1) => {
+      //   if (field.modified) {
+      //     const value = field.value;
+      //     console.log(value)
+      //     // form1.setFieldState('description', (state) => {
+      //     //   state.value = '';
+      //     // });
+      //   }
+      // });
+    },
   });
 
   registerValidateRules({
@@ -180,11 +191,18 @@ export default (props: Props) => {
   };
 
   useEffect(() => {
+    const one = (props?.data || [])[0];
     form.setValues({
       array: (props?.data || []).map((item) => {
         return {
-          ...item,
-          features: item.features.includes('changedOnly'),
+          ...one,
+          features: one.features.includes('changedOnly'),
+          id: item.id,
+          name: item.name,
+          configuration: {
+            ...one.configuration,
+            nodeId: item.configuration.nodeId,
+          },
         };
       }),
     });

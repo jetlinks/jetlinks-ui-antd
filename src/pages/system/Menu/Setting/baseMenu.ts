@@ -1420,6 +1420,10 @@ export default [
                         permission: 'data-collect-opc',
                         actions: ['save'],
                       },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save'],
+                      },
                     ],
                   },
                   {
@@ -1436,6 +1440,10 @@ export default [
                       },
                       {
                         permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'things-collector',
                         actions: ['save', 'query'],
                       },
                     ],
@@ -1456,6 +1464,10 @@ export default [
                         permission: 'data-collect-opc',
                         actions: ['save', 'query'],
                       },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save', 'query'],
+                      },
                     ],
                   },
                   {
@@ -1472,6 +1484,10 @@ export default [
                       },
                       {
                         permission: 'data-collect-opc',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'things-collector',
                         actions: ['delete'],
                       },
                     ],
@@ -1509,6 +1525,10 @@ export default [
                         permission: 'data-collect-opc',
                         actions: ['save'],
                       },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save'],
+                      },
                     ],
                   },
                   {
@@ -1525,6 +1545,10 @@ export default [
                       },
                       {
                         permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'things-collector',
                         actions: ['save', 'query'],
                       },
                     ],
@@ -1545,6 +1569,10 @@ export default [
                         permission: 'data-collect-opc',
                         actions: ['save', 'query'],
                       },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save', 'query'],
+                      },
                     ],
                   },
                   {
@@ -1561,6 +1589,10 @@ export default [
                       },
                       {
                         permission: 'data-collect-opc',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'things-collector',
                         actions: ['delete'],
                       },
                     ],
