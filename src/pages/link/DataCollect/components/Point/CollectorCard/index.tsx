@@ -2,19 +2,24 @@ import { useEffect, useState } from 'react';
 import { Ellipsis, PermissionButton } from '@/components';
 import './index.less';
 import { Badge, Popconfirm, Spin, Tooltip } from 'antd';
-import { DeleteOutlined, EditOutlined, FormOutlined, RedoOutlined } from '@ant-design/icons';
-// import OpcSave from '../Save/opc-ua';
-// import ModbusSave from '../Save/modbus';
+import {
+  CheckOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  FormOutlined,
+  RedoOutlined,
+} from '@ant-design/icons';
 import service from '@/pages/link/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import moment from 'moment';
-// import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
+import classNames from 'classnames';
 
 export interface PointCardProps {
   item: Partial<PointItem>;
   reload: () => void;
   wsValue: any;
   update: (item: any, type?: boolean) => void;
+  activeStyle?: string;
 }
 
 const opcImage = require('/public/images/DataCollect/device-opcua.png');
@@ -22,9 +27,7 @@ const modbusImage = require('/public/images/DataCollect/device-modbus.png');
 
 const CollectorCard = (props: PointCardProps) => {
   const { item, wsValue } = props;
-  // const [editVisible, setEditVisible] = useState<boolean>(false);
   const [spinning, setSpinning] = useState<boolean>(false);
-  // const [writeVisible, setWriteVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [dataValue, setDataValue] = useState<any>(wsValue);
 
@@ -42,37 +45,9 @@ const CollectorCard = (props: PointCardProps) => {
       setSpinning(false);
     }
   };
-
-  // const saveComponent = () => {
-  //   if (item.provider === 'OPC_UA') {
-  //     return (
-  //       <OpcSave
-  //         close={() => {
-  //           setEditVisible(false);
-  //         }}
-  //         reload={() => {
-  //           setEditVisible(false);
-  //         }}
-  //         data={item}
-  //       />
-  //     );
-  //   }
-  //   return (
-  //     <ModbusSave
-  //       close={() => {
-  //         setEditVisible(false);
-  //       }}
-  //       collector={{}}
-  //       reload={() => {
-  //         setEditVisible(false);
-  //       }}
-  //       data={item}
-  //     />
-  //   );
-  // };
   return (
     <Spin spinning={spinning}>
-      <div className={'card-item'}>
+      <div className={classNames('card-item', props.activeStyle)}>
         <div className={'card-item-left'}>
           <div className={'card-item-status'}>
             <div className={'card-item-status-content'}>
@@ -101,7 +76,11 @@ const CollectorCard = (props: PointCardProps) => {
                 <Popconfirm
                   title={'确认删除'}
                   disabled={!permission.delete}
-                  onConfirm={async () => {
+                  onCancel={(e) => {
+                    e?.stopPropagation();
+                  }}
+                  onConfirm={async (e) => {
+                    e?.stopPropagation();
                     if (item.id) {
                       const resp = await service.removePoint(item.id);
                       if (resp.status === 200) {
@@ -112,14 +91,19 @@ const CollectorCard = (props: PointCardProps) => {
                   }}
                 >
                   <Tooltip title={!permission.delete ? '暂无权限，请联系管理员' : ''}>
-                    <DeleteOutlined style={{ marginRight: 10 }} />
+                    <DeleteOutlined
+                      style={{ marginRight: 10 }}
+                      onClick={(e) => {
+                        e?.stopPropagation();
+                      }}
+                    />
                   </Tooltip>
                 </Popconfirm>
                 <Tooltip title={!permission.update ? '暂无权限，请联系管理员' : ''}>
                   <FormOutlined
-                    onClick={() => {
+                    onClick={(e) => {
+                      e?.stopPropagation();
                       if (permission.update) {
-                        // setEditVisible(true);
                         props.update(item);
                       }
                     }}
@@ -135,18 +119,26 @@ const CollectorCard = (props: PointCardProps) => {
                       <Ellipsis title={`${dataValue?.parseData}(${dataValue?.dataType})`} />
                     </div>
                     <div className={'card-item-content-item-header-action'}>
-                      <EditOutlined
-                        style={{ marginRight: 5 }}
-                        onClick={() => {
-                          props.update(item, true);
-                          // setWriteVisible(true);
-                        }}
-                      />
-                      <RedoOutlined
-                        onClick={() => {
-                          read();
-                        }}
-                      />
+                      {item.accessModes?.length === 1 &&
+                        item.accessModes.map((i) => i.value)?.includes('write') && (
+                          <EditOutlined
+                            style={{ marginLeft: 15 }}
+                            onClick={(e) => {
+                              e?.stopPropagation();
+                              props.update(item, true);
+                            }}
+                          />
+                        )}
+                      {item.accessModes?.length === 1 &&
+                        item.accessModes.map((i) => i.value)?.includes('read') && (
+                          <RedoOutlined
+                            style={{ marginLeft: 15 }}
+                            onClick={(e) => {
+                              e?.stopPropagation();
+                              read();
+                            }}
+                          />
+                        )}
                     </div>
                   </div>
                   <div className={'card-item-content-item-text'}>
@@ -168,14 +160,28 @@ const CollectorCard = (props: PointCardProps) => {
                     <span className={'action'} style={{ fontWeight: 600, color: '#000' }}>
                       --
                     </span>
-                    <EditOutlined
-                      className={'action'}
-                      style={{ margin: '0 15px' }}
-                      onClick={() => {
-                        props.update(item, true);
-                      }}
-                    />
-                    <RedoOutlined className={'action'} onClick={read} />
+                    {item.accessModes?.length === 1 &&
+                      item.accessModes.map((i) => i.value)?.includes('write') && (
+                        <EditOutlined
+                          className={'action'}
+                          style={{ marginLeft: 15 }}
+                          onClick={(e) => {
+                            e?.stopPropagation();
+                            props.update(item, true);
+                          }}
+                        />
+                      )}
+                    {item.accessModes?.length === 1 &&
+                      item.accessModes.map((i) => i.value)?.includes('read') && (
+                        <RedoOutlined
+                          style={{ marginLeft: 15 }}
+                          className={'action'}
+                          onClick={(e) => {
+                            e?.stopPropagation();
+                            read();
+                          }}
+                        />
+                      )}
                   </div>
                 </div>
               )}
@@ -213,15 +219,11 @@ const CollectorCard = (props: PointCardProps) => {
             </div>
           </div>
         </div>
-        {/*{editVisible && saveComponent()}*/}
-        {/*{writeVisible && (*/}
-        {/*  <WritePoint*/}
-        {/*    data={item}*/}
-        {/*    onCancel={() => {*/}
-        {/*      setWriteVisible(false);*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*)}*/}
+        <div className={'checked-icon'}>
+          <div>
+            <CheckOutlined />
+          </div>
+        </div>
       </div>
     </Spin>
   );
