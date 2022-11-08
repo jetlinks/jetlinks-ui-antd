@@ -1380,6 +1380,7 @@ export default [
                 url: '/iot/link/DataCollect/Dashboard',
                 icon: 'icon-shujumoni',
                 showPage: [
+                  'dashboard',
                   'data-collect-channel',
                   'data-collect-opc',
                   'data-collector',
