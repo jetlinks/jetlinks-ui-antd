@@ -1,30 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Ellipsis, PermissionButton } from '@/components';
 import './index.less';
 import { Badge, Popconfirm, Spin, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, FormOutlined, RedoOutlined } from '@ant-design/icons';
-import OpcSave from '../Save/opc-ua';
-import ModbusSave from '../Save/modbus';
+// import OpcSave from '../Save/opc-ua';
+// import ModbusSave from '../Save/modbus';
 import service from '@/pages/link/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import moment from 'moment';
-import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
+// import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
 
 export interface PointCardProps {
   item: Partial<PointItem>;
   reload: () => void;
   wsValue: any;
+  update: (item: any, type?: boolean) => void;
 }
 
 const opcImage = require('/public/images/DataCollect/device-opcua.png');
 const modbusImage = require('/public/images/DataCollect/device-modbus.png');
 
-export default (props: PointCardProps) => {
+const CollectorCard = (props: PointCardProps) => {
   const { item, wsValue } = props;
-  const [editVisible, setEditVisible] = useState<boolean>(false);
+  // const [editVisible, setEditVisible] = useState<boolean>(false);
   const [spinning, setSpinning] = useState<boolean>(false);
-  const [writeVisible, setWriteVisible] = useState<boolean>(false);
+  // const [writeVisible, setWriteVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
+  const [dataValue, setDataValue] = useState<any>(wsValue);
+
+  useEffect(() => {
+    setDataValue(wsValue);
+  }, [wsValue]);
 
   const read = async () => {
     if (item?.collectorId && item?.id) {
@@ -37,33 +43,33 @@ export default (props: PointCardProps) => {
     }
   };
 
-  const saveComponent = () => {
-    if (item.provider === 'OPC_UA') {
-      return (
-        <OpcSave
-          close={() => {
-            setEditVisible(false);
-          }}
-          reload={() => {
-            setEditVisible(false);
-          }}
-          data={item}
-        />
-      );
-    }
-    return (
-      <ModbusSave
-        close={() => {
-          setEditVisible(false);
-        }}
-        collector={{}}
-        reload={() => {
-          setEditVisible(false);
-        }}
-        data={item}
-      />
-    );
-  };
+  // const saveComponent = () => {
+  //   if (item.provider === 'OPC_UA') {
+  //     return (
+  //       <OpcSave
+  //         close={() => {
+  //           setEditVisible(false);
+  //         }}
+  //         reload={() => {
+  //           setEditVisible(false);
+  //         }}
+  //         data={item}
+  //       />
+  //     );
+  //   }
+  //   return (
+  //     <ModbusSave
+  //       close={() => {
+  //         setEditVisible(false);
+  //       }}
+  //       collector={{}}
+  //       reload={() => {
+  //         setEditVisible(false);
+  //       }}
+  //       data={item}
+  //     />
+  //   );
+  // };
   return (
     <Spin spinning={spinning}>
       <div className={'card-item'}>
@@ -113,7 +119,8 @@ export default (props: PointCardProps) => {
                   <FormOutlined
                     onClick={() => {
                       if (permission.update) {
-                        setEditVisible(true);
+                        // setEditVisible(true);
+                        props.update(item);
                       }
                     }}
                   />
@@ -121,17 +128,18 @@ export default (props: PointCardProps) => {
               </div>
             </div>
             <div className={'card-item-content'}>
-              {wsValue ? (
+              {dataValue ? (
                 <div className={'card-item-content-item'}>
                   <div className={'card-item-content-item-header'}>
                     <div className={'card-item-content-item-header-title'}>
-                      <Ellipsis title={`${wsValue?.parseData}(${wsValue?.dataType})`} />
+                      <Ellipsis title={`${dataValue?.parseData}(${dataValue?.dataType})`} />
                     </div>
                     <div className={'card-item-content-item-header-action'}>
                       <EditOutlined
                         style={{ marginRight: 5 }}
                         onClick={() => {
-                          setWriteVisible(true);
+                          props.update(item, true);
+                          // setWriteVisible(true);
                         }}
                       />
                       <RedoOutlined
@@ -142,13 +150,13 @@ export default (props: PointCardProps) => {
                     </div>
                   </div>
                   <div className={'card-item-content-item-text'}>
-                    <Ellipsis title={wsValue?.hex || ''} />
+                    <Ellipsis title={dataValue?.hex || ''} />
                   </div>
                   <div className={'card-item-content-item-text'}>
                     <Ellipsis
                       title={
-                        wsValue?.timestamp
-                          ? moment(wsValue.timestamp).format('YYYY-MM-DD HH:mm:ss')
+                        dataValue?.timestamp
+                          ? moment(dataValue.timestamp).format('YYYY-MM-DD HH:mm:ss')
                           : ''
                       }
                     />
@@ -164,15 +172,10 @@ export default (props: PointCardProps) => {
                       className={'action'}
                       style={{ margin: '0 15px' }}
                       onClick={() => {
-                        setWriteVisible(true);
+                        props.update(item, true);
                       }}
                     />
-                    <RedoOutlined
-                      className={'action'}
-                      onClick={() => {
-                        read();
-                      }}
-                    />
+                    <RedoOutlined className={'action'} onClick={read} />
                   </div>
                 </div>
               )}
@@ -210,16 +213,18 @@ export default (props: PointCardProps) => {
             </div>
           </div>
         </div>
-        {editVisible && saveComponent()}
-        {writeVisible && (
-          <WritePoint
-            data={item}
-            onCancel={() => {
-              setWriteVisible(false);
-            }}
-          />
-        )}
+        {/*{editVisible && saveComponent()}*/}
+        {/*{writeVisible && (*/}
+        {/*  <WritePoint*/}
+        {/*    data={item}*/}
+        {/*    onCancel={() => {*/}
+        {/*      setWriteVisible(false);*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*)}*/}
       </div>
     </Spin>
   );
 };
+
+export default CollectorCard;

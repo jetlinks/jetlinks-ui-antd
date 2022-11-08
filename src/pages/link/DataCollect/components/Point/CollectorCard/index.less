@@ -51,12 +51,13 @@
     }
     .card-item-content {
       display: flex;
+      overflow: hidden;
       .card-item-content-item {
         flex-direction: row-reverse;
         align-items: flex-start;
         justify-content: space-around;
-        //min-width: calc(50% - 40px);
-        width: calc(50% - 20px);
+        min-width: calc(50% - 40px);
+        max-width: calc(50% - 20px);
 
         .card-item-content-item-empty {
           margin-top: 10px;

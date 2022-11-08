@@ -12,24 +12,43 @@ import ModbusSave from '@/pages/link/DataCollect/components/Point/Save/modbus';
 import Scan from '@/pages/link/DataCollect/components/Point/Save/scan';
 import { map } from 'rxjs/operators';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
-
+import OpcSave from '@/pages/link/DataCollect/components/Point/Save/opc-ua';
+import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
+import BatchUpdate from './Save/BatchUpdate';
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   data?: Partial<CollectorItem>;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
+interface PointCardProps {
+  type: boolean; // true: 综合查询  false: 数据采集
+  data?: Partial<CollectorItem>;
+  provider?: 'OPC_UA' | 'MODBUS_TCP';
+  reload: boolean; // 变化时刷新
+}
+
 const PointModel = model<{
   m_visible: boolean;
+  p_visible: boolean;
   p_add_visible: boolean;
+  writeVisible: boolean;
   current: Partial<PointItem>;
+  reload: boolean;
+  batch_visible: boolean;
+  list: any[];
 }>({
   m_visible: false,
+  p_visible: false,
   p_add_visible: false,
   current: {},
+  writeVisible: false,
+  reload: false,
+  batch_visible: false,
+  list: [],
 });
 
-export default observer((props: Props) => {
+const PointCard = observer((props: PointCardProps) => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const { minHeight } = useDomFullHeight(`.data-collect-point`, 24);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
@@ -43,46 +62,72 @@ export default observer((props: Props) => {
     total: 0,
   });
 
-  const columns: ProColumns<PointItem>[] = [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '通讯协议',
-      dataIndex: 'provider',
-      valueType: 'select',
-      valueEnum: {
-        OPC_UA: {
-          text: 'OPC_UA',
-          status: 'OPC_UA',
+  const columns: ProColumns<PointItem>[] = props.type
+    ? [
+        {
+          title: '名称',
+          dataIndex: 'name',
         },
-        MODBUS_TCP: {
-          text: 'MODBUS_TCP',
-          status: 'MODBUS_TCP',
+        {
+          title: '通讯协议',
+          dataIndex: 'provider',
+          valueType: 'select',
+          valueEnum: {
+            OPC_UA: {
+              text: 'OPC_UA',
+              status: 'OPC_UA',
+            },
+            MODBUS_TCP: {
+              text: 'MODBUS_TCP',
+              status: 'MODBUS_TCP',
+            },
+          },
         },
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      valueType: 'select',
-      valueEnum: {
-        enabled: {
-          text: '正常',
-          status: 'enabled',
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '异常',
+              status: 'disabled',
+            },
+          },
         },
-        disabled: {
-          text: '异常',
-          status: 'disabled',
+        {
+          title: '说明',
+          dataIndex: 'description',
         },
-      },
-    },
-    {
-      title: '说明',
-      dataIndex: 'description',
-    },
-  ];
+      ]
+    : [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '异常',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ];
 
   const subRef = useRef<any>(null);
 
@@ -117,7 +162,7 @@ export default observer((props: Props) => {
       .then((resp) => {
         if (resp.status === 200) {
           setDataSource(resp.result);
-          console.log(resp.result);
+          PointModel.list = resp.result?.data || [];
           subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
         }
         setLoading(false);
@@ -126,7 +171,7 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(param);
-  }, [props.data?.id]);
+  }, [props.data?.id, props.reload]);
 
   useEffect(() => {
     return () => {
@@ -168,6 +213,18 @@ export default observer((props: Props) => {
                 >
                   {props?.provider === 'OPC_UA' ? '扫描' : '新增'}
                 </PermissionButton>
+                {props.provider === 'OPC_UA' && (
+                  <PermissionButton
+                    style={{ marginLeft: 15 }}
+                    isPermission={permission.update}
+                    onClick={() => {
+                      PointModel.batch_visible = true;
+                    }}
+                    key="batch"
+                  >
+                    批量编辑
+                  </PermissionButton>
+                )}
               </div>
             )}
             {dataSource?.data.length ? (
@@ -180,6 +237,18 @@ export default observer((props: Props) => {
                         wsValue={propertyValue[record.id]}
                         reload={() => {
                           handleSearch(param);
+                        }}
+                        update={(item, flag) => {
+                          if (flag) {
+                            PointModel.writeVisible = true;
+                          } else {
+                            if (item.provider === 'MODBUS_TCP') {
+                              PointModel.m_visible = true;
+                            } else {
+                              PointModel.p_visible = true;
+                            }
+                          }
+                          PointModel.current = item;
                         }}
                       />
                     </Col>
@@ -225,6 +294,14 @@ export default observer((props: Props) => {
           </div>
         </div>
       </Card>
+    </div>
+  );
+});
+
+export default observer((props: Props) => {
+  return (
+    <div>
+      <PointCard {...props} reload={PointModel.reload} />
       {PointModel.m_visible && (
         <ModbusSave
           data={PointModel.current}
@@ -234,8 +311,20 @@ export default observer((props: Props) => {
           }}
           reload={() => {
             PointModel.m_visible = false;
-            handleSearch(param);
+            PointModel.reload = !PointModel.reload;
           }}
+        />
+      )}
+      {PointModel.p_visible && (
+        <OpcSave
+          close={() => {
+            PointModel.p_visible = false;
+          }}
+          reload={() => {
+            PointModel.p_visible = false;
+            PointModel.reload = !PointModel.reload;
+          }}
+          data={PointModel.current}
         />
       )}
       {PointModel.p_add_visible && (
@@ -246,7 +335,27 @@ export default observer((props: Props) => {
           collector={props.data}
           reload={() => {
             PointModel.p_add_visible = false;
-            handleSearch(param);
+            PointModel.reload = !PointModel.reload;
+          }}
+        />
+      )}
+      {PointModel.writeVisible && (
+        <WritePoint
+          data={PointModel.current}
+          onCancel={() => {
+            PointModel.writeVisible = false;
+          }}
+        />
+      )}
+      {PointModel.batch_visible && (
+        <BatchUpdate
+          close={() => {
+            PointModel.batch_visible = false;
+          }}
+          data={PointModel.list}
+          reload={() => {
+            PointModel.batch_visible = false;
+            PointModel.reload = !PointModel.reload;
           }}
         />
       )}

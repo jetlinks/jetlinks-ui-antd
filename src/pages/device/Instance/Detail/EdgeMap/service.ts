@@ -32,6 +32,44 @@ class Service extends BaseService<any> {
         data,
       },
     );
+  getMap = (deviceId: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${deviceId}/device-collector-list/invoke`, {
+      method: 'POST',
+      data,
+    });
+  removeMap = (deviceId: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${deviceId}/device-collector-delete/invoke`, {
+      method: 'POST',
+      data,
+    });
+  treeMap = (deviceId: string, data?: any) =>
+    request(
+      `/${SystemConst.API_BASE}/edge/operations/${deviceId}/data-collector-channel-tree/invoke`,
+      {
+        method: 'POST',
+        data,
+      },
+    );
+  saveMap = (deviceId: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${deviceId}/device-collector-save/invoke`, {
+      method: 'POST',
+      data,
+    });
+  getProductListNoPage = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/device/product/_query/no-paging?paging=false`, {
+      method: 'POST',
+      data: params,
+    });
+  addDevice = (params: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance`, {
+      method: 'POST',
+      data: params,
+    });
+  editDevice = (params: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance`, {
+      method: 'PATCH',
+      data: params,
+    });
 }
 
 export default Service;

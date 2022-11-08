@@ -1380,6 +1380,7 @@ export default [
                 url: '/iot/link/DataCollect/Dashboard',
                 icon: 'icon-shujumoni',
                 showPage: [
+                  'dashboard',
                   'data-collect-channel',
                   'data-collect-opc',
                   'data-collector',
@@ -1411,6 +1412,18 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save'],
+                      },
                     ],
                   },
                   {
@@ -1419,7 +1432,19 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['add', 'query'],
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save', 'query'],
                       },
                     ],
                   },
@@ -1431,6 +1456,18 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save', 'query'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save', 'query'],
+                      },
                     ],
                   },
                   {
@@ -1439,6 +1476,18 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'things-collector',
                         actions: ['delete'],
                       },
                     ],
@@ -1468,6 +1517,18 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save'],
+                      },
                     ],
                   },
                   {
@@ -1476,7 +1537,19 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['add', 'query'],
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save', 'query'],
                       },
                     ],
                   },
@@ -1488,6 +1561,18 @@ export default [
                         permission: 'data-collect-channel',
                         actions: ['save', 'query'],
                       },
+                      {
+                        permission: 'data-collector',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['save', 'query'],
+                      },
                     ],
                   },
                   {
@@ -1496,6 +1581,18 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['delete'],
+                      },
+                      {
+                        permission: 'things-collector',
                         actions: ['delete'],
                       },
                     ],

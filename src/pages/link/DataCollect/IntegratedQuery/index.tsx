@@ -4,6 +4,7 @@ import { model } from '@formily/reactive';
 import Point from '../components/Point';
 import Device from '../components/Device';
 import Channel from '../components/Channel';
+import { useEffect } from 'react';
 
 const dataModel = model<{
   tab: string;
@@ -29,6 +30,11 @@ export default observer(() => {
       component: <Point type={true} />,
     },
   ];
+
+  useEffect(() => {
+    dataModel.tab = 'channel';
+  }, []);
+
   return (
     <PageContainer
       tabList={list}
