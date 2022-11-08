@@ -170,7 +170,11 @@ const Network = (props: Props) => {
                     type="link"
                     onClick={() => {
                       const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
-                      const tab: any = window.open(`${origin}/#${url}`);
+                      const tab: any = window.open(
+                        `${origin}/#${url}?type=${
+                          NetworkTypeMapping.get(props.provider?.id) || ''
+                        }`,
+                      );
                       tab!.onTabSaveSuccess = (value: any) => {
                         if (value.status === 200) {
                           setNetworkCurrent(value.result?.id);
@@ -181,7 +185,7 @@ const Network = (props: Props) => {
                       };
                     }}
                   >
-                    创建接入方式
+                    去新增
                   </Button>
                 )}
               </span>
