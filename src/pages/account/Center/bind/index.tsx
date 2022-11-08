@@ -44,7 +44,7 @@ const Bind = () => {
     // const url = window.location.href.split('redirect=')?.[1];
     console.log(redirectUrl);
     if (redirectUrl) {
-      window.location.href = redirectUrl;
+      window.location.href = decodeURIComponent(redirectUrl);
     }
   };
 
