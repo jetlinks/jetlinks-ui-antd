@@ -13,8 +13,6 @@ import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
 // import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
-import Opcua from '@/pages/device/Instance/Detail/Opcua';
-import Modbus from '@/pages/device/Instance/Detail/Modbus';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -30,7 +28,7 @@ import useLocation from '@/hooks/route/useLocation';
 import { onlyMessage } from '@/utils/util';
 import Parsing from './Parsing';
 import EdgeMap from './EdgeMap';
-// import EdgeMap from './EdgeMap';
+import MapChannel from './MapChannel';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -196,14 +194,14 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'modbus',
           tab: 'Modbus',
-          component: <Modbus data={InstanceModel.detail} />,
+          component: <MapChannel data={InstanceModel.detail} type="MODBUS_TCP" />,
         });
       }
       if (response.result.protocol === 'opc-ua') {
         datalist.push({
           key: 'opcua',
           tab: 'OPC UA',
-          component: <Opcua data={InstanceModel.detail} />,
+          component: <MapChannel data={InstanceModel.detail} type="OPC_UA" />,
         });
       }
       if (response.result.deviceType?.value === 'gateway') {
