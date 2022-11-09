@@ -39,6 +39,7 @@ const PointModel = model<{
   batch_visible: boolean;
   list: any[];
   selectKey: string[];
+  arr: any[];
 }>({
   m_visible: false,
   p_visible: false,
@@ -49,6 +50,7 @@ const PointModel = model<{
   batch_visible: false,
   list: [],
   selectKey: [],
+  arr: [],
 });
 
 const PointCard = observer((props: PointCardProps) => {
@@ -64,6 +66,21 @@ const PointCard = observer((props: PointCardProps) => {
     pageIndex: 0,
     total: 0,
   });
+
+  const getState = (record: Partial<ChannelItem>) => {
+    if (record) {
+      if (record?.state?.value === 'enabled') {
+        return { ...record?.runningState };
+      } else {
+        return {
+          text: '禁用',
+          value: 'disabled',
+        };
+      }
+    } else {
+      return {};
+    }
+  };
 
   const columns: ProColumns<PointItem>[] = props.type
     ? [
@@ -115,8 +132,31 @@ const PointCard = observer((props: PointCardProps) => {
               status: 'enabled',
             },
             disabled: {
-              text: '异常',
+              text: '禁用',
               status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '运行状态',
+          dataIndex: 'runningState',
+          valueType: 'select',
+          valueEnum: {
+            running: {
+              text: '运行中',
+              status: 'running',
+            },
+            partialError: {
+              text: '部分错误',
+              status: 'partialError',
+            },
+            failed: {
+              text: '错误',
+              status: 'failed',
+            },
+            stopped: {
+              text: '已停止',
+              status: 'stopped',
             },
           },
         },
@@ -131,17 +171,21 @@ const PointCard = observer((props: PointCardProps) => {
           dataIndex: 'name',
         },
         {
-          title: '状态',
-          dataIndex: 'state',
+          title: '访问类型',
+          dataIndex: 'accessModes',
           valueType: 'select',
           valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
+            read: {
+              text: '读',
+              status: 'read',
             },
-            disabled: {
-              text: '异常',
-              status: 'disabled',
+            write: {
+              text: '写',
+              status: 'write',
+            },
+            subscribe: {
+              text: '订阅',
+              status: 'subscribe',
             },
           },
         },
@@ -155,8 +199,31 @@ const PointCard = observer((props: PointCardProps) => {
               status: 'enabled',
             },
             disabled: {
-              text: '异常',
+              text: '禁用',
               status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '运行状态',
+          dataIndex: 'runningState',
+          valueType: 'select',
+          valueEnum: {
+            running: {
+              text: '运行中',
+              status: 'running',
+            },
+            partialError: {
+              text: '部分错误',
+              status: 'partialError',
+            },
+            failed: {
+              text: '错误',
+              status: 'failed',
+            },
+            stopped: {
+              text: '已停止',
+              status: 'stopped',
             },
           },
         },
@@ -236,9 +303,13 @@ const PointCard = observer((props: PointCardProps) => {
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
                 <PermissionButton
                   isPermission={permission.add}
-                  onClick={() => {
+                  onClick={async () => {
                     if (props.provider === 'OPC_UA') {
-                      PointModel.p_add_visible = true;
+                      const resp = await service.queryPointNoPaging({ paging: false });
+                      if (resp.status === 200) {
+                        PointModel.p_add_visible = true;
+                        PointModel.arr = resp.result;
+                      }
                     } else {
                       PointModel.m_visible = true;
                     }
@@ -289,7 +360,7 @@ const PointCard = observer((props: PointCardProps) => {
                       }}
                     >
                       <CollectorCard
-                        item={record}
+                        item={{ ...record, status: getState(record) }}
                         wsValue={propertyValue[record.id]}
                         reload={() => {
                           handleSearch(param);
@@ -389,6 +460,7 @@ export default observer((props: Props) => {
           close={() => {
             PointModel.p_add_visible = false;
           }}
+          data={PointModel.arr}
           collector={props.data}
           reload={() => {
             PointModel.p_add_visible = false;

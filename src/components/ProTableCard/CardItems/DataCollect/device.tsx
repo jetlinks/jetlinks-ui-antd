@@ -29,8 +29,11 @@ export default (props: CollectorCardProps) => {
       status={props.state?.value}
       statusText={props.state?.text}
       statusNames={{
-        enabled: StatusColorEnum.success,
-        disabled: StatusColorEnum.error,
+        running: StatusColorEnum.success,
+        disabled: StatusColorEnum.processing,
+        partialError: StatusColorEnum.warning,
+        failed: StatusColorEnum.error,
+        stopped: StatusColorEnum.default,
       }}
     >
       <div className={'pro-table-card-item'}>

@@ -13,6 +13,11 @@ class Service {
       method: 'POST',
       data: params,
     });
+  public queryPointNoPaging = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/_query/no-paging`, {
+      method: 'GET',
+      params,
+    });
   public queryPointCount = (params: any) =>
     request(`/${SystemConst.API_BASE}/data-collect/point/_count`, {
       method: 'POST',
@@ -142,14 +147,11 @@ class Service {
       method: 'GET',
     });
 
-  public savePointBatch = (collectorId: string, collectorName: string, params: any[]) =>
-    request(
-      `/${SystemConst.API_BASE}/data-collect/opc/point/_batch?collectorId=${collectorId}&collectorName=${collectorName}`,
-      {
-        method: 'POST',
-        data: params,
-      },
-    );
+  public savePointBatch = (params: any[]) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point`, {
+      method: 'PATCH',
+      data: params,
+    });
 
   public dashboard = (data?: any) =>
     request(`/${SystemConst.API_BASE}/dashboard/_multi`, {

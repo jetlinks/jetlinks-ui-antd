@@ -1,191 +1,38 @@
-import { Button, Empty, Modal, Popconfirm, Spin, Transfer, Tree } from 'antd';
-import type { TransferDirection } from 'antd/es/transfer';
+import { Button, Col, Modal, Row, Spin, Tree } from 'antd';
 import { useEffect, useState } from 'react';
 import service from '@/pages/link/DataCollect/service';
 import './scan.less';
-import { CloseOutlined } from '@ant-design/icons';
-import { Ellipsis } from '@/components';
 import { onlyMessage } from '@/utils/util';
+import { createSchemaField, FormProvider } from '@formily/react';
+import { ArrayTable, Editable, FormItem, Input, NumberPicker } from '@formily/antd';
+import MyInput from '@/pages/link/DataCollect/components/Point/Save/components/MyInput';
+import MySelect from '@/pages/link/DataCollect/components/Point/Save/components/MySelect';
+import {
+  createForm,
+  Field,
+  FormPath,
+  onFieldValueChange,
+  registerValidateRules,
+} from '@formily/core';
 
 interface Props {
   collector?: any;
   close: () => void;
   reload: () => void;
+  data: any[];
 }
-
-interface TreeTransferProps {
-  dataSource: any[];
-  targetKeys: string[];
-  onChange: (targetKeys: string[], direction: TransferDirection, moveKeys: string[]) => void;
-  channelId?: string;
-  arrChange: (arr: any[]) => void;
-}
-
-const TreeTransfer = ({
-  dataSource,
-  targetKeys,
-  channelId,
-  arrChange,
-  ...restProps
-}: TreeTransferProps) => {
-  const [transferDataSource, setTransferDataSource] = useState<any[]>(dataSource);
-
-  useEffect(() => {
-    setTransferDataSource([...dataSource]);
-  }, [dataSource]);
-
-  const isChecked = (selectedKeys: (string | number)[], eventKey: string | number) =>
-    selectedKeys.includes(eventKey);
-
-  const generateTree = (treeNodes: any[] = [], checkedKeys: string[] = []): any[] =>
-    treeNodes.map(({ children, ...props }) => ({
-      ...props,
-      disabled: checkedKeys.includes(props.key as string) || props?.folder,
-      children: generateTree(children, checkedKeys),
-    }));
-
-  const queryDataByID = (list: any[] = [], key: string): any => {
-    for (let i = 0; i < list.length; i++) {
-      if (list[i].key === key) {
-        return list[i];
-      }
-      if (list[i].children) {
-        return queryDataByID(list[i].children, key);
-      }
-    }
-  };
-
-  const generateTargetTree = (treeNodes: any[] = []): any[] => {
-    const arr = treeNodes.map((item) => queryDataByID(transferDataSource, item));
-    return arr;
-  };
-
-  const updateTreeData = (list: any[], key: string, children: any[]): any[] => {
-    const arr = list.map((node) => {
-      if (node.key === key) {
-        return {
-          ...node,
-          children,
-        };
-      }
-      if (node?.children && node.children.length) {
-        return {
-          ...node,
-          children: updateTreeData(node.children, key, children),
-        };
-      }
-      return node;
-    });
-    return arr;
-  };
-
-  useEffect(() => {
-    arrChange(generateTargetTree(targetKeys));
-  }, [targetKeys]);
-
-  const onLoadData = (node: any) =>
-    new Promise<void>(async (resolve) => {
-      if (node.children.length || !node?.folder) {
-        resolve();
-        return;
-      }
-      const resp = await service.scanOpcUAList({
-        id: channelId,
-        nodeId: node.key,
-      });
-      if (resp.status === 200) {
-        const list = resp.result.map((item: any) => {
-          return {
-            ...item,
-            key: item.id,
-            title: item.name,
-            disabled: item?.folder,
-            isLeaf: !item?.folder,
-          };
-        });
-        const arr = updateTreeData(transferDataSource, node.key, [...list]);
-        setTransferDataSource([...arr]);
-      }
-      resolve();
-    });
-
-  return (
-    <Transfer
-      {...restProps}
-      targetKeys={targetKeys}
-      dataSource={transferDataSource}
-      render={(item) => item?.title}
-      showSelectAll={false}
-      titles={['源数据', '目标数据']}
-      oneWay
-    >
-      {({ direction, onItemSelect, selectedKeys, onItemRemove }) => {
-        if (direction === 'left') {
-          const checkedKeys = [...selectedKeys, ...targetKeys];
-          return (
-            <div style={{ margin: '10px' }}>
-              <Tree
-                blockNode
-                checkable
-                checkStrictly
-                checkedKeys={checkedKeys}
-                height={250}
-                treeData={generateTree(transferDataSource, targetKeys)}
-                onCheck={(_, { node: { key } }) => {
-                  onItemSelect(key as string, !isChecked(checkedKeys, key));
-                }}
-                onSelect={(_, { node: { key } }) => {
-                  onItemSelect(key as string, !isChecked(checkedKeys, key));
-                }}
-                loadData={onLoadData}
-              />
-            </div>
-          );
-        } else {
-          if (targetKeys.length) {
-            return (
-              <div>
-                {generateTargetTree(targetKeys).map((item) => {
-                  return (
-                    <div className={'right-item'} key={item.key}>
-                      <div style={{ width: 'calc(100% - 30px)' }}>
-                        <Ellipsis title={item?.title || item.key} />
-                      </div>
-                      <div style={{ width: 20, marginLeft: 10 }}>
-                        <Popconfirm
-                          title={'确认删除？'}
-                          onConfirm={() => {
-                            if (onItemRemove) {
-                              onItemRemove([item.key]);
-                            }
-                          }}
-                        >
-                          <CloseOutlined />
-                        </Popconfirm>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          } else {
-            return <Empty style={{ marginTop: 10 }} />;
-          }
-        }
-      }}
-    </Transfer>
-  );
-};
 
 export default (props: Props) => {
-  const [targetKeys, setTargetKeys] = useState<string[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<any>();
   const [treeData, setTreeData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [spinning, setSpinning] = useState<boolean>(false);
-  const [arr, setArr] = useState<any[]>([]);
-  const onChange = (keys: any[]) => {
-    setTargetKeys(keys);
-  };
+  const [dataSource, setDataSource] = useState<any[]>([]);
+  const [selectKeys, setSelectKeys] = useState<any[]>([]);
+
+  useEffect(() => {
+    setSelectKeys(props.data.map((item) => item.pointKey));
+  }, [props.data]);
 
   useEffect(() => {
     if (props.collector?.channelId) {
@@ -211,13 +58,298 @@ export default (props: Props) => {
     }
   }, [props.collector?.channelId]);
 
+  const updateTreeData = (list: any[], key: string, children: any[]): any[] => {
+    const arr = list.map((node) => {
+      if (node.key === key) {
+        return {
+          ...node,
+          children,
+        };
+      }
+      if (node?.children && node.children.length) {
+        return {
+          ...node,
+          children: updateTreeData(node.children, key, children),
+        };
+      }
+      return node;
+    });
+    return arr;
+  };
+
+  const onLoadData = (node: any) =>
+    new Promise<void>(async (resolve) => {
+      if ((node?.children && node.children?.length) || !node?.folder) {
+        resolve();
+        return;
+      }
+      const resp = await service.scanOpcUAList({
+        id: props.collector?.channelId,
+        nodeId: node.key,
+      });
+      if (resp.status === 200) {
+        const list = resp.result.map((item: any) => {
+          return {
+            ...item,
+            key: item.id,
+            title: item.name,
+            disabled: item?.folder,
+            isLeaf: !item?.folder,
+          };
+        });
+        setTreeData((origin) => updateTreeData(origin, node.key, [...list]));
+      }
+      resolve();
+    });
+
+  const SchemaField = createSchemaField({
+    components: {
+      FormItem,
+      Editable,
+      Input,
+      ArrayTable,
+      NumberPicker,
+      MyInput,
+      MySelect,
+    },
+  });
+
+  const form = createForm({
+    initialValues: { array: [] },
+    effects: () => {
+      onFieldValueChange('array.*.accessModes', (field, f) => {
+        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+          return `array.${parseInt(index + 1)}.accessModes`;
+        });
+        const nextValue = (field.query(nextPath).take() as Field)?.value;
+        if (nextValue && nextValue.check) {
+          f.setFieldState(nextPath, (state) => {
+            state.value = {
+              ...field.value,
+              check: nextValue.check,
+            };
+          });
+        }
+      });
+      onFieldValueChange('array.*.configuration.interval', (field, f) => {
+        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+          return `array.${parseInt(index + 1)}.configuration.interval`;
+        });
+        const nextValue = (field.query(nextPath).take() as Field)?.value;
+        if (nextValue && nextValue.check) {
+          f.setFieldState(nextPath, (state) => {
+            state.value = {
+              ...field.value,
+              check: nextValue.check,
+            };
+          });
+        }
+      });
+      onFieldValueChange('array.*.features', (field, f) => {
+        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+          return `array.${parseInt(index + 1)}.features`;
+        });
+        const nextValue = (field.query(nextPath).take() as Field)?.value;
+        if (nextValue && nextValue.check) {
+          f.setFieldState(nextPath, (state) => {
+            state.value = {
+              ...field.value,
+              check: nextValue.check,
+            };
+          });
+        }
+      });
+    },
+  });
+
+  registerValidateRules({
+    checkLength(value) {
+      if (String(value.value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      }
+      if (!(Number(value.value) % 1 === 0) || Number(value.value) < 0) {
+        return {
+          type: 'error',
+          message: '请输入正整数',
+        };
+      }
+      return '';
+    },
+    checkAccessModes(value) {
+      if (value.value && value.value.length) {
+        return '';
+      } else {
+        return {
+          type: 'error',
+          message: '请选择访问类型',
+        };
+      }
+    },
+  });
+
+  const schema = {
+    type: 'object',
+    properties: {
+      array: {
+        type: 'array',
+        'x-decorator': 'FormItem',
+        'x-component': 'ArrayTable',
+        'x-component-props': {
+          // pagination: { pageSize: 10 },
+          scroll: { x: '100%' },
+        },
+        items: {
+          type: 'object',
+          properties: {
+            column1: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { title: '名称' },
+              properties: {
+                name: {
+                  type: 'string',
+                  'x-component': 'Input',
+                  'x-component-props': {
+                    placeholder: '请输入点位名称',
+                  },
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请输入点位名称',
+                    },
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                  ],
+                },
+              },
+            },
+            column2: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { title: 'nodeId' },
+              properties: {
+                'configuration.nodeId': {
+                  type: 'string',
+                  'x-component': 'Input',
+                  'x-component-props': {
+                    readOnly: true,
+                  },
+                },
+              },
+            },
+            column3: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { title: '访问类型' },
+              properties: {
+                accessModes: {
+                  'x-component': 'MySelect',
+                  'x-component-props': {
+                    placeholder: '请选择访问类型',
+                    mode: 'multiple',
+                    options: [
+                      { label: '读', value: 'read' },
+                      { label: '写', value: 'write' },
+                      { label: '订阅', value: 'subscribe' },
+                    ],
+                  },
+                  'x-validator': [
+                    {
+                      checkAccessModes: true,
+                    },
+                  ],
+                },
+              },
+            },
+            column4: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { title: '采集频率' },
+              properties: {
+                'configuration.interval': {
+                  'x-decorator': 'FormItem',
+                  'x-component': 'MyInput',
+                  'x-component-props': {
+                    placeholder: '请输入采集频率',
+                  },
+                  'x-validator': [
+                    {
+                      checkLength: true,
+                    },
+                  ],
+                },
+              },
+            },
+            column5: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': { title: '只推送变化的数据' },
+              properties: {
+                features: {
+                  'x-decorator': 'FormItem',
+                  'x-component': 'MySelect',
+                  'x-component-props': {
+                    options: [
+                      {
+                        label: '是',
+                        value: true,
+                      },
+                      {
+                        label: '否',
+                        value: false,
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  useEffect(() => {
+    const one = (dataSource || [])[0];
+    form.setValues({
+      array: (dataSource || []).map((item) => {
+        return {
+          ...one,
+          features: {
+            value: (one?.features || []).includes('changedOnly'),
+            check: true,
+          },
+          id: item.id,
+          name: item.name,
+          accessModes: {
+            value: one?.accessModes || [],
+            check: true,
+          },
+          configuration: {
+            ...one.configuration,
+            interval: {
+              value: one?.configuration?.interval || 3000,
+              check: true,
+            },
+            nodeId: item.id,
+          },
+        };
+      }),
+    });
+  }, [dataSource]);
+
   return (
     <Modal
       title={'扫描'}
       maskClosable={false}
       visible
       onCancel={props.close}
-      width={700}
+      width={1300}
       footer={[
         <Button key={1} onClick={props.close}>
           取消
@@ -227,21 +359,28 @@ export default (props: Props) => {
           key={2}
           loading={spinning}
           onClick={async () => {
+            const data: any = await form.submit();
+            const arr = data?.array || [];
             if (!arr.length) {
               onlyMessage('请选择目标数据', 'error');
               return;
             }
-            const list = arr.map((item) => {
+            const list = arr.map((item: any) => {
               return {
-                id: item.key,
-                name: item.title,
-                type: item.type,
+                name: item.name,
+                provider: 'OPC_UA',
+                collectorId: props.collector?.id,
+                collectorName: props.collector?.name,
+                pointKey: item.id,
+                configuration: {
+                  interval: item.configuration?.interval?.value,
+                },
+                features: !item.features?.value ? [] : ['changedOnly'],
+                accessModes: item.accessModes?.value || [],
               };
             });
             setSpinning(true);
-            const resp = await service.savePointBatch(props.collector?.id, props.collector?.name, [
-              ...list,
-            ]);
+            const resp = await service.savePointBatch([...list]);
             if (resp.status === 200) {
               onlyMessage('操作成功');
               props.reload();
@@ -254,15 +393,39 @@ export default (props: Props) => {
       ]}
     >
       <Spin spinning={loading}>
-        <TreeTransfer
-          channelId={props.collector?.channelId}
-          dataSource={treeData}
-          targetKeys={targetKeys}
-          onChange={onChange}
-          arrChange={(li) => {
-            setArr(li);
-          }}
-        />
+        <Row gutter={24}>
+          <Col span={6}>
+            <div style={{ padding: '10px 0' }}>
+              <Tree
+                blockNode
+                checkable
+                checkStrictly
+                checkedKeys={checkedKeys}
+                height={500}
+                treeData={treeData}
+                loadData={onLoadData}
+                onCheck={(checkedKeysValue, info) => {
+                  setCheckedKeys(checkedKeysValue);
+                  setDataSource(info.checkedNodes);
+                }}
+                titleRender={(nodeData) => {
+                  return (
+                    <div style={{ color: selectKeys.includes(nodeData.key) ? '#1d39c4' : 'black' }}>
+                      {nodeData.name}
+                    </div>
+                  );
+                }}
+              />
+            </div>
+          </Col>
+          <Col span={18}>
+            <div>
+              <FormProvider form={form}>
+                <SchemaField schema={schema} />
+              </FormProvider>
+            </div>
+          </Col>
+        </Row>
       </Spin>
     </Modal>
   );
