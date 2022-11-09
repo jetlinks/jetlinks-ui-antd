@@ -1386,7 +1386,13 @@ export default [
                   'data-collector',
                   'things-collector',
                 ],
-                permissions: [],
+                permissions: [
+                  { permission: 'dashboard', actions: ['query'] },
+                  { permission: 'data-collect-channel', actions: ['query'] },
+                  { permission: 'data-collect-opc', actions: ['query'] },
+                  { permission: 'data-collector', actions: ['query'] },
+                  { permission: 'things-collector', actions: ['query'] },
+                ],
                 buttons: [],
               },
               {

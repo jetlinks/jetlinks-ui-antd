@@ -25,6 +25,7 @@ type PointItem = {
   description?: string;
   provider: string;
   collectorId: string;
+  pointKey: string;
   circuitBreaker: {
     type: 'Ignore' | 'Break' | 'LowerFrequency';
     maxConsecutiveErrors?: string;

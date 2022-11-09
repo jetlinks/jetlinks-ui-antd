@@ -15,6 +15,7 @@ import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import OpcSave from '@/pages/link/DataCollect/components/Point/Save/opc-ua';
 import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
 import BatchUpdate from './Save/BatchUpdate';
+import { onlyMessage } from '@/utils/util';
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   data?: Partial<CollectorItem>;
@@ -37,6 +38,7 @@ const PointModel = model<{
   reload: boolean;
   batch_visible: boolean;
   list: any[];
+  selectKey: string[];
 }>({
   m_visible: false,
   p_visible: false,
@@ -46,6 +48,7 @@ const PointModel = model<{
   reload: false,
   batch_visible: false,
   list: [],
+  selectKey: [],
 });
 
 const PointCard = observer((props: PointCardProps) => {
@@ -84,6 +87,25 @@ const PointCard = observer((props: PointCardProps) => {
           },
         },
         {
+          title: '访问类型',
+          dataIndex: 'accessModes',
+          valueType: 'select',
+          valueEnum: {
+            read: {
+              text: '读',
+              status: 'read',
+            },
+            write: {
+              text: '写',
+              status: 'write',
+            },
+            subscribe: {
+              text: '订阅',
+              status: 'subscribe',
+            },
+          },
+        },
+        {
           title: '状态',
           dataIndex: 'state',
           valueType: 'select',
@@ -107,6 +129,21 @@ const PointCard = observer((props: PointCardProps) => {
         {
           title: '名称',
           dataIndex: 'name',
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '异常',
+              status: 'disabled',
+            },
+          },
         },
         {
           title: '状态',
@@ -162,7 +199,6 @@ const PointCard = observer((props: PointCardProps) => {
       .then((resp) => {
         if (resp.status === 200) {
           setDataSource(resp.result);
-          PointModel.list = resp.result?.data || [];
           subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
         }
         setLoading(false);
@@ -218,7 +254,11 @@ const PointCard = observer((props: PointCardProps) => {
                     style={{ marginLeft: 15 }}
                     isPermission={permission.update}
                     onClick={() => {
-                      PointModel.batch_visible = true;
+                      if (PointModel.list.length) {
+                        PointModel.batch_visible = true;
+                      } else {
+                        onlyMessage('请选择点位', 'error');
+                      }
                     }}
                     key="batch"
                   >
@@ -231,13 +271,30 @@ const PointCard = observer((props: PointCardProps) => {
               <>
                 <Row gutter={[18, 18]} style={{ marginTop: 10 }}>
                   {(dataSource?.data || []).map((record: any) => (
-                    <Col key={record.id} span={12}>
+                    <Col
+                      key={record.id}
+                      span={12}
+                      onClick={() => {
+                        if (props?.provider === 'OPC_UA') {
+                          if (PointModel.selectKey.includes(record.id)) {
+                            PointModel.selectKey = PointModel.selectKey.filter(
+                              (i) => i !== record.id,
+                            );
+                            PointModel.list = PointModel.list.filter((i) => i.id !== record.id);
+                          } else {
+                            PointModel.selectKey.push(record.id);
+                            PointModel.list.push(record);
+                          }
+                        }
+                      }}
+                    >
                       <CollectorCard
                         item={record}
                         wsValue={propertyValue[record.id]}
                         reload={() => {
                           handleSearch(param);
                         }}
+                        activeStyle={PointModel.selectKey.includes(record.id) ? 'active' : ''}
                         update={(item, flag) => {
                           if (flag) {
                             PointModel.writeVisible = true;
@@ -356,6 +413,8 @@ export default observer((props: Props) => {
           reload={() => {
             PointModel.batch_visible = false;
             PointModel.reload = !PointModel.reload;
+            PointModel.list = [];
+            PointModel.selectKey = [];
           }}
         />
       )}

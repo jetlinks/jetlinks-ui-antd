@@ -140,7 +140,7 @@ export default (props: Props) => {
             'x-disabled': props.data?.id,
             enum: [
               { label: 'OPC UA', value: 'OPC_UA' },
-              { label: 'MODBUS TCP', value: 'MODBUS_TCP' },
+              { label: 'Modbus TCP', value: 'MODBUS_TCP' },
             ],
             'x-validator': [
               {

@@ -194,39 +194,39 @@ export default (props: Props) => {
               },
             ],
           },
-          'configuration.codec.configuration.readIndex': {
-            title: '起始位置',
-            'x-component': 'NumberPicker',
-            'x-decorator': 'FormItem',
-            'x-decorator-props': {
-              gridSpan: 2,
-            },
-            'x-component-props': {
-              placeholder: '请输入起始位置',
-              stringMode: true,
-            },
-            'x-reactions': {
-              dependencies: ['...function'],
-              fulfill: {
-                state: {
-                  visible: '{{$deps[0] === "HoldingRegisters"}}',
-                },
-              },
-            },
-            'x-validator': [
-              {
-                required: true,
-                message: '请输入起始位置',
-              },
-              {
-                min: 1,
-                message: '请输入非0正整数',
-              },
-              {
-                checkLength: true,
-              },
-            ],
-          },
+          // 'configuration.codec.configuration.readIndex': {
+          //   title: '起始位置',
+          //   'x-component': 'NumberPicker',
+          //   'x-decorator': 'FormItem',
+          //   'x-decorator-props': {
+          //     gridSpan: 2,
+          //   },
+          //   'x-component-props': {
+          //     placeholder: '请输入起始位置',
+          //     stringMode: true,
+          //   },
+          //   'x-reactions': {
+          //     dependencies: ['...function'],
+          //     fulfill: {
+          //       state: {
+          //         visible: '{{$deps[0] === "HoldingRegisters"}}',
+          //       },
+          //     },
+          //   },
+          //   'x-validator': [
+          //     {
+          //       required: true,
+          //       message: '请输入起始位置',
+          //     },
+          //     {
+          //       min: 1,
+          //       message: '请输入非0正整数',
+          //     },
+          //     {
+          //       checkLength: true,
+          //     },
+          //   ],
+          // },
           'configuration.parameter.quantity': {
             title: '寄存器数量',
             'x-component': 'NumberPicker',
@@ -238,6 +238,16 @@ export default (props: Props) => {
               placeholder: '请输入寄存器数量',
               stringMode: true,
             },
+            // 'x-reactions': [
+            //   {
+            //     dependencies: ['configuration.codec.provider'],
+            //     fulfill: {
+            //       state: {
+            //         selfErrors: '{{$deps[0] && $self.value && {"int8:": 1, "int16": 2, "int32": 4, "int64": 8, "ieee754_float": 4, "ieee754_double": 8, "hex": 1}[$deps[0]] > $self.value * 2 ? "数据类型长度需 <= 寄存器数量 * 2" : ""}}',
+            //       },
+            //     },
+            //   },
+            // ],
             default: 1,
             'x-validator': [
               {
@@ -266,10 +276,12 @@ export default (props: Props) => {
             'x-reactions': [
               '{{useAsyncDataSource(getCodecProvider)}}',
               {
-                dependencies: ['..function'],
+                dependencies: ['..function', 'configuration.parameter.quantity'],
                 fulfill: {
                   state: {
                     visible: '{{$deps[0] === "HoldingRegisters"}}',
+                    selfErrors:
+                      '{{$deps[1] && $self.value && {"int8:": 1, "int16": 2, "int32": 4, "int64": 8, "ieee754_float": 4, "ieee754_double": 8, "hex": 1}[$self.value] > $deps[1] * 2 ? "数据类型长度需 <= 寄存器数量 * 2" : ""}}',
                   },
                 },
               },
@@ -413,8 +425,17 @@ export default (props: Props) => {
       collectorId: props?.collector?.id,
     };
     const response: any = props.data?.id
-      ? await service.updatePoint(props.data?.id, { ...props.data, ...value })
-      : await service.savePoint({ ...obj, ...props.data, ...value });
+      ? await service.updatePoint(props.data?.id, {
+          ...props.data,
+          ...value,
+          pointKey: value?.configuration?.parameter?.address,
+        })
+      : await service.savePoint({
+          ...obj,
+          ...props.data,
+          ...value,
+          pointKey: value?.configuration?.parameter?.address,
+        });
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();

@@ -90,16 +90,19 @@ const DeviceBoard = () => {
         return {
           limit: 24,
           interval: '1h',
+          format: 'HH:mm',
         };
       case 'week':
         return {
           limit: 7,
           interval: '1d',
+          format: 'MM-dd',
         };
       case 'hour':
         return {
           limit: 60,
           interval: '1m',
+          format: 'HH:mm',
         };
       default:
         const time = dt.end - dt.start;
@@ -109,16 +112,19 @@ const DeviceBoard = () => {
           return {
             limit: Math.abs(Math.ceil(time / (60 * 60))),
             interval: '1m',
+            format: 'HH:mm',
           };
         } else if (time > hour && time <= days) {
           return {
             limit: Math.abs(Math.ceil(time / hour)),
             interval: '1h',
+            format: 'HH:mm',
           };
         } else {
           return {
             limit: Math.abs(Math.ceil(dt / days)) + 1,
             interval: '1d',
+            format: 'MM-dd',
           };
         }
     }
@@ -137,7 +143,7 @@ const DeviceBoard = () => {
           from: data.time.start,
           to: data.time.end,
           interval: getParams(data.time).interval,
-          format: 'HH:mm',
+          format: getParams(data.time).format,
         },
       },
     ]);

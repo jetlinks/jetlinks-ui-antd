@@ -1,13 +1,13 @@
 import { Button, Modal } from 'antd';
-import { FormItem, Input, ArrayTable, Editable, NumberPicker } from '@formily/antd';
-import MyInput from './components/MyInput';
-import MySelect from './components/MySelect';
+import { FormItem, Checkbox, NumberPicker, FormGrid, Form } from '@formily/antd';
 import { createForm, registerValidateRules } from '@formily/core';
-import { FormProvider, createSchemaField } from '@formily/react';
-import { useEffect } from 'react';
+import { createSchemaField } from '@formily/react';
+import RadioCard from '@/components/RadioCard';
+import service from '@/pages/link/DataCollect/service';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
-  data?: any[];
+  data: any[];
   close: () => void;
   reload: () => void;
 }
@@ -15,40 +15,29 @@ interface Props {
 export default (props: Props) => {
   const SchemaField = createSchemaField({
     components: {
+      Form,
       FormItem,
-      Editable,
-      Input,
-      ArrayTable,
+      Checkbox,
+      FormGrid,
+      RadioCard,
       NumberPicker,
-      MyInput,
-      MySelect,
     },
   });
 
   const form = createForm({
-    initialValues: { array: [] },
-    effects: () => {
-      // onFieldValueChange('array.*.accessModes', (field, form1) => {
-      //   if (field.modified) {
-      //     const value = field.value;
-      //     console.log(value)
-      //     // form1.setFieldState('description', (state) => {
-      //     //   state.value = '';
-      //     // });
-      //   }
-      // });
-    },
+    initialValues: {},
   });
 
   registerValidateRules({
     checkLength(value) {
+      if (!value) return '';
       if (String(value).length > 64) {
         return {
           type: 'error',
           message: '最多可输入64个字符',
         };
       }
-      if (!(value % 1 === 0)) {
+      if (!(Number(value) % 1 === 0) || Number(value) <= 0) {
         return {
           type: 'error',
           message: '请输入非0正整数',
@@ -61,152 +50,107 @@ export default (props: Props) => {
   const schema = {
     type: 'object',
     properties: {
-      array: {
-        type: 'array',
-        'x-decorator': 'FormItem',
-        'x-component': 'ArrayTable',
+      layout: {
+        type: 'void',
+        'x-component': 'FormGrid',
         'x-component-props': {
-          pagination: { pageSize: 10 },
-          scroll: { x: '100%' },
+          maxColumns: 2,
+          minColumns: 2,
+          columnGap: 24,
         },
-        items: {
-          type: 'object',
-          properties: {
-            column1: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '名称' },
-              properties: {
-                name: {
-                  type: 'string',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    placeholder: '请输入点位名称',
-                  },
-                  'x-validator': [
-                    {
-                      required: true,
-                      message: '请输入点位名称',
-                    },
-                    {
-                      max: 64,
-                      message: '最多可输入64个字符',
-                    },
-                  ],
-                },
+        properties: {
+          accessModes: {
+            title: '访问类型',
+            type: 'array',
+            'x-component': 'RadioCard',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择访问类型',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '读', value: 'read' },
+                { label: '写', value: 'write' },
+                { label: '订阅', value: 'subscribe' },
+              ],
+            },
+            // 'x-validator': [
+            //   {
+            //     required: true,
+            //     message: '请选择访问类型',
+            //   },
+            // ],
+          },
+          interval: {
+            title: '采集频率',
+            'x-component': 'NumberPicker',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+              tooltip: '采集频率为0时不执行轮询任务',
+            },
+            // 'x-reactions': {
+            //   dependencies: ['..accessModes'],
+            //   fulfill: {
+            //     state: {
+            //       visible: '{{($deps[0] || []).includes("subscribe")}}',
+            //     },
+            //   },
+            // },
+            'x-component-props': {
+              placeholder: '请输入采集频率',
+              addonAfter: '毫秒',
+              stringMode: true,
+              style: {
+                width: '100%',
               },
             },
-            column2: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: 'nodeId', width: 150 },
-              properties: {
-                'configuration.nodeId': {
-                  type: 'string',
-                  'x-component': 'Input',
-                  'x-component-props': {
-                    readOnly: true,
-                  },
-                },
+            'x-validator': [
+              {
+                min: 0,
+                message: '请输入正整数',
               },
-            },
-            column3: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '访问类型', width: 200 },
-              properties: {
-                accessModes: {
-                  type: 'string',
-                  'x-component': 'MySelect',
-                  'x-component-props': {
-                    placeholder: '请选择访问类型',
-                    mode: 'multiple',
-                    options: [
-                      { label: '读', value: 'read' },
-                      { label: '写', value: 'write' },
-                      { label: '订阅', value: 'subscribe' },
-                    ],
-                  },
-                  'x-validator': [
-                    {
-                      required: true,
-                      message: '请选择访问类型',
-                    },
-                  ],
-                },
+              {
+                checkLength: true,
               },
+            ],
+          },
+          features: {
+            title: '',
+            type: 'array',
+            'x-component': 'Checkbox.Group',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
             },
-            column4: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': { title: '采集频率' },
-              properties: {
-                'configuration.interval': {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'MyInput',
-                  'x-component-props': {
-                    placeholder: '请输入采集频率',
-                  },
-                  'x-validator': [
-                    {
-                      required: true,
-                      message: '请输入采集频率',
-                    },
-                    {
-                      checkLength: true,
-                    },
-                  ],
-                },
+            // 'x-reactions': {
+            //   dependencies: ['.accessModes'],
+            //   fulfill: {
+            //     state: {
+            //       visible: '{{($deps[0] || []).includes("subscribe")}}',
+            //     },
+            //   },
+            // },
+            enum: [
+              {
+                label: '只推送变化的数据',
+                value: 'changedOnly',
               },
-            },
-            column5: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': { width: 210, title: '只推送变化的数据' },
-              properties: {
-                features: {
-                  type: 'array',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'MySelect',
-                  'x-component-props': {
-                    options: [
-                      {
-                        label: '是',
-                        value: true,
-                      },
-                      {
-                        label: '否',
-                        value: false,
-                      },
-                    ],
-                  },
-                },
-              },
-            },
+            ],
           },
         },
       },
     },
   };
-
-  useEffect(() => {
-    const one = (props?.data || [])[0];
-    form.setValues({
-      array: (props?.data || []).map((item) => {
-        return {
-          ...one,
-          features: one.features.includes('changedOnly'),
-          id: item.id,
-          name: item.name,
-          configuration: {
-            ...one.configuration,
-            nodeId: item.configuration.nodeId,
-          },
-        };
-      }),
-    });
-  }, [props.data]);
 
   return (
     <Modal
@@ -214,19 +158,53 @@ export default (props: Props) => {
       maskClosable={false}
       visible
       onCancel={props.close}
-      width={1200}
+      width={600}
       footer={[
         <Button key={1} onClick={props.close}>
           取消
         </Button>,
-        <Button type="primary" key={2} onClick={() => {}}>
+        <Button
+          type="primary"
+          key={2}
+          onClick={async () => {
+            const value = await form.submit<any>();
+            const obj = props.data[0];
+            if (value.accessModes.length) {
+              obj.accessModes = value.accessModes;
+            }
+            if (value.features.length) {
+              obj.features = value.features;
+            }
+            if (Number(value.interval) >= 0) {
+              obj.configuration = {
+                ...obj.configuration,
+                interval: Number(value.interval),
+              };
+            }
+            const arr = props.data.map((item) => {
+              return {
+                ...item,
+                ...obj,
+                pointKey: obj?.configuration?.nodeId,
+              };
+            });
+            const response = await service.savePointBatch(obj.collectorId, obj.collectorName, arr);
+            if (response && response?.status === 200) {
+              onlyMessage('操作成功');
+              props.reload();
+            }
+          }}
+        >
           确定
         </Button>,
       ]}
     >
-      <FormProvider form={form}>
+      <div style={{ margin: '5px 0 20px 0' }}>
+        将批量修改{(props?.data || []).length}条数据的访问类型、采集频率、只推送变化的数据
+      </div>
+      <Form form={form} layout="vertical">
         <SchemaField schema={schema} />
-      </FormProvider>
+      </Form>
     </Modal>
   );
 };

@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
-import { FormItem, Input } from '@formily/antd';
+import { FormItem, Input, Form } from '@formily/antd';
 import { createForm } from '@formily/core';
-import { createSchemaField, FormProvider } from '@formily/react';
+import { createSchemaField } from '@formily/react';
 import service from '../../../service';
 import { onlyMessage } from '@/utils/util';
 
@@ -17,6 +17,7 @@ const WritePoint = (props: Props) => {
     components: {
       Input,
       FormItem,
+      Form,
     },
   });
 
@@ -30,6 +31,9 @@ const WritePoint = (props: Props) => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
+        'x-component-props': {
+          placeholder: '请输入',
+        },
       },
     },
   };
@@ -64,9 +68,9 @@ const WritePoint = (props: Props) => {
       }}
     >
       <div style={{ marginTop: '30px' }}>
-        <FormProvider form={form}>
+        <Form form={form} layout="vertical">
           <SchemaField schema={schema} />
-        </FormProvider>
+        </Form>
       </div>
     </Modal>
   );

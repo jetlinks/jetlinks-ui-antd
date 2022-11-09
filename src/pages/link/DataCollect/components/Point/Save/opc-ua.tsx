@@ -126,24 +126,6 @@ export default (props: Props) => {
               },
             ],
           },
-          // 'configuration.codec.provider': {
-          //   title: '数据类型',
-          //   'x-component': 'Select',
-          //   'x-decorator': 'FormItem',
-          //   'x-decorator-props': {
-          //     gridSpan: 2,
-          //   },
-          //   'x-component-props': {
-          //     placeholder: '请选择数据类型',
-          //   },
-          //   'x-reactions': '{{useAsyncDataSource(getCodecProvider)}}',
-          //   'x-validator': [
-          //     {
-          //       required: true,
-          //       message: '请选择数据类型',
-          //     },
-          //   ],
-          // },
           accessModes: {
             title: '访问类型',
             type: 'array',
@@ -183,14 +165,14 @@ export default (props: Props) => {
               gridSpan: 2,
             },
             default: 3000,
-            'x-reactions': {
-              dependencies: ['..accessModes'],
-              fulfill: {
-                state: {
-                  visible: '{{($deps[0] || []).includes("subscribe")}}',
-                },
-              },
-            },
+            // 'x-reactions': {
+            //   dependencies: ['..accessModes'],
+            //   fulfill: {
+            //     state: {
+            //       visible: '{{($deps[0] || []).includes("subscribe")}}',
+            //     },
+            //   },
+            // },
             'x-component-props': {
               placeholder: '请输入采集频率',
               addonAfter: '毫秒',
@@ -216,14 +198,14 @@ export default (props: Props) => {
             'x-decorator-props': {
               gridSpan: 2,
             },
-            'x-reactions': {
-              dependencies: ['.accessModes'],
-              fulfill: {
-                state: {
-                  visible: '{{($deps[0] || []).includes("subscribe")}}',
-                },
-              },
-            },
+            // 'x-reactions': {
+            //   dependencies: ['.accessModes'],
+            //   fulfill: {
+            //     state: {
+            //       visible: '{{($deps[0] || []).includes("subscribe")}}',
+            //     },
+            //   },
+            // },
             enum: [
               {
                 label: '只推送变化的数据',
@@ -252,7 +234,6 @@ export default (props: Props) => {
 
   const saveData = async () => {
     const value = await form.submit<PointItem>();
-    console.log(value);
     const response: any = props.data?.id
       ? await service.updatePoint(props.data?.id, { ...props.data, ...value })
       : await service.savePoint({ ...props.data, ...value });
