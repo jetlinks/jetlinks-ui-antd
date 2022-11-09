@@ -28,16 +28,21 @@ class Service extends BaseService<any> {
       method: 'POST',
       data,
     });
-  treeMap = (deviceId: string, data?: any) =>
-    request(
-      `/${SystemConst.API_BASE}/edge/operations/${deviceId}/data-collector-channel-tree/invoke`,
-      {
-        method: 'POST',
-        data,
-      },
-    );
-  saveMap = (thingType: string, thingId: any, data?: any) =>
-    request(`/${SystemConst.API_BASE}/things/collector/${thingType}/${thingId}/{provider}`, {
+  // treeMap = (data?: any) =>
+  //   request(
+  //     `/${SystemConst.API_BASE}/data-collect/channel/_all/tree`,
+  //     {
+  //       method: 'POST',
+  //       data: data,
+  //     },
+  //   );
+  treeMap = (data: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/channel/_all/tree`, {
+      method: 'POST',
+      data: data,
+    });
+  saveMap = (thingId: any, provider: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/things/collector/device/${thingId}/${provider}`, {
       method: 'PATCH',
       data: data,
     });

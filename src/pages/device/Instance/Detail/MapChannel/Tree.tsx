@@ -2,19 +2,18 @@ import { onlyMessage } from '@/utils/util';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Modal, Tree, List, Popconfirm } from 'antd';
 import { useEffect, useRef, useState } from 'react';
-import { service } from '..';
+import { service } from '.';
 import './index.less';
 
 interface Props {
   close: any;
   deviceId: string;
-  edgeId: string;
   metaData: any;
-  addDevice?: any;
+  type: 'MODBUS_TCP' | 'OPC_UA';
 }
 
-const MapTree = (props: Props) => {
-  const { deviceId, edgeId, close, metaData } = props;
+const ChannelTree = (props: Props) => {
+  const { deviceId, close, metaData, type } = props;
   const [data, setData] = useState<any>([]);
   const [checked, setChecked] = useState<any>([]);
   const filterRef = useRef<any>([]);
@@ -49,9 +48,9 @@ const MapTree = (props: Props) => {
   };
 
   const save = async () => {
-    // console.log(list,'list')
+    console.log(metaData);
     const params: any[] = [];
-    // const metadataId = metaData.map((item: any) => item.metadataId);
+    // const metadataName = metaData.map((item: any) => item.name);
     list.forEach((item: any) => {
       const array = item.points.map((element: any) => ({
         channelId: item.parentId,
@@ -64,44 +63,34 @@ const MapTree = (props: Props) => {
       params.push(...array);
     });
     const filterParms = params.filter((item) => !!item.metadataId);
-    if (deviceId) {
-      if (filterParms && filterParms.length !== 0) {
-        const res = await service.saveMap(edgeId, {
-          deviceId: deviceId,
-          provider: filterParms[0].provider,
-          requestList: filterParms,
-        });
-        if (res.status === 200) {
-          onlyMessage('保存成功');
-          close();
-        }
-      } else {
-        onlyMessage('暂无属性映射', 'warning');
+    // console.log(filterParms, params)
+    if (filterParms && filterParms.length !== 0) {
+      const res = await service.saveMap(deviceId, type, filterParms);
+      if (res.status === 200) {
+        onlyMessage('操作成功');
+        close();
       }
     } else {
-      const res = await service.addDevice(props.addDevice);
-      if (res.status === 200) {
-        const resp = await service.saveMap(edgeId, {
-          deviceId: res.result.id,
-          provider: filterParms[0].provider,
-          requestList: filterParms,
-        });
-        if (resp.status === 200) {
-          onlyMessage('保存成功');
-          close();
-        }
-      }
+      onlyMessage('暂无对应属性的映射', 'warning');
     }
   };
 
   useEffect(() => {
-    service.treeMap(edgeId).then((res) => {
-      if (res.status === 200) {
-        // console.log(res.result?.[0], 'data');
-        setData(res.result?.[0]);
+    service
+      .treeMap({
+        terms: [
+          {
+            column: 'provider',
+            value: type,
+          },
+        ],
+      })
+      .then((res) => {
+        // console.log(res.result)
+        setData(res.result);
         setExpandedKey([res.result?.[0].id]);
-      }
-    });
+      });
+    // console.log(metaData,'metaData')
   }, []);
 
   useEffect(() => {
@@ -193,4 +182,4 @@ const MapTree = (props: Props) => {
     </Modal>
   );
 };
-export default MapTree;
+export default ChannelTree;

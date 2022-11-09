@@ -10,6 +10,8 @@ import Service from './service';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import './index.less';
+import { onlyMessage } from '@/utils/util';
+import ChannelTree from './Tree';
 
 interface Props {
   type: 'MODBUS_TCP' | 'OPC_UA';
@@ -24,6 +26,7 @@ const MapChannel = (props: Props) => {
   const [reload, setReload] = useState<string>('');
   const [properties, setProperties] = useState<any>([]);
   const [channelList, setChannelList] = useState<any>([]);
+  const [visible, setVisible] = useState<boolean>(false);
 
   const Render = (propsName: any) => {
     const text = properties.find((item: any) => item.metadataId === propsName.value);
@@ -34,6 +37,13 @@ const MapChannel = (props: Props) => {
       return <Badge status="success" text={'已绑定'} />;
     } else {
       return <Badge status="error" text={'未绑定'} />;
+    }
+  };
+  const remove = async (params: any) => {
+    const res = await service.removeMap('device', data.id, [params]);
+    if (res.status === 200) {
+      onlyMessage('解绑成功');
+      setReload('remove');
     }
   };
   const ActionButton = () => {
@@ -51,7 +61,7 @@ const MapChannel = (props: Props) => {
           title: '确认解绑',
           disabled: !record(index)?.id,
           onConfirm: async () => {
-            // remove(record(index)?.id);
+            remove(record(index)?.id);
           },
         }}
         key="unbind"
@@ -343,6 +353,14 @@ const MapChannel = (props: Props) => {
     },
   };
 
+  const save = async (item: any) => {
+    const res = await service.saveMap(data.id, type, item);
+    if (res.status === 200) {
+      onlyMessage('保存成功');
+      setReload('save');
+    }
+  };
+
   useEffect(() => {
     service
       .getChannel({
@@ -375,6 +393,7 @@ const MapChannel = (props: Props) => {
       metadataId: item.id,
       metadataName: `${item.name}(${item.id})`,
       metadataType: 'property',
+      name: item.name,
     }));
     if (metadata && metadata.length !== 0) {
       service.getMap('device', data.id).then((res) => {
@@ -395,7 +414,7 @@ const MapChannel = (props: Props) => {
           const delList = array.filter((a: any) => !a.metadataName).map((b: any) => b.id);
           //删除后解绑
           if (delList && delList.length !== 0) {
-            // service.removeDevicePoint(data.id, delList);
+            service.removeMap('device', data.id, delList);
           }
         }
       });
@@ -411,17 +430,21 @@ const MapChannel = (props: Props) => {
       ) : (
         <>
           <div className="top-button">
-            <Button style={{ marginRight: 10 }} onClick={async () => {}}>
+            <Button
+              style={{ marginRight: 10 }}
+              onClick={async () => {
+                setVisible(true);
+              }}
+            >
               批量映射
             </Button>
             <Button
               type="primary"
               onClick={async () => {
-                setReload('');
-                console.log(type);
                 const value: any = await form.submit();
                 if (value) {
-                  console.log(value);
+                  const array = value.requestList.filter((item: any) => item.channelId);
+                  save(array);
                 }
               }}
             >
@@ -432,6 +455,17 @@ const MapChannel = (props: Props) => {
             <SchemaField schema={schema} scope={{ useAsyncDataSource, getCollector, getPoint }} />
           </FormProvider>
         </>
+      )}
+      {visible && (
+        <ChannelTree
+          close={() => {
+            setVisible(false);
+            setReload('map');
+          }}
+          deviceId={data.id}
+          metaData={properties}
+          type={type}
+        />
       )}
     </Card>
   );
