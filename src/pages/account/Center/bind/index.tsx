@@ -43,7 +43,8 @@ const Bind = () => {
     const redirectUrl = urlParams.get('redirect') || window.location.href.split('redirect=')?.[1];
     // const url = window.location.href.split('redirect=')?.[1];
     console.log(redirectUrl);
-    if (redirectUrl) {
+    //内部集成需要跳回它们页面
+    if (redirectUrl && redirectUrl.indexOf('account/center/bind') === -1) {
       window.location.href = decodeURIComponent(redirectUrl);
     }
   };
