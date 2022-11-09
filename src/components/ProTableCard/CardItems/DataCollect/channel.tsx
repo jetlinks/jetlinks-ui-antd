@@ -29,9 +29,11 @@ export default (props: ChannelCardProps) => {
       statusText={props.state?.text}
       showMask={false}
       statusNames={{
-        enabled: StatusColorEnum.success,
-        disabled: StatusColorEnum.default,
-        error: StatusColorEnum.error,
+        running: StatusColorEnum.success,
+        disabled: StatusColorEnum.processing,
+        partialError: StatusColorEnum.warning,
+        failed: StatusColorEnum.error,
+        stopped: StatusColorEnum.default,
       }}
     >
       <div className={'pro-table-card-item'}>
