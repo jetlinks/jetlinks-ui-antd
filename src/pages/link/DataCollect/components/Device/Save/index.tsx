@@ -1,7 +1,7 @@
 import { Button, Modal } from 'antd';
 import { createForm, Field, onFieldReact } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
@@ -48,6 +48,16 @@ export default (props: Props) => {
       });
     },
   });
+
+  useEffect(() => {
+    if (props.data?.id) {
+      service.queryCollectorByID(props.data?.id).then((resp) => {
+        if (resp.status === 200) {
+          form.setValues(resp.result);
+        }
+      });
+    }
+  }, [props.data]);
 
   const SchemaField = createSchemaField({
     components: {
