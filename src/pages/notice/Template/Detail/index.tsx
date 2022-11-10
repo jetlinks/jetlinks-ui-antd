@@ -417,11 +417,14 @@ const Detail = observer(() => {
           });
           onFieldValueChange('template.templateType', (field, form1) => {
             const value = (field as Field).value;
-            // console.log(value,'11111')
             form1.setFieldState('template.message', (state1) => {
               if (value === 'tts') {
                 state1.disabled = false;
                 state1.hidden = false;
+                state1.componentProps = {
+                  rows: 5,
+                  placeholder: '此部分内容来自阿里云短信',
+                };
               } else {
                 state1.hidden = true;
               }
@@ -1026,6 +1029,7 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请选择类型',
                     },
+                    default: 'tts',
                     enum: [
                       { label: '语音通知', value: 'voice' },
                       { label: '语音验证码', value: 'tts' },
@@ -1125,7 +1129,7 @@ const Detail = observer(() => {
                       },
                     ],
                   },
-                  PlayTimes: {
+                  playTimes: {
                     title: '播放次数',
                     'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
