@@ -220,7 +220,7 @@ const CollectorCard = (props: PointCardProps) => {
                     {(item?.accessModes || []).map((i) => i?.text).join(',')}
                   </div>
                   <div className={'card-item-content-item-tag'}>
-                    采集频率{item?.configuration?.interval}s
+                    采集频率{item?.configuration?.interval}ms
                   </div>
                 </div>
               </div>

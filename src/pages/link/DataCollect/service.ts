@@ -158,6 +158,12 @@ class Service {
       method: 'POST',
       data,
     });
+
+  public validateField = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/endpoint/_validate`, {
+      method: 'POST',
+      data,
+    });
 }
 
 const service = new Service();

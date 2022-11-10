@@ -122,7 +122,7 @@ const DeviceBoard = () => {
           };
         } else {
           return {
-            limit: Math.abs(Math.ceil(dt / days)) + 1,
+            limit: Math.abs(Math.ceil(time / days)) + 1,
             interval: '1d',
             format: 'MM-dd',
           };

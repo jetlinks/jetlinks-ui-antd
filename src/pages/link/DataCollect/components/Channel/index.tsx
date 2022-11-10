@@ -190,6 +190,7 @@ export default observer((props: Props) => {
                               title: '该操作将会删除下属采集器与点位，确定删除？',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
+                                handleSearch(param);
                                 onlyMessage(
                                   intl.formatMessage({
                                     id: 'pages.data.option.success',
