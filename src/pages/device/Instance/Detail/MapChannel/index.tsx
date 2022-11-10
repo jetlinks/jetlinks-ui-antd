@@ -293,6 +293,12 @@ const MapChannel = (props: Props) => {
                       option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
                   },
                   'x-reactions': ['{{useAsyncDataSource(getPoint)}}'],
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请选择点位',
+                    },
+                  ],
                 },
               },
             },
@@ -442,7 +448,8 @@ const MapChannel = (props: Props) => {
               type="primary"
               onClick={async () => {
                 const value: any = await form.submit();
-                if (value) {
+                const arr = value.requestList.filter((i: any) => i.channelId);
+                if (arr && arr.length !== 0) {
                   const array = value.requestList.filter((item: any) => item.channelId);
                   save(array);
                 }

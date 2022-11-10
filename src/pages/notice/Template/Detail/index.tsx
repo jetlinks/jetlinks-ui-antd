@@ -415,7 +415,7 @@ const Detail = observer(() => {
               //   break;
             }
           });
-          onFieldValueChange('template.templateType', (field, form1) => {
+          onFieldReact('template.templateType', (field, form1) => {
             const value = (field as Field).value;
             form1.setFieldState('template.message', (state1) => {
               if (value === 'tts') {
