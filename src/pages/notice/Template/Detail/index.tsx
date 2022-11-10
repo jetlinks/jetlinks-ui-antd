@@ -418,12 +418,14 @@ const Detail = observer(() => {
           onFieldValueChange('template.templateType', (field, form1) => {
             const value = (field as Field).value;
             // console.log(value,'11111')
-            if (value === 'tts') {
-              form1.setFieldState('template.message', (state1) => {
+            form1.setFieldState('template.message', (state1) => {
+              if (value === 'tts') {
                 state1.disabled = false;
                 state1.hidden = false;
-              });
-            }
+              } else {
+                state1.hidden = true;
+              }
+            });
           });
         },
       }),
