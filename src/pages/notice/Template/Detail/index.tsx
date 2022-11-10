@@ -421,12 +421,17 @@ const Detail = observer(() => {
               if (value === 'tts') {
                 state1.disabled = false;
                 state1.hidden = false;
+                state1.required = false;
+                state1.decoratorProps = {
+                  tooltip: '语音验证码内容输入框，用于渲染验语音证码变量。',
+                };
                 state1.componentProps = {
                   rows: 5,
-                  placeholder: '此部分内容来自阿里云短信',
+                  placeholder: '此部分内容中变量将用于阿里云语音验证码。',
                 };
               } else {
                 state1.hidden = true;
+                state1.value = undefined;
               }
             });
           });
