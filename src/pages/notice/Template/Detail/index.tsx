@@ -139,6 +139,12 @@ const Detail = observer(() => {
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
               };
             }
+            // if (id === 'voice') {
+            //   const type = field.query('template.*.templateType').value();
+            //   console.log(type,'111111')
+            //   field.hidden = false
+            //   field.disabled = false
+            // }
           });
           onFieldValueChange('provider', (field, form1) => {
             const value = field.value;
@@ -407,6 +413,16 @@ const Detail = observer(() => {
               //   format.setComponent(PreviewText.Input);
               //   format.setValue('--');
               //   break;
+            }
+          });
+          onFieldValueChange('template.templateType', (field, form1) => {
+            const value = (field as Field).value;
+            // console.log(value,'11111')
+            if (value === 'tts') {
+              form1.setFieldState('template.message', (state1) => {
+                state1.disabled = false;
+                state1.hidden = false;
+              });
             }
           });
         },
@@ -996,6 +1012,23 @@ const Detail = observer(() => {
                 'x-visible': id === 'voice',
                 type: 'void',
                 properties: {
+                  templateType: {
+                    title: '类型',
+                    required: true,
+                    'x-component': 'Select',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '语音验证码类型可配置变量，并且只支持数字和英文字母',
+                    },
+
+                    'x-component-props': {
+                      placeholder: '请选择类型',
+                    },
+                    enum: [
+                      { label: '语音通知', value: 'voice' },
+                      { label: '语音验证码', value: 'tts' },
+                    ],
+                  },
                   layout: {
                     type: 'void',
                     'x-decorator': 'FormGrid',
@@ -1004,7 +1037,7 @@ const Detail = observer(() => {
                       minColumns: 2,
                     },
                     properties: {
-                      ttsCode: {
+                      templateCode: {
                         title: '模版ID',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
@@ -1015,6 +1048,20 @@ const Detail = observer(() => {
                         required: true,
                         'x-component-props': {
                           placeholder: '请输入模版ID',
+                        },
+                      },
+                      ttsCode: {
+                        title: '模版ID',
+                        'x-component': 'Input',
+                        'x-decorator': 'FormItem',
+                        'x-hidden': true,
+                        'x-reactions': {
+                          dependencies: ['.templateCode'],
+                          fulfill: {
+                            state: {
+                              value: '{{$deps[0]}}',
+                            },
+                          },
                         },
                       },
                       calledNumber: {
