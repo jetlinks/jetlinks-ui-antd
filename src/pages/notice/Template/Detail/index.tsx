@@ -427,7 +427,7 @@ const Detail = observer(() => {
                 };
                 state1.componentProps = {
                   rows: 5,
-                  placeholder: '此部分内容中变量将用于阿里云语音验证码。',
+                  placeholder: '内容中的变量将用于阿里云语音验证码。',
                 };
               } else {
                 state1.hidden = true;
