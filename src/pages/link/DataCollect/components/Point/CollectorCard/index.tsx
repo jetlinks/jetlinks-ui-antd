@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Ellipsis, PermissionButton } from '@/components';
+import { BadgeStatus, Ellipsis, PermissionButton } from '@/components';
 import './index.less';
-import { Badge, Popconfirm, Spin, Tooltip } from 'antd';
+import { Popconfirm, Spin, Tooltip } from 'antd';
 import {
   CheckOutlined,
   DeleteOutlined,
@@ -13,6 +13,7 @@ import service from '@/pages/link/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import moment from 'moment';
 import classNames from 'classnames';
+import { StatusColorEnum } from '@/components/BadgeStatus';
 
 export interface PointCardProps {
   item: Partial<PointItem>;
@@ -51,9 +52,16 @@ const CollectorCard = (props: PointCardProps) => {
         <div className={'card-item-left'}>
           <div className={'card-item-status'}>
             <div className={'card-item-status-content'}>
-              <Badge
-                status={item.state?.value === 'enabled' ? 'success' : 'error'}
-                text={item.state?.text}
+              <BadgeStatus
+                status={item.status?.value !== undefined ? item.status?.value : ''}
+                text={item.status?.text}
+                statusNames={{
+                  running: StatusColorEnum.success,
+                  disabled: StatusColorEnum.processing,
+                  partialError: StatusColorEnum.warning,
+                  failed: StatusColorEnum.error,
+                  stopped: StatusColorEnum.default,
+                }}
               />
             </div>
           </div>
@@ -212,7 +220,7 @@ const CollectorCard = (props: PointCardProps) => {
                     {(item?.accessModes || []).map((i) => i?.text).join(',')}
                   </div>
                   <div className={'card-item-content-item-tag'}>
-                    采集频率{item?.configuration?.interval}s
+                    采集频率{item?.configuration?.interval}ms
                   </div>
                 </div>
               </div>

@@ -227,10 +227,28 @@ export default (props: Props) => {
                 required: true,
                 message: '请输入端点url',
               },
-              // {
-              //   format: 'url',
-              //   message: '请输入正确的端点url',
-              // },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    service
+                      .validateField(value)
+                      .then((resp) => {
+                        if (resp.status === 200) {
+                          if (resp.result.passed) {
+                            resolve('');
+                          } else {
+                            resolve(resp.result.reason);
+                          }
+                        }
+                        resolve('');
+                      })
+                      .catch(() => {
+                        return '验证失败!';
+                      });
+                  });
+                },
+              },
             ],
             'x-reactions': {
               dependencies: ['..provider'],

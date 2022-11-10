@@ -38,13 +38,6 @@ export default observer((props: Props) => {
     total: 0,
   });
 
-  const test = (value: string) => {
-    if (value === 'error') {
-      return '';
-    }
-    return value;
-  };
-
   const columns: ProColumns<ChannelItem>[] = [
     {
       title: '名称',
@@ -67,24 +60,40 @@ export default observer((props: Props) => {
     },
     {
       title: '状态',
-      dataIndex: 'runningState',
+      dataIndex: 'state',
       valueType: 'select',
       valueEnum: {
         enabled: {
           text: '正常',
-          status: 'running',
+          status: 'enabled',
         },
         disabled: {
           text: '禁用',
-          status: 'stopped',
-        },
-        error: {
-          text: '异常',
-          status: 'error',
+          status: 'disabled',
         },
       },
-      search: {
-        transform: test,
+    },
+    {
+      title: '运行状态',
+      dataIndex: 'runningState',
+      valueType: 'select',
+      valueEnum: {
+        running: {
+          text: '运行中',
+          status: 'running',
+        },
+        partialError: {
+          text: '部分错误',
+          status: 'partialError',
+        },
+        failed: {
+          text: '错误',
+          status: 'failed',
+        },
+        stopped: {
+          text: '已停止',
+          status: 'stopped',
+        },
       },
     },
     {
@@ -113,17 +122,7 @@ export default observer((props: Props) => {
   const getState = (record: Partial<ChannelItem>) => {
     if (record) {
       if (record?.state?.value === 'enabled') {
-        if (record?.runningState?.value === 'running') {
-          return {
-            text: '正常',
-            value: 'enabled',
-          };
-        } else {
-          return {
-            text: '异常',
-            value: 'error',
-          };
-        }
+        return { ...record?.runningState };
       } else {
         return {
           text: '禁用',
@@ -157,7 +156,7 @@ export default observer((props: Props) => {
                     <Col key={record.id} span={props.type ? 8 : 12}>
                       <ChannelCard
                         {...record}
-                        status={getState(record)}
+                        state={getState(record)}
                         actions={[
                           <PermissionButton
                             type={'link'}
@@ -191,6 +190,7 @@ export default observer((props: Props) => {
                               title: '该操作将会删除下属采集器与点位，确定删除？',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
+                                handleSearch(param);
                                 onlyMessage(
                                   intl.formatMessage({
                                     id: 'pages.data.option.success',

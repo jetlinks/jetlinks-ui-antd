@@ -188,7 +188,7 @@ export default (props: Props) => {
                 pointKey: obj?.configuration?.nodeId,
               };
             });
-            const response = await service.savePointBatch(obj.collectorId, obj.collectorName, arr);
+            const response = await service.savePointBatch(arr);
             if (response && response?.status === 200) {
               onlyMessage('操作成功');
               props.reload();

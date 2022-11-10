@@ -37,6 +37,10 @@ type PointItem = {
     text: string;
     value: string;
   };
+  status?: {
+    text: string;
+    value: string;
+  };
   runningState?: {
     text: string;
     value: string;

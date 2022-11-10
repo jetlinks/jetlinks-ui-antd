@@ -62,6 +62,7 @@ export default forwardRef((props: HeaderProps, ref) => {
           preserve={false}
           initialValues={props.initialValues}
           onValuesChange={(_, allValue) => {
+            console.log(allValue, 'allValue');
             if (props.closeInitialParams && !isCloseInitial.current) {
               isCloseInitial.current = true;
             } else {
