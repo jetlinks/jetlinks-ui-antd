@@ -121,7 +121,7 @@ const CollectorCard = (props: PointCardProps) => {
             </div>
             <div className={'card-item-content'}>
               {dataValue ? (
-                <div className={'card-item-content-item'}>
+                <div className={'card-item-content-item-left'}>
                   <div className={'card-item-content-item-header'}>
                     <div className={'card-item-content-item-header-title'}>
                       <Ellipsis title={`${dataValue?.parseData}(${dataValue?.dataType})`} />
@@ -163,7 +163,7 @@ const CollectorCard = (props: PointCardProps) => {
                   </div>
                 </div>
               ) : (
-                <div className={'card-item-content-item'}>
+                <div className={'card-item-content-item-left'}>
                   <div className={'card-item-content-item-empty'}>
                     <span className={'action'} style={{ fontWeight: 600, color: '#000' }}>
                       --
@@ -194,26 +194,38 @@ const CollectorCard = (props: PointCardProps) => {
                 </div>
               )}
               <div className={'content-item-border-right'}></div>
-              <div className={'card-item-content-item'}>
+              <div className={'card-item-content-item-right'}>
                 <div className={'card-item-content-item-header'}>
-                  <div className={'card-item-content-item-header-item'}>
-                    <div>
-                      <Ellipsis title={item.configuration?.parameter?.quantity} />
+                  {item.configuration?.parameter?.quantity && (
+                    <div className={'card-item-content-item-header-item'}>
+                      <div>
+                        <Ellipsis title={item.configuration?.parameter?.quantity} />
+                      </div>
+                      <div style={{ width: 85, opacity: 0.75 }} className={'ellipsis'}>
+                        (读取寄存器)
+                      </div>
                     </div>
-                    <div style={{ width: 85, opacity: 0.75 }}>(读取寄存器)</div>
-                  </div>
-                  <div className={'card-item-content-item-header-item'}>
-                    <div>
-                      <Ellipsis title={item.configuration?.parameter?.address} />
+                  )}
+                  {item.configuration?.parameter?.address && (
+                    <div className={'card-item-content-item-header-item'}>
+                      <div>
+                        <Ellipsis title={item.configuration?.parameter?.address} />
+                      </div>
+                      <div style={{ width: 50, opacity: 0.75 }} className={'ellipsis'}>
+                        (地址)
+                      </div>
                     </div>
-                    <div style={{ width: 40, opacity: 0.75 }}>(地址)</div>
-                  </div>
-                  <div className={'card-item-content-item-header-item'}>
-                    <div>
-                      <Ellipsis title={item.configuration?.codec?.configuration?.scaleFactor} />
+                  )}
+                  {item.configuration?.codec?.configuration?.scaleFactor && (
+                    <div className={'card-item-content-item-header-item'}>
+                      <div>
+                        <Ellipsis title={item.configuration?.codec?.configuration?.scaleFactor} />
+                      </div>
+                      <div style={{ width: 72, opacity: 0.75 }} className={'ellipsis'}>
+                        (缩放因子)
+                      </div>
                     </div>
-                    <div style={{ width: 72, opacity: 0.75 }}>(缩放因子)</div>
-                  </div>
+                  )}
                 </div>
                 <div className={'card-item-content-item-tags'}>
                   <div className={'card-item-content-item-tag'}>

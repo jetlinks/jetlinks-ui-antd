@@ -5,7 +5,7 @@ import '../index.less';
 import { NetworkItem } from '@/pages/link/Type/typings';
 import { networkMap } from '@/pages/link/Type';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { Tooltip } from 'antd';
+// import { Tooltip } from 'antd';
 
 export interface NoticeCardProps extends NetworkItem {
   detail?: React.ReactNode;
@@ -36,8 +36,8 @@ export default (props: NoticeCardProps) => {
       );
       return (
         <>
-          {log.map((item) => (
-            <div key={item}>
+          {log.slice(0, 2).map((item) => (
+            <div key={item} className={'ellipsis-type-item'}>
               {networkMap[record.type]}
               {item}
             </div>
@@ -79,9 +79,9 @@ export default (props: NoticeCardProps) => {
             </div>
             <div>
               <label>详情</label>
-              <Tooltip title={createDetail()}>
-                <div className={'ellipsis'}>{createDetail()}</div>
-              </Tooltip>
+              {/*<Tooltip title={createDetail()}>*/}
+              <div className={'ellipsis-type'}>{createDetail()}</div>
+              {/*</Tooltip>*/}
             </div>
           </div>
         </div>

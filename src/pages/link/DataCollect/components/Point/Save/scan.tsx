@@ -1,10 +1,10 @@
-import { Button, Col, Modal, Row, Spin, Tree } from 'antd';
-import { useEffect, useState } from 'react';
+import { Button, Col, Modal, Row, Spin, Tree, Checkbox } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import service from '@/pages/link/DataCollect/service';
 import './scan.less';
 import { onlyMessage } from '@/utils/util';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { ArrayTable, Editable, FormItem, Input, NumberPicker } from '@formily/antd';
+import { ArrayTable, FormItem, Input } from '@formily/antd';
 import MyInput from '@/pages/link/DataCollect/components/Point/Save/components/MyInput';
 import MySelect from '@/pages/link/DataCollect/components/Point/Save/components/MySelect';
 import {
@@ -14,6 +14,7 @@ import {
   onFieldValueChange,
   registerValidateRules,
 } from '@formily/core';
+import RemoveData from './components/RemoveData';
 
 interface Props {
   collector?: any;
@@ -25,10 +26,11 @@ interface Props {
 export default (props: Props) => {
   const [checkedKeys, setCheckedKeys] = useState<any>();
   const [treeData, setTreeData] = useState<any[]>([]);
+  const [treeAllData, setTreeAllData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [spinning, setSpinning] = useState<boolean>(false);
-  const [dataSource, setDataSource] = useState<any[]>([]);
   const [selectKeys, setSelectKeys] = useState<any[]>([]);
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   useEffect(() => {
     setSelectKeys(props.data.map((item) => item.pointKey));
@@ -51,7 +53,7 @@ export default (props: Props) => {
                 disabled: item?.folder,
               };
             });
-            setTreeData(list);
+            setTreeAllData(list);
           }
           setLoading(false);
         });
@@ -97,7 +99,7 @@ export default (props: Props) => {
             isLeaf: !item?.folder,
           };
         });
-        setTreeData((origin) => updateTreeData(origin, node.key, [...list]));
+        setTreeAllData((origin) => updateTreeData(origin, node.key, [...list]));
       }
       resolve();
     });
@@ -105,62 +107,65 @@ export default (props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
-      Editable,
       Input,
       ArrayTable,
-      NumberPicker,
       MyInput,
       MySelect,
+      RemoveData,
     },
   });
 
-  const form = createForm({
-    initialValues: { array: [] },
-    effects: () => {
-      onFieldValueChange('array.*.accessModes', (field, f) => {
-        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
-          return `array.${parseInt(index + 1)}.accessModes`;
-        });
-        const nextValue = (field.query(nextPath).take() as Field)?.value;
-        if (nextValue && nextValue.check) {
-          f.setFieldState(nextPath, (state) => {
-            state.value = {
-              ...field.value,
-              check: nextValue.check,
-            };
+  const form = useMemo(
+    () =>
+      createForm({
+        initialValues: { array: [] },
+        effects: () => {
+          onFieldValueChange('array.*.accessModes', (field, f) => {
+            const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+              return `array.${parseInt(index + 1)}.accessModes`;
+            });
+            const nextValue = (field.query(nextPath).take() as Field)?.value;
+            if (nextValue && nextValue.check) {
+              f.setFieldState(nextPath, (state) => {
+                state.value = {
+                  ...field.value,
+                  check: nextValue.check,
+                };
+              });
+            }
           });
-        }
-      });
-      onFieldValueChange('array.*.configuration.interval', (field, f) => {
-        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
-          return `array.${parseInt(index + 1)}.configuration.interval`;
-        });
-        const nextValue = (field.query(nextPath).take() as Field)?.value;
-        if (nextValue && nextValue.check) {
-          f.setFieldState(nextPath, (state) => {
-            state.value = {
-              ...field.value,
-              check: nextValue.check,
-            };
+          onFieldValueChange('array.*.configuration.interval', (field, f) => {
+            const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+              return `array.${parseInt(index + 1)}.configuration.interval`;
+            });
+            const nextValue = (field.query(nextPath).take() as Field)?.value;
+            if (nextValue && nextValue.check) {
+              f.setFieldState(nextPath, (state) => {
+                state.value = {
+                  ...field.value,
+                  check: nextValue.check,
+                };
+              });
+            }
           });
-        }
-      });
-      onFieldValueChange('array.*.features', (field, f) => {
-        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
-          return `array.${parseInt(index + 1)}.features`;
-        });
-        const nextValue = (field.query(nextPath).take() as Field)?.value;
-        if (nextValue && nextValue.check) {
-          f.setFieldState(nextPath, (state) => {
-            state.value = {
-              ...field.value,
-              check: nextValue.check,
-            };
+          onFieldValueChange('array.*.features', (field, f) => {
+            const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+              return `array.${parseInt(index + 1)}.features`;
+            });
+            const nextValue = (field.query(nextPath).take() as Field)?.value;
+            if (nextValue && nextValue.check) {
+              f.setFieldState(nextPath, (state) => {
+                state.value = {
+                  ...field.value,
+                  check: nextValue.check,
+                };
+              });
+            }
           });
-        }
-      });
-    },
-  });
+        },
+      }),
+    [],
+  );
 
   registerValidateRules({
     checkLength(value) {
@@ -179,7 +184,7 @@ export default (props: Props) => {
       return '';
     },
     checkAccessModes(value) {
-      if (value.value && value.value.length) {
+      if (value?.value && value?.value.length) {
         return '';
       } else {
         return {
@@ -210,7 +215,6 @@ export default (props: Props) => {
               'x-component-props': { title: '名称' },
               properties: {
                 name: {
-                  type: 'string',
                   'x-component': 'Input',
                   'x-component-props': {
                     placeholder: '请输入点位名称',
@@ -308,40 +312,67 @@ export default (props: Props) => {
                 },
               },
             },
+            column6: {
+              type: 'void',
+              'x-component': 'ArrayTable.Column',
+              'x-component-props': {
+                title: '操作',
+                dataIndex: 'operations',
+                width: 50,
+              },
+              properties: {
+                item: {
+                  type: 'void',
+                  'x-component': 'FormItem',
+                  properties: {
+                    remove: {
+                      type: 'number',
+                      'x-component': 'RemoveData',
+                      'x-component-props': {
+                        onDelete: (item: any) => {
+                          setCheckedKeys({
+                            ...checkedKeys,
+                            checked: checkedKeys.checked.filter((i: any) => {
+                              return i !== item.id;
+                            }),
+                          });
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
     },
   };
 
-  useEffect(() => {
-    const one = (dataSource || [])[0];
-    form.setValues({
-      array: (dataSource || []).map((item) => {
-        return {
-          ...one,
-          features: {
-            value: (one?.features || []).includes('changedOnly'),
-            check: true,
-          },
-          id: item.id,
-          name: item.name,
-          accessModes: {
-            value: one?.accessModes || [],
-            check: true,
-          },
-          configuration: {
-            ...one.configuration,
-            interval: {
-              value: one?.configuration?.interval || 3000,
-              check: true,
-            },
-            nodeId: item.id,
-          },
-        };
-      }),
+  const handleData = (arr: any[]): any[] => {
+    const data = arr.filter((item) => {
+      return (isSelected && !selectKeys.includes(item.id)) || !isSelected;
     });
-  }, [dataSource]);
+    return data.map((item) => {
+      if (item.children && item.children?.length) {
+        return {
+          ...item,
+          children: handleData(item.children),
+        };
+      } else {
+        return item;
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (isSelected) {
+      const arr = handleData(treeAllData);
+      setTreeData(arr);
+    } else {
+      setTreeData(treeAllData);
+    }
+  }, [isSelected, treeAllData]);
 
   return (
     <Modal
@@ -359,7 +390,7 @@ export default (props: Props) => {
           key={2}
           loading={spinning}
           onClick={async () => {
-            const data: any = await form.submit();
+            const data = await form.submit<any>();
             const arr = data?.array || [];
             if (!arr.length) {
               onlyMessage('请选择目标数据', 'error');
@@ -395,6 +426,17 @@ export default (props: Props) => {
       <Spin spinning={loading}>
         <Row gutter={24}>
           <Col span={6}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4>数据源</h4>
+              <Checkbox
+                checked={isSelected}
+                onChange={(e) => {
+                  setIsSelected(e.target.checked);
+                }}
+              >
+                隐藏已有节点
+              </Checkbox>
+            </div>
             <div style={{ padding: '10px 0' }}>
               <Tree
                 blockNode
@@ -406,7 +448,45 @@ export default (props: Props) => {
                 loadData={onLoadData}
                 onCheck={(checkedKeysValue, info) => {
                   setCheckedKeys(checkedKeysValue);
-                  setDataSource(info.checkedNodes);
+                  const one: any = { ...info.node };
+                  const list = form.getState().values?.array || [];
+                  if (info.checked) {
+                    const last: any = list.length ? list[list.length - 1] : undefined;
+                    if (list.map((i: any) => i?.id).includes(one.id)) {
+                      return;
+                    }
+                    const item = {
+                      features: {
+                        value: last
+                          ? last?.features?.value
+                          : (one?.features || []).includes('changedOnly'),
+                        check: true,
+                      },
+                      id: one?.id || '',
+                      name: one?.name || '',
+                      accessModes: {
+                        value: last ? last?.accessModes?.value : one?.accessModes || [],
+                        check: true,
+                      },
+                      configuration: {
+                        ...one?.configuration,
+                        interval: {
+                          value: last
+                            ? last?.configuration?.interval?.value
+                            : one?.configuration?.interval || 3000,
+                          check: true,
+                        },
+                        nodeId: one?.id,
+                      },
+                    };
+                    form.setValues({
+                      array: [...list, item],
+                    });
+                  } else {
+                    form.setValues({
+                      array: list.filter((item: any) => item?.id !== one.id),
+                    });
+                  }
                 }}
                 titleRender={(nodeData) => {
                   return (
