@@ -1416,19 +1416,19 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                       {
                         permission: 'data-collector',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                       {
                         permission: 'data-collect-opc',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                       {
                         permission: 'things-collector',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                     ],
                   },
@@ -1451,6 +1451,10 @@ export default [
                       {
                         permission: 'things-collector',
                         actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'certificate',
+                        actions: ['query'],
                       },
                     ],
                   },
@@ -1482,19 +1486,19 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                       {
                         permission: 'data-collector',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                       {
                         permission: 'data-collect-opc',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                       {
                         permission: 'things-collector',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                     ],
                   },
@@ -1521,19 +1525,19 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                       {
                         permission: 'data-collector',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                       {
                         permission: 'data-collect-opc',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                       {
                         permission: 'things-collector',
-                        actions: ['save'],
+                        actions: ['save', 'query'],
                       },
                     ],
                   },
@@ -1556,6 +1560,10 @@ export default [
                       {
                         permission: 'things-collector',
                         actions: ['save', 'query'],
+                      },
+                      {
+                        permission: 'certificate',
+                        actions: ['query'],
                       },
                     ],
                   },
@@ -1587,19 +1595,19 @@ export default [
                     permissions: [
                       {
                         permission: 'data-collect-channel',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                       {
                         permission: 'data-collector',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                       {
                         permission: 'data-collect-opc',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                       {
                         permission: 'things-collector',
-                        actions: ['delete'],
+                        actions: ['delete', 'query'],
                       },
                     ],
                   },
