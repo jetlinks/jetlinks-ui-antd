@@ -10,16 +10,18 @@ import { Empty } from '@/components';
 
 const DataCollectModel = model<{
   id: Partial<string>;
-  type: 'channel' | 'device';
+  type: 'channel' | 'device' | undefined;
   provider: 'OPC_UA' | 'MODBUS_TCP';
   data: any;
   reload: boolean;
+  refresh: boolean;
 }>({
   type: 'channel',
   id: '',
   provider: 'MODBUS_TCP',
   data: {},
   reload: false,
+  refresh: false,
 });
 
 export default observer(() => {
@@ -34,6 +36,7 @@ export default observer(() => {
         type={false}
         id={DataCollectModel.id}
         provider={DataCollectModel.provider}
+        refresh={DataCollectModel.refresh}
       />
     ),
     device: (
@@ -48,16 +51,24 @@ export default observer(() => {
           <div className={styles.left}>
             <ChannelTree
               change={(key, type, provider, data) => {
+                DataCollectModel.type = undefined;
                 DataCollectModel.id = key;
-                DataCollectModel.type = type;
                 DataCollectModel.provider = provider;
                 DataCollectModel.data = data || {};
+                setTimeout(() => {
+                  DataCollectModel.type = type;
+                }, 0);
               }}
               reload={DataCollectModel.reload}
+              onReload={() => {
+                DataCollectModel.refresh = !DataCollectModel.refresh;
+              }}
             />
           </div>
           {DataCollectModel?.id ? (
-            <div className={styles.right}>{obj[DataCollectModel.type]}</div>
+            <div className={styles.right}>
+              {DataCollectModel.type ? obj[DataCollectModel.type] : ''}
+            </div>
           ) : (
             <Empty style={{ marginTop: 100 }} />
           )}

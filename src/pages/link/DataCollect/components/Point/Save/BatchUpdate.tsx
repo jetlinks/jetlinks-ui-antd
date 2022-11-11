@@ -169,10 +169,10 @@ export default (props: Props) => {
           onClick={async () => {
             const value = await form.submit<any>();
             const obj = props.data[0];
-            if (value.accessModes.length) {
+            if (value?.accessModes && value?.accessModes?.length) {
               obj.accessModes = value.accessModes;
             }
-            if (value.features.length) {
+            if (value?.features && value?.features?.length) {
               obj.features = value.features;
             }
             if (Number(value.interval) >= 0) {
@@ -185,7 +185,7 @@ export default (props: Props) => {
               return {
                 ...item,
                 ...obj,
-                pointKey: obj?.configuration?.nodeId,
+                pointKey: item?.pointKey || item?.configuration?.nodeId,
               };
             });
             const response = await service.savePointBatch(arr);

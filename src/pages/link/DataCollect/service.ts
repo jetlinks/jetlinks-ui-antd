@@ -164,6 +164,11 @@ class Service {
       method: 'POST',
       data,
     });
+  public batchDeletePoint = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/batch/_delete`, {
+      method: 'POST',
+      data: params,
+    });
 }
 
 const service = new Service();

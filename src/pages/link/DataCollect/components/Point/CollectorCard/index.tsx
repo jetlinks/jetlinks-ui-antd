@@ -121,32 +121,30 @@ const CollectorCard = (props: PointCardProps) => {
             </div>
             <div className={'card-item-content'}>
               {dataValue ? (
-                <div className={'card-item-content-item'}>
+                <div className={'card-item-content-item-left'}>
                   <div className={'card-item-content-item-header'}>
                     <div className={'card-item-content-item-header-title'}>
                       <Ellipsis title={`${dataValue?.parseData}(${dataValue?.dataType})`} />
                     </div>
                     <div className={'card-item-content-item-header-action'}>
-                      {item.accessModes?.length === 1 &&
-                        item.accessModes.map((i) => i.value)?.includes('write') && (
-                          <EditOutlined
-                            style={{ marginLeft: 15 }}
-                            onClick={(e) => {
-                              e?.stopPropagation();
-                              props.update(item, true);
-                            }}
-                          />
-                        )}
-                      {item.accessModes?.length === 1 &&
-                        item.accessModes.map((i) => i.value)?.includes('read') && (
-                          <RedoOutlined
-                            style={{ marginLeft: 15 }}
-                            onClick={(e) => {
-                              e?.stopPropagation();
-                              read();
-                            }}
-                          />
-                        )}
+                      {item.accessModes && item.accessModes.map((i) => i.value)?.includes('write') && (
+                        <EditOutlined
+                          style={{ marginLeft: 15 }}
+                          onClick={(e) => {
+                            e?.stopPropagation();
+                            props.update(item, true);
+                          }}
+                        />
+                      )}
+                      {item.accessModes && item.accessModes.map((i) => i.value)?.includes('read') && (
+                        <RedoOutlined
+                          style={{ marginLeft: 15 }}
+                          onClick={(e) => {
+                            e?.stopPropagation();
+                            read();
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                   <div className={'card-item-content-item-text'}>
@@ -163,57 +161,67 @@ const CollectorCard = (props: PointCardProps) => {
                   </div>
                 </div>
               ) : (
-                <div className={'card-item-content-item'}>
+                <div className={'card-item-content-item-left'}>
                   <div className={'card-item-content-item-empty'}>
                     <span className={'action'} style={{ fontWeight: 600, color: '#000' }}>
                       --
                     </span>
-                    {item.accessModes?.length === 1 &&
-                      item.accessModes.map((i) => i.value)?.includes('write') && (
-                        <EditOutlined
-                          className={'action'}
-                          style={{ marginLeft: 15 }}
-                          onClick={(e) => {
-                            e?.stopPropagation();
-                            props.update(item, true);
-                          }}
-                        />
-                      )}
-                    {item.accessModes?.length === 1 &&
-                      item.accessModes.map((i) => i.value)?.includes('read') && (
-                        <RedoOutlined
-                          style={{ marginLeft: 15 }}
-                          className={'action'}
-                          onClick={(e) => {
-                            e?.stopPropagation();
-                            read();
-                          }}
-                        />
-                      )}
+                    {item.accessModes && item.accessModes.map((i) => i.value)?.includes('write') && (
+                      <EditOutlined
+                        className={'action'}
+                        style={{ marginLeft: 15 }}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          props.update(item, true);
+                        }}
+                      />
+                    )}
+                    {item.accessModes && item.accessModes.map((i) => i.value)?.includes('read') && (
+                      <RedoOutlined
+                        style={{ marginLeft: 15 }}
+                        className={'action'}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          read();
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               )}
               <div className={'content-item-border-right'}></div>
-              <div className={'card-item-content-item'}>
+              <div className={'card-item-content-item-right'}>
                 <div className={'card-item-content-item-header'}>
-                  <div className={'card-item-content-item-header-item'}>
-                    <div>
-                      <Ellipsis title={item.configuration?.parameter?.quantity} />
+                  {item.configuration?.parameter?.quantity && (
+                    <div className={'card-item-content-item-header-item'}>
+                      <div>
+                        <Ellipsis title={item.configuration?.parameter?.quantity} />
+                      </div>
+                      <div style={{ width: 85, opacity: 0.75 }} className={'ellipsis'}>
+                        (读取寄存器)
+                      </div>
                     </div>
-                    <div style={{ width: 85, opacity: 0.75 }}>(读取寄存器)</div>
-                  </div>
-                  <div className={'card-item-content-item-header-item'}>
-                    <div>
-                      <Ellipsis title={item.configuration?.parameter?.address} />
+                  )}
+                  {item.configuration?.parameter?.address && (
+                    <div className={'card-item-content-item-header-item'}>
+                      <div>
+                        <Ellipsis title={item.configuration?.parameter?.address} />
+                      </div>
+                      <div style={{ width: 50, opacity: 0.75 }} className={'ellipsis'}>
+                        (地址)
+                      </div>
                     </div>
-                    <div style={{ width: 40, opacity: 0.75 }}>(地址)</div>
-                  </div>
-                  <div className={'card-item-content-item-header-item'}>
-                    <div>
-                      <Ellipsis title={item.configuration?.codec?.configuration?.scaleFactor} />
+                  )}
+                  {item.configuration?.codec?.configuration?.scaleFactor && (
+                    <div className={'card-item-content-item-header-item'}>
+                      <div>
+                        <Ellipsis title={item.configuration?.codec?.configuration?.scaleFactor} />
+                      </div>
+                      <div style={{ width: 72, opacity: 0.75 }} className={'ellipsis'}>
+                        (缩放因子)
+                      </div>
                     </div>
-                    <div style={{ width: 72, opacity: 0.75 }}>(缩放因子)</div>
-                  </div>
+                  )}
                 </div>
                 <div className={'card-item-content-item-tags'}>
                   <div className={'card-item-content-item-tag'}>
