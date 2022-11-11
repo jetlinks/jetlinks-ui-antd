@@ -34,14 +34,21 @@ export default (props: NoticeCardProps) => {
             item.configuration?.publicPort || item.configuration?.remotePort
           }`,
       );
+      const str = log
+        .map((item) => {
+          return `${networkMap[record.type]}${item}`;
+        })
+        .join(',');
+
       return (
         <>
-          {log.slice(0, 2).map((item) => (
-            <div key={item} className={'ellipsis-type-item'}>
-              {networkMap[record.type]}
-              {item}
-            </div>
-          ))}
+          {/*{[...log, ...log].slice(0, 2).map((item) => (*/}
+          {/*  <div key={item} className={'ellipsis-type-item'}>*/}
+          {/*    {networkMap[record.type]}*/}
+          {/*    {item}*/}
+          {/*  </div>*/}
+          {/*))}*/}
+          {str}
         </>
       );
     }

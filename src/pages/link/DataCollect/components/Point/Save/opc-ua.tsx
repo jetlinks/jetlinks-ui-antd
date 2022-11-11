@@ -83,10 +83,10 @@ export default (props: Props) => {
           message: '最多可输入64个字符',
         };
       }
-      if (!(value % 1 === 0)) {
+      if (!(Number(value) % 1 === 0) || Number(value) < 0) {
         return {
           type: 'error',
-          message: '请输入非0正整数',
+          message: '请输入0或正整数',
         };
       }
       return '';
@@ -165,17 +165,10 @@ export default (props: Props) => {
               gridSpan: 2,
             },
             default: 3000,
-            // 'x-reactions': {
-            //   dependencies: ['..accessModes'],
-            //   fulfill: {
-            //     state: {
-            //       visible: '{{($deps[0] || []).includes("subscribe")}}',
-            //     },
-            //   },
-            // },
             'x-component-props': {
               placeholder: '请输入采集频率',
               addonAfter: '毫秒',
+              stringMode: true,
               style: {
                 width: '100%',
               },

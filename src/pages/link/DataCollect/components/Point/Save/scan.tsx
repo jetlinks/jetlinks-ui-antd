@@ -4,7 +4,7 @@ import service from '@/pages/link/DataCollect/service';
 import './scan.less';
 import { onlyMessage } from '@/utils/util';
 import { createSchemaField, FormProvider } from '@formily/react';
-import { ArrayTable, FormItem, Input } from '@formily/antd';
+import { ArrayTable, FormItem, Input, Select } from '@formily/antd';
 import MyInput from '@/pages/link/DataCollect/components/Point/Save/components/MyInput';
 import MySelect from '@/pages/link/DataCollect/components/Point/Save/components/MySelect';
 import {
@@ -112,6 +112,7 @@ export default (props: Props) => {
       MyInput,
       MySelect,
       RemoveData,
+      Select,
     },
   });
 
@@ -184,14 +185,13 @@ export default (props: Props) => {
       return '';
     },
     checkAccessModes(value) {
-      if (value?.value && value?.value.length) {
-        return '';
-      } else {
+      if (!value?.value.length) {
         return {
           type: 'error',
           message: '请选择访问类型',
         };
       }
+      return '';
     },
   });
 
@@ -216,6 +216,7 @@ export default (props: Props) => {
               properties: {
                 name: {
                   'x-component': 'Input',
+                  'x-decorator': 'FormItem',
                   'x-component-props': {
                     placeholder: '请输入点位名称',
                   },
@@ -253,6 +254,7 @@ export default (props: Props) => {
               properties: {
                 accessModes: {
                   'x-component': 'MySelect',
+                  'x-decorator': 'FormItem',
                   'x-component-props': {
                     placeholder: '请选择访问类型',
                     mode: 'multiple',

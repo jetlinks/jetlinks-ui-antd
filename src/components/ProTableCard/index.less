@@ -110,16 +110,15 @@
           }
 
           .ellipsis-type {
+            display: -webkit-box;
+            width: 100%;
+            overflow: hidden;
             font-weight: bold;
             font-size: 14px;
-
-            .ellipsis-type-item {
-              width: 100%;
-              overflow: hidden;
-              white-space: nowrap;
-              text-align: left;
-              text-overflow: ellipsis;
-            }
+            text-overflow: ellipsis;
+            word-break: break-all;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
           }
         }
       }

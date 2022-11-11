@@ -274,6 +274,9 @@ export default observer((props: Props) => {
                                 if (resp.status === 200) {
                                   onlyMessage('操作成功！');
                                   handleSearch(param);
+                                  if (props?.reload) {
+                                    props.reload();
+                                  }
                                 } else {
                                   onlyMessage('操作失败！', 'error');
                                 }
@@ -318,6 +321,9 @@ export default observer((props: Props) => {
                                     }),
                                   );
                                   handleSearch(param);
+                                  if (props?.reload) {
+                                    props.reload();
+                                  }
                                 } else {
                                   onlyMessage(
                                     intl.formatMessage({ id: 'pages.device.instance.deleteTip' }),
