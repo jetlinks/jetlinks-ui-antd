@@ -168,7 +168,10 @@ export default (props: Props) => {
           key={2}
           onClick={async () => {
             const value = await form.submit<any>();
-            const obj = props.data[0];
+            const obj = {
+              ...props.data[0],
+              accessModes: value?.accessModes.map((item: any) => item?.value || item),
+            };
             if (value?.accessModes && value?.accessModes?.length) {
               obj.accessModes = value.accessModes;
             }
