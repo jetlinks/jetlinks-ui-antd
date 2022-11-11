@@ -18,6 +18,7 @@ interface Props {
   id?: any;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
   reload?: () => void;
+  refresh?: boolean;
 }
 
 const CollectorModel = model<{
@@ -177,7 +178,7 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(param);
-  }, [props.id]);
+  }, [props.id, props.refresh]);
 
   const getState = (record: Partial<CollectorItem>) => {
     if (record) {

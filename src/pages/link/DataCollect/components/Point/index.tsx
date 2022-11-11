@@ -28,6 +28,7 @@ interface PointCardProps {
   data?: Partial<CollectorItem>;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
   reload: boolean; // 变化时刷新
+  columns: ProColumns<PointItem>[];
 }
 
 const PointModel = model<{
@@ -85,157 +86,6 @@ const PointCard = observer((props: PointCardProps) => {
     }
   };
 
-  const columns: ProColumns<PointItem>[] = props.type
-    ? [
-        {
-          title: '名称',
-          dataIndex: 'name',
-        },
-        {
-          title: '通讯协议',
-          dataIndex: 'provider',
-          valueType: 'select',
-          valueEnum: {
-            OPC_UA: {
-              text: 'OPC_UA',
-              status: 'OPC_UA',
-            },
-            MODBUS_TCP: {
-              text: 'MODBUS_TCP',
-              status: 'MODBUS_TCP',
-            },
-          },
-        },
-        {
-          title: '访问类型',
-          dataIndex: 'accessModes',
-          valueType: 'select',
-          valueEnum: {
-            read: {
-              text: '读',
-              status: 'read',
-            },
-            write: {
-              text: '写',
-              status: 'write',
-            },
-            subscribe: {
-              text: '订阅',
-              status: 'subscribe',
-            },
-          },
-        },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          valueType: 'select',
-          valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
-            },
-            disabled: {
-              text: '禁用',
-              status: 'disabled',
-            },
-          },
-        },
-        {
-          title: '运行状态',
-          dataIndex: 'runningState',
-          valueType: 'select',
-          valueEnum: {
-            running: {
-              text: '运行中',
-              status: 'running',
-            },
-            partialError: {
-              text: '部分错误',
-              status: 'partialError',
-            },
-            failed: {
-              text: '错误',
-              status: 'failed',
-            },
-            stopped: {
-              text: '已停止',
-              status: 'stopped',
-            },
-          },
-        },
-        {
-          title: '说明',
-          dataIndex: 'description',
-        },
-      ]
-    : [
-        {
-          title: '名称',
-          dataIndex: 'name',
-        },
-        {
-          title: '访问类型',
-          dataIndex: 'accessModes',
-          valueType: 'select',
-          valueEnum: {
-            read: {
-              text: '读',
-              status: 'read',
-            },
-            write: {
-              text: '写',
-              status: 'write',
-            },
-            subscribe: {
-              text: '订阅',
-              status: 'subscribe',
-            },
-          },
-        },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          valueType: 'select',
-          valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
-            },
-            disabled: {
-              text: '禁用',
-              status: 'disabled',
-            },
-          },
-        },
-        {
-          title: '运行状态',
-          dataIndex: 'runningState',
-          valueType: 'select',
-          valueEnum: {
-            running: {
-              text: '运行中',
-              status: 'running',
-            },
-            partialError: {
-              text: '部分错误',
-              status: 'partialError',
-            },
-            failed: {
-              text: '错误',
-              status: 'failed',
-            },
-            stopped: {
-              text: '已停止',
-              status: 'stopped',
-            },
-          },
-        },
-        {
-          title: '说明',
-          dataIndex: 'description',
-        },
-      ];
-
   const subRef = useRef<any>(null);
 
   const subscribeProperty = (list: any) => {
@@ -255,6 +105,7 @@ const PointCard = observer((props: PointCardProps) => {
   const handleSearch = (params: any) => {
     PointModel.checkAll = false;
     PointModel.selectKey = [];
+    PointModel.list = [];
     setLoading(true);
     setParam(params);
     service
@@ -330,6 +181,7 @@ const PointCard = observer((props: PointCardProps) => {
           icon={<RedoOutlined />}
           onClick={() => {
             PointModel.selectKey = [];
+            PointModel.list = [];
             PointModel.checkAll = false;
           }}
         >
@@ -342,7 +194,7 @@ const PointCard = observer((props: PointCardProps) => {
   return (
     <div>
       <SearchComponent<PointItem>
-        field={columns}
+        field={props.columns}
         target="data-collect-point"
         onSearch={(data) => {
           const dt = {
@@ -394,8 +246,10 @@ const PointCard = observer((props: PointCardProps) => {
                         PointModel.checkAll = e.target.checked;
                         if (e.target.checked) {
                           PointModel.selectKey = [...dataSource?.data.map((item: any) => item.id)];
+                          PointModel.list = [...dataSource?.data];
                         } else {
                           PointModel.selectKey = [];
+                          PointModel.list = [];
                         }
                       }}
                     >
@@ -497,9 +351,171 @@ const PointCard = observer((props: PointCardProps) => {
 });
 
 export default observer((props: Props) => {
+  const columns: ProColumns<PointItem>[] = props.type
+    ? [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '通讯协议',
+          dataIndex: 'provider',
+          valueType: 'select',
+          valueEnum: {
+            OPC_UA: {
+              text: 'OPC_UA',
+              status: 'OPC_UA',
+            },
+            MODBUS_TCP: {
+              text: 'MODBUS_TCP',
+              status: 'MODBUS_TCP',
+            },
+          },
+        },
+        {
+          title: '访问类型',
+          dataIndex: 'accessModes',
+          valueType: 'select',
+          valueEnum: {
+            read: {
+              text: '读',
+              status: 'read',
+            },
+            write: {
+              text: '写',
+              status: 'write',
+            },
+            subscribe: {
+              text: '订阅',
+              status: 'subscribe',
+            },
+          },
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '运行状态',
+          dataIndex: 'runningState',
+          valueType: 'select',
+          valueEnum: {
+            running: {
+              text: '运行中',
+              status: 'running',
+            },
+            partialError: {
+              text: '部分错误',
+              status: 'partialError',
+            },
+            failed: {
+              text: '错误',
+              status: 'failed',
+            },
+            stopped: {
+              text: '已停止',
+              status: 'stopped',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ]
+    : [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '访问类型',
+          dataIndex: 'accessModes',
+          valueType: 'select',
+          valueEnum:
+            props?.provider === 'MODBUS_TCP'
+              ? {
+                  read: {
+                    text: '读',
+                    status: 'read',
+                  },
+                  write: {
+                    text: '写',
+                    status: 'write',
+                  },
+                }
+              : {
+                  read: {
+                    text: '读',
+                    status: 'read',
+                  },
+                  write: {
+                    text: '写',
+                    status: 'write',
+                  },
+                  subscribe: {
+                    text: '订阅',
+                    status: 'subscribe',
+                  },
+                },
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '运行状态',
+          dataIndex: 'runningState',
+          valueType: 'select',
+          valueEnum: {
+            running: {
+              text: '运行中',
+              status: 'running',
+            },
+            partialError: {
+              text: '部分错误',
+              status: 'partialError',
+            },
+            failed: {
+              text: '错误',
+              status: 'failed',
+            },
+            stopped: {
+              text: '已停止',
+              status: 'stopped',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ];
   return (
     <div>
-      <PointCard {...props} reload={PointModel.reload} />
+      <PointCard columns={columns} {...props} reload={PointModel.reload} />
       {PointModel.m_visible && (
         <ModbusSave
           data={PointModel.current}

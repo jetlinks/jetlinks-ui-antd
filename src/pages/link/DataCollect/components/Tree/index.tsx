@@ -46,6 +46,7 @@ interface Props {
     data?: any,
   ) => void;
   reload?: boolean;
+  onReload: () => void;
 }
 
 export default observer((props: Props) => {
@@ -245,6 +246,7 @@ export default observer((props: Props) => {
                                   if (resp.status === 200) {
                                     TreeModel.param = {};
                                     handleSearch(TreeModel.param);
+                                    props.onReload();
                                     onlyMessage('操作成功');
                                   } else {
                                     onlyMessage('操作失败！', 'error');
@@ -260,7 +262,7 @@ export default observer((props: Props) => {
                                 </Tooltip>
                               </Popconfirm>
                               <Popconfirm
-                                title={'该操作将会删除下属采集器与点位，确定删除？'}
+                                title={'该操作将会删除下属点位，确定删除？'}
                                 onConfirm={async () => {
                                   const resp = await service.removeCollector(i.id);
                                   if (resp.status === 200) {
