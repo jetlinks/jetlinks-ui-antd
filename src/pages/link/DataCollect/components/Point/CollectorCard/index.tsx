@@ -127,26 +127,24 @@ const CollectorCard = (props: PointCardProps) => {
                       <Ellipsis title={`${dataValue?.parseData}(${dataValue?.dataType})`} />
                     </div>
                     <div className={'card-item-content-item-header-action'}>
-                      {item.accessModes?.length === 1 &&
-                        item.accessModes.map((i) => i.value)?.includes('write') && (
-                          <EditOutlined
-                            style={{ marginLeft: 15 }}
-                            onClick={(e) => {
-                              e?.stopPropagation();
-                              props.update(item, true);
-                            }}
-                          />
-                        )}
-                      {item.accessModes?.length === 1 &&
-                        item.accessModes.map((i) => i.value)?.includes('read') && (
-                          <RedoOutlined
-                            style={{ marginLeft: 15 }}
-                            onClick={(e) => {
-                              e?.stopPropagation();
-                              read();
-                            }}
-                          />
-                        )}
+                      {item.accessModes && item.accessModes.map((i) => i.value)?.includes('write') && (
+                        <EditOutlined
+                          style={{ marginLeft: 15 }}
+                          onClick={(e) => {
+                            e?.stopPropagation();
+                            props.update(item, true);
+                          }}
+                        />
+                      )}
+                      {item.accessModes && item.accessModes.map((i) => i.value)?.includes('read') && (
+                        <RedoOutlined
+                          style={{ marginLeft: 15 }}
+                          onClick={(e) => {
+                            e?.stopPropagation();
+                            read();
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                   <div className={'card-item-content-item-text'}>
@@ -168,28 +166,26 @@ const CollectorCard = (props: PointCardProps) => {
                     <span className={'action'} style={{ fontWeight: 600, color: '#000' }}>
                       --
                     </span>
-                    {item.accessModes?.length === 1 &&
-                      item.accessModes.map((i) => i.value)?.includes('write') && (
-                        <EditOutlined
-                          className={'action'}
-                          style={{ marginLeft: 15 }}
-                          onClick={(e) => {
-                            e?.stopPropagation();
-                            props.update(item, true);
-                          }}
-                        />
-                      )}
-                    {item.accessModes?.length === 1 &&
-                      item.accessModes.map((i) => i.value)?.includes('read') && (
-                        <RedoOutlined
-                          style={{ marginLeft: 15 }}
-                          className={'action'}
-                          onClick={(e) => {
-                            e?.stopPropagation();
-                            read();
-                          }}
-                        />
-                      )}
+                    {item.accessModes && item.accessModes.map((i) => i.value)?.includes('write') && (
+                      <EditOutlined
+                        className={'action'}
+                        style={{ marginLeft: 15 }}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          props.update(item, true);
+                        }}
+                      />
+                    )}
+                    {item.accessModes && item.accessModes.map((i) => i.value)?.includes('read') && (
+                      <RedoOutlined
+                        style={{ marginLeft: 15 }}
+                        className={'action'}
+                        onClick={(e) => {
+                          e?.stopPropagation();
+                          read();
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               )}

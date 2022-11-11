@@ -165,11 +165,11 @@ const PointCard = observer((props: PointCardProps) => {
           popConfirm={{
             title: '确认删除?',
             onConfirm: async () => {
-              // const resp = await service.batchDeletePoint(PointModel.selectKey);
-              // if(resp.status === 200) {
-              //   handleSearch(param);
-              //   onlyMessage('操作成功！')
-              // }
+              const resp = await service.batchDeletePoint(PointModel.selectKey);
+              if (resp.status === 200) {
+                handleSearch(param);
+                onlyMessage('操作成功！');
+              }
             },
           }}
         >

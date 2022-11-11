@@ -166,7 +166,7 @@ class Service {
     });
   public batchDeletePoint = (params: any) =>
     request(`/${SystemConst.API_BASE}/data-collect/point/batch/_delete`, {
-      method: 'PUT',
+      method: 'POST',
       data: params,
     });
 }
