@@ -562,121 +562,121 @@ export default [
               },
             ],
           },
-          {
-            code: 'link/Channel',
-            name: '通道配置',
-            owner: 'iot',
-            parentId: '1-4',
-            id: '1-4-8',
-            sortIndex: 8,
-            url: '/iot/link/Channel',
-            icon: 'icon-zidingyiguize',
-            permissions: [],
-            children: [
-              {
-                code: 'link/Channel/Opcua',
-                name: 'OPC UA',
-                owner: 'iot',
-                parentId: '1-4-8',
-                id: '1-4-8-1',
-                sortIndex: 1,
-                url: '/iot/link/Channel/Opcua',
-                icon: 'icon-zhilianshebei',
-                permissions: [
-                  { permission: 'opc-device-bind', actions: ['query'] },
-                  { permission: 'opc-point', actions: ['query'] },
-                  { permission: 'opc-client', actions: ['query'] },
-                ],
-                buttons: [
-                  {
-                    id: 'view',
-                    name: '设备接入',
-                    permissions: [
-                      { permission: 'opc-point', actions: ['query'] },
-                      { permission: 'opc-device-bind', actions: ['query'] },
-                      { permission: 'opc-client', actions: ['query'] },
-                    ],
-                  },
-                  {
-                    id: 'action',
-                    name: '启/禁用',
-                    permissions: [
-                      { permission: 'opc-point', actions: ['query', 'save'] },
-                      { permission: 'opc-client', actions: ['query', 'save'] },
-                    ],
-                  },
-                  {
-                    id: 'update',
-                    name: '编辑',
-                    permissions: [
-                      { permission: 'opc-point', actions: ['query', 'save'] },
-                      { permission: 'opc-device-bind', actions: ['query', 'save'] },
-                      { permission: 'opc-client', actions: ['query', 'save'] },
-                    ],
-                  },
-                  {
-                    id: 'delete',
-                    name: '删除',
-                    permissions: [
-                      { permission: 'opc-point', actions: ['query', 'delete'] },
-                      { permission: 'opc-device-bind', actions: ['query', 'delete'] },
-                      { permission: 'opc-client', actions: ['query', 'delete'] },
-                    ],
-                  },
-                  {
-                    id: 'add',
-                    name: '新增',
-                    permissions: [
-                      { permission: 'opc-point', actions: ['query', 'save'] },
-                      { permission: 'opc-device-bind', actions: ['query', 'save'] },
-                      { permission: 'opc-client', actions: ['query', 'save'] },
-                    ],
-                  },
-                ],
-              },
-              {
-                code: 'link/Channel/Modbus',
-                name: 'Modbus',
-                owner: 'iot',
-                parentId: '1-4-8',
-                id: '1-4-8-2',
-                sortIndex: 2,
-                url: '/iot/link/Channel/Modbus',
-                icon: 'icon-changjingliandong',
-                permissions: [
-                  { permission: 'modbus-point', actions: ['query', 'save', 'delete'] },
-                  { permission: 'modbus-master', actions: ['query', 'save', 'delete'] },
-                ],
-                buttons: [
-                  {
-                    id: 'update',
-                    name: '编辑',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                  {
-                    id: 'action',
-                    name: '启/禁用',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                  {
-                    id: 'view',
-                    name: '设备接入',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                  {
-                    id: 'delete',
-                    name: '删除',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'delete'] }],
-                  },
-                  {
-                    id: 'add',
-                    name: '新增',
-                    permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
-                  },
-                ],
-              },
-            ],
-          },
+          // {
+          //   code: 'link/Channel',
+          //   name: '通道配置',
+          //   owner: 'iot',
+          //   parentId: '1-4',
+          //   id: '1-4-8',
+          //   sortIndex: 8,
+          //   url: '/iot/link/Channel',
+          //   icon: 'icon-zidingyiguize',
+          //   permissions: [],
+          //   children: [
+          //     {
+          //       code: 'link/Channel/Opcua',
+          //       name: 'OPC UA',
+          //       owner: 'iot',
+          //       parentId: '1-4-8',
+          //       id: '1-4-8-1',
+          //       sortIndex: 1,
+          //       url: '/iot/link/Channel/Opcua',
+          //       icon: 'icon-zhilianshebei',
+          //       permissions: [
+          //         { permission: 'opc-device-bind', actions: ['query'] },
+          //         { permission: 'opc-point', actions: ['query'] },
+          //         { permission: 'opc-client', actions: ['query'] },
+          //       ],
+          //       buttons: [
+          //         {
+          //           id: 'view',
+          //           name: '设备接入',
+          //           permissions: [
+          //             { permission: 'opc-point', actions: ['query'] },
+          //             { permission: 'opc-device-bind', actions: ['query'] },
+          //             { permission: 'opc-client', actions: ['query'] },
+          //           ],
+          //         },
+          //         {
+          //           id: 'action',
+          //           name: '启/禁用',
+          //           permissions: [
+          //             { permission: 'opc-point', actions: ['query', 'save'] },
+          //             { permission: 'opc-client', actions: ['query', 'save'] },
+          //           ],
+          //         },
+          //         {
+          //           id: 'update',
+          //           name: '编辑',
+          //           permissions: [
+          //             { permission: 'opc-point', actions: ['query', 'save'] },
+          //             { permission: 'opc-device-bind', actions: ['query', 'save'] },
+          //             { permission: 'opc-client', actions: ['query', 'save'] },
+          //           ],
+          //         },
+          //         {
+          //           id: 'delete',
+          //           name: '删除',
+          //           permissions: [
+          //             { permission: 'opc-point', actions: ['query', 'delete'] },
+          //             { permission: 'opc-device-bind', actions: ['query', 'delete'] },
+          //             { permission: 'opc-client', actions: ['query', 'delete'] },
+          //           ],
+          //         },
+          //         {
+          //           id: 'add',
+          //           name: '新增',
+          //           permissions: [
+          //             { permission: 'opc-point', actions: ['query', 'save'] },
+          //             { permission: 'opc-device-bind', actions: ['query', 'save'] },
+          //             { permission: 'opc-client', actions: ['query', 'save'] },
+          //           ],
+          //         },
+          //       ],
+          //     },
+          //     {
+          //       code: 'link/Channel/Modbus',
+          //       name: 'Modbus',
+          //       owner: 'iot',
+          //       parentId: '1-4-8',
+          //       id: '1-4-8-2',
+          //       sortIndex: 2,
+          //       url: '/iot/link/Channel/Modbus',
+          //       icon: 'icon-changjingliandong',
+          //       permissions: [
+          //         { permission: 'modbus-point', actions: ['query', 'save', 'delete'] },
+          //         { permission: 'modbus-master', actions: ['query', 'save', 'delete'] },
+          //       ],
+          //       buttons: [
+          //         {
+          //           id: 'update',
+          //           name: '编辑',
+          //           permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+          //         },
+          //         {
+          //           id: 'action',
+          //           name: '启/禁用',
+          //           permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+          //         },
+          //         {
+          //           id: 'view',
+          //           name: '设备接入',
+          //           permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+          //         },
+          //         {
+          //           id: 'delete',
+          //           name: '删除',
+          //           permissions: [{ permission: 'modbus-master', actions: ['query', 'delete'] }],
+          //         },
+          //         {
+          //           id: 'add',
+          //           name: '新增',
+          //           permissions: [{ permission: 'modbus-master', actions: ['query', 'save'] }],
+          //         },
+          //       ],
+          //     },
+          //   ],
+          // },
           {
             code: 'device/Firmware',
             name: '远程升级',
