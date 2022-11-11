@@ -120,7 +120,7 @@ const Save = () => {
                 sipConfigs: {
                   transport: 'UDP',
                   keepaliveInterval: 60,
-                  registerInterval: 3000,
+                  registerInterval: 3600,
                 },
               }}
               onFinish={async (values: any) => {
@@ -155,7 +155,10 @@ const Save = () => {
                   <Form.Item
                     label="名称"
                     name="name"
-                    rules={[{ required: true, message: '请输入名称' }]}
+                    rules={[
+                      { required: true, message: '请输入名称' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入名称" />
                   </Form.Item>
@@ -199,7 +202,10 @@ const Save = () => {
                   <Form.Item
                     label="信令名称"
                     name={['sipConfigs', 'name']}
-                    rules={[{ required: true, message: '请输入信令名称' }]}
+                    rules={[
+                      { required: true, message: '请输入信令名称' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入信令名称" />
                   </Form.Item>
@@ -208,7 +214,10 @@ const Save = () => {
                   <Form.Item
                     label="上级SIP ID"
                     name={['sipConfigs', 'sipId']}
-                    rules={[{ required: true, message: '请输入上级SIP ID' }]}
+                    rules={[
+                      { required: true, message: '请输入上级SIP ID' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入上级SIP ID" />
                   </Form.Item>
@@ -217,7 +226,10 @@ const Save = () => {
                   <Form.Item
                     label="上级SIP域"
                     name={['sipConfigs', 'domain']}
-                    rules={[{ required: true, message: '请输入上级平台SIP域' }]}
+                    rules={[
+                      { required: true, message: '请输入上级平台SIP域' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入上级平台SIP域" />
                   </Form.Item>
@@ -238,7 +250,10 @@ const Save = () => {
                   <Form.Item
                     label="本地SIP ID"
                     name={['sipConfigs', 'localSipId']}
-                    rules={[{ required: true, message: '请输入网关侧的SIP ID' }]}
+                    rules={[
+                      { required: true, message: '请输入网关侧的SIP ID' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="网关侧的SIP ID" />
                   </Form.Item>
@@ -296,7 +311,10 @@ const Save = () => {
                   <Form.Item
                     label="用户"
                     name={['sipConfigs', 'user']}
-                    rules={[{ required: true, message: '请输入用户' }]}
+                    rules={[
+                      { required: true, message: '请输入用户' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入用户" />
                   </Form.Item>
@@ -305,7 +323,10 @@ const Save = () => {
                   <Form.Item
                     label="接入密码"
                     name={['sipConfigs', 'password']}
-                    rules={[{ required: true, message: '请输入接入密码' }]}
+                    rules={[
+                      { required: true, message: '请输入接入密码' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input.Password placeholder="请输入接入密码" />
                   </Form.Item>
@@ -314,7 +335,10 @@ const Save = () => {
                   <Form.Item
                     label="厂商"
                     name={['sipConfigs', 'manufacturer']}
-                    rules={[{ required: true, message: '请输入厂商' }]}
+                    rules={[
+                      { required: true, message: '请输入厂商' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入厂商" />
                   </Form.Item>
@@ -323,7 +347,10 @@ const Save = () => {
                   <Form.Item
                     label="型号"
                     name={['sipConfigs', 'model']}
-                    rules={[{ required: true, message: '请输入型号' }]}
+                    rules={[
+                      { required: true, message: '请输入型号' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入型号" />
                   </Form.Item>
@@ -332,7 +359,10 @@ const Save = () => {
                   <Form.Item
                     label="版本号"
                     name={['sipConfigs', 'firmware']}
-                    rules={[{ required: true, message: '请输入版本号' }]}
+                    rules={[
+                      { required: true, message: '请输入版本号' },
+                      { max: 64, message: '最大长度64字符' },
+                    ]}
                   >
                     <Input placeholder="请输入版本号" />
                   </Form.Item>

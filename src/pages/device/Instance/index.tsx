@@ -34,6 +34,7 @@ import { useLocation } from '@/hooks';
 import { service as deptService } from '@/pages/system/Department';
 import { service as categoryService } from '@/pages/device/Category';
 import { onlyMessage } from '@/utils/util';
+import { isNoCommunity } from '@/utils/util';
 
 export const statusMap = new Map();
 statusMap.set('在线', 'processing');
@@ -331,12 +332,14 @@ const Instance = () => {
         service.getProviders().then((resp: any) => {
           return (resp?.result || [])
             .filter((i: any) =>
-              [
-                'mqtt-server-gateway',
-                'http-server-gateway',
-                'mqtt-client-gateway',
-                'tcp-server-gateway',
-              ].includes(i.id),
+              !isNoCommunity
+                ? [
+                    'mqtt-server-gateway',
+                    'http-server-gateway',
+                    'mqtt-client-gateway',
+                    'tcp-server-gateway',
+                  ].includes(i.id)
+                : i,
             )
             .map((item: any) => ({
               label: item.name,

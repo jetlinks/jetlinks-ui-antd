@@ -12,9 +12,7 @@ import Functions from '@/pages/device/Instance/Detail/Functions';
 import Running from '@/pages/device/Instance/Detail/Running';
 import ChildDevice from '@/pages/device/Instance/Detail/ChildDevice';
 import Diagnose from '@/pages/device/Instance/Detail/Diagnose';
-import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
-import Opcua from '@/pages/device/Instance/Detail/Opcua';
-import Modbus from '@/pages/device/Instance/Detail/Modbus';
+// import MetadataMap from '@/pages/device/Instance/Detail/MetadataMap';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Metadata from '../../components/Metadata';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
@@ -27,9 +25,10 @@ import { Ellipsis, PermissionButton } from '@/components';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Service from '@/pages/device/Instance/service';
 import useLocation from '@/hooks/route/useLocation';
-import { onlyMessage, isNoCommunity } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import Parsing from './Parsing';
-// import EdgeMap from './EdgeMap';
+import EdgeMap from './EdgeMap';
+import MapChannel from './MapChannel';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -151,15 +150,15 @@ const InstanceDetail = observer(() => {
     },
   ];
 
-  const pList = [
-    'websocket-server',
-    'http-server-gateway',
-    'udp-device-gateway',
-    'coap-server-gateway',
-    'mqtt-client-gateway',
-    'mqtt-server-gateway',
-    'tcp-server-gateway',
-  ];
+  // const pList = [
+  //   'websocket-server',
+  //   'http-server-gateway',
+  //   'udp-device-gateway',
+  //   'coap-server-gateway',
+  //   'mqtt-client-gateway',
+  //   'mqtt-server-gateway',
+  //   'tcp-server-gateway',
+  // ];
   const [list, setList] =
     useState<{ key: string; tab: string | ReactNode; component: ReactNode }[]>(baseList);
 
@@ -168,18 +167,18 @@ const InstanceDetail = observer(() => {
     if (response.status === 200) {
       InstanceModel.detail = response?.result;
       const datalist = [...baseList];
-      if (
-        InstanceModel.detail?.accessProvider &&
-        pList.includes(InstanceModel.detail?.accessProvider)
-      ) {
-        if (isNoCommunity) {
-          datalist.push({
-            key: 'metadata-map',
-            tab: '物模型映射',
-            component: <MetadataMap type="device" />,
-          });
-        }
-      }
+      // if (
+      //   InstanceModel.detail?.accessProvider &&
+      //   pList.includes(InstanceModel.detail?.accessProvider)
+      // ) {
+      //   if (isNoCommunity) {
+      //     datalist.push({
+      //       key: 'metadata-map',
+      //       tab: '物模型映射',
+      //       component: <MetadataMap type="device" />,
+      //     });
+      //   }
+      // }
       const paring = response.result?.features?.find((item: any) => item.id === 'transparentCodec');
       if (paring) {
         datalist.push({
@@ -195,14 +194,14 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'modbus',
           tab: 'Modbus',
-          component: <Modbus data={InstanceModel.detail} />,
+          component: <MapChannel data={InstanceModel.detail} type="MODBUS_TCP" />,
         });
       }
       if (response.result.protocol === 'opc-ua') {
         datalist.push({
           key: 'opcua',
           tab: 'OPC UA',
-          component: <Opcua data={InstanceModel.detail} />,
+          component: <MapChannel data={InstanceModel.detail} type="OPC_UA" />,
         });
       }
       if (response.result.deviceType?.value === 'gateway') {
@@ -210,16 +209,16 @@ const InstanceDetail = observer(() => {
         datalist.push({
           key: 'child-device',
           tab: '子设备',
-          component: <ChildDevice />,
+          component: <ChildDevice data={InstanceModel.detail} />,
         });
       }
-      // if(response.result){
-      //   datalist.push({
-      //     key: 'edge-map',
-      //     tab: '边缘端映射',
-      //     component: <EdgeMap />,
-      //   })
-      // }
+      if (response.result.accessProvider === 'edge-child-device' && response.result.parentId) {
+        datalist.push({
+          key: 'edge-map',
+          tab: '边缘端映射',
+          component: <EdgeMap data={InstanceModel.detail} />,
+        });
+      }
       setList(datalist);
       // 写入物模型数据
       const metadata: DeviceMetadata = JSON.parse(response.result?.metadata || '{}');

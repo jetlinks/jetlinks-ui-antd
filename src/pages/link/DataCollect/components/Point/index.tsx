@@ -1,87 +1,111 @@
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDomFullHeight } from '@/hooks';
 import service from '@/pages/link/DataCollect/service';
 import CollectorCard from './CollectorCard/index';
 import { Empty, PermissionButton } from '@/components';
-import { Card, Col, Pagination, Row } from 'antd';
+import { Button, Card, Checkbox, Col, Dropdown, Menu, Pagination, Row } from 'antd';
 import { model } from '@formily/reactive';
 import ModbusSave from '@/pages/link/DataCollect/components/Point/Save/modbus';
 import Scan from '@/pages/link/DataCollect/components/Point/Save/scan';
-
+import { map } from 'rxjs/operators';
+import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import OpcSave from '@/pages/link/DataCollect/components/Point/Save/opc-ua';
+import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
+import BatchUpdate from './Save/BatchUpdate';
+import { onlyMessage } from '@/utils/util';
+import { DeleteOutlined, EditOutlined, RedoOutlined } from '@ant-design/icons';
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   data?: Partial<CollectorItem>;
   provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
+interface PointCardProps {
+  type: boolean; // true: 综合查询  false: 数据采集
+  data?: Partial<CollectorItem>;
+  provider?: 'OPC_UA' | 'MODBUS_TCP';
+  reload: boolean; // 变化时刷新
+  columns: ProColumns<PointItem>[];
+}
+
 const PointModel = model<{
   m_visible: boolean;
+  p_visible: boolean;
   p_add_visible: boolean;
+  writeVisible: boolean;
   current: Partial<PointItem>;
+  reload: boolean;
+  batch_visible: boolean;
+  list: any[];
+  selectKey: string[];
+  arr: any[];
+  checkAll: boolean;
 }>({
   m_visible: false,
+  p_visible: false,
   p_add_visible: false,
   current: {},
+  writeVisible: false,
+  reload: false,
+  batch_visible: false,
+  list: [],
+  selectKey: [],
+  arr: [],
+  checkAll: false,
 });
 
-export default observer((props: Props) => {
+const PointCard = observer((props: PointCardProps) => {
+  const [subscribeTopic] = useSendWebsocketMessage();
   const { minHeight } = useDomFullHeight(`.data-collect-point`, 24);
-  const [param, setParam] = useState({
-    terms: [],
-  });
+  const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
+  const [propertyValue, setPropertyValue] = useState<any>({});
   const [dataSource, setDataSource] = useState<any>({
     data: [],
-    pageSize: 10,
+    pageSize: 12,
     pageIndex: 0,
     total: 0,
   });
 
-  const columns: ProColumns<PointItem>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-    },
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '通讯协议',
-      dataIndex: 'provider',
-      valueType: 'select',
-      valueEnum: {
-        OPC_UA: {
-          text: 'OPC_UA',
-          status: 'OPC_UA',
-        },
-        MODBUS_TCP: {
-          text: 'MODBUS_TCP',
-          status: 'MODBUS_TCP',
-        },
-      },
-    },
-    {
-      title: '状态',
-      dataIndex: 'state',
-      valueType: 'select',
-      valueEnum: {
-        enabled: {
-          text: '正常',
-          status: 'enabled',
-        },
-        disabled: {
+  const getState = (record: Partial<ChannelItem>) => {
+    if (record) {
+      if (record?.state?.value === 'enabled') {
+        return { ...record?.runningState };
+      } else {
+        return {
           text: '禁用',
-          status: 'disabled',
-        },
-      },
-    },
-  ];
+          value: 'disabled',
+        };
+      }
+    } else {
+      return {};
+    }
+  };
+
+  const subRef = useRef<any>(null);
+
+  const subscribeProperty = (list: any) => {
+    const id = `collector-${props.data?.channelId || 'channel'}-${
+      props.data?.id || 'point'
+    }-data-${list.join('-')}`;
+    const topic = `/collector/${props.data?.channelId || '*'}/${props.data?.id || '*'}/data`;
+    subRef.current = subscribeTopic!(id, topic, {
+      pointId: list.join(','),
+    })
+      ?.pipe(map((res) => res.payload))
+      .subscribe((payload: any) => {
+        propertyValue[payload?.pointId] = { ...payload };
+        setPropertyValue({ ...propertyValue });
+      });
+  };
   const handleSearch = (params: any) => {
+    PointModel.checkAll = false;
+    PointModel.selectKey = [];
+    PointModel.list = [];
     setLoading(true);
     setParam(params);
     service
@@ -98,6 +122,7 @@ export default observer((props: Props) => {
       .then((resp) => {
         if (resp.status === 200) {
           setDataSource(resp.result);
+          subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
         }
         setLoading(false);
       });
@@ -105,16 +130,75 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(param);
-  }, [props.data?.id]);
+  }, [props.data?.id, props.reload]);
+
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      subRef.current && subRef.current?.unsubscribe();
+    };
+  }, []);
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <PermissionButton
+          isPermission={permission.update}
+          icon={<EditOutlined />}
+          onClick={() => {
+            if (PointModel.list.length) {
+              PointModel.batch_visible = true;
+            } else {
+              onlyMessage('请选择点位', 'error');
+            }
+          }}
+          key="batch"
+        >
+          编辑
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <PermissionButton
+          key="delete"
+          isPermission={permission.delete}
+          icon={<DeleteOutlined />}
+          popConfirm={{
+            title: '确认删除?',
+            onConfirm: async () => {
+              const resp = await service.batchDeletePoint(PointModel.selectKey);
+              if (resp.status === 200) {
+                handleSearch(param);
+                onlyMessage('操作成功！');
+              }
+            },
+          }}
+        >
+          删除
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <Button
+          icon={<RedoOutlined />}
+          onClick={() => {
+            PointModel.selectKey = [];
+            PointModel.list = [];
+            PointModel.checkAll = false;
+          }}
+        >
+          取消
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <div>
       <SearchComponent<PointItem>
-        field={columns}
+        field={props.columns}
         target="data-collect-point"
         onSearch={(data) => {
           const dt = {
-            pageSize: 10,
+            pageSize: 12,
             terms: [...data?.terms],
           };
           handleSearch(dt);
@@ -127,9 +211,14 @@ export default observer((props: Props) => {
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
                 <PermissionButton
                   isPermission={permission.add}
-                  onClick={() => {
+                  style={{ marginRight: 10 }}
+                  onClick={async () => {
                     if (props.provider === 'OPC_UA') {
-                      PointModel.p_add_visible = true;
+                      const resp = await service.queryPointNoPaging({ paging: false });
+                      if (resp.status === 200) {
+                        PointModel.p_add_visible = true;
+                        PointModel.arr = resp.result;
+                      }
                     } else {
                       PointModel.m_visible = true;
                     }
@@ -138,19 +227,80 @@ export default observer((props: Props) => {
                   key="button"
                   type="primary"
                 >
-                  新增
+                  {props?.provider === 'OPC_UA' ? '扫描' : '新增'}
                 </PermissionButton>
+                {props.provider === 'OPC_UA' && (
+                  <Dropdown key={'more'} overlay={menu} placement="bottom">
+                    <Button>批量操作</Button>
+                  </Dropdown>
+                )}
               </div>
             )}
             {dataSource?.data.length ? (
               <>
-                <Row gutter={[18, 18]} style={{ marginTop: 10 }}>
+                {props.provider === 'OPC_UA' && (
+                  <div style={{ margin: '20px 0' }}>
+                    <Checkbox
+                      checked={PointModel.checkAll}
+                      onChange={(e) => {
+                        PointModel.checkAll = e.target.checked;
+                        if (e.target.checked) {
+                          PointModel.selectKey = [...dataSource?.data.map((item: any) => item.id)];
+                          PointModel.list = [...dataSource?.data];
+                        } else {
+                          PointModel.selectKey = [];
+                          PointModel.list = [];
+                        }
+                      }}
+                    >
+                      全选
+                    </Checkbox>
+                  </div>
+                )}
+                <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
                   {(dataSource?.data || []).map((record: any) => (
-                    <Col key={record.id} span={12}>
+                    <Col
+                      key={record.id}
+                      xl={props.type ? 12 : 24}
+                      xxl={12}
+                      span={24}
+                      onClick={() => {
+                        if (props?.provider === 'OPC_UA') {
+                          if (PointModel.selectKey.includes(record.id)) {
+                            PointModel.selectKey = PointModel.selectKey.filter(
+                              (i) => i !== record.id,
+                            );
+                            PointModel.list = PointModel.list.filter((i) => i.id !== record.id);
+                          } else {
+                            PointModel.selectKey.push(record.id);
+                            PointModel.list.push(record);
+                          }
+                          if (PointModel.selectKey.length === dataSource.data.length) {
+                            PointModel.checkAll = true;
+                          } else {
+                            PointModel.checkAll = false;
+                          }
+                        }
+                      }}
+                    >
                       <CollectorCard
-                        item={record}
+                        item={{ ...record, status: getState(record) }}
+                        wsValue={propertyValue[record.id]}
                         reload={() => {
                           handleSearch(param);
+                        }}
+                        activeStyle={PointModel.selectKey.includes(record.id) ? 'active' : ''}
+                        update={(item, flag) => {
+                          if (flag) {
+                            PointModel.writeVisible = true;
+                          } else {
+                            if (item.provider === 'MODBUS_TCP') {
+                              PointModel.m_visible = true;
+                            } else {
+                              PointModel.p_visible = true;
+                            }
+                          }
+                          PointModel.current = item;
                         }}
                       />
                     </Col>
@@ -178,7 +328,7 @@ export default observer((props: Props) => {
                         pageSize: size,
                       });
                     }}
-                    pageSizeOptions={[10, 20, 50, 100]}
+                    pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
                     showTotal={(num) => {
                       const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
@@ -196,17 +346,199 @@ export default observer((props: Props) => {
           </div>
         </div>
       </Card>
+    </div>
+  );
+});
+
+export default observer((props: Props) => {
+  const columns: ProColumns<PointItem>[] = props.type
+    ? [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '通讯协议',
+          dataIndex: 'provider',
+          valueType: 'select',
+          valueEnum: {
+            OPC_UA: {
+              text: 'OPC_UA',
+              status: 'OPC_UA',
+            },
+            MODBUS_TCP: {
+              text: 'MODBUS_TCP',
+              status: 'MODBUS_TCP',
+            },
+          },
+        },
+        {
+          title: '访问类型',
+          dataIndex: 'accessModes',
+          valueType: 'select',
+          valueEnum: {
+            read: {
+              text: '读',
+              status: 'read',
+            },
+            write: {
+              text: '写',
+              status: 'write',
+            },
+            subscribe: {
+              text: '订阅',
+              status: 'subscribe',
+            },
+          },
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '运行状态',
+          dataIndex: 'runningState',
+          valueType: 'select',
+          valueEnum: {
+            running: {
+              text: '运行中',
+              status: 'running',
+            },
+            partialError: {
+              text: '部分错误',
+              status: 'partialError',
+            },
+            failed: {
+              text: '错误',
+              status: 'failed',
+            },
+            stopped: {
+              text: '已停止',
+              status: 'stopped',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ]
+    : [
+        {
+          title: '名称',
+          dataIndex: 'name',
+        },
+        {
+          title: '访问类型',
+          dataIndex: 'accessModes',
+          valueType: 'select',
+          valueEnum:
+            props?.provider === 'MODBUS_TCP'
+              ? {
+                  read: {
+                    text: '读',
+                    status: 'read',
+                  },
+                  write: {
+                    text: '写',
+                    status: 'write',
+                  },
+                }
+              : {
+                  read: {
+                    text: '读',
+                    status: 'read',
+                  },
+                  write: {
+                    text: '写',
+                    status: 'write',
+                  },
+                  subscribe: {
+                    text: '订阅',
+                    status: 'subscribe',
+                  },
+                },
+        },
+        {
+          title: '状态',
+          dataIndex: 'state',
+          valueType: 'select',
+          valueEnum: {
+            enabled: {
+              text: '正常',
+              status: 'enabled',
+            },
+            disabled: {
+              text: '禁用',
+              status: 'disabled',
+            },
+          },
+        },
+        {
+          title: '运行状态',
+          dataIndex: 'runningState',
+          valueType: 'select',
+          valueEnum: {
+            running: {
+              text: '运行中',
+              status: 'running',
+            },
+            partialError: {
+              text: '部分错误',
+              status: 'partialError',
+            },
+            failed: {
+              text: '错误',
+              status: 'failed',
+            },
+            stopped: {
+              text: '已停止',
+              status: 'stopped',
+            },
+          },
+        },
+        {
+          title: '说明',
+          dataIndex: 'description',
+        },
+      ];
+  return (
+    <div>
+      <PointCard columns={columns} {...props} reload={PointModel.reload} />
       {PointModel.m_visible && (
         <ModbusSave
           data={PointModel.current}
-          // channelId={props.id}
+          collector={props?.data || {}}
           close={() => {
             PointModel.m_visible = false;
           }}
           reload={() => {
             PointModel.m_visible = false;
-            handleSearch(param);
+            PointModel.reload = !PointModel.reload;
           }}
+        />
+      )}
+      {PointModel.p_visible && (
+        <OpcSave
+          close={() => {
+            PointModel.p_visible = false;
+          }}
+          reload={() => {
+            PointModel.p_visible = false;
+            PointModel.reload = !PointModel.reload;
+          }}
+          data={PointModel.current}
         />
       )}
       {PointModel.p_add_visible && (
@@ -214,10 +546,33 @@ export default observer((props: Props) => {
           close={() => {
             PointModel.p_add_visible = false;
           }}
-          channelId={props.data?.channelId}
+          data={PointModel.arr}
+          collector={props.data}
           reload={() => {
             PointModel.p_add_visible = false;
-            handleSearch(param);
+            PointModel.reload = !PointModel.reload;
+          }}
+        />
+      )}
+      {PointModel.writeVisible && (
+        <WritePoint
+          data={PointModel.current}
+          onCancel={() => {
+            PointModel.writeVisible = false;
+          }}
+        />
+      )}
+      {PointModel.batch_visible && (
+        <BatchUpdate
+          close={() => {
+            PointModel.batch_visible = false;
+          }}
+          data={PointModel.list}
+          reload={() => {
+            PointModel.batch_visible = false;
+            PointModel.reload = !PointModel.reload;
+            PointModel.list = [];
+            PointModel.selectKey = [];
           }}
         />
       )}

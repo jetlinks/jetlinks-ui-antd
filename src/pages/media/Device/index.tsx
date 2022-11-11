@@ -272,10 +272,10 @@ const Device = () => {
           tooltip={
             record.state.value === 'offline' ||
             record.state.value === 'notActive' ||
-            record.provider === providerType['fixed-media']
+            record.provider === 'fixed-media'
               ? {
                   title:
-                    record.provider === providerType['fixed-media']
+                    record.provider === 'fixed-media'
                       ? '固定地址无法更新通道'
                       : record.state.value === 'offline'
                       ? '设备已离线'
@@ -290,7 +290,7 @@ const Device = () => {
           disabled={
             record.state.value === 'offline' ||
             record.state.value === 'notActive' ||
-            record.provider === providerType['fixed-media']
+            record.provider === 'fixed-media'
           }
           style={{ padding: 0 }}
           type={'link'}
@@ -426,10 +426,10 @@ const Device = () => {
                 key={'updateChannel'}
                 isPermission={permission.update}
                 tooltip={
-                  record.state.value !== 'online' || record.provider === providerType['fixed-media']
+                  record.state.value !== 'online' || record.provider === 'fixed-media'
                     ? {
                         title:
-                          record.provider === providerType['fixed-media']
+                          record.provider === 'fixed-media'
                             ? '固定地址无法更新通道'
                             : record.state.value === 'offline'
                             ? '设备已离线'
@@ -439,9 +439,7 @@ const Device = () => {
                       }
                     : undefined
                 }
-                disabled={
-                  record.state.value !== 'online' || record.provider === providerType['fixed-media']
-                }
+                disabled={record.state.value !== 'online' || record.provider === 'fixed-media'}
                 onClick={() => {
                   updateChannel(record.id);
                 }}

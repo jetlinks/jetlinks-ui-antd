@@ -40,11 +40,12 @@ const Bind = () => {
   };
   const goRedirect = () => {
     const urlParams = new URLSearchParams(window.location.hash);
-    const redirectUrl = urlParams.get('redirect');
+    const redirectUrl = urlParams.get('redirect') || window.location.href.split('redirect=')?.[1];
     // const url = window.location.href.split('redirect=')?.[1];
     console.log(redirectUrl);
-    if (redirectUrl) {
-      window.location.href = redirectUrl;
+    //内部集成需要跳回它们页面
+    if (redirectUrl && redirectUrl.indexOf('account/center/bind') === -1) {
+      window.location.href = decodeURIComponent(redirectUrl);
     }
   };
 

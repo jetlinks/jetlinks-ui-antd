@@ -60,12 +60,13 @@ const Edit = (props: Props) => {
 
   const configToSchema = (list: any[]) => {
     const config = {};
-    list.forEach((item) => {
+    list.forEach((item, index) => {
       config[item.relation] = {
         type: 'string',
         title: item.relationName,
         'x-decorator': 'FormItem',
         'x-component': 'Select',
+        'x-index': index,
         'x-component-props': {
           placeholder: `请选择${item.relationName}`,
           showSearch: true,

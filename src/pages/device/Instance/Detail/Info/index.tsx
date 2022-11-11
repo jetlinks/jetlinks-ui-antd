@@ -120,7 +120,9 @@ const Info = observer(() => {
               defaultMessage: '创建时间',
             })}
           >
-            {moment(InstanceModel.detail?.createTime).format('YYYY-MM-DD HH:mm:ss')}
+            {InstanceModel.detail?.createTime
+              ? moment(InstanceModel.detail?.createTime).format('YYYY-MM-DD HH:mm:ss')
+              : ''}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -128,8 +130,9 @@ const Info = observer(() => {
               defaultMessage: '注册时间',
             })}
           >
-            {InstanceModel.detail?.registerTime &&
-              moment(InstanceModel.detail?.registerTime).format('YYYY-MM-DD HH:mm:ss')}
+            {InstanceModel.detail?.registerTime
+              ? moment(InstanceModel.detail?.registerTime).format('YYYY-MM-DD HH:mm:ss')
+              : ''}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({

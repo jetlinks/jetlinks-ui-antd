@@ -7,6 +7,7 @@ type LoginParam = {
 };
 
 type UserBase = {
+  username: boolean | string;
   avatar: string;
   createTime: number;
   description: string;

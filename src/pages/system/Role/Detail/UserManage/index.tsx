@@ -118,7 +118,7 @@ const UserManage = () => {
         tableAlertOptionRender={() => (
           <Space size={16}>
             <Popconfirm
-              title="确认解绑嘛"
+              title="确认解绑"
               onConfirm={() => {
                 setSelectedRowKeys([]);
                 unBindUser(params.id, [...selectedRowKeys]);

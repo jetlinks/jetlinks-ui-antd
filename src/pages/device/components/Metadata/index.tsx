@@ -14,7 +14,6 @@ import { PermissionButton } from '@/components';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useParams } from 'umi';
-import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 
 interface Props {
@@ -32,8 +31,6 @@ const Metadata = observer((props: Props) => {
     props.type === 'device' ? 'device/Instance' : 'device/Product',
   );
 
-  const { minHeight } = useDomFullHeight(`.device-detail-metadata`, 12);
-
   const params = useParams<{ id: string }>();
 
   const resetMetadata = async () => {
@@ -48,7 +45,7 @@ const Metadata = observer((props: Props) => {
   };
 
   return (
-    <div className={'device-detail-metadata'} style={{ position: 'relative', minHeight }}>
+    <div className={'device-detail-metadata'} style={{ position: 'relative' }}>
       <div className={styles.tips} style={{ width: '40%' }}>
         <Tooltip
           title={

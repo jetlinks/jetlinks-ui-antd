@@ -40,13 +40,13 @@ const EnumParam = () => {
               'x-reactions':
                 '{{(field)=>field.title = field.value && (field.value.text) || field.title}}',
               properties: {
-                text: {
+                value: {
                   type: 'string',
-                  title: 'Text',
+                  title: 'Value',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
-                    placeholder: '标识',
+                    placeholder: '请输入标识',
                   },
                   'x-validator': [
                     {
@@ -55,13 +55,13 @@ const EnumParam = () => {
                     },
                     {
                       required: true,
-                      message: '请输入标识',
+                      message: '请输入Value',
                     },
                   ],
                 },
-                value: {
+                text: {
                   type: 'string',
-                  title: 'Value',
+                  title: 'Text',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
@@ -74,7 +74,7 @@ const EnumParam = () => {
                     },
                     {
                       required: true,
-                      message: '请输入描述',
+                      message: '请输入Text',
                     },
                   ],
                 },

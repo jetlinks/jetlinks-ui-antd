@@ -152,8 +152,10 @@ Editable.Popover = observer((props) => {
   const openPopover = () => {
     setVisible(true);
   };
-  if (field.title === '配置参数' && !props.title) {
-    const path = field.path.segments.filter((key: any) => key !== 'config');
+  if ((field.title === '配置参数' || field.title === '指标数据') && !props.title) {
+    const filterKeys = ['config', 'edit'];
+    const path = field.path.segments.filter((key: any) => !filterKeys.includes(key));
+    console.log('EditTable', path, field.form.values);
     const value = get(field.form.values, path)?.name;
     title = value || '配置参数';
   }

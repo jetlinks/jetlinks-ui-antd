@@ -8,6 +8,8 @@ class Service extends BaseService<DeviceItem> {
 
   channelCount = (data: any = {}) =>
     request(`${this.uri}/channel/_count`, { method: 'POST', data: data });
+  getDevice = (data: any = {}) =>
+    request(`${this.uri}/device/_query/`, { method: 'POST', data: data });
 }
 
 export default Service;

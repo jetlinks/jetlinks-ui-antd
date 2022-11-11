@@ -103,7 +103,7 @@ export default () => {
       ellipsis: true,
     },
     {
-      dataIndex: 'state',
+      dataIndex: 'status',
       width: 90,
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',
@@ -116,7 +116,7 @@ export default () => {
           status: 'online',
         },
         offline: {
-          text: '离线',
+          text: '未连接',
           status: 'offline',
         },
       },

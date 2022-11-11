@@ -46,6 +46,7 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [parallel, setParallel] = useState(true); // 是否并行
   const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
+  const [targetTypeDisabled, setTargetTypeDisabled] = useState(false);
 
   const [requestParams, setRequestParams] = useState<any>(undefined);
   const [triggerValue, setTriggerValue] = useState<any>([]);
@@ -95,9 +96,15 @@ export default () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
+    const targetType = params.get('targetType');
     if (id) {
       getDetail(id);
     }
+
+    if (targetType) {
+      setTargetTypeDisabled(true);
+    }
+
     if (location && location.state) {
       setView(location.state.view);
     }
@@ -291,7 +298,7 @@ export default () => {
                   rules={[{ required: true, message: '请选择触发方式' }]}
                   initialValue={'device'}
                 >
-                  <TriggerWay onSelect={setTriggerType} disabled={isEdit} />
+                  <TriggerWay onSelect={setTriggerType} disabled={isEdit || targetTypeDisabled} />
                 </Form.Item>
                 {triggerType === TriggerWayType.timing && (
                   <TimingTrigger

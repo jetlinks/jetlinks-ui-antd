@@ -4,7 +4,7 @@ import { Card } from 'antd';
 import LeftTree from './tree';
 import { ScreenPlayer } from '@/components';
 import { ptzStart, ptzStop, ptzTool } from './service';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './index.less';
 import { useDomFullHeight } from '@/hooks';
 
@@ -23,6 +23,13 @@ const SplitScreen = () => {
     setDeviceId(dId);
     player.current?.replaceVideo(dId, cId, getMediaUrl(dId, cId));
   };
+
+  useEffect(() => {
+    document.body.style.overflowY = 'scroll';
+    return () => {
+      document.body.style.overflowY = '';
+    };
+  }, []);
 
   return (
     <PageContainer>

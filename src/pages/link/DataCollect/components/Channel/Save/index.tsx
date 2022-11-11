@@ -1,14 +1,14 @@
 import { Button, Modal } from 'antd';
-import { createForm, Field } from '@formily/core';
+import { createForm, Field, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import service from '@/pages/link/DataCollect/service';
-import { PermissionButton } from '@/components';
-import { onlyMessage } from '@/utils/util';
+import { onlyMessage, testDomain, testIP, testIPv6 } from '@/utils/util';
 import { action } from '@formily/reactive';
+import { RadioCard } from '@/components';
 
 interface Props {
   data: Partial<ChannelItem>;
@@ -17,9 +17,8 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const { permission } = PermissionButton.usePermission('link/Protocol');
   const [data, setData] = useState<Partial<ChannelItem>>(props.data);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [authTypeList, setAuthTypeList] = useState<any[]>([]);
 
   useEffect(() => {
     if (props.data?.id) {
@@ -29,6 +28,18 @@ export default (props: Props) => {
         }
       });
     }
+    service.queryAuthTypeList({}).then((resp) => {
+      if (resp.status === 200) {
+        setAuthTypeList(
+          (resp.result || []).map((item: any) => {
+            return {
+              label: item.text,
+              value: item.value,
+            };
+          }),
+        );
+      }
+    });
   }, [props.data]);
 
   const form = createForm({
@@ -37,14 +48,16 @@ export default (props: Props) => {
   });
 
   const getSecurityPolicyList = () => service.querySecurityPolicyList({});
+  const getSecurityModesList = () => service.querySecurityModesList({});
+  const getCertificateList = () => service.queryCertificateList({});
 
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
     field.loading = true;
     services(field).then(
       action.bound!((resp: any) => {
         field.dataSource = (resp?.result || []).map((item: any) => ({
-          label: item.name,
-          value: item.id,
+          label: item?.text || item?.name || item,
+          value: item?.value || item?.id || item,
         }));
         field.loading = false;
       }),
@@ -59,11 +72,25 @@ export default (props: Props) => {
       NumberPicker,
       Password,
       FormGrid,
+      RadioCard,
     },
     scope: {
       icon(name: any) {
         return React.createElement(ICONS[name]);
       },
+    },
+  });
+
+  registerValidateRules({
+    testHost(val: string) {
+      if (!(testIP(val) || testIPv6(val) || testDomain(val))) {
+        return {
+          type: 'error',
+          message: '请输入正确格式的Modbus主机IP地址',
+        };
+      } else {
+        return true;
+      }
     },
   });
 
@@ -110,9 +137,10 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择通讯协议',
             },
+            'x-disabled': props.data?.id,
             enum: [
-              { label: 'OPC_UA', value: 'OPC_UA' },
-              { label: 'MODBUS_TCP', value: 'MODBUS_TCP' },
+              { label: 'OPC UA', value: 'OPC_UA' },
+              { label: 'Modbus TCP', value: 'MODBUS_TCP' },
             ],
             'x-validator': [
               {
@@ -127,6 +155,7 @@ export default (props: Props) => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
+              tooltip: '支持ipv4、ipv6、域名',
             },
             'x-component-props': {
               placeholder: '请输入Modbus主机IP',
@@ -135,6 +164,9 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请输入Modbus主机IP',
+              },
+              {
+                testHost: true,
               },
             ],
             'x-reactions': {
@@ -164,11 +196,11 @@ export default (props: Props) => {
               },
               {
                 max: 65535,
-                message: '请输入0-65535之间的整整数',
+                message: '请输入0-65535之间的正整数',
               },
               {
                 min: 0,
-                message: '请输入0-65535之间的整整数',
+                message: '请输入0-65535之间的正整数',
               },
             ],
             'x-reactions': {
@@ -194,6 +226,28 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请输入端点url',
+              },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    service
+                      .validateField(value)
+                      .then((resp) => {
+                        if (resp.status === 200) {
+                          if (resp.result.passed) {
+                            resolve('');
+                          } else {
+                            resolve(resp.result.reason);
+                          }
+                        }
+                        resolve('');
+                      })
+                      .catch(() => {
+                        return '验证失败!';
+                      });
+                  });
+                },
               },
             ],
             'x-reactions': {
@@ -233,6 +287,110 @@ export default (props: Props) => {
               },
             ],
           },
+          'configuration.securityMode': {
+            title: '安全模式',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择安全模式',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择安全模式',
+              },
+            ],
+            'x-reactions': [
+              '{{useAsyncDataSource(getSecurityModesList)}}',
+              {
+                dependencies: ['..provider'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="OPC_UA"}}',
+                  },
+                },
+              },
+            ],
+          },
+          'configuration.certificate': {
+            title: '证书',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择证书',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择证书',
+              },
+            ],
+            'x-reactions': [
+              '{{useAsyncDataSource(getCertificateList)}}',
+              {
+                dependencies: ['.securityMode'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="SignAndEncrypt" || $deps[0]==="Sign"}}',
+                  },
+                },
+              },
+            ],
+          },
+          'configuration.authType': {
+            title: '权限认证',
+            'x-component': 'RadioCard',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            default: 'anonymous',
+            'x-component-props': {
+              model: 'singular',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+              },
+              placeholder: '请选择权限认证',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择权限认证',
+              },
+            ],
+            'x-reactions': [
+              // '{{useAsyncDataSource(getAuthTypeList)}}',
+              {
+                dependencies: ['..provider'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0]==="OPC_UA"}}',
+                    componentProps: {
+                      model: 'singular',
+                      itemStyle: {
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-around',
+                        minWidth: '130px',
+                        height: '50px',
+                      },
+                      placeholder: '请选择权限认证',
+                      options: [...authTypeList],
+                    },
+                  },
+                },
+              },
+            ],
+          },
           'configuration.username': {
             title: '用户名',
             'x-component': 'Input',
@@ -243,17 +401,21 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入用户名',
             },
-            // 'x-validator': [
-            //   {
-            //     required: true,
-            //     message: '请输入用户名',
-            //   },
-            // ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入用户名',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
             'x-reactions': {
-              dependencies: ['..provider'],
+              dependencies: ['.authType'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]==="OPC_UA"}}',
+                  visible: '{{$deps[0]==="username"}}',
                 },
               },
             },
@@ -268,17 +430,21 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入密码',
             },
-            // 'x-validator': [
-            //   {
-            //     required: true,
-            //     message: '请输入密码',
-            //   },
-            // ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入密码',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
             'x-reactions': {
-              dependencies: ['..provider'],
+              dependencies: ['.authType'],
               fulfill: {
                 state: {
-                  visible: '{{$deps[0]==="OPC_UA"}}',
+                  visible: '{{$deps[0]==="username"}}',
                 },
               },
             },
@@ -304,11 +470,11 @@ export default (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<ChannelItem>();
-    setLoading(true);
+    // setLoading(true);
     const response: any = props.data?.id
       ? await service.updateChannel(props.data?.id, { ...props.data, ...value })
       : await service.saveChannel({ ...props.data, ...value });
-    setLoading(false);
+    // setLoading(false);
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();
@@ -332,15 +498,23 @@ export default (props: Props) => {
           onClick={() => {
             save();
           }}
-          loading={loading}
-          disabled={props.data?.id ? !permission.update : !permission.add}
+          // loading={loading}
         >
           确定
         </Button>,
       ]}
     >
       <Form form={form} layout="vertical">
-        <SchemaField schema={schema} scope={{ useAsyncDataSource, getSecurityPolicyList }} />
+        <SchemaField
+          schema={schema}
+          scope={{
+            useAsyncDataSource,
+            getSecurityPolicyList,
+            // getAuthTypeList,
+            getSecurityModesList,
+            getCertificateList,
+          }}
+        />
       </Form>
     </Modal>
   );

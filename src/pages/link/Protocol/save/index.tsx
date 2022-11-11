@@ -20,6 +20,7 @@ interface Props {
 const Save = (props: Props) => {
   const [data, setData] = useState<ProtocolItem | undefined>(props.data);
   const { permission } = PermissionButton.usePermission('link/Protocol');
+  const [loading, setLoading] = useState(false);
   // const [count, setCount] = useState<number>(0);
 
   useEffect(() => {
@@ -245,9 +246,11 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<ProtocolItem>();
+    setLoading(true);
     const response: any = props.data?.id
       ? await service.savePatch({ ...props.data, ...value })
       : await service.save({ ...props.data, ...value });
+    setLoading(false);
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
       props.reload();
@@ -272,6 +275,7 @@ const Save = (props: Props) => {
         <Button
           type="primary"
           key={2}
+          loading={loading}
           onClick={() => {
             save();
           }}

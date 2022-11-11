@@ -139,6 +139,12 @@ const Detail = observer(() => {
                   '变量格式:${name};\n 示例:尊敬的${name},${time}有设备触发告警,请注意处理',
               };
             }
+            // if (id === 'voice') {
+            //   const type = field.query('template.*.templateType').value();
+            //   console.log(type,'111111')
+            //   field.hidden = false
+            //   field.disabled = false
+            // }
           });
           onFieldValueChange('provider', (field, form1) => {
             const value = field.value;
@@ -409,6 +415,26 @@ const Detail = observer(() => {
               //   break;
             }
           });
+          onFieldReact('template.templateType', (field, form1) => {
+            const value = (field as Field).value;
+            form1.setFieldState('template.message', (state1) => {
+              if (value === 'tts') {
+                state1.disabled = false;
+                state1.hidden = false;
+                state1.required = false;
+                state1.decoratorProps = {
+                  tooltip: '语音验证码内容输入框，用于渲染验语音证码变量。',
+                };
+                state1.componentProps = {
+                  rows: 5,
+                  placeholder: '内容中的变量将用于阿里云语音验证码。',
+                };
+              } else {
+                state1.hidden = true;
+                state1.value = undefined;
+              }
+            });
+          });
         },
       }),
     [id],
@@ -497,7 +523,7 @@ const Detail = observer(() => {
 
   registerValidateRules({
     batchCheckEmail(value) {
-      const regEmail = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+      const regEmail = /^([A-Za-z0-9_\-\.])+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
       let error;
       if (value) {
         value.some((item: string) => {
@@ -617,7 +643,7 @@ const Detail = observer(() => {
                         },
                       },
                       toParty: {
-                        title: '收信组织',
+                        title: '收信部门',
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         // 'x-decorator-props': {
@@ -625,7 +651,7 @@ const Detail = observer(() => {
                         //   gridSpan: 1,
                         // },
                         'x-component-props': {
-                          placeholder: '请选择收信组织',
+                          placeholder: '请选择收信部门',
                         },
                       },
                     },
@@ -835,7 +861,7 @@ const Detail = observer(() => {
                     },
                     properties: {
                       departmentIdList: {
-                        title: '收信组织',
+                        title: '收信部门',
                         // required: true,
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
@@ -844,7 +870,7 @@ const Detail = observer(() => {
                         //   gridSpan: 1,
                         // },
                         'x-component-props': {
-                          placeholder: '请选择收信组织',
+                          placeholder: '请选择收信部门',
                         },
                         // 'x-reactions': {
                         //   dependencies: ['configId'],
@@ -996,6 +1022,24 @@ const Detail = observer(() => {
                 'x-visible': id === 'voice',
                 type: 'void',
                 properties: {
+                  templateType: {
+                    title: '类型',
+                    required: true,
+                    'x-component': 'Select',
+                    'x-decorator': 'FormItem',
+                    'x-decorator-props': {
+                      tooltip: '语音验证码类型可配置变量，并且只支持数字和英文字母',
+                    },
+
+                    'x-component-props': {
+                      placeholder: '请选择类型',
+                    },
+                    default: 'tts',
+                    enum: [
+                      { label: '语音通知', value: 'voice' },
+                      { label: '语音验证码', value: 'tts' },
+                    ],
+                  },
                   layout: {
                     type: 'void',
                     'x-decorator': 'FormGrid',
@@ -1004,7 +1048,7 @@ const Detail = observer(() => {
                       minColumns: 2,
                     },
                     properties: {
-                      ttsCode: {
+                      templateCode: {
                         title: '模版ID',
                         'x-component': 'Input',
                         'x-decorator': 'FormItem',
@@ -1015,6 +1059,20 @@ const Detail = observer(() => {
                         required: true,
                         'x-component-props': {
                           placeholder: '请输入模版ID',
+                        },
+                      },
+                      ttsCode: {
+                        title: '模版ID',
+                        'x-component': 'Input',
+                        'x-decorator': 'FormItem',
+                        'x-hidden': true,
+                        'x-reactions': {
+                          dependencies: ['.templateCode'],
+                          fulfill: {
+                            state: {
+                              value: '{{$deps[0]}}',
+                            },
+                          },
                         },
                       },
                       calledNumber: {
@@ -1076,7 +1134,7 @@ const Detail = observer(() => {
                       },
                     ],
                   },
-                  PlayTimes: {
+                  playTimes: {
                     title: '播放次数',
                     'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',

@@ -28,21 +28,17 @@ const ChannelModel = model<{
 export default observer((props: Props) => {
   const intl = useIntl();
   const { minHeight } = useDomFullHeight(`.data-collect-channel`, 24);
-  const [param, setParam] = useState({});
-  const { permission } = PermissionButton.usePermission('device/Instance');
+  const [param, setParam] = useState({ pageSize: 12, terms: [] });
+  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [loading, setLoading] = useState<boolean>(true);
   const [dataSource, setDataSource] = useState<any>({
     data: [],
-    pageSize: 10,
+    pageSize: 12,
     pageIndex: 0,
     total: 0,
   });
 
   const columns: ProColumns<ChannelItem>[] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-    },
     {
       title: '名称',
       dataIndex: 'name',
@@ -77,6 +73,33 @@ export default observer((props: Props) => {
         },
       },
     },
+    {
+      title: '运行状态',
+      dataIndex: 'runningState',
+      valueType: 'select',
+      valueEnum: {
+        running: {
+          text: '运行中',
+          status: 'running',
+        },
+        partialError: {
+          text: '部分错误',
+          status: 'partialError',
+        },
+        failed: {
+          text: '错误',
+          status: 'failed',
+        },
+        stopped: {
+          text: '已停止',
+          status: 'stopped',
+        },
+      },
+    },
+    {
+      title: '说明',
+      dataIndex: 'description',
+    },
   ];
 
   const handleSearch = (params: any) => {
@@ -96,6 +119,20 @@ export default observer((props: Props) => {
     handleSearch(param);
   }, []);
 
+  const getState = (record: Partial<ChannelItem>) => {
+    if (record) {
+      if (record?.state?.value === 'enabled') {
+        return { ...record?.runningState };
+      } else {
+        return {
+          text: '禁用',
+          value: 'disabled',
+        };
+      }
+    } else {
+      return {};
+    }
+  };
   return (
     <div>
       <SearchComponent<ChannelItem>
@@ -103,7 +140,7 @@ export default observer((props: Props) => {
         target="data-collect-channel"
         onSearch={(data) => {
           const dt = {
-            pageSize: 10,
+            pageSize: 12,
             terms: [...data?.terms],
           };
           handleSearch(dt);
@@ -119,6 +156,7 @@ export default observer((props: Props) => {
                     <Col key={record.id} span={props.type ? 8 : 12}>
                       <ChannelCard
                         {...record}
+                        state={getState(record)}
                         actions={[
                           <PermissionButton
                             type={'link'}
@@ -140,13 +178,19 @@ export default observer((props: Props) => {
                             isPermission={permission.delete}
                             type={'link'}
                             style={{ padding: 0 }}
+                            // disabled={record?.state?.value !== 'disabled'}
+                            // tooltip={
+                            //   record?.state?.value !== 'disabled'
+                            //     ? {
+                            //         title: '正常的通道不能删除',
+                            //       }
+                            //     : undefined
+                            // }
                             popConfirm={{
-                              title: intl.formatMessage({
-                                id: 'pages.data.option.remove.tips',
-                              }),
-                              disabled: record?.state?.value !== 'disabled',
+                              title: '该操作将会删除下属采集器与点位，确定删除？',
                               onConfirm: async () => {
                                 await service.removeChannel(record.id);
+                                handleSearch(param);
                                 onlyMessage(
                                   intl.formatMessage({
                                     id: 'pages.data.option.success',
@@ -185,7 +229,7 @@ export default observer((props: Props) => {
                         pageSize: size,
                       });
                     }}
-                    pageSizeOptions={[10, 20, 50, 100]}
+                    pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
                     showTotal={(num) => {
                       const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;

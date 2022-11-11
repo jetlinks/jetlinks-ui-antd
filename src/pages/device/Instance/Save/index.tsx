@@ -16,6 +16,8 @@ interface Props {
   data?: Partial<DeviceInstance>;
 }
 
+const defaultImage = '/images/device-type-3-big.png';
+
 const Save = (props: Props) => {
   const { visible, close, data } = props;
   const [productList, setProductList] = useState<any[]>([]);
@@ -23,9 +25,13 @@ const Save = (props: Props) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (visible && data) {
+    if (visible && data && Object.keys(data).length) {
       form.setFieldsValue({
         ...data,
+      });
+    } else if (visible) {
+      form.setFieldsValue({
+        photoUrl: defaultImage,
       });
     }
   }, [visible]);

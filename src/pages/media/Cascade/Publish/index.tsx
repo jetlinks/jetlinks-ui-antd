@@ -33,8 +33,10 @@ const Publish = (props: Props) => {
         et += 1;
         setCountErr(et);
         setFlag(false);
-        errMessages.push({ ...res });
-        setErrMessage([...errMessages]);
+        if (errMessages.length <= 5) {
+          errMessages.push({ ...res });
+          setErrMessage([...errMessages]);
+        }
       }
     };
     source.onerror = () => {
@@ -65,7 +67,7 @@ const Publish = (props: Props) => {
               <a
                 style={{ marginLeft: 20 }}
                 onClick={() => {
-                  downloadObject(errMessage, props.data.name + '-推送失败');
+                  downloadObject(errMessage || '', props.data.name + '-推送失败');
                 }}
               >
                 下载

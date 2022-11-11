@@ -13,6 +13,16 @@ class Service {
       method: 'POST',
       data: params,
     });
+  public queryPointNoPaging = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/_query/no-paging`, {
+      method: 'GET',
+      params,
+    });
+  public queryPointCount = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/_count`, {
+      method: 'POST',
+      data: params,
+    });
   public queryPointByID = (id: string) =>
     request(`/${SystemConst.API_BASE}/data-collect/point/${id}`, {
       method: 'GET',
@@ -27,7 +37,7 @@ class Service {
       method: 'POST',
       data,
     });
-  public writePoint = (collectorId: string, data: string[]) =>
+  public writePoint = (collectorId: string, data: any[]) =>
     request(`/${SystemConst.API_BASE}data-collect/collector/${collectorId}/points/_write`, {
       method: 'POST',
       data,
@@ -44,6 +54,11 @@ class Service {
     });
   public queryCollector = (params: any) =>
     request(`/${SystemConst.API_BASE}/data-collect/collector/_query`, {
+      method: 'POST',
+      data: params,
+    });
+  public queryCollectorCount = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/collector/_count`, {
       method: 'POST',
       data: params,
     });
@@ -71,6 +86,11 @@ class Service {
       method: 'POST',
       data: params,
     });
+  public queryChannelCount = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/channel/_count`, {
+      method: 'POST',
+      data: params,
+    });
   public queryChannelByID = (id: string) =>
     request(`/${SystemConst.API_BASE}/data-collect/channel/${id}`, {
       method: 'GET',
@@ -89,11 +109,30 @@ class Service {
       method: 'POST',
       data: params,
     });
-  public querySecurityPolicyList = (params: any) =>
-    request(`/${SystemConst.API_BASE}/edge/operations/local/opcua-security-policies/invoke`, {
-      method: 'POST',
-      data: params,
+  public querySecurityPolicyList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/security-policies`, {
+      method: 'GET',
+      params,
     });
+
+  public querySecurityModesList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/security-modes`, {
+      method: 'GET',
+      params,
+    });
+
+  public queryCertificateList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/network/certificate/_query/no-paging?paging=false`, {
+      method: 'GET',
+      params,
+    });
+
+  public queryAuthTypeList = (params?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/auth-types`, {
+      method: 'GET',
+      params,
+    });
+
   public scanOpcUAList = (params: any) =>
     request(
       `/${SystemConst.API_BASE}/data-collect/opc/channel/${params.id}/nodes?nodeId=${
@@ -106,6 +145,29 @@ class Service {
   public queryCodecProvider = () =>
     request(`/${SystemConst.API_BASE}/things/collector/codecs`, {
       method: 'GET',
+    });
+
+  public savePointBatch = (params: any[]) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point`, {
+      method: 'PATCH',
+      data: params,
+    });
+
+  public dashboard = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/dashboard/_multi`, {
+      method: 'POST',
+      data,
+    });
+
+  public validateField = (data?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/opc/endpoint/_validate`, {
+      method: 'POST',
+      data,
+    });
+  public batchDeletePoint = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/batch/_delete`, {
+      method: 'POST',
+      data: params,
     });
 }
 

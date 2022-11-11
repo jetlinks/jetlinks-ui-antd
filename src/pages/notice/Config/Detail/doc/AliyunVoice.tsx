@@ -20,7 +20,7 @@ const AliyunVoice = () => {
       <div>
         <h2>1、RegionID</h2>
         <div>
-          阿里云内部给每台机器设置的唯一编号。请根据购买的阿里云服务器阿里云地域和可用区对照表地址：https://help.aliyun.com/document_detail/40654.html?spm=a2c6h.13066369.0.0.54a174710O7rWH获取路径：“微信公众平台”管理后台--“设置与开发”--“基本配置”
+          阿里云内部给每台机器设置的唯一编号。请根据购买的阿里云服务器阿里云地域和可用区对照表地址：https://help.aliyun.com/document_detail/40654.html?spm=a2c6h.13066369.0.0.54a174710O7rWH
         </div>
       </div>
       <h2>2、AccesskeyID/Secret</h2>
