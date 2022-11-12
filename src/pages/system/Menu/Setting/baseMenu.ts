@@ -1411,6 +1411,28 @@ export default [
                 permissions: [],
                 buttons: [
                   {
+                    id: 'view',
+                    name: '查看',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['query'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['query'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['query'],
+                      },
+                    ],
+                  },
+                  {
                     id: 'add',
                     name: '新增',
                     permissions: [
@@ -1519,6 +1541,28 @@ export default [
                 ],
                 permissions: [],
                 buttons: [
+                  {
+                    id: 'view',
+                    name: '查看',
+                    permissions: [
+                      {
+                        permission: 'data-collect-channel',
+                        actions: ['query'],
+                      },
+                      {
+                        permission: 'data-collector',
+                        actions: ['query'],
+                      },
+                      {
+                        permission: 'data-collect-opc',
+                        actions: ['query'],
+                      },
+                      {
+                        permission: 'things-collector',
+                        actions: ['query'],
+                      },
+                    ],
+                  },
                   {
                     id: 'add',
                     name: '新增',
