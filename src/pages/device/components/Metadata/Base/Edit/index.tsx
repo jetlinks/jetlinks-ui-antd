@@ -707,7 +707,7 @@ const Edit = observer((props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              mode: 'tags',
+              mode: 'multiple',
             },
             enum: [
               {

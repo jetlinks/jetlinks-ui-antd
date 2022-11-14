@@ -159,7 +159,7 @@ export const isNoCommunity = !(localStorage.getItem(SystemConst.Version_Code) ==
  */
 export const phoneRegEx = (value: string) => {
   const phone = new RegExp(
-    '^(((\\+86)|(\\+86-))|((86)|(86\\-))|((0086)|(0086\\-)))?1[3|5|7|8]\\d{9}$',
+    '^(((\\+86)|(\\+86-))|((86)|(86\\-))|((0086)|(0086\\-)))?1[3|5|7|8|9]\\d{9}$',
   );
   const mobile = /(0[0-9]{2,3})([2-9][0-9]{6,7})+([0-9]{8,11})?$/;
   return phone.test(value) || mobile.test(value);
