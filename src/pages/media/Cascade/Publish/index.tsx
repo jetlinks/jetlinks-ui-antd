@@ -33,8 +33,10 @@ const Publish = (props: Props) => {
         et += 1;
         setCountErr(et);
         setFlag(false);
-        errMessages.push({ ...res });
-        setErrMessage([...errMessages]);
+        if (errMessages.length <= 5) {
+          errMessages.push({ ...res });
+          setErrMessage([...errMessages]);
+        }
       }
     };
     source.onerror = () => {
