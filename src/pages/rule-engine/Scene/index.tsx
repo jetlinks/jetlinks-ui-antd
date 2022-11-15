@@ -36,6 +36,7 @@ const Scene = () => {
   const { permission } = PermissionButton.usePermission('rule-engine/Scene');
   const [searchParams, setSearchParams] = useState<any>({});
   const [visible, setVisible] = useState<boolean>(false);
+  const [current, setCurrent] = useState<Partial<SceneItem>>({});
   const history = useHistory();
 
   const deleteById = async (id: string) => {
@@ -97,9 +98,8 @@ const Scene = () => {
             : undefined
         }
         onClick={() => {
-          // const url = getMenuPathByCode('rule-engine/Scene/Save');
-          // history.push(`${url}?id=${record.id}`);
           setVisible(true);
+          setCurrent(record);
         }}
       >
         <EditOutlined />
@@ -344,6 +344,7 @@ const Scene = () => {
             onClick={() => {
               // const url = getMenuPathByCode('rule-engine/Scene/Save');
               // history.push(url);
+              setCurrent({});
               setVisible(true);
             }}
           >
@@ -366,8 +367,10 @@ const Scene = () => {
                   title: '查看',
                 }}
                 onClick={() => {
-                  const url = getMenuPathByCode('rule-engine/Scene/Save');
-                  history.push(`${url}?id=${record.id}`, { view: true });
+                  // const url = getMenuPathByCode('rule-engine/Scene/Save');
+                  // history.push(`${url}?id=${record.id}`, { view: true });
+                  // setCurrent({})
+                  // setVisible(true)
                 }}
               >
                 <EyeOutlined />
@@ -379,6 +382,7 @@ const Scene = () => {
       />
       {visible && (
         <Save
+          data={current}
           close={() => {
             setVisible(false);
           }}

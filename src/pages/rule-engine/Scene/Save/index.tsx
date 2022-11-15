@@ -1,16 +1,26 @@
 import { Modal } from '@/components';
 import { Form, Input } from 'antd';
 import TriggerWay from '@/pages/rule-engine/Scene/Save/components/TriggerWay';
+import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
+import { useEffect } from 'react';
+
 interface Props {
   close: () => void;
+  data: Partial<SceneItem>;
 }
 
 export default (props: Props) => {
   const [form] = Form.useForm();
 
+  useEffect(() => {
+    form.setFieldsValue({
+      ...props.data,
+    });
+  }, [props.data]);
+
   return (
     <Modal
-      title={'新增'}
+      title={props.data?.id ? '编辑' : '新增'}
       maskClosable={false}
       visible
       onCancel={() => {
@@ -43,10 +53,10 @@ export default (props: Props) => {
           initialValue={'device'}
         >
           <TriggerWay
-            onSelect={(val) => {
-              console.log(val);
-            }}
-            disabled={false}
+            // onSelect={(val) => {
+            //   // console.log(val);
+            // }}
+            disabled={!!props.data.id}
           />
         </Form.Item>
       </Form>
