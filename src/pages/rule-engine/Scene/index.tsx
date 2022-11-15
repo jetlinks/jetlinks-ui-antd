@@ -20,6 +20,7 @@ import { getMenuPathByCode } from '@/utils/menu';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
+import Save from './Save';
 
 export const service = new Service('scene');
 
@@ -34,6 +35,7 @@ const Scene = () => {
   const actionRef = useRef<ActionType>();
   const { permission } = PermissionButton.usePermission('rule-engine/Scene');
   const [searchParams, setSearchParams] = useState<any>({});
+  const [visible, setVisible] = useState<boolean>(false);
   const history = useHistory();
 
   const deleteById = async (id: string) => {
@@ -95,8 +97,9 @@ const Scene = () => {
             : undefined
         }
         onClick={() => {
-          const url = getMenuPathByCode('rule-engine/Scene/Save');
-          history.push(`${url}?id=${record.id}`);
+          // const url = getMenuPathByCode('rule-engine/Scene/Save');
+          // history.push(`${url}?id=${record.id}`);
+          setVisible(true);
         }}
       >
         <EditOutlined />
@@ -339,8 +342,9 @@ const Scene = () => {
             type="primary"
             isPermission={permission.add}
             onClick={() => {
-              const url = getMenuPathByCode('rule-engine/Scene/Save');
-              history.push(url);
+              // const url = getMenuPathByCode('rule-engine/Scene/Save');
+              // history.push(url);
+              setVisible(true);
             }}
           >
             {intl.formatMessage({
@@ -373,6 +377,13 @@ const Scene = () => {
           />
         )}
       />
+      {visible && (
+        <Save
+          close={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };
