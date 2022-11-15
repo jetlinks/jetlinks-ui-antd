@@ -48,9 +48,11 @@ export default (props: TriggerWayProps) => {
       >
         <div className={'way-item-title'}>
           <p>设备触发</p>
-          <span>DEVICE TRIGGER</span>
+          <span>适用于设备数据或行为满足触发条件时，执行指定的动作</span>
         </div>
-        <img className={'way-item-image'} src={'/images/device-trigger.png'} />
+        <div className={'way-item-image'}>
+          <img width={48} src={'/images/device-trigger.png'} />
+        </div>
       </div>
       <div
         className={classNames('trigger-way-item', {
@@ -62,9 +64,11 @@ export default (props: TriggerWayProps) => {
       >
         <div className={'way-item-title'}>
           <p>手动触发</p>
-          <span>MANUAL TRIGGER</span>
+          <span>适用于第三方平台向物联网平台下发指令控制设备.</span>
         </div>
-        <img className={'way-item-image'} src={'/images/manual-trigger.png'} />
+        <div className={'way-item-image'}>
+          <img width={48} src={'/images/manual-trigger.png'} />
+        </div>
       </div>
       <div
         className={classNames('trigger-way-item', {
@@ -76,9 +80,11 @@ export default (props: TriggerWayProps) => {
       >
         <div className={'way-item-title'}>
           <p>定时触发</p>
-          <span>TIMING TRIGGER</span>
+          <span>适用于定期执行固定任务.</span>
         </div>
-        <img className={'way-item-image'} src={'/images/timing-trigger.png'} />
+        <div className={'way-item-image'}>
+          <img width={48} src={'/images/timing-trigger.png'} />
+        </div>
       </div>
     </div>
   );

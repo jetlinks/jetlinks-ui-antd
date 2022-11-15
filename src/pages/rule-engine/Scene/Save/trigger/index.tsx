@@ -9,7 +9,7 @@ import Operation from './operation';
 import classNames from 'classnames';
 import { observer } from '@formily/reactive-react';
 import OrgTreeSelect from './OrgTreeSelect';
-import { FormModel } from '../index';
+import { FormModel } from '../old';
 import AllDevice from '@/pages/rule-engine/Scene/Save/action/device/AllDevice';
 import encodeQuery from '@/utils/encodeQuery';
 

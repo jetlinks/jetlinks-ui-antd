@@ -1,4 +1,4 @@
-@import '~antd/es/style/themes/default.less';
+@import '../../../../../../../node_modules/antd/es/style/themes/default.less';
 
 .trigger-way-warp {
   display: flex;
@@ -7,7 +7,9 @@
 
   .trigger-way-item {
     display: flex;
-    padding: 22px 16px;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px;
     border: 1px solid #e0e4e8;
     border-radius: 2px;
     cursor: pointer;
@@ -22,13 +24,13 @@
       }
 
       span {
-        color: rgba(#000, 0.24);
+        color: rgba(#000, 0.35);
         font-size: 12px;
       }
     }
 
     .way-item-image {
-      margin-left: 26px;
+      margin: 0 !important;
     }
 
     &:hover {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BadgeStatus, Ellipsis, PermissionButton } from '@/components';
 import './index.less';
 import { Popconfirm, Spin, Tooltip } from 'antd';
@@ -30,11 +30,6 @@ const CollectorCard = (props: PointCardProps) => {
   const { item, wsValue } = props;
   const [spinning, setSpinning] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
-  const [dataValue, setDataValue] = useState<any>(wsValue);
-
-  useEffect(() => {
-    setDataValue(wsValue);
-  }, [wsValue]);
 
   const read = async () => {
     if (item?.collectorId && item?.id) {
@@ -120,11 +115,11 @@ const CollectorCard = (props: PointCardProps) => {
               </div>
             </div>
             <div className={'card-item-content'}>
-              {dataValue ? (
+              {wsValue ? (
                 <div className={'card-item-content-item-left'}>
                   <div className={'card-item-content-item-header'}>
                     <div className={'card-item-content-item-header-title'}>
-                      <Ellipsis title={`${dataValue?.parseData}(${dataValue?.dataType})`} />
+                      <Ellipsis title={`${wsValue?.parseData}(${wsValue?.dataType})`} />
                     </div>
                     <div className={'card-item-content-item-header-action'}>
                       {item.accessModes && item.accessModes.map((i) => i.value)?.includes('write') && (
@@ -148,13 +143,13 @@ const CollectorCard = (props: PointCardProps) => {
                     </div>
                   </div>
                   <div className={'card-item-content-item-text'}>
-                    <Ellipsis title={dataValue?.hex || ''} />
+                    <Ellipsis title={wsValue?.hex || ''} />
                   </div>
                   <div className={'card-item-content-item-text'}>
                     <Ellipsis
                       title={
-                        dataValue?.timestamp
-                          ? moment(dataValue.timestamp).format('YYYY-MM-DD HH:mm:ss')
+                        wsValue?.timestamp
+                          ? moment(wsValue.timestamp).format('YYYY-MM-DD HH:mm:ss')
                           : ''
                       }
                     />
@@ -224,9 +219,13 @@ const CollectorCard = (props: PointCardProps) => {
                   )}
                 </div>
                 <div className={'card-item-content-item-tags'}>
-                  <div className={'card-item-content-item-tag'}>
-                    {(item?.accessModes || []).map((i) => i?.text).join(',')}
-                  </div>
+                  {item.accessModes && item.accessModes.length ? (
+                    <div className={'card-item-content-item-tag'}>
+                      {(item?.accessModes || []).map((i) => i?.text).join(',')}
+                    </div>
+                  ) : (
+                    ''
+                  )}
                   <div className={'card-item-content-item-tag'}>
                     采集频率{item?.configuration?.interval}ms
                   </div>

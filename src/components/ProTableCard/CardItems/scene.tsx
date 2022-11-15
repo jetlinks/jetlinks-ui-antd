@@ -38,21 +38,16 @@ export default (props: DeviceCardProps) => {
         </div>
         <div className={'card-item-body'}>
           <div className={'card-item-header'}>
-            {/*<span className={'card-item-header-name ellipsis'}>*/}
-            {/*  <Tooltip title={props.name}>{props.name}</Tooltip>*/}
-            {/*</span>*/}
             <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
-          <div className={'card-item-content'}>
+          <div>
             <div>
               <label>触发方式</label>
               <Ellipsis title={TriggerWayType[props.triggerType]} />
-              {/*<div className={'ellipsis'}>{TriggerWayType[props.triggerType]}</div>*/}
             </div>
             <div>
               <label>说明</label>
               <Ellipsis title={props.description} />
-              {/*<div className={'ellipsis'}>{props.description || ''}</div>*/}
             </div>
           </div>
         </div>
