@@ -230,12 +230,15 @@ const Edit = observer((props: Props) => {
     properties: {
       type: {
         title: schemaTitleMapping[MetadataModel.type].title,
-        'x-validator': [
-          {
-            required: true,
-            message: `请选择${schemaTitleMapping[MetadataModel.type].title}`,
-          },
-        ],
+        'x-validator':
+          MetadataModel.type !== 'functions'
+            ? [
+                {
+                  required: true,
+                  message: `请选择${schemaTitleMapping[MetadataModel.type].title}`,
+                },
+              ]
+            : [],
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         default: MetadataModel.type === 'events' ? 'object' : null,

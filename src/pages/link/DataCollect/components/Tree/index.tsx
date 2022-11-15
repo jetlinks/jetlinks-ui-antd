@@ -9,14 +9,14 @@ import {
 import { Button, Input, Tree, Space, Popconfirm, Tooltip } from 'antd';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { BadgeStatus, Empty, PermissionButton } from '@/components';
+import { Empty, PermissionButton } from '@/components';
 import styles from './index.less';
 import service from '@/pages/link/DataCollect/service';
 import { useEffect } from 'react';
 import Save from '../../components/Channel/Save/index';
 import CollectorSave from '../../components/Device/Save/index';
 import { onlyMessage } from '@/utils/util';
-import { StatusColorEnum } from '@/components/BadgeStatus';
+// import { StatusColorEnum } from '@/components/BadgeStatus';
 import { useIntl } from '@@/plugin-locale/localeExports';
 
 const TreeModel = model<{
@@ -76,25 +76,25 @@ export default observer((props: Props) => {
     handleSearch(TreeModel.param);
   }, [TreeModel.param, props.reload]);
 
-  const getState = (record: Partial<ChannelItem>): { text: string; value: string } => {
-    if (record) {
-      if (record?.state?.value === 'enabled') {
-        return {
-          text: record?.runningState?.text || '',
-          value: record?.runningState?.value || '',
-        };
-      } else {
-        return {
-          text: '禁用',
-          value: 'disabled',
-        };
-      }
-    }
-    return {
-      text: '',
-      value: '',
-    };
-  };
+  // const getState = (record: Partial<ChannelItem>): { text: string; value: string } => {
+  //   if (record) {
+  //     if (record?.state?.value === 'enabled') {
+  //       return {
+  //         text: record?.runningState?.text || '',
+  //         value: record?.runningState?.value || '',
+  //       };
+  //     } else {
+  //       return {
+  //         text: '禁用',
+  //         value: 'disabled',
+  //       };
+  //     }
+  //   }
+  //   return {
+  //     text: '',
+  //     value: '',
+  //   };
+  // };
 
   return (
     <div>
@@ -146,7 +146,7 @@ export default observer((props: Props) => {
                       >
                         <img width={'20px'} style={{ marginRight: 5 }} src={channelImg} />
                         <div className={'ellipsis'}>
-                          <BadgeStatus
+                          {/* <BadgeStatus
                             status={
                               item && getState(item) && getState(item)?.value
                                 ? getState(item).value
@@ -160,7 +160,8 @@ export default observer((props: Props) => {
                               failed: StatusColorEnum.error,
                               stopped: StatusColorEnum.default,
                             }}
-                          />
+                          /> */}
+                          {item.name}
                         </div>
                       </div>
                       <div>
