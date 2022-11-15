@@ -224,9 +224,11 @@ const CollectorCard = (props: PointCardProps) => {
                   )}
                 </div>
                 <div className={'card-item-content-item-tags'}>
-                  <div className={'card-item-content-item-tag'}>
-                    {(item?.accessModes || []).map((i) => i?.text).join(',')}
-                  </div>
+                  {item.accessModes && item.accessModes.length && (
+                    <div className={'card-item-content-item-tag'}>
+                      {(item?.accessModes || []).map((i) => i?.text).join(',')}
+                    </div>
+                  )}
                   <div className={'card-item-content-item-tag'}>
                     采集频率{item?.configuration?.interval}ms
                   </div>
