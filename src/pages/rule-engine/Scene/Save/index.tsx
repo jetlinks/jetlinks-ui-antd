@@ -3,6 +3,8 @@ import { Form, Input } from 'antd';
 import TriggerWay from '@/pages/rule-engine/Scene/Save/components/TriggerWay';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import { useEffect } from 'react';
+import { getMenuPathByCode } from '@/utils/menu';
+import useHistory from '@/hooks/route/useHistory';
 
 interface Props {
   close: () => void;
@@ -11,6 +13,7 @@ interface Props {
 
 export default (props: Props) => {
   const [form] = Form.useForm();
+  const history = useHistory();
 
   useEffect(() => {
     form.setFieldsValue({
@@ -28,7 +31,9 @@ export default (props: Props) => {
       }}
       onOk={async () => {
         const values = await form.validateFields();
-        console.log(values);
+        props.close();
+        const url = getMenuPathByCode('rule-engine/Scene/Detail');
+        history.push(`${url}?type=${values.trigger?.type}`);
       }}
       width={700}
     >
@@ -56,7 +61,7 @@ export default (props: Props) => {
             // onSelect={(val) => {
             //   // console.log(val);
             // }}
-            disabled={!!props.data.id}
+            disabled={!!props.data?.id}
           />
         </Form.Item>
       </Form>

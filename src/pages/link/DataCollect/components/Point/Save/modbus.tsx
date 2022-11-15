@@ -429,12 +429,26 @@ export default (props: Props) => {
           ...props.data,
           ...value,
           pointKey: value?.configuration?.parameter?.address,
+          configuration: {
+            ...value?.configuration,
+            codec: {
+              ...value?.configuration?.codec,
+              provider: value?.configuration?.codec?.provider || 'int8',
+            },
+          },
         })
       : await service.savePoint({
           ...obj,
           ...props.data,
           ...value,
           pointKey: value?.configuration?.parameter?.address,
+          configuration: {
+            ...value?.configuration,
+            codec: {
+              ...value?.configuration?.codec,
+              provider: value?.configuration?.codec?.provider || 'int8',
+            },
+          },
         });
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
