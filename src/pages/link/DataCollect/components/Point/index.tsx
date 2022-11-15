@@ -103,6 +103,9 @@ const PointCard = observer((props: PointCardProps) => {
       });
   };
   const handleSearch = (params: any) => {
+    if (subRef.current) {
+      subRef.current?.unsubscribe();
+    }
     PointModel.checkAll = false;
     PointModel.selectKey = [];
     PointModel.list = [];
