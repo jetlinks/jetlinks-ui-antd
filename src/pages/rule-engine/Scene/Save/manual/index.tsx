@@ -1,3 +1,8 @@
+import Actions from '../action';
 export default () => {
-  return <div>手动</div>;
+  return (
+    <div>
+      <Actions />
+    </div>
+  );
 };

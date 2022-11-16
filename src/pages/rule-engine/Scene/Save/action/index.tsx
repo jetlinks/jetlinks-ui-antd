@@ -1,4 +1,5 @@
 import { Collapse } from 'antd';
+import { List } from './ListItem';
 
 const { Panel } = Collapse;
 
@@ -16,7 +17,9 @@ export default () => {
             }
             key="1"
           >
-            <div className="actions-list"></div>
+            <div className="actions-list">
+              <List type="serial" />
+            </div>
           </Panel>
           <Panel
             header={

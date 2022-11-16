@@ -1,24 +1,31 @@
 import { Button, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { AddButton } from '../../components/Buttons';
 import { Item } from './index';
+import type { ItemType } from './Item';
+import './index.less';
 
-export default () => {
+interface PropsType {
+  type: ItemType;
+}
+
+export default (props: PropsType) => {
   const [form] = Form.useForm();
 
   return (
     <div className="action-list-content">
       <Form form={form} colon={false} layout={'vertical'} preserve={false} name="actions">
-        <Form.List name="actions">
+        <Form.List name="actions" initialValue={[{}]}>
           {(fields, { add, remove }) => (
             <div className="actions-list_form">
-              {fields.length ? (
-                fields.map(({ key, name, ...resetField }) => (
-                  <Item key={key} name={name} resetField={resetField} remove={remove} />
-                ))
-              ) : (
-                <AddButton>点击配置动作</AddButton>
-              )}
+              {fields.map(({ key, name, ...resetField }) => (
+                <Item
+                  key={key}
+                  name={name}
+                  resetField={resetField}
+                  remove={remove}
+                  type={props.type}
+                />
+              ))}
               <div className="action-list-add">
                 <Button type="primary" onClick={add} ghost icon={<PlusOutlined />}>
                   新增
