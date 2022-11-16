@@ -10,7 +10,7 @@ export const MENUS_BUTTONS_CACHE = 'MENUS_BUTTONS_CACHE';
 
 const DetailCode = 'detail';
 
-// 额外子级路由
+// 额外子级路由F
 const extraRouteObj = {
   notice: {
     children: [

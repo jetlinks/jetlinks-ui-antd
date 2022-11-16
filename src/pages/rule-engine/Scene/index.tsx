@@ -20,7 +20,7 @@ import { getMenuPathByCode } from '@/utils/menu';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
-import Save from './Save';
+import Save from './Save/save';
 
 export const service = new Service('scene');
 
