@@ -7,7 +7,7 @@ export default () => {
     <div className="actions">
       <div className="actions-title">执行</div>
       <div className="actions-warp">
-        <Collapse defaultActiveKey={[]}>
+        <Collapse defaultActiveKey={['1']}>
           <Panel
             header={
               <span>

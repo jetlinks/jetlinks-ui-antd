@@ -1,7 +1,2 @@
-import List from './List';
-import Item from './Item';
-
-export default {
-  List,
-  Item,
-};
+export { default as List } from './List';
+export { default as Item } from './Item';
