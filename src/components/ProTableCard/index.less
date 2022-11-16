@@ -121,6 +121,34 @@
             -webkit-line-clamp: 2;
           }
         }
+
+        .card-item-content-scene {
+          display: flex;
+          .card-item-content-scene-item {
+            min-width: 80px;
+            div {
+              color: rgba(0, 0, 0, 0.65);
+              font-size: 14px;
+              span.item-icon {
+                margin-right: 10px;
+              }
+            }
+            &:last-child {
+              margin-left: 16px;
+            }
+            .scene-item-trigger {
+              width: 100%;
+              overflow: hidden;
+              color: #000;
+              font-size: 14px;
+              white-space: nowrap; //文本不会换行
+              text-overflow: ellipsis; //文本溢出显示省略号
+            }
+            .scene-item-action {
+              border: 1px solid #f0f2f3;
+            }
+          }
+        }
       }
     }
   }

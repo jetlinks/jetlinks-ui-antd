@@ -62,6 +62,7 @@ export default observer((props: Props) => {
       title: '状态',
       dataIndex: 'state',
       valueType: 'select',
+      hideInSearch: true,
       valueEnum: {
         enabled: {
           text: '正常',
@@ -77,6 +78,7 @@ export default observer((props: Props) => {
       title: '运行状态',
       dataIndex: 'runningState',
       valueType: 'select',
+      hideInSearch: true,
       valueEnum: {
         running: {
           text: '运行中',

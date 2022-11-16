@@ -246,7 +246,7 @@ const MapChannel = (props: Props) => {
                 title: (
                   <>
                     采集器
-                    <Tooltip title="边缘网关代理的真实物理设备">
+                    <Tooltip title="数据采集中配置的真实物理设备">
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </>
@@ -458,9 +458,11 @@ const MapChannel = (props: Props) => {
               保存
             </Button>
           </div>
-          <FormProvider form={form}>
-            <SchemaField schema={schema} scope={{ useAsyncDataSource, getCollector, getPoint }} />
-          </FormProvider>
+          <div className="array-table">
+            <FormProvider form={form}>
+              <SchemaField schema={schema} scope={{ useAsyncDataSource, getCollector, getPoint }} />
+            </FormProvider>
+          </div>
         </>
       )}
       {visible && (
