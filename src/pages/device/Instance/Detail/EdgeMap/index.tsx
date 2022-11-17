@@ -24,6 +24,7 @@ const EdgeMap = (props: Props) => {
       metadataName: `${item.name}(${item.id})`,
       metadataType: 'property',
     }));
+    console.log(metadata, 2222);
     if (metadata && metadata.length !== 0) {
       service
         .getMap(data.parentId, {

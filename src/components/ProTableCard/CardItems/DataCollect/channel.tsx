@@ -26,6 +26,7 @@ export default (props: ChannelCardProps) => {
     <TableCard
       actions={props.actions}
       status={props.state?.value}
+      showStatus={false}
       statusText={props.state?.text}
       showMask={false}
       statusNames={{
