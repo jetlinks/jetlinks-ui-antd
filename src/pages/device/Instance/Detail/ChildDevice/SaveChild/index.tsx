@@ -34,14 +34,16 @@ const SaveChild = (props: Props) => {
 
   useEffect(() => {
     if (props.childData.id) {
-      const product = productList.filter((i: any) => i.id === props.childData.productId)[0];
-      // console.log(JSON.parse(item.metadata || []));
-      if (product && product.metadata) {
-        const metadata = JSON.parse(product?.metadata || {})?.properties?.map((item: any) => ({
-          metadataId: item.id,
-          metadataName: `${item.name}(${item.id})`,
-          metadataType: 'property',
-        }));
+      // const product = productList.filter((i: any) => i.id === props.childData.productId)[0];
+      // console.log(props.childData,'product');
+      if (props.childData.deriveMetadata) {
+        const metadata = JSON.parse(props.childData?.deriveMetadata || {})?.properties?.map(
+          (item: any) => ({
+            metadataId: item.id,
+            metadataName: `${item.name}(${item.id})`,
+            metadataType: 'property',
+          }),
+        );
         if (metadata && metadata.length !== 0) {
           service
             .getMap(props.data.id, {
@@ -77,7 +79,7 @@ const SaveChild = (props: Props) => {
         }
       }
     }
-  }, [productList]);
+  }, [props.childData]);
 
   return (
     <>

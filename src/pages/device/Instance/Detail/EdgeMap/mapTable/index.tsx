@@ -408,6 +408,7 @@ const MapTable = (props: Props) => {
   };
 
   useEffect(() => {
+    console.log(metaData, 1111111);
     service.edgeChannel(edgeId).then((res) => {
       if (res.status === 200) {
         const list = res.result?.[0].map((item: any) => ({
