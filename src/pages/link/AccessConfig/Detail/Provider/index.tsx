@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { TitleComponent } from '@/components';
 import { Button, Card, Col, Row, Tooltip } from 'antd';
 import styles from './index.less';
-import { isNoCommunity } from '@/utils/util';
 
 interface Props {
   data: any[];
@@ -31,53 +30,43 @@ const Provider = (props: Props) => {
         network.push(item);
       }
     });
-    if (!isNoCommunity) {
-      const list = network.filter(
-        (item) =>
-          item.id &&
-          [
-            'mqtt-server-gateway',
-            'http-server-gateway',
-            'mqtt-client-gateway',
-            'tcp-server-gateway',
-          ].includes(item.id),
-      );
-      setDataSource([
-        {
-          type: 'network',
-          list: [...list],
-          title: '自定义设备接入',
-        },
-      ]);
-    } else {
-      setDataSource([
-        {
-          type: 'network',
-          list: [...network],
-          title: '自定义设备接入',
-        },
-        {
-          type: 'media',
-          list: [...media],
-          title: '视频类设备接入',
-        },
-        {
-          type: 'cloud',
-          list: [...cloud],
-          title: '云平台接入',
-        },
-        {
-          type: 'channel',
-          list: [...channel],
-          title: '通道类设备接入',
-        },
-        {
-          type: 'edge',
-          list: [...edge],
-          title: '官方接入',
-        },
-      ]);
+    const list = [];
+    if (network.length) {
+      list.push({
+        type: 'network',
+        list: [...network],
+        title: '自定义设备接入',
+      });
     }
+    if (media.length) {
+      list.push({
+        type: 'media',
+        list: [...media],
+        title: '视频类设备接入',
+      });
+    }
+    if (cloud.length) {
+      list.push({
+        type: 'cloud',
+        list: [...cloud],
+        title: '云平台接入',
+      });
+    }
+    if (channel.length) {
+      list.push({
+        type: 'channel',
+        list: [...channel],
+        title: '通道类设备接入',
+      });
+    }
+    if (edge.length) {
+      list.push({
+        type: 'edge',
+        list: [...edge],
+        title: '官方接入',
+      });
+    }
+    setDataSource([...list]);
   }, [props.data]);
 
   const backMap = new Map();
