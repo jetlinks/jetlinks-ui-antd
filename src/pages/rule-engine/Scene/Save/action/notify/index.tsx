@@ -1,37 +1,45 @@
 import { Modal, Button, Steps } from 'antd';
-import { useState } from 'react';
+import React from 'react';
 import { observer } from '@formily/react';
+import { model } from '@formily/reactive';
+import NotifyWay from './NotifyWay';
+import NotifyConfig from './NotifyConfig';
+import NotifyTemplate from './NotifyTemplate';
+import './index.less';
+const initSteps = [
+  {
+    key: 'way',
+    title: '通知方式',
+    content: <NotifyWay />,
+  },
+  {
+    key: 'config',
+    title: '通知配置',
+    content: <NotifyConfig />,
+  },
+  {
+    key: 'template',
+    title: '通知模板',
+    content: <NotifyTemplate />,
+  },
+];
 
-// const NotifyeModel = model<{
-//   steps: <{title: string, content: ReactNode}>[]
-// }>({
-//   current: {}
-// });
+const NotifyModel = model<{
+  steps: { key: string; title: string; content: React.ReactNode }[];
+  current: number;
+}>({
+  steps: initSteps,
+  current: 0,
+});
 
 export default observer(() => {
-  const [current, setCurrent] = useState(0);
-  const steps = [
-    {
-      title: '通知方式',
-      content: 'First-content',
-    },
-    {
-      title: '通知配置',
-      content: 'Second-content',
-    },
-    {
-      title: '通知模板',
-      content: 'Last-content',
-    },
-  ];
   const next = () => {
-    setCurrent(current + 1);
+    NotifyModel.current += 1;
   };
 
   const prev = () => {
-    setCurrent(current - 1);
+    NotifyModel.current -= 1;
   };
-  const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   return (
     <Modal
@@ -40,26 +48,29 @@ export default observer(() => {
       width={1000}
       footer={
         <div className="steps-action">
-          {current < steps.length - 1 && (
+          {NotifyModel.current === 0 && <Button onClick={() => {}}>取消</Button>}
+          {NotifyModel.current < NotifyModel.steps.length - 1 && (
             <Button type="primary" onClick={() => next()}>
-              Next
+              下一步
             </Button>
           )}
-          {current === steps.length - 1 && (
+          {NotifyModel.current === NotifyModel.steps.length - 1 && (
             <Button type="primary" onClick={() => {}}>
-              Done
+              确定
             </Button>
           )}
-          {current > 0 && (
+          {NotifyModel.current > 0 && (
             <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-              Previous
+              上一步
             </Button>
           )}
         </div>
       }
     >
-      <Steps current={current} items={items} />
-      <div className="steps-content">{steps[current].content}</div>
+      <div className="steps-steps">
+        <Steps current={NotifyModel.current} items={NotifyModel.steps} />
+      </div>
+      <div className="steps-content">{NotifyModel.steps[NotifyModel.current]?.content}</div>
     </Modal>
   );
 });
