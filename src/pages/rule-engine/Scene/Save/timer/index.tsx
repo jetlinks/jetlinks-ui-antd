@@ -1,6 +1,7 @@
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { useState } from 'react';
 import TimerTrigger from './TimerTrigger';
+import Action from '../action';
 
 export default () => {
   const [visible, setVisible] = useState<boolean>(false);
@@ -15,7 +16,9 @@ export default () => {
       >
         <AddButton>点击配置定时触发规则</AddButton>
       </div>
-      <div>执行动作</div>
+      <div>
+        <Action />
+      </div>
       {visible && (
         <TimerTrigger
           data={{}}
