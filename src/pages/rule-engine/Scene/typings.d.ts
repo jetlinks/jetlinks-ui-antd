@@ -10,6 +10,24 @@ type Trigger = {
   device: Record<string, unknown>;
 };
 
+export enum Source {
+  'manual' = 'manual',
+  'metric' = 'metric',
+}
+
+export enum ActionDeviceSelector {
+  'all' = 'all',
+  'fixed' = 'fixed',
+  'tag' = 'tag',
+  'relation' = 'relation',
+}
+
+export enum ActionDeviceSource {
+  'fixed' = 'fixed',
+  'upper' = 'upper',
+  'relation' = 'relation',
+}
+
 export enum OperatorType {
   'online' = 'online',
   'offline' = 'offline',
@@ -37,6 +55,17 @@ export enum Executor {
   'delay' = 'delay',
   'device' = 'device',
   'alarm' = 'alarm',
+}
+
+export enum DeviceMessageType {
+  'INVOKE_FUNCTION' = 'INVOKE_FUNCTION',
+  'READ_PROPERTY' = 'READ_PROPERTY',
+  'WRITE_PROPERTY' = 'WRITE_PROPERTY',
+}
+
+export enum ActionAlarmMode {
+  'trigger' = 'trigger',
+  'relieve' = 'relieve',
 }
 
 export interface OperationTimerPeriod {
@@ -89,7 +118,7 @@ export interface ShakeLimitType {
   alarmFirst: boolean;
 }
 
-interface SceneItem {
+export interface SceneItem {
   parallel: boolean;
   state: State;
   actions: Action[];
@@ -100,7 +129,7 @@ interface SceneItem {
   triggerType: string;
 }
 
-type TriggerType = {
+export type TriggerType = {
   type: string;
   /**
    * 防抖配置
@@ -117,47 +146,98 @@ type TriggerType = {
   /**
    * 定时触发配置
    */
-  timer?: any;
+  timer?: OperationTimer;
 };
 
-interface TermsVale {
-  source: string | 'manual' | 'metric';
+export interface TermsVale {
+  source: keyof typeof Source;
   /** 手动输入值,source为 manual 时不能为空 */
   value?: Record<string, any>;
   /** 指标值,source为 metric 时不能为空 */
   metric?: Record<string, any>;
 }
 
-type TermsType = {
+export type TermsType = {
   column?: string;
-  value?: any;
+  value?: TermsVale;
   type?: string;
   termType?: string;
   options?: any[];
-  terms?: any[];
+  terms?: TermsType[];
 };
 
-type Relation = {
+export type PlatformRelation = {
   objectType: string;
   objectId: string;
 };
 
-type NotifyVariablesType = {
+export type Relationship = {
+  objectType: string;
+  objectSource: {
+    source: string;
+    upperKey: string;
+  };
+  related: {
+    objectType: string;
+    relation: string;
+  };
+};
+
+export interface NotifyVariablesType {
   source: string;
   value?: Record<string, any>;
   upperKey?: string;
-  relation?: Relation;
+  relation?: PlatformRelation | Relationship;
   options?: any;
-};
+}
 
-interface NotifyProps {
+export interface NotifyProps {
   notifyType: string;
   notifierId: string;
   templateId: string;
   variables: Record<string, NotifyVariablesType>;
 }
 
-type ActionsType = {
+export type SelectorValuesType =
+  | { value: string; name: string }
+  | { value: { column: string; value: any }[]; name: string }
+  | { value: { objectType: string; relation: any }[] };
+
+export type ActionDeviceMessageType = {
+  deviceId: string;
+  messageType: keyof typeof DeviceMessageType;
+  /** 功能调用时使用 */
+  functionId?: string;
+  /** 功能调用时使用 */
+  inputs?: Record<string, any>[];
+  /** 读取属性时使用, 读取属性时为String数组，设置属性时为 Object */
+  properties?: string[] | Record<string, any>;
+};
+
+export interface ActionsDeviceProps {
+  productId?: string;
+  message?: ActionDeviceMessageType;
+  selector: keyof typeof ActionDeviceSelector;
+  source: keyof typeof ActionDeviceSource;
+  selectorValues?: SelectorValuesType[];
+  /** 来源为upper时不能为空 */
+  upperKey?: string;
+  /** 来源为relation时不能为空 */
+  relation?: any;
+}
+
+export interface BranchesThen {
+  parallel: boolean;
+  actions: ActionsType;
+}
+
+export interface ActionBranchesProps {
+  when: TermsType[];
+  shakeLimit: ShakeLimitType;
+  then: BranchesThen[];
+}
+
+export interface ActionsType {
   executor: keyof typeof Executor;
   /** 执行器类型为notify时不能为空 */
   notify?: NotifyProps;
@@ -166,12 +246,14 @@ type ActionsType = {
     time?: number;
     unit?: keyof typeof TimeUnit;
   };
-  device?: any;
-  alarm?: any;
+  device?: ActionsDeviceProps;
+  alarm?: {
+    mode: keyof typeof ActionAlarmMode;
+  };
   terms?: TermsType[];
-};
+}
 
-type FormModelType = {
+export interface FormModelType {
   id?: string;
   name?: string;
   /**
@@ -189,10 +271,10 @@ type FormModelType = {
   /**
    * 动作分支
    */
-  branches?: any[];
+  branches?: ActionBranchesProps[];
   /**
    * 拓展信息,用于前端存储一些渲染数据
    */
   options?: any;
   description?: string;
-};
+}
