@@ -1,6 +1,6 @@
-import { observe } from '@formily/reactive';
 import { Modal, Button, Steps } from 'antd';
 import { useState } from 'react';
+import { observer } from '@formily/react';
 
 // const NotifyeModel = model<{
 //   steps: <{title: string, content: ReactNode}>[]
@@ -8,7 +8,7 @@ import { useState } from 'react';
 //   current: {}
 // });
 
-export default observe(() => {
+export default observer(() => {
   const [current, setCurrent] = useState(0);
   const steps = [
     {
