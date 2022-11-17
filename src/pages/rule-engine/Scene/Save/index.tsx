@@ -5,6 +5,12 @@ import Device from '../Save/device/index';
 import Manual from '../Save/manual/index';
 import Timer from '../Save/timer/index';
 import { TitleComponent } from '@/components';
+import { observable } from '@formily/reactive';
+import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
+
+export const FormModel = observable<FormModelType>({
+  actions: [],
+});
 
 export default () => {
   const location = useLocation();

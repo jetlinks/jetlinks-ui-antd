@@ -215,10 +215,10 @@ export type ActionDeviceMessageType = {
 };
 
 export interface ActionsDeviceProps {
-  productId?: string;
-  message?: ActionDeviceMessageType;
   selector: keyof typeof ActionDeviceSelector;
   source: keyof typeof ActionDeviceSource;
+  productId?: string;
+  message?: ActionDeviceMessageType;
   selectorValues?: SelectorValuesType[];
   /** 来源为upper时不能为空 */
   upperKey?: string;
@@ -251,6 +251,8 @@ export interface ActionsType {
     mode: keyof typeof ActionAlarmMode;
   };
   terms?: TermsType[];
+  /** map中的key，用于删除 */
+  key?: string;
 }
 
 export interface FormModelType {
@@ -267,7 +269,7 @@ export interface FormModelType {
   /**
    * 执行动作
    */
-  actions?: ActionsType[];
+  actions: ActionsType[];
   /**
    * 动作分支
    */
