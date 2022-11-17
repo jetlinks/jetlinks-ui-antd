@@ -20,7 +20,7 @@ import { getMenuPathByCode } from '@/utils/menu';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
-import Save from './Save';
+import Save from './Save/save';
 
 export const service = new Service('scene');
 
@@ -36,7 +36,7 @@ const Scene = () => {
   const { permission } = PermissionButton.usePermission('rule-engine/Scene');
   const [searchParams, setSearchParams] = useState<any>({});
   const [visible, setVisible] = useState<boolean>(false);
-  const [current, setCurrent] = useState<Partial<SceneItem>>({});
+  const [current] = useState<Partial<SceneItem>>({});
   const history = useHistory();
 
   const deleteById = async (id: string) => {
@@ -98,8 +98,8 @@ const Scene = () => {
             : undefined
         }
         onClick={() => {
-          setVisible(true);
-          setCurrent(record);
+          const url = getMenuPathByCode('rule-engine/Scene/Save');
+          history.push(`${url}?id=${record.id}`);
         }}
       >
         <EditOutlined />
@@ -342,10 +342,10 @@ const Scene = () => {
             type="primary"
             isPermission={permission.add}
             onClick={() => {
-              // const url = getMenuPathByCode('rule-engine/Scene/Save');
-              // history.push(url);
-              setCurrent({});
-              setVisible(true);
+              const url = getMenuPathByCode('rule-engine/Scene/Save');
+              history.push(url);
+              // setCurrent({});
+              // setVisible(true);
             }}
           >
             {intl.formatMessage({
@@ -367,8 +367,8 @@ const Scene = () => {
                   title: '查看',
                 }}
                 onClick={() => {
-                  // const url = getMenuPathByCode('rule-engine/Scene/Save');
-                  // history.push(`${url}?id=${record.id}`, { view: true });
+                  const url = getMenuPathByCode('rule-engine/Scene/Save');
+                  history.push(`${url}?id=${record.id}`, { view: true });
                   // setCurrent({})
                   // setVisible(true)
                 }}

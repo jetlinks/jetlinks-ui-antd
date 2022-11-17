@@ -45,10 +45,10 @@ export default (props: DeviceCardProps) => {
               <label>触发方式</label>
               <Ellipsis title={TriggerWayType[props.triggerType]} />
             </div>
-            <div>
-              <label>说明</label>
-              <Ellipsis title={props.description} />
-            </div>
+            {/*<div>*/}
+            {/*  <label>说明</label>*/}
+            {/*  <Ellipsis title={props.description} />*/}
+            {/*</div>*/}
           </div>
         </div>
       </div>

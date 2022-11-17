@@ -1,0 +1,68 @@
+@bgColor: #fafafa;
+
+.scene-save {
+  .trigger-type-content,
+  & .scene-actions {
+    .actions-item {
+      padding: 24px 24px 0 24px;
+      background-color: @bgColor;
+
+      &:not(:first-child) {
+        margin-top: 16px;
+      }
+
+      .actions-item-title {
+        margin-bottom: 16px;
+      }
+
+      .actions-item-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 16px;
+        border-top: 1px solid #2f54eb;
+      }
+
+      .template-variable {
+        margin-bottom: 16px;
+        padding: 16px;
+        border: 1px solid #e6e6e6;
+      }
+    }
+  }
+
+  .ant-form-item-with-help .ant-form-item-explain {
+    height: 0 !important;
+  }
+
+  //.trigger-type-content {
+  //  > .ant-row {
+  //    margin-bottom: 24px;
+  //
+  //    &:last-child,
+  //    &:first-child {
+  //      margin-bottom: 0;
+  //    }
+  //  }
+  //}
+}
+
+.scene-content {
+  position: relative;
+
+  .scene-content-left {
+    width: 66.66%;
+  }
+
+  .scene-content-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 33.33%;
+    height: 100%;
+
+    > div {
+      height: 100%;
+      overflow-y: auto;
+    }
+  }
+}

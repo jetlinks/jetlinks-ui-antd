@@ -72,7 +72,7 @@
     "@liveqing/liveplayer": "^2.6.4",
     "@umijs/route-utils": "^1.0.36",
     "ahooks": "^2.10.9",
-    "antd": "4.19.5",
+    "antd": "^4.19.5",
     "braft-editor": "^2.3.9",
     "classnames": "^2.3.1",
     "dexie": "^3.0.3",

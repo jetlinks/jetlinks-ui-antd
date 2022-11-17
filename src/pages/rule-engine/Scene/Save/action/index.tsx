@@ -1,4 +1,5 @@
 import { Collapse } from 'antd';
+import { List } from './ListItem';
 
 const { Panel } = Collapse;
 
@@ -7,7 +8,7 @@ export default () => {
     <div className="actions">
       <div className="actions-title">执行</div>
       <div className="actions-warp">
-        <Collapse defaultActiveKey={[]}>
+        <Collapse defaultActiveKey={['1']}>
           <Panel
             header={
               <span>
@@ -16,7 +17,9 @@ export default () => {
             }
             key="1"
           >
-            <div className="actions-list"></div>
+            <div className="actions-list">
+              <List type="serial" />
+            </div>
           </Panel>
           <Panel
             header={
