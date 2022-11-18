@@ -17,7 +17,7 @@ interface ItemProps {
 }
 
 export default (props: ItemProps) => {
-  const [visible] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
   return (
     <>
       <div className="actions-item">
@@ -25,7 +25,13 @@ export default (props: ItemProps) => {
           <div className="type">
             <img src="" />
           </div>
-          <div></div>
+          <div
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
+            {'item'}
+          </div>
         </div>
         <div className="item-number">{props.name + 1}</div>
         <div
@@ -40,7 +46,15 @@ export default (props: ItemProps) => {
           <DeleteOutlined />
         </div>
       </div>
-      {visible && <Modal />}
+      {visible && (
+        <Modal
+          name={props.name}
+          data={props.data}
+          close={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </>
   );
 };

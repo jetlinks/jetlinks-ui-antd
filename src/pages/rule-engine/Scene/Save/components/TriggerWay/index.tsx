@@ -42,6 +42,7 @@ export default (props: TriggerWayProps) => {
         className={classNames('trigger-way-item', {
           active: type === TriggerWayType.device,
         })}
+        style={{ width: 204 }}
         onClick={() => {
           onSelect(TriggerWayType.device);
         }}
@@ -58,6 +59,7 @@ export default (props: TriggerWayProps) => {
         className={classNames('trigger-way-item', {
           active: type === TriggerWayType.manual,
         })}
+        style={{ width: 204 }}
         onClick={() => {
           onSelect(TriggerWayType.manual);
         }}
@@ -74,6 +76,7 @@ export default (props: TriggerWayProps) => {
         className={classNames('trigger-way-item', {
           active: type === TriggerWayType.timing,
         })}
+        style={{ width: 204 }}
         onClick={() => {
           onSelect(TriggerWayType.timing);
         }}
