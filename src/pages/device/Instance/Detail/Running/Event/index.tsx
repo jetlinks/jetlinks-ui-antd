@@ -18,7 +18,7 @@ const EventLog = (props: Props) => {
   const params = useParams<{ id: string }>();
   const { data } = props;
   const actionRef = useRef<ActionType>();
-  const [searchParams, setSearchParams] = useState<any>({ pageSize: 10 });
+  const [searchParams, setSearchParams] = useState<any>({});
   // const device = InstanceModel.detail;
   // const [subscribeTopic] = useSendWebsocketMessage();
 
@@ -141,9 +141,6 @@ const EventLog = (props: Props) => {
           return service.getEventCount(params.id, data.id!, {
             ...param,
           });
-        }}
-        pagination={{
-          pageSize: 10,
         }}
         columns={[...createColumn(), ...columns]}
       />
