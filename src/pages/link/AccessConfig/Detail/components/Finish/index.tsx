@@ -350,7 +350,10 @@ const Finish = (props: Props) => {
                         channelId: props?.config?.network,
                       };
                     }
-                    const resp: any = await service[!props.data?.id ? 'save' : 'update'](param);
+                    const resp: any = await service[!props.data?.id ? 'save' : 'update']({
+                      ...param,
+                      id: props.data.id ? props.data.id : undefined,
+                    });
                     if (resp.status === 200) {
                       onlyMessage('操作成功！');
                       history.goBack();
