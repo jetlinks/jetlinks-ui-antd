@@ -40,7 +40,15 @@ export default (props: ListProps) => {
       >
         点击配置执行动作
       </AddButton>
-      {visible && <Modal />}
+      {visible && (
+        <Modal
+          name={props.actions.length + 1}
+          data={{}}
+          close={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </div>
   );
 };

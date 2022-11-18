@@ -7,6 +7,8 @@ import Timer from '../Save/timer/index';
 import { TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
+import { useEffect } from 'react';
+import { service } from '@/pages/rule-engine/Scene';
 
 export const FormModel = observable<FormModelType>({
   actions: [],
@@ -25,6 +27,17 @@ export const FormModel = observable<FormModelType>({
 export default () => {
   const location = useLocation();
   const triggerType = location?.query?.triggerType || '';
+  const id = location?.query?.id || '';
+
+  useEffect(() => {
+    if (id) {
+      service.detail(id).then((resp) => {
+        if (resp.status === 200) {
+          Object.assign(FormModel, resp.result);
+        }
+      });
+    }
+  }, [id]);
 
   const triggerRender = (type: string) => {
     switch (type) {
