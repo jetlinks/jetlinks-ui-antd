@@ -19,7 +19,7 @@ interface ItemProps {
 export default (props: ItemProps) => {
   const [visible] = useState<boolean>(false);
   return (
-    <>
+    <div className="actions-item-warp">
       <div className="actions-item">
         <div className="item-options-warp">
           <div className="type">
@@ -40,7 +40,14 @@ export default (props: ItemProps) => {
           <DeleteOutlined />
         </div>
       </div>
+      {props.type === 'serial' ? (
+        props.data.terms?.length ? (
+          <div></div>
+        ) : (
+          <div>添加过滤条件</div>
+        )
+      ) : null}
       {visible && <Modal />}
-    </>
+    </div>
   );
 };

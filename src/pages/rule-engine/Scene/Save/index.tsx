@@ -10,6 +10,16 @@ import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 
 export const FormModel = observable<FormModelType>({
   actions: [],
+  terms: [
+    {
+      column: undefined,
+      value: undefined,
+    },
+    {
+      column: undefined,
+      value: undefined,
+    },
+  ],
 });
 
 export default () => {
