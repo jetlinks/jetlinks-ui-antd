@@ -12,14 +12,42 @@ import { service } from '@/pages/rule-engine/Scene';
 
 export const FormModel = observable<FormModelType>({
   actions: [],
-  terms: [
+  branches: [
     {
-      column: undefined,
-      value: undefined,
+      when: [
+        {
+          terms: [
+            {
+              column: undefined,
+              value: undefined,
+              key: 'params_1',
+            },
+          ],
+          type: 'and',
+          key: 'terms_1',
+        },
+      ],
+      key: 'branckes_1',
+      shakeLimit: {
+        enabled: false,
+        groupType: 'device',
+        time: 1,
+        threshold: 1,
+        alarmFirst: false,
+      },
+      then: [],
     },
     {
-      column: undefined,
-      value: undefined,
+      when: [],
+      key: 'branckes_2',
+      shakeLimit: {
+        enabled: false,
+        groupType: 'device',
+        time: 1,
+        threshold: 1,
+        alarmFirst: false,
+      },
+      then: [],
     },
   ],
 });

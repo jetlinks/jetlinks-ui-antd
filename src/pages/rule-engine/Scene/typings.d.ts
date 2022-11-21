@@ -230,12 +230,14 @@ export interface ActionsDeviceProps {
 export interface BranchesThen {
   parallel: boolean;
   actions: ActionsType;
+  key?: string;
 }
 
 export interface ActionBranchesProps {
   when: TermsType[];
   shakeLimit: ShakeLimitType;
   then: BranchesThen[];
+  key?: string;
 }
 
 export interface ActionsType {

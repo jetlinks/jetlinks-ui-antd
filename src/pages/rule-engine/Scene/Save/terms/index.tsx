@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
 import { TitleComponent } from '@/components';
-import { observer } from '@formily/react';
+import { observer, Observer } from '@formily/react';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
-import Term from './term';
+import BranchItem from './branchItem';
 
 export default observer(() => {
   const queryColumn = () => {};
 
   useEffect(() => {
-    console.log('terms', FormModel.trigger?.device);
     if (FormModel.trigger?.device) {
       queryColumn();
     }
@@ -17,7 +16,14 @@ export default observer(() => {
   return (
     <div className="actions-terms">
       <TitleComponent style={{ fontSize: 14 }} data="触发条件" />
-      <Term />
+      <Observer>
+        {() =>
+          FormModel.branches?.map((item, index) => {
+            const isFrist = index === 0;
+            return <BranchItem data={item} isFrist={isFrist} name={index} />;
+          })
+        }
+      </Observer>
     </div>
   );
 });
