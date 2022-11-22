@@ -256,6 +256,10 @@ export interface ActionsType {
   terms?: TermsType[];
   /** map中的key，用于删除 */
   key?: string;
+  /**
+   * 拓展信息,用于前端存储一些渲染数据
+   */
+  options?: any;
 }
 
 export interface FormModelType {
