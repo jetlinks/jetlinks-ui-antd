@@ -275,7 +275,7 @@ export default observer(() => {
           tableAlertRender={false}
           rowSelection={{
             type: 'radio',
-            selectedRowKeys: DeviceModel.productId,
+            selectedRowKeys: DeviceModel.deviceId,
             onChange: (selectedRowKeys, selectedRows) => {
               DeviceModel.deviceId = selectedRows.map((item) => item.id);
             },

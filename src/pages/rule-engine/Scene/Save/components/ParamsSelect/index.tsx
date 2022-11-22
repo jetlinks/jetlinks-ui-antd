@@ -73,6 +73,9 @@ export default (props: Props) => {
         suffix={<DownOutlined style={{ color: 'rgba(0, 0, 0, 0.25)' }} />}
         {...props.inputProps}
         value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
         onFocus={() => {
           setVisible(true);
         }}
