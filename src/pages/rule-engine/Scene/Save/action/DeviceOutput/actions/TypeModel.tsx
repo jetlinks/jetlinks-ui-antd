@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { DataNode } from 'antd/es/tree';
 import { Input, InputNumber, Select, Tree } from 'antd';
 import MTimePicker from '../../../components/ParamsSelect/components/MTimePicker';
+import moment from 'moment';
 
 interface Props {
   value: any;
@@ -39,10 +40,12 @@ export default (props: Props) => {
       ],
     },
   ];
-  const [showValue, setShowValue] = useState<any>('');
+
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
 
   const onChange = (params: any) => {
-    setShowValue(params);
     setValue(params);
     if (props.onChange) {
       props.onChange(params);
@@ -59,7 +62,7 @@ export default (props: Props) => {
           <InputNumber
             value={value}
             onChange={(e: any) => {
-              onChange(e);
+              setValue(e);
             }}
             style={{ width: '100%' }}
             placeholder={'请输入'}
@@ -83,18 +86,28 @@ export default (props: Props) => {
       case 'date':
         return (
           <MTimePicker
-            value={value}
-            onChange={(time: any, timeString: string) => {
-              setShowValue(timeString);
-              setValue(time);
+            value={moment(value, 'HH:mm:ss')}
+            onChange={(_: any, timeString: string) => {
+              setValue(timeString);
               if (props.onChange) {
-                props.onChange(time, timeString);
+                props.onChange(timeString);
               }
             }}
           />
         );
       default:
-        return <Input value={value} placeholder={'请输入' + name} />;
+        return (
+          <Input
+            value={value}
+            placeholder={'请输入' + name}
+            onChange={(e) => {
+              setValue(e.target.value);
+              if (props.onChange) {
+                props.onChange(e.target.value);
+              }
+            }}
+          />
+        );
     }
   };
 
@@ -114,16 +127,14 @@ export default (props: Props) => {
           defaultExpandAll
           onSelect={(selectedKeys) => {
             setValue(selectedKeys[0]);
-            setShowValue(selectedKeys[0]);
+            if (props.onChange) {
+              props.onChange(selectedKeys[0]);
+            }
           }}
         />
       ),
     },
   ];
-
-  useEffect(() => {
-    setShowValue(value);
-  }, [props.value]);
 
   return (
     <div>
@@ -134,7 +145,7 @@ export default (props: Props) => {
         }}
         tabKey={'manual'}
         itemList={itemList}
-        value={showValue}
+        value={value}
         onChange={(val: any) => {
           setValue(val);
         }}
