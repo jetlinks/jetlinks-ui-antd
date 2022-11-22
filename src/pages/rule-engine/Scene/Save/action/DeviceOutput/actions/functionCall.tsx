@@ -61,7 +61,7 @@ export default (props: FunctionCallProps) => {
 
   const getItemNode = (record: any) => {
     const type = record.type;
-    return <TypeModel value={record.value} type={type} />;
+    return <TypeModel value={record.value} type={type} record={record} />;
   };
 
   const columns: ProColumns<FunctionTableDataType>[] = [
