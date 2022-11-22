@@ -1,18 +1,46 @@
 import { Modal, Form } from 'antd';
-import ActionsType from '@/pages/rule-engine/Scene/Save/components/TriggerWay/actionsType';
-import { useState } from 'react';
+import ActionsTypeComponent from '@/pages/rule-engine/Scene/Save/components/TriggerWay/actionsType';
+import { useEffect, useState } from 'react';
 import Notify from '../notify';
+import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
+
+interface Props {
+  close: () => void;
+  data: Partial<ActionsType>;
+  name: number;
+}
 import Device from '../DeviceOutput';
-export default () => {
+export default (props: Props) => {
   const [form] = Form.useForm();
   const [actionType, setActionType] = useState<string>('');
+
+  useEffect(() => {
+    if (props.data?.executor) {
+      form.setFieldsValue({
+        type: props.data.executor,
+      });
+    }
+  }, [props.data]);
 
   const actionTypeComponent = (type: string) => {
     switch (type) {
       case 'device':
         return <Device />;
       case 'notify':
-        return <Notify />;
+        return (
+          <Notify
+            value={props.data?.notify || {}}
+            save={(data: any) => {
+              console.log(data); // value
+              setActionType('');
+              props.close();
+            }}
+            name={props.name}
+            cancel={() => {
+              setActionType('');
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -23,7 +51,9 @@ export default () => {
       title="类型"
       open
       width={800}
-      onCancel={() => {}}
+      onCancel={() => {
+        props.close();
+      }}
       onOk={async () => {
         const values = await form.validateFields();
         setActionType(values.type);
@@ -36,7 +66,7 @@ export default () => {
           required
           rules={[{ required: true, message: '请选择类型' }]}
         >
-          <ActionsType />
+          <ActionsTypeComponent />
         </Form.Item>
       </Form>
       {actionTypeComponent(actionType)}

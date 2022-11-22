@@ -1,40 +1,54 @@
-import { Button, Form } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { Item } from './index';
-import type { ItemType } from './Item';
+import { useState } from 'react';
+import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
+import Modal from '../Modal/add';
 import './index.less';
-
-interface PropsType {
-  type: ItemType;
+import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
+import Item from './Item';
+import type { ParallelType } from './Item';
+interface ListProps {
+  type: ParallelType;
+  actions: ActionsType[];
 }
 
-export default (props: PropsType) => {
-  const [form] = Form.useForm();
+export default (props: ListProps) => {
+  const [visible, setVisible] = useState<boolean>(false);
 
   return (
     <div className="action-list-content">
-      <Form form={form} colon={false} layout={'vertical'} preserve={false} name="actions">
-        <Form.List name="actions" initialValue={[{}]}>
-          {(fields, { add, remove }) => (
-            <div className="actions-list_form">
-              {fields.map(({ key, name, ...resetField }) => (
-                <Item
-                  key={key}
-                  name={name}
-                  resetField={resetField}
-                  remove={remove}
-                  type={props.type}
-                />
-              ))}
-              <div className="action-list-add">
-                <Button type="primary" onClick={add} ghost icon={<PlusOutlined />}>
-                  新增
-                </Button>
-              </div>
-            </div>
-          )}
-        </Form.List>
-      </Form>
+      {props.actions.map((item, index) => (
+        <Item name={index} data={item} type={props.type} key={item.key} />
+      ))}
+      <AddButton
+        onClick={() => {
+          setVisible(true);
+          // const addItem: ActionsType = {
+          //   executor: 'device',
+          //   device: {
+          //     selector: 'all',
+          //     source: 'fixed'
+          //   },
+          //   key: `${props.type}_${props.actions.length}`
+          // }
+
+          // if (props.type === 'serial') {
+          //   addItem.terms = []
+          // }
+          // console.log(addItem);
+
+          // FormModel?.actions?.push(addItem)
+        }}
+      >
+        点击配置执行动作
+      </AddButton>
+      {visible && (
+        <Modal
+          name={props.actions.length + 1}
+          data={{}}
+          close={() => {
+            setVisible(false);
+          }}
+        />
+      )}
     </div>
   );
 };

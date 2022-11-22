@@ -25,7 +25,7 @@ export default (props: Props) => {
     <Modal
       title={props.data?.id ? '编辑' : '新增'}
       maskClosable={false}
-      visible
+      open
       onCancel={() => {
         props.close();
       }}
@@ -33,7 +33,11 @@ export default (props: Props) => {
         const values = await form.validateFields();
         props.close();
         const url = getMenuPathByCode('rule-engine/Scene/Save');
-        history.push(`${url}?triggerType=${values.trigger?.type}`);
+        if (props.data?.id) {
+          history.push(`${url}?triggerType=${values.trigger?.type}&id=${props.data?.id}`);
+        } else {
+          history.push(`${url}?triggerType=${values.trigger?.type}`);
+        }
       }}
       width={700}
     >

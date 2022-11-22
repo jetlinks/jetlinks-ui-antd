@@ -11,6 +11,14 @@ interface NotifyTypeProps {
   options: any[];
 }
 
+const iconMap = new Map();
+iconMap.set('dingTalk', require('/public/images/notice/dingtalk.png'));
+iconMap.set('weixin', require('/public/images/notice/wechat.png'));
+iconMap.set('email', require('/public/images/notice/email.png'));
+iconMap.set('voice', require('/public/images/notice/voice.png'));
+iconMap.set('sms', require('/public/images/notice/sms.png'));
+iconMap.set('webhook', require('/public/images/notice/webhook.png'));
+
 export default (props: NotifyTypeProps) => {
   const [type, setType] = useState(props.value || '');
 
@@ -29,23 +37,21 @@ export default (props: NotifyTypeProps) => {
   };
 
   return (
-    <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
+    <div className={classNames('notify-type-warp', props.className, { disabled: props.disabled })}>
       {(props?.options || []).map((item) => (
         <div
           key={item.id}
-          className={classNames('trigger-way-item', {
+          className={classNames('notify-type-item', {
             active: type === item.id,
           })}
           onClick={() => {
             onSelect(item.id);
           }}
         >
-          <div className={'way-item-title'}>
-            <p>{item.name}</p>
+          <div className={'notify-type-item-image'}>
+            <img width={'100%'} src={iconMap.get(item.id)} />
           </div>
-          <div className={'way-item-image'}>
-            <img width={48} src={item.image} />
-          </div>
+          <div className={'notify-type-item-title'}>{item.name}</div>
         </div>
       ))}
     </div>

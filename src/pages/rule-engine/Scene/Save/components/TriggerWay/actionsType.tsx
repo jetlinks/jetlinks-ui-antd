@@ -74,6 +74,7 @@ export default (props: ActionsTypeProps) => {
           className={classNames('trigger-way-item', {
             active: type === item.value,
           })}
+          style={{ width: 237 }}
           onClick={() => {
             onSelect(item.value);
           }}

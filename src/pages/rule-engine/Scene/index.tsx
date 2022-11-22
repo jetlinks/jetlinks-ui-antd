@@ -204,7 +204,9 @@ const Scene = () => {
           }}
           onClick={() => {
             const url = getMenuPathByCode('rule-engine/Scene/Save');
-            history.push(`${url}?id=${record.id}`, { view: true });
+            history.push(`${url}?id=${record.id}&triggerType=${record.triggerType}`, {
+              view: true,
+            });
           }}
         >
           <EyeOutlined />
@@ -342,8 +344,6 @@ const Scene = () => {
             type="primary"
             isPermission={permission.add}
             onClick={() => {
-              // const url = getMenuPathByCode('rule-engine/Scene/Save');
-              // history.push(url);
               setCurrent({});
               setVisible(true);
             }}
@@ -367,10 +367,10 @@ const Scene = () => {
                   title: '查看',
                 }}
                 onClick={() => {
-                  // const url = getMenuPathByCode('rule-engine/Scene/Save');
-                  // history.push(`${url}?id=${record.id}`, { view: true });
-                  // setCurrent({})
-                  // setVisible(true)
+                  const url = getMenuPathByCode('rule-engine/Scene/Save');
+                  history.push(`${url}?id=${record.id}&triggerType=${record.triggerType}`, {
+                    view: true,
+                  });
                 }}
               >
                 <EyeOutlined />

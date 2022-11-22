@@ -1,4 +1,6 @@
 .action-list-content {
+  padding: 8px;
+
   .actions-list_form {
     .action-list-add {
       display: flex;
@@ -6,6 +8,41 @@
       margin-top: 16px;
       padding-top: 16px;
       border-top: 1px solid @primary-color;
+    }
+  }
+}
+
+.actions-item {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px dashed #999;
+  border-radius: 2px;
+
+  .item-number {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    font-weight: 800;
+    transform: translateY(-50%);
+  }
+
+  .item-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: #e50012;
+    background-color: rgba(229, 0, 18, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+
+    &:hover {
+      background-color: rgba(#e50012, 0.2);
     }
   }
 }
