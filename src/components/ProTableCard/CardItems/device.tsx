@@ -145,3 +145,58 @@ export default (props: DeviceCardProps) => {
     </TableCard>
   );
 };
+
+export const SceneDeviceCard = (props: DeviceCardProps) => {
+  const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
+
+  return (
+    <TableCard
+      showTool={props.showTool}
+      showMask={false}
+      status={props.state?.value}
+      actions={props.actions}
+      statusText={props.state?.text}
+      statusNames={{
+        online: StatusColorEnum.processing,
+        offline: StatusColorEnum.error,
+        notActive: StatusColorEnum.warning,
+      }}
+      onClick={props.onClick}
+      className={props.className}
+    >
+      <div className={'pro-table-card-item'}>
+        <div className={'card-item-avatar'}>
+          <img
+            width={88}
+            height={88}
+            src={imgUrl}
+            alt={''}
+            onError={() => {
+              setImgUrl(defaultImage);
+            }}
+          />
+        </div>
+        <div className={'card-item-body'}>
+          <div className={'card-item-header'}>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
+          </div>
+          <div className={'card-item-content-flex'}>
+            <div className={'flex-auto'}>
+              <label>设备类型</label>
+              <Ellipsis title={props.deviceType ? props.deviceType.text : ''} />
+            </div>
+            <div className={'flex-auto'}>
+              <label>产品名称</label>
+              <Ellipsis title={props.productName} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={'checked-icon'}>
+        <div>
+          <CheckOutlined />
+        </div>
+      </div>
+    </TableCard>
+  );
+};

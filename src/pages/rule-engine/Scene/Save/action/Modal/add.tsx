@@ -2,12 +2,15 @@ import { Modal, Form } from 'antd';
 import ActionsType from '@/pages/rule-engine/Scene/Save/components/TriggerWay/actionsType';
 import { useState } from 'react';
 import Notify from '../notify';
+import Device from '../DeviceOutput';
 export default () => {
   const [form] = Form.useForm();
   const [actionType, setActionType] = useState<string>('');
 
   const actionTypeComponent = (type: string) => {
     switch (type) {
+      case 'device':
+        return <Device />;
       case 'notify':
         return <Notify />;
       default:

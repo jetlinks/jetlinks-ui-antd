@@ -30,6 +30,7 @@ interface ProTableCardProps<T> {
    */
   gridColumns?: [number, number, number];
   height?: 'none';
+  onlyCard?: boolean; //只展示card
 }
 
 const ProTableCard = <
@@ -39,7 +40,7 @@ const ProTableCard = <
 >(
   props: ProTableCardProps<T> & ProTableProps<T, U, ValueType>,
 ) => {
-  const { cardRender, toolBarRender, request, ...extraProps } = props;
+  const { cardRender, toolBarRender, request, onlyCard, ...extraProps } = props;
   const [model, setModel] = useState<ModelType>(ModelEnum.CARD);
   const [total, setTotal] = useState<number | undefined>(0);
   const [current, setCurrent] = useState(1); // 当前页
@@ -64,7 +65,7 @@ const ProTableCard = <
         if (!rowSelection || (rowSelection && !rowSelection.selectedRowKeys)) {
           return dom;
         }
-        const { selectedRowKeys, onChange } = rowSelection;
+        const { selectedRowKeys, onChange, type } = rowSelection;
 
         // @ts-ignore
         const id = dom.props.id;
@@ -82,13 +83,15 @@ const ProTableCard = <
               const isSelect = selectedRowKeys.includes(id);
 
               if (isSelect) {
-                const nowRowKeys = selectedRowKeys.filter((key: string) => key !== id);
+                const nowRowKeys =
+                  type === 'radio' ? [id] : selectedRowKeys.filter((key: string) => key !== id);
                 onChange(
                   nowRowKeys,
                   dataSource!.filter((item) => nowRowKeys.includes(item.id)),
                 );
               } else {
-                const nowRowKeys = [...selectedRowKeys, id];
+                // const nowRowKeys = [...selectedRowKeys, id];
+                const nowRowKeys = rowSelection.type === 'radio' ? [id] : [...selectedRowKeys, id];
                 onChange(
                   nowRowKeys,
                   dataSource!.filter((item) => nowRowKeys.includes(item.id)),
@@ -207,6 +210,7 @@ const ProTableCard = <
           pageSizeOptions: pageSizeOptions,
         }}
         toolBarRender={(action, row) => {
+          if (onlyCard) return [];
           const oldBar = toolBarRender ? toolBarRender(action, row) : [];
           return [
             ...oldBar,
