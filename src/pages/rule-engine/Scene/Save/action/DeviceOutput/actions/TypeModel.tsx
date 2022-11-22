@@ -1,13 +1,13 @@
 import ParamsSelect, { ItemProps } from '@/pages/rule-engine/Scene/Save/components/ParamsSelect';
 import { useEffect, useState } from 'react';
 import { DataNode } from 'antd/es/tree';
-import { Input, InputNumber, Tree } from 'antd';
+import { Input, InputNumber, Select, Tree } from 'antd';
 import MTimePicker from '../../../components/ParamsSelect/components/MTimePicker';
 
 interface Props {
   value: any;
   type: string;
-  onChange?: (data: any) => void;
+  onChange?: (data: any, format?: any) => void;
 }
 
 export default (props: Props) => {
@@ -41,6 +41,14 @@ export default (props: Props) => {
   ];
   const [showValue, setShowValue] = useState<any>('');
 
+  const onChange = (params: any) => {
+    setShowValue(params);
+    setValue(params);
+    if (props.onChange) {
+      props.onChange(params);
+    }
+  };
+
   const renderNode = (type: string) => {
     switch (type) {
       case 'int':
@@ -51,11 +59,25 @@ export default (props: Props) => {
           <InputNumber
             value={value}
             onChange={(e: any) => {
-              setShowValue(e);
-              setValue(e);
+              onChange(e);
             }}
             style={{ width: '100%' }}
             placeholder={'请输入'}
+          />
+        );
+      case 'boolean':
+        return (
+          <Select
+            value={value}
+            style={{ width: '100%', textAlign: 'left' }}
+            options={[
+              { label: 'true', value: true },
+              { label: 'false', value: false },
+            ]}
+            placeholder={'请选择' + name}
+            onChange={(e) => {
+              onChange(e);
+            }}
           />
         );
       case 'date':
@@ -65,6 +87,9 @@ export default (props: Props) => {
             onChange={(time: any, timeString: string) => {
               setShowValue(timeString);
               setValue(time);
+              if (props.onChange) {
+                props.onChange(time, timeString);
+              }
             }}
           />
         );
