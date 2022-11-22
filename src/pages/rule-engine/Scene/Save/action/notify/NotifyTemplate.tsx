@@ -48,6 +48,7 @@ export default observer(() => {
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
+          onlyCard={true}
           search={false}
           gridColumn={2}
           columnEmptyText={''}
@@ -59,7 +60,9 @@ export default observer(() => {
               {...record}
             />
           )}
+          tableAlertRender={false}
           rowSelection={{
+            type: 'radio',
             selectedRowKeys: [NotifyModel.notify?.templateId || ''],
             onChange: (selectedRowKeys) => {
               if (selectedRowKeys.length) {

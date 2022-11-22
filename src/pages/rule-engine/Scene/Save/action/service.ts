@@ -97,3 +97,16 @@ export const getRelations = () =>
       terms: [{ termType: 'eq', column: 'objectTypeName', value: '设备' }],
     },
   });
+
+export const queryDefaultLevel = () =>
+  request(`/${SystemConst.API_BASE}/alarm/config/default/level`, {
+    method: 'GET',
+  });
+
+export const queryAlarmList = (data: any) => {
+  return request(`/${SystemConst.API_BASE}/alarm/config/_query/`, { data, method: 'POST' });
+};
+
+export const queryAlarmCount = (data: any) => {
+  return request(`/${SystemConst.API_BASE}/alarm/config/_count`, { params: data, method: 'GET' });
+};

@@ -3,13 +3,15 @@ import ActionsTypeComponent from '@/pages/rule-engine/Scene/Save/components/Trig
 import { useEffect, useState } from 'react';
 import Notify from '../notify';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
+import Device from '../DeviceOutput';
 
 interface Props {
   close: () => void;
+  save: (data: any) => void;
   data: Partial<ActionsType>;
   name: number;
 }
-import Device from '../DeviceOutput';
+
 export default (props: Props) => {
   const [form] = Form.useForm();
   const [actionType, setActionType] = useState<string>('');
@@ -31,9 +33,8 @@ export default (props: Props) => {
           <Notify
             value={props.data?.notify || {}}
             save={(data: any) => {
-              console.log(data); // value
               setActionType('');
-              props.close();
+              props.save(data);
             }}
             name={props.name}
             cancel={() => {
@@ -57,6 +58,7 @@ export default (props: Props) => {
       onOk={async () => {
         const values = await form.validateFields();
         setActionType(values.type);
+        props.save({ ...props.data, type: values.type });
       }}
     >
       <Form form={form} layout={'vertical'}>
