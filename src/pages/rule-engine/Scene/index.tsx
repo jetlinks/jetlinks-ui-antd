@@ -24,7 +24,7 @@ import Save from './Save/save';
 
 export const service = new Service('scene');
 
-enum TriggerWayType {
+export enum TriggerWayType {
   manual = '手动触发',
   timer = '定时触发',
   device = '设备触发',

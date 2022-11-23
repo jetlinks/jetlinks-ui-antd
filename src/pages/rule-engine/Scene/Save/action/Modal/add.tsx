@@ -58,9 +58,10 @@ export default (props: Props) => {
       }}
       onOk={async () => {
         const values = await form.validateFields();
-        console.log(values.type);
         setActionType(values.type);
-        // props.save({ ...props.data, type: values.type });
+        if (values.type === 'relieve' || values.type === 'trigger') {
+          props.save({ ...props.data, type: values.type });
+        }
       }}
     >
       <Form form={form} layout={'vertical'}>

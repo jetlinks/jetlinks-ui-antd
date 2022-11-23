@@ -2,80 +2,81 @@
 
 @card-content-padding-top: 30px;
 
-.alarm-log-context {
-  display: flex;
-  align-items: center;
-  width: 100%;
-
-  .context-left {
+.alarm-log-card {
+  .alarm-log-context {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: calc(40% - 40px);
-    margin-right: 10%;
+    width: 100%;
 
-    .context-img {
-      margin-right: 20px;
-    }
-
-    .left-item {
-      width: calc(100% - 90px);
-
-      .left-item-title {
-        font-size: 18px;
+    .context-left {
+      display: flex;
+      align-items: center;
+      width: 40%;
+      .context-img {
+        margin-right: 20px;
       }
 
-      .left-item-value {
-        color: #666;
-        font-size: 14px;
+      .left-item {
+        width: calc(100% - 90px);
+        padding-right: 10px;
+
+        .left-item-title {
+          font-size: 18px;
+        }
+
+        .left-item-value {
+          color: #666;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .context-right {
+      display: flex;
+      align-items: center;
+      width: 60%;
+      padding-left: 10px;
+      border-left: 1px solid rgba(0, 0, 0, 0.09);
+
+      .right-item {
+        display: flex;
+        flex-direction: column;
+        border: none;
+        .right-item-title {
+          color: #666;
+          font-size: 12px;
+        }
+
+        .right-item-value {
+          color: #000;
+          font-size: 14px;
+        }
       }
     }
   }
 
-  .context-right {
+  .alarm-log-state {
+    position: absolute;
+    top: @card-content-padding-top;
+    right: -12px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 60%;
-    margin-right: 10px;
-    padding-left: 10%;
-    border-left: 1px solid rgba(0, 0, 0, 0.09);
+    justify-content: center;
+    width: 100px;
+    padding: 2px 0;
+    color: #fff;
+    background-color: rgba(#5995f5, 0.15);
+    transform: skewX(45deg);
 
-    .right-item {
-      .right-item-title {
-        color: #666;
-        font-size: 12px;
+    .card-state-content {
+      transform: skewX(-45deg);
+
+      .stateText {
+        width: 70px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-align: center;
+        text-overflow: ellipsis;
       }
-
-      .right-item-value {
-        color: #000;
-        font-size: 14px;
-      }
-    }
-  }
-}
-
-.alarm-log-state {
-  position: absolute;
-  top: @card-content-padding-top;
-  right: -12px;
-  display: flex;
-  justify-content: center;
-  width: 100px;
-  padding: 2px 0;
-  color: #fff;
-  background-color: rgba(#5995f5, 0.15);
-  transform: skewX(45deg);
-
-  .card-state-content {
-    transform: skewX(-45deg);
-
-    .stateText {
-      width: 70px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-align: center;
-      text-overflow: ellipsis;
     }
   }
 }
