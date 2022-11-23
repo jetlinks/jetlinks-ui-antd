@@ -14,11 +14,12 @@ export interface ItemProps {
 interface Props {
   placeholder?: string;
   value: any;
-  onChange: (dt: any) => void;
+  onChange: (valeu: any, sources?: any) => void;
   inputProps?: InputProps;
   itemList: ItemProps[];
   style?: object;
   tabKey: string;
+  type?: string;
 }
 
 export default (props: Props) => {
@@ -27,7 +28,6 @@ export default (props: Props) => {
   const wrapperRef = useRef<any>(null);
   const nodeRef = useRef<any>(null);
   const [value, setValue] = useState<any>(props.value);
-  // const [showValue, setShowValue] = useState<string | undefined>('');
 
   useEffect(() => {
     setTabKey(props.tabKey);
@@ -52,20 +52,9 @@ export default (props: Props) => {
     };
   });
 
-  // const contentRender = (item: ItemProps | undefined) => {
-  //   switch (item?.type) {
-  //     case 'time-picker':
-  //       return <MTimePicker {...item.children} value={value} onChange={(time: any, timeString: string) => {
-  //         setShowValue(timeString)
-  //         console.log(timeString)
-  //         setValue(time)
-  //       }} />;
-  //     case 'tree':
-  //       return <Tree {...item.children} height={300} defaultExpandAll />
-  //     default:
-  //       return null;
-  //   }
-  // }
+  useEffect(() => {
+    props.onChange(value, tabKey);
+  }, [value, tabKey]);
 
   return (
     <div className={'select-wrapper'} ref={wrapperRef} style={props.style}>
@@ -81,7 +70,11 @@ export default (props: Props) => {
         }}
       />
       {visible && (
-        <div className={'select-container'} ref={nodeRef}>
+        <div
+          className={'select-container'}
+          ref={nodeRef}
+          style={props.type !== 'date' ? { minHeight: 100 } : undefined}
+        >
           <div className={'select-box'}>
             <div className={'select-box-header-top'}>
               <div className={'select-box-header'}>

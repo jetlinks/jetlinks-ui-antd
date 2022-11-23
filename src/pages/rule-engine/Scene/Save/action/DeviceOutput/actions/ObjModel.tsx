@@ -12,6 +12,7 @@ export default (props: Props) => {
   const monacoRef = useRef<any>();
 
   const [value, setValue] = useState<any>(props.value);
+  const [loading, setLoading] = useState(false);
 
   const editorDidMountHandle = (editor: any) => {
     monacoRef.current = editor;
@@ -35,17 +36,27 @@ export default (props: Props) => {
         props.ok(value);
       }}
     >
-      <MonacoEditor
-        width={'100%'}
-        height={400}
-        theme="vs-dark"
-        language={'json'}
-        value={value}
-        onChange={(newValue) => {
-          setValue(newValue);
+      <div
+        ref={() => {
+          setTimeout(() => {
+            setLoading(true);
+          }, 100);
         }}
-        editorDidMount={editorDidMountHandle}
-      />
+      >
+        {loading && (
+          <MonacoEditor
+            width={'100%'}
+            height={400}
+            theme="vs-dark"
+            language={'json'}
+            value={value}
+            onChange={(newValue) => {
+              setValue(newValue);
+            }}
+            editorDidMount={editorDidMountHandle}
+          />
+        )}
+      </div>
     </Modal>
   );
 };

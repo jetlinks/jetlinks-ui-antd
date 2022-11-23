@@ -25,6 +25,7 @@ export default (props: Props) => {
   }, [props.data]);
 
   const actionTypeComponent = (type: string) => {
+    console.log(type, '111');
     switch (type) {
       case 'device':
         return <Device />;
@@ -57,8 +58,9 @@ export default (props: Props) => {
       }}
       onOk={async () => {
         const values = await form.validateFields();
+        console.log(values.type);
         setActionType(values.type);
-        props.save({ ...props.data, type: values.type });
+        // props.save({ ...props.data, type: values.type });
       }}
     >
       <Form form={form} layout={'vertical'}>

@@ -11,14 +11,15 @@ import ObjModel from './ObjModel';
 interface Props {
   value: any;
   type: string;
-  onChange?: (data: any, format?: any) => void;
-  record: any;
+  onChange: (data: any, source?: any) => void;
+  record?: any; //枚举值使用
 }
 
 export default (props: Props) => {
-  const [value, setValue] = useState<any>(null);
+  const [value, setValue] = useState<any>(props.value || '');
   const [visible, setVisible] = useState<boolean>(false);
   const [objVisiable, setObjVisable] = useState<boolean>(false);
+  const [source, setSource] = useState<string>('');
   const treeData: DataNode[] = [
     {
       title: 'parent 1',
@@ -47,9 +48,9 @@ export default (props: Props) => {
     },
   ];
 
-  useEffect(() => {
-    setValue(props.value);
-  }, [props.value]);
+  // useEffect(() => {
+  //   setValue(props.value);
+  // }, [props.value]);
 
   const onChange = (params: any) => {
     setValue(params);
@@ -57,6 +58,10 @@ export default (props: Props) => {
       props.onChange(params);
     }
   };
+
+  useEffect(() => {
+    props.onChange(value, source);
+  }, [source, value]);
 
   const renderNode = (type: string) => {
     switch (type) {
@@ -175,7 +180,7 @@ export default (props: Props) => {
     },
     {
       label: `内置参数`,
-      key: 'built-in',
+      key: 'upper',
       content: (
         <Tree
           treeData={treeData}
@@ -202,9 +207,11 @@ export default (props: Props) => {
         tabKey={'manual'}
         itemList={itemList}
         value={value}
-        onChange={(val: any) => {
+        onChange={(val: any, tabKey: any) => {
           setValue(val);
+          setSource(tabKey);
         }}
+        type={props.type}
       />
       {visible && (
         <AMap

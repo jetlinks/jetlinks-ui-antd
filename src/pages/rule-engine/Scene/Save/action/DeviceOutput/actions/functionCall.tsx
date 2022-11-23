@@ -27,7 +27,7 @@ export default (props: FunctionCallProps) => {
     if (props.functionData && props.functionData.length) {
       setEditableRowKeys(props.functionData.map((d) => d.id));
       if (props.value) {
-        console.log(props.functionData, 11111111111);
+        // console.log(props.functionData, 11111111111);
         const tableData = props.functionData.map((item: any) => {
           const oldValue = props.value.find((oldItem: any) => oldItem.name === item.id);
           if (oldValue) {

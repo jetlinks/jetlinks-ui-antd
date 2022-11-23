@@ -129,7 +129,16 @@ export default observer((props: Props) => {
             <ReadProperty properties={properties} propertiesChange={setPropertiesId} />
           </Form.Item>
         )}
-        {deviceMessageType === 'WRITE_PROPERTY' && <WriteProperty properties={properties} />}
+        {deviceMessageType === 'WRITE_PROPERTY' && (
+          <Form.Item
+            name={['device', 'message', 'properties']}
+            label="设置属性"
+            rules={[{ required: true, message: '请选择属性' }]}
+          >
+            <WriteProperty properties={properties} />
+          </Form.Item>
+        )}
+        {/* {deviceMessageType === 'WRITE_PROPERTY' && <WriteProperty properties={properties} />} */}
       </Form>
     </div>
   );
