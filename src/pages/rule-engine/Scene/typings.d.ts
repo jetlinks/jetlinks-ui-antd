@@ -112,7 +112,7 @@ export interface TriggerDevice {
 
 export interface ShakeLimitType {
   enabled: boolean;
-  groupType: string;
+  groupType?: string; // 执行动作没有该参数
   time: number;
   threshold: number;
   alarmFirst: boolean;
@@ -134,11 +134,11 @@ export type TriggerType = {
   /**
    * 防抖配置
    */
-  shakeLimit?: any;
+  shakeLimit?: ShakeLimitType;
   /**
    * 拓展信息
    */
-  options?: ShakeLimitType;
+  options?: Record<string, any>;
   /**
    * 设备触发配置
    */
@@ -189,7 +189,6 @@ export interface NotifyVariablesType {
   value?: Record<string, any>;
   upperKey?: string;
   relation?: PlatformRelation | Relationship;
-  options?: any;
 }
 
 export interface NotifyProps {
@@ -256,6 +255,7 @@ export interface ActionsType {
   terms?: TermsType[];
   /** map中的key，用于删除 */
   key?: string;
+  options?: Record<string, any>;
 }
 
 export interface FormModelType {
@@ -280,6 +280,6 @@ export interface FormModelType {
   /**
    * 拓展信息,用于前端存储一些渲染数据
    */
-  options?: any;
+  options?: Record<string, any>;
   description?: string;
 }

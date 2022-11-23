@@ -4,6 +4,7 @@ import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import { PlusCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ActionBranchesProps } from '@/pages/rule-engine/Scene/typings';
 import Term from './term';
+import Actions from '@/pages/rule-engine/Scene/Save/action';
 import classNames from 'classnames';
 
 interface BranchesItemProps {
@@ -36,10 +37,9 @@ export default observer((props: BranchesItemProps) => {
     if (index > 0) {
       FormModel.branches?.push({
         when: [],
-        key: 'branch_' + FormModel.branches.length + 1,
+        key: `branch_${new Date().getTime()}`,
         shakeLimit: {
-          enabled: false,
-          groupType: 'device',
+          enabled: true,
           time: 1,
           threshold: 1,
           alarmFirst: false,
@@ -97,7 +97,9 @@ export default observer((props: BranchesItemProps) => {
             }
           </Observer>
         </div>
-        <div className="actions-branchs"></div>
+        <div className="actions-branchs">
+          <Actions openShakeLimit={true} name={['branches', props.name]} />
+        </div>
       </div>
     </div>
   );

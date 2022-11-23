@@ -1,17 +1,45 @@
 import { Collapse } from 'antd';
 import { List } from './ListItem';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
+import ShakeLimit from '../components/ShakeLimit';
 import './index.less';
 import { Observer } from '@formily/react';
+import { get } from 'lodash';
+import type { ShakeLimitType } from '../../typings';
 
 const { Panel } = Collapse;
 
-export default () => {
+interface ActionsProps {
+  name?: (string | number)[];
+  openShakeLimit?: boolean;
+}
+
+export default (props: ActionsProps) => {
   return (
     <div className="actions">
-      <div className="actions-title">执行</div>
+      <div className="actions-title">
+        <span>执行</span>
+        {props.openShakeLimit ? (
+          <Observer>
+            {() => {
+              const data: ShakeLimitType = get(FormModel, [...props.name!, 'shakeLimit']);
+              return (
+                <ShakeLimit
+                  enabled={data.enabled}
+                  time={data.time}
+                  threshold={data.threshold}
+                  alarmFirst={data.alarmFirst}
+                  onChange={(type, value) => {
+                    data[type] = value;
+                  }}
+                />
+              );
+            }}
+          </Observer>
+        ) : null}
+      </div>
       <div className="actions-warp">
-        <Collapse defaultActiveKey={['1', '2']}>
+        <Collapse defaultActiveKey={['1']}>
           <Panel
             header={
               <span>

@@ -27,7 +27,7 @@ const TypeStyle = {
   type: styles.type,
 };
 
-export default (props: DropdownButtonProps) => {
+const DropdownButton = (props: DropdownButtonProps) => {
   const [myValue, setMyValue] = useState(props.value);
   const [label, setLabel] = useState('');
   const [loading, setLoading] = useState(false);
@@ -96,3 +96,5 @@ export default (props: DropdownButtonProps) => {
     </Dropdown>
   );
 };
+
+export default DropdownButton;

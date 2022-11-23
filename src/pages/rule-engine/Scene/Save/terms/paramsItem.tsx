@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
-import { DropdownButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
+import { DropdownButton, ParamsDropdown } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from '@formily/react';
@@ -31,7 +31,7 @@ export default observer((props: ParamsItemProps) => {
   };
 
   const addItem = () => {
-    const key = 'params_' + new Date().getTime();
+    const key = `params_${new Date().getTime()}`;
     const data = get(FormModel.branches, [...props.pName, 'terms']);
     data?.push({
       type: 'and',
@@ -53,13 +53,20 @@ export default observer((props: ParamsItemProps) => {
           options={paramOptions}
           type="param"
           placeholder="请选择参数"
-        ></DropdownButton>
+          value={props.data.column}
+        />
         <DropdownButton
           options={termTypeOptions}
           type="termType"
           placeholder="操作符"
-        ></DropdownButton>
-        <DropdownButton options={valueOptions} type="value" placeholder="参数值"></DropdownButton>
+          value={props.data.termType}
+        />
+        <ParamsDropdown
+          options={valueOptions}
+          type="value"
+          placeholder="参数值"
+          value={props.data.value}
+        />
         <div className={classNames('button-delete', { show: deleteVisible })} onClick={deleteItem}>
           <CloseOutlined />
         </div>
@@ -74,7 +81,7 @@ export default observer((props: ParamsItemProps) => {
             isTree={false}
             type="type"
             value="and"
-          ></DropdownButton>
+          />
         </div>
       ) : (
         <div className="term-add" onClick={addItem}>

@@ -29,8 +29,7 @@ export const FormModel = observable<FormModelType>({
       ],
       key: 'branckes_1',
       shakeLimit: {
-        enabled: false,
-        groupType: 'device',
+        enabled: true,
         time: 1,
         threshold: 1,
         alarmFirst: false,
@@ -41,8 +40,7 @@ export const FormModel = observable<FormModelType>({
       when: [],
       key: 'branckes_2',
       shakeLimit: {
-        enabled: false,
-        groupType: 'device',
+        enabled: true,
         time: 1,
         threshold: 1,
         alarmFirst: false,

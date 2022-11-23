@@ -29,7 +29,7 @@ export default observer((props: TermsProps) => {
 
   const addTerms = () => {
     const data = get(FormModel.branches, [...props.pName]);
-    const key = 'terms_' + new Date().getTime();
+    const key = `terms_${new Date().getTime()}`;
     const defaultValue = {
       type: 'and',
       terms: [
@@ -84,7 +84,7 @@ export default observer((props: TermsProps) => {
               isTree={false}
               type="type"
               value={props.data.type}
-            ></DropdownButton>
+            />
           </div>
         ) : (
           <div className="terms-add" onClick={addTerms}>
