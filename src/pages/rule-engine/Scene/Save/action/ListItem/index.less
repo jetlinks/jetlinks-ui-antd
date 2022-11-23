@@ -11,13 +11,33 @@
     }
   }
 }
-
 .actions-item {
   position: relative;
   margin-bottom: 24px;
   padding: 16px;
   border: 1px dashed #999;
   border-radius: 2px;
+
+  .item-options-warp {
+    display: flex;
+    height: 48px;
+
+    .item-options-type {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      margin-right: 8px;
+      background-color: #fafafa;
+    }
+
+    .item-options-content {
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      background-color: #fafafa;
+    }
+  }
 
   .item-number {
     position: absolute;
