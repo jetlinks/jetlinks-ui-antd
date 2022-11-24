@@ -5,7 +5,7 @@ import './index.less';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Item from './Item';
 import type { ParallelType } from './Item';
-import { FormModel } from '../..';
+import { FormModel } from '@/pages/rule-engine/Scene/Save';
 interface ListProps {
   type: ParallelType;
   actions: ActionsType[];

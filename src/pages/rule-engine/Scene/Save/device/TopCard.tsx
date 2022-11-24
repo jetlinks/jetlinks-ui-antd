@@ -9,6 +9,7 @@ interface Props {
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
   disabled?: boolean;
+  labelBottom?: boolean;
 }
 
 const TopCard = (props: Props) => {
@@ -35,6 +36,7 @@ const TopCard = (props: Props) => {
           key={item.value}
           className={classNames('trigger-way-item', {
             active: type === item.value,
+            labelBottom: props.labelBottom,
           })}
           onClick={() => {
             onSelect(item.value);
@@ -42,7 +44,7 @@ const TopCard = (props: Props) => {
         >
           <div className={'way-item-title'}>
             <p>{item.label}</p>
-            <span>{item.tip}</span>
+            {item.tip && <span>{item.tip}</span>}
           </div>
           <div className={'way-item-image'}>
             <img width={48} src={item.image} />

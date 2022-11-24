@@ -1,265 +1,153 @@
-import { Col, Input, InputNumber, Row, Select, TimePicker } from 'antd';
-import { ItemGroup, TimeSelect } from '@/pages/rule-engine/Scene/Save/components';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { omit } from 'lodash';
+import { Form, Input, Radio, InputNumber, Select } from 'antd';
+import type { FormInstance } from 'antd';
+import WhenOption from './whenOption';
+import RangePicker from './RangePicker';
+import TimePicker from './TimePicker';
 import moment from 'moment';
+import ItemGroup from '../ItemGroup';
+interface TimmingTriggerProps {
+  name: (string | number)[];
+  form: FormInstance<any>;
+}
 
-type TimerType = {
-  trigger: string;
-  cron?: string;
-  when?: number[];
-  mod?: string;
-  period?: {
-    from?: string;
-    to?: string;
-    every?: number;
-    unit?: string;
-  };
-  once?: {
-    time?: string;
-  };
+const triggerOptions = [
+  { label: '按周', value: 'week' },
+  { label: '按月', value: 'month' },
+  { label: 'cron表达式', value: 'cron' },
+];
+const modOptions = [
+  { label: '周期执行', value: 'period' },
+  { label: '执行一次', value: 'once' },
+];
+
+export const timeUnitEnum = {
+  seconds: '秒',
+  minutes: '分',
+  hours: '小时',
 };
 
-interface TimingTrigger {
-  className?: string;
-  value?: TimerType;
-  onChange?: (value: TimerType) => void;
-}
+const CronRegEx = new RegExp(
+  '^\\s*($|#|\\w+\\s*=|(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[01]?\\d|2[0-3])(?:(?:-|\\/|\\,)(?:[01]?\\d|2[0-3]))?(?:,(?:[01]?\\d|2[0-3])(?:(?:-|\\/|\\,)(?:[01]?\\d|2[0-3]))?)*)\\s+(\\?|\\*|(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?(?:,(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?)*)\\s+(\\?|\\*|(?:[1-9]|1[012])(?:(?:-|\\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?(?:,(?:[1-9]|1[012])(?:(?:-|\\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?)*|\\?|\\*|(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?(?:,(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?)*)\\s+(\\?|\\*|(?:[0-6])(?:(?:-|\\/|\\,|#)(?:[0-6]))?(?:L)?(?:,(?:[0-6])(?:(?:-|\\/|\\,|#)(?:[0-6]))?(?:L)?)*|\\?|\\*|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?(?:,(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?)*)(|\\s)+(\\?|\\*|(?:|\\d{4})(?:(?:-|\\/|\\,)(?:|\\d{4}))?(?:,(?:|\\d{4})(?:(?:-|\\/|\\,)(?:|\\d{4}))?)*))$',
+);
 
-enum TriggerEnum {
-  'week' = 'week',
-  'month' = 'month',
-  'cron' = 'cron',
-}
+export default (props: TimmingTriggerProps) => {
+  const { name, form } = props;
 
-enum PeriodModEnum {
-  'period' = 'period',
-  'once' = 'once',
-}
+  const trigger = Form.useWatch([...name, 'trigger'], form);
+  const mod = Form.useWatch([...name, 'mod'], form);
 
-const DefaultValue = {
-  trigger: TriggerEnum.week,
-  mod: PeriodModEnum.period,
-  period: {},
-};
-
-export default (props: TimingTrigger) => {
-  const [data, setData] = useState<TimerType>(DefaultValue);
-  const timePickerRef = useRef(null);
-
-  useEffect(() => {
-    setData(props.value || DefaultValue);
-  }, [props.value]);
-
-  const onChange = (newData: TimerType) => {
-    if (props.onChange) {
-      props.onChange(newData);
-    }
-  };
-
-  const type1Select = async (key: string) => {
-    if (key !== TriggerEnum.cron) {
-      onChange({
-        trigger: key,
-        mod: PeriodModEnum.period,
-        when: [],
-        period: {
-          unit: 'seconds',
-          from: moment(new Date()).format('HH:mm:ss'),
-          to: moment(new Date()).format('HH:mm:ss'),
-        },
-      });
-    } else {
-      onChange({
-        trigger: key,
-        cron: undefined,
-      });
-    }
-  };
-
-  const type2Select = useCallback(
-    (key: string) => {
-      if (key === PeriodModEnum.period) {
-        onChange({
-          ...omit(data, 'once'),
-          mod: key,
-          period: {
-            from: moment(new Date()).format('HH:mm:ss'),
-            to: moment(new Date()).format('HH:mm:ss'),
-            unit: 'seconds',
-          },
-        });
-      } else {
-        onChange({
-          ...omit(data, 'period'),
-          mod: key,
-          once: {
-            time: moment(new Date()).format('HH:mm:ss'),
-          },
-        });
-      }
-    },
-    [data],
-  );
+  console.log('trigger', trigger, mod);
 
   const TimeTypeAfter = (
-    <Select
-      value={data.period?.unit || 'seconds'}
-      options={[
-        { label: '秒', value: 'seconds' },
-        { label: '分', value: 'minutes' },
-        { label: '小时', value: 'hours' },
-      ]}
-      onSelect={(key: string) => {
-        onChange({
-          ...data,
-          period: {
-            ...data.period,
-            unit: key,
-          },
-        });
-      }}
-    />
+    <Form.Item noStyle name={[...props.name, 'period', 'unit']} initialValue="seconds">
+      <Select
+        options={[
+          { label: '秒', value: 'seconds' },
+          { label: '分', value: 'minutes' },
+          { label: '小时', value: 'hours' },
+        ]}
+      />
+    </Form.Item>
   );
 
   return (
-    <Row gutter={24} className={props.className}>
-      <Col
-        xxl={data.trigger !== TriggerEnum.cron ? 6 : 8}
-        xl={data.trigger !== TriggerEnum.cron ? 10 : 12}
-      >
-        <ItemGroup>
-          <Select
-            options={[
-              { label: '按周', value: TriggerEnum.week },
-              { label: '按月', value: TriggerEnum.month },
-              { label: 'cron表达式', value: TriggerEnum.cron },
-            ]}
-            value={data.trigger}
-            onSelect={type1Select}
-            style={{ width: 120 }}
-          />
-          {data.trigger !== TriggerEnum.cron ? (
-            <TimeSelect
-              value={data.when}
-              options={
-                data.trigger === TriggerEnum.week
-                  ? [
-                      { label: '周一', value: 1 },
-                      { label: '周二', value: 2 },
-                      { label: '周三', value: 3 },
-                      { label: '周四', value: 4 },
-                      { label: '周五', value: 5 },
-                      { label: '周六', value: 6 },
-                      { label: '周末', value: 7 },
-                    ]
-                  : new Array(31)
-                      .fill(1)
-                      .map((_, index) => ({ label: index + 1 + '号', value: index + 1 }))
-              }
-              style={{ width: '100%' }}
-              onChange={(keys) => {
-                onChange({
-                  ...data,
-                  when: keys,
-                });
-              }}
-            />
-          ) : (
-            <Input
-              value={props.value?.cron}
-              placeholder={'请输入cron表达式'}
-              style={{ width: 400 }}
-              onChange={(e) => {
-                onChange({
-                  trigger: data.trigger,
-                  cron: e.target.value,
-                });
-              }}
-            />
-          )}
-        </ItemGroup>
-      </Col>
-      {data.trigger !== TriggerEnum.cron && (
+    <>
+      <Form.Item name={[...name, 'trigger']} initialValue="week">
+        <Radio.Group options={triggerOptions} optionType="button" buttonStyle="solid" />
+      </Form.Item>
+      {trigger === 'cron' ? (
+        <Form.Item
+          initialValue={undefined}
+          name={[...name, 'cron']}
+          rules={[
+            { max: 64, message: '最多可输入64个字符' },
+            {
+              validator: async (_: any, value: any) => {
+                if (value) {
+                  if (!CronRegEx.test(value)) {
+                    return Promise.reject(new Error('请输入正确的cron表达式'));
+                  }
+                } else {
+                  return Promise.reject(new Error('请输入cron表达式'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
+          <Input placeholder="corn表达式" />
+        </Form.Item>
+      ) : (
         <>
-          <Col xxl={12} xl={14}>
-            <ItemGroup>
-              <Select
-                options={[
-                  { label: '周期执行', value: PeriodModEnum.period },
-                  { label: '执行一次', value: PeriodModEnum.once },
-                ]}
-                value={data.mod}
-                style={{ width: 120 }}
-                onSelect={type2Select}
-              />
-              {data.mod === PeriodModEnum.period ? (
-                <div ref={timePickerRef}>
-                  <TimePicker.RangePicker
-                    format={'HH:mm:ss'}
-                    value={[
-                      moment(data.period?.from || new Date(), 'HH:mm:ss'),
-                      moment(data.period?.to || new Date(), 'hh:mm:ss'),
-                    ]}
-                    getPopupContainer={() => timePickerRef.current!}
-                    onChange={(_, dateString) => {
-                      onChange({
-                        ...data,
-                        period: {
-                          ...data.period,
-                          from: dateString[0],
-                          to: dateString[1],
-                        },
-                      });
-                    }}
-                    style={{ width: '100%' }}
-                  />
-                </div>
-              ) : (
-                <TimePicker
-                  format={'HH:mm:ss'}
-                  value={moment(data.once?.time || new Date(), 'HH:mm:ss')}
-                  onChange={(_, dateString) => {
-                    onChange({
-                      ...data,
-                      once: {
-                        time: dateString,
-                      },
-                    });
-                  }}
-                />
-              )}
-            </ItemGroup>
-          </Col>
-          <Col xxl={6} xl={10}>
-            <ItemGroup style={{ gap: 16 }}>
-              {data.mod === PeriodModEnum.period ? (
-                <>
-                  <span> 每 </span>
-                  <InputNumber
-                    value={data.period?.every}
-                    placeholder={'请输入时间'}
-                    addonAfter={TimeTypeAfter}
-                    style={{ flex: 1 }}
-                    min={0}
-                    max={59}
-                    onChange={(e) => {
-                      onChange({
-                        ...data,
-                        period: {
-                          ...data.period,
-                          every: e,
-                        },
-                      });
-                    }}
-                  />
-                </>
-              ) : null}
-              <span style={{ flex: 0, flexBasis: 64, lineHeight: '32px' }}> 执行一次 </span>
-            </ItemGroup>
-          </Col>
+          <Form.Item
+            name={[...name, 'when']}
+            rules={[
+              {
+                validator: async (_: any, value: any) => {
+                  if (!value) {
+                    return Promise.reject(new Error('请选择时间'));
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <WhenOption type={trigger} />
+          </Form.Item>
+          <Form.Item
+            initialValue="period"
+            name={[...name, 'mod']}
+            rules={[
+              {
+                required: true,
+                message: '请选择执行频率',
+              },
+            ]}
+          >
+            <Radio.Group options={modOptions} optionType="button" buttonStyle="solid" />
+          </Form.Item>
         </>
       )}
-    </Row>
+      {trigger !== 'cron' && mod === 'once' ? (
+        <ItemGroup style={{ gap: 16 }}>
+          <Form.Item
+            name={[...name, 'once']}
+            initialValue={{ time: moment(new Date()).format('HH:mm:ss') }}
+          >
+            <TimePicker />
+          </Form.Item>
+          <Form.Item> 执行一次 </Form.Item>
+        </ItemGroup>
+      ) : null}
+      {trigger !== 'cron' && mod === 'period' ? (
+        <>
+          <ItemGroup style={{ gap: 16 }}>
+            <Form.Item
+              name={[...name, 'period']}
+              initialValue={{
+                from: moment(new Date()).format('HH:mm:ss'),
+                to: moment(new Date()).format('HH:mm:ss'),
+              }}
+            >
+              <RangePicker form={form} />
+            </Form.Item>
+            <Form.Item> 每 </Form.Item>
+            <Form.Item
+              name={[...name, 'period', 'every']}
+              rules={[{ required: true, message: '请输入时间' }]}
+            >
+              <InputNumber
+                placeholder={'请输入时间'}
+                addonAfter={TimeTypeAfter}
+                style={{ maxWidth: 170 }}
+                min={0}
+                max={59}
+              />
+            </Form.Item>
+            <Form.Item> 执行一次 </Form.Item>
+          </ItemGroup>
+        </>
+      ) : null}
+    </>
   );
 };

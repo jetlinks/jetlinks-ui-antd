@@ -376,7 +376,7 @@ const Scene = () => {
                 <EyeOutlined />
               </PermissionButton>
             }
-            tools={Tools(record, 'card')}
+            // tools={Tools(record, 'card')}
           />
         )}
       />
