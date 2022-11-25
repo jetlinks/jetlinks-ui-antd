@@ -10,6 +10,7 @@ import './index.less';
 import { onlyMessage } from '@/utils/util';
 import { queryMessageTemplateDetail } from '@/pages/rule-engine/Scene/Save/action/service';
 import { NotifyProps } from '@/pages/rule-engine/Scene/typings';
+import { FormModel } from '@/pages/rule-engine/Scene/Save';
 
 interface Props {
   value: Partial<NotifyProps>;
@@ -105,7 +106,9 @@ export default observer((props: Props) => {
       const resp = await VariableRef.current?.save();
       if (resp) {
         NotifyModel.notify.variables = resp;
-        props.save(NotifyModel.notify);
+        const { options, ...extra } = NotifyModel.notify;
+        FormModel.actions[props.name].options = options;
+        props.save(extra);
         NotifyModel.current = 0;
       }
     }

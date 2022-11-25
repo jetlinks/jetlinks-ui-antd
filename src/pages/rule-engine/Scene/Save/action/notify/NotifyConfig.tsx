@@ -64,9 +64,13 @@ export default observer(() => {
           rowSelection={{
             type: 'radio',
             selectedRowKeys: [NotifyModel.notify?.notifierId || ''],
-            onChange: (selectedRowKeys) => {
+            onChange: (selectedRowKeys, list) => {
               if (selectedRowKeys.length) {
                 NotifyModel.notify.notifierId = String(selectedRowKeys[selectedRowKeys.length - 1]);
+                NotifyModel.notify.options = {
+                  ...NotifyModel.notify.options,
+                  notifierName: list[list.length - 1]?.name,
+                };
               }
             },
           }}

@@ -6,7 +6,7 @@ type Action = {
 };
 
 type Trigger = {
-  trigger: string;
+  type: string;
   device: Record<string, unknown>;
 };
 
@@ -118,14 +118,24 @@ export interface ShakeLimitType {
   alarmFirst: boolean;
 }
 
+export interface BranchesType {
+  enabled: boolean;
+  groupType?: string; // 执行动作没有该参数
+  time: number;
+  threshold: number;
+  alarmFirst: boolean;
+}
+
 export interface SceneItem {
   parallel: boolean;
   state: State;
   actions: Action[];
-  triggers: Trigger[];
+  trigger: Trigger;
   id: string;
   name: string;
   description: string;
+  branches: BranchesType[];
+  options: any;
   triggerType: string;
 }
 
@@ -196,6 +206,7 @@ export interface NotifyProps {
   notifierId: string;
   templateId: string;
   variables: Record<string, NotifyVariablesType>;
+  options?: Record<string, any>;
 }
 
 export type SelectorValuesType =

@@ -1,15 +1,15 @@
 import { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import { PermissionButton, ProTableCard } from '@/components';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import SceneCard from '@/components/ProTableCard/CardItems/scene';
+import { DisconnectOutlined, PlusOutlined } from '@ant-design/icons';
+import SceneCard from '@/components/ProTableCard/CardItems/Scene';
 import { useRef, useState } from 'react';
 import { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import useLocation from '@/hooks/route/useLocation';
-// import { service } from "@/pages/rule-engine/Alarm/Configuration";
 import { service as sceneService } from '@/pages/rule-engine/Scene';
 import Save from './Save';
-// import SearchComponent from "@/components/SearchComponent";
+import { service } from '@/pages/rule-engine/Alarm/Configuration';
+import { onlyMessage } from '@/utils/util';
 
 export default () => {
   const intl = useIntl();
@@ -118,7 +118,8 @@ export default () => {
               {
                 terms: [
                   {
-                    column: 'sceneId',
+                    column: 'id',
+                    termType: 'alarm-bind-rule',
                     value: id,
                   },
                 ],
@@ -134,6 +135,7 @@ export default () => {
           });
         }}
         rowKey="id"
+        gridColumn={1}
         search={false}
         onlyCard={true}
         headerTitle={[
@@ -157,7 +159,7 @@ export default () => {
             {...record}
             showBindBtn={false}
             cardType={'bind'}
-            actions={[
+            tools={[
               <PermissionButton
                 key={'unbind'}
                 type={'link'}
@@ -165,15 +167,17 @@ export default () => {
                 isPermission={permission.update}
                 popConfirm={{
                   title: '确认解绑？',
-                  onConfirm: () => {
-                    console.log(record.id);
+                  onConfirm: async () => {
+                    const resp = await service.unbindScene(id, [record.id]);
+                    if (resp.status === 200) {
+                      onlyMessage('操作成功！');
+                      actionRef.current?.reload();
+                    }
                   },
                 }}
-                tooltip={{
-                  title: <span>解绑</span>,
-                }}
               >
-                <DeleteOutlined />
+                <DisconnectOutlined />
+                解绑
               </PermissionButton>,
             ]}
           />
@@ -184,6 +188,10 @@ export default () => {
           id={id}
           close={() => {
             setVisible(false);
+          }}
+          ok={() => {
+            setVisible(false);
+            actionRef.current?.reload();
           }}
         />
       )}
