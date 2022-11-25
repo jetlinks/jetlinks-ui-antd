@@ -9,6 +9,7 @@ import WriteProperty from './WriteProperty';
 
 interface Props {
   get: (data: any) => void;
+  name: number;
 }
 
 export default observer((props: Props) => {
@@ -80,7 +81,12 @@ export default observer((props: Props) => {
   return (
     <div>
       <Form form={form} layout={'vertical'}>
-        <Form.Item name="messageType" label="动作类型" required initialValue="WRITE_PROPERTY">
+        <Form.Item
+          name={['device', 'message', 'messageType']}
+          label="动作类型"
+          required
+          initialValue="WRITE_PROPERTY"
+        >
           <TopCard
             typeList={TypeList}
             onChange={(value: string) => {
@@ -115,7 +121,11 @@ export default observer((props: Props) => {
                 name={['device', 'message', 'inputs']}
                 rules={[{ required: true, message: '请输入功能值' }]}
               >
-                <FunctionCall functionData={functionList} productId={DeviceModel.productId[0]} />
+                <FunctionCall
+                  functionData={functionList}
+                  productId={DeviceModel.productId[0]}
+                  name={props.name}
+                />
               </Form.Item>
             )}
           </>
@@ -135,7 +145,7 @@ export default observer((props: Props) => {
             label="设置属性"
             rules={[{ required: true, message: '请选择属性' }]}
           >
-            <WriteProperty properties={properties} />
+            <WriteProperty properties={properties} name={props.name} />
           </Form.Item>
         )}
         {/* {deviceMessageType === 'WRITE_PROPERTY' && <WriteProperty properties={properties} />} */}

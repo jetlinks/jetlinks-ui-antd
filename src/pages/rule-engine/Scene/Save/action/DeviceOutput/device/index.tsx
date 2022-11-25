@@ -1,7 +1,7 @@
 import { ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Instance/index';
 import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
@@ -11,16 +11,25 @@ import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
 import DeviceModel from '../model';
 import { observer } from '@formily/reactive-react';
-import { Form } from 'antd';
+import { Form, TreeSelect } from 'antd';
 import '../index.less';
 import TopCard from './TopCard';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { FormModel } from '../../..';
+import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
+import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 
-export default observer(() => {
+interface Props {
+  name: number;
+}
+
+export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
   const [form] = Form.useForm();
+  const [type, setType] = useState<string>('');
+  const [builtInList, setBuiltInList] = useState<any[]>([]);
 
   const TypeList = [
     {
@@ -232,67 +241,137 @@ export default observer(() => {
           }),
     },
   ];
+
+  const isParallel = () => {
+    const array = FormModel.actions.find((item) => 'terms' in item);
+    if (array && builtInList.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const filterTree = (nodes: any[]) => {
+    if (!nodes?.length) {
+      return nodes;
+    }
+    return nodes.filter((it) => {
+      if (it.children.find((item: any) => item.id.indexOf('deviceId') > -1)) {
+        // console.log(it.children.find((item: any) => item.id.indexOf('deviceId') > -1))
+        return true;
+      }
+      return false;
+    });
+  };
+
+  const sourceChangeEvent = async () => {
+    const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+    queryBuiltInParams(FormModel, params).then((res: any) => {
+      if (res.status === 200) {
+        const _data = BuiltInParamsHandleTreeData(res.result);
+        const array = filterTree(_data);
+        setBuiltInList(array);
+        // console.log(array)
+      }
+    });
+  };
+
+  useEffect(() => {
+    // console.log(FormModel, isParallel())
+    sourceChangeEvent();
+    setType('custom');
+  }, []);
+
   return (
     <div>
       <div className="device-title">
         <ExclamationCircleOutlined className="device-title-icon" />
         <span>自定义选择当前产品下的任意设备</span>
       </div>
-      <Form form={form} layout={'vertical'}>
-        <Form.Item name="type" label="选择方式" required>
-          <TopCard typeList={TypeList} />
-        </Form.Item>
-      </Form>
-      <SearchComponent
-        field={columns}
-        model={'simple'}
-        enableSave={false}
-        onSearch={async (data) => {
-          actionRef.current?.reset?.();
-          setSearchParam(data);
-        }}
-        target="device"
-        defaultParam={[
-          {
-            terms: [
-              {
-                column: 'productId',
-                value: DeviceModel.productId[0],
-              },
-            ],
-          },
-        ]}
-      />
-      <div>
-        <ProTableCard<DeviceInstance>
-          actionRef={actionRef}
-          columns={columns}
-          rowKey="id"
-          search={false}
-          gridColumn={2}
-          columnEmptyText={''}
-          onlyCard={true}
-          tableAlertRender={false}
-          rowSelection={{
-            type: 'radio',
-            selectedRowKeys: DeviceModel.deviceId,
-            onChange: (selectedRowKeys, selectedRows) => {
-              DeviceModel.deviceId = selectedRows.map((item) => item.id);
-            },
-          }}
-          request={(params) =>
-            service.query({
-              ...params,
-              sorts: [{ name: 'createTime', order: 'desc' }],
-            })
-          }
-          params={searchParam}
-          cardRender={(record) => (
-            <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
+      {isParallel() && (
+        <Form form={form} layout={'vertical'}>
+          <Form.Item name="type" label="选择方式" required>
+            <TopCard
+              typeList={TypeList}
+              value={'custom'}
+              onChange={(value) => {
+                setType(value);
+              }}
+            />
+          </Form.Item>
+          {type === 'variable' && (
+            <Form.Item name="deviceId" label="变量" required>
+              <TreeSelect
+                style={{ width: '100%', height: '100%' }}
+                treeData={builtInList}
+                fieldNames={{ label: 'name', value: 'id' }}
+                placeholder={'请选择参数'}
+                onSelect={(value: any, node: any) => {
+                  // console.log(value,node)
+                  DeviceModel.deviceId = [value];
+                  DeviceModel.deviceDetail = node;
+                }}
+              />
+            </Form.Item>
           )}
-          height={'none'}
-        />
-      </div>
+        </Form>
+      )}
+      {type === 'custom' && (
+        <>
+          <SearchComponent
+            field={columns}
+            model={'simple'}
+            enableSave={false}
+            onSearch={async (data) => {
+              actionRef.current?.reset?.();
+              setSearchParam(data);
+            }}
+            target="device"
+            defaultParam={[
+              {
+                terms: [
+                  {
+                    column: 'productId',
+                    value: DeviceModel.productId[0],
+                  },
+                ],
+              },
+            ]}
+          />
+          <div>
+            <ProTableCard<DeviceInstance>
+              actionRef={actionRef}
+              columns={columns}
+              rowKey="id"
+              search={false}
+              gridColumn={2}
+              columnEmptyText={''}
+              onlyCard={true}
+              tableAlertRender={false}
+              rowSelection={{
+                type: 'radio',
+                selectedRowKeys: DeviceModel.deviceId,
+                onChange: (selectedRowKeys, selectedRows) => (
+                  // console.log(selectedRowKeys)
+                  (DeviceModel.deviceId = selectedRowKeys),
+                  (DeviceModel.deviceDetail = selectedRows?.[0])
+                ),
+              }}
+              request={(params) =>
+                service.query({
+                  ...params,
+                  sorts: [{ name: 'createTime', order: 'desc' }],
+                })
+              }
+              params={searchParam}
+              cardRender={(record) => (
+                <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
+              )}
+              height={'none'}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 });

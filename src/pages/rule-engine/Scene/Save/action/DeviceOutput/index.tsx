@@ -1,18 +1,25 @@
 import { Modal, Button, Steps } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import Device from './device';
 import Product from './product';
 import Action from './actions';
 import Service from './service';
-// import { model } from '@formily/reactive';
 import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
+import { ActionsDeviceProps } from '../../../typings';
 
 export const service = new Service<any>('');
 
-export default observer(() => {
+interface Props {
+  value: Partial<ActionsDeviceProps> | any;
+  save: (data: any) => void;
+  cancel: () => void;
+  name: number;
+}
+
+export default observer((props: Props) => {
   const [open, setOpen] = useState<boolean>(true);
   // const [data, setData] = useState<any>({})
   const formRef = useRef<any>();
@@ -26,13 +33,14 @@ export default observer(() => {
     {
       key: 'device',
       title: '选择设备',
-      content: <Device />,
+      content: <Device name={props.name} />,
     },
     {
       key: 'action',
       title: '执行动作',
       content: (
         <Action
+          name={props.name}
           get={(item: any) => {
             formRef.current = item;
           }}
@@ -60,8 +68,25 @@ export default observer(() => {
 
   const save = async () => {
     const value = await formRef.current?.validateFields();
-    console.log(value);
+    const item = {
+      selector: 'fixed',
+      source: 'fixed',
+      selectorValues: [
+        {
+          value: DeviceModel.deviceDetail.id || DeviceModel.deviceDetail.id[0],
+          name: DeviceModel.deviceDetail.name,
+        },
+      ],
+      productId: DeviceModel.productId[0],
+      message: value,
+    };
+    // console.log('device', item)
+    props.save(item);
   };
+
+  useEffect(() => {
+    console.log(props.value);
+  }, [props.value]);
 
   return (
     <Modal

@@ -9,6 +9,7 @@ interface Props {
   id?: string;
   onChange?: (value?: any) => void;
   propertiesChange?: (value?: string) => void;
+  name?: any;
 }
 
 // const item = {
@@ -90,6 +91,7 @@ export default (props: Props) => {
           <TypeModel
             value={propertiesValue}
             type={propertiesType}
+            name={props.name}
             onChange={(value, sources) => {
               setPropertiesValue(value);
               setSource(sources);

@@ -25,10 +25,21 @@ export default (props: Props) => {
   }, [props.data]);
 
   const actionTypeComponent = (type: string) => {
-    console.log(type, '111');
     switch (type) {
       case 'device':
-        return <Device />;
+        return (
+          <Device
+            value={props.data?.device}
+            save={(data: any) => {
+              setActionType('');
+              props.save(data);
+            }}
+            name={props.name}
+            cancel={() => {
+              setActionType('');
+            }}
+          />
+        );
       case 'notify':
         return (
           <Notify
