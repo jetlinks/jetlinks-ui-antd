@@ -9,9 +9,14 @@ import { observable } from '@formily/reactive';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 import { useEffect } from 'react';
 import { service } from '@/pages/rule-engine/Scene';
+import './index.less';
 
 export const FormModel = observable<FormModelType>({
+  trigger: {
+    type: '',
+  },
   actions: [],
+  options: {},
   branches: [
     {
       when: [

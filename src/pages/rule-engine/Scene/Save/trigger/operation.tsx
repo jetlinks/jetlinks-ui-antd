@@ -8,6 +8,7 @@ interface OperatorProps {
   value?: any;
   onChange?: (value: any) => void;
   id?: string;
+  onSelect?: (value: string, item: any) => void;
 }
 
 export default (props: OperatorProps) => {
@@ -82,7 +83,7 @@ export default (props: OperatorProps) => {
     <Row gutter={24}>
       <Col span={6}>
         <Select
-          mode="multiple"
+          // mode="multiple"
           id={props.id}
           options={props.propertiesList || []}
           value={key}
@@ -93,10 +94,11 @@ export default (props: OperatorProps) => {
           maxTagCount={'responsive'}
           style={{ width: '100%' }}
           placeholder={'请选择属性'}
-          onSelect={(id: any) => {
+          onSelect={(id: any, item: any) => {
             if (props.onChange) {
               props.onChange({ [id]: undefined });
             }
+            props.onSelect?.(id, item);
           }}
           onDeselect={(id: any) => {
             const _value: any = { ...props.value };

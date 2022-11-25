@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react';
+import React from 'react';
 
 interface ButtonProps {
-  children?: React.ReactDOM | string;
+  children?: React.ReactChild[] | React.ReactChild | string;
   onClick?: () => void;
   style?: CSSProperties;
 }

@@ -30,11 +30,17 @@ const TypeList = [
 export default observer(() => {
   const [form] = Form.useForm();
 
-  const selector = Form.useWatch('type', form);
+  const selector = Form.useWatch('selector', form);
 
   useEffect(() => {
-    form.setFieldsValue({ type: DeviceModel.selector });
-  }, [DeviceModel.selector]);
+    if (form) {
+      form.setFieldsValue({ selector: DeviceModel.selector });
+    }
+  }, []);
+
+  useEffect(() => {
+    DeviceModel.selector = selector;
+  }, [selector]);
 
   const contentRender = (type?: string) => {
     switch (type) {

@@ -17,6 +17,14 @@ export default observer(() => {
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
 
+  const handleMetadata = (metadata?: string) => {
+    try {
+      DeviceModel.metadata = JSON.parse(metadata || '{}');
+    } catch (error) {
+      DeviceModel.metadata = {};
+    }
+  };
+
   const columns: ProColumns<ProductItem>[] = [
     {
       title: 'ID',
@@ -223,6 +231,7 @@ export default observer(() => {
               // console.log(selectedRowKeys,selectedRows)
               DeviceModel.productId = selectedRows.map((item) => item.id)[0];
               DeviceModel.productDetail = selectedRows?.[0];
+              handleMetadata(DeviceModel.productDetail.metadata);
             },
           }}
           request={(params) =>
