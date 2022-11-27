@@ -132,15 +132,7 @@ export default (props: ItemProps) => {
           </div>
         );
       default:
-        return (
-          <AddButton
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            点击配置执行动作
-          </AddButton>
-        );
+        return null;
     }
   };
 
@@ -225,7 +217,7 @@ export default (props: ItemProps) => {
           }}
           save={(data: ActionsType, options) => {
             // FormModel.actions[props.name] = data;
-            props.onUpdate(props, options);
+            props.onUpdate(data, options);
             setVisible(false);
           }}
           type={props.type}

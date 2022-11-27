@@ -65,9 +65,9 @@ export default observer((props: Props) => {
       case 'way':
         return <NotifyWay ref={WayRef} value={NotifyModel.notify?.notifyType} />;
       case 'config':
-        return <NotifyConfig />;
+        return <NotifyConfig type={NotifyModel.notify.notifyType || ''} />;
       case 'template':
-        return <NotifyTemplate />;
+        return <NotifyTemplate type={NotifyModel.notify.notifyType || ''} />;
       case 'variable':
         return <VariableDefinitions name={props.name} ref={VariableRef} />;
       default:
