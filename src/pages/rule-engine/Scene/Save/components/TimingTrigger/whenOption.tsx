@@ -55,7 +55,7 @@ export default (props: TimerWhenProps) => {
           }
         }}
       >
-        全部
+        每天
       </div>
       {options.map((item) => {
         return (

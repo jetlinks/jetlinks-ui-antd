@@ -14,10 +14,12 @@ interface DropdownButtonProps {
   className?: string;
   placeholder?: string;
   value?: string;
-  onChange?: (value?: string) => void;
+  onChange?: (value?: string, item?: any) => void;
   options: DropdownButtonOptions[];
   isTree?: boolean;
   type: 'param' | 'termType' | 'value' | 'type';
+  fieldNames?: any;
+  showLabelKey?: string;
 }
 
 const TypeStyle = {
@@ -31,24 +33,38 @@ const DropdownButton = (props: DropdownButtonProps) => {
   const [myValue, setMyValue] = useState(props.value);
   const [label, setLabel] = useState('');
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const typeClassName = TypeStyle[props.type];
 
   const menuOnSelect = ({ key, item }: { key: string; item: any }) => {
-    props.onChange?.(key);
+    setOpen(false);
+
+    props.onChange?.(key, item);
     setMyValue(key);
-    setLabel(item.props.title);
+    let titleKey = 'title';
+    if (props.showLabelKey) {
+      titleKey = props.showLabelKey;
+    }
+    setLabel(item.props[titleKey]);
   };
 
   const treeSelect = (selectedKeys: (string | number)[], e: any) => {
-    props.onChange?.(selectedKeys[0] as string);
+    setOpen(false);
+
+    props.onChange?.(selectedKeys[0] as string, e);
     setMyValue(selectedKeys[0] as string);
-    setLabel(e.node.title);
+
+    let titleKey = 'title';
+    if (props.showLabelKey) {
+      titleKey = props.showLabelKey;
+    }
+    setLabel(e.node[titleKey]);
   };
 
   const menuOptions = {
     selectedKeys: myValue ? [myValue] : [],
-    items: props.options.map((item) => ({ ...item, label: item.title })),
+    items: props.options?.map((item) => ({ ...item, label: item.title })) || [],
     onClick: menuOnSelect,
   };
 
@@ -58,9 +74,11 @@ const DropdownButton = (props: DropdownButtonProps) => {
         selectedKeys={myValue ? [myValue] : []}
         onSelect={treeSelect}
         treeData={props.options}
+        fieldNames={props.fieldNames}
+        height={500}
       />
     );
-  }, [props.options]);
+  }, [props.options, myValue]);
 
   const _options = !props.isTree ? { menu: menuOptions } : { dropdownRender: () => DropdownRender };
 
@@ -68,7 +86,12 @@ const DropdownButton = (props: DropdownButtonProps) => {
     let isLabel = false;
     return data.some((item) => {
       if (item.key === value) {
-        setLabel(item.title);
+        let titleKey = 'title';
+        if (props.showLabelKey) {
+          titleKey = props.showLabelKey;
+        }
+        setLabel(item[titleKey]);
+        setLoading(false);
         isLabel = true;
       } else if (item.children) {
         isLabel = findLable(value, item.children);
@@ -79,17 +102,23 @@ const DropdownButton = (props: DropdownButtonProps) => {
 
   useEffect(() => {
     setMyValue(props.value);
+    if (!props.value) {
+      setLabel('');
+    } else {
+      setLoading(true);
+      findLable(props.value, props.options);
+    }
   }, [props.value]);
 
   useEffect(() => {
-    if (myValue && !loading) {
-      findLable(myValue, props.options);
+    if (props.value && !loading) {
+      findLable(props.value, props.options);
       setLoading(true);
     }
   }, [props.options]);
 
   return (
-    <Dropdown {..._options} trigger={['click']}>
+    <Dropdown {..._options} trigger={['click']} open={open} onOpenChange={setOpen}>
       <div className={classNames(styles['dropdown-button'], props.className, typeClassName)}>
         {label || props.placeholder}
       </div>

@@ -1,7 +1,7 @@
 import { ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Instance/index';
 import { isNoCommunity } from '@/utils/util';
@@ -16,6 +16,13 @@ export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
+  const [selectorValues, setSelectorValues] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (DeviceModel.selector === 'device') {
+      setSelectorValues(DeviceModel.selectorValues?.map((item) => item.id) || []);
+    }
+  }, [DeviceModel.selectorValues]);
 
   const columns: ProColumns<DeviceInstance>[] = [
     {
@@ -246,17 +253,13 @@ export default observer(() => {
           onlyCard={true}
           tableAlertRender={false}
           rowSelection={{
-            type: 'radio',
-            selectedRowKeys: [DeviceModel.deviceId],
-            onChange: (_, selectedRows) => {
-              if (selectedRows.length) {
-                const item = selectedRows[0];
-                DeviceModel.deviceId = item.id;
-                DeviceModel.selectorValues = [{ value: DeviceModel.deviceId, name: item.name }];
-              } else {
-                DeviceModel.deviceId = '';
-                DeviceModel.selectorValues = [];
-              }
+            selectedRowKeys: selectorValues,
+            onChange(selectedRowKeys, selectedRows) {
+              setSelectorValues(selectedRowKeys);
+              DeviceModel.selectorValues = selectedRows.map((item) => ({
+                name: item.name,
+                value: item.id,
+              }));
             },
           }}
           request={(params) =>

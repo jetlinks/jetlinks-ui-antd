@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Observer, observer } from '@formily/react';
 import AddModel from './addModel';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
+import classNames from 'classnames';
 
 export default observer(() => {
   const [visible, setVisible] = useState(false);
@@ -41,7 +42,7 @@ export default observer(() => {
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
-            const label = handleLabel(FormModel.options);
+            const label = handleLabel(FormModel.trigger?.options);
             return (
               <AddButton
                 style={{ width: '100%' }}
@@ -49,7 +50,13 @@ export default observer(() => {
                   setVisible(true);
                 }}
               >
-                <div className="trigger-options-content">{label}</div>
+                <div
+                  className={classNames('trigger-options-content', {
+                    'is-add': !!Object.keys(FormModel.trigger?.options || {}).length,
+                  })}
+                >
+                  {label}
+                </div>
               </AddButton>
             );
           }}
@@ -61,7 +68,7 @@ export default observer(() => {
           value={FormModel.trigger?.device}
           onSave={(data, options) => {
             setVisible(false);
-            FormModel['options'] = options;
+            FormModel.trigger!['options'] = options;
             FormModel.trigger!.device = data;
           }}
           onCancel={() => {

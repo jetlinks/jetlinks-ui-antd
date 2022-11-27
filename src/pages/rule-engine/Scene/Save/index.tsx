@@ -6,17 +6,28 @@ import Manual from '../Save/manual/index';
 import Timer from '../Save/timer/index';
 import { TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
+import { observer } from '@formily/react';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { service } from '@/pages/rule-engine/Scene';
 import './index.less';
+import { onlyMessage } from '@/utils/util';
+import { useHistory } from 'umi';
+import { getMenuPathByCode } from '@/utils/menu';
 
 export const FormModel = observable<FormModelType>({
   trigger: {
     type: '',
+    options: {},
   },
   actions: [],
-  options: {},
+  options: {
+    terms: [
+      {
+        terms: [],
+      },
+    ],
+  },
   branches: [
     {
       when: [
@@ -25,7 +36,9 @@ export const FormModel = observable<FormModelType>({
             {
               column: undefined,
               value: undefined,
+              termType: undefined,
               key: 'params_1',
+              type: 'and',
             },
           ],
           type: 'and',
@@ -55,10 +68,11 @@ export const FormModel = observable<FormModelType>({
   ],
 });
 
-export default () => {
+export default observer(() => {
   const location = useLocation();
   const triggerType = location?.query?.triggerType || '';
   const id = location?.query?.id || '';
+  const history = useHistory();
 
   useEffect(() => {
     if (id) {
@@ -71,6 +85,7 @@ export default () => {
   }, [id]);
 
   const triggerRender = (type: string) => {
+    FormModel.trigger!.type = type;
     switch (type) {
       case 'device':
         return (
@@ -95,6 +110,16 @@ export default () => {
     }
   };
 
+  const submit = useCallback(() => {
+    service.updateScene(FormModel).then((res) => {
+      if (res.status === 200) {
+        onlyMessage('操作成功', 'success');
+        const url = getMenuPathByCode('rule-engine/Scene');
+        history.push(url);
+      }
+    });
+  }, [id, FormModel]);
+
   return (
     <PageContainer>
       <Card>
@@ -107,7 +132,7 @@ export default () => {
             <Input.TextArea showCount maxLength={200} placeholder={'请输入说明'} rows={4} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" onClick={submit}>
               保存
             </Button>
           </Form.Item>
@@ -115,4 +140,4 @@ export default () => {
       </Card>
     </PageContainer>
   );
-};
+});

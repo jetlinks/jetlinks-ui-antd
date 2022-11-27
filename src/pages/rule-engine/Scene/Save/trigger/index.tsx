@@ -114,7 +114,7 @@ export default observer((props: TriggerProps) => {
       setProductList(resp.result);
       if (FormModel.trigger && FormModel.trigger.device) {
         const productItem = resp.result.find(
-          (item: any) => item.id === FormModel.trigger!.device.productId,
+          (item: any) => item.id === FormModel.trigger!.device?.productId,
         );
 
         if (productItem) {
