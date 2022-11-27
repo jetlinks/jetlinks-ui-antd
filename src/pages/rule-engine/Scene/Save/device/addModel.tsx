@@ -76,7 +76,7 @@ export default observer((props: AddProps) => {
   };
 
   const handleOptions = (data: TriggerDeviceOptions) => {
-    console.log(data);
+    // console.log(data);
 
     const _options: any = {
       name: '', // 名称

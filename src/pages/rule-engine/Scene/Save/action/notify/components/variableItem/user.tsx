@@ -108,7 +108,12 @@ export default observer((props: UserProps) => {
     },
   ];
 
-  const onchange = (_source: string = 'fixed', _value?: string, isRelation?: boolean) => {
+  const onchange = (
+    _source: string = 'fixed',
+    _value?: string,
+    isRelation?: boolean,
+    _name?: string,
+  ) => {
     const obj: any = {
       source: _source,
     };
@@ -136,6 +141,10 @@ export default observer((props: UserProps) => {
     }
 
     if (props.onChange) {
+      NotifyModel.notify.options = {
+        ...NotifyModel.notify.options,
+        sendTo: _name,
+      };
       props.onChange(obj);
     }
   };
@@ -163,7 +172,7 @@ export default observer((props: UserProps) => {
       }
 
       if (!location.query?.id) {
-        onchange(props.value?.source, '');
+        onchange(props.value?.source, '', false, '');
       }
     }
   }, [props.type, source]);
@@ -207,7 +216,7 @@ export default observer((props: UserProps) => {
         placeholder={'请选择收信人'}
         onSelect={(key: any, node: any) => {
           setValue(key);
-          onchange(source, key, node.isRelation);
+          onchange(source, key, node.isRelation, node.name);
         }}
         filterTreeNode={filterOption}
       >
@@ -220,9 +229,9 @@ export default observer((props: UserProps) => {
         value={value}
         options={relationList}
         listHeight={200}
-        onChange={(key) => {
+        onChange={(key, option) => {
           setValue(key);
-          onchange(source, key);
+          onchange(source, key, false, option?.label);
         }}
         fieldNames={{ label: 'name', value: 'id' }}
         placeholder={'请选择收信人'}
@@ -242,7 +251,7 @@ export default observer((props: UserProps) => {
         placeholder={'请选择收信人'}
         onSelect={(key: any, node: any) => {
           setValue(key);
-          onchange(source, key, node.isRelation);
+          onchange(source, key, node.isRelation, node.name);
         }}
         filterTreeNode={filterOption}
       >
@@ -253,7 +262,7 @@ export default observer((props: UserProps) => {
         value={value}
         placeholder={'请输入固定邮箱'}
         onChange={(e) => {
-          onchange(source, e.target.value);
+          onchange(source, e.target.value, false, e.target.value);
         }}
       />
     );
@@ -268,7 +277,7 @@ export default observer((props: UserProps) => {
         placeholder={'请选择收信人'}
         onSelect={(key: any, node: any) => {
           setValue(key);
-          onchange(source, key, node.isRelation);
+          onchange(source, key, node.isRelation, node.name);
         }}
         filterTreeNode={filterOption}
       >
@@ -279,7 +288,7 @@ export default observer((props: UserProps) => {
         value={value}
         placeholder={'请输入固定号码'}
         onChange={(e) => {
-          onchange(source, e.target.value);
+          onchange(source, e.target.value, false, e.target.value);
         }}
       />
     );
@@ -297,7 +306,7 @@ export default observer((props: UserProps) => {
         style={{ width: 120 }}
         onChange={(key) => {
           setSource(key);
-          onchange(key, undefined);
+          onchange(key, undefined, false, '');
         }}
       />
       {NotifyModel.notify.notifyType &&

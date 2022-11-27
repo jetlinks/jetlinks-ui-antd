@@ -40,8 +40,12 @@ export default (props: TagSelectProps) => {
         value: 'id',
       }}
       style={{ width: '100%' }}
-      onChange={(key) => {
+      onChange={(key, option: any) => {
         if (props.onChange) {
+          NotifyModel.notify.options = {
+            ...NotifyModel.notify.options,
+            tagName: option ? option?.label : '',
+          };
           props.onChange(key);
         }
       }}

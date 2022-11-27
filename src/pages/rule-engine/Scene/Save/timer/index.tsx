@@ -30,8 +30,6 @@ export default observer(() => {
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
-            console.log(FormModel.options);
-
             const label = handleLabel(FormModel.options);
             return (
               <AddButton

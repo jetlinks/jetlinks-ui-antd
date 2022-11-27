@@ -50,6 +50,17 @@ class Service extends BaseService<ConfigItem> {
     request(`/${SystemConst.API_BASE}/alarm/config/default/level`, {
       method: 'GET',
     });
+
+  public bindScene = (data: any) =>
+    request(`/${SystemConst.API_BASE}/alarm/rule/bind`, {
+      method: 'PATCH',
+      data,
+    });
+  public unbindScene = (id: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/alarm/rule/bind/${id}/_delete`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;
