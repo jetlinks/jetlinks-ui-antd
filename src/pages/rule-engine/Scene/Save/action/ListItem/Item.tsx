@@ -129,15 +129,7 @@ export default (props: ItemProps) => {
           </div>
         );
       default:
-        return (
-          <AddButton
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            点击配置执行动作
-          </AddButton>
-        );
+        return null;
     }
   };
 
@@ -169,7 +161,17 @@ export default (props: ItemProps) => {
         </div>
       );
     } else if (props?.data?.executor === 'notify') {
-      return notifyRender(props?.data);
+      return props?.data?.notify?.notifyType ? (
+        notifyRender(props?.data)
+      ) : (
+        <AddButton
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          点击配置执行动作
+        </AddButton>
+      );
     }
     return (
       <AddButton
@@ -207,10 +209,10 @@ export default (props: ItemProps) => {
         <div
           className="item-delete"
           onClick={() => {
-            const indexOf = FormModel.actions.findIndex((item) => item.key === props.data.key);
-            if (props.data.key && indexOf !== -1) {
-              FormModel.actions.splice(indexOf, 1);
-            }
+            // const indexOf = FormModel.actions.findIndex((item) => item.key === props.data.key);
+            // if (props.data.key && indexOf !== -1) {
+            //   FormModel.actions.splice(indexOf, 1);
+            // }
           }}
         >
           <DeleteOutlined />

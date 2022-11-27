@@ -68,7 +68,7 @@ const Scene = () => {
           style={{ padding: 0 }}
           isPermission={permission.tigger}
           tooltip={{
-            title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '手动触发',
+            title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '',
           }}
           disabled={record.state?.value === 'disabled'}
           popConfirm={{
@@ -294,4 +294,5 @@ const Scene = () => {
     </PageContainer>
   );
 };
+
 export default Scene;
