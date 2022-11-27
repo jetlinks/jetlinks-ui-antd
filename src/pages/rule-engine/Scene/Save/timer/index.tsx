@@ -52,7 +52,11 @@ export default observer(() => {
         </Observer>
       </div>
       <div>
-        <Action />
+        <Observer>
+          {() => (
+            <Action thenOptions={FormModel.branches ? FormModel.branches[0].then : []} name={0} />
+          )}
+        </Observer>
       </div>
       {visible && (
         <TimerTrigger

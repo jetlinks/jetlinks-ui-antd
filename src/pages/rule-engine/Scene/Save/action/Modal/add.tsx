@@ -2,14 +2,16 @@ import { Modal, Form } from 'antd';
 import ActionsTypeComponent from '@/pages/rule-engine/Scene/Save/components/TriggerWay/actionsType';
 import { useEffect, useState } from 'react';
 import Notify from '../notify';
-import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
+import type { ActionsType, ParallelType } from '@/pages/rule-engine/Scene/typings';
 import Device from '../DeviceOutput';
+import Delay from '../Delay';
 
 interface Props {
   close: () => void;
   save: (data: any, options?: any) => void;
   data: Partial<ActionsType>;
   name: number;
+  type: ParallelType;
 }
 
 export default (props: Props) => {
@@ -55,6 +57,26 @@ export default (props: Props) => {
             }}
           />
         );
+      case 'delay':
+        return (
+          <Delay
+            value={props.data?.delay || {}}
+            save={(data: any, options) => {
+              setActionType('');
+              props.save(
+                {
+                  type: 'delay',
+                  key: props.data.key || `delay_${new Date().getTime()}`,
+                  ...data,
+                },
+                options,
+              );
+            }}
+            cancel={() => {
+              setActionType('');
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -83,7 +105,7 @@ export default (props: Props) => {
           required
           rules={[{ required: true, message: '请选择类型' }]}
         >
-          <ActionsTypeComponent />
+          <ActionsTypeComponent type={props.type} />
         </Form.Item>
       </Form>
       {actionTypeComponent(actionType)}

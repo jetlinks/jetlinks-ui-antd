@@ -111,7 +111,7 @@ export default observer((props: BranchesItemProps) => {
           )}
         </div>
         <div className="actions-branchs">
-          <Actions openShakeLimit={true} name={['branches', props.name]} />
+          <Actions openShakeLimit={true} name={props.name} thenOptions={props.data.then} />
         </div>
       </div>
     </div>

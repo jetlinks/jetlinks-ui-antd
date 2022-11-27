@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Modal from '../Modal/add';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import { DeleteOutlined } from '@ant-design/icons';
-import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
@@ -16,6 +15,10 @@ interface ItemProps {
   name: number;
   data: ActionsType;
   type: ParallelType;
+  parallel: boolean;
+  options: any;
+  onUpdate: (data: any, options: any) => void;
+  onDelete: () => void;
 }
 
 const iconMap = new Map();
@@ -170,6 +173,10 @@ export default (props: ItemProps) => {
       );
     } else if (props?.data?.executor === 'notify') {
       return notifyRender(props?.data);
+    } else if (props?.data?.executor === 'delay') {
+      return <div> {props.options.name}</div>;
+    } else if (props.data?.executor === 'device') {
+      return <div></div>;
     }
     return (
       <AddButton
@@ -204,25 +211,11 @@ export default (props: ItemProps) => {
           </div>
         </div>
         <div className="item-number">{props.name + 1}</div>
-        <div
-          className="item-delete"
-          onClick={() => {
-            const indexOf = FormModel.actions.findIndex((item) => item.key === props.data.key);
-            if (props.data.key && indexOf !== -1) {
-              FormModel.actions.splice(indexOf, 1);
-            }
-          }}
-        >
+        <div className="item-delete" onClick={props.onDelete}>
           <DeleteOutlined />
         </div>
       </div>
-      {props.type === 'serial' ? (
-        props.data.terms?.length ? (
-          <div></div>
-        ) : (
-          <div>添加过滤条件</div>
-        )
-      ) : null}
+      {props.type === 'serial' ? props.parallel ? <div>添加过滤条件</div> : <div></div> : null}
       {visible && (
         <Modal
           name={props.name}
@@ -230,10 +223,12 @@ export default (props: ItemProps) => {
           close={() => {
             setVisible(false);
           }}
-          save={(data: ActionsType) => {
-            FormModel.actions[props.name] = data;
+          save={(data: ActionsType, options) => {
+            // FormModel.actions[props.name] = data;
+            props.onUpdate(props, options);
             setVisible(false);
           }}
+          type={props.type}
         />
       )}
       {triggerVisible && (

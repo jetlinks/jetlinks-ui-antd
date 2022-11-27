@@ -10,6 +10,13 @@ type Trigger = {
   device: Record<string, unknown>;
 };
 
+export enum ParallelEnum {
+  'parallel' = 'parallel',
+  'serial' = 'serial',
+}
+
+export type ParallelType = keyof typeof ParallelEnum;
+
 export enum Source {
   'manual' = 'manual',
   'metric' = 'metric',
@@ -239,7 +246,7 @@ export interface ActionsDeviceProps {
 
 export interface BranchesThen {
   parallel: boolean;
-  actions: ActionsType;
+  actions: ActionsType[];
   key?: string;
 }
 
