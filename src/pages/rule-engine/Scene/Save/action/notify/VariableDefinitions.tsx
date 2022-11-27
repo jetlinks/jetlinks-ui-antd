@@ -120,9 +120,9 @@ export default forwardRef((props: Props, ref) => {
       const formData = await form.validateFields().catch(() => {
         resolve(false);
       });
-      console.log(formData);
       if (formData) {
-        resolve(formData);
+        console.log(formData);
+        // resolve(formData);
       } else {
         resolve(false);
       }

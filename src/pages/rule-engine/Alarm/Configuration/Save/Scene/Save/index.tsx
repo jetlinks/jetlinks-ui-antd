@@ -1,16 +1,17 @@
 import { Modal, ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import { SceneItem } from '@/pages/rule-engine/Scene/typings';
-import { ExtraSceneCard } from '@/components/ProTableCard/CardItems/scene';
+import { ExtraSceneCard } from '@/components/ProTableCard/CardItems/Scene';
 import { service as sceneService } from '@/pages/rule-engine/Scene';
 import { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { onlyMessage } from '@/utils/util';
-
+import { service } from '@/pages/rule-engine/Alarm/Configuration';
 interface Props {
   close: () => void;
   id: string;
+  ok: () => void;
 }
 
 export default (props: Props) => {
@@ -81,7 +82,17 @@ export default (props: Props) => {
       }}
       onOk={async () => {
         if (selectKeys.length > 0) {
-          props.close();
+          const list = selectKeys.map((item) => {
+            return {
+              alarmId: id,
+              ruleId: item,
+            };
+          });
+          const resp = await service.bindScene([...list]);
+          if (resp.status === 200) {
+            onlyMessage('操作成功');
+            props.ok();
+          }
         } else {
           onlyMessage('请选择至少一条数据', 'error');
         }
@@ -110,7 +121,7 @@ export default (props: Props) => {
           rowKey="id"
           search={false}
           onlyCard={true}
-          gridColumn={2}
+          gridColumn={1}
           columnEmptyText={''}
           // @ts-ignore
           request={(params) => {
@@ -133,7 +144,8 @@ export default (props: Props) => {
                 {
                   terms: [
                     {
-                      column: 'sceneId',
+                      column: 'id',
+                      termType: 'alarm-bind-rule$not',
                       value: id,
                     },
                   ],

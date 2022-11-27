@@ -1,18 +1,25 @@
 import { Modal, Button, Steps } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import Device from './device';
 import Product from './product';
 import Action from './actions';
 import Service from './service';
-// import { model } from '@formily/reactive';
 import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
+import { ActionsDeviceProps } from '../../../typings';
 
 export const service = new Service<any>('');
 
-export default observer(() => {
+interface Props {
+  value: Partial<ActionsDeviceProps> | any;
+  save: (data: any, _options?: any) => void;
+  cancel: () => void;
+  name: number;
+}
+
+export default observer((props: Props) => {
   const [open, setOpen] = useState<boolean>(true);
   // const [data, setData] = useState<any>({})
   const formRef = useRef<any>();
@@ -26,13 +33,14 @@ export default observer(() => {
     {
       key: 'device',
       title: '选择设备',
-      content: <Device />,
+      content: <Device name={props.name} />,
     },
     {
       key: 'action',
       title: '执行动作',
       content: (
         <Action
+          name={props.name}
           get={(item: any) => {
             formRef.current = item;
           }}
@@ -40,6 +48,15 @@ export default observer(() => {
       ),
     },
   ];
+
+  // const handleOptions = ()=>{
+  //   const _options: any = {
+  //     name: '', // 名称
+  //     onlyName: false,
+  //     type: '', // 触发类型
+  //     action: DeviceModel.options.action,
+  //   };
+  // }
 
   const next = () => {
     if (
@@ -60,8 +77,47 @@ export default observer(() => {
 
   const save = async () => {
     const value = await formRef.current?.validateFields();
-    console.log(value);
+    const item = {
+      selector: 'fixed',
+      source: 'fixed',
+      selectorValues: [
+        {
+          value: DeviceModel.deviceDetail.id,
+          name: DeviceModel.deviceDetail.name,
+        },
+      ],
+      productId: DeviceModel.productId[0],
+      message: value,
+    };
+    console.log(item, value);
+
+    const _options: any = {
+      name: '', //设备名称
+      type: '', //类型
+      properties: '', //属性功能
+    };
+    _options.name = DeviceModel.deviceDetail.name;
+    const _type = value.device.message.messageType;
+    if (_type === 'INVOKE_FUNCTION') {
+      _options.type = '执行';
+      _options.properties = value.device.message.functionId;
+    }
+    if (_type === 'READ_PROPERTY') {
+      _options.type = '读取';
+      _options.properties = value.device.message.properties?.[0];
+    }
+    if (_type === 'WRITE_PROPERTY') {
+      _options.type = '设置';
+      _options.properties = Object.keys(value.device.message.properties)?.[0];
+    }
+    console.log(_options);
+    console.log('device', item);
+    props.save(item, _options);
   };
+
+  useEffect(() => {
+    console.log(props.value);
+  }, [props.value]);
 
   return (
     <Modal

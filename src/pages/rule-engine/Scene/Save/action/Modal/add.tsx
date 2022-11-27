@@ -7,7 +7,7 @@ import Device from '../DeviceOutput';
 
 interface Props {
   close: () => void;
-  save: (data: any) => void;
+  save: (data: any, options?: any) => void;
   data: Partial<ActionsType>;
   name: number;
 }
@@ -25,10 +25,22 @@ export default (props: Props) => {
   }, [props.data]);
 
   const actionTypeComponent = (type: string) => {
-    console.log(type, '111');
     switch (type) {
       case 'device':
-        return <Device />;
+        return (
+          <Device
+            value={props.data?.device}
+            save={(data: any, options: any) => {
+              setActionType('');
+              // console.log(data,options)
+              props.save(data, options);
+            }}
+            name={props.name}
+            cancel={() => {
+              setActionType('');
+            }}
+          />
+        );
       case 'notify':
         return (
           <Notify

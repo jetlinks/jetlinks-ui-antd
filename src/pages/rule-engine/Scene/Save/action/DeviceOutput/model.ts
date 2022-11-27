@@ -1,6 +1,7 @@
 // 模型
 import { ProductItem } from '@/pages/device/Product/typings';
 import { model } from '@formily/reactive';
+import { ActionsDeviceProps } from '../../../typings';
 
 type ModelType = {
   steps: {
@@ -10,8 +11,11 @@ type ModelType = {
   }[];
   current: number;
   productId: string[];
-  deviceId: string[];
+  deviceId: any[];
   productDetail: ProductItem | any;
+  device: Partial<ActionsDeviceProps>;
+  deviceDetail: any;
+  options: any;
 };
 
 const DeviceModel = model<ModelType>({
@@ -20,6 +24,9 @@ const DeviceModel = model<ModelType>({
   productId: [],
   deviceId: [],
   productDetail: {},
+  device: {},
+  deviceDetail: {},
+  options: {},
 });
 
 export default DeviceModel;

@@ -28,14 +28,31 @@
       justify-content: center;
       width: 48px;
       margin-right: 8px;
-      background-color: #fafafa;
+      background: rgba(47, 84, 235, 0.08);
     }
 
     .item-options-content {
       display: flex;
       align-items: center;
       padding: 0 8px;
-      background-color: #fafafa;
+      background: rgba(47, 84, 235, 0.08);
+      cursor: pointer;
+      div {
+        padding: 6px 10px;
+        color: #333;
+        font-size: 14px;
+        line-height: 22px;
+        background-color: #fff;
+        border-radius: 22px;
+        .notify-text-highlight {
+          margin-left: 5px;
+          font-weight: bold;
+        }
+        .notify-img-highlight {
+          margin: 0 10px;
+          color: rgba(0, 0, 0, 0.8);
+        }
+      }
     }
   }
 

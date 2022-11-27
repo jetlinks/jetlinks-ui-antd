@@ -53,8 +53,12 @@ export default (props: OrgProps) => {
         label: 'name',
         value: 'id',
       }}
-      onChange={(key) => {
+      onChange={(key, label) => {
         if (props.onChange) {
+          NotifyModel.notify.options = {
+            ...NotifyModel.notify.options,
+            orgName: label,
+          };
           props.onChange({
             source: 'fixed',
             value: key,

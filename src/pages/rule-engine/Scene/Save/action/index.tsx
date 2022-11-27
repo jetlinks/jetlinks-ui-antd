@@ -25,10 +25,10 @@ export default (props: ActionsProps) => {
               const data: ShakeLimitType = get(FormModel, [...props.name!, 'shakeLimit']);
               return (
                 <ShakeLimit
-                  enabled={data.enabled}
-                  time={data.time}
-                  threshold={data.threshold}
-                  alarmFirst={data.alarmFirst}
+                  enabled={data?.enabled}
+                  time={data?.time}
+                  threshold={data?.threshold}
+                  alarmFirst={data?.alarmFirst}
                   onChange={(type, value) => {
                     data[type] = value;
                   }}

@@ -15,7 +15,7 @@ interface FunctionCallProps {
   functionData: any[];
   value?: any;
   onChange?: (data: any) => void;
-  name?: string;
+  name?: any;
   productId?: string;
 }
 
@@ -61,7 +61,7 @@ export default (props: FunctionCallProps) => {
 
   const getItemNode = (record: any) => {
     const type = record.type;
-    return <TypeModel value={record.value} type={type} record={record} />;
+    return <TypeModel value={record.value} type={type} record={record} name={props.name} />;
   };
 
   const columns: ProColumns<FunctionTableDataType>[] = [

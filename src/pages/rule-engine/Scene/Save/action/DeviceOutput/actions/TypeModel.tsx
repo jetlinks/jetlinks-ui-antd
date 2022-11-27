@@ -1,18 +1,21 @@
 import ParamsSelect, { ItemProps } from '@/pages/rule-engine/Scene/Save/components/ParamsSelect';
 import { useEffect, useState } from 'react';
-import { DataNode } from 'antd/es/tree';
 import { Input, InputNumber, Select, Tree } from 'antd';
 import MTimePicker from '../../../components/ParamsSelect/components/MTimePicker';
 import moment from 'moment';
 import { EditOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import AMap from '@/components/GeoPoint/AMap';
 import ObjModel from './ObjModel';
+import { FormModel } from '../../..';
+import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
+import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 
 interface Props {
   value: any;
   type: string;
-  onChange: (data: any, source?: any) => void;
+  onChange?: (data: any, source?: any) => void;
   record?: any; //枚举值使用
+  name?: any;
 }
 
 export default (props: Props) => {
@@ -20,37 +23,18 @@ export default (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [objVisiable, setObjVisable] = useState<boolean>(false);
   const [source, setSource] = useState<string>('');
-  const treeData: DataNode[] = [
-    {
-      title: 'parent 1',
-      key: '0-0',
-      children: [
-        {
-          title: 'parent 1-0',
-          key: '0-0-0',
-          children: [
-            {
-              title: 'leaf',
-              key: '0-0-0-0',
-            },
-            {
-              title: 'leaf',
-              key: '0-0-0-1',
-            },
-          ],
-        },
-        {
-          title: 'parent 1-1',
-          key: '0-0-1',
-          children: [{ title: 'sss', key: '0-0-1-0' }],
-        },
-      ],
-    },
-  ];
+  const [builtInList, setBuiltInList] = useState<any[]>([]);
 
-  // useEffect(() => {
-  //   setValue(props.value);
-  // }, [props.value]);
+  const sourceChangeEvent = async () => {
+    const params = props?.name - 1 >= 0 ? { action: props?.name - 1 } : undefined;
+    queryBuiltInParams(FormModel, params).then((res: any) => {
+      if (res.status === 200) {
+        const _data = BuiltInParamsHandleTreeData(res.result);
+        console.log(_data);
+        setBuiltInList(_data);
+      }
+    });
+  };
 
   const onChange = (params: any) => {
     setValue(params);
@@ -60,7 +44,12 @@ export default (props: Props) => {
   };
 
   useEffect(() => {
-    props.onChange(value, source);
+    if (props.onChange) {
+      props.onChange(value, source);
+    }
+    if (source === 'upper') {
+      sourceChangeEvent();
+    }
   }, [source, value]);
 
   const renderNode = (type: string) => {
@@ -183,9 +172,10 @@ export default (props: Props) => {
       key: 'upper',
       content: (
         <Tree
-          treeData={treeData}
+          treeData={builtInList}
           height={300}
           defaultExpandAll
+          fieldNames={{ title: 'name', key: 'id' }}
           onSelect={(selectedKeys) => {
             setValue(selectedKeys[0]);
             if (props.onChange) {

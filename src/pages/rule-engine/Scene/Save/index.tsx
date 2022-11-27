@@ -79,6 +79,7 @@ export default observer(() => {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
           Object.assign(FormModel, resp.result);
+          console.log(FormModel, '11111');
         }
       });
     }

@@ -21,7 +21,6 @@ const TopCard = (props: Props) => {
   const onSelect = (_type: string) => {
     if (!props.disabled) {
       setType(_type);
-
       if (props.onChange) {
         props.onChange(_type);
       }
@@ -38,6 +37,9 @@ const TopCard = (props: Props) => {
           })}
           onClick={() => {
             onSelect(item.value);
+            if (props.onChange) {
+              props.onChange(item.value);
+            }
           }}
         >
           <div className={'way-item-title'}>
