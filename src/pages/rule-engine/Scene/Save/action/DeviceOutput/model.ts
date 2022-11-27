@@ -15,6 +15,7 @@ type ModelType = {
   productDetail: ProductItem | any;
   device: Partial<ActionsDeviceProps>;
   deviceDetail: any;
+  options: any;
 };
 
 const DeviceModel = model<ModelType>({
@@ -25,6 +26,7 @@ const DeviceModel = model<ModelType>({
   productDetail: {},
   device: {},
   deviceDetail: {},
+  options: {},
 });
 
 export default DeviceModel;

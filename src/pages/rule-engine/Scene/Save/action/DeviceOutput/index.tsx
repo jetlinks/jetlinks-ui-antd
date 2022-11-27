@@ -14,7 +14,7 @@ export const service = new Service<any>('');
 
 interface Props {
   value: Partial<ActionsDeviceProps> | any;
-  save: (data: any) => void;
+  save: (data: any, _options?: any) => void;
   cancel: () => void;
   name: number;
 }
@@ -49,6 +49,15 @@ export default observer((props: Props) => {
     },
   ];
 
+  // const handleOptions = ()=>{
+  //   const _options: any = {
+  //     name: '', // 名称
+  //     onlyName: false,
+  //     type: '', // 触发类型
+  //     action: DeviceModel.options.action,
+  //   };
+  // }
+
   const next = () => {
     if (
       (DeviceModel.current === 0 && DeviceModel.productId.length !== 0) ||
@@ -73,15 +82,37 @@ export default observer((props: Props) => {
       source: 'fixed',
       selectorValues: [
         {
-          value: DeviceModel.deviceDetail.id || DeviceModel.deviceDetail.id[0],
+          value: DeviceModel.deviceDetail.id,
           name: DeviceModel.deviceDetail.name,
         },
       ],
       productId: DeviceModel.productId[0],
       message: value,
     };
-    // console.log('device', item)
-    props.save(item);
+    console.log(item, value);
+
+    const _options: any = {
+      name: '', //设备名称
+      type: '', //类型
+      properties: '', //属性功能
+    };
+    _options.name = DeviceModel.deviceDetail.name;
+    const _type = value.device.message.messageType;
+    if (_type === 'INVOKE_FUNCTION') {
+      _options.type = '执行';
+      _options.properties = value.device.message.functionId;
+    }
+    if (_type === 'READ_PROPERTY') {
+      _options.type = '读取';
+      _options.properties = value.device.message.properties?.[0];
+    }
+    if (_type === 'WRITE_PROPERTY') {
+      _options.type = '设置';
+      _options.properties = Object.keys(value.device.message.properties)?.[0];
+    }
+    console.log(_options);
+    console.log('device', item);
+    props.save(item, _options);
   };
 
   useEffect(() => {
