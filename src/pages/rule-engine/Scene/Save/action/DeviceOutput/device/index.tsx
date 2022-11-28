@@ -46,13 +46,13 @@ export default observer((props: Props) => {
     {
       label: '按关系',
       value: 'relation',
-      image: require('/public/images/scene/device-custom.png'),
+      image: require('/public/images/scene/device-relation.png'),
       tip: '选择与触发设备具有相同关系的设备',
     },
     {
       label: '按标签',
       value: 'tag',
-      image: require('/public/images/scene/device-custom.png'),
+      image: require('/public/images/scene/device-tag.png'),
       tip: '按标签选择产品下具有特定标签的设备',
     },
     {
@@ -292,7 +292,7 @@ export default observer((props: Props) => {
     });
   };
   const filterType = async () => {
-    console.log(FormModel);
+    // console.log('',FormModel);
     if (FormModel.trigger?.type === 'device') {
       const res = await getRelations();
       if (res.status === 200 && res.result.length === 0) {
