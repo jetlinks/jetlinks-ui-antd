@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react';
+import React from 'react';
 
 interface ButtonProps {
-  children?: React.ReactDOM | string;
+  children?: React.ReactChild[] | React.ReactChild | string;
   onClick?: () => void;
   style?: CSSProperties;
 }
@@ -9,7 +10,9 @@ interface ButtonProps {
 const AddButton = (props: ButtonProps) => {
   return (
     <div className="rule-button-warp" style={props.style}>
-      <div className="rule-button add-button">{props.children}</div>
+      <div className="rule-button add-button" onClick={props.onClick}>
+        {props.children}
+      </div>
     </div>
   );
 };

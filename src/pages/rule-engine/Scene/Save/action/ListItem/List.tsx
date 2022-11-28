@@ -1,40 +1,96 @@
-import { Button, Form } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-import { Item } from './index';
-import type { ItemType } from './Item';
+import { useEffect, useState } from 'react';
+import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
+import Modal from '../Modal/add';
 import './index.less';
-
-interface PropsType {
-  type: ItemType;
+import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
+import Item from './Item';
+import type { ParallelType } from './Item';
+interface ListProps {
+  thenName: number;
+  type: ParallelType;
+  actions: ActionsType[];
+  parallel: boolean;
+  onAdd: (data: any) => void;
+  onDelete: (index: number) => void;
 }
 
-export default (props: PropsType) => {
-  const [form] = Form.useForm();
+export default (props: ListProps) => {
+  const [visible, setVisible] = useState<boolean>(false);
+  const [actions, setActions] = useState<ActionsType[]>(props.actions);
+
+  useEffect(() => {
+    setActions(props.actions);
+  }, [props.actions]);
 
   return (
     <div className="action-list-content">
-      <Form form={form} colon={false} layout={'vertical'} preserve={false} name="actions">
-        <Form.List name="actions" initialValue={[{}]}>
-          {(fields, { add, remove }) => (
-            <div className="actions-list_form">
-              {fields.map(({ key, name, ...resetField }) => (
-                <Item
-                  key={key}
-                  name={name}
-                  resetField={resetField}
-                  remove={remove}
-                  type={props.type}
-                />
-              ))}
-              <div className="action-list-add">
-                <Button type="primary" onClick={add} ghost icon={<PlusOutlined />}>
-                  新增
-                </Button>
-              </div>
-            </div>
-          )}
-        </Form.List>
-      </Form>
+      {actions.map((item, index) => (
+        <Item
+          thenName={props.thenName}
+          name={index}
+          data={item}
+          type={props.type}
+          key={item.key}
+          parallel={props.parallel}
+          options={item.options}
+          onDelete={() => {
+            props.onDelete(index);
+          }}
+          onUpdate={(data, options) => {
+            console.log('addItem', options);
+
+            props.onAdd({
+              ...item,
+              ...data,
+              options,
+            });
+            setVisible(false);
+          }}
+        />
+      ))}
+      <AddButton
+        onClick={() => {
+          setVisible(true);
+        }}
+      >
+        点击配置执行动作
+      </AddButton>
+      {visible && (
+        <Modal
+          type={props.type}
+          name={props.actions.length + 1}
+          data={{
+            key: `${props.type}_${props.actions.length}`,
+          }}
+          close={() => {
+            setVisible(false);
+          }}
+          save={(data: any, options) => {
+            console.log(data);
+
+            const { type, ...extra } = data;
+            console.log('list', options);
+            const item: ActionsType = {
+              ...extra,
+              executor: data.type === 'trigger' || data.type === 'relieve' ? 'alarm' : data.type,
+              key: data.key,
+              options,
+            };
+
+            if (data.type === 'trigger' || data.type === 'relieve') {
+              item.alarm = {
+                mode: data.type,
+              };
+            }
+            // const index = FormModel?.actions.findIndex((i) => {
+            //   return i.key === item.key ? item : i;
+            // });
+            // FormModel.actions[index] = { ...item };
+            props.onAdd(item);
+            setVisible(false);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,148 @@
+.deleteBtn() {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: none;
+  width: 20px;
+  height: 20px;
+  color: #999;
+  line-height: 20px;
+  text-align: center;
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &.show {
+    display: block;
+  }
+
+  &:hover {
+    background-color: #f3f3f3;
+  }
+}
+
+.actions-terms {
+  .actions-terms-warp {
+    display: flex;
+
+    &:not(:last-child) {
+      margin-bottom: 24px;
+    }
+
+    .actions-terms-title {
+      width: 40px;
+      padding-top: 16px;
+      color: #6968be;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .actions-terms-options {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      width: 0;
+
+      &.border {
+        padding: 18px;
+        border: 1px dashed #999;
+        border-radius: 2px;
+      }
+
+      .actions-terms-list {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 16px;
+      }
+    }
+  }
+
+  .terms-params-delete {
+    .deleteBtn();
+
+    &.denger {
+      color: #e50012;
+      background-color: rgba(229, 0, 18, 0.1);
+    }
+  }
+}
+
+.terms-params {
+  display: inline-block;
+
+  // &:not(:first-child) {
+  //   margin-bottom: 16px;
+  // }
+
+  .terms-params-warp {
+    display: flex;
+    align-items: center;
+  }
+
+  .terms-params-content {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px;
+    background-color: #fafafa;
+    row-gap: 16px;
+  }
+
+  .terms-add {
+    display: inline-block;
+    width: 66px;
+    margin-left: 16px;
+    padding: 2px 8px;
+    color: rgba(0, 0, 0, 0.3);
+    background: #fff;
+    border: 1px dashed rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    cursor: pointer;
+  }
+
+  .term-type-warp {
+    display: inline-block;
+    width: 50px;
+    margin: 0 16px;
+    .term-type {
+      padding-top: 4px;
+      padding-bottom: 4px;
+      border-radius: 2px;
+    }
+  }
+}
+
+.terms-params-item {
+  .params-button {
+    display: inline-block;
+    padding: 6px 8px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .params-item_button {
+    position: relative;
+    display: inline-block;
+    padding: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+
+    .button-delete {
+      .deleteBtn();
+    }
+  }
+
+  .term-add {
+    display: inline-block;
+    width: 66px;
+    margin-left: 16px;
+    padding: 4px 8px;
+    color: #333;
+    background: #e8e8e8;
+    border: 1px solid #f0f0f0;
+    border-radius: 30px;
+    cursor: pointer;
+  }
+}

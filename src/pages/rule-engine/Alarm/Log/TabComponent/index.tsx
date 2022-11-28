@@ -16,9 +16,11 @@ import classNames from 'classnames';
 import { useDomFullHeight } from '@/hooks';
 import PermissionButton from '@/components/PermissionButton';
 import { Ellipsis } from '@/components';
+import { Store } from 'jetlinks-store';
 
 interface Props {
   type: string;
+  id?: string;
 }
 
 const imgMap = new Map();
@@ -43,6 +45,17 @@ colorMap.set(5, '#C4C4C4');
 const TabComponent = observer((props: Props) => {
   const { minHeight } = useDomFullHeight(`.alarmLog`, 36);
   const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Log');
+
+  useEffect(() => {
+    if (AlarmLogModel.defaultLevel.length === 0) {
+      service.queryDefaultLevel().then((resp) => {
+        if (resp.status === 200) {
+          Store.set('default-level', resp.result?.levels || []);
+          AlarmLogModel.defaultLevel = resp.result?.levels || [];
+        }
+      });
+    }
+  }, []);
 
   const columns: ProColumns<any>[] = [
     {
@@ -135,11 +148,19 @@ const TabComponent = observer((props: Props) => {
   const handleSearch = (params: any) => {
     setParam(params);
     const terms = [...params.terms];
-    if (props.type !== 'all') {
+    if (props.type !== 'all' && !props.id) {
       terms.push({
         termType: 'eq',
         column: 'targetType',
         value: props.type,
+        type: 'and',
+      });
+    }
+    if (props.id) {
+      terms.push({
+        termType: 'eq',
+        column: 'alarmConfigId',
+        value: props.id,
         type: 'and',
       });
     }
@@ -153,9 +174,9 @@ const TabComponent = observer((props: Props) => {
         if (resp.status === 200) {
           const res = await service.getOrgList();
           if (res.status === 200) {
-            resp.result.data.map((item) => {
+            resp.result.data.map((item: any) => {
               if (item.targetType === 'org') {
-                res.result.forEach((item2) => {
+                res.result.forEach((item2: any) => {
                   if (item2.id === item.targetId) {
                     item.targetName = item2.name;
                   }
@@ -174,9 +195,6 @@ const TabComponent = observer((props: Props) => {
 
   useEffect(() => {
     handleSearch(param);
-    if (props.type === 'prodcut') {
-    }
-    console.log(props.type);
   }, [props.type]);
 
   const tools = (record: any) => [
@@ -230,7 +248,7 @@ const TabComponent = observer((props: Props) => {
       处理记录
     </PermissionButton>,
 
-    // <Button
+    // <ButtontargetType
     //   type={'link'}
     //   style={{ padding: 0 }}
     //   key={'detail'}
@@ -261,11 +279,9 @@ const TabComponent = observer((props: Props) => {
       });
   };
 
-  const defaultImage = require('/public/images/device-access.png');
-
   return (
     <div className="alarm-log-card">
-      {props.type === 'all' && (
+      {['all', 'detail'].includes(props.type) && (
         <SearchComponent<any>
           field={columns}
           target="alarm-log"
@@ -278,7 +294,7 @@ const TabComponent = observer((props: Props) => {
           }}
         />
       )}
-      {props.type === 'product' && (
+      {['product', 'other'].includes(props.type) && (
         <SearchComponent<any>
           field={productCol}
           target="alarm-log"
@@ -317,139 +333,132 @@ const TabComponent = observer((props: Props) => {
           }}
         />
       )}
-      {props.type === 'other' && (
-        <SearchComponent<any>
-          field={productCol}
-          target="alarm-log"
-          onSearch={(data) => {
-            const dt = {
-              pageSize: 10,
-              terms: [...data?.terms],
-            };
-            handleSearch(dt);
-          }}
-        />
-      )}
 
-      <Card>
-        <div className="alarmLog" style={{ minHeight, position: 'relative' }}>
+      <Card bordered={false}>
+        <div className="alarm-log-card" style={{ minHeight, position: 'relative' }}>
           <div style={{ height: '100%', paddingBottom: 48 }}>
-            {dataSource?.data.length > 0 ? (
-              <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
-                {(dataSource?.data || []).map((item: any) => (
-                  <Col key={item.id} span={12}>
-                    <div className={classNames('iot-card')}>
-                      <div className={'card-warp'}>
-                        <div className={classNames('card-content')}>
-                          <div style={{ width: 'calc(100% - 90px)' }}>
-                            <Ellipsis title={item.alarmName} titleStyle={{ color: '#2F54EB' }} />
-                            {/*<Tooltip title={item.alarmName}>*/}
-                            {/*  <a style={{ cursor: 'default' }}>{item.alarmName}</a>*/}
-                            {/*</Tooltip>*/}
-                          </div>
-                          <div className="alarm-log-context">
-                            <div className="context-left">
-                              <div className="context-img">
-                                <img width={70} height={70} src={defaultImage} alt={''} />
-                              </div>
-                              <div className="left-item">
-                                <div className="left-item-title">
-                                  {titleMap.get(item.targetType)}
-                                </div>
-                                <div className="left-item-value ellipsis">
-                                  <Tooltip placement="topLeft" title={item.targetName}>
-                                    {item.targetName}
-                                  </Tooltip>
-                                </div>
-                              </div>
+            {dataSource?.data.length ? (
+              <>
+                <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
+                  {(dataSource?.data || []).map((item: any) => (
+                    <Col key={item.id} span={12}>
+                      <div className={classNames('iot-card')}>
+                        <div className={'card-warp'}>
+                          <div className={classNames('card-content')}>
+                            <div style={{ width: 'calc(100% - 90px)', marginBottom: 10 }}>
+                              <Ellipsis
+                                title={item.alarmName}
+                                titleStyle={{ color: '#2F54EB', fontWeight: 500 }}
+                              />
                             </div>
-                            <div className="context-right">
-                              <div className="right-item">
-                                <div className="right-item-title">最近告警时间</div>
-                                <div className="right-item-value ellipsis">
-                                  {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
-                                </div>
-                              </div>
-                              <div className="right-item">
-                                <div className="right-item-title">状态</div>
-                                <div className="right-item-value">
-                                  <Badge
-                                    status={item.state.value === 'warning' ? 'error' : 'default'}
+                            <div className="alarm-log-context">
+                              <div className="context-left">
+                                <div className="context-img">
+                                  <img
+                                    width={70}
+                                    height={70}
+                                    src={imgMap.get(item.targetType || 'other')}
+                                    alt={''}
                                   />
-                                  <span
-                                    style={{
-                                      color: item.state.value === 'warning' ? '#E50012' : 'black',
-                                    }}
-                                  >
-                                    {item.state.text}
-                                  </span>
+                                </div>
+                                <div className="left-item">
+                                  <div className="left-item-title">
+                                    {titleMap.get(item.targetType)}
+                                  </div>
+                                  <div className="left-item-value ellipsis">
+                                    <Tooltip placement="topLeft" title={item.targetName}>
+                                      {item.targetName}
+                                    </Tooltip>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="context-right">
+                                <div className="right-item">
+                                  <div className="right-item-title">最近告警时间</div>
+                                  <div className="right-item-value ellipsis">
+                                    {moment(item.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
+                                  </div>
+                                </div>
+                                <div className="right-item">
+                                  <div className="right-item-title">状态</div>
+                                  <div className="right-item-value">
+                                    <Badge
+                                      status={item.state.value === 'warning' ? 'error' : 'default'}
+                                    />
+                                    <span
+                                      style={{
+                                        color: item.state.value === 'warning' ? '#E50012' : 'black',
+                                        marginLeft: 5,
+                                      }}
+                                    >
+                                      {item.state.text}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div
-                            className={'alarm-log-state'}
-                            style={{ backgroundColor: colorMap.get(item.level) }}
-                          >
-                            <div className={'card-state-content'}>
-                              <Tooltip
-                                placement="topLeft"
-                                title={
-                                  AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
-                                    ?.title || item.level
-                                }
-                              >
-                                <div className="ellipsis" style={{ maxWidth: 70 }}>
-                                  {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
-                                    ?.title || item.level}
-                                </div>
-                              </Tooltip>
+                            <div
+                              className={'alarm-log-state'}
+                              style={{ backgroundColor: colorMap.get(item.level) }}
+                            >
+                              <div className={'card-state-content'}>
+                                <Tooltip
+                                  placement="topLeft"
+                                  title={
+                                    AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
+                                      ?.title || item.level
+                                  }
+                                >
+                                  <div className="ellipsis" style={{ maxWidth: 70 }}>
+                                    {AlarmLogModel.defaultLevel.find((i) => i.level === item.level)
+                                      ?.title || item.level}
+                                  </div>
+                                </Tooltip>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        <div className={'card-tools'}>{getAction(tools(item))}</div>
                       </div>
-                      <div className={'card-tools'}>{getAction(tools(item))}</div>
-                    </div>
-                  </Col>
-                ))}
-              </Row>
+                    </Col>
+                  ))}
+                </Row>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                  }}
+                >
+                  <Pagination
+                    showSizeChanger
+                    size="small"
+                    className={'pro-table-card-pagination'}
+                    total={dataSource?.total || 0}
+                    current={dataSource?.pageIndex + 1}
+                    onChange={(page, size) => {
+                      handleSearch({
+                        ...param,
+                        pageIndex: page - 1,
+                        pageSize: size,
+                      });
+                    }}
+                    pageSizeOptions={[10, 20, 50, 100]}
+                    pageSize={dataSource?.pageSize}
+                    showTotal={(num) => {
+                      const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+                      const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+                      return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+                    }}
+                  />
+                </div>
+              </>
             ) : (
               <Empty style={{ marginTop: '10%' }} />
             )}
           </div>
-          {dataSource.data.length > 0 && (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                position: 'absolute',
-                bottom: 0,
-                width: '100%',
-              }}
-            >
-              <Pagination
-                showSizeChanger
-                size="small"
-                className={'pro-table-card-pagination'}
-                total={dataSource?.total || 0}
-                current={dataSource?.pageIndex + 1}
-                onChange={(page, size) => {
-                  handleSearch({
-                    ...param,
-                    pageIndex: page - 1,
-                    pageSize: size,
-                  });
-                }}
-                pageSizeOptions={[10, 20, 50, 100]}
-                pageSize={dataSource?.pageSize}
-                showTotal={(num) => {
-                  const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-                  const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-                  return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-                }}
-              />
-            </div>
-          )}
         </div>
       </Card>
       {AlarmLogModel.solveVisible && (

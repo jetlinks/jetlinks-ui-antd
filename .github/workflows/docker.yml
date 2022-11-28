@@ -1,7 +1,7 @@
 name: build images
 on:
-  push:
-    branches: ["master", "2.0", "next"]
+    push:
+        branches: ["master", "2.0", "next"]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

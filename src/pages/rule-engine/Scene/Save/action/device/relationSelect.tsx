@@ -4,7 +4,7 @@ import { getRelations } from '@/pages/rule-engine/Scene/Save/action/service';
 
 interface RelationProps {
   value?: any;
-  onChange?: (value?: any) => void;
+  onChange?: (value?: any, options?: any) => void;
   id?: string;
 }
 
@@ -33,16 +33,19 @@ export default (props: RelationProps) => {
       options={options}
       style={{ width: '100%' }}
       value={props.value ? props.value[0]?.value?.relation : undefined}
-      onSelect={(key: string) => {
+      onSelect={(key: string, option: any) => {
         if (props.onChange) {
-          props.onChange([
-            {
-              value: {
-                objectType: 'user',
-                relation: key,
+          props.onChange(
+            [
+              {
+                value: {
+                  objectType: 'user',
+                  relation: key,
+                },
               },
-            },
-          ]);
+            ],
+            option,
+          );
         }
       }}
       placeholder={'请选择关系'}

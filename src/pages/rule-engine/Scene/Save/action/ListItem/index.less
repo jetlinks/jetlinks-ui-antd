@@ -1,4 +1,6 @@
 .action-list-content {
+  padding: 8px;
+
   .actions-list_form {
     .action-list-add {
       display: flex;
@@ -7,5 +9,114 @@
       padding-top: 16px;
       border-top: 1px solid @primary-color;
     }
+  }
+}
+.actions-item {
+  position: relative;
+  margin-bottom: 24px;
+  padding: 16px;
+  border: 1px dashed #999;
+  border-radius: 2px;
+
+  .item-options-warp {
+    display: flex;
+    height: 48px;
+
+    .item-options-type {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      margin-right: 8px;
+      background-color: #fafafa;
+    }
+
+    .item-options-content {
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      background: #fafafa;
+      cursor: pointer;
+      div {
+        padding: 6px 10px;
+        color: #333;
+        font-size: 14px;
+        line-height: 22px;
+        background-color: #fff;
+        border-radius: 22px;
+        .notify-text-highlight {
+          margin-left: 5px;
+          font-weight: bold;
+        }
+        .notify-img-highlight {
+          margin: 0 10px;
+          color: rgba(0, 0, 0, 0.8);
+        }
+      }
+    }
+  }
+
+  .item-number {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    font-weight: 800;
+    transform: translateY(-50%);
+  }
+
+  .item-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: #e50012;
+    background-color: rgba(229, 0, 18, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(#e50012, 0.2);
+    }
+  }
+}
+
+.filter-condition-warp {
+  margin-bottom: 16px;
+
+  .filter-condition-content {
+    position: relative;
+    padding: 16px;
+    border: 1px dashed rgba(0, 0, 0, 0.3);
+    row-gap: 16px;
+
+    .filter-condition-delete {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      color: #e50012;
+      background-color: rgba(229, 0, 18, 0.1);
+      border-radius: 50%;
+      transform: translate(50%, -50%);
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(229, 0, 18, 0.2);
+      }
+    }
+  }
+  .filter-add-button {
+    color: #2f54eb;
+    cursor: pointer;
   }
 }

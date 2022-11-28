@@ -14,7 +14,6 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Space, Tooltip } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
-import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import AlarmConfig from '@/components/ProTableCard/CardItems/AlarmConfig';
 import { Store } from 'jetlinks-store';
@@ -23,16 +22,14 @@ import { useHistory } from 'umi';
 import { onlyMessage } from '@/utils/util';
 import encodeQuery from '@/utils/encodeQuery';
 
-const service = new Service('alarm/config');
+export const service = new Service('alarm/config');
 
 const Configuration = () => {
   const intl = useIntl();
   const history = useHistory();
-  const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Configuration');
 
-  const [current, setCurrent] = useState<any>();
   const columns: ProColumns<ConfigurationItem>[] = [
     {
       dataIndex: 'name',
@@ -223,8 +220,8 @@ const Configuration = () => {
           }}
           type="link"
           onClick={() => {
-            setVisible(true);
-            setCurrent(record);
+            const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+            history.push(`${url}?id=${record.id}`);
           }}
         >
           <EditOutlined />
@@ -355,8 +352,8 @@ const Configuration = () => {
                 key="edit"
                 type="link"
                 onClick={() => {
-                  setCurrent(record);
-                  setVisible(true);
+                  const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+                  history.push(`${url}?id=${record.id}`);
                 }}
               >
                 <EditOutlined />
@@ -431,8 +428,8 @@ const Configuration = () => {
             <PermissionButton
               isPermission={permission.add}
               onClick={() => {
-                setCurrent(undefined);
-                setVisible(true);
+                const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+                history.push(`${url}`);
               }}
               key="button"
               icon={<PlusOutlined />}
@@ -445,14 +442,6 @@ const Configuration = () => {
             </PermissionButton>
           </Space>
         }
-      />
-      <Save
-        data={current}
-        visible={visible}
-        close={() => {
-          setVisible(false);
-          actionRef.current?.reset?.();
-        }}
       />
     </PageContainer>
   );

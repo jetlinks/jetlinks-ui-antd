@@ -5,30 +5,22 @@ import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import {
   DeleteOutlined,
   EditOutlined,
-  EyeOutlined,
   LikeOutlined,
   PlayCircleOutlined,
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { BadgeStatus, PermissionButton, ProTableCard } from '@/components';
+import { PermissionButton, ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
-import SceneCard from '@/components/ProTableCard/CardItems/scene';
+import SceneCard from '@/components/ProTableCard/CardItems/Scene';
 import Service from './service';
 import { useIntl } from 'umi';
-import { getMenuPathByCode } from '@/utils/menu';
-import { StatusColorEnum } from '@/components/BadgeStatus';
 import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
 import Save from './Save/save';
+import { getMenuPathByCode } from '@/utils/menu';
 
 export const service = new Service('scene');
-
-enum TriggerWayType {
-  manual = '手动触发',
-  timer = '定时触发',
-  device = '设备触发',
-}
 
 const Scene = () => {
   const intl = useIntl();
@@ -36,7 +28,7 @@ const Scene = () => {
   const { permission } = PermissionButton.usePermission('rule-engine/Scene');
   const [searchParams, setSearchParams] = useState<any>({});
   const [visible, setVisible] = useState<boolean>(false);
-  const [current] = useState<Partial<SceneItem>>({});
+  const [current, setCurrent] = useState<Partial<SceneItem>>({});
   const history = useHistory();
 
   const deleteById = async (id: string) => {
@@ -51,8 +43,24 @@ const Scene = () => {
     }
   };
 
-  const Tools = (record: any, type: 'card' | 'table'): React.ReactNode[] => {
-    const item = [
+  const Tools = (record: SceneItem): React.ReactNode[] => {
+    return [
+      <PermissionButton
+        key={'update'}
+        type={'link'}
+        style={{ padding: 0 }}
+        isPermission={permission.update}
+        onClick={() => {
+          setVisible(true);
+          setCurrent(record);
+        }}
+      >
+        <EditOutlined />
+        {intl.formatMessage({
+          id: 'pages.data.option.edit',
+          defaultMessage: '编辑',
+        })}
+      </PermissionButton>,
       record.triggerType === 'manual' && (
         <PermissionButton
           key="trigger"
@@ -60,7 +68,7 @@ const Scene = () => {
           style={{ padding: 0 }}
           isPermission={permission.tigger}
           tooltip={{
-            title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '手动触发',
+            title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '',
           }}
           disabled={record.state?.value === 'disabled'}
           popConfirm={{
@@ -79,36 +87,9 @@ const Scene = () => {
           }}
         >
           <LikeOutlined />
-          {type === 'table' ? '' : '手动触发'}
+          {'手动触发'}
         </PermissionButton>
       ),
-      <PermissionButton
-        key={'update'}
-        type={'link'}
-        style={{ padding: 0 }}
-        isPermission={permission.update}
-        tooltip={
-          type === 'table'
-            ? {
-                title: intl.formatMessage({
-                  id: 'pages.data.option.edit',
-                  defaultMessage: '编辑',
-                }),
-              }
-            : undefined
-        }
-        onClick={() => {
-          const url = getMenuPathByCode('rule-engine/Scene/Save');
-          history.push(`${url}?id=${record.id}`);
-        }}
-      >
-        <EditOutlined />
-        {type !== 'table' &&
-          intl.formatMessage({
-            id: 'pages.data.option.edit',
-            defaultMessage: '编辑',
-          })}
-      </PermissionButton>,
       <PermissionButton
         key={'started'}
         type={'link'}
@@ -147,25 +128,12 @@ const Scene = () => {
             }
           },
         }}
-        tooltip={
-          type === 'table'
-            ? {
-                title: intl.formatMessage({
-                  id: `pages.data.option.${
-                    record.state.value === 'started' ? 'disabled' : 'enabled'
-                  }`,
-                  defaultMessage: '启用',
-                }),
-              }
-            : undefined
-        }
       >
         {record.state.value === 'started' ? <StopOutlined /> : <PlayCircleOutlined />}
-        {type !== 'table' &&
-          intl.formatMessage({
-            id: `pages.data.option.${record.state.value === 'started' ? 'disabled' : 'enabled'}`,
-            defaultMessage: record.state.value === 'started' ? '禁用' : '启用',
-          })}
+        {intl.formatMessage({
+          id: `pages.data.option.${record.state.value === 'started' ? 'disabled' : 'enabled'}`,
+          defaultMessage: record.state.value === 'started' ? '禁用' : '启用',
+        })}
       </PermissionButton>,
       <PermissionButton
         key={'delete'}
@@ -181,39 +149,12 @@ const Scene = () => {
           },
         }}
         tooltip={{
-          title:
-            record.state.value === 'started' ? (
-              <span>请先禁用该场景,再删除</span>
-            ) : (
-              <span>删除</span>
-            ),
+          title: record.state.value === 'started' ? <span>请先禁用该场景,再删除</span> : '',
         }}
       >
         <DeleteOutlined />
       </PermissionButton>,
     ];
-    if (type === 'table') {
-      return [
-        <PermissionButton
-          key={'update'}
-          type={'link'}
-          style={{ padding: 0 }}
-          isPermission={permission.view}
-          tooltip={{
-            title: '查看',
-          }}
-          onClick={() => {
-            const url = getMenuPathByCode('rule-engine/Scene/Save');
-            history.push(`${url}?id=${record.id}`, { view: true });
-          }}
-        >
-          <EyeOutlined />
-        </PermissionButton>,
-        ...item,
-      ];
-    } else {
-      return item;
-    }
   };
 
   const columns: ProColumns<SceneItem>[] = [
@@ -233,7 +174,6 @@ const Scene = () => {
         id: 'pages.ruleEngine.scene.triggers',
         defaultMessage: '触发方式',
       }),
-      // width: 120,
       valueType: 'select',
       valueEnum: {
         manual: {
@@ -249,7 +189,6 @@ const Scene = () => {
           status: 'device',
         },
       },
-      renderText: (record) => TriggerWayType[record],
     },
     {
       dataIndex: 'description',
@@ -257,7 +196,6 @@ const Scene = () => {
         id: 'pages.system.description',
         defaultMessage: '说明',
       }),
-      hideInSearch: true,
     },
     {
       dataIndex: 'state',
@@ -265,22 +203,7 @@ const Scene = () => {
         id: 'pages.searchTable.titleStatus',
         defaultMessage: '状态',
       }),
-      // width: '90px',
       valueType: 'select',
-      renderText: (record) =>
-        record ? (
-          <BadgeStatus
-            status={record.value}
-            text={record.text}
-            statusNames={{
-              started: StatusColorEnum.processing,
-              disable: StatusColorEnum.error,
-              notActive: StatusColorEnum.warning,
-            }}
-          />
-        ) : (
-          ''
-        ),
       valueEnum: {
         started: {
           text: '正常',
@@ -291,17 +214,6 @@ const Scene = () => {
           status: 'disable',
         },
       },
-    },
-    {
-      title: intl.formatMessage({
-        id: 'pages.data.option',
-        defaultMessage: '操作',
-      }),
-      valueType: 'option',
-      align: 'left',
-      width: 200,
-      fixed: 'right',
-      render: (text, record) => Tools(record, 'table'),
     },
   ];
 
@@ -321,6 +233,8 @@ const Scene = () => {
         scroll={{ x: 1366 }}
         params={searchParams}
         columnEmptyText={''}
+        gridColumn={1}
+        onlyCard={true}
         options={{ fullScreen: true }}
         request={(params) =>
           service.query({
@@ -342,10 +256,8 @@ const Scene = () => {
             type="primary"
             isPermission={permission.add}
             onClick={() => {
-              const url = getMenuPathByCode('rule-engine/Scene/Save');
-              history.push(url);
-              // setCurrent({});
-              // setVisible(true);
+              setCurrent({});
+              setVisible(true);
             }}
           >
             {intl.formatMessage({
@@ -357,26 +269,11 @@ const Scene = () => {
         cardRender={(record) => (
           <SceneCard
             {...record}
-            detail={
-              <PermissionButton
-                key={'update'}
-                type={'link'}
-                style={{ padding: 0, fontSize: 24, color: '#fff' }}
-                isPermission={permission.view}
-                tooltip={{
-                  title: '查看',
-                }}
-                onClick={() => {
-                  const url = getMenuPathByCode('rule-engine/Scene/Save');
-                  history.push(`${url}?id=${record.id}`, { view: true });
-                  // setCurrent({})
-                  // setVisible(true)
-                }}
-              >
-                <EyeOutlined />
-              </PermissionButton>
-            }
-            tools={Tools(record, 'card')}
+            onClick={() => {
+              const url = getMenuPathByCode('rule-engine/Scene/Save');
+              history.push(`${url}?triggerType=${record.trigger?.type}&id=${record?.id}`);
+            }}
+            tools={Tools(record)}
           />
         )}
       />
@@ -391,4 +288,5 @@ const Scene = () => {
     </PageContainer>
   );
 };
+
 export default Scene;
