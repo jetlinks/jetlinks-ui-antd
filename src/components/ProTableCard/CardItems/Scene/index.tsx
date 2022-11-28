@@ -200,8 +200,20 @@ const deviceRender = (data: ActionsType | undefined) => {
     case 'relation':
       return (
         <div>
-          {data?.options?.type || ''}
-          与【触发设备】具有相同【关系名称】的【产品名称】设备的【属性/功能】
+          {data?.options?.type || ''}与
+          <span className={styles['notify-text-highlight']}>{data?.options?.deviceName || ''}</span>
+          具有相同
+          <span className={styles['notify-text-highlight']}>
+            {data?.options?.relationName || ''}
+          </span>
+          的
+          <span className={styles['notify-text-highlight']}>
+            {data?.options?.productName || ''}
+          </span>
+          设备的
+          <span className={styles['notify-text-highlight']}>
+            {data?.options?.propertyName || data?.options?.functionName || ''}
+          </span>
         </div>
       );
     case 'tag':
@@ -221,11 +233,12 @@ const deviceRender = (data: ActionsType | undefined) => {
     default:
       return (
         <div>
-          {data?.options?.type || ''}
-          <span className={styles['notify-text-highlight']}>{data?.options?.deviceName || ''}</span>
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.propertyName || data?.options?.functionName || ''}
-          </span>
+          {/*{data?.options?.type || ''}*/}
+          {/*<span className={styles['notify-text-highlight']}>{data?.options?.deviceName || ''}</span>*/}
+          {/*<span className={styles['notify-text-highlight']}>*/}
+          {/*  {data?.options?.propertyName || data?.options?.functionName || ''}*/}
+          {/*</span>*/}
+          打开空调动作1执行结果=成功并且 湿度24
         </div>
       );
   }
@@ -297,8 +310,10 @@ const branchesActionRender = (actions: any[]) => {
   if (actions && actions?.length) {
     const list: any[] = [];
     actions.map((item, index) => {
-      list.push(actionRender(item, index));
+      const dt = actionRender(item, index);
+      list.push(dt);
     });
+
     return list.map((item, index) => (
       <div className={styles['right-item-right-item-contents-item']}>
         <div style={{ minWidth: 40 }}>动作{index + 1}</div>
@@ -308,6 +323,7 @@ const branchesActionRender = (actions: any[]) => {
   }
   return '';
 };
+
 const ContentRender = (data: SceneCardProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const type = data.triggerType;
@@ -411,7 +427,6 @@ const ContentRender = (data: SceneCardProps) => {
                     <div className={styles['card-item-content-action-item-right-item']}>
                       <div className={styles['right-item-right']}>
                         {(item?.then || []).map((i: BranchesThen, _index: number) => {
-                          console.log(i);
                           return (
                             <div key={i?.key || _index} className={styles['right-item-right-item']}>
                               <div className={styles['trigger-ways']}>

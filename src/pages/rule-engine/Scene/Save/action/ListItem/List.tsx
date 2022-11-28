@@ -66,6 +66,7 @@ export default (props: ListProps) => {
             console.log(data);
 
             const { type, ...extra } = data;
+            console.log('list', data);
             const item: ActionsType = {
               ...extra,
               executor: data.type === 'trigger' || data.type === 'relieve' ? 'alarm' : data.type,

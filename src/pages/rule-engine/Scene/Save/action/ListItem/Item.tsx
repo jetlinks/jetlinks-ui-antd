@@ -144,7 +144,46 @@ export default (props: ItemProps) => {
     }
   };
 
+  const deviceRender = (data: ActionsType | undefined) => {
+    switch (data?.device?.selector) {
+      case 'fixed':
+        return (
+          <div>
+            {data?.options?.type}
+            <span>{data?.options?.name}</span>
+            {data?.options?.properties}
+          </div>
+        );
+      case 'tag':
+        return (
+          <div>
+            {data?.options?.type}
+            {data.options?.taglist.map((item: any) => (
+              <span>
+                {item.type}
+                {item.name}
+                {item.value}
+              </span>
+            ))}
+            {data?.options?.productName}
+            {data?.options?.properties}
+          </div>
+        );
+      case 'relation':
+        return (
+          <div>
+            {data?.options?.type}与<span>{data?.options?.name}</span>具有相同
+            {data?.options?.relationName}的{data?.options?.productName}设备的
+            {data?.options?.properties}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   const contentRender = () => {
+    // console.log('props.data', props.data)
     if (props?.data?.alarm?.mode === 'trigger') {
       return (
         <div>
@@ -160,7 +199,12 @@ export default (props: ItemProps) => {
       );
     } else if (props?.data?.alarm?.mode === 'relieve') {
       return (
-        <div>
+        <div
+          className={'item-options-content'}
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
           满足条件后将解除关联
           <a
             onClick={() => {
@@ -172,11 +216,38 @@ export default (props: ItemProps) => {
         </div>
       );
     } else if (props?.data?.executor === 'notify') {
-      return notifyRender(props?.data);
+      return (
+        <div
+          className={'item-options-content'}
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          {notifyRender(props?.data)}
+        </div>
+      );
     } else if (props?.data?.executor === 'delay') {
-      return <div> {props.options.name}</div>;
+      return (
+        <div
+          className={'item-options-content'}
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          {props.options.name}
+        </div>
+      );
     } else if (props.data?.executor === 'device') {
-      return <div></div>;
+      return (
+        <div
+          className={'item-options-content'}
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          {deviceRender(props?.data)}
+        </div>
+      );
     }
     return (
       <AddButton
@@ -195,20 +266,13 @@ export default (props: ItemProps) => {
         <div className="item-options-warp">
           <div className="item-options-type">
             <img
-              style={{ width: 48 }}
+              style={{ width: 18 }}
               src={iconMap.get(
                 props?.data.executor === 'alarm' ? props?.data?.alarm?.mode : props?.data.executor,
               )}
             />
           </div>
-          <div
-            className={'item-options-content'}
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            {contentRender()}
-          </div>
+          {contentRender()}
         </div>
         <div className="item-number">{props.name + 1}</div>
         <div className="item-delete" onClick={props.onDelete}>

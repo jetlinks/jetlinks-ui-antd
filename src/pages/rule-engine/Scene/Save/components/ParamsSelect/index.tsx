@@ -103,6 +103,7 @@ export default (props: Props) => {
                     )}
                     onClick={() => {
                       setTabKey(item.key);
+                      props.onChange(value, item.key);
                     }}
                   >
                     {item.label}

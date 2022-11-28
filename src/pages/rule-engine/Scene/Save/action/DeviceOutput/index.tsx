@@ -9,6 +9,7 @@ import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
+// import { FormModel } from '../..';
 
 export const service = new Service<any>('');
 
@@ -48,16 +49,6 @@ export default observer((props: Props) => {
       ),
     },
   ];
-
-  // const handleOptions = ()=>{
-  //   const _options: any = {
-  //     name: '', // 名称
-  //     onlyName: false,
-  //     type: '', // 触发类型
-  //     action: DeviceModel.options.action,
-  //   };
-  // }
-
   const next = () => {
     if (
       (DeviceModel.current === 0 && DeviceModel.productId.length !== 0) ||
@@ -78,16 +69,11 @@ export default observer((props: Props) => {
   const save = async () => {
     const value = await formRef.current?.validateFields();
     const item = {
-      selector: 'fixed',
-      source: 'fixed',
-      selectorValues: [
-        {
-          value: DeviceModel.deviceDetail.id,
-          name: DeviceModel.deviceDetail.name,
-        },
-      ],
-      productId: DeviceModel.productId[0],
-      message: value,
+      selector: DeviceModel.selector,
+      source: DeviceModel.source,
+      selectorValues: DeviceModel.selectorValues,
+      productId: DeviceModel.productId,
+      message: value.device.message,
     };
     console.log(item, value);
 
@@ -95,6 +81,10 @@ export default observer((props: Props) => {
       name: '', //设备名称
       type: '', //类型
       properties: '', //属性功能
+      selector: DeviceModel.selector, //选择器标识
+      productName: DeviceModel.productDetail.name,
+      relationName: DeviceModel.relationName,
+      taglist: [],
     };
     _options.name = DeviceModel.deviceDetail.name;
     const _type = value.device.message.messageType;
@@ -110,9 +100,19 @@ export default observer((props: Props) => {
       _options.type = '设置';
       _options.properties = Object.keys(value.device.message.properties)?.[0];
     }
-    console.log(_options);
-    console.log('device', item);
+    if (_options.selector === 'tag') {
+      _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
+        name: it.column || it.name,
+        type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
+        value: it.value,
+      }));
+      // console.log(_options.taglist, 'taglist')
+    }
+    // console.log(_options);
+    // console.log('device', item);
     props.save(item, _options);
+    // FormModel.actions[props.name].options = _options;
+    DeviceModel.current = 0;
   };
 
   useEffect(() => {

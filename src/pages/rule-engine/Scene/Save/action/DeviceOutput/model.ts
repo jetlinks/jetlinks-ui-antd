@@ -10,23 +10,33 @@ type ModelType = {
     content: React.ReactNode;
   }[];
   current: number;
-  productId: string[];
-  deviceId: any[];
+  productId: string;
+  deviceId: string;
   productDetail: ProductItem | any;
   device: Partial<ActionsDeviceProps>;
   deviceDetail: any;
   options: any;
+  selector: string;
+  selectorValues: any;
+  upperKey: string;
+  source: string;
+  relationName: string;
 };
 
 const DeviceModel = model<ModelType>({
   steps: [],
   current: 0,
-  productId: [],
-  deviceId: [],
+  productId: '',
+  deviceId: '',
   productDetail: {},
   device: {},
   deviceDetail: {},
   options: {},
+  selector: 'fixed',
+  selectorValues: [],
+  upperKey: '',
+  source: 'fixed',
+  relationName: '',
 });
 
 export default DeviceModel;

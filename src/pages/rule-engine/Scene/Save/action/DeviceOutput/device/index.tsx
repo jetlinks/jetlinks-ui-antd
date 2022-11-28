@@ -18,6 +18,9 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { FormModel } from '../../..';
 import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
+import RelationSelect from '../../device/relationSelect';
+import { getRelations } from '@/pages/rule-engine/Scene/Save/action/service';
+import Tag from './Tag';
 
 interface Props {
   name: number;
@@ -28,15 +31,29 @@ export default observer((props: Props) => {
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
   const [form] = Form.useForm();
-  const [type, setType] = useState<string>('');
   const [builtInList, setBuiltInList] = useState<any[]>([]);
+  const selector = Form.useWatch('selector', form);
+  const [tagList, setTagList] = useState([]);
+  const [list, setList] = useState<any>([]);
 
   const TypeList = [
     {
       label: '自定义',
-      value: 'custom',
+      value: 'fixed',
       image: require('/public/images/scene/device-custom.png'),
       tip: '自定义选择当前产品下的任意设备',
+    },
+    {
+      label: '按关系',
+      value: 'relation',
+      image: require('/public/images/scene/device-custom.png'),
+      tip: '选择与触发设备具有相同关系的设备',
+    },
+    {
+      label: '按标签',
+      value: 'tag',
+      image: require('/public/images/scene/device-custom.png'),
+      tip: '按标签选择产品下具有特定标签的设备',
     },
     {
       label: '按变量',
@@ -216,9 +233,9 @@ export default observer((props: Props) => {
             paging: false,
           })
           .then((resp) => {
-            const formatValue = (list: any[]) => {
+            const formatValue = (lists: any[]) => {
               const _list: any[] = [];
-              list.forEach((item) => {
+              lists.forEach((item) => {
                 if (item.children) {
                   item.children = formatValue(item.children);
                 }
@@ -271,16 +288,188 @@ export default observer((props: Props) => {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const array = filterTree(_data);
         setBuiltInList(array);
-        // console.log(array)
       }
     });
   };
+  const filterType = async () => {
+    console.log(FormModel);
+    if (FormModel.trigger?.type === 'device') {
+      const res = await getRelations();
+      if (res.status === 200 && res.result.length === 0) {
+        const array = TypeList.filter((item) => item.value !== 'relation');
+        setList(array);
+      } else {
+        setList(TypeList);
+      }
+      const tag = JSON.parse(DeviceModel.productDetail?.metadata || '{}')?.tags;
+      console.log(tag, 'tag');
+      if (!tag) {
+        const array = TypeList.filter((item) => item.value !== 'tag');
+        setList(array);
+      } else {
+        setList(TypeList);
+      }
+    } else {
+      const arr = TypeList.filter((item) => item.value !== 'relation' && item.value !== 'tag');
+      const arr1 = TypeList.filter((item) => item.value === 'fixed');
+      // isParallel()? setList(arr1):setList(arr)
+      if (isParallel()) {
+        setList(arr1);
+      } else {
+        setList(arr);
+      }
+    }
+  };
+
+  const contentRender = (type?: string) => {
+    switch (type) {
+      //自定义
+      case 'fixed':
+        return (
+          <>
+            <SearchComponent
+              field={columns}
+              model={'simple'}
+              enableSave={false}
+              onSearch={async (data) => {
+                actionRef.current?.reset?.();
+                setSearchParam(data);
+              }}
+              target="device"
+              defaultParam={[
+                {
+                  terms: [
+                    {
+                      column: 'productId',
+                      value: DeviceModel.productId,
+                    },
+                  ],
+                },
+              ]}
+            />
+            <div>
+              <ProTableCard<DeviceInstance>
+                actionRef={actionRef}
+                columns={columns}
+                rowKey="id"
+                search={false}
+                gridColumn={2}
+                columnEmptyText={''}
+                onlyCard={true}
+                tableAlertRender={false}
+                rowSelection={{
+                  type: 'radio',
+                  selectedRowKeys: [DeviceModel.deviceId],
+                  onChange: (_, selectedRows) => {
+                    if (selectedRows.length) {
+                      const item = selectedRows?.[0];
+                      DeviceModel.deviceId = item.id;
+                      DeviceModel.selectorValues = [
+                        { value: DeviceModel.deviceId, name: item.name },
+                      ];
+                    } else {
+                      DeviceModel.deviceId = '';
+                      DeviceModel.selectorValues = [];
+                    }
+                  },
+                }}
+                request={(params) =>
+                  service.query({
+                    ...params,
+                    sorts: [{ name: 'createTime', order: 'desc' }],
+                  })
+                }
+                params={searchParam}
+                cardRender={(record) => (
+                  <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
+                )}
+                height={'none'}
+              />
+            </div>
+          </>
+        );
+      case 'relation':
+        return (
+          <Form.Item
+            name="selectorValues"
+            label="关系"
+            rules={[{ required: true, message: '请选择关系人' }]}
+          >
+            <RelationSelect
+              onChange={(value, options) => {
+                // console.log(value,options)
+                if (value) {
+                  DeviceModel.deviceId = 'deviceId';
+                  DeviceModel.source = 'upper';
+                  DeviceModel.selectorValues = value;
+                  DeviceModel.upperKey = 'deviceId';
+                  DeviceModel.relationName = options.label;
+                }
+              }}
+            />
+          </Form.Item>
+        );
+      case 'tag':
+        return (
+          <Form.Item
+            name="selectorValues"
+            // label='标签'
+            rules={[{ required: true, message: '请选择标签' }]}
+          >
+            <Tag
+              tagData={tagList}
+              onChange={(value) => {
+                console.log(value);
+                if (value) {
+                  DeviceModel.deviceId = 'deviceId';
+                  DeviceModel.source = 'fixed';
+                  DeviceModel.selectorValues = value;
+                }
+              }}
+            />
+          </Form.Item>
+        );
+      default:
+        return (
+          <>
+            <Form.Item name="selectorValues" label="变量" required>
+              <TreeSelect
+                style={{ width: '100%', height: '100%' }}
+                treeData={builtInList}
+                fieldNames={{ label: 'name', value: 'id' }}
+                placeholder={'请选择参数'}
+                onSelect={(value: any, node: any) => {
+                  console.log(value, node);
+                  DeviceModel.deviceId = value;
+                  DeviceModel.deviceDetail = node;
+                  DeviceModel.selectorValues = [{ value: value, name: node.description }];
+                }}
+              />
+            </Form.Item>
+          </>
+        );
+    }
+  };
 
   useEffect(() => {
-    // console.log(FormModel, isParallel())
+    if (form) {
+      form.setFieldsValue({ selector: DeviceModel.selector });
+    }
     sourceChangeEvent();
-    setType('custom');
   }, []);
+
+  useEffect(() => {
+    if (DeviceModel.productDetail) {
+      const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
+      setTagList(metadata.tags);
+      // console.log(metadata.tags)
+      filterType();
+    }
+  }, [DeviceModel.productDetail]);
+
+  useEffect(() => {
+    DeviceModel.selector = selector;
+  }, [selector]);
 
   return (
     <div>
@@ -288,90 +477,20 @@ export default observer((props: Props) => {
         <ExclamationCircleOutlined className="device-title-icon" />
         <span>自定义选择当前产品下的任意设备</span>
       </div>
-      {isParallel() && (
+
+      {/* {isParallel() && (
         <Form form={form} layout={'vertical'}>
-          <Form.Item name="type" label="选择方式" required>
-            <TopCard
-              typeList={TypeList}
-              value={'custom'}
-              onChange={(value) => {
-                setType(value);
-              }}
-            />
+          <Form.Item name="selector" label="选择方式" required>
+            <TopCard typeList={TypeList} />
           </Form.Item>
-          {type === 'variable' && (
-            <Form.Item name="deviceId" label="变量" required>
-              <TreeSelect
-                style={{ width: '100%', height: '100%' }}
-                treeData={builtInList}
-                fieldNames={{ label: 'name', value: 'id' }}
-                placeholder={'请选择参数'}
-                onSelect={(value: any, node: any) => {
-                  // console.log(value,node)
-                  DeviceModel.deviceId = [value];
-                  DeviceModel.deviceDetail = node;
-                }}
-              />
-            </Form.Item>
-          )}
         </Form>
-      )}
-      {type === 'custom' && (
-        <>
-          <SearchComponent
-            field={columns}
-            model={'simple'}
-            enableSave={false}
-            onSearch={async (data) => {
-              actionRef.current?.reset?.();
-              setSearchParam(data);
-            }}
-            target="device"
-            defaultParam={[
-              {
-                terms: [
-                  {
-                    column: 'productId',
-                    value: DeviceModel.productId[0],
-                  },
-                ],
-              },
-            ]}
-          />
-          <div>
-            <ProTableCard<DeviceInstance>
-              actionRef={actionRef}
-              columns={columns}
-              rowKey="id"
-              search={false}
-              gridColumn={2}
-              columnEmptyText={''}
-              onlyCard={true}
-              tableAlertRender={false}
-              rowSelection={{
-                type: 'radio',
-                selectedRowKeys: DeviceModel.deviceId,
-                onChange: (selectedRowKeys, selectedRows) => (
-                  // console.log(selectedRowKeys)
-                  (DeviceModel.deviceId = selectedRowKeys),
-                  (DeviceModel.deviceDetail = selectedRows?.[0])
-                ),
-              }}
-              request={(params) =>
-                service.query({
-                  ...params,
-                  sorts: [{ name: 'createTime', order: 'desc' }],
-                })
-              }
-              params={searchParam}
-              cardRender={(record) => (
-                <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
-              )}
-              height={'none'}
-            />
-          </div>
-        </>
-      )}
+      )} */}
+      <Form form={form} layout={'vertical'}>
+        <Form.Item name="selector" label="选择方式" required>
+          <TopCard typeList={list} />
+        </Form.Item>
+        {contentRender(selector)}
+      </Form>
     </div>
   );
 });
