@@ -364,6 +364,7 @@ export default observer((props: Props) => {
                     if (selectedRows.length) {
                       const item = selectedRows?.[0];
                       DeviceModel.deviceId = item.id;
+                      DeviceModel.deviceDetail = item;
                       DeviceModel.selectorValues = [
                         { value: DeviceModel.deviceId, name: item.name },
                       ];
