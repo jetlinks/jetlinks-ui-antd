@@ -149,8 +149,7 @@ const Scene = () => {
           },
         }}
         tooltip={{
-          title:
-            record.state.value === 'started' ? <span>请先禁用该场景,再删除</span> : <span></span>,
+          title: record.state.value === 'started' ? <span>请先禁用该场景,再删除</span> : '',
         }}
       >
         <DeleteOutlined />
