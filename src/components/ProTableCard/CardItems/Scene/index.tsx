@@ -130,63 +130,49 @@ const notifyRender = (data: ActionsType | undefined) => {
   switch (data?.notify?.notifyType) {
     case 'dingTalk':
       return (
-        <div>
+        <div className={styles['notify-img-highlight']}>
           向<span>{data?.options?.notifierName || data?.notify?.notifierId}</span>
-          通过<span className={styles['notify-img-highlight']}>钉钉</span>发送
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.templateName || data?.notify?.templateId}
-          </span>
+          通过<span>钉钉</span>发送
+          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
         </div>
       );
     case 'weixin':
       return (
-        <div>
-          向<span className={styles['notify-text-highlight']}>{data?.options?.sendTo || ''}</span>
-          <span className={styles['notify-text-highlight']}>{data?.options?.orgName || ''}</span>
-          <span className={styles['notify-text-highlight']}>{data?.options?.tagName || ''}</span>
-          通过<span className={styles['notify-img-highlight']}>微信</span>发送
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.templateName || data?.notify?.templateId}
-          </span>
+        <div className={styles['notify-img-highlight']}>
+          向<span>{data?.options?.sendTo || ''}</span>
+          <span>{data?.options?.orgName || ''}</span>
+          <span>{data?.options?.tagName || ''}</span>
+          通过<span>微信</span>发送
+          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
         </div>
       );
     case 'email':
       return (
-        <div>
-          向<span className={styles['notify-text-highlight']}>{data?.options?.sendTo || ''}</span>
-          通过<span className={styles['notify-img-highlight']}>邮件</span>发送
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.templateName || data?.notify?.templateId}
-          </span>
+        <div className={styles['notify-img-highlight']}>
+          向<span>{data?.options?.sendTo || ''}</span>
+          通过<span>邮件</span>发送
+          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
         </div>
       );
     case 'voice':
       return (
-        <div>
-          向
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.calledNumber || ''}
-          </span>
-          通过<span className={styles['notify-img-highlight']}>语音</span>发送
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.templateName || data?.notify?.templateId}
-          </span>
+        <div className={styles['notify-img-highlight']}>
+          向<span>{data?.options?.calledNumber || ''}</span>
+          通过<span>语音</span>发送
+          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
         </div>
       );
     case 'sms':
       return (
-        <div>
-          向<span className={'notify-text-highlight'}>{data?.options?.sendTo || ''}</span>
-          通过<span className={'notify-img-highlight'}>短信</span>发送
-          <span className={'notify-text-highlight'}>
-            {data?.options?.templateName || data?.notify?.templateId}
-          </span>
+        <div className={styles['notify-img-highlight']}>
+          向{data?.options?.sendTo || ''}通过短信发送
+          {data?.options?.templateName || data?.notify?.templateId}
         </div>
       );
     case 'webhook':
       return (
-        <div>
-          通过<span className={'notify-img-highlight'}>webhook</span>发送
+        <div className={styles['notify-img-highlight']}>
+          通过<span>webhook</span>发送
           <span>{data?.options?.templateName || data?.notify?.templateId}</span>
         </div>
       );
@@ -199,18 +185,18 @@ const deviceRender = (data: ActionsType | undefined) => {
   switch (data?.device?.selector) {
     case 'fixed':
       return (
-        <div>
+        <div className={styles['notify-text-highlight']}>
           {data?.options?.type}
-          <span className={styles['notify-text-highlight']}>{data?.options?.name}</span>
+          <span className={styles['trigger-device']}>{data?.options?.name}</span>
           {data?.options?.properties}
         </div>
       );
     case 'tag':
       return (
-        <div>
+        <div className={styles['notify-text-highlight']}>
           {data?.options?.type}
           {data.options?.taglist.map((item: any) => (
-            <span className={styles['notify-text-highlight']}>
+            <span className={styles['trigger-device']}>
               {item.type}
               {item.name}
               {item.value}
@@ -222,9 +208,9 @@ const deviceRender = (data: ActionsType | undefined) => {
       );
     case 'relation':
       return (
-        <div>
+        <div className={styles['notify-text-highlight']}>
           {data?.options?.type}与
-          <span className={styles['notify-text-highlight']}>{data?.options?.name}</span>具有相同
+          <span className={styles['trigger-device']}>{data?.options?.name}</span>具有相同
           {data?.options?.relationName}的{data?.options?.productName}设备的
           {data?.options?.properties}
         </div>
@@ -324,13 +310,7 @@ const branchesActionRender = (actions: any[]) => {
 const ContentRender = (data: SceneCardProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const type = data.triggerType;
-  if (
-    type === 'device' &&
-    (data.branches || [])?.length &&
-    Object.keys(data?.trigger?.device || {}).length
-  ) {
-    // const obj = data.trigger.device;
-    // const operation: any = data.trigger.device?.operation;
+  if (!!type && (data.branches || [])?.length) {
     const trigger = data?.options?.trigger;
     const text =
       (trigger?.name || '') +
@@ -343,16 +323,12 @@ const ContentRender = (data: SceneCardProps) => {
       <div className={styles['card-item-content-box']}>
         <MyTooltip placement="topLeft" title={text}>
           <div className={classNames(styles['card-item-content-trigger'], 'ellipsis')}>
-            {text}
-            {/*{selectorRender(obj)}*/}
-            {/*{operation ? (*/}
-            {/*  <span>*/}
-            {/*    {timerRender(operation?.timer)}*/}
-            {/*    {operatorRender(operation)}*/}
-            {/*  </span>*/}
-            {/*) : (*/}
-            {/*  ''*/}
-            {/*)}*/}
+            {trigger?.name || ''}
+            <span className={styles['trigger-device']}>{trigger?.productName || ''}</span>
+            {(trigger?.when || '') +
+              (trigger?.time || '') +
+              (trigger?.extraTime || '') +
+              (trigger?.type || '')}
           </div>
         </MyTooltip>
         <div className={styles['card-item-content-action']}>
@@ -361,28 +337,30 @@ const ContentRender = (data: SceneCardProps) => {
               return (
                 <div className={styles['card-item-content-action-item']} key={item?.key || index}>
                   <div className={styles['card-item-content-action-item-left']}>
-                    {index === 0 ? '当' : '否则'}
+                    {type === 'device' ? (index === 0 ? '当' : '否则') : '执行'}
                   </div>
                   <div className={styles['card-item-content-action-item-right']}>
                     <div className={styles['card-item-content-action-item-right-item']}>
-                      <div className={styles['right-item-left']}>
-                        <MyTooltip title={conditionsRender(data.options?.terms || [], index)}>
-                          <div className={classNames(styles['trigger-conditions'], 'ellipsis')}>
-                            {conditionsRender(data.options?.terms || [], index)}
-                          </div>
-                        </MyTooltip>
-                        {item.shakeLimit?.enabled && (
-                          <MyTooltip
-                            title={`(${item.shakeLimit?.time}秒内发生${item.shakeLimit?.threshold}
-                            次以上时执行一次)`}
-                          >
-                            <div className={classNames(styles['trigger-shake'], 'ellipsis')}>
-                              ({item.shakeLimit?.time}秒内发生{item.shakeLimit?.threshold}
-                              次以上时执行一次)
+                      {type === 'device' && (
+                        <div className={styles['right-item-left']}>
+                          <MyTooltip title={conditionsRender(data.options?.terms || [], index)}>
+                            <div className={classNames(styles['trigger-conditions'], 'ellipsis')}>
+                              {conditionsRender(data.options?.terms || [], index)}
                             </div>
                           </MyTooltip>
-                        )}
-                      </div>
+                          {item.shakeLimit?.enabled && (
+                            <MyTooltip
+                              title={`(${item.shakeLimit?.time}秒内发生${item.shakeLimit?.threshold}
+                            次以上时执行一次)`}
+                            >
+                              <div className={classNames(styles['trigger-shake'], 'ellipsis')}>
+                                ({item.shakeLimit?.time}秒内发生{item.shakeLimit?.threshold}
+                                次以上时执行一次)
+                              </div>
+                            </MyTooltip>
+                          )}
+                        </div>
+                      )}
                       <div className={styles['right-item-right']}>
                         {(item?.then || []).map((i: BranchesThen, _index: number) => (
                           <div key={i?.key || _index} className={styles['right-item-right-item']}>
@@ -412,39 +390,6 @@ const ContentRender = (data: SceneCardProps) => {
               展开更多{!visible ? <DownOutlined /> : <UpOutlined />}
             </div>
           )}
-        </div>
-      </div>
-    );
-  } else if (type !== 'device' && data.branches?.length) {
-    return (
-      <div className={styles['card-item-content-box']}>
-        <div className={styles['card-item-content-action']}>
-          {data.branches?.length &&
-            (data?.branches || []).map((item: any, index) => {
-              return (
-                <div className={styles['card-item-content-action-item']} key={item?.key || index}>
-                  <div className={styles['card-item-content-action-item-left']}>执行</div>
-                  <div className={styles['card-item-content-action-item-right']}>
-                    <div className={styles['card-item-content-action-item-right-item']}>
-                      <div className={styles['right-item-right']}>
-                        {(item?.then || []).map((i: BranchesThen, _index: number) => {
-                          return (
-                            <div key={i?.key || _index} className={styles['right-item-right-item']}>
-                              <div className={styles['trigger-ways']}>
-                                {i.parallel ? '并行执行' : '串行执行'}
-                              </div>
-                              <div className={classNames(styles['right-item-right-item-contents'])}>
-                                {branchesActionRender(Array.isArray(i?.actions) ? i?.actions : [])}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
         </div>
       </div>
     );
