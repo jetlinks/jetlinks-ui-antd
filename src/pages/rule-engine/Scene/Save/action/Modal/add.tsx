@@ -64,9 +64,16 @@ export default (props: Props) => {
         return (
           <Notify
             value={props.data?.notify || {}}
-            save={(data: any) => {
+            options={props.data?.options || {}}
+            save={(data: any, option: any) => {
               setActionType('');
-              props.save(data);
+              props.save(
+                {
+                  ...data,
+                  key: props.data.key || `notify_${new Date().getTime()}`,
+                },
+                option,
+              );
             }}
             name={props.name}
             cancel={() => {

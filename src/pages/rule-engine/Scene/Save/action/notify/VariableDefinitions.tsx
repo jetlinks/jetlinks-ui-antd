@@ -10,6 +10,7 @@ import { forwardRef, useCallback, useImperativeHandle } from 'react';
 
 interface Props {
   name: number;
+  value?: any;
 }
 
 export default forwardRef((props: Props, ref) => {
@@ -117,14 +118,17 @@ export default forwardRef((props: Props, ref) => {
 
   const saveBtn = () => {
     return new Promise(async (resolve) => {
-      const formData = await form.validateFields().catch(() => {
-        resolve(false);
-      });
-      if (formData) {
-        console.log(formData);
-        // resolve(formData);
+      if (NotifyModel.variable.length) {
+        const formData = await form.validateFields().catch(() => {
+          resolve(false);
+        });
+        if (formData) {
+          resolve(formData);
+        } else {
+          resolve(false);
+        }
       } else {
-        resolve(false);
+        resolve({});
       }
     });
   };
@@ -137,19 +141,28 @@ export default forwardRef((props: Props, ref) => {
     <div>
       <Form form={form} layout={'vertical'}>
         {(NotifyModel?.variable || []).map((item) => {
-          const type = item.expands?.businessType || item.type;
+          const type = item.expands?.businessType || item?.type;
           let initialValue = undefined;
           const rules = getRules(item, type);
           if (type === 'user') {
-            initialValue = {
-              source: 'relation',
-              value: undefined,
-            };
+            initialValue =
+              props?.value && item?.id && props?.value[item.id]
+                ? props?.value[item.id]
+                : {
+                    source: 'relation',
+                    value: undefined,
+                  };
           } else if (['date', 'number', 'string'].includes(type)) {
-            initialValue = {
-              source: 'fixed',
-              value: undefined,
-            };
+            initialValue =
+              props?.value && item?.id && props?.value[item.id]
+                ? props?.value[item.id]
+                : {
+                    source: 'fixed',
+                    value: undefined,
+                  };
+          } else {
+            initialValue =
+              props?.value && item?.id && props?.value[item.id] ? props?.value[item.id] : undefined;
           }
           return (
             <Form.Item

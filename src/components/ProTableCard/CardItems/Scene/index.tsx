@@ -197,50 +197,40 @@ const notifyRender = (data: ActionsType | undefined) => {
 
 const deviceRender = (data: ActionsType | undefined) => {
   switch (data?.device?.selector) {
-    case 'relation':
+    case 'fixed':
       return (
         <div>
-          {data?.options?.type || ''}与
-          <span className={styles['notify-text-highlight']}>{data?.options?.deviceName || ''}</span>
-          具有相同
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.relationName || ''}
-          </span>
-          的
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.productName || ''}
-          </span>
-          设备的
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.propertyName || data?.options?.functionName || ''}
-          </span>
+          {data?.options?.type}
+          <span className={styles['notify-text-highlight']}>{data?.options?.name}</span>
+          {data?.options?.properties}
         </div>
       );
     case 'tag':
       return (
         <div>
-          {data?.options?.type || ''}
-          <span className={styles['notify-text-highlight']}>{data?.options?.deviceName || ''}</span>
-          为
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.productName || ''}
-          </span>
-          <span className={styles['notify-text-highlight']}>
-            {data?.options?.propertyName || data?.options?.functionName || ''}
-          </span>
+          {data?.options?.type}
+          {data.options?.taglist.map((item: any) => (
+            <span className={styles['notify-text-highlight']}>
+              {item.type}
+              {item.name}
+              {item.value}
+            </span>
+          ))}
+          {data?.options?.productName}
+          {data?.options?.properties}
+        </div>
+      );
+    case 'relation':
+      return (
+        <div>
+          {data?.options?.type}与
+          <span className={styles['notify-text-highlight']}>{data?.options?.name}</span>具有相同
+          {data?.options?.relationName}的{data?.options?.productName}设备的
+          {data?.options?.properties}
         </div>
       );
     default:
-      return (
-        <div>
-          {/*{data?.options?.type || ''}*/}
-          {/*<span className={styles['notify-text-highlight']}>{data?.options?.deviceName || ''}</span>*/}
-          {/*<span className={styles['notify-text-highlight']}>*/}
-          {/*  {data?.options?.propertyName || data?.options?.functionName || ''}*/}
-          {/*</span>*/}
-          打开空调动作1执行结果=成功并且 湿度24
-        </div>
-      );
+      return null;
   }
 };
 

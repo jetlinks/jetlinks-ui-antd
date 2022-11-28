@@ -48,12 +48,12 @@ export default (props: ItemProps) => {
     setOp(props.options);
   }, [props.options]);
 
-  const notifyRender = (data: ActionsType | undefined) => {
+  const notifyRender = (data: ActionsType | undefined, options: any) => {
     switch (data?.notify?.notifyType) {
       case 'dingTalk':
         return (
           <div>
-            向<span>{data?.options?.notifierName || data?.notify?.notifierId}</span>
+            向<span>{options?.notifierName || data?.notify?.notifierId}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -61,16 +61,16 @@ export default (props: ItemProps) => {
             </span>
             发送
             <span className={'notify-text-highlight'}>
-              {data?.options?.templateName || data?.notify?.templateId}
+              {options?.templateName || data?.notify?.templateId}
             </span>
           </div>
         );
       case 'weixin':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{data?.options?.sendTo || ''}</span>
-            <span className={'notify-text-highlight'}>{data?.options?.orgName || ''}</span>
-            <span className={'notify-text-highlight'}>{data?.options?.tagName || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.tagName || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -78,14 +78,14 @@ export default (props: ItemProps) => {
             </span>
             发送
             <span className={'notify-text-highlight'}>
-              {data?.options?.templateName || data?.notify?.templateId}
+              {options?.templateName || data?.notify?.templateId}
             </span>
           </div>
         );
       case 'email':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{data?.options?.sendTo || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -93,14 +93,14 @@ export default (props: ItemProps) => {
             </span>
             发送
             <span className={'notify-text-highlight'}>
-              {data?.options?.templateName || data?.notify?.templateId}
+              {options?.templateName || data?.notify?.templateId}
             </span>
           </div>
         );
       case 'voice':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{data?.options?.calledNumber || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.calledNumber || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -108,14 +108,14 @@ export default (props: ItemProps) => {
             </span>
             发送
             <span className={'notify-text-highlight'}>
-              {data?.options?.templateName || data?.notify?.templateId}
+              {options?.templateName || data?.notify?.templateId}
             </span>
           </div>
         );
       case 'sms':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{data?.options?.sendTo || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -123,7 +123,7 @@ export default (props: ItemProps) => {
             </span>
             发送
             <span className={'notify-text-highlight'}>
-              {data?.options?.templateName || data?.notify?.templateId}
+              {options?.templateName || data?.notify?.templateId}
             </span>
           </div>
         );
@@ -136,7 +136,7 @@ export default (props: ItemProps) => {
               webhook
             </span>
             发送
-            <span>{data?.options?.templateName || data?.notify?.templateId}</span>
+            <span>{options?.templateName || data?.notify?.templateId}</span>
           </div>
         );
       default:
@@ -223,7 +223,7 @@ export default (props: ItemProps) => {
             setVisible(true);
           }}
         >
-          {notifyRender(props?.data)}
+          {notifyRender(props?.data, props?.options)}
         </div>
       );
     } else if (props?.data?.executor === 'delay') {

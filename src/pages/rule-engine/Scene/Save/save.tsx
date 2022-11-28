@@ -32,29 +32,24 @@ export default (props: Props) => {
       }}
       onOk={async () => {
         const values = await form.validateFields();
-        // const obj = {...values}
-        // if(values.trigger?.type === 'device') {
-        //   obj.trigger = {
-        //     ...obj.trigger,
-        //     device: obj.trigger?.device || {}
-        //   }
-        // }
-        // if(values.trigger?.type === 'timer') {
-        //   obj.trigger = {
-        //     ...obj.trigger,
-        //     timer: obj.trigger?.timer || {}
-        //   }
-        // }
+        const obj = {
+          ...props.data,
+          ...values,
+          trigger: {
+            ...props.data?.trigger,
+            ...values.trigger,
+          },
+        };
         const resp = props.data?.id
-          ? await service.modify(props.data?.id, { ...values })
-          : await service.save(values);
+          ? await service.modify(props.data?.id, { ...obj })
+          : await service.save(obj);
         if (resp.status === 200) {
           props.close();
           const url = getMenuPathByCode('rule-engine/Scene/Save');
           if (props.data?.id) {
             history.push(`${url}?triggerType=${values.trigger?.type}&id=${props.data?.id}`);
           } else {
-            history.push(`${url}?triggerType=${values.trigger?.type}`);
+            history.push(`${url}?triggerType=${values.trigger?.type}&id=${resp.result?.id}`);
           }
         }
       }}
