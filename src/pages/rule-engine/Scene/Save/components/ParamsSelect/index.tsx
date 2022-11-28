@@ -63,9 +63,9 @@ export default (props: Props) => {
     };
   });
 
-  useEffect(() => {
-    props.onChange(value, tabKey);
-  }, [value, tabKey]);
+  // useEffect(() => {
+  //   props.onChange(value, tabKey);
+  // }, [value, tabKey]);
 
   return (
     <div className={'select-wrapper'} ref={wrapperRef} style={props.style}>

@@ -83,3 +83,42 @@
     }
   }
 }
+
+.filter-condition-warp {
+  margin-bottom: 16px;
+
+  .filter-condition-content {
+    position: relative;
+    padding: 8px;
+    background-color: #fafafa;
+    border: 1px dashed rgba(0, 0, 0, 0.3);
+    row-gap: 16px;
+
+    .filter-condition-delete {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      display: none;
+      width: 20px;
+      height: 20px;
+      color: #999;
+      line-height: 20px;
+      text-align: center;
+      background-color: #f1f1f1;
+      border-radius: 50%;
+      cursor: pointer;
+
+      &.show {
+        display: block;
+      }
+
+      &:hover {
+        background-color: #f3f3f3;
+      }
+    }
+  }
+  .filter-add-button {
+    color: #2f54eb;
+    cursor: pointer;
+  }
+}

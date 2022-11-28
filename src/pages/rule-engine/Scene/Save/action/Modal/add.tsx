@@ -34,7 +34,7 @@ export default (props: Props) => {
             value={props.data?.device}
             save={(data: any, options: any) => {
               setActionType('');
-              // console.log(data,options)
+              console.log(data, options);
               props.save(data, options);
             }}
             name={props.name}
@@ -67,7 +67,9 @@ export default (props: Props) => {
                 {
                   type: 'delay',
                   key: props.data.key || `delay_${new Date().getTime()}`,
-                  ...data,
+                  delay: {
+                    ...data,
+                  },
                 },
                 options,
               );

@@ -56,22 +56,28 @@ export default (props: ActionsProps) => {
               <Observer>
                 {() => {
                   const parallelThens = props.thenOptions.filter((item) => !item.parallel);
-                  console.log(parallelThens);
 
                   return (
                     <List
+                      thenName={props.name}
                       type="serial"
                       parallel={false}
                       actions={parallelThens.length ? parallelThens[0].actions : []}
                       onAdd={(actionItem) => {
                         console.log(parallelThens);
                         if (parallelThens[0]) {
-                          parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
-                            if (aItem.key === actionItem.key) {
-                              return actionItem;
-                            }
-                            return aItem;
-                          });
+                          if (
+                            parallelThens[0].actions.some((aItem) => aItem.key === actionItem.key)
+                          ) {
+                            parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
+                              if (aItem.key === actionItem.key) {
+                                return actionItem;
+                              }
+                              return aItem;
+                            });
+                          } else {
+                            parallelThens[0].actions.push(actionItem);
+                          }
                           set(FormModel, ['branches', props.name, 'then'], parallelThens);
                         } else {
                           parallelThens.push({
@@ -105,17 +111,24 @@ export default (props: ActionsProps) => {
                   const parallelThens = props.thenOptions.filter((item) => item.parallel);
                   return (
                     <List
+                      thenName={props.name}
                       type="parallel"
                       parallel={true}
                       actions={parallelThens.length ? parallelThens[0].actions : []}
                       onAdd={(actionItem) => {
                         if (parallelThens[0]) {
-                          parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
-                            if (aItem.key === actionItem.key) {
-                              return actionItem;
-                            }
-                            return aItem;
-                          });
+                          if (
+                            parallelThens[0].actions.some((aItem) => aItem.key === actionItem.key)
+                          ) {
+                            parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
+                              if (aItem.key === actionItem.key) {
+                                return actionItem;
+                              }
+                              return aItem;
+                            });
+                          } else {
+                            parallelThens[0].actions.push(actionItem);
+                          }
                           set(FormModel, ['branches', props.name, 'then'], parallelThens);
                         } else {
                           parallelThens.push({

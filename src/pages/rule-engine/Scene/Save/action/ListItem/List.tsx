@@ -6,6 +6,7 @@ import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Item from './Item';
 import type { ParallelType } from './Item';
 interface ListProps {
+  thenName: number;
   type: ParallelType;
   actions: ActionsType[];
   parallel: boolean;
@@ -25,6 +26,7 @@ export default (props: ListProps) => {
     <div className="action-list-content">
       {actions.map((item, index) => (
         <Item
+          thenName={props.thenName}
           name={index}
           data={item}
           type={props.type}
@@ -61,16 +63,21 @@ export default (props: ListProps) => {
             setVisible(false);
           }}
           save={(data: any, options) => {
+            console.log(data);
+
             const { type, ...extra } = data;
             const item: ActionsType = {
               ...extra,
               executor: data.type === 'trigger' || data.type === 'relieve' ? 'alarm' : data.type,
               key: data.key,
-              alarm: {
-                mode: data.type,
-              },
               options,
             };
+
+            if (data.type === 'trigger' || data.type === 'relieve') {
+              item.alarm = {
+                mode: data.type,
+              };
+            }
             // const index = FormModel?.actions.findIndex((i) => {
             //   return i.key === item.key ? item : i;
             // });

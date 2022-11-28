@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from '../Modal/add';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import { DeleteOutlined } from '@ant-design/icons';
 import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
+import FilterCondition from './FilterCondition';
+
 export enum ParallelEnum {
   'parallel' = 'parallel',
   'serial' = 'serial',
@@ -12,6 +14,7 @@ export enum ParallelEnum {
 
 export type ParallelType = keyof typeof ParallelEnum;
 interface ItemProps {
+  thenName: number;
   name: number;
   data: ActionsType;
   type: ParallelType;
@@ -39,6 +42,11 @@ itemNotifyIconMap.set('webhook', require('/public/images/scene/notify-item-img/w
 export default (props: ItemProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [triggerVisible, setTriggerVisible] = useState<boolean>(false);
+  const [op, setOp] = useState<any>(props.options);
+
+  useEffect(() => {
+    setOp(props.options);
+  }, [props.options]);
 
   const notifyRender = (data: ActionsType | undefined) => {
     switch (data?.notify?.notifyType) {
@@ -207,7 +215,36 @@ export default (props: ItemProps) => {
           <DeleteOutlined />
         </div>
       </div>
-      {props.type === 'serial' ? props.parallel ? <div>添加过滤条件</div> : <div></div> : null}
+      {props.parallel ? null : (
+        <FilterCondition
+          thenName={props.thenName}
+          data={props.data.terms?.[0]}
+          onAdd={() => {
+            let _data = props.data;
+            if (!_data.terms) {
+              _data = {
+                ..._data,
+                terms: [{}],
+              };
+              props.onUpdate(_data, op);
+            }
+          }}
+          onChange={(termsData) => {
+            const _data = props.data;
+            if (_data.terms) {
+              _data.terms = [termsData];
+              props.onUpdate(_data, op);
+            }
+          }}
+          onDelete={() => {
+            const _data = props.data;
+            if (_data.terms) {
+              delete _data.terms;
+              props.onUpdate(_data, op);
+            }
+          }}
+        />
+      )}
       {visible && (
         <Modal
           name={props.name}
@@ -217,6 +254,7 @@ export default (props: ItemProps) => {
           }}
           save={(data: ActionsType, options) => {
             // FormModel.actions[props.name] = data;
+            setOp(options);
             props.onUpdate(data, options);
             setVisible(false);
           }}
