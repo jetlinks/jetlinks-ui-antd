@@ -45,86 +45,86 @@ enum UnitEnum {
   hours = '小时',
 }
 
-const selectorRender = (obj: any) => {
-  switch (obj?.selector) {
-    case 'all':
-      return (
-        <span>
-          所有的<span className={styles['trigger-device']}>{obj?.productId}</span>
-        </span>
-      );
-    case 'fixed':
-      return (
-        <span>
-          设备
-          <span className={styles['trigger-device']}>
-            {(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}
-          </span>
-        </span>
-      );
-    case 'org':
-      return (
-        <span>
-          部门
-          <span className={styles['trigger-device']}>
-            {(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}
-          </span>
-        </span>
-      );
-    default:
-      return '';
-  }
-};
+// const selectorRender = (obj: any) => {
+//   switch (obj?.selector) {
+//     case 'all':
+//       return (
+//         <span>
+//           所有的<span className={styles['trigger-device']}>{obj?.productId}</span>
+//         </span>
+//       );
+//     case 'fixed':
+//       return (
+//         <span>
+//           设备
+//           <span className={styles['trigger-device']}>
+//             {(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}
+//           </span>
+//         </span>
+//       );
+//     case 'org':
+//       return (
+//         <span>
+//           部门
+//           <span className={styles['trigger-device']}>
+//             {(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}
+//           </span>
+//         </span>
+//       );
+//     default:
+//       return '';
+//   }
+// };
 
-const selectorContextRender = (obj: any) => {
-  switch (obj?.selector) {
-    case 'all':
-      return `所有的${obj?.productId}`;
-    case 'fixed':
-      return `设备${(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}`;
-    case 'org':
-      return `部门${(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}`;
-    default:
-      return '';
-  }
-};
+// const selectorContextRender = (obj: any) => {
+//   switch (obj?.selector) {
+//     case 'all':
+//       return `所有的${obj?.productId}`;
+//     case 'fixed':
+//       return `设备${(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}`;
+//     case 'org':
+//       return `部门${(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}`;
+//     default:
+//       return '';
+//   }
+// };
 
-const timerRender = (timer: any) => {
-  if (timer?.trigger && timer?.mod) {
-    const trigger = timer?.trigger;
-    const mod = timer?.mod;
-    const str: string = trigger === 'week' ? '星期' : trigger === 'month' ? '月' : timer?.cron;
-    if (mod === 'once') {
-      return `，每${str}${timer.when.join('/')}，${timer?.once.time}执行一次`;
-    } else {
-      return `每${str}${timer.when.join('/')}，${timer?.period?.from}-${timer?.period.to}，每${
-        timer?.period.every
-      }${UnitEnum[timer?.period?.unit]}执行一次`;
-    }
-  }
-  return '';
-};
+// const timerRender = (timer: any) => {
+//   if (timer?.trigger && timer?.mod) {
+//     const trigger = timer?.trigger;
+//     const mod = timer?.mod;
+//     const str: string = trigger === 'week' ? '星期' : trigger === 'month' ? '月' : timer?.cron;
+//     if (mod === 'once') {
+//       return `，每${str}${timer.when.join('/')}，${timer?.once.time}执行一次`;
+//     } else {
+//       return `每${str}${timer.when.join('/')}，${timer?.period?.from}-${timer?.period.to}，每${
+//         timer?.period.every
+//       }${UnitEnum[timer?.period?.unit]}执行一次`;
+//     }
+//   }
+//   return '';
+// };
 
-const operatorRender = (operation: any) => {
-  switch (operation?.operator) {
-    case 'online':
-      return '上线';
-    case 'offline':
-      return '离线';
-    case 'reportEvent':
-      return `上报事件${operation?.options?.eventName}`;
-    case 'reportProperty':
-      return `上报属性${(operation?.options?.propertiesName || []).join(',')}`;
-    case 'readProperty':
-      return `读取属性${(operation?.options?.propertiesName || []).join(',')}`;
-    case 'writeProperty':
-      return `修改属性${(operation?.options?.propertiesName || []).join(',')}`;
-    case 'invokeFunction':
-      return `调用功能${operation?.options?.functionName}`;
-    default:
-      return '';
-  }
-};
+// const operatorRender = (operation: any) => {
+//   switch (operation?.operator) {
+//     case 'online':
+//       return '上线';
+//     case 'offline':
+//       return '离线';
+//     case 'reportEvent':
+//       return `上报事件${operation?.options?.eventName}`;
+//     case 'reportProperty':
+//       return `上报属性${(operation?.options?.propertiesName || []).join(',')}`;
+//     case 'readProperty':
+//       return `读取属性${(operation?.options?.propertiesName || []).join(',')}`;
+//     case 'writeProperty':
+//       return `修改属性${(operation?.options?.propertiesName || []).join(',')}`;
+//     case 'invokeFunction':
+//       return `调用功能${operation?.options?.functionName}`;
+//     default:
+//       return '';
+//   }
+// };
 
 const notifyRender = (data: ActionsType | undefined) => {
   switch (data?.notify?.notifyType) {
@@ -329,26 +329,30 @@ const ContentRender = (data: SceneCardProps) => {
     (data.branches || [])?.length &&
     Object.keys(data?.trigger?.device || {}).length
   ) {
-    const obj = data.trigger.device;
-    const operation: any = data.trigger.device?.operation;
+    // const obj = data.trigger.device;
+    // const operation: any = data.trigger.device?.operation;
+    const trigger = data?.options?.trigger;
+    const text =
+      (trigger?.name || '') +
+      (trigger?.productName || '') +
+      (trigger?.when || '') +
+      (trigger?.time || '') +
+      (trigger?.extraTime || '') +
+      (trigger?.type || '');
     return (
       <div className={styles['card-item-content-box']}>
-        <MyTooltip
-          placement="topLeft"
-          title={`${
-            selectorContextRender(obj) + timerRender(operation?.timer) + operatorRender(operation)
-          }`}
-        >
+        <MyTooltip placement="topLeft" title={text}>
           <div className={classNames(styles['card-item-content-trigger'], 'ellipsis')}>
-            {selectorRender(obj)}
-            {operation ? (
-              <span>
-                {timerRender(operation?.timer)}
-                {operatorRender(operation)}
-              </span>
-            ) : (
-              ''
-            )}
+            {text}
+            {/*{selectorRender(obj)}*/}
+            {/*{operation ? (*/}
+            {/*  <span>*/}
+            {/*    {timerRender(operation?.timer)}*/}
+            {/*    {operatorRender(operation)}*/}
+            {/*  </span>*/}
+            {/*) : (*/}
+            {/*  ''*/}
+            {/*)}*/}
           </div>
         </MyTooltip>
         <div className={styles['card-item-content-action']}>
