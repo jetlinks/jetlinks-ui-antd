@@ -1,34 +1,39 @@
-import { observer, Observer } from '@formily/react';
+import { observer } from '@formily/react';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import ParamsItem from './paramsItem';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { DropdownButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import classNames from 'classnames';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
-import { get, set } from 'lodash';
+import { get } from 'lodash';
+import { TermsModel } from './index';
 import './index.less';
 interface TermsProps {
   data: TermsType;
   pName: (number | string)[];
   name: number;
   isLast: boolean;
+  onValueChange: (data: TermsType) => void;
+  onLabelChange: (label: any) => void;
+  onDelete: () => void;
 }
 
 export default observer((props: TermsProps) => {
   const [deleteVisible, setDeleteVisible] = useState(false);
+  const [terms, setTerms] = useState<TermsType[]>([]);
 
-  const deleteTerms = () => {
-    const data = get(FormModel.branches, [...props.pName]);
-    const indexOf = data!.findIndex((item: TermsType) => item.key === props.data.key);
-    if (indexOf !== undefined && indexOf !== -1) {
-      data!.splice(indexOf, 1);
+  useEffect(() => {
+    if (props.data.terms) {
+      setTerms(props.data.terms);
+    } else {
+      setTerms([]);
     }
-    set(FormModel.branches!, [...props.pName], data);
-  };
+  }, [props.data.terms]);
 
   const addTerms = () => {
     const data = get(FormModel.branches, [...props.pName]);
+    FormModel.options!.terms[props.name].terms.push('');
     const key = `terms_${new Date().getTime()}`;
     const defaultValue = {
       type: 'and',
@@ -43,7 +48,6 @@ export default observer((props: TermsProps) => {
       key,
     };
     data?.push(defaultValue);
-    console.log(FormModel.branches);
   };
 
   return (
@@ -54,22 +58,58 @@ export default observer((props: TermsProps) => {
           onMouseOver={() => setDeleteVisible(true)}
           onMouseOut={() => setDeleteVisible(false)}
         >
-          <Observer>
-            {() =>
-              props.data.terms?.map((item, index) => (
-                <ParamsItem
-                  pName={[...props.pName, props.name]}
-                  name={index}
-                  data={item}
-                  key={item.key}
-                  isLast={index === props.data.terms!.length - 1}
-                />
-              ))
-            }
-          </Observer>
+          {terms.map((item, index) => (
+            <ParamsItem
+              pName={[...props.pName, props.name]}
+              name={index}
+              data={item}
+              key={item.key}
+              isLast={index === props.data.terms!.length - 1}
+              options={TermsModel.columnOptions}
+              onDelete={() => {
+                terms.splice(index, 1);
+                setTerms([...terms]);
+                props.onValueChange({
+                  terms: terms,
+                });
+              }}
+              onAdd={() => {
+                const key = `params_${new Date().getTime()}`;
+                terms.push({
+                  type: 'and',
+                  column: undefined,
+                  value: undefined,
+                  termType: undefined,
+                  key,
+                });
+                console.log('onAdd', terms);
+
+                setTerms([...terms]);
+                props.onValueChange({
+                  terms: terms,
+                });
+              }}
+              onValueChange={(data) => {
+                terms[index] = {
+                  ...terms[index],
+                  ...data,
+                };
+                setTerms([...terms]);
+                props.onValueChange({
+                  terms: terms,
+                });
+              }}
+              onLableChange={(options) => {
+                console.log(options, FormModel.options!.terms);
+                FormModel.options!.terms[props.name].terms[index] = options;
+                FormModel.options!.terms[props.name].termType =
+                  props.data.type === 'and' ? '并且' : '或者';
+              }}
+            />
+          ))}
           <div
             className={classNames('terms-params-delete', { show: deleteVisible })}
-            onClick={deleteTerms}
+            onClick={props.onDelete}
           >
             <CloseOutlined />
           </div>

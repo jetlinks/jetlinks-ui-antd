@@ -7,7 +7,11 @@ import { ExtraNoticeConfigCard } from '@/components/ProTableCard/CardItems/notic
 import { observer } from '@formily/react';
 import { NotifyModel } from './index';
 
-export default observer(() => {
+interface Props {
+  type: string;
+}
+
+export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
 
@@ -85,7 +89,7 @@ export default observer(() => {
                         {
                           column: 'type',
                           termType: 'eq',
-                          value: NotifyModel.notify?.notifyType || '',
+                          value: NotifyModel.notify?.notifyType || props.type,
                         },
                       ],
                     },
@@ -94,7 +98,7 @@ export default observer(() => {
                     {
                       column: 'type',
                       termType: 'eq',
-                      value: NotifyModel.notify?.notifyType || '',
+                      value: NotifyModel.notify?.notifyType || props.type,
                     },
                   ],
               sorts: [{ name: 'createTime', order: 'desc' }],

@@ -20,6 +20,10 @@ interface Props {
   style?: object;
   tabKey: string;
   type?: string;
+  className?: string | string[];
+  children?: ReactNode;
+  open?: boolean;
+  openChange?: (open: boolean) => void;
 }
 
 export default (props: Props) => {
@@ -37,10 +41,17 @@ export default (props: Props) => {
     setValue(props.value);
   }, [props.value]);
 
+  useEffect(() => {
+    if (props.open !== undefined) {
+      setVisible(props.open);
+    }
+  }, [props.open]);
+
   const handleClick = (e: any) => {
     if (visible && e.target) {
       if (!(wrapperRef.current && wrapperRef.current.contains(e.target))) {
         setVisible(false);
+        props.openChange?.(false);
       }
     }
   };
@@ -58,18 +69,22 @@ export default (props: Props) => {
 
   return (
     <div className={'select-wrapper'} ref={wrapperRef} style={props.style}>
-      <Input
-        suffix={<DownOutlined style={{ color: 'rgba(0, 0, 0, 0.25)' }} />}
-        {...props.inputProps}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          props.onChange(e.target.value, tabKey);
-        }}
-        onFocus={() => {
-          setVisible(true);
-        }}
-      />
+      {props.children ? (
+        props.children
+      ) : (
+        <Input
+          suffix={<DownOutlined style={{ color: 'rgba(0, 0, 0, 0.25)' }} />}
+          {...props.inputProps}
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
+          onFocus={() => {
+            setVisible(true);
+            props.openChange?.(true);
+          }}
+        />
+      )}
       {visible && (
         <div
           className={'select-container'}

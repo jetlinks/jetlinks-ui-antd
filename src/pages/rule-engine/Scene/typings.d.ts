@@ -10,6 +10,13 @@ type Trigger = {
   device: Record<string, unknown>;
 };
 
+export enum ParallelEnum {
+  'parallel' = 'parallel',
+  'serial' = 'serial',
+}
+
+export type ParallelType = keyof typeof ParallelEnum;
+
 export enum Source {
   'manual' = 'manual',
   'metric' = 'metric',
@@ -162,7 +169,7 @@ export type TriggerType = {
 export interface TermsVale {
   source: keyof typeof Source;
   /** 手动输入值,source为 manual 时不能为空 */
-  value?: Record<string, any>;
+  value?: Record<string, any> | any[];
   /** 指标值,source为 metric 时不能为空 */
   metric?: Record<string, any>;
 }
@@ -239,7 +246,7 @@ export interface ActionsDeviceProps {
 
 export interface BranchesThen {
   parallel: boolean;
-  actions: ActionsType;
+  actions: ActionsType[];
   key?: string;
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import './index.less';
+import { ParallelType } from '../../../typings';
 
 interface ActionsTypeProps {
   value?: string;
@@ -8,6 +9,7 @@ interface ActionsTypeProps {
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
   disabled?: boolean;
+  type: ParallelType;
 }
 
 export enum ActionsTypeEnum {
@@ -68,26 +70,28 @@ export default (props: ActionsTypeProps) => {
 
   return (
     <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
-      {TypeList.map((item) => (
-        <div
-          key={item.value}
-          className={classNames('trigger-way-item', {
-            active: type === item.value,
-          })}
-          style={{ width: 237 }}
-          onClick={() => {
-            onSelect(item.value);
-          }}
-        >
-          <div className={'way-item-title'}>
-            <p>{item.label}</p>
-            <span>{item.tip}</span>
+      {TypeList.map((item) =>
+        props.type === 'parallel' && item.value === 'delay' ? null : (
+          <div
+            key={item.value}
+            className={classNames('trigger-way-item', {
+              active: type === item.value,
+            })}
+            style={{ width: 237 }}
+            onClick={() => {
+              onSelect(item.value);
+            }}
+          >
+            <div className={'way-item-title'}>
+              <p>{item.label}</p>
+              <span>{item.tip}</span>
+            </div>
+            <div className={'way-item-image'}>
+              <img width={48} src={item.image} />
+            </div>
           </div>
-          <div className={'way-item-image'}>
-            <img width={48} src={item.image} />
-          </div>
-        </div>
-      ))}
+        ),
+      )}
     </div>
   );
 };

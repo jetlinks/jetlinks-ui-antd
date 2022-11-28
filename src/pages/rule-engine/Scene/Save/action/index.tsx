@@ -4,14 +4,15 @@ import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import ShakeLimit from '../components/ShakeLimit';
 import './index.less';
 import { Observer } from '@formily/react';
-import { get } from 'lodash';
-import type { ShakeLimitType } from '../../typings';
+import { get, set } from 'lodash';
+import type { ShakeLimitType, BranchesThen } from '../../typings';
 
 const { Panel } = Collapse;
 
 interface ActionsProps {
-  name?: (string | number)[];
+  name: number;
   openShakeLimit?: boolean;
+  thenOptions: BranchesThen[];
 }
 
 export default (props: ActionsProps) => {
@@ -22,7 +23,10 @@ export default (props: ActionsProps) => {
         {props.openShakeLimit ? (
           <Observer>
             {() => {
-              const data: ShakeLimitType = get(FormModel, [...props.name!, 'shakeLimit']);
+              const data: ShakeLimitType | undefined = get(FormModel.branches, [
+                props.name!,
+                'shakeLimit',
+              ]);
               return (
                 <ShakeLimit
                   enabled={data?.enabled}
@@ -30,7 +34,7 @@ export default (props: ActionsProps) => {
                   threshold={data?.threshold}
                   alarmFirst={data?.alarmFirst}
                   onChange={(type, value) => {
-                    data[type] = value;
+                    data![type] = value;
                   }}
                 />
               );
@@ -50,12 +54,40 @@ export default (props: ActionsProps) => {
           >
             <div className="actions-list">
               <Observer>
-                {() => (
-                  <List
-                    type="serial"
-                    actions={FormModel.actions.filter((item) => 'terms' in item)}
-                  />
-                )}
+                {() => {
+                  const parallelThens = props.thenOptions.filter((item) => !item.parallel);
+                  console.log(parallelThens);
+
+                  return (
+                    <List
+                      type="serial"
+                      parallel={false}
+                      actions={parallelThens.length ? parallelThens[0].actions : []}
+                      onAdd={(actionItem) => {
+                        console.log(parallelThens);
+                        if (parallelThens[0]) {
+                          parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
+                            if (aItem.key === actionItem.key) {
+                              return actionItem;
+                            }
+                            return aItem;
+                          });
+                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                        } else {
+                          parallelThens.push({
+                            parallel: false,
+                            actions: [actionItem],
+                          });
+                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                        }
+                      }}
+                      onDelete={(_index) => {
+                        parallelThens[0].actions.splice(_index, 1);
+                        set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                      }}
+                    />
+                  );
+                }}
               </Observer>
             </div>
           </Panel>
@@ -69,12 +101,37 @@ export default (props: ActionsProps) => {
           >
             <div className="actions-list">
               <Observer>
-                {() => (
-                  <List
-                    type="parallel"
-                    actions={FormModel.actions.filter((item) => !('terms' in item))}
-                  />
-                )}
+                {() => {
+                  const parallelThens = props.thenOptions.filter((item) => item.parallel);
+                  return (
+                    <List
+                      type="parallel"
+                      parallel={true}
+                      actions={parallelThens.length ? parallelThens[0].actions : []}
+                      onAdd={(actionItem) => {
+                        if (parallelThens[0]) {
+                          parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
+                            if (aItem.key === actionItem.key) {
+                              return actionItem;
+                            }
+                            return aItem;
+                          });
+                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                        } else {
+                          parallelThens.push({
+                            parallel: true,
+                            actions: [actionItem],
+                          });
+                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                        }
+                      }}
+                      onDelete={(_index) => {
+                        parallelThens[0].actions.splice(_index, 1);
+                        set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                      }}
+                    />
+                  );
+                }}
               </Observer>
             </div>
           </Panel>

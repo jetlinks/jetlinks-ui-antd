@@ -101,11 +101,11 @@ export default forwardRef((props, ref) => {
     }
 
     if (DeviceModel.metadata.properties?.length) {
-      const _readProperty = DeviceModel.metadata.properties.filter((item) =>
-        item.expands.type.includes('read'),
+      const _readProperty = DeviceModel.metadata.properties.filter(
+        (item) => !!item.expands.type?.includes('read'),
       );
-      const _writeProperty = DeviceModel.metadata.properties.filter((item) =>
-        item.expands.type.includes('write'),
+      const _writeProperty = DeviceModel.metadata.properties.filter(
+        (item) => !!item.expands.type?.includes('write'),
       );
       setReadProperty(_readProperty);
       setWriteProperty(_writeProperty);

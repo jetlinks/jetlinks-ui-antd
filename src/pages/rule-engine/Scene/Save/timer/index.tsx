@@ -5,6 +5,7 @@ import { Observer, observer } from '@formily/react';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import TimerTrigger from './TimerTrigger';
 import Action from '../action';
+import classNames from 'classnames';
 
 export default observer(() => {
   const [visible, setVisible] = useState<boolean>(false);
@@ -30,7 +31,7 @@ export default observer(() => {
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
-            const label = handleLabel(FormModel.options);
+            const label = handleLabel(FormModel.trigger?.options);
             return (
               <AddButton
                 style={{ width: '100%' }}
@@ -38,21 +39,31 @@ export default observer(() => {
                   setVisible(true);
                 }}
               >
-                <div className="trigger-options-content">{label}</div>
+                <div
+                  className={classNames('trigger-options-content', {
+                    'is-add': !!Object.keys(FormModel.trigger?.options || {}).length,
+                  })}
+                >
+                  {label}
+                </div>
               </AddButton>
             );
           }}
         </Observer>
       </div>
       <div>
-        <Action />
+        <Observer>
+          {() => (
+            <Action thenOptions={FormModel.branches ? FormModel.branches[0].then : []} name={0} />
+          )}
+        </Observer>
       </div>
       {visible && (
         <TimerTrigger
           data={FormModel.trigger?.timer}
           save={(data, options) => {
             setVisible(false);
-            FormModel['options'] = options;
+            FormModel.trigger!['options'] = options;
             FormModel.trigger!.timer = data;
           }}
           close={() => {

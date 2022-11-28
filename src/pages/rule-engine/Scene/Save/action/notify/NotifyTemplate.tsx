@@ -7,7 +7,11 @@ import { ExtraNoticeTemplateCard } from '@/components/ProTableCard/CardItems/not
 import { observer } from '@formily/react';
 import { NotifyModel } from './index';
 
-export default observer(() => {
+interface Props {
+  type: string;
+}
+
+export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
 
@@ -75,10 +79,13 @@ export default observer(() => {
             },
           }}
           request={async (params) => {
-            const resp = await queryMessageTemplatePaging(NotifyModel.notify?.notifierId || '', {
-              ...params,
-              sorts: [{ name: 'createTime', order: 'desc' }],
-            });
+            const resp = await queryMessageTemplatePaging(
+              NotifyModel.notify?.notifierId || props?.type,
+              {
+                ...params,
+                sorts: [{ name: 'createTime', order: 'desc' }],
+              },
+            );
             return {
               code: resp.message,
               result: {

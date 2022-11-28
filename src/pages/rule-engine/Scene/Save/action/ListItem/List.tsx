@@ -5,10 +5,12 @@ import './index.less';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Item from './Item';
 import type { ParallelType } from './Item';
-import { FormModel } from '@/pages/rule-engine/Scene/Save';
 interface ListProps {
   type: ParallelType;
   actions: ActionsType[];
+  parallel: boolean;
+  onAdd: (data: any) => void;
+  onDelete: (index: number) => void;
 }
 
 export default (props: ListProps) => {
@@ -22,7 +24,24 @@ export default (props: ListProps) => {
   return (
     <div className="action-list-content">
       {actions.map((item, index) => (
-        <Item name={index} data={item} type={props.type} key={item.key} />
+        <Item
+          name={index}
+          data={item}
+          type={props.type}
+          key={item.key}
+          parallel={props.parallel}
+          options={item.options}
+          onDelete={() => {
+            props.onDelete(index);
+          }}
+          onUpdate={(data, options) => {
+            props.onAdd({
+              ...data,
+              options,
+            });
+            setVisible(false);
+          }}
+        />
       ))}
       <AddButton
         onClick={() => {
@@ -33,6 +52,7 @@ export default (props: ListProps) => {
       </AddButton>
       {visible && (
         <Modal
+          type={props.type}
           name={props.actions.length + 1}
           data={{
             key: `${props.type}_${props.actions.length}`,
@@ -40,7 +60,7 @@ export default (props: ListProps) => {
           close={() => {
             setVisible(false);
           }}
-          save={(data: any) => {
+          save={(data: any, options) => {
             const { type, ...extra } = data;
             const item: ActionsType = {
               ...extra,
@@ -49,11 +69,13 @@ export default (props: ListProps) => {
               alarm: {
                 mode: data.type,
               },
+              options,
             };
-            const index = FormModel?.actions.findIndex((i) => {
-              return i.key === item.key ? item : i;
-            });
-            FormModel.actions[index] = { ...item };
+            // const index = FormModel?.actions.findIndex((i) => {
+            //   return i.key === item.key ? item : i;
+            // });
+            // FormModel.actions[index] = { ...item };
+            props.onAdd(item);
             setVisible(false);
           }}
         />
