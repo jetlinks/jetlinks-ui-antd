@@ -75,10 +75,10 @@ export default observer((props: Props) => {
       productId: DeviceModel.productId,
       message: value.device.message,
     };
-    console.log(item, value);
+    // console.log(item, value);
 
     const _options: any = {
-      name: '', //设备名称
+      name: '-', //设备名称
       type: '', //类型
       properties: '', //属性功能
       selector: DeviceModel.selector, //选择器标识
@@ -95,10 +95,12 @@ export default observer((props: Props) => {
     if (_type === 'READ_PROPERTY') {
       _options.type = '读取';
       _options.properties = value.device.message.properties?.[0];
+      // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
       _options.properties = Object.keys(value.device.message.properties)?.[0];
+      // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_options.selector === 'tag') {
       _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
@@ -108,7 +110,8 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    // console.log(_options);
+    console.log(_options);
+    console.log(DeviceModel.deviceDetail.name);
     // console.log('device', item);
     props.save(item, _options);
     // FormModel.actions[props.name].options = _options;
