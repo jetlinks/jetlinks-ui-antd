@@ -4,6 +4,7 @@ import TimingTrigger, {
   timeUnitEnum,
 } from '@/pages/rule-engine/Scene/Save/components/TimingTrigger';
 import { numberToString } from '@/pages/rule-engine/Scene/Save/components/TimingTrigger/whenOption';
+import { useEffect } from 'react';
 
 interface Props {
   close: () => void;
@@ -13,6 +14,12 @@ interface Props {
 
 export default (props: Props) => {
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (props.data && form) {
+      form.setFieldsValue(props.data);
+    }
+  }, [props.data, form]);
 
   const handleOptions = (value: OperationTimer) => {
     const _options: any = {

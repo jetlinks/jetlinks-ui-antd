@@ -11,6 +11,7 @@ interface BranchesItemProps {
   name: number;
   data: ActionBranchesProps;
   isFrist: boolean;
+  paramsOptions: any[];
   onDelete: () => void;
 }
 
@@ -80,6 +81,7 @@ export default observer((props: BranchesItemProps) => {
                 name={dIndex}
                 data={item}
                 key={item.key}
+                paramsOptions={props.paramsOptions}
                 isLast={dIndex === when!.length - 1}
                 onValueChange={(data) => {
                   FormModel.branches![props.name].when[dIndex] = {

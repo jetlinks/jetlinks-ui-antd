@@ -18,10 +18,9 @@ import { getMenuPathByCode } from '@/utils/menu';
 export const FormModel = observable<FormModelType>({
   trigger: {
     type: '',
-    options: {},
   },
-  actions: [],
   options: {
+    trigger: {},
     terms: [
       {
         terms: [],

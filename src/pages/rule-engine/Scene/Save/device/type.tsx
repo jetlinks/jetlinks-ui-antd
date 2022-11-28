@@ -5,6 +5,7 @@ import { DeviceModel } from './addModel';
 import TimingTrigger from '../components/TimingTrigger';
 import Operation from '../trigger/operation';
 import FunctionCall from '../action/device/functionCall';
+import type { DeviceModelProps } from './addModel';
 
 export enum OperatorType {
   'online' = 'online',
@@ -56,9 +57,11 @@ const TypeEnum = {
 
 type OperatorTypeKeys = keyof typeof OperatorType;
 
-export default forwardRef((props, ref) => {
-  console.log(props);
+interface Props {
+  data: DeviceModelProps;
+}
 
+export default forwardRef((props: Props, ref) => {
   const [form] = Form.useForm();
 
   const operator: OperatorTypeKeys = Form.useWatch('operator', form);
@@ -88,23 +91,23 @@ export default forwardRef((props, ref) => {
     OperatorType.invokeFunction,
   ];
 
-  useEffect(() => {
+  const handleInit = (data: DeviceModelProps) => {
     form.setFieldsValue({
-      ...DeviceModel.operation,
+      ...data.operation,
     });
 
     const newTypeList = [...TypeList];
 
-    if (DeviceModel.metadata.events?.length) {
+    if (data.metadata.events?.length) {
       newTypeList.push(TypeEnum.reportEvent);
-      setEvents(DeviceModel.metadata.events);
+      setEvents(data.metadata.events);
     }
 
-    if (DeviceModel.metadata.properties?.length) {
-      const _readProperty = DeviceModel.metadata.properties.filter(
+    if (data.metadata.properties?.length) {
+      const _readProperty = data.metadata.properties.filter(
         (item) => !!item.expands.type?.includes('read'),
       );
-      const _writeProperty = DeviceModel.metadata.properties.filter(
+      const _writeProperty = data.metadata.properties.filter(
         (item) => !!item.expands.type?.includes('write'),
       );
       setReadProperty(_readProperty);
@@ -117,13 +120,19 @@ export default forwardRef((props, ref) => {
       }
     }
 
-    if (DeviceModel.metadata.functions?.length) {
+    if (data.metadata.functions?.length) {
       newTypeList.push(TypeEnum.invokeFunction);
-      setFunctions(DeviceModel.metadata.functions);
+      setFunctions(data.metadata.functions);
     }
 
     setTypeList(newTypeList);
-  }, []);
+  };
+
+  useEffect(() => {
+    if (props.data) {
+      handleInit(props.data);
+    }
+  }, [props.data]);
 
   useEffect(() => {
     if (TimeFilterArray.includes(operator)) {

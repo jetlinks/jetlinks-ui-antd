@@ -1,11 +1,11 @@
 import ProTable from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
 import { DeviceModel } from './addModel';
-import { observer } from '@formily/reactive-react';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { service } from '@/pages/system/Department';
 import { useState, useRef } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { observer } from '@formily/reactive-react';
 
 export default observer(() => {
   const actionRef = useRef<ActionType>();

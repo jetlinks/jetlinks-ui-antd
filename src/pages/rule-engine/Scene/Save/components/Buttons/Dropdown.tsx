@@ -32,7 +32,7 @@ const TypeStyle = {
 const DropdownButton = (props: DropdownButtonProps) => {
   const [myValue, setMyValue] = useState(props.value);
   const [label, setLabel] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const typeClassName = TypeStyle[props.type];
@@ -111,7 +111,7 @@ const DropdownButton = (props: DropdownButtonProps) => {
   }, [props.value]);
 
   useEffect(() => {
-    if (props.value && !loading) {
+    if (props.value) {
       findLable(props.value, props.options);
       setLoading(true);
     }

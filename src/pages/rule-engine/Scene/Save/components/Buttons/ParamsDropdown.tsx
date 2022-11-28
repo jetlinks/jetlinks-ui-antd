@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Input, InputNumber, Menu } from 'antd';
+import { Input, InputNumber, Menu, Tree } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
 import MTimePicker from '../ParamsSelect/components/MTimePicker';
@@ -16,6 +16,7 @@ interface ParamsDropdownProps {
   metricOptions?: any[];
   type?: string;
   options?: any[];
+  BuiltInOptions?: any[];
   metricsOptions?: any[];
   name?: number;
   valueType: string;
@@ -61,7 +62,7 @@ const Menus = (props: MenusProps) => {
 export default (props: ParamsDropdownProps) => {
   const [label, setLabel] = useState('');
   const [myValue, setMyValue] = useState<any>(undefined);
-  const [activeKey, setActiveKey] = useState('manual');
+  const [activeKey, setActiveKey] = useState(props.BuiltInOptions ? 'fixed' : 'manual');
   const [open, setOpen] = useState(false);
 
   const onValueChange = useCallback(
@@ -76,6 +77,8 @@ export default (props: ParamsDropdownProps) => {
     },
     [activeKey],
   );
+
+  console.log('activeKey', activeKey);
 
   const renderNode = useCallback(
     (type: string, _v: any, config: any) => {
@@ -124,6 +127,22 @@ export default (props: ParamsDropdownProps) => {
               }}
             />
           );
+        case 'tree':
+          return (
+            <Tree
+              selectedKeys={_value ? [_value] : []}
+              onSelect={(selectedKeys, e) => {
+                let titleKey = 'title';
+                if (props.showLabelKey) {
+                  titleKey = props.showLabelKey;
+                }
+                onValueChange(selectedKeys[0], e.node[titleKey]);
+              }}
+              style={{ width: 300 }}
+              treeData={props.BuiltInOptions}
+              height={500}
+            />
+          );
         default:
           return (
             <Input
@@ -140,25 +159,25 @@ export default (props: ParamsDropdownProps) => {
     [props],
   );
 
-  // const findLable = (value: string, data: any[]): boolean => {
-  //   let isLabel = false;
-  //   return data.some((item) => {
-  //     if (item.key === value) {
-  //       let titleKey = 'title'
-  //       if (props.showLabelKey) {
-  //         titleKey = props.showLabelKey
-  //       }
-  //       setLabel(item[titleKey]);
-  //       isLabel = true;
-  //     } else if (item.children) {
-  //       isLabel = findLable(value, item.children);
-  //     }
-  //     return isLabel;
-  //   });
-  // };
+  const findLable = (value: string, data: any[]): boolean => {
+    let isLabel = false;
+    return data.some((item) => {
+      if (item.key === value) {
+        let titleKey = 'title';
+        if (props.showLabelKey) {
+          titleKey = props.showLabelKey;
+        }
+        setLabel(item[titleKey]);
+        isLabel = true;
+      } else if (item.children) {
+        isLabel = findLable(value, item.children);
+      }
+      return isLabel;
+    });
+  };
 
   useEffect(() => {
-    console.log('params-dropdown', props.value);
+    console.log('params-dropdown', props.value, props);
 
     if (props.value?.value === undefined || props.value?.value === '') {
       setLabel('');
@@ -182,37 +201,63 @@ export default (props: ParamsDropdownProps) => {
       }
     } else if (['enum', 'boolean'].includes(props.valueType)) {
       setLabel(props.name ? props.value.value[props.name] : props.value.value);
+    } else if (props.BuiltInOptions) {
+      findLable(props.value?.value, props.BuiltInOptions || []);
+    } else {
+      setLabel(props.value?.value);
     }
     setMyValue(props.value?.value);
-    setActiveKey(props.value?.source);
-  }, [props.value]);
+    if (props.value?.source) {
+      setActiveKey(props.value?.source);
+    } else {
+      setActiveKey(props.BuiltInOptions ? 'fixed' : 'manual');
+    }
+  }, [props.value, props.valueType]);
 
   useEffect(() => {
-    if (props.options) {
-      // findLable(props.value?.value, props.options || [])
+    if (props.BuiltInOptions) {
+      findLable(props.value?.value, props.BuiltInOptions || []);
     }
-  }, [props.options]);
+  }, [props.BuiltInOptions]);
 
-  const _itemList = [
-    {
-      key: 'manual',
-      label: '手动输入',
-      content: renderNode(props.valueType, myValue, props),
-    },
-  ];
+  let _itemList = [];
 
-  if (props.isMetric) {
-    _itemList.push({
-      key: 'metric',
-      label: '指标值',
-      content: renderNode('enum', myValue, props),
-    });
+  if ('BuiltInOptions' in props) {
+    _itemList = [
+      {
+        key: 'fixed',
+        label: '手动输入',
+        content: renderNode(props.valueType, myValue, props),
+      },
+      {
+        key: 'upper',
+        label: '内置参数',
+        content: renderNode('tree', myValue, props),
+      },
+    ];
+  } else {
+    _itemList = [
+      {
+        key: 'manual',
+        label: '手动输入',
+        content: renderNode(props.valueType, myValue, props),
+      },
+    ];
+
+    if (props.isMetric) {
+      _itemList.push({
+        key: 'metric',
+        label: '指标值',
+        content: renderNode('enum', myValue, props),
+      });
+    }
   }
 
   return (
     <ParamsSelect
       value={myValue}
       onChange={(value, source) => {
+        console.log(value);
         setActiveKey(source);
         // props.onChange?.({
         //   value,
@@ -222,6 +267,7 @@ export default (props: ParamsDropdownProps) => {
       tabKey={activeKey}
       itemList={_itemList}
       style={{ width: 'auto', display: 'inline-block' }}
+      bodyStyle={{ width: 'auto' }}
       type={props.valueType}
       open={open}
       openChange={setOpen}

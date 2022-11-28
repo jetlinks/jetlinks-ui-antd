@@ -1,7 +1,7 @@
 import { ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProductItem } from '@/pages/device/Product/typings';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Product/index';
 import { SceneProductCard } from '@/components/ProTableCard/CardItems/product';
@@ -24,6 +24,18 @@ export default observer(() => {
       DeviceModel.metadata = {};
     }
   };
+
+  useEffect(() => {
+    if (DeviceModel.productId && !DeviceModel.productDetail.id) {
+      service.detail(DeviceModel.productId).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          DeviceModel.productDetail = res.result;
+          handleMetadata(res.result.metadata);
+        }
+      });
+    }
+  }, [DeviceModel.productId]);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -228,7 +240,7 @@ export default observer(() => {
             type: 'radio',
             selectedRowKeys: [DeviceModel.productId],
             onChange: (_, selectedRows) => {
-              // console.log(selectedRowKeys,selectedRows)
+              console.log(selectedRows);
               DeviceModel.productId = selectedRows.map((item) => item.id)[0];
               DeviceModel.productDetail = selectedRows?.[0];
               handleMetadata(DeviceModel.productDetail.metadata);

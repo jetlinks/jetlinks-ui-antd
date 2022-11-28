@@ -1,7 +1,7 @@
 import { ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Instance/index';
 import { isNoCommunity } from '@/utils/util';
@@ -10,19 +10,12 @@ import { service as deptService } from '@/pages/system/Department';
 import { useIntl } from 'umi';
 import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { DeviceModel } from './addModel';
-import { observer } from '@formily/reactive-react';
 
-export default observer(() => {
+export default () => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
-  const [selectorValues, setSelectorValues] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (DeviceModel.selector === 'device') {
-      setSelectorValues(DeviceModel.selectorValues?.map((item) => item.id) || []);
-    }
-  }, [DeviceModel.selectorValues]);
+  const [isFirst, setIsFirst] = useState(true);
 
   const columns: ProColumns<DeviceInstance>[] = [
     {
@@ -253,13 +246,22 @@ export default observer(() => {
           onlyCard={true}
           tableAlertRender={false}
           rowSelection={{
-            selectedRowKeys: selectorValues,
+            selectedRowKeys: DeviceModel.selectorValues
+              ? DeviceModel.selectorValues.map((item) => {
+                  console.log('item', item);
+
+                  return item.value;
+                })
+              : [],
             onChange(selectedRowKeys, selectedRows) {
-              setSelectorValues(selectedRowKeys);
-              DeviceModel.selectorValues = selectedRows.map((item) => ({
-                name: item.name,
-                value: item.id,
-              }));
+              console.log(selectedRowKeys, DeviceModel.selectorValues);
+              if (!isFirst) {
+                DeviceModel.selectorValues = selectedRows.map((item) => ({
+                  name: item.name,
+                  value: item.id,
+                }));
+                setIsFirst(false);
+              }
             },
           }}
           request={(params) =>
@@ -277,4 +279,4 @@ export default observer(() => {
       </div>
     </>
   );
-});
+};

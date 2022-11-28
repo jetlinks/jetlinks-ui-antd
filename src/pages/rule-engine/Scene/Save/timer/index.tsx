@@ -31,7 +31,7 @@ export default observer(() => {
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
-            const label = handleLabel(FormModel.trigger?.options);
+            const label = handleLabel(FormModel.options?.trigger);
             return (
               <AddButton
                 style={{ width: '100%' }}
@@ -41,7 +41,7 @@ export default observer(() => {
               >
                 <div
                   className={classNames('trigger-options-content', {
-                    'is-add': !!Object.keys(FormModel.trigger?.options || {}).length,
+                    'is-add': !!Object.keys(FormModel.options?.trigger || {}).length,
                   })}
                 >
                   {label}
@@ -63,7 +63,7 @@ export default observer(() => {
           data={FormModel.trigger?.timer}
           save={(data, options) => {
             setVisible(false);
-            FormModel.trigger!['options'] = options;
+            FormModel.options!['trigger'] = options;
             FormModel.trigger!.timer = data;
           }}
           close={() => {

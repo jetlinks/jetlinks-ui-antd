@@ -39,19 +39,10 @@ export default observer(() => {
   }, []);
 
   useEffect(() => {
-    DeviceModel.selector = selector;
-  }, [selector]);
-
-  const contentRender = (type?: string) => {
-    switch (type) {
-      case 'custom':
-        return <DeviceList />;
-      case 'org':
-        return <OrgList />;
-      default:
-        return <></>;
+    if (selector) {
+      DeviceModel.selector = selector;
     }
-  };
+  }, [selector]);
 
   return (
     <div>
@@ -60,7 +51,7 @@ export default observer(() => {
           <TopCard typeList={TypeList} />
         </Form.Item>
       </Form>
-      {contentRender(selector)}
+      {selector === 'custom' ? <DeviceList /> : selector === 'org' ? <OrgList /> : null}
     </div>
   );
 });

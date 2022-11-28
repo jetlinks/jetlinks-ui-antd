@@ -64,6 +64,19 @@ const ParasmItem = observer((props: ParamsItemProps) => {
     }
   };
 
+  const findParams = (key: string, data: any[]): boolean => {
+    let has = false;
+    return data.some((item) => {
+      if (item.value === key) {
+        paramChange({ node: item });
+        has = true;
+      } else if (item.children) {
+        has = findParams(key, item.children);
+      }
+      return has;
+    });
+  };
+
   const handleName = (_data: any): any => (
     <Space>
       {_data.name}
@@ -115,6 +128,10 @@ const ParasmItem = observer((props: ParamsItemProps) => {
     });
 
     setParamOptions(_data);
+
+    if (column) {
+      findParams(column, _data);
+    }
   }, [props.options]);
 
   const handleOptionsLabel = useCallback(

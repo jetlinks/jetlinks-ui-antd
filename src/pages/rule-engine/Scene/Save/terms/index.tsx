@@ -46,6 +46,7 @@ export default observer(() => {
                 data={item}
                 isFrist={isFrist}
                 name={index}
+                paramsOptions={TermsModel.columnOptions}
                 onDelete={() => {
                   FormModel.branches?.splice(index, 1);
                 }}

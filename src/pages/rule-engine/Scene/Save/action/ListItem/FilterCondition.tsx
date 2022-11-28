@@ -24,6 +24,7 @@ export default observer((props: FilterProps) => {
   const [termType, setTermType] = useState('');
   const [column, setColumn] = useState('');
 
+  const [BuiltInOptions, setBuiltInOptions] = useState<any[]>([]);
   const [columnOptions, setColumnOptions] = useState<any[]>([]);
   const [ttOptions, setTtOptions] = useState<any[]>([]);
   const [valueOptions] = useState<any[]>([]);
@@ -90,7 +91,9 @@ export default observer((props: FilterProps) => {
   const getParmas = () => {
     queryBuiltInParams(FormModel, { action: props.thenName }).then((res: any) => {
       if (res.status === 200) {
-        setColumnOptions(handleTreeData(res.result));
+        const params = handleTreeData(res.result);
+        setColumnOptions(params);
+        setBuiltInOptions(params);
       }
     });
   };
@@ -124,6 +127,14 @@ export default observer((props: FilterProps) => {
       props.onLableChange?.(_l);
     }
   }, [label]);
+
+  useEffect(() => {
+    if (props.data) {
+      setColumn(props.data.column || '');
+      setTermType(props.data.termType || '');
+      setValue(props.data.value);
+    }
+  }, [props.data]);
 
   useEffect(() => {
     if (props.data) {
@@ -215,6 +226,8 @@ export default observer((props: FilterProps) => {
                 placeholder="参数值"
                 valueType={valueType}
                 value={value}
+                BuiltInOptions={BuiltInOptions}
+                showLabelKey="fullName"
                 name={0}
                 onChange={(v, lb) => {
                   setValue({
@@ -231,6 +244,8 @@ export default observer((props: FilterProps) => {
                 placeholder="参数值"
                 valueType={valueType}
                 value={value}
+                BuiltInOptions={BuiltInOptions}
+                showLabelKey="fullName"
                 name={1}
                 onChange={(v, lb) => {
                   setValue({
@@ -249,6 +264,8 @@ export default observer((props: FilterProps) => {
               placeholder="参数值"
               valueType={valueType}
               value={value}
+              BuiltInOptions={BuiltInOptions}
+              showLabelKey="fullName"
               onChange={(v, lb) => {
                 setValue({
                   ...v,

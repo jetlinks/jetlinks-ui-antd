@@ -290,7 +290,7 @@ export interface FormModelType {
   /**
    * 执行动作
    */
-  actions: ActionsType[];
+  actions?: ActionsType[];
   /**
    * 动作分支
    */

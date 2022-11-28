@@ -1,6 +1,6 @@
 import { Modal, Button, Steps } from 'antd';
 import { observer } from '@formily/react';
-import { model } from '@formily/reactive';
+import { observable } from '@formily/reactive';
 import { useEffect, useRef } from 'react';
 import { onlyMessage } from '@/utils/util';
 import type { TriggerDevice, TriggerDeviceOptions } from '@/pages/rule-engine/Scene/typings';
@@ -16,7 +16,7 @@ interface AddProps {
   onSave?: (data: TriggerDevice, options: any) => void;
 }
 
-interface DeviceModelProps extends Partial<TriggerDevice> {
+export interface DeviceModelProps extends Partial<TriggerDevice> {
   steps: { key: string; title: string }[];
   stepNumber: number;
   productId: string;
@@ -28,11 +28,11 @@ interface DeviceModelProps extends Partial<TriggerDevice> {
   };
   deviceId: string;
   orgId: string;
-  operation: TriggerDeviceOptions;
+  operation?: TriggerDeviceOptions;
   options: any;
 }
 
-export const DeviceModel = model<DeviceModelProps>({
+export const DeviceModel = observable<DeviceModelProps>({
   steps: [
     {
       key: 'product',
@@ -61,14 +61,22 @@ export const DeviceModel = model<DeviceModelProps>({
 });
 
 export default observer((props: AddProps) => {
-  const typeRef = useRef<{ validateFields?: any }>();
+  const typeRef = useRef<{ validateFields?: any; handleInit?: any }>();
 
   useEffect(() => {
     DeviceModel.stepNumber = 0;
   }, []);
 
   useEffect(() => {
-    Object.assign(DeviceModel, props.value);
+    if (props.value) {
+      DeviceModel.selector = props.value.selector;
+      DeviceModel.productId = props.value.productId;
+      DeviceModel.selector = props.value.selector;
+      DeviceModel.selectorValues = props.value.selectorValues;
+      DeviceModel.operation = props.value.operation;
+      // Object.assign(DeviceModel, props.value);
+      console.log('addModel', DeviceModel, props.value);
+    }
   }, [props.value]);
 
   const prev = () => {
@@ -175,17 +183,11 @@ export default observer((props: AddProps) => {
       case 'device':
         return <Device />;
       case 'type':
-        return <Type ref={typeRef} />;
+        return <Type ref={typeRef} data={DeviceModel} />;
       default:
         return <Product />;
     }
   };
-
-  useEffect(() => {
-    if (props.value) {
-      // TODO 处理回显数据
-    }
-  }, [props.value]);
 
   return (
     <Modal

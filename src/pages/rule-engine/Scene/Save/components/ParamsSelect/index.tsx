@@ -18,6 +18,7 @@ interface Props {
   inputProps?: InputProps;
   itemList: ItemProps[];
   style?: object;
+  bodyStyle?: object;
   tabKey: string;
   type?: string;
   className?: string | string[];
@@ -66,6 +67,7 @@ export default (props: Props) => {
   // useEffect(() => {
   //   props.onChange(value, tabKey);
   // }, [value, tabKey]);
+  const _bosyStyle = props.bodyStyle || {};
 
   return (
     <div className={'select-wrapper'} ref={wrapperRef} style={props.style}>
@@ -89,7 +91,7 @@ export default (props: Props) => {
         <div
           className={'select-container'}
           ref={nodeRef}
-          style={props.type !== 'date' ? { minHeight: 100 } : undefined}
+          style={props.type !== 'date' ? { minHeight: 100, ..._bosyStyle } : _bosyStyle}
         >
           <div className={'select-box'}>
             <div className={'select-box-header-top'}>

@@ -7,13 +7,13 @@ import { DropdownButton } from '@/pages/rule-engine/Scene/Save/components/Button
 import classNames from 'classnames';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
 import { get } from 'lodash';
-import { TermsModel } from './index';
 import './index.less';
 interface TermsProps {
   data: TermsType;
   pName: (number | string)[];
   name: number;
   isLast: boolean;
+  paramsOptions: any[];
   onValueChange: (data: TermsType) => void;
   onLabelChange: (label: any) => void;
   onDelete: () => void;
@@ -65,7 +65,7 @@ export default observer((props: TermsProps) => {
               data={item}
               key={item.key}
               isLast={index === props.data.terms!.length - 1}
-              options={TermsModel.columnOptions}
+              options={props.paramsOptions}
               onDelete={() => {
                 terms.splice(index, 1);
                 setTerms([...terms]);
