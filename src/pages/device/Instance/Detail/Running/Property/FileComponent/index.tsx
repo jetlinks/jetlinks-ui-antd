@@ -23,6 +23,7 @@ imgMap.set('img', require('/public/images/running/img.png'));
 imgMap.set('error', require('/public/images/running/error.png'));
 imgMap.set('video', require('/public/images/running/video.png'));
 imgMap.set('other', require('/public/images/running/other.png'));
+imgMap.set('obj', require('/public/images/running/obj.png'));
 
 const FileComponent = (props: Props) => {
   const { data, value } = props;
@@ -121,7 +122,19 @@ const FileComponent = (props: Props) => {
           </div>
         );
       }
-    } else if (data?.valueType?.type === 'object' || data?.valueType?.type === 'geoPoint') {
+    } else if (data?.valueType?.type === 'object') {
+      return (
+        <div
+          className={props.type === 'card' ? styles.cardValue : styles.otherValue}
+          onClick={() => {
+            setType('obj');
+            setVisible(true);
+          }}
+        >
+          <img src={imgMap.get('obj')} />
+        </div>
+      );
+    } else if (data?.valueType?.type === 'geoPoint') {
       return (
         <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
           <Tooltip placement="topLeft" title={JSON.stringify(value?.formatValue)}>
