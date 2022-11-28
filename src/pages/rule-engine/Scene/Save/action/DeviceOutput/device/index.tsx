@@ -47,13 +47,13 @@ export default observer((props: Props) => {
       label: '按关系',
       value: 'relation',
       image: require('/public/images/scene/device-custom.png'),
-      tip: '自定义选择当前产品下的任意设备',
+      tip: '选择与触发设备具有相同关系的设备',
     },
     {
       label: '按标签',
       value: 'tag',
       image: require('/public/images/scene/device-custom.png'),
-      tip: '自定义选择当前产品下的任意设备',
+      tip: '按标签选择产品下具有特定标签的设备',
     },
     {
       label: '按变量',

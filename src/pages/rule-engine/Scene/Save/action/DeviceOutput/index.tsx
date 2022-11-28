@@ -9,7 +9,7 @@ import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
-import { FormModel } from '../..';
+// import { FormModel } from '../..';
 
 export const service = new Service<any>('');
 
@@ -73,7 +73,7 @@ export default observer((props: Props) => {
       source: DeviceModel.source,
       selectorValues: DeviceModel.selectorValues,
       productId: DeviceModel.productId,
-      message: value,
+      message: value.device.message,
     };
     console.log(item, value);
 
@@ -108,10 +108,10 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    console.log(_options);
+    // console.log(_options);
     // console.log('device', item);
-    props.save(item);
-    FormModel.actions[props.name].options = _options;
+    props.save(item, _options);
+    // FormModel.actions[props.name].options = _options;
     DeviceModel.current = 0;
   };
 

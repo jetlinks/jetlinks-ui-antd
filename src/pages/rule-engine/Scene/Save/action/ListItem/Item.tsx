@@ -175,6 +175,7 @@ export default (props: ItemProps) => {
   };
 
   const contentRender = () => {
+    // console.log('props.data', props.data)
     if (props?.data?.alarm?.mode === 'trigger') {
       return (
         <div>
@@ -229,7 +230,16 @@ export default (props: ItemProps) => {
         </div>
       );
     } else if (props.data?.executor === 'device') {
-      return deviceRender(props?.data);
+      return (
+        <div
+          className={'item-options-content'}
+          onClick={() => {
+            setVisible(true);
+          }}
+        >
+          {deviceRender(props?.data)}
+        </div>
+      );
     }
     return (
       <AddButton

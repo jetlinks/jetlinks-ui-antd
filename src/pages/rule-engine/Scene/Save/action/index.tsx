@@ -56,7 +56,7 @@ export default (props: ActionsProps) => {
               <Observer>
                 {() => {
                   const parallelThens = props.thenOptions.filter((item) => !item.parallel);
-                  console.log(parallelThens);
+                  // console.log(parallelThens);
 
                   return (
                     <List
@@ -64,7 +64,7 @@ export default (props: ActionsProps) => {
                       parallel={false}
                       actions={parallelThens.length ? parallelThens[0].actions : []}
                       onAdd={(actionItem) => {
-                        console.log(parallelThens);
+                        // console.log(parallelThens);
                         if (parallelThens[0]) {
                           parallelThens[0].actions = parallelThens[0].actions.map((aItem) => {
                             if (aItem.key === actionItem.key) {
