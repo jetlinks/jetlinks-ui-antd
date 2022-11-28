@@ -10,11 +10,11 @@ import './index.less';
 import { onlyMessage } from '@/utils/util';
 import { queryMessageTemplateDetail } from '@/pages/rule-engine/Scene/Save/action/service';
 import { NotifyProps } from '@/pages/rule-engine/Scene/typings';
-import { FormModel } from '@/pages/rule-engine/Scene/Save';
 
 interface Props {
   value: Partial<NotifyProps>;
-  save: (notify: Partial<NotifyProps>) => void;
+  save: (notify: any, options: any) => void;
+  options?: any;
   cancel: () => void;
   name: number;
 }
@@ -57,8 +57,11 @@ export default observer((props: Props) => {
   const VariableRef = useRef<{ save: any }>();
 
   useEffect(() => {
-    NotifyModel.notify = props.value;
-  }, [props.value]);
+    NotifyModel.notify = {
+      ...props.value,
+      options: { ...props.options },
+    };
+  }, [props.value, props.options]);
 
   const renderComponent = (type: string) => {
     switch (type) {
@@ -69,7 +72,13 @@ export default observer((props: Props) => {
       case 'template':
         return <NotifyTemplate type={NotifyModel.notify.notifyType || ''} />;
       case 'variable':
-        return <VariableDefinitions name={props.name} ref={VariableRef} />;
+        return (
+          <VariableDefinitions
+            value={NotifyModel.notify.variables}
+            name={props.name}
+            ref={VariableRef}
+          />
+        );
       default:
         return null;
     }
@@ -107,8 +116,13 @@ export default observer((props: Props) => {
       if (resp) {
         NotifyModel.notify.variables = resp;
         const { options, ...extra } = NotifyModel.notify;
-        FormModel.actions[props.name].options = options;
-        props.save(extra);
+        props.save(
+          {
+            notify: { ...extra },
+            type: 'notify',
+          },
+          options,
+        );
         NotifyModel.current = 0;
       }
     }

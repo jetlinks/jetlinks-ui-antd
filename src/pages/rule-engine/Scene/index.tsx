@@ -150,11 +150,7 @@ const Scene = () => {
         }}
         tooltip={{
           title:
-            record.state.value === 'started' ? (
-              <span>请先禁用该场景,再删除</span>
-            ) : (
-              <span>删除</span>
-            ),
+            record.state.value === 'started' ? <span>请先禁用该场景,再删除</span> : <span></span>,
         }}
       >
         <DeleteOutlined />
@@ -275,7 +271,6 @@ const Scene = () => {
           <SceneCard
             {...record}
             onClick={() => {
-              console.log(123);
               const url = getMenuPathByCode('rule-engine/Scene/Save');
               history.push(`${url}?triggerType=${record.trigger?.type}&id=${record?.id}`);
             }}
