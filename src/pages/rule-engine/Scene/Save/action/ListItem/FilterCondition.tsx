@@ -13,6 +13,7 @@ interface FilterProps {
   thenName: number;
   data?: TermsType;
   onChange: (value: TermsType) => void;
+  onLableChange: (lb: string) => void;
   onAdd: () => void;
   onDelete: () => void;
 }
@@ -27,6 +28,7 @@ export default observer((props: FilterProps) => {
   const [ttOptions, setTtOptions] = useState<any[]>([]);
   const [valueOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
+  const [label, setLabel] = useState<any[]>([undefined, undefined, {}]);
 
   const valueChange = useCallback(
     (_value: any) => {
@@ -93,6 +95,36 @@ export default observer((props: FilterProps) => {
     });
   };
 
+  const handleOptionsLabel = (c: string, t: string, v: any) => {
+    const termsTypeKey = {
+      eq: '等于_value',
+      neq: '不等于_value',
+      gt: '大于_value',
+      gte: '大于等于_value',
+      lt: '小于_value',
+      lte: '小于等于_value',
+      btw: '在_value和_value2之间',
+      nbtw: '不在_value和_value2之间',
+      time_gt_now: '距离当前时间大于_value秒',
+      time_lt_now: '距离当前时间小于_value秒',
+    };
+
+    if (DoubleFilter.includes(t)) {
+      const str = termsTypeKey[t].replace('_value', v[0]).replace('_value2', v[1]);
+      return `${c} ${str}`;
+    }
+    const str = termsTypeKey[t].replace('_value', v);
+    return `${c} ${str}`;
+  };
+
+  useEffect(() => {
+    const _v = Object.values(label[2]);
+    if (_v.length && label[1]) {
+      const _l = handleOptionsLabel(label[0], label[1], _v.length > 1 ? _v : _v[0]);
+      props.onLableChange?.(_l);
+    }
+  }, [label]);
+
   useEffect(() => {
     if (props.data) {
       getParmas();
@@ -131,10 +163,13 @@ export default observer((props: FilterProps) => {
               let _termTypeValue = undefined;
               if (_termTypeOptions.length) {
                 _termTypeValue = _termTypeOptions[0].key;
+                label[1] = _termTypeValue;
                 setTermType(_termTypeValue);
               } else {
                 setTermType('');
               }
+              label[0] = node.fullName;
+              setLabel([...label]);
               valueChange({
                 column: _value,
                 value: {
@@ -161,6 +196,10 @@ export default observer((props: FilterProps) => {
               }
               setValue(_value);
               setTermType(v!);
+
+              label[1] = v;
+              setLabel([...label]);
+
               valueChange({
                 column: props.data!.column,
                 value: value as TermsVale,
@@ -177,10 +216,12 @@ export default observer((props: FilterProps) => {
                 valueType={valueType}
                 value={value}
                 name={0}
-                onChange={(v) => {
+                onChange={(v, lb) => {
                   setValue({
                     ...v,
                   });
+                  label[2] = { ...label[2], 0: lb };
+                  setLabel([...label]);
                   valueEventChange(v);
                 }}
               />
@@ -191,10 +232,12 @@ export default observer((props: FilterProps) => {
                 valueType={valueType}
                 value={value}
                 name={1}
-                onChange={(v) => {
+                onChange={(v, lb) => {
                   setValue({
                     ...v,
                   });
+                  label[2] = { ...label[2], 1: lb };
+                  setLabel([...label]);
                   valueEventChange(v);
                 }}
               />
@@ -206,10 +249,12 @@ export default observer((props: FilterProps) => {
               placeholder="参数值"
               valueType={valueType}
               value={value}
-              onChange={(v) => {
+              onChange={(v, lb) => {
                 setValue({
                   ...v,
                 });
+                label[2] = { 0: lb };
+                setLabel([...label]);
                 valueEventChange(v);
               }}
             />

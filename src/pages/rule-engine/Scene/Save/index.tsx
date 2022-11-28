@@ -7,7 +7,7 @@ import Timer from '../Save/timer/index';
 import { TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
 import { observer } from '@formily/react';
-import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
+import type { FormModelType, ActionBranchesProps } from '@/pages/rule-engine/Scene/typings';
 import { useEffect, useCallback } from 'react';
 import { service } from '@/pages/rule-engine/Scene';
 import './index.less';
@@ -78,7 +78,41 @@ export default observer(() => {
     if (id) {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
-          Object.assign(FormModel, resp.result);
+          let branches = resp.result.branches;
+          // 处理 branches 的 key
+          if (branches) {
+            branches = branches.map((bItem: ActionBranchesProps, bIndex: number) => {
+              bItem.key = `branches_${new Date().getTime() + bIndex}`;
+              if (bItem.then && bItem.then) {
+                bItem.then = bItem.then.map((tItem) => {
+                  if (tItem.actions) {
+                    tItem.actions = tItem.actions.map((aItem, index) => {
+                      aItem.key = `${aItem.executor}_${new Date().getTime() + index}`;
+                      return aItem;
+                    });
+                  }
+                  return tItem;
+                });
+              }
+              if (bItem.when) {
+                bItem.when = bItem.when.map((wItem, index) => {
+                  wItem.key = `when_${new Date().getTime() + index}`;
+                  if (wItem.terms) {
+                    wItem.terms = wItem.terms.map((wtItem, wtIndex) => {
+                      wtItem.key = `terms_${new Date().getTime() + wtIndex}`;
+                      return wtItem;
+                    });
+                  }
+                  return wItem;
+                });
+              }
+              return bItem;
+            });
+          }
+          Object.assign(FormModel, {
+            ...resp.result,
+            branches,
+          });
           console.log(FormModel, '11111');
         }
       });

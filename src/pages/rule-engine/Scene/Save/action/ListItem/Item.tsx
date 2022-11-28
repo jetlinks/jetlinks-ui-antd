@@ -297,8 +297,17 @@ export default (props: ItemProps) => {
             const _data = props.data;
             if (_data.terms) {
               _data.terms = [termsData];
-              props.onUpdate(_data, op);
+              props.onUpdate(_data, {
+                ...op,
+              });
             }
+          }}
+          onLableChange={(lb) => {
+            const _data = props.data;
+            props.onUpdate(_data, {
+              ...op,
+              terms: lb,
+            });
           }}
           onDelete={() => {
             const _data = props.data;

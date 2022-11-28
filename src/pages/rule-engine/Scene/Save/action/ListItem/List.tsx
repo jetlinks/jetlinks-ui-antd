@@ -37,6 +37,8 @@ export default (props: ListProps) => {
             props.onDelete(index);
           }}
           onUpdate={(data, options) => {
+            console.log('addItem', options);
+
             props.onAdd({
               ...item,
               ...data,
