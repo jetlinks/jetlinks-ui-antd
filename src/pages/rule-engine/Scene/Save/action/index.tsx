@@ -63,7 +63,7 @@ export default (props: ActionsProps) => {
                       parallel={false}
                       actions={parallelThens.length ? parallelThens[0].actions : []}
                       onAdd={(actionItem) => {
-                        // console.log(parallelThens);
+                        console.log('parallelThens', parallelThens);
                         if (parallelThens[0]) {
                           if (
                             parallelThens[0].actions.some((aItem) => aItem.key === actionItem.key)

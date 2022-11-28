@@ -38,6 +38,7 @@ export default (props: ListProps) => {
           }}
           onUpdate={(data, options) => {
             props.onAdd({
+              ...item,
               ...data,
               options,
             });

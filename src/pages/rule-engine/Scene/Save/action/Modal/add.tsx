@@ -34,7 +34,7 @@ export default (props: Props) => {
             value={props.data?.device}
             save={(data: any, options: any) => {
               setActionType('');
-              // console.log(data, options);
+              console.log('Device', data);
               // props.save(data, options);
               // console.log('device-------------', {
               //   type: 'device',
@@ -46,7 +46,7 @@ export default (props: Props) => {
               props.save(
                 {
                   type: 'device',
-                  key: props.data.key || `action_${props.name}`,
+                  key: props.data.key || `device_${new Date().getTime()}`,
                   device: {
                     ...data,
                   },
