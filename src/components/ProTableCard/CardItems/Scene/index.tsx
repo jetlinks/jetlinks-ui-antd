@@ -306,8 +306,15 @@ const branchesActionRender = (actions: any[]) => {
 
     return list.map((item, index) => (
       <div className={styles['right-item-right-item-contents-item']}>
-        <div style={{ minWidth: 40 }}>动作{index + 1}</div>
-        {item}
+        <div style={{ margin: '0 10px' }}>{item}</div>
+        <MyTooltip title={actions[index]?.options?.terms || ''}>
+          {actions[index]?.options?.terms && (
+            <div className={'ellipsis'} style={{ minWidth: 40 }}>
+              动作{index + 1}
+              {actions[index]?.options?.terms}
+            </div>
+          )}
+        </MyTooltip>
       </div>
     ));
   }
@@ -390,7 +397,7 @@ const ContentRender = (data: SceneCardProps) => {
               );
             },
           )}
-          {(data?.branches || []).length > 1 && (
+          {(data?.branches || []).length > 2 && (
             <div
               className={styles['trigger-actions-more']}
               onClick={(e) => {
