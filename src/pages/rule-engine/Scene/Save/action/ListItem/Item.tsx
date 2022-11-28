@@ -141,6 +141,52 @@ export default (props: ItemProps) => {
     }
   };
 
+  const deviceRender = (data: ActionsType | undefined) => {
+    switch (data?.device?.selector) {
+      case 'fixed':
+        return (
+          <div>
+            {data?.options?.type}
+            <span>{data?.options?.name}</span>
+            {data?.options?.properties}
+          </div>
+        );
+      case 'tag':
+        return (
+          <div>
+            {data?.options?.type}
+            {data.options?.taglist.map((item: any) => (
+              <span>
+                {item.type}
+                {item.name}
+                {item.value}
+              </span>
+            ))}
+            {data?.options?.productName}
+            {data?.options?.properties}
+          </div>
+        );
+      case 'relation':
+        return (
+          <div>
+            {data?.options?.type}与<span>{data?.options?.name}</span>具有相同
+            {data?.options?.relationName}的{data?.options?.productName}设备的
+            {data?.options?.properties}
+          </div>
+        );
+      default:
+        return (
+          <AddButton
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
+            点击配置执行动作
+          </AddButton>
+        );
+    }
+  };
+
   const contentRender = () => {
     if (props?.data?.alarm?.mode === 'trigger') {
       return (
@@ -170,6 +216,8 @@ export default (props: ItemProps) => {
       );
     } else if (props?.data?.executor === 'notify') {
       return notifyRender(props?.data);
+    } else if (props?.data?.executor === 'device') {
+      return deviceRender(props?.data);
     }
     return (
       <AddButton

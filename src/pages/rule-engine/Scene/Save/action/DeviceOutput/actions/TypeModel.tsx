@@ -44,13 +44,10 @@ export default (props: Props) => {
   };
 
   useEffect(() => {
-    if (props.onChange) {
-      props.onChange(value, source);
-    }
     if (source === 'upper') {
       sourceChangeEvent();
     }
-  }, [source, value]);
+  }, [source]);
 
   const renderNode = (type: string) => {
     switch (type) {
@@ -198,8 +195,12 @@ export default (props: Props) => {
         itemList={itemList}
         value={value}
         onChange={(val: any, tabKey: any) => {
+          // console.log(val,tabKey)
           setValue(val);
           setSource(tabKey);
+          if (props.onChange) {
+            props.onChange(val, tabKey);
+          }
         }}
         type={props.type}
       />

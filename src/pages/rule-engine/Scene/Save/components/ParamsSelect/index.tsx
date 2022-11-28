@@ -52,9 +52,9 @@ export default (props: Props) => {
     };
   });
 
-  useEffect(() => {
-    props.onChange(value, tabKey);
-  }, [value, tabKey]);
+  // useEffect(() => {
+  //   props.onChange(value, tabKey);
+  // }, [value, tabKey]);
 
   return (
     <div className={'select-wrapper'} ref={wrapperRef} style={props.style}>
@@ -64,6 +64,7 @@ export default (props: Props) => {
         value={value}
         onChange={(e) => {
           setValue(e.target.value);
+          props.onChange(e.target.value, tabKey);
         }}
         onFocus={() => {
           setVisible(true);
@@ -87,6 +88,7 @@ export default (props: Props) => {
                     )}
                     onClick={() => {
                       setTabKey(item.key);
+                      props.onChange(value, item.key);
                     }}
                   >
                     {item.label}
