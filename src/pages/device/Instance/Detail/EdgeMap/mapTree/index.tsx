@@ -64,11 +64,13 @@ const MapTree = (props: Props) => {
       params.push(...array);
     });
     const filterParms = params.filter((item) => !!item.metadataId);
+    console.log(metaData);
+    console.log('filterParms', filterParms);
     if (deviceId) {
       if (filterParms && filterParms.length !== 0) {
         const res = await service.saveMap(edgeId, {
           deviceId: deviceId,
-          provider: filterParms[0].provider,
+          provider: filterParms[0]?.provider,
           requestList: filterParms,
         });
         if (res.status === 200) {

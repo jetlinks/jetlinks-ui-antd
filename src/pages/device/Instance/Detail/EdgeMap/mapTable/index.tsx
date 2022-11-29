@@ -28,7 +28,7 @@ const MapTable = (props: Props) => {
   const { metaData, deviceId, reload, edgeId, productList } = props;
   const [visible, setVisible] = useState<boolean>(false);
   const [channelList, setChannelList] = useState<any>([]);
-  const [deviceData, seyDeviceData] = useState<any>({});
+  const [deviceData, setDeviceData] = useState<any>({});
 
   const remove = async (params: any) => {
     const res = await service.removeMap(edgeId, {
@@ -408,7 +408,7 @@ const MapTable = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(metaData, 1111111);
+    // console.log(metaData, 1111111);
     service.edgeChannel(edgeId).then((res) => {
       if (res.status === 200) {
         const list = res.result?.[0].map((item: any) => ({
@@ -428,16 +428,16 @@ const MapTable = (props: Props) => {
         <Button
           style={{ marginRight: 10 }}
           onClick={async () => {
-            const value = await props.formRef.validateFields();
+            setVisible(true);
+            const value = await props.formRef?.validateFields();
             if (value) {
               const formData = {
                 ...value,
-                productName: productList.find((item: any) => item.id === value.productId).name,
+                productName: productList.find((item: any) => item.id === value.productId)?.name,
                 parentId: edgeId,
                 // id: deviceId ? deviceId : undefined,
               };
-              seyDeviceData(formData);
-              setVisible(true);
+              setDeviceData(formData);
             }
           }}
         >
