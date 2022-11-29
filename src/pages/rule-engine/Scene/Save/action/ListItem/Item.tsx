@@ -331,7 +331,7 @@ export default (props: ItemProps) => {
             props.onUpdate(data, options);
             setVisible(false);
           }}
-          type={props.type}
+          parallel={props.parallel}
         />
       )}
       {triggerVisible && (

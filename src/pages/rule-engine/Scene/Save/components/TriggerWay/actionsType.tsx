@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import './index.less';
-import { ParallelType } from '../../../typings';
+// import { ParallelType } from '../../../typings';
 
 interface ActionsTypeProps {
   value?: string;
@@ -9,7 +9,8 @@ interface ActionsTypeProps {
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
   disabled?: boolean;
-  type: ParallelType;
+  // type: ParallelType;
+  parallel: boolean; //并行true
 }
 
 export enum ActionsTypeEnum {
@@ -71,7 +72,7 @@ export default (props: ActionsTypeProps) => {
   return (
     <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
       {TypeList.map((item) =>
-        props.type === 'parallel' && item.value === 'delay' ? null : (
+        props.parallel && item.value === 'delay' ? null : (
           <div
             key={item.value}
             className={classNames('trigger-way-item', {

@@ -80,9 +80,15 @@ export default observer((props: Props) => {
 
   return (
     <div>
-      <Form form={form} layout={'vertical'}>
+      <Form
+        form={form}
+        layout={'vertical'}
+        initialValues={{
+          message: DeviceModel.message || {},
+        }}
+      >
         <Form.Item
-          name={['device', 'message', 'messageType']}
+          name={['message', 'messageType']}
           label="动作类型"
           required
           initialValue="WRITE_PROPERTY"
@@ -97,7 +103,7 @@ export default observer((props: Props) => {
         {deviceMessageType === 'INVOKE_FUNCTION' && (
           <>
             <Form.Item
-              name={['device', 'message', 'functionId']}
+              name={['message', 'functionId']}
               label="功能调用"
               rules={[{ required: true, message: '请选择功能' }]}
             >
@@ -118,7 +124,7 @@ export default observer((props: Props) => {
             </Form.Item>
             {functionId && (
               <Form.Item
-                name={['device', 'message', 'inputs']}
+                name={['message', 'inputs']}
                 rules={[{ required: true, message: '请输入功能值' }]}
               >
                 <FunctionCall
@@ -132,7 +138,7 @@ export default observer((props: Props) => {
         )}
         {deviceMessageType === 'READ_PROPERTY' && (
           <Form.Item
-            name={['device', 'message', 'properties']}
+            name={['message', 'properties']}
             label="读取属性"
             rules={[{ required: true, message: '请选择读取属性' }]}
           >
@@ -141,14 +147,13 @@ export default observer((props: Props) => {
         )}
         {deviceMessageType === 'WRITE_PROPERTY' && (
           <Form.Item
-            name={['device', 'message', 'properties']}
+            name={['message', 'properties']}
             label="设置属性"
             rules={[{ required: true, message: '请选择属性' }]}
           >
             <WriteProperty properties={properties} name={props.name} />
           </Form.Item>
         )}
-        {/* {deviceMessageType === 'WRITE_PROPERTY' && <WriteProperty properties={properties} />} */}
       </Form>
     </div>
   );

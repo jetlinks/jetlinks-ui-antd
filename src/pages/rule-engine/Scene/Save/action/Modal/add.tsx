@@ -2,7 +2,7 @@ import { Modal, Form } from 'antd';
 import ActionsTypeComponent from '@/pages/rule-engine/Scene/Save/components/TriggerWay/actionsType';
 import { useEffect, useState } from 'react';
 import Notify from '../notify';
-import type { ActionsType, ParallelType } from '@/pages/rule-engine/Scene/typings';
+import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Device from '../DeviceOutput';
 import Delay from '../Delay';
 
@@ -11,7 +11,8 @@ interface Props {
   save: (data: any, options?: any) => void;
   data: Partial<ActionsType>;
   name: number;
-  type: ParallelType;
+  // type: ParallelType;
+  parallel: boolean;
 }
 
 export default (props: Props) => {
@@ -34,15 +35,6 @@ export default (props: Props) => {
             value={props.data?.device}
             save={(data: any, options: any) => {
               setActionType('');
-              console.log('Device', data);
-              // props.save(data, options);
-              // console.log('device-------------', {
-              //   type: 'device',
-              //   key: props.data.key || `action_${props.name}`,
-              //   device: {
-              //     ...data,
-              //   },
-              // });
               props.save(
                 {
                   type: 'device',
@@ -58,6 +50,7 @@ export default (props: Props) => {
             cancel={() => {
               setActionType('');
             }}
+            parallel={props.parallel}
           />
         );
       case 'notify':
@@ -131,7 +124,7 @@ export default (props: Props) => {
           required
           rules={[{ required: true, message: '请选择类型' }]}
         >
-          <ActionsTypeComponent type={props.type} />
+          <ActionsTypeComponent parallel={props.parallel} />
         </Form.Item>
       </Form>
       {actionTypeComponent(actionType)}
