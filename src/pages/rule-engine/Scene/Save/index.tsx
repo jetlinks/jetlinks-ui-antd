@@ -54,19 +54,21 @@ const defaultBranches = [
   },
 ];
 
+const defaultOptions = {
+  trigger: {},
+  terms: [
+    {
+      terms: [],
+    },
+  ],
+};
+
 export const FormModel = observable<{ current: FormModelType }>({
   current: {
     trigger: {
       type: '',
     },
-    options: {
-      trigger: {},
-      terms: [
-        {
-          terms: [],
-        },
-      ],
-    },
+    options: defaultOptions,
     branches: defaultBranches,
   },
 });
@@ -82,14 +84,7 @@ export default observer(() => {
       trigger: {
         type: '',
       },
-      options: {
-        trigger: {},
-        terms: [
-          {
-            terms: [],
-          },
-        ],
-      },
+      options: defaultOptions,
       branches: defaultBranches,
     };
   };
@@ -132,7 +127,7 @@ export default observer(() => {
           }
           FormModel.current = {
             ...resp.result,
-            options: resp.result.options || {},
+            options: resp.result.options || defaultOptions,
             branches,
           };
           console.log('FormModel', FormModel);
