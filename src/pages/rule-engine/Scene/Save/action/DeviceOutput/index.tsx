@@ -18,6 +18,7 @@ interface Props {
   save: (data: any, _options?: any) => void;
   cancel: () => void;
   name: number;
+  parallel: boolean;
 }
 
 export default observer((props: Props) => {
@@ -34,7 +35,7 @@ export default observer((props: Props) => {
     {
       key: 'device',
       title: '选择设备',
-      content: <Device name={props.name} />,
+      content: <Device name={props.name} parallel={props.parallel} />,
     },
     {
       key: 'action',
@@ -73,7 +74,7 @@ export default observer((props: Props) => {
       source: DeviceModel.source,
       selectorValues: DeviceModel.selectorValues,
       productId: DeviceModel.productId,
-      message: value.device.message,
+      message: value.message,
     };
     // console.log(item, value);
 
@@ -87,19 +88,19 @@ export default observer((props: Props) => {
       taglist: [],
     };
     _options.name = DeviceModel.deviceDetail.name;
-    const _type = value.device.message.messageType;
+    const _type = value.message.messageType;
     if (_type === 'INVOKE_FUNCTION') {
       _options.type = '执行';
-      _options.properties = value.device.message.functionId;
+      _options.properties = value.message.functionId;
     }
     if (_type === 'READ_PROPERTY') {
       _options.type = '读取';
-      _options.properties = value.device.message.properties?.[0];
+      _options.properties = value.message.properties?.[0];
       // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
-      _options.properties = Object.keys(value.device.message.properties)?.[0];
+      _options.properties = Object.keys(value.message.properties)?.[0];
       // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_options.selector === 'tag') {
@@ -110,16 +111,23 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    console.log(_options);
-    console.log(DeviceModel.deviceDetail.name);
-    // console.log('device', item);
     props.save(item, _options);
-    // FormModel.actions[props.name].options = _options;
     DeviceModel.current = 0;
   };
 
   useEffect(() => {
-    console.log(props.value);
+    if (props.value) {
+      console.log('----------', props.value);
+      DeviceModel.selector = props.value.selector;
+      DeviceModel.productId = props.value.productId;
+      DeviceModel.selector = props.value.selector;
+      DeviceModel.selectorValues = props.value.selectorValues;
+      DeviceModel.message = props.value.message;
+      DeviceModel.deviceId =
+        props.value.selector === 'fixed'
+          ? props.value.selectorValues?.map((item: any) => item.value)[0]
+          : 'deviceId';
+    }
   }, [props.value]);
 
   return (

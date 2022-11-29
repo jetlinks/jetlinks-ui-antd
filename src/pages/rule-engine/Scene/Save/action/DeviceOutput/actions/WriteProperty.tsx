@@ -70,7 +70,7 @@ export default (props: Props) => {
         <Select
           id={props.id}
           value={props.value ? props.value[0] : undefined}
-          options={props.properties.filter((item) => {
+          options={props.properties?.filter((item) => {
             if (item.expands && item.expands.type) {
               return item.expands.type.includes('write');
             }

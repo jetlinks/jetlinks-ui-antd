@@ -24,6 +24,7 @@ import Tag from './Tag';
 
 interface Props {
   name: number;
+  parallel: boolean;
 }
 
 export default observer((props: Props) => {
@@ -35,6 +36,7 @@ export default observer((props: Props) => {
   const selector = Form.useWatch('selector', form);
   const [tagList, setTagList] = useState([]);
   const [list, setList] = useState<any>([]);
+  const [isFirst, setIsFirst] = useState(true);
 
   const TypeList = [
     {
@@ -259,22 +261,12 @@ export default observer((props: Props) => {
     },
   ];
 
-  const isParallel = () => {
-    const array = FormModel.current.actions?.find((item) => 'terms' in item);
-    if (array && builtInList.length > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
   const filterTree = (nodes: any[]) => {
     if (!nodes?.length) {
       return nodes;
     }
     return nodes.filter((it) => {
       if (it.children.find((item: any) => item.id.indexOf('deviceId') > -1)) {
-        // console.log(it.children.find((item: any) => item.id.indexOf('deviceId') > -1))
         return true;
       }
       return false;
@@ -291,33 +283,34 @@ export default observer((props: Props) => {
       }
     });
   };
+
   const filterType = async () => {
-    // console.log('',FormModel);
+    const _list = TypeList.filter((item) => item.value === 'fixed');
     if (FormModel.current.trigger?.type === 'device') {
+      //关系
       const res = await getRelations();
-      if (res.status === 200 && res.result.length === 0) {
-        const array = TypeList.filter((item) => item.value !== 'relation');
-        setList(array);
-      } else {
-        setList(TypeList);
+      if (res.status === 200 && res.result.length !== 0) {
+        const array = TypeList.filter((item) => item.value === 'relation');
+        _list.push(...array);
       }
+      //标签
       const tag = JSON.parse(DeviceModel.productDetail?.metadata || '{}')?.tags;
-      console.log(tag, 'tag');
       if (!tag) {
-        const array = TypeList.filter((item) => item.value !== 'tag');
-        setList(array);
-      } else {
-        setList(TypeList);
+        const array = TypeList.filter((item) => item.value === 'tag');
+        _list.push(...array);
       }
+      //变量
+      if (builtInList.length !== 0 && !props.parallel) {
+        const array = TypeList.filter((item) => item.value === 'variable');
+        _list.push(...array);
+      }
+      setList(_list);
     } else {
-      const arr = TypeList.filter((item) => item.value !== 'relation' && item.value !== 'tag');
-      const arr1 = TypeList.filter((item) => item.value === 'fixed');
-      // isParallel()? setList(arr1):setList(arr)
-      if (isParallel()) {
-        setList(arr1);
-      } else {
-        setList(arr);
+      if (builtInList.length !== 0 && !props.parallel) {
+        const array = TypeList.filter((item) => item.value === 'variable');
+        _list.push(...array);
       }
+      setList(_list);
     }
   };
 
@@ -361,16 +354,20 @@ export default observer((props: Props) => {
                   type: 'radio',
                   selectedRowKeys: [DeviceModel.deviceId],
                   onChange: (_, selectedRows) => {
-                    if (selectedRows.length) {
-                      const item = selectedRows?.[0];
-                      DeviceModel.deviceId = item.id;
-                      DeviceModel.deviceDetail = item;
-                      DeviceModel.selectorValues = [
-                        { value: DeviceModel.deviceId, name: item.name },
-                      ];
+                    if (!isFirst) {
+                      if (selectedRows.length) {
+                        const item = selectedRows?.[0];
+                        DeviceModel.deviceId = item.id;
+                        DeviceModel.deviceDetail = item;
+                        DeviceModel.selectorValues = [
+                          { value: DeviceModel.deviceId, name: item.name },
+                        ];
+                      } else {
+                        DeviceModel.deviceId = '';
+                        DeviceModel.selectorValues = [];
+                      }
                     } else {
-                      DeviceModel.deviceId = '';
-                      DeviceModel.selectorValues = [];
+                      setIsFirst(false);
                     }
                   },
                 }}
@@ -457,16 +454,16 @@ export default observer((props: Props) => {
       form.setFieldsValue({ selector: DeviceModel.selector });
     }
     sourceChangeEvent();
+    console.log('-----deviceid-----', DeviceModel.deviceId);
   }, []);
 
   useEffect(() => {
     if (DeviceModel.productDetail) {
       const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
       setTagList(metadata.tags);
-      // console.log(metadata.tags)
       filterType();
     }
-  }, [DeviceModel.productDetail]);
+  }, [DeviceModel.productDetail, builtInList]);
 
   useEffect(() => {
     DeviceModel.selector = selector;
@@ -478,16 +475,8 @@ export default observer((props: Props) => {
         <ExclamationCircleOutlined className="device-title-icon" />
         <span>自定义选择当前产品下的任意设备</span>
       </div>
-
-      {/* {isParallel() && (
-        <Form form={form} layout={'vertical'}>
-          <Form.Item name="selector" label="选择方式" required>
-            <TopCard typeList={TypeList} />
-          </Form.Item>
-        </Form>
-      )} */}
       <Form form={form} layout={'vertical'}>
-        <Form.Item name="selector" label="选择方式" required>
+        <Form.Item name="selector" label="选择方式" required hidden={list.length === 1}>
           <TopCard typeList={list} />
         </Form.Item>
         {contentRender(selector)}
