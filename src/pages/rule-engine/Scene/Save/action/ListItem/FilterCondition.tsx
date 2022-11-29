@@ -89,7 +89,7 @@ export default observer((props: FilterProps) => {
   };
 
   const getParmas = () => {
-    queryBuiltInParams(FormModel, { action: props.thenName }).then((res: any) => {
+    queryBuiltInParams(FormModel.current, { action: props.thenName }).then((res: any) => {
       if (res.status === 200) {
         const params = handleTreeData(res.result);
         setColumnOptions(params);

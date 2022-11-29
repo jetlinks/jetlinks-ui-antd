@@ -260,7 +260,7 @@ export default observer((props: Props) => {
   ];
 
   const isParallel = () => {
-    const array = FormModel.actions.find((item) => 'terms' in item);
+    const array = FormModel.current.actions?.find((item) => 'terms' in item);
     if (array && builtInList.length > 0) {
       return true;
     } else {
@@ -283,7 +283,7 @@ export default observer((props: Props) => {
 
   const sourceChangeEvent = async () => {
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
-    queryBuiltInParams(FormModel, params).then((res: any) => {
+    queryBuiltInParams(FormModel.current, params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const array = filterTree(_data);
@@ -293,7 +293,7 @@ export default observer((props: Props) => {
   };
   const filterType = async () => {
     // console.log('',FormModel);
-    if (FormModel.trigger?.type === 'device') {
+    if (FormModel.current.trigger?.type === 'device') {
       const res = await getRelations();
       if (res.status === 200 && res.result.length === 0) {
         const array = TypeList.filter((item) => item.value !== 'relation');

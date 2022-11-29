@@ -26,7 +26,7 @@ export interface DeviceModelProps extends Partial<TriggerDevice> {
     events?: any[];
     functions?: any[];
   };
-  deviceId: string;
+  deviceKeys: string[];
   orgId: string;
   operation?: TriggerDeviceOptions;
   options: any;
@@ -50,7 +50,7 @@ export const DeviceModel = observable<DeviceModelProps>({
   stepNumber: 0,
   productId: '',
   productDetail: {},
-  deviceId: '',
+  deviceKeys: [],
   orgId: '',
   selector: 'custom',
   metadata: {},
@@ -74,6 +74,10 @@ export default observer((props: AddProps) => {
       DeviceModel.selector = props.value.selector;
       DeviceModel.selectorValues = props.value.selectorValues;
       DeviceModel.operation = props.value.operation;
+      DeviceModel.deviceKeys =
+        props.value.selector === 'custom'
+          ? props.value.selectorValues?.map((item) => item.value) || []
+          : [];
       // Object.assign(DeviceModel, props.value);
       console.log('addModel', DeviceModel, props.value);
     }

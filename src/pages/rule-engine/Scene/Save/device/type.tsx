@@ -68,6 +68,7 @@ export default forwardRef((props: Props, ref) => {
 
   const [readProperty, setReadProperty] = useState<any[]>([]);
   const [writeProperty, setWriteProperty] = useState<any[]>([]);
+  // const [reportProperty, setReportProperty] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
   const [functions, setFunctions] = useState<any[]>([]);
   const [functionItem, setFunctionItem] = useState<any[]>([]);
@@ -110,14 +111,25 @@ export default forwardRef((props: Props, ref) => {
       const _writeProperty = data.metadata.properties.filter(
         (item) => !!item.expands.type?.includes('write'),
       );
+
+      const _reportProperty = data.metadata.properties.filter(
+        (item) => !!item.expands.type?.includes('report'),
+      );
+
       setReadProperty(_readProperty);
       setWriteProperty(_writeProperty);
+      // setReportProperty(_reportProperty);
+
       if (_readProperty.length) {
         newTypeList.push(TypeEnum.readProperty);
       }
       if (_writeProperty.length) {
         newTypeList.push(TypeEnum.writeProperty);
       }
+      if (_reportProperty.length) {
+        newTypeList.push(TypeEnum.reportProperty);
+      }
+      console.log('data.metadata.properties', data.metadata.properties);
     }
 
     if (data.metadata.functions?.length) {

@@ -32,8 +32,8 @@ export default observer((props: TermsProps) => {
   }, [props.data.terms]);
 
   const addTerms = () => {
-    const data = get(FormModel.branches, [...props.pName]);
-    FormModel.options!.terms[props.name].terms.push('');
+    const data = get(FormModel.current.branches, [...props.pName]);
+    FormModel.current.options!.terms[props.name].terms.push('');
     const key = `terms_${new Date().getTime()}`;
     const defaultValue = {
       type: 'and',
@@ -100,9 +100,9 @@ export default observer((props: TermsProps) => {
                 });
               }}
               onLableChange={(options) => {
-                console.log(options, FormModel.options!.terms);
-                FormModel.options!.terms[props.name].terms[index] = options;
-                FormModel.options!.terms[props.name].termType =
+                console.log(options, FormModel.current.options!.terms);
+                FormModel.current.options!.terms[props.name].terms[index] = options;
+                FormModel.current.options!.terms[props.name].termType =
                   props.data.type === 'and' ? '并且' : '或者';
               }}
             />

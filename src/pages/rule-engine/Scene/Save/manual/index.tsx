@@ -7,7 +7,10 @@ export default observer(() => {
     <div>
       <Observer>
         {() => (
-          <Action thenOptions={FormModel.branches ? FormModel.branches[0].then : []} name={0} />
+          <Action
+            thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
+            name={0}
+          />
         )}
       </Observer>
     </div>

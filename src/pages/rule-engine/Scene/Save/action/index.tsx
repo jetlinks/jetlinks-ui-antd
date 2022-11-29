@@ -23,7 +23,7 @@ export default (props: ActionsProps) => {
         {props.openShakeLimit ? (
           <Observer>
             {() => {
-              const data: ShakeLimitType | undefined = get(FormModel.branches, [
+              const data: ShakeLimitType | undefined = get(FormModel.current.branches, [
                 props.name!,
                 'shakeLimit',
               ]);
@@ -77,18 +77,18 @@ export default (props: ActionsProps) => {
                           } else {
                             parallelThens[0].actions.push(actionItem);
                           }
-                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                          set(FormModel.current, ['branches', props.name, 'then'], parallelThens);
                         } else {
                           parallelThens.push({
                             parallel: false,
                             actions: [actionItem],
                           });
-                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                          set(FormModel.current, ['branches', props.name, 'then'], parallelThens);
                         }
                       }}
                       onDelete={(_index) => {
                         parallelThens[0].actions.splice(_index, 1);
-                        set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                        set(FormModel.current, ['branches', props.name, 'then'], parallelThens);
                       }}
                     />
                   );
@@ -128,18 +128,18 @@ export default (props: ActionsProps) => {
                           } else {
                             parallelThens[0].actions.push(actionItem);
                           }
-                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                          set(FormModel.current, ['branches', props.name, 'then'], parallelThens);
                         } else {
                           parallelThens.push({
                             parallel: true,
                             actions: [actionItem],
                           });
-                          set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                          set(FormModel.current, ['branches', props.name, 'then'], parallelThens);
                         }
                       }}
                       onDelete={(_index) => {
                         parallelThens[0].actions.splice(_index, 1);
-                        set(FormModel, ['branches', props.name, 'then'], parallelThens);
+                        set(FormModel.current, ['branches', props.name, 'then'], parallelThens);
                       }}
                     />
                   );

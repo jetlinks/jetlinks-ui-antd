@@ -15,56 +15,60 @@ import { onlyMessage } from '@/utils/util';
 import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
 
-export const FormModel = observable<FormModelType>({
-  trigger: {
-    type: '',
-  },
-  options: {
-    trigger: {},
-    terms: [
+const defaultBranches = [
+  {
+    when: [
       {
-        terms: [],
+        terms: [
+          {
+            column: undefined,
+            value: undefined,
+            termType: undefined,
+            key: 'params_1',
+            type: 'and',
+          },
+        ],
+        type: 'and',
+        key: 'terms_1',
       },
     ],
+    key: 'branckes_1',
+    shakeLimit: {
+      enabled: true,
+      time: 1,
+      threshold: 1,
+      alarmFirst: false,
+    },
+    then: [],
   },
-  branches: [
-    {
-      when: [
+  {
+    when: [],
+    key: 'branckes_2',
+    shakeLimit: {
+      enabled: true,
+      time: 1,
+      threshold: 1,
+      alarmFirst: false,
+    },
+    then: [],
+  },
+];
+
+export const FormModel = observable<{ current: FormModelType }>({
+  current: {
+    trigger: {
+      type: '',
+    },
+    options: {
+      trigger: {},
+      terms: [
         {
-          terms: [
-            {
-              column: undefined,
-              value: undefined,
-              termType: undefined,
-              key: 'params_1',
-              type: 'and',
-            },
-          ],
-          type: 'and',
-          key: 'terms_1',
+          terms: [],
         },
       ],
-      key: 'branckes_1',
-      shakeLimit: {
-        enabled: true,
-        time: 1,
-        threshold: 1,
-        alarmFirst: false,
-      },
-      then: [],
     },
-    {
-      when: [],
-      key: 'branckes_2',
-      shakeLimit: {
-        enabled: true,
-        time: 1,
-        threshold: 1,
-        alarmFirst: false,
-      },
-      then: [],
-    },
-  ],
+    branches: defaultBranches,
+  },
 });
 
 export default observer(() => {
@@ -73,11 +77,29 @@ export default observer(() => {
   const id = location?.query?.id || '';
   const history = useHistory();
 
+  const FormModelInit = () => {
+    FormModel.current = {
+      trigger: {
+        type: '',
+      },
+      options: {
+        trigger: {},
+        terms: [
+          {
+            terms: [],
+          },
+        ],
+      },
+      branches: defaultBranches,
+    };
+  };
+
   useEffect(() => {
+    FormModelInit();
     if (id) {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
-          let branches = resp.result.branches;
+          let branches = resp.result.branches || defaultBranches;
           // 处理 branches 的 key
           if (branches) {
             branches = branches.map((bItem: ActionBranchesProps, bIndex: number) => {
@@ -108,18 +130,19 @@ export default observer(() => {
               return bItem;
             });
           }
-          Object.assign(FormModel, {
+          FormModel.current = {
             ...resp.result,
+            options: resp.result.options || {},
             branches,
-          });
-          console.log(FormModel, '11111');
+          };
+          console.log('FormModel', FormModel);
         }
       });
     }
   }, [id]);
 
   const triggerRender = (type: string) => {
-    FormModel.trigger!.type = type;
+    FormModel.current.trigger!.type = type;
     switch (type) {
       case 'device':
         return (
@@ -145,7 +168,7 @@ export default observer(() => {
   };
 
   const submit = useCallback(() => {
-    service.updateScene(FormModel).then((res) => {
+    service.updateScene(FormModel.current).then((res) => {
       if (res.status === 200) {
         onlyMessage('操作成功', 'success');
         const url = getMenuPathByCode('rule-engine/Scene');

@@ -43,7 +43,7 @@ export default (props: BuiltInProps) => {
 
   const sourceChangeEvent = async () => {
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
-    queryBuiltInParams(FormModel, params).then((res: any) => {
+    queryBuiltInParams(FormModel.current, params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         setBuiltInList(_data);

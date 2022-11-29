@@ -31,7 +31,7 @@ export default observer(() => {
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
-            const label = handleLabel(FormModel.options?.trigger);
+            const label = handleLabel(FormModel.current.options?.trigger);
             return (
               <AddButton
                 style={{ width: '100%' }}
@@ -41,7 +41,7 @@ export default observer(() => {
               >
                 <div
                   className={classNames('trigger-options-content', {
-                    'is-add': !!Object.keys(FormModel.options?.trigger || {}).length,
+                    'is-add': !!Object.keys(FormModel.current.options?.trigger || {}).length,
                   })}
                 >
                   {label}
@@ -54,17 +54,20 @@ export default observer(() => {
       <div>
         <Observer>
           {() => (
-            <Action thenOptions={FormModel.branches ? FormModel.branches[0].then : []} name={0} />
+            <Action
+              thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
+              name={0}
+            />
           )}
         </Observer>
       </div>
       {visible && (
         <TimerTrigger
-          data={FormModel.trigger?.timer}
+          data={FormModel.current.trigger?.timer}
           save={(data, options) => {
             setVisible(false);
-            FormModel.options!['trigger'] = options;
-            FormModel.trigger!.timer = data;
+            FormModel.current.options!['trigger'] = options;
+            FormModel.current.trigger!.timer = data;
           }}
           close={() => {
             setVisible(false);

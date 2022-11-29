@@ -23,23 +23,17 @@ export default observer(() => {
   };
 
   useEffect(() => {
-    console.log('terms-useEffect', FormModel.trigger?.device);
-
-    if (FormModel.trigger?.device) {
-      queryColumn(FormModel.trigger);
+    if (FormModel.current.trigger?.device) {
+      queryColumn(FormModel.current.trigger);
     }
-  }, [FormModel.trigger?.device]);
-
-  useEffect(() => {
-    console.log('terms-useEffect-branches', FormModel.branches);
-  }, [FormModel.branches]);
+  }, [FormModel.current.trigger?.device]);
 
   return (
     <div className="actions-terms">
       <TitleComponent style={{ fontSize: 14 }} data="触发条件" />
       <Observer>
         {() =>
-          FormModel.branches?.map((item, index) => {
+          FormModel.current.branches?.map((item, index) => {
             const isFrist = index === 0;
             return (
               <BranchItem
@@ -48,7 +42,7 @@ export default observer(() => {
                 name={index}
                 paramsOptions={TermsModel.columnOptions}
                 onDelete={() => {
-                  FormModel.branches?.splice(index, 1);
+                  FormModel.current.branches?.splice(index, 1);
                 }}
               />
             );

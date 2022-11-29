@@ -2,15 +2,23 @@ import type { ReactChild } from 'react';
 import Terms from '@/pages/rule-engine/Scene/Save/terms';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { useState } from 'react';
-import { Observer, observer } from '@formily/react';
+import { Observer } from '@formily/react';
 import AddModel from './addModel';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import classNames from 'classnames';
+import { observer } from '@formily/reactive-react';
+
+const defaultDeviceValue = {
+  productId: '',
+  selector: 'custom',
+  selectorValues: [],
+};
 
 export default observer(() => {
   const [visible, setVisible] = useState(false);
 
   const handleLabel = (options: any): ReactChild | ReactChild[] => {
+    console.log('FormModel', options);
     if (!options || !Object.keys(options).length) return '点击配置设备触发';
 
     const _label = [<span className="trigger-options-name">{options.name}</span>];
@@ -37,12 +45,14 @@ export default observer(() => {
     return _label;
   };
 
+  console.log(FormModel.current);
+
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
-            const label = handleLabel(FormModel.options?.trigger);
+            const label = handleLabel(FormModel.current.options?.trigger);
             return (
               <AddButton
                 style={{ width: '100%' }}
@@ -52,7 +62,7 @@ export default observer(() => {
               >
                 <div
                   className={classNames('trigger-options-content', {
-                    'is-add': !!Object.keys(FormModel.options?.trigger || {}).length,
+                    'is-add': !!Object.keys(FormModel.current.options?.trigger || {}).length,
                   })}
                 >
                   {label}
@@ -65,11 +75,11 @@ export default observer(() => {
       <Terms />
       {visible && (
         <AddModel
-          value={FormModel.trigger?.device}
+          value={FormModel.current.trigger?.device || defaultDeviceValue}
           onSave={(data, options) => {
             setVisible(false);
-            FormModel.options!['trigger'] = options;
-            FormModel.trigger!.device = data;
+            FormModel.current.options!['trigger'] = options;
+            FormModel.current.trigger!.device = data;
           }}
           onCancel={() => {
             setVisible(false);

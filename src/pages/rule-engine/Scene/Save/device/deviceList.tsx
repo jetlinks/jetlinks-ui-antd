@@ -10,8 +10,9 @@ import { service as deptService } from '@/pages/system/Department';
 import { useIntl } from 'umi';
 import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { DeviceModel } from './addModel';
+import { observer, Observer } from '@formily/reactive-react';
 
-export default () => {
+export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
@@ -235,48 +236,46 @@ export default () => {
           },
         ]}
       />
-      <div>
-        <ProTableCard<DeviceInstance>
-          actionRef={actionRef}
-          columns={columns}
-          rowKey="id"
-          search={false}
-          gridColumn={2}
-          columnEmptyText={''}
-          onlyCard={true}
-          tableAlertRender={false}
-          rowSelection={{
-            selectedRowKeys: DeviceModel.selectorValues
-              ? DeviceModel.selectorValues.map((item) => {
-                  console.log('item', item);
-
-                  return item.value;
-                })
-              : [],
-            onChange(selectedRowKeys, selectedRows) {
-              console.log(selectedRowKeys, DeviceModel.selectorValues);
-              if (!isFirst) {
-                DeviceModel.selectorValues = selectedRows.map((item) => ({
-                  name: item.name,
-                  value: item.id,
-                }));
-                setIsFirst(false);
-              }
-            },
-          }}
-          request={(params) =>
-            service.query({
-              ...params,
-              sorts: [{ name: 'createTime', order: 'desc' }],
-            })
-          }
-          params={searchParam}
-          cardRender={(record) => (
-            <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
-          )}
-          height={'none'}
-        />
-      </div>
+      <Observer>
+        {() => (
+          <ProTableCard<DeviceInstance>
+            actionRef={actionRef}
+            columns={columns}
+            rowKey="id"
+            search={false}
+            gridColumn={2}
+            columnEmptyText={''}
+            onlyCard={true}
+            tableAlertRender={false}
+            rowSelection={{
+              selectedRowKeys: [...DeviceModel.deviceKeys],
+              onChange(selectedRowKeys, selectedRows) {
+                console.log(selectedRowKeys, DeviceModel.selectorValues, isFirst);
+                if (!isFirst) {
+                  DeviceModel.deviceKeys = selectedRows.map((item) => item.id);
+                  DeviceModel.selectorValues = selectedRows.map((item) => ({
+                    name: item.name,
+                    value: item.id,
+                  }));
+                } else {
+                  setIsFirst(false);
+                }
+              },
+            }}
+            request={(params) =>
+              service.query({
+                ...params,
+                sorts: [{ name: 'createTime', order: 'desc' }],
+              })
+            }
+            params={searchParam}
+            cardRender={(record) => (
+              <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
+            )}
+            height={'none'}
+          />
+        )}
+      </Observer>
     </>
   );
-};
+});

@@ -26,8 +26,8 @@ export default observer((props: BranchesItemProps) => {
   }, [props.data]);
 
   const addWhen = (index: number) => {
-    const lastBranch = FormModel.branches![index].when;
-    FormModel.options?.terms.push({
+    const lastBranch = FormModel.current.branches![index].when;
+    FormModel.current.options?.terms.push({
       terms: [],
     });
     lastBranch.push({
@@ -43,7 +43,7 @@ export default observer((props: BranchesItemProps) => {
     });
     // 增加下一个否则, '当' 排除
     if (index > 0) {
-      FormModel.branches?.push({
+      FormModel.current.branches?.push({
         when: [],
         key: `branch_${new Date().getTime()}`,
         shakeLimit: {
@@ -84,16 +84,16 @@ export default observer((props: BranchesItemProps) => {
                 paramsOptions={props.paramsOptions}
                 isLast={dIndex === when!.length - 1}
                 onValueChange={(data) => {
-                  FormModel.branches![props.name].when[dIndex] = {
-                    ...FormModel.branches![props.name].when[dIndex],
+                  FormModel.current.branches![props.name].when[dIndex] = {
+                    ...FormModel.current.branches![props.name].when[dIndex],
                     ...data,
                   };
                 }}
                 onLabelChange={(options) => {
-                  FormModel.options!.terms[props.name] = options;
+                  FormModel.current.options!.terms[props.name] = options;
                 }}
                 onDelete={() => {
-                  FormModel.branches![props.name].when.splice(dIndex, 1);
+                  FormModel.current.branches![props.name].when.splice(dIndex, 1);
                 }}
               />
             ))
