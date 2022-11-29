@@ -42,6 +42,7 @@ const SaveChild = (props: Props) => {
             metadataId: item.id,
             metadataName: `${item.name}(${item.id})`,
             metadataType: 'property',
+            name: item.name,
           }),
         );
         if (metadata && metadata.length !== 0) {
@@ -126,9 +127,10 @@ const SaveChild = (props: Props) => {
                     metadataType: 'property',
                     metadataName: `${i.name}(${i.id})`,
                     metadataId: i.id,
+                    name: i.name,
                   }));
                   setMetaData(array);
-                  console.log(array);
+                  // console.log(array);
                 }}
               >
                 {productList.map((item: any) => (

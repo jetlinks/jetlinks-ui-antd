@@ -229,7 +229,7 @@ export default (props: ProductCardProps) => {
   const intl = useIntl();
   return (
     <TableCard
-      showMask={false}
+      // showMask={false}
       showTool={props.showTool}
       detail={props.detail}
       actions={props.actions}
