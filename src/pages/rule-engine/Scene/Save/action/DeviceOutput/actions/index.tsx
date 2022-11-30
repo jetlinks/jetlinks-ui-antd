@@ -14,7 +14,7 @@ interface Props {
 
 export default observer((props: Props) => {
   const [form] = Form.useForm();
-  const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
+  const [deviceMessageType, setDeviceMessageType] = useState('');
   const [properties, setProperties] = useState([]); // 物模型-属性
   const [propertiesId, setPropertiesId] = useState<string | undefined>(''); // 物模型-属性ID,用于串行
   const [functionList, setFunctionList] = useState<any>([]); // 物模型-功能
@@ -43,6 +43,8 @@ export default observer((props: Props) => {
   ];
 
   useEffect(() => {
+    // console.log(DeviceModel.message)
+    setDeviceMessageType(DeviceModel.message.messageType);
     if (DeviceModel.productDetail) {
       const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
       setProperties(metadata.properties);
@@ -80,12 +82,18 @@ export default observer((props: Props) => {
 
   return (
     <div>
-      <Form form={form} layout={'vertical'}>
+      <Form
+        form={form}
+        layout={'vertical'}
+        initialValues={{
+          message: DeviceModel.message,
+        }}
+      >
         <Form.Item
-          name={['device', 'message', 'messageType']}
+          name={['message', 'messageType']}
           label="动作类型"
           required
-          initialValue="WRITE_PROPERTY"
+          // initialValue="WRITE_PROPERTY"
         >
           <TopCard
             typeList={TypeList}
@@ -97,7 +105,7 @@ export default observer((props: Props) => {
         {deviceMessageType === 'INVOKE_FUNCTION' && (
           <>
             <Form.Item
-              name={['device', 'message', 'functionId']}
+              name={['message', 'functionId']}
               label="功能调用"
               rules={[{ required: true, message: '请选择功能' }]}
             >
@@ -118,7 +126,7 @@ export default observer((props: Props) => {
             </Form.Item>
             {functionId && (
               <Form.Item
-                name={['device', 'message', 'inputs']}
+                name={['message', 'inputs']}
                 rules={[{ required: true, message: '请输入功能值' }]}
               >
                 <FunctionCall
@@ -132,7 +140,7 @@ export default observer((props: Props) => {
         )}
         {deviceMessageType === 'READ_PROPERTY' && (
           <Form.Item
-            name={['device', 'message', 'properties']}
+            name={['message', 'properties']}
             label="读取属性"
             rules={[{ required: true, message: '请选择读取属性' }]}
           >
@@ -141,14 +149,13 @@ export default observer((props: Props) => {
         )}
         {deviceMessageType === 'WRITE_PROPERTY' && (
           <Form.Item
-            name={['device', 'message', 'properties']}
+            name={['message', 'properties']}
             label="设置属性"
             rules={[{ required: true, message: '请选择属性' }]}
           >
             <WriteProperty properties={properties} name={props.name} />
           </Form.Item>
         )}
-        {/* {deviceMessageType === 'WRITE_PROPERTY' && <WriteProperty properties={properties} />} */}
       </Form>
     </div>
   );

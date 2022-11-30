@@ -453,7 +453,7 @@ const MapTable = (props: Props) => {
               const array = value.requestList.filter((item: any) => item.channelId);
               const submitData = {
                 deviceId: deviceId,
-                provider: array[0].provider,
+                provider: array[0]?.provider,
                 requestList: array,
               };
               save(submitData);

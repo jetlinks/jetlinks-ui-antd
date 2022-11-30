@@ -1,5 +1,5 @@
 import { Modal, Button, Steps } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { observer } from '@formily/react';
 import Device from './device';
 import Product from './product';
@@ -9,7 +9,6 @@ import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
-// import { FormModel } from '../..';
 
 export const service = new Service<any>('');
 
@@ -18,23 +17,22 @@ interface Props {
   save: (data: any, _options?: any) => void;
   cancel: () => void;
   name: number;
+  parallel: boolean;
 }
 
 export default observer((props: Props) => {
-  const [open, setOpen] = useState<boolean>(true);
-  // const [data, setData] = useState<any>({})
   const formRef = useRef<any>();
 
   DeviceModel.steps = [
     {
       key: 'product',
       title: '选择产品',
-      content: <Product />,
+      content: <Product productId={props.value?.productId} />,
     },
     {
       key: 'device',
       title: '选择设备',
-      content: <Device name={props.name} />,
+      content: <Device name={props.name} parallel={props.parallel} />,
     },
     {
       key: 'action',
@@ -73,7 +71,7 @@ export default observer((props: Props) => {
       source: DeviceModel.source,
       selectorValues: DeviceModel.selectorValues,
       productId: DeviceModel.productId,
-      message: value.device.message,
+      message: value.message,
     };
     // console.log(item, value);
 
@@ -87,19 +85,19 @@ export default observer((props: Props) => {
       taglist: [],
     };
     _options.name = DeviceModel.deviceDetail.name;
-    const _type = value.device.message.messageType;
+    const _type = value.message.messageType;
     if (_type === 'INVOKE_FUNCTION') {
       _options.type = '执行';
-      _options.properties = value.device.message.functionId;
+      _options.properties = value.message.functionId;
     }
     if (_type === 'READ_PROPERTY') {
       _options.type = '读取';
-      _options.properties = value.device.message.properties?.[0];
+      _options.properties = value.message.properties?.[0];
       // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
-      _options.properties = Object.keys(value.device.message.properties)?.[0];
+      _options.properties = Object.keys(value.message.properties)?.[0];
       // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_options.selector === 'tag') {
@@ -110,30 +108,48 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    console.log(_options);
-    console.log(DeviceModel.deviceDetail.name);
-    // console.log('device', item);
+    console.log(item);
     props.save(item, _options);
-    // FormModel.actions[props.name].options = _options;
     DeviceModel.current = 0;
   };
 
   useEffect(() => {
-    console.log(props.value);
+    if (props.value) {
+      console.log('----------', props.value);
+      DeviceModel.selector = props.value.selector;
+      DeviceModel.productId = props.value.productId;
+      DeviceModel.selector = props.value.selector;
+      DeviceModel.selectorValues = props.value.selectorValues;
+      DeviceModel.message = props.value.message;
+      DeviceModel.deviceId =
+        props.value.selector === 'fixed'
+          ? props.value.selectorValues?.map((item: any) => item.value)[0]
+          : 'deviceId';
+    }
   }, [props.value]);
 
   return (
     <Modal
       title={'执行动作'}
-      open={open}
+      open
       width={800}
       onCancel={() => {
-        setOpen(false);
+        props.cancel();
+        DeviceModel.current = 0;
       }}
       maskClosable={false}
       footer={
         <div className="steps-action">
-          {DeviceModel.current === 0 && <Button onClick={() => {}}>取消</Button>}
+          {DeviceModel.current === 0 && (
+            <Button
+              onClick={() => {
+                props.cancel();
+                DeviceModel.current = 0;
+              }}
+            >
+              取消
+            </Button>
+          )}
           {DeviceModel.current > 0 && (
             <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
               上一步
