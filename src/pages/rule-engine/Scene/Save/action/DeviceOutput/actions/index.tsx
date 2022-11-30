@@ -14,7 +14,7 @@ interface Props {
 
 export default observer((props: Props) => {
   const [form] = Form.useForm();
-  const [deviceMessageType, setDeviceMessageType] = useState('WRITE_PROPERTY');
+  const [deviceMessageType, setDeviceMessageType] = useState('');
   const [properties, setProperties] = useState([]); // 物模型-属性
   const [propertiesId, setPropertiesId] = useState<string | undefined>(''); // 物模型-属性ID,用于串行
   const [functionList, setFunctionList] = useState<any>([]); // 物模型-功能
@@ -43,6 +43,8 @@ export default observer((props: Props) => {
   ];
 
   useEffect(() => {
+    // console.log(DeviceModel.message)
+    setDeviceMessageType(DeviceModel.message.messageType);
     if (DeviceModel.productDetail) {
       const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
       setProperties(metadata.properties);
@@ -84,14 +86,14 @@ export default observer((props: Props) => {
         form={form}
         layout={'vertical'}
         initialValues={{
-          message: DeviceModel.message || {},
+          message: DeviceModel.message,
         }}
       >
         <Form.Item
           name={['message', 'messageType']}
           label="动作类型"
           required
-          initialValue="WRITE_PROPERTY"
+          // initialValue="WRITE_PROPERTY"
         >
           <TopCard
             typeList={TypeList}

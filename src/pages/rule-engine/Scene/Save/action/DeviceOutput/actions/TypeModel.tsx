@@ -22,7 +22,7 @@ export default (props: Props) => {
   const [value, setValue] = useState<any>(props.value || '');
   const [visible, setVisible] = useState<boolean>(false);
   const [objVisiable, setObjVisable] = useState<boolean>(false);
-  const [source, setSource] = useState<string>('');
+  const [source, setSource] = useState<string>('fixed');
   const [builtInList, setBuiltInList] = useState<any[]>([]);
 
   const sourceChangeEvent = async () => {
@@ -39,7 +39,7 @@ export default (props: Props) => {
   const onChange = (params: any) => {
     setValue(params);
     if (props.onChange) {
-      props.onChange(params);
+      props.onChange(params, source);
     }
   };
 
@@ -70,7 +70,7 @@ export default (props: Props) => {
           <Select
             value={value}
             style={{ width: '100%', textAlign: 'left' }}
-            options={props.record.options || []}
+            options={props.record?.options || []}
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
             mode="multiple"
@@ -150,7 +150,7 @@ export default (props: Props) => {
             onChange={(e) => {
               setValue(e.target.value);
               if (props.onChange) {
-                props.onChange(e.target.value);
+                props.onChange(e.target.value, source);
               }
             }}
           />
@@ -161,7 +161,7 @@ export default (props: Props) => {
   const itemList: ItemProps[] = [
     {
       label: `手动输入`,
-      key: 'manual',
+      key: 'fixed',
       content: renderNode(props.type),
     },
     {
@@ -191,7 +191,7 @@ export default (props: Props) => {
         inputProps={{
           placeholder: '请选择',
         }}
-        tabKey={'manual'}
+        tabKey={'fixed'}
         itemList={itemList}
         value={value}
         onChange={(val: any, tabKey: any) => {

@@ -1,5 +1,5 @@
 import { Modal, Button, Steps } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { observer } from '@formily/react';
 import Device from './device';
 import Product from './product';
@@ -9,7 +9,6 @@ import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
-// import { FormModel } from '../..';
 
 export const service = new Service<any>('');
 
@@ -22,15 +21,13 @@ interface Props {
 }
 
 export default observer((props: Props) => {
-  const [open, setOpen] = useState<boolean>(true);
-  // const [data, setData] = useState<any>({})
   const formRef = useRef<any>();
 
   DeviceModel.steps = [
     {
       key: 'product',
       title: '选择产品',
-      content: <Product />,
+      content: <Product productId={props.value?.productId} />,
     },
     {
       key: 'device',
@@ -111,6 +108,7 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
+    console.log(item);
     props.save(item, _options);
     DeviceModel.current = 0;
   };
@@ -133,15 +131,25 @@ export default observer((props: Props) => {
   return (
     <Modal
       title={'执行动作'}
-      open={open}
+      open
       width={800}
       onCancel={() => {
-        setOpen(false);
+        props.cancel();
+        DeviceModel.current = 0;
       }}
       maskClosable={false}
       footer={
         <div className="steps-action">
-          {DeviceModel.current === 0 && <Button onClick={() => {}}>取消</Button>}
+          {DeviceModel.current === 0 && (
+            <Button
+              onClick={() => {
+                props.cancel();
+                DeviceModel.current = 0;
+              }}
+            >
+              取消
+            </Button>
+          )}
           {DeviceModel.current > 0 && (
             <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
               上一步

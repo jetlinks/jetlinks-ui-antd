@@ -23,20 +23,20 @@ export default (props: Props) => {
   const [propertiesId, setPropertiesId] = useState<string | undefined>(undefined);
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
-  const [source, setSource] = useState<string>('');
+  const [source, setSource] = useState<string>('fixed');
 
   useEffect(() => {
-    console.log(props.value);
+    // console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
           setPropertiesValue(props.value[0]);
         } else if ('undefined' in props.value) {
-          // setPropertiesKey(undefined);
           setPropertiesValue(undefined);
         } else {
+          console.log(Object.keys(props.value));
           Object.keys(props.value).forEach((key: string) => {
-            // setPropertiesKey(key);
+            setPropertiesId(key);
             setPropertiesValue(props.value[key].value);
             const propertiesItem = props.properties.find((item: any) => item.id === key);
             if (propertiesItem) {
@@ -46,13 +46,11 @@ export default (props: Props) => {
         }
       }
     } else {
-      // setPropertiesKey(undefined);
       setPropertiesValue(undefined);
     }
   }, [props.value, props.properties]);
 
   useEffect(() => {
-    // console.log(propertiesValue)
     if (props.onChange && propertiesValue) {
       const obj = {
         [propertiesId || 0]: {
@@ -69,7 +67,7 @@ export default (props: Props) => {
       <Col span={12}>
         <Select
           id={props.id}
-          value={props.value ? props.value[0] : undefined}
+          value={props.value ? propertiesId : undefined}
           options={props.properties?.filter((item) => {
             if (item.expands && item.expands.type) {
               return item.expands.type.includes('write');
@@ -93,6 +91,7 @@ export default (props: Props) => {
             type={propertiesType}
             name={props.name}
             onChange={(value, sources) => {
+              console.log(value, sources);
               setPropertiesValue(value);
               setSource(sources);
             }}
