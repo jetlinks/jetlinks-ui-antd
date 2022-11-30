@@ -1,7 +1,7 @@
 import { ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import { ProductItem } from '@/pages/device/Product/typings';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Product/index';
 import { SceneProductCard } from '@/components/ProTableCard/CardItems/product';
@@ -12,7 +12,11 @@ import { service as deptService } from '@/pages/system/Department';
 import DeviceModel from '../model';
 import { observer } from '@formily/reactive-react';
 
-export default observer(() => {
+interface Props {
+  productId: string;
+}
+
+export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
@@ -189,6 +193,17 @@ export default observer(() => {
           }),
     },
   ];
+
+  useEffect(() => {
+    if (props.productId) {
+      service.detail(props.productId).then((res) => {
+        if (res.status === 200) {
+          DeviceModel.productDetail = res.result;
+        }
+      });
+    }
+  }, []);
+
   return (
     <div>
       <SearchComponent
@@ -219,8 +234,7 @@ export default observer(() => {
           rowSelection={{
             type: 'radio',
             selectedRowKeys: [DeviceModel.productId],
-            onChange: (selectedRowKeys, selectedRows) => {
-              // console.log(selectedRowKeys,selectedRows)
+            onChange: (_, selectedRows) => {
               DeviceModel.productId = selectedRows.map((item) => item.id)?.[0];
               DeviceModel.productDetail = selectedRows?.[0];
             },
