@@ -14,6 +14,7 @@ import './index.less';
 import { onlyMessage } from '@/utils/util';
 import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
+import { cloneDeep } from 'lodash';
 
 const defaultBranches = [
   {
@@ -34,20 +35,9 @@ const defaultBranches = [
     ],
     key: 'branckes_1',
     shakeLimit: {
-      enabled: true,
-      time: 1,
-      threshold: 1,
-      alarmFirst: false,
-    },
-    then: [],
-  },
-  {
-    when: [],
-    key: 'branckes_2',
-    shakeLimit: {
-      enabled: true,
-      time: 1,
-      threshold: 1,
+      enabled: false,
+      time: 0,
+      threshold: 0,
       alarmFirst: false,
     },
     then: [],
@@ -56,9 +46,13 @@ const defaultBranches = [
 
 const defaultOptions = {
   trigger: {},
-  terms: [
+  when: [
     {
-      terms: [],
+      terms: [
+        {
+          terms: [],
+        },
+      ],
     },
   ],
 };
@@ -85,7 +79,20 @@ export default observer(() => {
         type: '',
       },
       options: defaultOptions,
-      branches: defaultBranches,
+      branches: [
+        ...defaultBranches,
+        {
+          when: [],
+          key: 'branckes_2',
+          shakeLimit: {
+            enabled: false,
+            time: 0,
+            threshold: 0,
+            alarmFirst: false,
+          },
+          then: [],
+        },
+      ],
     };
   };
 
@@ -125,12 +132,23 @@ export default observer(() => {
               return bItem;
             });
           }
+          branches.push({
+            when: [],
+            key: 'branckes_2',
+            shakeLimit: {
+              enabled: false,
+              time: 0,
+              threshold: 0,
+              alarmFirst: false,
+            },
+            then: [],
+          });
           FormModel.current = {
             ...resp.result,
-            options: resp.result.options || defaultOptions,
-            branches,
           };
-          console.log('FormModel', FormModel);
+          FormModel.current.options = { ...defaultOptions, ...resp.result.options };
+          FormModel.current.trigger = resp.result.trigger || {};
+          FormModel.current.branches = branches;
         }
       });
     }
@@ -163,7 +181,22 @@ export default observer(() => {
   };
 
   const submit = useCallback(() => {
-    service.updateScene(FormModel.current).then((res) => {
+    const FormData = cloneDeep(FormModel.current);
+    const { options, branches } = FormData;
+    if (options?.terms) {
+      options.when = options.when.filter((item: any) => {
+        const terms = item.terms.filter((tItem: any) => !!tItem.length);
+        return !!terms.length;
+      });
+      if (!options.terms.length) {
+        delete options.terms;
+      }
+    }
+
+    if (branches) {
+      FormData.branches = branches.filter((item) => !!item.then.length || !!item.when.length);
+    }
+    service.updateScene(FormData).then((res) => {
       if (res.status === 200) {
         onlyMessage('操作成功', 'success');
         const url = getMenuPathByCode('rule-engine/Scene');

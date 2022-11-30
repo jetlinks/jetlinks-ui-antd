@@ -43,6 +43,7 @@ export default observer(() => {
                 paramsOptions={TermsModel.columnOptions}
                 onDelete={() => {
                   FormModel.current.branches?.splice(index, 1);
+                  FormModel.current.options?.when?.splice(index, 1);
                 }}
               />
             );

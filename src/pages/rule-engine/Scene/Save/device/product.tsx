@@ -244,6 +244,13 @@ export default observer(() => {
               DeviceModel.productId = selectedRows.map((item) => item.id)[0];
               DeviceModel.productDetail = selectedRows?.[0];
               handleMetadata(DeviceModel.productDetail.metadata);
+              // 初始化选择设备类型以及触发类型
+              DeviceModel.deviceKeys = [];
+              DeviceModel.orgId = '';
+              DeviceModel.selector = 'custom';
+              DeviceModel.operation = {
+                operator: 'online',
+              };
             },
           }}
           request={(params) =>

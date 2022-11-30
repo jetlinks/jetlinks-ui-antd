@@ -45,14 +45,17 @@
       width: 0;
 
       &.border {
-        padding: 18px;
+        padding: 10px 18px 18px 18px;
         border: 1px dashed #999;
         border-radius: 2px;
       }
 
       .actions-terms-list {
         display: flex;
-        flex-wrap: wrap;
+        padding-top: 10px;
+        overflow-x: auto;
+        overflow-y: visible;
+        // flex-wrap: wrap;
         row-gap: 16px;
       }
     }
@@ -69,7 +72,9 @@
 }
 
 .terms-params {
-  display: inline-block;
+  // display: inline-block;
+  display: flex;
+  flex-shrink: 0;
 
   // &:not(:first-child) {
   //   margin-bottom: 16px;
@@ -83,14 +88,18 @@
   .terms-params-content {
     position: relative;
     display: flex;
-    flex-wrap: wrap;
+    // flex-wrap: wrap;
     padding: 8px;
     background-color: #fafafa;
     row-gap: 16px;
+    .terms-params-item {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .terms-add {
-    display: inline-block;
+    // display: inline-block;
     width: 66px;
     margin-left: 16px;
     padding: 2px 8px;
@@ -99,10 +108,15 @@
     border: 1px dashed rgba(0, 0, 0, 0.3);
     border-radius: 30px;
     cursor: pointer;
+
+    .terms-content {
+      display: flex;
+      align-items: center;
+    }
   }
 
   .term-type-warp {
-    display: inline-block;
+    // display: inline-block;
     width: 50px;
     margin: 0 16px;
     .term-type {
@@ -115,7 +129,7 @@
 
 .terms-params-item {
   .params-button {
-    display: inline-block;
+    // display: inline-block;
     padding: 6px 8px;
     border: 1px solid #d9d9d9;
     border-radius: 8px;
@@ -124,10 +138,15 @@
 
   .params-item_button {
     position: relative;
-    display: inline-block;
+    // display: inline-block;
+    display: flex;
     padding: 4px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 2px;
+
+    // > div {
+    //   flex-shrink: 0;
+    // }
 
     .button-delete {
       .deleteBtn();
@@ -135,7 +154,7 @@
   }
 
   .term-add {
-    display: inline-block;
+    // display: inline-block;
     width: 66px;
     margin-left: 16px;
     padding: 4px 8px;

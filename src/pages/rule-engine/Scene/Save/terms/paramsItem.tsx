@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import type { TermsType, TermsVale } from '@/pages/rule-engine/Scene/typings';
 import { DropdownButton, ParamsDropdown } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
@@ -12,6 +12,7 @@ interface ParamsItemProps {
   pName: (number | string)[];
   name: number;
   isLast: boolean;
+  isDelete: boolean;
   options: any[];
   onValueChange?: (value: TermsType) => void;
   onLableChange?: (label: string) => void;
@@ -33,8 +34,15 @@ const ParasmItem = observer((props: ParamsItemProps) => {
   const [column, setColumn] = useState('');
   const [label, setLabel] = useState<any[]>([undefined, undefined, {}]);
 
+  const ValueRef = useRef<Partial<TermsType>>({
+    column: '',
+    termType: '',
+    value: undefined,
+  });
+
   const valueChange = useCallback(
     (_value: any) => {
+      console.log({ ..._value });
       props.onValueChange?.({ ..._value });
     },
     [column, termType, value],
@@ -42,9 +50,11 @@ const ParasmItem = observer((props: ParamsItemProps) => {
 
   const valueEventChange = useCallback(
     (_v: any) => {
+      console.log('valueEventChange', column, termType);
+
       valueChange({
-        column,
-        termType,
+        column: ValueRef.current.column,
+        termType: ValueRef.current.termType,
         value: _v,
       });
     },
@@ -108,9 +118,12 @@ const ParasmItem = observer((props: ParamsItemProps) => {
   };
 
   useEffect(() => {
+    console.log('paramsChange', props.data);
+
     setTermType(props.data.termType || '');
     setValue(props.data.value);
     setColumn(props.data.column || '');
+    ValueRef.current = props.data || {};
   }, [props.data]);
 
   useEffect(() => {
@@ -175,8 +188,12 @@ const ParasmItem = observer((props: ParamsItemProps) => {
     <div className="terms-params-item">
       <div
         className="params-item_button"
-        onMouseOver={() => setDeleteVisible(true)}
-        onMouseOut={() => setDeleteVisible(false)}
+        onMouseOver={() => {
+          if (props.isDelete) setDeleteVisible(true);
+        }}
+        onMouseOut={() => {
+          if (props.isDelete) setDeleteVisible(false);
+        }}
       >
         <DropdownButton
           options={paramOptions}
@@ -196,6 +213,7 @@ const ParasmItem = observer((props: ParamsItemProps) => {
             });
             paramChange(item);
             setColumn(_value!);
+            ValueRef.current.column = _value!;
             const node = item.node;
             const _termTypeOptions: any[] =
               node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
@@ -240,7 +258,7 @@ const ParasmItem = observer((props: ParamsItemProps) => {
 
             label[1] = v;
             setLabel([...label]);
-
+            ValueRef.current.termType = v;
             valueChange({
               column: props.data.column,
               value: value as TermsVale,
@@ -298,6 +316,8 @@ const ParasmItem = observer((props: ParamsItemProps) => {
                 ...v,
               });
               label[2] = { 0: lb };
+              console.log('onchange', ValueRef.current, termType, props.data.column);
+
               setLabel([...label]);
               valueEventChange(v);
             }}
@@ -324,8 +344,10 @@ const ParasmItem = observer((props: ParamsItemProps) => {
         </div>
       ) : (
         <div className="term-add" onClick={props.onAdd}>
-          <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
-          <span>条件</span>
+          <div className="terms-content">
+            <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
+            <span>条件</span>
+          </div>
         </div>
       )}
     </div>

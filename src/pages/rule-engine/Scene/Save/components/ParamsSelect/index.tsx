@@ -1,6 +1,6 @@
 import { DownOutlined } from '@ant-design/icons';
-import { Input } from 'antd';
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { Dropdown, Input } from 'antd';
+import { useState, useEffect, ReactNode } from 'react';
 import './index.less';
 import classNames from 'classnames';
 import { InputProps } from 'antd/lib/input/Input';
@@ -28,10 +28,10 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const [visible, setVisible] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const [tabKey, setTabKey] = useState<string>(props?.tabKey || props.itemList[0]?.key);
-  const wrapperRef = useRef<any>(null);
-  const nodeRef = useRef<any>(null);
+  // const wrapperRef = useRef<any>(null);
+  // const nodeRef = useRef<any>(null);
   const [value, setValue] = useState<any>(props.value);
 
   useEffect(() => {
@@ -44,33 +44,60 @@ export default (props: Props) => {
 
   useEffect(() => {
     if (props.open !== undefined) {
-      setVisible(props.open);
+      setOpen(props.open);
     }
   }, [props.open]);
 
-  const handleClick = (e: any) => {
-    if (visible && e.target) {
-      if (!(wrapperRef.current && wrapperRef.current.contains(e.target))) {
-        setVisible(false);
-        props.openChange?.(false);
-      }
-    }
-  };
+  // const handleClick = (e: any) => {
+  //   if (open && e.target) {
+  //     if (!(wrapperRef.current && wrapperRef.current.contains(e.target))) {
+  //       setOpen(false);
+  //       props.openChange?.(false);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('click', handleClick);
-    return () => {
-      window.removeEventListener('click', handleClick);
-    };
-  });
+  // useEffect(() => {
+  //   window.addEventListener('click', handleClick);
+  //   return () => {
+  //     window.removeEventListener('click', handleClick);
+  //   };
+  // });
 
   // useEffect(() => {
   //   props.onChange(value, tabKey);
   // }, [value, tabKey]);
-  const _bosyStyle = props.bodyStyle || {};
+  // const _bosyStyle = props.bodyStyle || {};
 
   return (
-    <div className={'select-wrapper'} ref={wrapperRef} style={props.style}>
+    <Dropdown
+      trigger={['click']}
+      open={open}
+      onOpenChange={setOpen}
+      dropdownRender={() => (
+        <div className="select-box">
+          <div className={'select-box-header-top'}>
+            <div className={'select-box-header'}>
+              {(props.itemList || []).map((item) => (
+                <div
+                  key={item.key}
+                  className={classNames('select-header-title', item.key === tabKey ? 'active' : '')}
+                  onClick={() => {
+                    setTabKey(item.key);
+                    props.onChange(value, item.key);
+                  }}
+                >
+                  {item.label}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className={'select-box-content'}>
+            {(props?.itemList || []).find((item) => item.key === tabKey)?.content || ''}
+          </div>
+        </div>
+      )}
+    >
       {props.children ? (
         props.children
       ) : (
@@ -82,46 +109,11 @@ export default (props: Props) => {
             setValue(e.target.value);
           }}
           onFocus={() => {
-            setVisible(true);
+            setOpen(true);
             props.openChange?.(true);
           }}
         />
       )}
-      {visible && (
-        <div
-          className={'select-container'}
-          ref={nodeRef}
-          style={props.type !== 'date' ? { minHeight: 100, ..._bosyStyle } : _bosyStyle}
-        >
-          <div className={'select-box'}>
-            <div className={'select-box-header-top'}>
-              <div className={'select-box-header'}>
-                {(props.itemList || []).map((item) => (
-                  <div
-                    key={item.key}
-                    className={classNames(
-                      'select-header-title',
-                      item.key === tabKey ? 'active' : '',
-                    )}
-                    onClick={() => {
-                      setTabKey(item.key);
-                      props.onChange(value, item.key);
-                    }}
-                  >
-                    {item.label}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className={'select-box-content'}>
-              {
-                (props?.itemList || []).find((item) => item.key === tabKey)?.content || ''
-                // contentRender((props?.itemList || []).find(item => item.key === tabKey))
-              }
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </Dropdown>
   );
 };

@@ -45,8 +45,6 @@ export default observer(() => {
     return _label;
   };
 
-  console.log(FormModel.current);
-
   return (
     <div>
       <div style={{ marginBottom: 16 }}>

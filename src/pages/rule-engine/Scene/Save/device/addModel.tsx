@@ -78,8 +78,6 @@ export default observer((props: AddProps) => {
         props.value.selector === 'custom'
           ? props.value.selectorValues?.map((item) => item.value) || []
           : [];
-      // Object.assign(DeviceModel, props.value);
-      console.log('addModel', DeviceModel, props.value);
     }
   }, [props.value]);
 

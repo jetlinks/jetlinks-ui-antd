@@ -70,13 +70,15 @@ const DropdownButton = (props: DropdownButtonProps) => {
 
   const DropdownRender = useMemo(() => {
     return (
-      <Tree
-        selectedKeys={myValue ? [myValue] : []}
-        onSelect={treeSelect}
-        treeData={props.options}
-        fieldNames={props.fieldNames}
-        height={500}
-      />
+      <div className={styles['dropdown-content']}>
+        <Tree
+          selectedKeys={myValue ? [myValue] : []}
+          onSelect={treeSelect}
+          treeData={props.options}
+          fieldNames={props.fieldNames}
+          height={500}
+        />
+      </div>
     );
   }, [props.options, myValue]);
 

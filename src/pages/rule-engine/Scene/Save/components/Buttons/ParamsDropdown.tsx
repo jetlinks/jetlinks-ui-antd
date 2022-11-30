@@ -33,8 +33,6 @@ const Menus = (props: MenusProps) => {
   const [value, setValue] = useState(props.value);
 
   useEffect(() => {
-    console.log('menus-useEffect', props.value);
-
     setValue(props.value);
   }, [props.value]);
 
@@ -78,8 +76,6 @@ export default (props: ParamsDropdownProps) => {
     [activeKey],
   );
 
-  console.log('activeKey', activeKey);
-
   const renderNode = useCallback(
     (type: string, _v: any, config: any) => {
       let _value = _v;
@@ -121,8 +117,9 @@ export default (props: ParamsDropdownProps) => {
         case 'date':
           return (
             <MTimePicker
-              value={moment(_value, 'HH:mm:ss')}
+              value={_value ? moment(_value, 'HH:mm:ss') : undefined}
               onChange={(_: any, timeString: string) => {
+                console.log('timeString', timeString);
                 onValueChange(timeString, timeString);
               }}
             />
@@ -177,8 +174,6 @@ export default (props: ParamsDropdownProps) => {
   };
 
   useEffect(() => {
-    console.log('params-dropdown', props.value, props);
-
     if (props.value?.value === undefined || props.value?.value === '') {
       setLabel('');
     } else if (props.valueType === 'boolean') {
@@ -266,7 +261,7 @@ export default (props: ParamsDropdownProps) => {
       }}
       tabKey={activeKey}
       itemList={_itemList}
-      style={{ width: 'auto', display: 'inline-block' }}
+      style={{ width: 'auto' }}
       bodyStyle={{ width: 'auto' }}
       type={props.valueType}
       open={open}
