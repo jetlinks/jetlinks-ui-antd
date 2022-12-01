@@ -97,6 +97,14 @@ export default observer(() => {
   };
 
   useEffect(() => {
+    return () => {
+      // 销毁
+      console.log('销毁');
+      FormModelInit();
+    };
+  }, []);
+
+  useEffect(() => {
     FormModelInit();
     if (id) {
       service.detail(id).then((resp) => {

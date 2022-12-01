@@ -1,6 +1,6 @@
 import ProTable from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
-import { DeviceModel } from './addModel';
+import { TriggerDeviceModel } from './addModel';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { service } from '@/pages/system/Department';
 import { useState, useRef } from 'react';
@@ -49,15 +49,17 @@ export default observer(() => {
         tableAlertRender={false}
         rowSelection={{
           type: 'radio',
-          selectedRowKeys: [DeviceModel.orgId],
+          selectedRowKeys: [TriggerDeviceModel.orgId],
           onChange: (_, selectedRows) => {
             if (selectedRows.length) {
               const item = selectedRows[0];
-              DeviceModel.orgId = item.id;
-              DeviceModel.selectorValues = [{ value: DeviceModel.orgId, name: item.name }];
+              TriggerDeviceModel.orgId = item.id;
+              TriggerDeviceModel.selectorValues = [
+                { value: TriggerDeviceModel.orgId, name: item.name },
+              ];
             } else {
-              DeviceModel.orgId = '';
-              DeviceModel.selectorValues = [];
+              TriggerDeviceModel.orgId = '';
+              TriggerDeviceModel.selectorValues = [];
             }
           },
         }}

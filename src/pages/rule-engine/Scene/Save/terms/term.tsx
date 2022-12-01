@@ -25,7 +25,8 @@ export default observer((props: TermsProps) => {
 
   const addTerms = () => {
     const data = get(FormModel.current.branches, [...props.pName]);
-    FormModel.current.options!.when[props.whenName].terms.push({
+
+    FormModel.current.options?.when[props.whenName]?.terms?.push({
       terms: [],
     });
     const key = `terms_${new Date().getTime()}`;
@@ -61,7 +62,7 @@ export default observer((props: TermsProps) => {
           <Observer>
             {() => {
               const _when = get(FormModel.current.branches, [...props.pName, props.name]);
-              const terms: TermsType[] = _when.terms;
+              const terms: TermsType[] = _when?.terms || [];
               return terms.map((item, index) => (
                 <ParamsItem
                   pName={[...props.pName, props.name]}
@@ -133,6 +134,9 @@ export default observer((props: TermsProps) => {
               isTree={false}
               type="type"
               value={props.data.type}
+              onChange={(v) => {
+                props.data.type = v;
+              }}
             />
           </div>
         ) : (

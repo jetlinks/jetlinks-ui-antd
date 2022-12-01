@@ -9,14 +9,19 @@ import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
 import { useIntl } from 'umi';
 import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
-import { DeviceModel } from './addModel';
+import { TriggerDeviceModel } from './addModel';
 import { observer, Observer } from '@formily/reactive-react';
 
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const [searchParam, setSearchParam] = useState({});
+  const [searchParam, setSearchParam] = useState<any>({
+    pageIndex: TriggerDeviceModel.devicePage,
+    pageSize: TriggerDeviceModel.devicePageSize,
+  });
   const [isFirst, setIsFirst] = useState(true);
+
+  const [loading, setLoading] = useState(true);
 
   const columns: ProColumns<DeviceInstance>[] = [
     {
@@ -221,8 +226,17 @@ export default observer(() => {
         model={'simple'}
         enableSave={false}
         onSearch={async (data) => {
-          actionRef.current?.reset?.();
-          setSearchParam(data);
+          if (loading) {
+            setSearchParam({
+              pageIndex: TriggerDeviceModel.devicePage,
+              pageSize: TriggerDeviceModel.devicePageSize,
+              ...data,
+            });
+            setLoading(true);
+          } else {
+            actionRef.current?.reset?.();
+            setSearchParam(data);
+          }
         }}
         target="scene-trugger-device"
         defaultParam={[
@@ -230,7 +244,7 @@ export default observer(() => {
             terms: [
               {
                 column: 'productId',
-                value: DeviceModel.productId,
+                value: TriggerDeviceModel.productId,
               },
             ],
           },
@@ -248,12 +262,12 @@ export default observer(() => {
             onlyCard={true}
             tableAlertRender={false}
             rowSelection={{
-              selectedRowKeys: [...DeviceModel.deviceKeys],
+              selectedRowKeys: [...TriggerDeviceModel.deviceKeys],
               onChange(selectedRowKeys, selectedRows) {
-                console.log(selectedRowKeys, DeviceModel.selectorValues, isFirst);
+                console.log(selectedRowKeys);
                 if (!isFirst) {
-                  DeviceModel.deviceKeys = selectedRows.map((item) => item.id);
-                  DeviceModel.selectorValues = selectedRows.map((item) => ({
+                  TriggerDeviceModel.deviceKeys = selectedRows.map((item) => item.id);
+                  TriggerDeviceModel.selectorValues = selectedRows.map((item) => ({
                     name: item.name,
                     value: item.id,
                   }));
@@ -261,6 +275,10 @@ export default observer(() => {
                   setIsFirst(false);
                 }
               },
+            }}
+            onPageChange={(page, size) => {
+              TriggerDeviceModel.devicePage = page;
+              TriggerDeviceModel.devicePageSize = size;
             }}
             request={(params) =>
               service.query({

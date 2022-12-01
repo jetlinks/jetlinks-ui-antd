@@ -9,33 +9,37 @@ import { isNoCommunity } from '@/utils/util';
 import { useIntl } from 'umi';
 import { service as categoryService } from '@/pages/device/Category';
 import { service as deptService } from '@/pages/system/Department';
-import { DeviceModel } from './addModel';
+import { TriggerDeviceModel } from './addModel';
 import { observer } from '@formily/reactive-react';
 
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const [searchParam, setSearchParam] = useState({});
+  const [searchParam, setSearchParam] = useState<any>({
+    pageIndex: TriggerDeviceModel.productPage,
+    pageSize: TriggerDeviceModel.productPageSize,
+  });
+
+  const [loading, setLoading] = useState(true);
 
   const handleMetadata = (metadata?: string) => {
     try {
-      DeviceModel.metadata = JSON.parse(metadata || '{}');
+      TriggerDeviceModel.metadata = JSON.parse(metadata || '{}');
     } catch (error) {
-      DeviceModel.metadata = {};
+      TriggerDeviceModel.metadata = {};
     }
   };
 
   useEffect(() => {
-    if (DeviceModel.productId && !DeviceModel.productDetail.id) {
-      service.detail(DeviceModel.productId).then((res) => {
-        console.log(res);
+    if (TriggerDeviceModel.productId && !TriggerDeviceModel.productDetail.id) {
+      service.detail(TriggerDeviceModel.productId).then((res) => {
         if (res.status === 200) {
-          DeviceModel.productDetail = res.result;
+          TriggerDeviceModel.productDetail = res.result;
           handleMetadata(res.result.metadata);
         }
       });
     }
-  }, [DeviceModel.productId]);
+  }, [TriggerDeviceModel.productId]);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -216,8 +220,17 @@ export default observer(() => {
         model={'simple'}
         enableSave={false}
         onSearch={async (data) => {
-          actionRef.current?.reset?.();
-          setSearchParam(data);
+          if (loading) {
+            setSearchParam({
+              pageIndex: TriggerDeviceModel.devicePage,
+              pageSize: TriggerDeviceModel.devicePageSize,
+              ...data,
+            });
+            setLoading(true);
+          } else {
+            actionRef.current?.reset?.();
+            setSearchParam(data);
+          }
         }}
         target="department-assets-product"
       />
@@ -238,20 +251,24 @@ export default observer(() => {
           tableAlertRender={false}
           rowSelection={{
             type: 'radio',
-            selectedRowKeys: [DeviceModel.productId],
+            selectedRowKeys: [TriggerDeviceModel.productId],
             onChange: (_, selectedRows) => {
               console.log(selectedRows);
-              DeviceModel.productId = selectedRows.map((item) => item.id)[0];
-              DeviceModel.productDetail = selectedRows?.[0];
-              handleMetadata(DeviceModel.productDetail.metadata);
+              TriggerDeviceModel.productId = selectedRows.map((item) => item.id)[0];
+              TriggerDeviceModel.productDetail = selectedRows?.[0];
+              handleMetadata(TriggerDeviceModel.productDetail.metadata);
               // 初始化选择设备类型以及触发类型
-              DeviceModel.deviceKeys = [];
-              DeviceModel.orgId = '';
-              DeviceModel.selector = 'custom';
-              DeviceModel.operation = {
+              TriggerDeviceModel.deviceKeys = [];
+              TriggerDeviceModel.orgId = '';
+              TriggerDeviceModel.selector = 'custom';
+              TriggerDeviceModel.operation = {
                 operator: 'online',
               };
             },
+          }}
+          onPageChange={(page, size) => {
+            TriggerDeviceModel.productPage = page;
+            TriggerDeviceModel.productPageSize = size;
           }}
           request={(params) =>
             service.query({

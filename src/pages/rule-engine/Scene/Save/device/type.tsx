@@ -1,7 +1,7 @@
 import { Col, Form, Row, Select } from 'antd';
 import { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import TopCard from './TopCard';
-import { DeviceModel } from './addModel';
+import { TriggerDeviceModel } from './addModel';
 import TimingTrigger from '../components/TimingTrigger';
 import Operation from '../trigger/operation';
 import FunctionCall from '../action/device/functionCall';
@@ -184,7 +184,7 @@ export default forwardRef((props: Props, ref) => {
                   fieldNames={{ label: 'name', value: 'id' }}
                   onSelect={(v: any, propertyItem: any) => {
                     console.log(v);
-                    DeviceModel.options.action = '读取' + propertyItem.name;
+                    TriggerDeviceModel.options.action = '读取' + propertyItem.name;
                   }}
                 />
               </Form.Item>
@@ -200,7 +200,7 @@ export default forwardRef((props: Props, ref) => {
               propertiesList={writeProperty}
               onSelect={(a, item) => {
                 console.log(a);
-                DeviceModel.options.action = '修改' + item.name;
+                TriggerDeviceModel.options.action = '修改' + item.name;
               }}
             />
           </Form.Item>
@@ -214,7 +214,7 @@ export default forwardRef((props: Props, ref) => {
               fieldNames={{ label: 'name', value: 'id' }}
               onSelect={(v: any, evenItem: any) => {
                 console.log(v);
-                DeviceModel.options.action = evenItem.name + '上报';
+                TriggerDeviceModel.options.action = evenItem.name + '上报';
               }}
             />
           </Form.Item>
@@ -238,7 +238,7 @@ export default forwardRef((props: Props, ref) => {
                   }
                   onSelect={(v: any, fcItem: any) => {
                     console.log(v);
-                    DeviceModel.options.action = '执行' + fcItem.name;
+                    TriggerDeviceModel.options.action = '执行' + fcItem.name;
                     if (fcItem) {
                       const _properties = fcItem.valueType
                         ? fcItem.valueType.properties

@@ -31,6 +31,7 @@ interface ProTableCardProps<T> {
   gridColumns?: [number, number, number];
   height?: 'none';
   onlyCard?: boolean; //只展示card
+  onPageChange?: (page: number, size: number) => void;
 }
 
 const ProTableCard = <
@@ -43,9 +44,15 @@ const ProTableCard = <
   const { cardRender, toolBarRender, request, onlyCard, ...extraProps } = props;
   const [model, setModel] = useState<ModelType>(ModelEnum.CARD);
   const [total, setTotal] = useState<number | undefined>(0);
-  const [current, setCurrent] = useState(1); // 当前页
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(Default_Size * 2); // 每页条数
+  const [current, setCurrent] = useState(
+    props.params && props.params.pageIndex ? props.params.pageIndex + 1 : 1,
+  ); // 当前页
+  const [pageIndex, setPageIndex] = useState(
+    props.params && props.params.pageIndex ? props.params.pageIndex : 0,
+  );
+  const [pageSize, setPageSize] = useState(
+    props.params && props.params.pageSize ? props.params.pageSize : Default_Size * 2,
+  ); // 每页条数
   const [column, setColumn] = useState(props.gridColumn || 4);
   const [loading, setLoading] = useState(false);
   const [dataLength, setDataLength] = useState<number>(0);
@@ -155,8 +162,18 @@ const ProTableCard = <
   const pageSizeOptions = [Default_Size * 2, Default_Size * 4, Default_Size * 8, Default_Size * 16];
 
   useEffect(() => {
-    setCurrent(1);
-    setPageIndex(0);
+    console.log('props.params?.pageIndex', props.params?.pageIndex);
+
+    if (props.params?.pageIndex) {
+      setCurrent(props.params?.pageIndex + 1);
+      setPageIndex(props.params?.pageIndex);
+      if (props.params.pageSize) {
+        setPageSize(props.params?.pageSize);
+      }
+    } else {
+      setCurrent(1);
+      setPageIndex(0);
+    }
   }, [props.params]);
 
   return (
@@ -204,6 +221,7 @@ const ProTableCard = <
             setCurrent(page);
             setPageIndex(page - 1);
             setPageSize(size);
+            props.onPageChange?.(page - 1, size);
           },
           pageSize: pageSize,
           current: current,
@@ -266,6 +284,7 @@ const ProTableCard = <
                 setCurrent(page);
                 setPageIndex(page - 1);
                 setPageSize(size);
+                props.onPageChange?.(page - 1, size);
               }}
               pageSizeOptions={pageSizeOptions}
               pageSize={pageSize}
