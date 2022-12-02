@@ -1,7 +1,7 @@
 import { ProTableCard } from '@/components';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProductItem } from '@/pages/device/Product/typings';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Product/index';
 import { SceneProductCard } from '@/components/ProTableCard/CardItems/product';
@@ -12,6 +12,14 @@ import { service as deptService } from '@/pages/system/Department';
 import { TriggerDeviceModel } from './addModel';
 import { observer } from '@formily/reactive-react';
 
+export const handleMetadata = (metadata?: string) => {
+  try {
+    TriggerDeviceModel.metadata = JSON.parse(metadata || '{}');
+  } catch (error) {
+    TriggerDeviceModel.metadata = {};
+  }
+};
+
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
@@ -21,25 +29,6 @@ export default observer(() => {
   });
 
   const [loading, setLoading] = useState(true);
-
-  const handleMetadata = (metadata?: string) => {
-    try {
-      TriggerDeviceModel.metadata = JSON.parse(metadata || '{}');
-    } catch (error) {
-      TriggerDeviceModel.metadata = {};
-    }
-  };
-
-  useEffect(() => {
-    if (TriggerDeviceModel.productId && !TriggerDeviceModel.productDetail.id) {
-      service.detail(TriggerDeviceModel.productId).then((res) => {
-        if (res.status === 200) {
-          TriggerDeviceModel.productDetail = res.result;
-          handleMetadata(res.result.metadata);
-        }
-      });
-    }
-  }, [TriggerDeviceModel.productId]);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -260,7 +249,7 @@ export default observer(() => {
               // 初始化选择设备类型以及触发类型
               TriggerDeviceModel.deviceKeys = [];
               TriggerDeviceModel.orgId = '';
-              TriggerDeviceModel.selector = 'custom';
+              TriggerDeviceModel.selector = 'all';
               TriggerDeviceModel.operation = {
                 operator: 'online',
               };

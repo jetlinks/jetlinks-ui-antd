@@ -129,7 +129,7 @@ export default (props: TimmingTriggerProps) => {
                 to: moment(new Date()).format('HH:mm:ss'),
               }}
             >
-              <RangePicker form={form} />
+              <RangePicker name={[...name, 'period']} form={form} />
             </Form.Item>
             <Form.Item> 每 </Form.Item>
             <Form.Item
