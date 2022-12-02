@@ -870,7 +870,8 @@ const Instance = () => {
         visible={exportVisible}
       />
       <Import
-        data={current}
+        // data={current}
+        type={''}
         close={() => {
           setImportVisible(false);
           actionRef.current?.reload();
