@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Dropdown, Tree } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
+import { onlyMessage } from '@/utils/util';
 
 type DropdownButtonOptions = {
   title: string;
@@ -121,7 +122,14 @@ const DropdownButton = (props: DropdownButtonProps) => {
 
   return (
     <Dropdown {..._options} trigger={['click']} open={open} onOpenChange={setOpen}>
-      <div className={classNames(styles['dropdown-button'], props.className, typeClassName)}>
+      <div
+        className={classNames(styles['dropdown-button'], props.className, typeClassName)}
+        onClick={() => {
+          if (props.options.length === 0) {
+            onlyMessage('请先配置设备触发规则', 'warning');
+          }
+        }}
+      >
         {label || props.placeholder}
       </div>
     </Dropdown>

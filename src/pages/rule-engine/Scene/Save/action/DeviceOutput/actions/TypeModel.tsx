@@ -16,22 +16,33 @@ interface Props {
   onChange?: (data: any, source?: any) => void;
   record?: any; //枚举值使用
   name?: any;
+  source?: string;
 }
 
 export default (props: Props) => {
   const [value, setValue] = useState<any>(props.value || '');
   const [visible, setVisible] = useState<boolean>(false);
   const [objVisiable, setObjVisable] = useState<boolean>(false);
-  const [source, setSource] = useState<string>('fixed');
+  const [source, setSource] = useState<string>(props.source || 'fixed');
   const [builtInList, setBuiltInList] = useState<any[]>([]);
+  const [labelValue, setLabelValue] = useState<any>('');
+
+  const filterTree = (nodes: any[]) => {
+    let lable: any;
+    nodes.forEach((item) => {
+      lable = item.children?.find((it: any) => it.id === props.value);
+    });
+    return lable?.description;
+  };
 
   const sourceChangeEvent = async () => {
     const params = props?.name - 1 >= 0 ? { action: props?.name - 1 } : undefined;
     queryBuiltInParams(FormModel.current, params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
-        console.log(_data);
         setBuiltInList(_data);
+        const label = filterTree(_data);
+        setLabelValue(label);
       }
     });
   };
@@ -173,10 +184,12 @@ export default (props: Props) => {
           height={300}
           defaultExpandAll
           fieldNames={{ title: 'name', key: 'id' }}
-          onSelect={(selectedKeys) => {
+          onSelect={(selectedKeys, e) => {
+            console.log(e.node);
+            setLabelValue(e.node.description);
             setValue(selectedKeys[0]);
             if (props.onChange) {
-              props.onChange(selectedKeys[0]);
+              props.onChange(selectedKeys[0], source);
             }
           }}
         />
@@ -191,11 +204,11 @@ export default (props: Props) => {
         inputProps={{
           placeholder: '请选择',
         }}
-        tabKey={'fixed'}
+        tabKey={source}
         itemList={itemList}
         value={value}
         onChange={(val: any, tabKey: any) => {
-          // console.log(val,tabKey)
+          console.log(val, tabKey);
           setValue(val);
           setSource(tabKey);
           if (props.onChange) {
@@ -203,6 +216,7 @@ export default (props: Props) => {
           }
         }}
         type={props.type}
+        labelValue={labelValue}
       />
       {visible && (
         <AMap
