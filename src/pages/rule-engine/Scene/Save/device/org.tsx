@@ -34,6 +34,7 @@ export default observer(() => {
         onSearch={(data) => {
           setParam(data);
         }}
+        bodyStyle={{ padding: 0, paddingBottom: 16 }}
         model={'simple'}
         target="scene-triggrt-device-category"
       />

@@ -72,6 +72,8 @@ interface Props<T> {
   model?: 'simple' | 'advance';
   enableSave?: boolean;
   initParam?: SearchTermsServer;
+  style?: React.CSSProperties;
+  bodyStyle?: React.CSSProperties;
 }
 
 const termType = [
@@ -790,7 +792,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   );
 
   return (
-    <Card bordered={false} className={styles.container}>
+    <Card
+      bordered={false}
+      className={styles.container}
+      style={props.style}
+      bodyStyle={props.bodyStyle}
+    >
       <Form
         form={form}
         className={styles.form}

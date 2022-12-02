@@ -208,6 +208,7 @@ export default observer(() => {
         field={columns}
         model={'simple'}
         enableSave={false}
+        bodyStyle={{ padding: 0, paddingBottom: 16 }}
         onSearch={async (data) => {
           if (loading) {
             setSearchParam({
@@ -249,7 +250,7 @@ export default observer(() => {
               // 初始化选择设备类型以及触发类型
               TriggerDeviceModel.deviceKeys = [];
               TriggerDeviceModel.orgId = '';
-              TriggerDeviceModel.selector = 'all';
+              TriggerDeviceModel.selector = 'fixed';
               TriggerDeviceModel.operation = {
                 operator: 'online',
               };
