@@ -74,6 +74,7 @@ export default observer(() => {
       {visible && (
         <AddModel
           value={FormModel.current.trigger?.device || defaultDeviceValue}
+          options={FormModel.current.options?.trigger}
           onSave={(data, options) => {
             setVisible(false);
             FormModel.current.options!['trigger'] = options;

@@ -340,6 +340,9 @@ const ParasmItem = observer((props: ParamsItemProps) => {
             isTree={false}
             type="type"
             value={props.data.type}
+            onChange={(v) => {
+              props.data.type = v;
+            }}
           />
         </div>
       ) : (

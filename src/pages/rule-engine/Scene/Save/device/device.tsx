@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { observer } from '@formily/reactive-react';
 import { Form } from 'antd';
 import TopCard from './TopCard';
-import { DeviceModel } from './addModel';
+import { TriggerDeviceModel } from './addModel';
 import DeviceList from './deviceList';
 import OrgList from './org';
 
@@ -34,13 +34,13 @@ export default observer(() => {
 
   useEffect(() => {
     if (form) {
-      form.setFieldsValue({ selector: DeviceModel.selector });
+      form.setFieldsValue({ selector: TriggerDeviceModel.selector });
     }
   }, []);
 
   useEffect(() => {
     if (selector) {
-      DeviceModel.selector = selector;
+      TriggerDeviceModel.selector = selector;
     }
   }, [selector]);
 

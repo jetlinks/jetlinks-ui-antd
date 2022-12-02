@@ -20,8 +20,6 @@ export default observer((props: BranchesItemProps) => {
   const [when, setWhen] = useState<TermsType[]>([]);
 
   useEffect(() => {
-    console.log('branchItem', props.data.when);
-
     if (props.data.when) {
       setWhen(props.data.when);
     }
