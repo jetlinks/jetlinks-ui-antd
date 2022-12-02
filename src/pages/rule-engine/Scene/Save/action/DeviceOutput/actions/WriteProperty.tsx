@@ -26,7 +26,7 @@ export default (props: Props) => {
   const [source, setSource] = useState<string>('fixed');
 
   useEffect(() => {
-    // console.log(props.value);
+    console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -34,10 +34,10 @@ export default (props: Props) => {
         } else if ('undefined' in props.value) {
           setPropertiesValue(undefined);
         } else {
-          console.log(Object.keys(props.value));
           Object.keys(props.value).forEach((key: string) => {
             setPropertiesId(key);
             setPropertiesValue(props.value[key].value);
+            setSource(props.value[key].source);
             const propertiesItem = props.properties.find((item: any) => item.id === key);
             if (propertiesItem) {
               setPropertiesType(propertiesItem.valueType.type);
@@ -90,6 +90,7 @@ export default (props: Props) => {
             value={propertiesValue}
             type={propertiesType}
             name={props.name}
+            source={source}
             onChange={(value, sources) => {
               console.log(value, sources);
               setPropertiesValue(value);

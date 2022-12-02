@@ -25,13 +25,12 @@ interface Props {
   children?: ReactNode;
   open?: boolean;
   openChange?: (open: boolean) => void;
+  labelValue?: string;
 }
 
 export default (props: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const [tabKey, setTabKey] = useState<string>(props?.tabKey || props.itemList[0]?.key);
-  // const wrapperRef = useRef<any>(null);
-  // const nodeRef = useRef<any>(null);
   const [value, setValue] = useState<any>(props.value);
 
   useEffect(() => {
@@ -47,27 +46,6 @@ export default (props: Props) => {
       setOpen(props.open);
     }
   }, [props.open]);
-
-  // const handleClick = (e: any) => {
-  //   if (open && e.target) {
-  //     if (!(wrapperRef.current && wrapperRef.current.contains(e.target))) {
-  //       setOpen(false);
-  //       props.openChange?.(false);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('click', handleClick);
-  //   return () => {
-  //     window.removeEventListener('click', handleClick);
-  //   };
-  // });
-
-  // useEffect(() => {
-  //   props.onChange(value, tabKey);
-  // }, [value, tabKey]);
-  // const _bosyStyle = props.bodyStyle || {};
 
   return (
     <Dropdown
@@ -104,9 +82,11 @@ export default (props: Props) => {
         <Input
           suffix={<DownOutlined style={{ color: 'rgba(0, 0, 0, 0.25)' }} />}
           {...props.inputProps}
-          value={value}
+          value={props.labelValue ? props.labelValue : value}
           onChange={(e) => {
+            console.log(111111);
             setValue(e.target.value);
+            props.onChange(value, tabKey);
           }}
           onFocus={() => {
             setOpen(true);
