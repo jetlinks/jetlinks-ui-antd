@@ -5,7 +5,7 @@ import { Badge, Button, Checkbox, Modal, Radio, Space, Upload } from 'antd';
 import 'antd/lib/tree-select/style/index.less';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/device/Instance';
-import type { DeviceInstance } from '../typings';
+// import type { DeviceInstance } from '../typings';
 import FUpload from '@/components/Upload';
 import { UploadOutlined } from '@ant-design/icons';
 import SystemConst from '@/utils/const';
@@ -17,7 +17,8 @@ import encodeQuery from '@/utils/encodeQuery';
 interface Props {
   visible: boolean;
   close: () => void;
-  data: Partial<DeviceInstance>;
+  type?: string;
+  // data: Partial<DeviceInstance>;
 }
 
 const FileFormat = (props: any) => {
@@ -177,7 +178,12 @@ const Import = (props: Props) => {
 
   useEffect(() => {
     service
-      .getProductList(encodeQuery({ terms: { state: 1 }, sorts: { createTime: 'desc' } }))
+      .getProductList(
+        encodeQuery({
+          terms: { state: 1, accessProvider: props?.type },
+          sorts: { createTime: 'desc' },
+        }),
+      )
       .then((resp) => {
         if (resp.status === 200) {
           const list = resp.result.map((item: { name: any; id: any }) => ({
