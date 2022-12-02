@@ -186,10 +186,11 @@ export default (props: ItemProps) => {
     // console.log('props.data', props.data)
     if (props?.data?.alarm?.mode === 'trigger') {
       return (
-        <div>
+        <div className={'item-options-content'}>
           满足条件后将触发关联
           <a
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setTriggerVisible(true);
             }}
           >

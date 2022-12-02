@@ -132,7 +132,7 @@ export default observer((props: Props) => {
     <Modal
       title={'执行动作'}
       open
-      width={800}
+      width={810}
       onCancel={() => {
         props.cancel();
         NotifyModel.current = 0;

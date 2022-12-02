@@ -394,21 +394,21 @@ export default observer((props: Props) => {
             },
           },
         },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          valueType: 'select',
-          valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
-            },
-            disabled: {
-              text: '禁用',
-              status: 'disabled',
-            },
-          },
-        },
+        // {
+        //   title: '状态',
+        //   dataIndex: 'state',
+        //   valueType: 'select',
+        //   valueEnum: {
+        //     enabled: {
+        //       text: '正常',
+        //       status: 'enabled',
+        //     },
+        //     disabled: {
+        //       text: '禁用',
+        //       status: 'disabled',
+        //     },
+        //   },
+        // },
         {
           title: '运行状态',
           dataIndex: 'runningState',
@@ -473,21 +473,21 @@ export default observer((props: Props) => {
                   },
                 },
         },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          valueType: 'select',
-          valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
-            },
-            disabled: {
-              text: '禁用',
-              status: 'disabled',
-            },
-          },
-        },
+        // {
+        //   title: '状态',
+        //   dataIndex: 'state',
+        //   valueType: 'select',
+        //   valueEnum: {
+        //     enabled: {
+        //       text: '正常',
+        //       status: 'enabled',
+        //     },
+        //     disabled: {
+        //       text: '禁用',
+        //       status: 'disabled',
+        //     },
+        //   },
+        // },
         {
           title: '运行状态',
           dataIndex: 'runningState',

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import './index.less';
-// import { ParallelType } from '../../../typings';
 
 interface ActionsTypeProps {
   value?: string;
@@ -9,14 +8,7 @@ interface ActionsTypeProps {
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
   disabled?: boolean;
-  // type: ParallelType;
   parallel: boolean; //并行true
-}
-
-export enum ActionsTypeEnum {
-  manual = 'manual',
-  timing = 'timer',
-  device = 'device',
 }
 
 const TypeList = [

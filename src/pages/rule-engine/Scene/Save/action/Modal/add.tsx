@@ -105,7 +105,7 @@ export default (props: Props) => {
     <Modal
       title="类型"
       open
-      width={800}
+      width={860}
       onCancel={() => {
         props.close();
       }}

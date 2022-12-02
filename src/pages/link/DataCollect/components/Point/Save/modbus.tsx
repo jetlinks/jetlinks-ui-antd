@@ -34,6 +34,9 @@ export default (props: Props) => {
       accessModes: props.data?.accessModes
         ? (props.data?.accessModes || []).map((item) => item.value)
         : [],
+      features: props.data?.features
+        ? (props.data?.features || []).map((item: any) => item?.value)
+        : [],
     });
   }, [props.data]);
 
@@ -155,9 +158,9 @@ export default (props: Props) => {
               placeholder: '请选择功能码',
             },
             enum: [
-              { label: '线圈寄存器', value: 'Coils' },
-              { label: '保存寄存器', value: 'HoldingRegisters' },
-              { label: '输入寄存器', value: 'DiscreteInputs' },
+              { label: '01线圈寄存器', value: 'Coils' },
+              { label: '03保存寄存器', value: 'HoldingRegisters' },
+              { label: '04输入寄存器', value: 'DiscreteInputs' },
             ],
             'x-validator': [
               {
