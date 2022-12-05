@@ -26,7 +26,7 @@ const AccessConfig = () => {
   const [param, setParam] = useState<any>({ pageSize: 10, terms: [] });
   const { permission } = PermissionButton.usePermission('link/AccessConfig');
 
-  const { minHeight } = useDomFullHeight(`.link-accessConfig`, 36);
+  const { minHeight } = useDomFullHeight(`.link-accessConfig`, 24);
 
   const columns: ProColumns<any>[] = [
     {

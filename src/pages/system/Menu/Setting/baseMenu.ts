@@ -1362,298 +1362,298 @@ export default [
               },
             ],
           },
+        ],
+      },
+      {
+        code: 'link/DataCollect',
+        name: '数据采集',
+        owner: 'iot',
+        sortIndex: 10,
+        url: '/iot/link/DataCollect',
+        icon: 'icon-shuxingpeizhi',
+        showPage: [],
+        permissions: [],
+        children: [
           {
-            code: 'link/DataCollect',
+            code: 'DataCollect/Dashboard',
+            name: '仪表盘',
+            owner: 'iot',
+            sortIndex: 1,
+            url: '/iot/DataCollect/Dashboard',
+            icon: 'icon-shujumoni',
+            showPage: [
+              'dashboard',
+              'data-collect-channel',
+              'data-collect-opc',
+              'data-collector',
+              'things-collector',
+            ],
+            permissions: [
+              { permission: 'dashboard', actions: ['query'] },
+              { permission: 'data-collect-channel', actions: ['query'] },
+              { permission: 'data-collect-opc', actions: ['query'] },
+              { permission: 'data-collector', actions: ['query'] },
+              { permission: 'things-collector', actions: ['query'] },
+            ],
+            buttons: [],
+          },
+          {
+            code: 'DataCollect/DataGathering',
             name: '数据采集',
             owner: 'iot',
-            sortIndex: 10,
-            url: '/iot/link/DataCollect',
-            icon: 'icon-shuxingpeizhi',
-            showPage: [],
+            sortIndex: 2,
+            url: '/iot/DataCollect/DataGathering',
+            icon: 'icon-rizhifuwu',
+            showPage: [
+              'data-collect-channel',
+              'data-collect-opc',
+              'data-collector',
+              'things-collector',
+            ],
             permissions: [],
-            children: [
+            buttons: [
               {
-                code: 'link/DataCollect/Dashboard',
-                name: '仪表盘',
-                owner: 'iot',
-                sortIndex: 1,
-                url: '/iot/link/DataCollect/Dashboard',
-                icon: 'icon-shujumoni',
-                showPage: [
-                  'dashboard',
-                  'data-collect-channel',
-                  'data-collect-opc',
-                  'data-collector',
-                  'things-collector',
-                ],
+                id: 'view',
+                name: '查看',
                 permissions: [
-                  { permission: 'dashboard', actions: ['query'] },
-                  { permission: 'data-collect-channel', actions: ['query'] },
-                  { permission: 'data-collect-opc', actions: ['query'] },
-                  { permission: 'data-collector', actions: ['query'] },
-                  { permission: 'things-collector', actions: ['query'] },
-                ],
-                buttons: [],
-              },
-              {
-                code: 'link/DataCollect/DataGathering',
-                name: '数据采集',
-                owner: 'iot',
-                sortIndex: 2,
-                url: '/iot/link/DataCollect/DataGathering',
-                icon: 'icon-rizhifuwu',
-                showPage: [
-                  'data-collect-channel',
-                  'data-collect-opc',
-                  'data-collector',
-                  'things-collector',
-                ],
-                permissions: [],
-                buttons: [
                   {
-                    id: 'view',
-                    name: '查看',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['query'],
-                      },
-                    ],
+                    permission: 'data-collect-channel',
+                    actions: ['query'],
                   },
                   {
-                    id: 'add',
-                    name: '新增',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['save', 'query'],
-                      },
-                    ],
+                    permission: 'data-collector',
+                    actions: ['query'],
                   },
                   {
-                    id: 'update',
-                    name: '编辑',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'certificate',
-                        actions: ['query'],
-                      },
-                    ],
+                    permission: 'data-collect-opc',
+                    actions: ['query'],
                   },
                   {
-                    id: 'action',
-                    name: '禁用/启用',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['save', 'query'],
-                      },
-                    ],
-                  },
-                  {
-                    id: 'delete',
-                    name: '删除',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['delete', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['delete', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['delete', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['delete', 'query'],
-                      },
-                    ],
+                    permission: 'things-collector',
+                    actions: ['query'],
                   },
                 ],
               },
               {
-                code: 'link/DataCollect/IntegratedQuery',
-                name: '综合查询',
-                owner: 'iot',
-                sortIndex: 3,
-                url: '/iot/link/DataCollect/IntegratedQuery',
-                icon: 'icon-zhilianshebei',
-                showPage: [
-                  'data-collect-channel',
-                  'data-collect-opc',
-                  'data-collector',
-                  'things-collector',
+                id: 'add',
+                name: '新增',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['save', 'query'],
+                  },
                 ],
-                permissions: [],
-                buttons: [
+              },
+              {
+                id: 'update',
+                name: '编辑',
+                permissions: [
                   {
-                    id: 'view',
-                    name: '查看',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['query'],
-                      },
-                    ],
+                    permission: 'data-collect-channel',
+                    actions: ['save', 'query'],
                   },
                   {
-                    id: 'add',
-                    name: '新增',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['save', 'query'],
-                      },
-                    ],
+                    permission: 'data-collector',
+                    actions: ['save', 'query'],
                   },
                   {
-                    id: 'update',
-                    name: '编辑',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'certificate',
-                        actions: ['query'],
-                      },
-                    ],
+                    permission: 'data-collect-opc',
+                    actions: ['save', 'query'],
                   },
                   {
-                    id: 'action',
-                    name: '禁用/启用',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['save', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['save', 'query'],
-                      },
-                    ],
+                    permission: 'things-collector',
+                    actions: ['save', 'query'],
                   },
                   {
-                    id: 'delete',
-                    name: '删除',
-                    permissions: [
-                      {
-                        permission: 'data-collect-channel',
-                        actions: ['delete', 'query'],
-                      },
-                      {
-                        permission: 'data-collector',
-                        actions: ['delete', 'query'],
-                      },
-                      {
-                        permission: 'data-collect-opc',
-                        actions: ['delete', 'query'],
-                      },
-                      {
-                        permission: 'things-collector',
-                        actions: ['delete', 'query'],
-                      },
-                    ],
+                    permission: 'certificate',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'action',
+                name: '禁用/启用',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['save', 'query'],
+                  },
+                ],
+              },
+              {
+                id: 'delete',
+                name: '删除',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['delete', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['delete', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['delete', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['delete', 'query'],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            code: 'DataCollect/IntegratedQuery',
+            name: '综合查询',
+            owner: 'iot',
+            sortIndex: 3,
+            url: '/iot/DataCollect/IntegratedQuery',
+            icon: 'icon-zhilianshebei',
+            showPage: [
+              'data-collect-channel',
+              'data-collect-opc',
+              'data-collector',
+              'things-collector',
+            ],
+            permissions: [],
+            buttons: [
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'add',
+                name: '新增',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['save', 'query'],
+                  },
+                ],
+              },
+              {
+                id: 'update',
+                name: '编辑',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'certificate',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'action',
+                name: '禁用/启用',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['save', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['save', 'query'],
+                  },
+                ],
+              },
+              {
+                id: 'delete',
+                name: '删除',
+                permissions: [
+                  {
+                    permission: 'data-collect-channel',
+                    actions: ['delete', 'query'],
+                  },
+                  {
+                    permission: 'data-collector',
+                    actions: ['delete', 'query'],
+                  },
+                  {
+                    permission: 'data-collect-opc',
+                    actions: ['delete', 'query'],
+                  },
+                  {
+                    permission: 'things-collector',
+                    actions: ['delete', 'query'],
                   },
                 ],
               },

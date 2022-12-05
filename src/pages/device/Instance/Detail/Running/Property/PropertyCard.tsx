@@ -106,14 +106,22 @@ const Property = (props: Props) => {
           <FileComponent type="card" value={dataValue} data={data} />
           <div style={{ marginTop: 10 }}>
             <div style={{ color: 'rgba(0, 0, 0, .65)', fontSize: 12 }}>更新时间</div>
-            <div
-              style={{ marginTop: 5, fontSize: 16, color: 'black', minHeight: 25 }}
-              className="value"
+            <Tooltip
+              title={
+                dataValue?.timestamp
+                  ? moment(dataValue?.timestamp).format('YYYY-MM-DD HH:mm:ss')
+                  : ''
+              }
             >
-              {dataValue?.timestamp
-                ? moment(dataValue?.timestamp).format('YYYY-MM-DD HH:mm:ss')
-                : ''}
-            </div>
+              <div
+                style={{ marginTop: 5, fontSize: 16, color: 'black', minHeight: 25 }}
+                className="time-value"
+              >
+                {dataValue?.timestamp
+                  ? moment(dataValue?.timestamp).format('YYYY-MM-DD HH:mm:ss')
+                  : ''}
+              </div>
+            </Tooltip>
           </div>
         </div>
       </Spin>

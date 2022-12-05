@@ -27,7 +27,7 @@ const ChannelModel = model<{
 
 export default observer((props: Props) => {
   const intl = useIntl();
-  const { minHeight } = useDomFullHeight(`.data-collect-channel`, 24);
+  const { minHeight } = useDomFullHeight(`.data-collect-channel-card`, 24);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
   const [loading, setLoading] = useState<boolean>(true);
@@ -148,106 +148,110 @@ export default observer((props: Props) => {
           handleSearch(dt);
         }}
       />
-      <Card loading={loading} bordered={false}>
-        <div style={{ position: 'relative', minHeight }}>
-          <div style={{ height: '100%', paddingBottom: 48 }}>
-            {dataSource?.data.length ? (
-              <>
-                <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
-                  {(dataSource?.data || []).map((record: any) => (
-                    <Col key={record.id} span={props.type ? 8 : 12}>
-                      <ChannelCard
-                        {...record}
-                        state={getState(record)}
-                        actions={[
-                          <PermissionButton
-                            type={'link'}
-                            onClick={() => {
-                              ChannelModel.current = record;
-                              ChannelModel.visible = true;
-                            }}
-                            key={'edit'}
-                            isPermission={permission.update}
-                          >
-                            <EditOutlined />
-                            {intl.formatMessage({
-                              id: 'pages.data.option.edit',
-                              defaultMessage: '编辑',
-                            })}
-                          </PermissionButton>,
-                          <PermissionButton
-                            key="delete"
-                            isPermission={permission.delete}
-                            type={'link'}
-                            style={{ padding: 0 }}
-                            // disabled={record?.state?.value !== 'disabled'}
-                            // tooltip={
-                            //   record?.state?.value !== 'disabled'
-                            //     ? {
-                            //         title: '正常的通道不能删除',
-                            //       }
-                            //     : undefined
-                            // }
-                            popConfirm={{
-                              title: '该操作将会删除下属采集器与点位，确定删除？',
-                              onConfirm: async () => {
-                                await service.removeChannel(record.id);
-                                handleSearch(param);
-                                onlyMessage(
-                                  intl.formatMessage({
-                                    id: 'pages.data.option.success',
-                                    defaultMessage: '操作成功!',
-                                  }),
-                                );
-                              },
-                            }}
-                          >
-                            <DeleteOutlined />
-                          </PermissionButton>,
-                        ]}
-                      />
-                    </Col>
-                  ))}
-                </Row>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    position: 'absolute',
-                    width: '100%',
-                    bottom: 0,
-                  }}
-                >
-                  <Pagination
-                    showSizeChanger
-                    size="small"
-                    className={'pro-table-card-pagination'}
-                    total={dataSource?.total || 0}
-                    current={dataSource?.pageIndex + 1}
-                    onChange={(page, size) => {
-                      handleSearch({
-                        ...param,
-                        pageIndex: page - 1,
-                        pageSize: size,
-                      });
-                    }}
-                    pageSizeOptions={[12, 24, 48, 96]}
-                    pageSize={dataSource?.pageSize}
-                    showTotal={(num) => {
-                      const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
-                      const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
-                      return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
-                    }}
+      <Card
+        loading={loading}
+        bordered={false}
+        style={{ position: 'relative', minHeight }}
+        className={'data-collect-channel-card'}
+      >
+        <div style={{ height: '100%', paddingBottom: 48 }}>
+          {dataSource?.data.length > 0 ? (
+            <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
+              {(dataSource?.data || []).map((record: any) => (
+                <Col key={record.id} span={props.type ? 8 : 12}>
+                  <ChannelCard
+                    {...record}
+                    state={getState(record)}
+                    actions={[
+                      <PermissionButton
+                        type={'link'}
+                        onClick={() => {
+                          ChannelModel.current = record;
+                          ChannelModel.visible = true;
+                        }}
+                        key={'edit'}
+                        isPermission={permission.update}
+                      >
+                        <EditOutlined />
+                        {intl.formatMessage({
+                          id: 'pages.data.option.edit',
+                          defaultMessage: '编辑',
+                        })}
+                      </PermissionButton>,
+                      <PermissionButton
+                        key="delete"
+                        isPermission={permission.delete}
+                        type={'link'}
+                        style={{ padding: 0 }}
+                        // disabled={record?.state?.value !== 'disabled'}
+                        // tooltip={
+                        //   record?.state?.value !== 'disabled'
+                        //     ? {
+                        //         title: '正常的通道不能删除',
+                        //       }
+                        //     : undefined
+                        // }
+                        popConfirm={{
+                          title: '该操作将会删除下属采集器与点位，确定删除？',
+                          placement: 'topRight',
+                          onConfirm: async () => {
+                            await service.removeChannel(record.id);
+                            handleSearch(param);
+                            onlyMessage(
+                              intl.formatMessage({
+                                id: 'pages.data.option.success',
+                                defaultMessage: '操作成功!',
+                              }),
+                            );
+                          },
+                        }}
+                      >
+                        <DeleteOutlined />
+                      </PermissionButton>,
+                    ]}
                   />
-                </div>
-              </>
-            ) : (
-              <div style={{ height: minHeight - 150 }}>
-                <Empty />
-              </div>
-            )}
-          </div>
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <div style={{ height: minHeight - 150 }}>
+              <Empty />
+            </div>
+          )}
         </div>
+        {dataSource?.data?.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              position: 'absolute',
+              width: '100%',
+              bottom: 0,
+            }}
+          >
+            <Pagination
+              showSizeChanger
+              size="small"
+              className={'pro-table-card-pagination'}
+              total={dataSource?.total || 0}
+              current={dataSource?.pageIndex + 1}
+              onChange={(page, size) => {
+                handleSearch({
+                  ...param,
+                  pageIndex: page - 1,
+                  pageSize: size,
+                });
+              }}
+              pageSizeOptions={[12, 24, 48, 96]}
+              pageSize={dataSource?.pageSize}
+              showTotal={(num) => {
+                const minSize = dataSource?.pageIndex * dataSource?.pageSize + 1;
+                const MaxSize = (dataSource?.pageIndex + 1) * dataSource?.pageSize;
+                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+              }}
+            />
+          </div>
+        )}
       </Card>
       {ChannelModel.visible && (
         <Save
