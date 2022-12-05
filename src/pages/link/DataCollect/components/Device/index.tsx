@@ -7,7 +7,13 @@ import service from '@/pages/link/DataCollect/service';
 import CollectorCard from '@/components/ProTableCard/CardItems/DataCollect/device';
 import { Empty, PermissionButton } from '@/components';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import { Card, Col, Pagination, Row } from 'antd';
 import { model } from '@formily/reactive';
@@ -45,7 +51,7 @@ export default observer((props: Props) => {
   const columns: ProColumns<CollectorItem>[] = props.type
     ? [
         {
-          title: '名称',
+          title: '采集器名称',
           dataIndex: 'name',
         },
         {
@@ -108,7 +114,7 @@ export default observer((props: Props) => {
       ]
     : [
         {
-          title: '名称',
+          title: '采集器名称',
           dataIndex: 'name',
         },
         {
@@ -208,8 +214,13 @@ export default observer((props: Props) => {
           handleSearch(dt);
         }}
       />
-      <Card bordered={false} loading={loading}>
-        <div style={{ minHeight, position: 'relative' }}>
+      <Card
+        bordered={false}
+        loading={loading}
+        style={{ minHeight, position: 'relative' }}
+        className={'data-collect-collector'}
+      >
+        <div>
           <div style={{ paddingBottom: 48, height: '100%' }}>
             {!props.type && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
@@ -221,8 +232,9 @@ export default observer((props: Props) => {
                   }}
                   key="button"
                   type="primary"
+                  icon={<PlusOutlined />}
                 >
-                  新增
+                  新增采集器
                 </PermissionButton>
               </div>
             )}
@@ -311,6 +323,7 @@ export default observer((props: Props) => {
                             popConfirm={{
                               title: '该操作将会删除下属点位，确定删除？',
                               disabled: record?.state?.value !== 'disabled',
+                              placement: 'topRight',
                               onConfirm: async () => {
                                 if (record?.state?.value === 'disabled') {
                                   await service.removeCollector(record.id);
@@ -384,7 +397,7 @@ export default observer((props: Props) => {
         <Save
           data={CollectorModel.current}
           channelId={props.id}
-          provider={props.provider}
+          provider={props.provider || CollectorModel.current?.provider}
           close={() => {
             CollectorModel.visible = false;
           }}

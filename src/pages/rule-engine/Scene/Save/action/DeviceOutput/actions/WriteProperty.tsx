@@ -48,7 +48,7 @@ export default (props: Props) => {
     } else {
       setPropertiesValue(undefined);
     }
-  }, [props.value, props.properties]);
+  }, [props.properties]);
 
   useEffect(() => {
     if (props.onChange && propertiesValue) {

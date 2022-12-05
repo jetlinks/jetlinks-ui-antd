@@ -124,8 +124,12 @@ const DropdownButton = (props: DropdownButtonProps) => {
       <div
         className={classNames(styles['dropdown-button'], props.className, typeClassName)}
         onClick={() => {
-          if (props.options.length === 0) {
+          console.log(props.options);
+          if (props.options.length === 0 && props.type !== 'termType') {
             onlyMessage('请先配置设备触发规则', 'warning');
+          }
+          if (props.options.length === 0 && props.type === 'termType') {
+            onlyMessage('请先配置属性值', 'warning');
           }
         }}
       >

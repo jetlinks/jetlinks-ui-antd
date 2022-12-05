@@ -84,7 +84,6 @@ export default (props: Props) => {
           {...props.inputProps}
           value={props.labelValue ? props.labelValue : value}
           onChange={(e) => {
-            console.log(111111);
             setValue(e.target.value);
             props.onChange(value, tabKey);
           }}

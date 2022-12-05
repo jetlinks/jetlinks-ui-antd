@@ -30,6 +30,7 @@ export default (props: Props) => {
       onCancel={() => {
         props.close();
       }}
+      width={750}
       onOk={async () => {
         const values = await form.validateFields();
         const obj = {
@@ -53,7 +54,6 @@ export default (props: Props) => {
           }
         }
       }}
-      width={700}
     >
       <Form name="scene-save" layout={'vertical'} form={form} autoComplete="off">
         <Form.Item

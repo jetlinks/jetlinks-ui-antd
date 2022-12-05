@@ -6,10 +6,10 @@ import {
   StopOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { Button, Input, Tree, Space, Popconfirm, Tooltip } from 'antd';
+import { Button, Input, Tree, Space, Popconfirm, Tooltip, Tag } from 'antd';
 import { observer } from '@formily/react';
 import { model } from '@formily/reactive';
-import { Empty, PermissionButton } from '@/components';
+import { Ellipsis, Empty, PermissionButton } from '@/components';
 import styles from './index.less';
 import service from '@/pages/link/DataCollect/service';
 import { useEffect } from 'react';
@@ -96,6 +96,29 @@ export default observer((props: Props) => {
   //   };
   // };
 
+  const getState = (record: any) => {
+    if (record) {
+      const colorMap = new Map();
+      colorMap.set('running', 'success');
+      colorMap.set('partialError', 'warning');
+      colorMap.set('failed', 'error');
+      colorMap.set('stopped', 'default');
+      if (record?.state?.value === 'enabled') {
+        return (
+          record?.runningState && (
+            <Tag color={colorMap.get(record?.runningState?.value)}>
+              {record?.runningState?.text}
+            </Tag>
+          )
+        );
+      } else {
+        return <Tag color="processing">禁用</Tag>;
+      }
+    } else {
+      return '';
+    }
+  };
+
   return (
     <div>
       <div>
@@ -113,6 +136,7 @@ export default observer((props: Props) => {
       <div style={{ margin: '16px 0' }}>
         <Button
           type="primary"
+          ghost
           style={{ width: '100%' }}
           icon={<PlusOutlined />}
           onClick={() => {
@@ -120,7 +144,7 @@ export default observer((props: Props) => {
             TreeModel.current = {};
           }}
         >
-          新增
+          新增通道
         </Button>
       </div>
       <div>
@@ -145,23 +169,9 @@ export default observer((props: Props) => {
                         }}
                       >
                         <img width={'20px'} style={{ marginRight: 5 }} src={channelImg} />
-                        <div className={'ellipsis'}>
-                          {/* <BadgeStatus
-                            status={
-                              item && getState(item) && getState(item)?.value
-                                ? getState(item).value
-                                : ''
-                            }
-                            text={item.name}
-                            statusNames={{
-                              running: StatusColorEnum.success,
-                              disabled: StatusColorEnum.processing,
-                              partialError: StatusColorEnum.warning,
-                              failed: StatusColorEnum.error,
-                              stopped: StatusColorEnum.default,
-                            }}
-                          /> */}
-                          {item.name}
+                        <div style={{ display: 'flex' }}>
+                          <Ellipsis title={item.name} style={{ marginRight: 5, maxWidth: 120 }} />
+                          {getState(item)}
                         </div>
                       </div>
                       <div>
@@ -211,8 +221,18 @@ export default observer((props: Props) => {
                             }}
                           >
                             <img width={'20px'} style={{ marginRight: 5 }} src={deviceImg} />
-                            <div style={{ width: '120px' }} className={'ellipsis'}>
-                              {i.name}
+                            <div style={{ display: 'flex' }}>
+                              <span
+                                className={'ellipsis'}
+                                style={{
+                                  marginRight: 5,
+                                  maxWidth: 90,
+                                  color: 'rgba(0, 0, 0, 0.6)',
+                                }}
+                              >
+                                {i.name}
+                              </span>
+                              {getState(i)}
                             </div>
                           </div>
                           <div>

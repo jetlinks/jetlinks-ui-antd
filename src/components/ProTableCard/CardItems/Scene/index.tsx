@@ -278,8 +278,10 @@ const actionRender = (action: ActionsType, index: number) => {
 const conditionsRender = (when: any[], index: number) => {
   if (when.length && when[index]) {
     let str: string = '';
-    (when[index]?.terms || []).map((i: any) => {
-      str += `${i?.terms[0] || ''}${i?.termType || ''}`;
+    (when[index]?.terms || []).map((i: any, _index: number) => {
+      str += `${i?.terms[0] || ''}${
+        i?.termType && when[index]?.terms.length !== _index + 1 ? i?.termType : ''
+      }`;
     });
     return str;
   }
@@ -374,7 +376,7 @@ const ContentRender = (data: SceneCardProps) => {
                       {item?.then && item?.then.length && (
                         <div
                           className={styles['right-item-right']}
-                          style={{ width: type === 'device' ? '85%' : '15%' }}
+                          style={{ width: type === 'device' ? '85%' : '100%' }}
                         >
                           {(item?.then || []).map((i: BranchesThen, _index: number) => (
                             <div key={i?.key || _index} className={styles['right-item-right-item']}>
