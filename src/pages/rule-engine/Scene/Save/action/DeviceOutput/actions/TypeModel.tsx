@@ -20,7 +20,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const [value, setValue] = useState<any>(props.value || '');
+  const [value, setValue] = useState<any>(props.value || undefined);
   const [visible, setVisible] = useState<boolean>(false);
   const [objVisiable, setObjVisable] = useState<boolean>(false);
   const [source, setSource] = useState<string>(props.source || 'fixed');
@@ -49,6 +49,7 @@ export default (props: Props) => {
 
   const onChange = (params: any) => {
     setValue(params);
+    setLabelValue(params);
     if (props.onChange) {
       props.onChange(params, source);
     }
@@ -86,6 +87,7 @@ export default (props: Props) => {
             placeholder={'请选择'}
             mode="multiple"
             onChange={(e) => {
+              console.log(e);
               onChange(e);
             }}
           />
@@ -147,6 +149,7 @@ export default (props: Props) => {
             value={moment(value, 'HH:mm:ss')}
             onChange={(_: any, timeString: string) => {
               setValue(timeString);
+              setLabelValue(timeString);
               if (props.onChange) {
                 props.onChange(timeString);
               }
@@ -160,6 +163,7 @@ export default (props: Props) => {
             placeholder={'请输入'}
             onChange={(e) => {
               setValue(e.target.value);
+              setLabelValue(e.target.value);
               if (props.onChange) {
                 props.onChange(e.target.value, source);
               }
@@ -185,7 +189,7 @@ export default (props: Props) => {
           defaultExpandAll
           fieldNames={{ title: 'name', key: 'id' }}
           onSelect={(selectedKeys, e) => {
-            console.log(e.node);
+            // console.log(e.node);
             setLabelValue(e.node.description);
             setValue(selectedKeys[0]);
             if (props.onChange) {
@@ -208,7 +212,7 @@ export default (props: Props) => {
         itemList={itemList}
         value={value}
         onChange={(val: any, tabKey: any) => {
-          console.log(val, tabKey);
+          // console.log(val, tabKey);
           setValue(val);
           setSource(tabKey);
           if (props.onChange) {

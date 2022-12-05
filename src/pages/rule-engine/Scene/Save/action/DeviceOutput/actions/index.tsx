@@ -16,7 +16,7 @@ export default observer((props: Props) => {
   const [form] = Form.useForm();
   const [deviceMessageType, setDeviceMessageType] = useState('');
   const [properties, setProperties] = useState([]); // 物模型-属性
-  const [propertiesId, setPropertiesId] = useState<string | undefined>(''); // 物模型-属性ID,用于串行
+  // const [propertiesId, setPropertiesId] = useState<string | undefined>(''); // 物模型-属性ID,用于串行
   const [functionList, setFunctionList] = useState<any>([]); // 物模型-功能
   const [functionId, setFunctionId] = useState('');
   const [functions, setFunctions] = useState([]);
@@ -43,14 +43,12 @@ export default observer((props: Props) => {
   ];
 
   useEffect(() => {
-    // console.log(DeviceModel.message)
-    setDeviceMessageType(DeviceModel.message.messageType);
     if (DeviceModel.productDetail) {
       const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
       setProperties(metadata.properties);
       setFunctions(metadata.functions);
     }
-  }, [DeviceModel.productDetail, functionId]);
+  }, [DeviceModel.productDetail]);
 
   useEffect(() => {
     if (functionId && functions.length !== 0) {
@@ -71,10 +69,19 @@ export default observer((props: Props) => {
           });
         }
         setFunctionList(array);
-        console.log(propertiesId, 'array');
       }
     }
   }, [functions, functionId]);
+
+  useEffect(() => {
+    if (DeviceModel.message.messageType) {
+      setDeviceMessageType(DeviceModel.message.messageType);
+    }
+    if (DeviceModel.message.functionId) {
+      setFunctionId(DeviceModel.message.functionId);
+    }
+    // console.log(DeviceModel.message)
+  }, [DeviceModel.message]);
 
   useEffect(() => {
     props.get(form);
@@ -93,12 +100,14 @@ export default observer((props: Props) => {
           name={['message', 'messageType']}
           label="动作类型"
           required
+          rules={[{ required: true, message: '请选择动作类型' }]}
           // initialValue="WRITE_PROPERTY"
         >
           <TopCard
             typeList={TypeList}
             onChange={(value: string) => {
               setDeviceMessageType(value);
+              console.log(value);
             }}
           />
         </Form.Item>
@@ -129,11 +138,7 @@ export default observer((props: Props) => {
                 name={['message', 'inputs']}
                 rules={[{ required: true, message: '请输入功能值' }]}
               >
-                <FunctionCall
-                  functionData={functionList}
-                  productId={DeviceModel.productId[0]}
-                  name={props.name}
-                />
+                <FunctionCall functionData={functionList} name={props.name} />
               </Form.Item>
             )}
           </>
@@ -144,7 +149,7 @@ export default observer((props: Props) => {
             label="读取属性"
             rules={[{ required: true, message: '请选择读取属性' }]}
           >
-            <ReadProperty properties={properties} propertiesChange={setPropertiesId} />
+            <ReadProperty properties={properties} />
           </Form.Item>
         )}
         {deviceMessageType === 'WRITE_PROPERTY' && (
