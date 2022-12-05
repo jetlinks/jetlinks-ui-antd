@@ -57,7 +57,8 @@ export default (props: ListProps) => {
       </AddButton>
       {visible && (
         <Modal
-          type={props.type}
+          // type={props.type}
+          parallel={props.parallel}
           name={props.actions.length + 1}
           data={{
             key: `${props.type}_${props.actions.length}`,
