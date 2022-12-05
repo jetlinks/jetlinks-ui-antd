@@ -225,6 +225,7 @@ export default observer(() => {
         field={columns}
         model={'simple'}
         enableSave={false}
+        bodyStyle={{ padding: 0, paddingBottom: 16 }}
         onSearch={async (data) => {
           if (loading) {
             setSearchParam({

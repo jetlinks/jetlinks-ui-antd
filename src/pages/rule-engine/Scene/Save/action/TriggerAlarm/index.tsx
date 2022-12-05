@@ -143,11 +143,12 @@ export default (props: Props) => {
         props.close();
       }}
     >
-      <div>关联告警数量：{count}</div>
+      <div style={{ marginBottom: 24 }}>关联告警数量：{count}</div>
       <ProTable<ConfigurationItem>
         actionRef={actionRef}
         params={{}}
         columns={columns}
+        toolBarRender={false}
         search={false}
         rowKey={'id'}
         columnEmptyText={''}

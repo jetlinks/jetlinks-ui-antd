@@ -385,6 +385,11 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/gateway/device/providers`, {
       method: 'GET',
     });
+  // 边缘网关
+  public restPassword = (id: string) =>
+    request(`/${SystemConst.API_BASE}/edge/operations/${id}/auth-user-password-reset/invoke`, {
+      method: 'POST',
+    });
 }
 
 export default Service;

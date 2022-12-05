@@ -9,6 +9,9 @@ import Device from './device';
 import Type from './type';
 import { numberToString } from '../components/TimingTrigger/whenOption';
 import { timeUnitEnum } from '../components/TimingTrigger';
+import { Store } from 'jetlinks-store';
+import { FormModel } from '@/pages/rule-engine/Scene/Save';
+import { isEqual } from 'lodash';
 
 interface AddProps {
   options?: any;
@@ -43,7 +46,7 @@ const defaultModelData: Omit<DeviceModelProps, 'steps'> = {
   productDetail: {},
   deviceKeys: [],
   orgId: '',
-  selector: 'custom',
+  selector: 'fixed',
   metadata: {},
   operation: {
     operator: 'online',
@@ -80,12 +83,19 @@ export default observer((props: AddProps) => {
     TriggerDeviceModel.stepNumber = 0;
     return () => {
       Object.keys(defaultModelData).forEach((key) => {
-        TriggerDeviceModel[key] = defaultModelData[key];
+        if (
+          ['selector', 'productId', 'selectorValues', 'operation', 'deviceKeys', 'orgId'].includes(
+            key,
+          )
+        ) {
+          TriggerDeviceModel[key] = defaultModelData[key];
+        }
       });
     };
   }, []);
 
   useEffect(() => {
+    console.log('productPage', props.value);
     if (props.value) {
       TriggerDeviceModel.selector = props.value.selector;
       TriggerDeviceModel.productId = props.value.productId;
@@ -93,9 +103,11 @@ export default observer((props: AddProps) => {
       TriggerDeviceModel.selectorValues = props.value.selectorValues;
       TriggerDeviceModel.operation = props.value.operation;
       TriggerDeviceModel.deviceKeys =
-        props.value.selector === 'custom'
+        props.value.selector === 'fixed'
           ? props.value.selectorValues?.map((item) => item.value) || []
           : [];
+      TriggerDeviceModel.orgId =
+        props.value.selector === 'org' ? props.value.selectorValues?.[0].value : [];
     }
   }, [props.value]);
 
@@ -128,7 +140,7 @@ export default observer((props: AddProps) => {
       extraTime: undefined,
       action: TriggerDeviceModel.options.action,
     };
-    if (TriggerDeviceModel.selector === 'custom') {
+    if (TriggerDeviceModel.selector === 'fixed') {
       _options.name = TriggerDeviceModel.selectorValues?.map((item) => item.name).join(',');
     } else if (TriggerDeviceModel.selector === 'org') {
       _options.name = TriggerDeviceModel.selectorValues?.[0].name + '的';
@@ -184,7 +196,7 @@ export default observer((props: AddProps) => {
         onlyMessage('请选择产品', 'error');
       }
     } else if (TriggerDeviceModel.stepNumber === 1) {
-      if (TriggerDeviceModel.selector === 'custom' && !TriggerDeviceModel.selectorValues?.length) {
+      if (TriggerDeviceModel.selector === 'fixed' && !TriggerDeviceModel.selectorValues?.length) {
         onlyMessage('请选择设备', 'error');
         return;
       } else if (
@@ -204,15 +216,18 @@ export default observer((props: AddProps) => {
         _options.productPageSize = TriggerDeviceModel.productPageSize;
         _options.devicePage = TriggerDeviceModel.devicePage;
         _options.devicePageSize = TriggerDeviceModel.devicePageSize;
-        props.onSave?.(
-          {
-            operation: operationData,
-            selectorValues: TriggerDeviceModel.selectorValues,
-            selector: TriggerDeviceModel.selector!,
-            productId: TriggerDeviceModel.productId,
-          },
-          _options,
-        );
+        const saveData = {
+          operation: operationData,
+          selectorValues: TriggerDeviceModel.selectorValues,
+          selector: TriggerDeviceModel.selector!,
+          productId: TriggerDeviceModel.productId,
+        };
+        const isUpdate = isEqual(saveData, FormModel.current.trigger?.device);
+        Store.set('TriggerDeviceModel', {
+          update: !isUpdate,
+        });
+        console.log('isUpdate', isUpdate);
+        props.onSave?.(saveData, _options);
       }
     }
   };

@@ -2318,6 +2318,110 @@ export default [
           },
         ],
       },
+      {
+        code: 'edge',
+        name: '边缘网关',
+        owner: 'iot',
+        sortIndex: 8,
+        url: '/iot/edge',
+        icon: 'icon-zidingyiguize',
+        permissions: [],
+        buttons: [],
+        children: [
+          {
+            code: 'edge/Device',
+            name: '网关设备',
+            owner: 'iot',
+            sortIndex: 1,
+            url: '/iot/edge/Devic',
+            icon: 'icon-changjingliandong',
+            showPage: ['device-instance'],
+            permissions: [],
+            buttons: [
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'device-instance',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'action',
+                name: '启/禁用',
+                permissions: [
+                  {
+                    permission: 'device-instance',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'delete',
+                name: '删除',
+                permissions: [
+                  {
+                    permission: 'device-instance',
+                    actions: ['query', 'delete'],
+                  },
+                ],
+              },
+              {
+                id: 'update',
+                name: '编辑',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'add',
+                name: '新增',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'import',
+                name: '导入',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['save'],
+                  },
+                ],
+              },
+              {
+                id: 'setting',
+                name: '远程控制',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['save'],
+                  },
+                ],
+              },
+              {
+                id: 'password',
+                name: '重置密码',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['save'],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 

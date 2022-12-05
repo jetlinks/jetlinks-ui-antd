@@ -1,4 +1,4 @@
-import type { ReactChild } from 'react';
+import { ReactChild, useEffect } from 'react';
 import Terms from '@/pages/rule-engine/Scene/Save/terms';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { useState } from 'react';
@@ -7,15 +7,34 @@ import AddModel from './addModel';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import classNames from 'classnames';
 import { observer } from '@formily/reactive-react';
+import { service } from '@/pages/device/Product/index';
+import { Store } from 'jetlinks-store';
+import { TriggerDeviceModel } from './addModel';
+import { handleMetadata } from './product';
 
 const defaultDeviceValue = {
   productId: '',
-  selector: 'custom',
+  selector: 'fixed',
   selectorValues: [],
 };
 
 export default observer(() => {
   const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (FormModel.current.trigger!.device?.productId) {
+      service.detail(FormModel.current.trigger!.device?.productId).then((res) => {
+        if (res.status === 200) {
+          TriggerDeviceModel.productDetail = res.result;
+          handleMetadata(res.result.metadata);
+        } else {
+          Store.set('TriggerDeviceModel', {
+            update: true,
+          });
+        }
+      });
+    }
+  }, [FormModel.current.trigger!.device?.productId]);
 
   const handleLabel = (options: any): ReactChild | ReactChild[] => {
     console.log('FormModel', options);

@@ -9,7 +9,7 @@ import OrgList from './org';
 const TypeList = [
   {
     label: '自定义',
-    value: 'custom',
+    value: 'fixed',
     image: require('/public/images/scene/device-custom.png'),
     tip: '自定义选择当前产品下的任意设备',
   },
@@ -34,6 +34,8 @@ export default observer(() => {
 
   useEffect(() => {
     if (form) {
+      console.log('TriggerDeviceModel.selector', TriggerDeviceModel.selector);
+
       form.setFieldsValue({ selector: TriggerDeviceModel.selector });
     }
   }, []);
@@ -51,7 +53,7 @@ export default observer(() => {
           <TopCard typeList={TypeList} />
         </Form.Item>
       </Form>
-      {selector === 'custom' ? <DeviceList /> : selector === 'org' ? <OrgList /> : null}
+      {selector === 'fixed' ? <DeviceList /> : selector === 'org' ? <OrgList /> : null}
     </div>
   );
 });

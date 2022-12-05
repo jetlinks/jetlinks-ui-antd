@@ -7,7 +7,7 @@ import Term from './term';
 import Actions from '@/pages/rule-engine/Scene/Save/action';
 import classNames from 'classnames';
 import { set } from 'lodash';
-
+import { Store } from 'jetlinks-store';
 interface BranchesItemProps {
   name: number;
   data: ActionBranchesProps;
@@ -18,6 +18,16 @@ interface BranchesItemProps {
 
 export default observer((props: BranchesItemProps) => {
   const [when, setWhen] = useState<TermsType[]>([]);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    Store.subscribe('TriggerDeviceModel', (data) => {
+      console.log('Store', data);
+      if (data.update) {
+        setError(true);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (props.data.when) {
@@ -62,7 +72,9 @@ export default observer((props: BranchesItemProps) => {
   return (
     <div className="actions-terms-warp">
       <div className="actions-terms-title">{props.isFrist ? '当' : '否则'}</div>
-      <div className={classNames('actions-terms-options', { border: !props.isFrist })}>
+      <div
+        className={classNames('actions-terms-options', { border: !props.isFrist, error: error })}
+      >
         {!props.isFrist && props.data.when.length ? (
           <div className={classNames('terms-params-delete denger show')} onClick={props.onDelete}>
             <DeleteOutlined />

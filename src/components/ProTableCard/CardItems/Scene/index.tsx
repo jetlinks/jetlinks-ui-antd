@@ -276,8 +276,12 @@ const actionRender = (action: ActionsType, index: number) => {
 };
 
 const conditionsRender = (when: any[], index: number) => {
-  if (when.length) {
-    return (when[index]?.terms || []).join('');
+  if (when.length && when[index]) {
+    let str: string = '';
+    (when[index]?.terms || []).map((i: any) => {
+      str += `${i?.terms[0] || ''}${i?.termType || ''}`;
+    });
+    return str;
   }
   return '';
 };
@@ -342,10 +346,16 @@ const ContentRender = (data: SceneCardProps) => {
                   <div className={styles['card-item-content-action-item-right']}>
                     <div className={styles['card-item-content-action-item-right-item']}>
                       {type === 'device' && (
-                        <div className={styles['right-item-left']}>
-                          <MyTooltip title={conditionsRender(data.options?.terms || [], index)}>
+                        <div
+                          className={styles['right-item-left']}
+                          style={{ width: item?.then && item?.then.length ? '15%' : '100%' }}
+                        >
+                          <MyTooltip
+                            placement={'topLeft'}
+                            title={conditionsRender(data.options?.when || [], index)}
+                          >
                             <div className={classNames(styles['trigger-conditions'], 'ellipsis')}>
-                              {conditionsRender(data.options?.terms || [], index)}
+                              {conditionsRender(data.options?.when || [], index)}
                             </div>
                           </MyTooltip>
                           {item.shakeLimit?.enabled && (
@@ -361,18 +371,23 @@ const ContentRender = (data: SceneCardProps) => {
                           )}
                         </div>
                       )}
-                      <div className={styles['right-item-right']}>
-                        {(item?.then || []).map((i: BranchesThen, _index: number) => (
-                          <div key={i?.key || _index} className={styles['right-item-right-item']}>
-                            <div className={styles['trigger-ways']}>
-                              {i.parallel ? '并行执行' : '串行执行'}
+                      {item?.then && item?.then.length && (
+                        <div
+                          className={styles['right-item-right']}
+                          style={{ width: type === 'device' ? '85%' : '15%' }}
+                        >
+                          {(item?.then || []).map((i: BranchesThen, _index: number) => (
+                            <div key={i?.key || _index} className={styles['right-item-right-item']}>
+                              <div className={styles['trigger-ways']}>
+                                {i.parallel ? '并行执行' : '串行执行'}
+                              </div>
+                              <div className={classNames(styles['right-item-right-item-contents'])}>
+                                {branchesActionRender(Array.isArray(i?.actions) ? i?.actions : [])}
+                              </div>
                             </div>
-                            <div className={classNames(styles['right-item-right-item-contents'])}>
-                              {branchesActionRender(Array.isArray(i?.actions) ? i?.actions : [])}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
