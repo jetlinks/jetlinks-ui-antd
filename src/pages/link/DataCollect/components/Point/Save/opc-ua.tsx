@@ -34,6 +34,9 @@ export default (props: Props) => {
       accessModes: props.data?.accessModes
         ? (props.data?.accessModes || []).map((item) => item.value)
         : [],
+      features: props.data?.features
+        ? (props.data?.features || []).map((item: any) => item?.value)
+        : [],
     });
   }, [props.data]);
 

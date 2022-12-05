@@ -59,7 +59,7 @@ const PointModel = model<{
 
 const PointCard = observer((props: PointCardProps) => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const { minHeight } = useDomFullHeight(`.data-collect-point`, 24);
+  const { minHeight } = useDomFullHeight(`.data-collect-point`);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
@@ -207,8 +207,13 @@ const PointCard = observer((props: PointCardProps) => {
           handleSearch(dt);
         }}
       />
-      <Card loading={loading} bordered={false}>
-        <div style={{ position: 'relative', minHeight }}>
+      <Card
+        loading={loading}
+        bordered={false}
+        className={'data-collect-point'}
+        style={{ position: 'relative', minHeight }}
+      >
+        <div>
           <div style={{ height: '100%', paddingBottom: 48 }}>
             {!props.type && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>

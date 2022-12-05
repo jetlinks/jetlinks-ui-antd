@@ -208,8 +208,13 @@ export default observer((props: Props) => {
           handleSearch(dt);
         }}
       />
-      <Card bordered={false} loading={loading}>
-        <div style={{ minHeight, position: 'relative' }}>
+      <Card
+        bordered={false}
+        loading={loading}
+        style={{ minHeight, position: 'relative' }}
+        className={'data-collect-collector'}
+      >
+        <div>
           <div style={{ paddingBottom: 48, height: '100%' }}>
             {!props.type && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
@@ -311,6 +316,7 @@ export default observer((props: Props) => {
                             popConfirm={{
                               title: '该操作将会删除下属点位，确定删除？',
                               disabled: record?.state?.value !== 'disabled',
+                              placement: 'topRight',
                               onConfirm: async () => {
                                 if (record?.state?.value === 'disabled') {
                                   await service.removeCollector(record.id);

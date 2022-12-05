@@ -663,8 +663,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         handleSearch(false);
         return;
       }
-      form.setInitialValues(JSON.parse(q));
-      handleSearch(false);
+      // form.setInitialValues(JSON.parse(q));
+      // handleSearch(false);
     }
   };
 
