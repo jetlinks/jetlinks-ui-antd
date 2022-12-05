@@ -16,7 +16,7 @@ import OpcSave from '@/pages/link/DataCollect/components/Point/Save/opc-ua';
 import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
 import BatchUpdate from './Save/BatchUpdate';
 import { onlyMessage } from '@/utils/util';
-import { DeleteOutlined, EditOutlined, RedoOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   data?: Partial<CollectorItem>;
@@ -234,8 +234,9 @@ const PointCard = observer((props: PointCardProps) => {
                   }}
                   key="button"
                   type="primary"
+                  icon={<PlusOutlined />}
                 >
-                  {props?.provider === 'OPC_UA' ? '扫描' : '新增'}
+                  {props?.provider === 'OPC_UA' ? '扫描' : '新增点位'}
                 </PermissionButton>
                 {props.provider === 'OPC_UA' && (
                   <Dropdown key={'more'} overlay={menu} placement="bottom">
@@ -362,7 +363,7 @@ export default observer((props: Props) => {
   const columns: ProColumns<PointItem>[] = props.type
     ? [
         {
-          title: '名称',
+          title: '点位名称',
           dataIndex: 'name',
         },
         {
@@ -444,7 +445,7 @@ export default observer((props: Props) => {
       ]
     : [
         {
-          title: '名称',
+          title: '点位名称',
           dataIndex: 'name',
         },
         {

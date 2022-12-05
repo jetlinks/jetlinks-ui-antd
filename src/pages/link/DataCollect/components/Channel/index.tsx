@@ -40,7 +40,7 @@ export default observer((props: Props) => {
 
   const columns: ProColumns<ChannelItem>[] = [
     {
-      title: '名称',
+      title: '通道名称',
       dataIndex: 'name',
     },
     {

@@ -32,14 +32,12 @@ const useDomFullHeight = (target: BasicTarget | string, extraHeight: number = 0)
 
   useEffect(() => {
     const el = getTargetElement(target);
-    console.log(target, 'target', el);
     let resizeObserver: ResizeObserver | undefined;
     if (el) {
       resizeObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
           const bodyClient = document.body.getBoundingClientRect();
           const domClient = entry.target.getBoundingClientRect();
-          console.log(domClient, 'domClient', bodyClient);
           if (domClient.y < 50) {
             setState(100);
           } else {

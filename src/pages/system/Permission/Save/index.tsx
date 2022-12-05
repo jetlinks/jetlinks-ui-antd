@@ -147,8 +147,18 @@ const Save = (props: Props) => {
               properties: {
                 action: {
                   type: 'string',
-                  'x-decorator': 'Editable',
+                  'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请输入操作类型',
+                    },
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                  ],
                 },
               },
             },
@@ -165,9 +175,18 @@ const Save = (props: Props) => {
               properties: {
                 name: {
                   type: 'string',
-
-                  'x-decorator': 'Editable',
+                  'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '请输入名称',
+                    },
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                  ],
                 },
               },
             },
@@ -184,8 +203,14 @@ const Save = (props: Props) => {
               properties: {
                 describe: {
                   type: 'string',
-                  'x-decorator': 'Editable',
+                  'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-validator': [
+                    {
+                      max: 64,
+                      message: '最多可输入64个字符',
+                    },
+                  ],
                 },
               },
             },
