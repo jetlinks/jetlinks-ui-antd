@@ -15,13 +15,13 @@ interface ParamsItemProps {
   isDelete: boolean;
   options: any[];
   onValueChange?: (value: TermsType) => void;
-  onLableChange?: (label: string) => void;
+  onLabelChange?: (label: string) => void;
   onAdd: () => void;
   onDelete: () => void;
 }
 
 const DoubleFilter = ['nbtw', 'btw'];
-const ParasmItem = observer((props: ParamsItemProps) => {
+const ParamsItem = observer((props: ParamsItemProps) => {
   const [deleteVisible, setDeleteVisible] = useState(false);
   const [paramOptions, setParamOptions] = useState<any[]>([]);
   const [ttOptions, setTtOptions] = useState<any[]>([]);
@@ -180,7 +180,7 @@ const ParasmItem = observer((props: ParamsItemProps) => {
     const _v = Object.values(label[2]);
     if (_v.length && label[1]) {
       const _l = handleOptionsLabel(label[0], label[1], _v.length > 1 ? _v : _v[0]);
-      props.onLableChange?.(_l);
+      props.onLabelChange?.(_l);
     }
   }, [label]);
 
@@ -316,7 +316,6 @@ const ParasmItem = observer((props: ParamsItemProps) => {
                 ...v,
               });
               label[2] = { 0: lb };
-              console.log('onchange', ValueRef.current, termType, props.data.column);
 
               setLabel([...label]);
               valueEventChange(v);
@@ -357,4 +356,4 @@ const ParasmItem = observer((props: ParamsItemProps) => {
   );
 });
 
-export default ParasmItem;
+export default ParamsItem;

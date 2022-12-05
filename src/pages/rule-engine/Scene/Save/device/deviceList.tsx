@@ -6,7 +6,6 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from '@/pages/device/Instance/index';
 import { isNoCommunity } from '@/utils/util';
 import { service as categoryService } from '@/pages/device/Category';
-import { service as deptService } from '@/pages/system/Department';
 import { useIntl } from 'umi';
 import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { TriggerDeviceModel } from './addModel';
@@ -175,47 +174,6 @@ export default observer(() => {
           status: 'gateway',
         },
       },
-    },
-    {
-      dataIndex: 'id$dim-assets',
-      title: '所属组织',
-      valueType: 'treeSelect',
-      hideInTable: true,
-      fieldProps: {
-        fieldNames: {
-          label: 'name',
-          value: 'value',
-        },
-      },
-      request: () =>
-        deptService
-          .queryOrgThree({
-            paging: false,
-          })
-          .then((resp) => {
-            const formatValue = (list: any[]) => {
-              const _list: any[] = [];
-              list.forEach((item) => {
-                if (item.children) {
-                  item.children = formatValue(item.children);
-                }
-                _list.push({
-                  ...item,
-                  value: JSON.stringify({
-                    assetType: 'device',
-                    targets: [
-                      {
-                        type: 'org',
-                        id: item.id,
-                      },
-                    ],
-                  }),
-                });
-              });
-              return _list;
-            };
-            return formatValue(resp.result);
-          }),
     },
   ];
 

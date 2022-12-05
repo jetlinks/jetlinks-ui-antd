@@ -17,7 +17,7 @@ export const TermsModel = model<TermsModelProps>({
 
 export default observer(() => {
   const queryColumn = (data: TriggerType) => {
-    service.getParseTerm({ trigger: data }).then((res) => {
+    service.getParseTerm({ trigger: data }).then((res: any) => {
       TermsModel.columnOptions = res;
     });
   };

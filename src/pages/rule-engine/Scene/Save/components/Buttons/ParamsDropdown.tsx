@@ -65,6 +65,7 @@ export default (props: ParamsDropdownProps) => {
 
   const onValueChange = useCallback(
     (value: any, _label: any) => {
+      console.log('valueChange-activeKey', activeKey);
       setMyValue(value);
       setLabel(_label);
       const changeValue = {
@@ -126,19 +127,20 @@ export default (props: ParamsDropdownProps) => {
           );
         case 'tree':
           return (
-            <Tree
-              selectedKeys={_value ? [_value] : []}
-              onSelect={(selectedKeys, e) => {
-                let titleKey = 'title';
-                if (props.showLabelKey) {
-                  titleKey = props.showLabelKey;
-                }
-                onValueChange(selectedKeys[0], e.node[titleKey]);
-              }}
-              style={{ width: 300 }}
-              treeData={props.BuiltInOptions}
-              height={500}
-            />
+            <div style={{ overflowY: 'auto', maxHeight: 400 }}>
+              <Tree
+                selectedKeys={_value ? [_value] : []}
+                onSelect={(selectedKeys, e) => {
+                  let titleKey = 'title';
+                  if (props.showLabelKey) {
+                    titleKey = props.showLabelKey;
+                  }
+                  onValueChange(selectedKeys[0], e.node[titleKey]);
+                }}
+                style={{ width: 300 }}
+                treeData={props.BuiltInOptions}
+              />
+            </div>
           );
         default:
           return (
@@ -153,10 +155,10 @@ export default (props: ParamsDropdownProps) => {
           );
       }
     },
-    [props],
+    [props, activeKey],
   );
 
-  const findLable = (value: string, data: any[]): boolean => {
+  const findLabel = (value: string, data: any[]): boolean => {
     let isLabel = false;
     return data.some((item) => {
       if (item.key === value) {
@@ -167,7 +169,7 @@ export default (props: ParamsDropdownProps) => {
         setLabel(item[titleKey]);
         isLabel = true;
       } else if (item.children) {
-        isLabel = findLable(value, item.children);
+        isLabel = findLabel(value, item.children);
       }
       return isLabel;
     });
@@ -197,10 +199,11 @@ export default (props: ParamsDropdownProps) => {
     } else if (['enum', 'boolean'].includes(props.valueType)) {
       setLabel(props.name ? props.value.value[props.name] : props.value.value);
     } else if (props.BuiltInOptions) {
-      findLable(props.value?.value, props.BuiltInOptions || []);
+      findLabel(props.value?.value, props.BuiltInOptions || []);
     } else {
       setLabel(props.value?.value);
     }
+    console.log('valueChange-params-effect', props.value?.source, props.value?.value);
     setMyValue(props.value?.value);
     if (props.value?.source) {
       setActiveKey(props.value?.source);
@@ -211,7 +214,7 @@ export default (props: ParamsDropdownProps) => {
 
   useEffect(() => {
     if (props.BuiltInOptions) {
-      findLable(props.value?.value, props.BuiltInOptions || []);
+      findLabel(props.value?.value, props.BuiltInOptions || []);
     }
   }, [props.BuiltInOptions]);
 
@@ -252,7 +255,7 @@ export default (props: ParamsDropdownProps) => {
     <ParamsSelect
       value={myValue}
       onChange={(value, source) => {
-        console.log(value);
+        console.log(value, source);
         setActiveKey(source);
         // props.onChange?.({
         //   value,

@@ -83,7 +83,7 @@ export default observer(() => {
         ...defaultBranches,
         {
           when: [],
-          key: 'branckes_2',
+          key: 'branches_2',
           shakeLimit: {
             enabled: false,
             time: 0,
@@ -109,33 +109,36 @@ export default observer(() => {
     if (id) {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
-          let branches = resp.result.branches || defaultBranches;
+          console.log('defaultBranches', defaultBranches);
+          let branches = resp.result.branches || cloneDeep(defaultBranches);
           // 处理 branches 的 key
           if (branches) {
             branches = branches.map((bItem: ActionBranchesProps, bIndex: number) => {
-              bItem.key = `branches_${new Date().getTime() + bIndex}`;
-              if (bItem.then && bItem.then) {
-                bItem.then = bItem.then.map((tItem) => {
-                  if (tItem.actions) {
-                    tItem.actions = tItem.actions.map((aItem, index) => {
-                      aItem.key = `${aItem.executor}_${new Date().getTime() + index}`;
-                      return aItem;
-                    });
-                  }
-                  return tItem;
-                });
-              }
-              if (bItem.when) {
-                bItem.when = bItem.when.map((wItem, index) => {
-                  wItem.key = `when_${new Date().getTime() + index}`;
-                  if (wItem.terms) {
-                    wItem.terms = wItem.terms.map((wtItem, wtIndex) => {
-                      wtItem.key = `terms_${new Date().getTime() + wtIndex}`;
-                      return wtItem;
-                    });
-                  }
-                  return wItem;
-                });
+              if (!bItem.key) {
+                bItem.key = `branches_${new Date().getTime() + bIndex}`;
+                if (bItem.then && bItem.then) {
+                  bItem.then = bItem.then.map((tItem) => {
+                    if (tItem.actions) {
+                      tItem.actions = tItem.actions.map((aItem, index) => {
+                        aItem.key = `${aItem.executor}_${new Date().getTime() + index}`;
+                        return aItem;
+                      });
+                    }
+                    return tItem;
+                  });
+                }
+                if (bItem.when) {
+                  bItem.when = bItem.when.map((wItem, index) => {
+                    wItem.key = `when_${new Date().getTime() + index}`;
+                    if (wItem.terms) {
+                      wItem.terms = wItem.terms.map((wtItem, wtIndex) => {
+                        wtItem.key = `terms_${new Date().getTime() + wtIndex}`;
+                        return wtItem;
+                      });
+                    }
+                    return wItem;
+                  });
+                }
               }
               return bItem;
             });

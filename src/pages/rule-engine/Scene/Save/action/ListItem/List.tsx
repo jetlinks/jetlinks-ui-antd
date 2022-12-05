@@ -20,6 +20,7 @@ export default (props: ListProps) => {
 
   useEffect(() => {
     setActions(props.actions);
+    console.log('list-change', props.actions);
   }, [props.actions]);
 
   return (
@@ -27,6 +28,7 @@ export default (props: ListProps) => {
       {actions.map((item, index) => (
         <Item
           thenName={props.thenName}
+          branchGroup={props.parallel ? 1 : 0}
           name={index}
           data={item}
           type={props.type}
@@ -37,8 +39,6 @@ export default (props: ListProps) => {
             props.onDelete(index);
           }}
           onUpdate={(data, options) => {
-            console.log('addItem', options);
-
             props.onAdd({
               ...item,
               ...data,
@@ -57,7 +57,8 @@ export default (props: ListProps) => {
       </AddButton>
       {visible && (
         <Modal
-          type={props.type}
+          // type={props.type}
+          parallel={props.parallel}
           name={props.actions.length + 1}
           data={{
             key: `${props.type}_${props.actions.length}`,

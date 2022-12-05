@@ -11,6 +11,7 @@ import { service } from '@/pages/device/Product/index';
 import { Store } from 'jetlinks-store';
 import { TriggerDeviceModel } from './addModel';
 import { handleMetadata } from './product';
+import { set } from 'lodash';
 
 const defaultDeviceValue = {
   productId: '',
@@ -96,8 +97,9 @@ export default observer(() => {
           options={FormModel.current.options?.trigger}
           onSave={(data, options) => {
             setVisible(false);
-            FormModel.current.options!['trigger'] = options;
-            FormModel.current.trigger!.device = data;
+            console.log('FormModel.current.options', data);
+            set(FormModel.current, ['options', 'trigger'], options);
+            set(FormModel.current, ['trigger', 'device'], data);
           }}
           onCancel={() => {
             setVisible(false);

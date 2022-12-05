@@ -112,7 +112,7 @@ export default (props: TimmingTriggerProps) => {
         <ItemGroup style={{ gap: 16 }}>
           <Form.Item
             name={[...name, 'once']}
-            initialValue={{ time: moment(new Date()).format('HH:mm:ss') }}
+            // initialValue={{ time: moment(new Date()).format('HH:mm:ss') }}
           >
             <TimePicker />
           </Form.Item>

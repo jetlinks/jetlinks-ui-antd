@@ -20,6 +20,7 @@ export type ParallelType = keyof typeof ParallelEnum;
 export enum Source {
   'manual' = 'manual',
   'metric' = 'metric',
+  'fixed' = 'fixed',
 }
 
 export enum ActionDeviceSelector {

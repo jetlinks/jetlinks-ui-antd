@@ -1,7 +1,7 @@
 import type { TermsType, TermsVale } from '@/pages/rule-engine/Scene/typings';
 import { DropdownButton, ParamsDropdown } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import classNames from 'classnames';
 import { observer } from '@formily/react';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
@@ -11,9 +11,11 @@ import { Space } from 'antd';
 
 interface FilterProps {
   thenName: number;
+  branchGroup?: number;
+  action?: number;
   data?: TermsType;
   onChange: (value: TermsType) => void;
-  onLableChange: (lb: string) => void;
+  onLabelChange: (lb: string) => void;
   onAdd: () => void;
   onDelete: () => void;
 }
@@ -26,10 +28,16 @@ export default observer((props: FilterProps) => {
 
   const [BuiltInOptions, setBuiltInOptions] = useState<any[]>([]);
   const [columnOptions, setColumnOptions] = useState<any[]>([]);
-  const [ttOptions, setTtOptions] = useState<any[]>([]);
+  const [ttOptions, setTtOptions] = useState<any>([]);
   const [valueOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
   const [label, setLabel] = useState<any[]>([undefined, undefined, {}]);
+
+  const ValueRef = useRef<Partial<TermsType>>({
+    column: '',
+    termType: '',
+    value: undefined,
+  });
 
   const valueChange = useCallback(
     (_value: any) => {
@@ -41,8 +49,8 @@ export default observer((props: FilterProps) => {
   const valueEventChange = useCallback(
     (_v: any) => {
       valueChange({
-        column,
-        termType,
+        column: ValueRef.current.column,
+        termType: ValueRef.current.termType,
         value: _v,
       });
     },
@@ -54,7 +62,7 @@ export default observer((props: FilterProps) => {
     const _termTypeOptions: any[] =
       node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
     setTtOptions(_termTypeOptions);
-    setValueType(node.dataType);
+    setValueType(node.dataType || node.type);
   };
 
   const handleName = (data: any) => {
@@ -88,10 +96,17 @@ export default observer((props: FilterProps) => {
     return [];
   };
 
-  const getParmas = () => {
-    queryBuiltInParams(FormModel.current, { action: props.thenName }).then((res: any) => {
+  const getParams = () => {
+    const _params = {
+      branch: props.thenName,
+      branchGroup: props.branchGroup,
+      action: props.action,
+    };
+    queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
-        const params = handleTreeData(res.result);
+        const params = handleTreeData(
+          res.result.filter((item: any) => !item.id.includes(`action_${props.action}`)),
+        );
         setColumnOptions(params);
         setBuiltInOptions(params);
       }
@@ -124,7 +139,7 @@ export default observer((props: FilterProps) => {
     const _v = Object.values(label[2]);
     if (_v.length && label[1]) {
       const _l = handleOptionsLabel(label[0], label[1], _v.length > 1 ? _v : _v[0]);
-      props.onLableChange?.(_l);
+      props.onLabelChange?.(_l);
     }
   }, [label]);
 
@@ -132,13 +147,15 @@ export default observer((props: FilterProps) => {
     if (props.data) {
       setColumn(props.data.column || '');
       setTermType(props.data.termType || '');
+      console.log('valueChange-filter-effect', props.data.value);
       setValue(props.data.value);
+      ValueRef.current = props.data || {};
     }
   }, [props.data]);
 
   useEffect(() => {
     if (props.data) {
-      getParmas();
+      getParams();
     }
   }, []);
 
@@ -162,7 +179,7 @@ export default observer((props: FilterProps) => {
             onChange={(_value, item) => {
               setValue({
                 value: undefined,
-                source: 'manual',
+                source: 'fixed',
               });
               paramChange(item);
               setColumn(_value!);
@@ -177,15 +194,17 @@ export default observer((props: FilterProps) => {
                 label[1] = _termTypeValue;
                 setTermType(_termTypeValue);
               } else {
+                label[1] = '';
                 setTermType('');
               }
+              ValueRef.current.column = _value!;
               label[0] = node.fullName;
               setLabel([...label]);
               valueChange({
                 column: _value,
                 value: {
                   value: undefined,
-                  source: 'manual',
+                  source: 'fixed',
                 },
                 termType: _termTypeValue,
               });
@@ -210,7 +229,7 @@ export default observer((props: FilterProps) => {
 
               label[1] = v;
               setLabel([...label]);
-
+              ValueRef.current.termType = v;
               valueChange({
                 column: props.data!.column,
                 value: value as TermsVale,
@@ -267,6 +286,7 @@ export default observer((props: FilterProps) => {
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
               onChange={(v, lb) => {
+                console.log('valueChange4', v);
                 setValue({
                   ...v,
                 });
@@ -282,7 +302,7 @@ export default observer((props: FilterProps) => {
           className="filter-add-button"
           onClick={() => {
             props.onAdd();
-            getParmas();
+            getParams();
           }}
         >
           <PlusOutlined style={{ paddingRight: 16 }} /> 添加过滤条件

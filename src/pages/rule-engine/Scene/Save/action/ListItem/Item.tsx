@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Modal from '../Modal/add';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -15,6 +15,7 @@ export enum ParallelEnum {
 export type ParallelType = keyof typeof ParallelEnum;
 interface ItemProps {
   thenName: number;
+  branchGroup?: number;
   name: number;
   data: ActionsType;
   type: ParallelType;
@@ -43,6 +44,7 @@ export default (props: ItemProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [triggerVisible, setTriggerVisible] = useState<boolean>(false);
   const [op, setOp] = useState<any>(props.options);
+  const cacheValueRef = useRef<any>({});
 
   useEffect(() => {
     setOp(props.options);
@@ -261,6 +263,10 @@ export default (props: ItemProps) => {
     );
   };
 
+  useEffect(() => {
+    cacheValueRef.current = props.data;
+  }, [props.data]);
+
   return (
     <div className="actions-item-warp">
       <div className="actions-item">
@@ -282,6 +288,8 @@ export default (props: ItemProps) => {
       </div>
       {props.parallel ? null : (
         <FilterCondition
+          action={props.name}
+          branchGroup={props.branchGroup}
           thenName={props.thenName}
           data={props.data.terms?.[0]}
           onAdd={() => {
@@ -291,6 +299,7 @@ export default (props: ItemProps) => {
                 ..._data,
                 terms: [{}],
               };
+              cacheValueRef.current = _data;
               props.onUpdate(_data, op);
             }
           }}
@@ -298,14 +307,14 @@ export default (props: ItemProps) => {
             const _data = props.data;
             if (_data.terms) {
               _data.terms = [termsData];
+              cacheValueRef.current = _data;
               props.onUpdate(_data, {
                 ...op,
               });
             }
           }}
-          onLableChange={(lb) => {
-            const _data = props.data;
-            props.onUpdate(_data, {
+          onLabelChange={(lb) => {
+            props.onUpdate(cacheValueRef.current, {
               ...op,
               terms: lb,
             });

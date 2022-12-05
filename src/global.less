@@ -124,6 +124,14 @@ ol {
   text-overflow: ellipsis;
 }
 
+.ellipsisFn(@num: 1, @width: 100%) {
+  display: -webkit-box;
+  max-width: @width;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: @num;
+}
+
 .ellipsis-70 {
   width: 70%;
   overflow: hidden;

@@ -77,7 +77,6 @@ const DropdownButton = (props: DropdownButtonProps) => {
           onSelect={treeSelect}
           treeData={props.options}
           fieldNames={props.fieldNames}
-          height={500}
         />
       </div>
     );
@@ -85,7 +84,7 @@ const DropdownButton = (props: DropdownButtonProps) => {
 
   const _options = !props.isTree ? { menu: menuOptions } : { dropdownRender: () => DropdownRender };
 
-  const findLable = (value: string, data: DropdownButtonOptions[]): boolean => {
+  const findLabel = (value: string, data: DropdownButtonOptions[]): boolean => {
     let isLabel = false;
     return data.some((item) => {
       if (item.key === value) {
@@ -97,7 +96,7 @@ const DropdownButton = (props: DropdownButtonProps) => {
         setLoading(false);
         isLabel = true;
       } else if (item.children) {
-        isLabel = findLable(value, item.children);
+        isLabel = findLabel(value, item.children);
       }
       return isLabel;
     });
@@ -109,13 +108,13 @@ const DropdownButton = (props: DropdownButtonProps) => {
       setLabel('');
     } else {
       setLoading(true);
-      findLable(props.value, props.options);
+      findLabel(props.value, props.options);
     }
   }, [props.value]);
 
   useEffect(() => {
     if (props.value) {
-      findLable(props.value, props.options);
+      findLabel(props.value, props.options);
       setLoading(true);
     }
   }, [props.options]);

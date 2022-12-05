@@ -107,7 +107,7 @@ export default observer((props: TermsProps) => {
                       terms: terms,
                     });
                   }}
-                  onLableChange={(options) => {
+                  onLabelChange={(options) => {
                     FormModel.current.options!.when[props.whenName].terms[props.name].terms[index] =
                       options;
                     FormModel.current.options!.when[props.whenName].terms[props.name].termType =
