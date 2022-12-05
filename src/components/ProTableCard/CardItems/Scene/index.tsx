@@ -376,7 +376,7 @@ const ContentRender = (data: SceneCardProps) => {
                       {item?.then && item?.then.length && (
                         <div
                           className={styles['right-item-right']}
-                          style={{ width: type === 'device' ? '85%' : '15%' }}
+                          style={{ width: type === 'device' ? '85%' : '100%' }}
                         >
                           {(item?.then || []).map((i: BranchesThen, _index: number) => (
                             <div key={i?.key || _index} className={styles['right-item-right-item']}>
