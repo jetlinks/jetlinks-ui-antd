@@ -52,7 +52,7 @@ export const downloadFileByUrl = (url: string, name: string, type: string) => {
 export const downloadObject = (record: Record<string, any>, fileName: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
-  ghostLink.download = `${record?.name}${fileName}_${moment(new Date()).format(
+  ghostLink.download = `${record?.name || ''}${fileName}_${moment(new Date()).format(
     'YYYY/MM/DD HH:mm:ss',
   )}.json`;
   ghostLink.style.display = 'none';

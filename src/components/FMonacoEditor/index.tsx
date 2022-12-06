@@ -2,7 +2,7 @@ import MonacoEditor from 'react-monaco-editor';
 import { connect, mapProps } from '@formily/react';
 import { useState } from 'react';
 
-const JMonacoEditor = (props: any) => {
+export const JMonacoEditor = (props: any) => {
   const [loading, setLoading] = useState(false);
 
   return (

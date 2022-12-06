@@ -223,6 +223,8 @@ export default observer((props: Props) => {
         }}
       >
         <ProTableCard<ProductItem>
+          noPadding
+          cardScrollY={460}
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
@@ -237,6 +239,7 @@ export default observer((props: Props) => {
             onChange: (_, selectedRows) => {
               DeviceModel.productId = selectedRows.map((item) => item.id)?.[0];
               DeviceModel.productDetail = selectedRows?.[0];
+              DeviceModel.message = {};
             },
           }}
           request={(params) =>

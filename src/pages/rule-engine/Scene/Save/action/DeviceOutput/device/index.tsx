@@ -342,6 +342,8 @@ export default observer((props: Props) => {
             />
             <div>
               <ProTableCard<DeviceInstance>
+                noPadding
+                cardScrollY={460}
                 actionRef={actionRef}
                 columns={columns}
                 rowKey="id"
