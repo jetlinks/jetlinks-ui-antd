@@ -247,7 +247,7 @@ export default observer((props: AddProps) => {
     <Modal
       visible
       title="执行规则"
-      width={800}
+      width={810}
       onCancel={() => {
         props.onCancel?.();
         TriggerDeviceModel.stepNumber = 0;

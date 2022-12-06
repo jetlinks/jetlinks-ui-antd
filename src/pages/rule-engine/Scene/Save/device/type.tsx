@@ -162,7 +162,13 @@ export default forwardRef((props: Props, ref) => {
   }));
 
   return (
-    <div>
+    <div
+      style={{
+        maxHeight: 'calc(100vh - 350px)',
+        overflowY: 'auto',
+        overflowX: 'hidden'
+      }}
+    >
       <Form form={form} layout={'vertical'}>
         <Form.Item name="operator" label="触发类型" required initialValue={'online'}>
           <TopCard typeList={TypeList} labelBottom={true} />

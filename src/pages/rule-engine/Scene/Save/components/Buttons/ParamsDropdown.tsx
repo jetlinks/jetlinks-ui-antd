@@ -72,6 +72,7 @@ export default (props: ParamsDropdownProps) => {
         value: value,
         source: activeKey,
       };
+      setOpen(false)
       props.onChange?.(changeValue, _label);
     },
     [activeKey],
@@ -112,6 +113,7 @@ export default (props: ParamsDropdownProps) => {
               options={_options}
               onChange={(v, l) => {
                 onValueChange(v === 'true' ? true : false, l);
+                setOpen(false)
               }}
             />
           );
@@ -122,6 +124,7 @@ export default (props: ParamsDropdownProps) => {
               onChange={(_: any, timeString: string) => {
                 console.log('timeString', timeString);
                 onValueChange(timeString, timeString);
+                setOpen(false)
               }}
             />
           );
@@ -136,6 +139,7 @@ export default (props: ParamsDropdownProps) => {
                     titleKey = props.showLabelKey;
                   }
                   onValueChange(selectedKeys[0], e.node[titleKey]);
+                  setOpen(false)
                 }}
                 style={{ width: 300 }}
                 treeData={props.BuiltInOptions}

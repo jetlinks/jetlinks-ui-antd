@@ -105,7 +105,8 @@ export default observer((props: FilterProps) => {
     queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
         const params = handleTreeData(
-          res.result.filter((item: any) => !item.id.includes(`action_${props.action}`)),
+          // res.result.filter((item: any) => !item.id.includes(`action_${props.action}`)),
+          res.result
         );
         setColumnOptions(params);
         setBuiltInOptions(params);
