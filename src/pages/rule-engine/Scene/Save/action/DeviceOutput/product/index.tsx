@@ -223,6 +223,8 @@ export default observer((props: Props) => {
         }}
       >
         <ProTableCard<ProductItem>
+          noPadding
+          cardScrollY={460}
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
