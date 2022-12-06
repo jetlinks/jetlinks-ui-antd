@@ -16,7 +16,6 @@ export default observer((props: Props) => {
   const [form] = Form.useForm();
   const [deviceMessageType, setDeviceMessageType] = useState('');
   const [properties, setProperties] = useState([]); // 物模型-属性
-  // const [propertiesId, setPropertiesId] = useState<string | undefined>(''); // 物模型-属性ID,用于串行
   const [functionList, setFunctionList] = useState<any>([]); // 物模型-功能
   const [functionId, setFunctionId] = useState('');
   const [functions, setFunctions] = useState([]);
@@ -80,7 +79,6 @@ export default observer((props: Props) => {
     if (DeviceModel.message.functionId) {
       setFunctionId(DeviceModel.message.functionId);
     }
-    // console.log(DeviceModel.message)
   }, [DeviceModel.message]);
 
   useEffect(() => {
@@ -108,6 +106,11 @@ export default observer((props: Props) => {
             onChange={(value: string) => {
               setDeviceMessageType(value);
               console.log(value);
+              form.setFieldsValue({
+                message: {
+                  properties: [],
+                },
+              });
             }}
           />
         </Form.Item>

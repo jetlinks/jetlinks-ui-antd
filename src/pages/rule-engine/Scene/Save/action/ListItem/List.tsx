@@ -20,7 +20,7 @@ export default (props: ListProps) => {
 
   useEffect(() => {
     setActions(props.actions);
-    console.log('list-change', props.actions);
+    // console.log('list-change', props.actions);
   }, [props.actions]);
 
   return (

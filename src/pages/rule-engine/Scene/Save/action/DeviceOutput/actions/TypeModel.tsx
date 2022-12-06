@@ -1,6 +1,6 @@
 import ParamsSelect, { ItemProps } from '@/pages/rule-engine/Scene/Save/components/ParamsSelect';
 import { useEffect, useState } from 'react';
-import { Input, InputNumber, Select, Tree } from 'antd';
+import { Empty, Input, InputNumber, Select, Tree } from 'antd';
 import MTimePicker from '../../../components/ParamsSelect/components/MTimePicker';
 import moment from 'moment';
 import { EditOutlined, EnvironmentOutlined } from '@ant-design/icons';
@@ -26,13 +26,25 @@ export default (props: Props) => {
   const [source, setSource] = useState<string>(props.source || 'fixed');
   const [builtInList, setBuiltInList] = useState<any[]>([]);
   const [labelValue, setLabelValue] = useState<any>('');
+  const [dateOpen, setDateOpen] = useState<boolean>();
 
-  const filterTree = (nodes: any[]) => {
+  const filterLabel = (nodes: any[]) => {
     let lable: any;
     nodes.forEach((item) => {
       lable = item.children?.find((it: any) => it.id === props.value);
     });
     return lable?.description;
+  };
+  const filterTree = (nodes: any[]) => {
+    if (!nodes?.length) {
+      return nodes;
+    }
+    return nodes.filter((it) => {
+      if (it.children.find((item: any) => item.type === props.type)) {
+        return true;
+      }
+      return false;
+    });
   };
 
   const sourceChangeEvent = async () => {
@@ -40,8 +52,11 @@ export default (props: Props) => {
     queryBuiltInParams(FormModel.current, params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
-        setBuiltInList(_data);
-        const label = filterTree(_data);
+        const filterData = filterTree(_data);
+        // console.log('_data',_data,)
+        // console.log('type',props.type)
+        setBuiltInList(filterData);
+        const label = filterLabel(filterData);
         setLabelValue(label);
       }
     });
@@ -146,6 +161,9 @@ export default (props: Props) => {
       case 'date':
         return (
           <MTimePicker
+            onOpen={(param) => {
+              setDateOpen(param);
+            }}
             value={moment(value, 'HH:mm:ss')}
             onChange={(_: any, timeString: string) => {
               setValue(timeString);
@@ -182,22 +200,25 @@ export default (props: Props) => {
     {
       label: `内置参数`,
       key: 'upper',
-      content: (
-        <Tree
-          treeData={builtInList}
-          height={300}
-          defaultExpandAll
-          fieldNames={{ title: 'name', key: 'id' }}
-          onSelect={(selectedKeys, e) => {
-            // console.log(e.node);
-            setLabelValue(e.node.description);
-            setValue(selectedKeys[0]);
-            if (props.onChange) {
-              props.onChange(selectedKeys[0], source);
-            }
-          }}
-        />
-      ),
+      content:
+        builtInList.length !== 0 ? (
+          <Tree
+            treeData={builtInList}
+            height={300}
+            defaultExpandAll
+            fieldNames={{ title: 'name', key: 'id' }}
+            onSelect={(selectedKeys, e) => {
+              // console.log(e.node);
+              setLabelValue(e.node.description);
+              setValue(selectedKeys[0]);
+              if (props.onChange) {
+                props.onChange(selectedKeys[0], source);
+              }
+            }}
+          />
+        ) : (
+          <Empty />
+        ),
     },
   ];
 
@@ -207,18 +228,19 @@ export default (props: Props) => {
         style={{ width: '100%', height: '100%' }}
         inputProps={{
           placeholder: '请选择',
+          disabled: true,
         }}
         tabKey={source}
         itemList={itemList}
         value={value}
         onChange={(val: any, tabKey: any) => {
-          // console.log(val, tabKey);
           setValue(val);
           setSource(tabKey);
           if (props.onChange) {
             props.onChange(val, tabKey);
           }
         }}
+        open={dateOpen}
         type={props.type}
         labelValue={labelValue}
       />
