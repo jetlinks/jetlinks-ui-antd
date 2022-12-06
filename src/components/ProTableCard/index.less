@@ -25,7 +25,7 @@
   .pro-table-card-items {
     display: grid;
     grid-gap: 26px;
-    padding-bottom: 38px;
+    //padding-bottom: 38px;
 
     .pro-table-card-item {
       display: flex;
@@ -160,6 +160,17 @@
 
     > .ant-pagination-item {
       display: none;
+    }
+  }
+
+  &.noPadding {
+    .ant-card-body {
+      padding: 0 !important;
+    }
+
+    .pro-table-card-pagination {
+      right: 0;
+      bottom: 0;
     }
   }
 

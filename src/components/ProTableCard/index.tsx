@@ -1,7 +1,7 @@
 import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { isFunction } from 'lodash';
 import { Empty, Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
@@ -32,6 +32,9 @@ interface ProTableCardProps<T> {
   height?: 'none';
   onlyCard?: boolean; //只展示card
   onPageChange?: (page: number, size: number) => void;
+  cardBodyClass?: string;
+  noPadding?: boolean;
+  cardScrollY?: number;
 }
 
 const ProTableCard = <
@@ -72,7 +75,7 @@ const ProTableCard = <
         if (!rowSelection || (rowSelection && !rowSelection.selectedRowKeys)) {
           return dom;
         }
-        const { selectedRowKeys, onChange, type } = rowSelection;
+        const { selectedRowKeys, onChange, onSelect, type } = rowSelection;
 
         // @ts-ignore
         const id = dom.props.id;
@@ -86,39 +89,46 @@ const ProTableCard = <
           key: id,
           onClick: (e: any) => {
             e.stopPropagation();
-            if (onChange) {
+            if (onChange || onSelect) {
               const isSelect = selectedRowKeys.includes(id);
 
+              let nowRowKeys: Key[] = [];
+              let nowRowNodes = [];
               if (isSelect) {
-                const nowRowKeys =
+                nowRowKeys =
                   type === 'radio' ? [id] : selectedRowKeys.filter((key: string) => key !== id);
-                onChange(
-                  nowRowKeys,
-                  dataSource!.filter((item) => nowRowKeys.includes(item.id)),
-                );
               } else {
                 // const nowRowKeys = [...selectedRowKeys, id];
-                const nowRowKeys = rowSelection.type === 'radio' ? [id] : [...selectedRowKeys, id];
-                onChange(
-                  nowRowKeys,
-                  dataSource!.filter((item) => nowRowKeys.includes(item.id)),
-                );
+                nowRowKeys = rowSelection.type === 'radio' ? [id] : [...selectedRowKeys, id];
               }
+              nowRowNodes = dataSource!.filter((item) => nowRowKeys.includes(item.id));
+
+              onChange?.(nowRowKeys, nowRowNodes);
+              onSelect?.((dom as any).props, !isSelect, nowRowNodes);
             }
           },
         });
       };
 
+      const style: React.CSSProperties = {};
+
+      if (props.cardScrollY !== undefined) {
+        style.maxHeight = props.cardScrollY;
+        style.overflowY = 'auto';
+      }
+
       return (
         <>
           {dataSource && dataSource.length ? (
-            <div
-              className={'pro-table-card-items'}
-              style={{ gridTemplateColumns: `repeat(${column}, 1fr)` }}
-            >
-              {dataSource.map((item) =>
-                cardRender && isFunction(cardRender) ? Item(cardRender(item)) : null,
-              )}
+            <div style={{ paddingBottom: 38 }}>
+              <div
+                className={classNames('pro-table-card-items', props.cardBodyClass)}
+                style={{ gridTemplateColumns: `repeat(${column}, 1fr)`, ...style }}
+              >
+                {dataSource.map((item) =>
+                  cardRender && isFunction(cardRender) ? Item(cardRender(item)) : null,
+                )}
+              </div>
             </div>
           ) : (
             <div
@@ -162,8 +172,6 @@ const ProTableCard = <
   const pageSizeOptions = [Default_Size * 2, Default_Size * 4, Default_Size * 8, Default_Size * 16];
 
   useEffect(() => {
-    console.log('props.params?.pageIndex', props.params?.pageIndex);
-
     if (props.params?.pageIndex) {
       setCurrent(props.params?.pageIndex + 1);
       setPageIndex(props.params?.pageIndex);
@@ -178,7 +186,9 @@ const ProTableCard = <
 
   return (
     <div
-      className={'pro-table-card'}
+      className={classNames('pro-table-card', {
+        noPadding: props.noPadding || 'noPadding' in props,
+      })}
       style={{ minHeight: props.height === 'none' ? 'auto' : minHeight }}
       ref={domRef}
     >
