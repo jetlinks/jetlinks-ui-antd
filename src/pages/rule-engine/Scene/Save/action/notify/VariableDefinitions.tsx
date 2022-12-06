@@ -7,6 +7,7 @@ import Tag from './components/variableItem/tag';
 import BuildIn from './components/variableItem/buildIn';
 import InputFile from './components/variableItem/inputFile';
 import { forwardRef, useCallback, useImperativeHandle } from 'react';
+import { onlyMessage } from '@/utils/util';
 
 interface Props {
   name: number;
@@ -122,10 +123,40 @@ export default forwardRef((props: Props, ref) => {
         const formData = await form.validateFields().catch(() => {
           resolve(false);
         });
-        if (formData) {
-          resolve(formData);
+        if (
+          NotifyModel.notify.notifyType &&
+          ['dingTalk', 'weixin'].includes(NotifyModel.notify.notifyType)
+        ) {
+          const arr = NotifyModel.variable.map((item) => {
+            return { type: item.expands?.businessType || item?.type, id: item.id };
+          });
+          const org = arr.find((i) => i.type === 'org')?.id;
+          const user = arr.find((i) => i.type === 'user')?.id;
+          if (org && user) {
+            if (
+              (formData[org]?.source && formData[org]?.value) ||
+              (!formData[org]?.source && formData[org]) ||
+              (formData[user]?.source && (formData[user]?.value || formData[user]?.relation)) ||
+              (!formData[user]?.source && formData[user])
+            ) {
+              resolve(formData);
+            } else {
+              onlyMessage('收信人和收信部门必填一个', 'error');
+              resolve(false);
+            }
+          } else {
+            if (formData) {
+              resolve(formData);
+            } else {
+              resolve(false);
+            }
+          }
         } else {
-          resolve(false);
+          if (formData) {
+            resolve(formData);
+          } else {
+            resolve(false);
+          }
         }
       } else {
         resolve({});

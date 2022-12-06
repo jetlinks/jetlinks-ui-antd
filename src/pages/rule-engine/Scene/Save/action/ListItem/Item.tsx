@@ -55,7 +55,8 @@ export default (props: ItemProps) => {
       case 'dingTalk':
         return (
           <div>
-            向<span>{options?.notifierName || data?.notify?.notifierId}</span>
+            向<span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -189,7 +190,7 @@ export default (props: ItemProps) => {
     if (props?.data?.alarm?.mode === 'trigger') {
       return (
         <div className={'item-options-content'}>
-          满足条件后将触发关联
+          满足条件后将触发
           <a
             onClick={(e) => {
               e.stopPropagation();
