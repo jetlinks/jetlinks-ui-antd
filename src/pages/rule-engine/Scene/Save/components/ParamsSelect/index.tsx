@@ -82,13 +82,14 @@ export default (props: Props) => {
         <Input
           suffix={<DownOutlined style={{ color: 'rgba(0, 0, 0, 0.25)' }} />}
           {...props.inputProps}
+          readOnly
           value={props.labelValue ? props.labelValue : value}
           onChange={(e) => {
             setValue(e.target.value);
             props.onChange(value, tabKey);
           }}
           onFocus={() => {
-            setOpen(true);
+            // setOpen(true);
             props.openChange?.(true);
           }}
         />

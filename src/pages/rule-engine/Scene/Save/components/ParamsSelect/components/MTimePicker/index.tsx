@@ -3,7 +3,11 @@ import './index.less';
 import type { TimePickerProps } from 'antd/lib/time-picker';
 import { useEffect, useState } from 'react';
 
-export default (props: TimePickerProps) => {
+type Props = TimePickerProps & {
+  onOpen?: (open: boolean) => void;
+};
+
+export default (props: Props) => {
   const [myValue, setMyValue] = useState<any>(props.value || undefined);
 
   useEffect(() => {
@@ -23,6 +27,11 @@ export default (props: TimePickerProps) => {
         className={'manual-time-picker'}
         popupClassName={'my-manual-time-picker'}
         open
+        onOk={() => {
+          if (props.onOpen) {
+            props.onOpen(false);
+          }
+        }}
         // @ts-ignore
         getPopupContainer={(trigger) => {
           return trigger && trigger?.parentNode ? trigger.parentNode : document.body;

@@ -38,6 +38,7 @@ export default (props: Props) => {
               props.save(
                 {
                   type: 'device',
+                  executor: 'device',
                   key: props.data.key || `device_${new Date().getTime()}`,
                   device: {
                     ...data,
@@ -63,6 +64,7 @@ export default (props: Props) => {
               props.save(
                 {
                   ...data,
+                  executor: 'notify',
                   key: props.data.key || `notify_${new Date().getTime()}`,
                 },
                 option,
@@ -83,6 +85,7 @@ export default (props: Props) => {
               props.save(
                 {
                   type: 'delay',
+                  executor: 'delay',
                   key: props.data.key || `delay_${new Date().getTime()}`,
                   delay: {
                     ...data,
@@ -113,7 +116,8 @@ export default (props: Props) => {
         const values = await form.validateFields();
         setActionType(values.type);
         if (values.type === 'relieve' || values.type === 'trigger') {
-          props.save({ ...props.data, type: values.type });
+          console.log(values.type, props.data);
+          props.save({ ...props.data, type: values.type, executor: values.type });
         }
       }}
     >
