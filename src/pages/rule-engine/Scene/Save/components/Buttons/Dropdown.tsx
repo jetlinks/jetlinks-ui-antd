@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dropdown, Tree } from 'antd';
+import { Dropdown, Empty, Tree } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
 import { onlyMessage } from '@/utils/util';
@@ -98,25 +98,24 @@ const DropdownButton = (props: DropdownButtonProps) => {
     );
   }, [props.options, myValue]);
 
-  const _options = !props.isTree ? { menu: menuOptions } : { dropdownRender: () => DropdownRender };
-
-  // const findLabel = (value: string, data: DropdownButtonOptions[]): boolean => {
-  //   let isLabel = false;
-  //   return data.some((item) => {
-  //     if (item.key === value) {
-  //       let titleKey = 'title';
-  //       if (props.showLabelKey) {
-  //         titleKey = props.showLabelKey;
-  //       }
-  //       setLabel(item[titleKey]);
-  //       setLoading(false);
-  //       isLabel = true;
-  //     } else if (item.children) {
-  //       isLabel = findLabel(value, item.children);
-  //     }
-  //     return isLabel;
-  //   });
-  // };
+  const _options = !props.isTree
+    ? {
+        menu: menuOptions,
+        dropdownRender: (menu: any) => {
+          if (!menuOptions.items.length) {
+            return (
+              <div
+                className={styles['dropdown-content']}
+                style={{ background: '#fff', padding: '0 16px' }}
+              >
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              </div>
+            );
+          }
+          return menu;
+        },
+      }
+    : { dropdownRender: () => DropdownRender };
 
   useEffect(() => {
     setMyValue(props.value);

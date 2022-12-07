@@ -5,10 +5,10 @@ import { model } from '@formily/reactive';
 import { FormModel, defaultBranches } from '@/pages/rule-engine/Scene/Save';
 import BranchItem from './branchItem';
 import { service } from '@/pages/rule-engine/Scene/index';
-import { Switch } from 'antd'
+import { Switch } from 'antd';
 import type { TriggerType } from '@/pages/rule-engine/Scene/typings';
 import Actions from '@/pages/rule-engine/Scene/Save/action';
-import {cloneDeep} from "lodash";
+import { cloneDeep, set } from 'lodash';
 
 interface TermsModelProps {
   columnOptions: any[];
@@ -19,15 +19,14 @@ export const TermsModel = model<TermsModelProps>({
 });
 
 export default observer(() => {
-
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    console.log('terms-effect',FormModel.current.branches)
+    console.log('terms-effect', FormModel.current.branches);
     if (FormModel.current.branches && FormModel.current.branches.length === 1) {
-      setOpen(false)
+      setOpen(false);
     }
-  }, [FormModel.current.branches])
+  }, [FormModel.current.branches]);
 
   const queryColumn = (data: TriggerType) => {
     service.getParseTerm({ trigger: data }).then((res: any) => {
@@ -36,8 +35,8 @@ export default observer(() => {
   };
 
   const openChange = (checked: boolean) => {
-    console.log('terms-effect-change')
-    setOpen(checked)
+    console.log('terms-effect-change');
+    setOpen(checked);
     if (checked) {
       FormModel.current.branches = cloneDeep([
         ...defaultBranches,
@@ -52,12 +51,21 @@ export default observer(() => {
           },
           then: [],
         },
-      ])
+      ]);
+      set(FormModel.current.options!, 'when', [
+        {
+          terms: [
+            {
+              terms: [],
+            },
+          ],
+        },
+      ]);
     } else {
       FormModel.current.branches = [
         {
           when: [],
-          key: 'branches_'+new Date().getTime(),
+          key: 'branches_' + new Date().getTime(),
           shakeLimit: {
             enabled: false,
             time: 0,
@@ -65,10 +73,11 @@ export default observer(() => {
             alarmFirst: false,
           },
           then: [],
-        }
-      ]
+        },
+      ];
+      set(FormModel.current.options!, 'when', []);
     }
-  }
+  };
 
   useEffect(() => {
     if (FormModel.current.trigger?.device) {
@@ -82,12 +91,17 @@ export default observer(() => {
         style={{ fontSize: 14 }}
         data={
           <span>
-            触发条件 <Switch checked={open} onChange={openChange} checkedChildren={'开'} unCheckedChildren={'关'}/>
+            触发条件{' '}
+            <Switch
+              checked={open}
+              onChange={openChange}
+              checkedChildren={'开'}
+              unCheckedChildren={'关'}
+            />
           </span>
         }
       />
-      {
-        open ?
+      {open ? (
         <Observer>
           {() =>
             FormModel.current.branches?.map((item, index) => {
@@ -106,9 +120,14 @@ export default observer(() => {
               );
             })
           }
-        </Observer> :
-          <Actions openShakeLimit={true} name={0} thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []} />
-      }
+        </Observer>
+      ) : (
+        <Actions
+          openShakeLimit={true}
+          name={0}
+          thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
+        />
+      )}
     </div>
   );
 });

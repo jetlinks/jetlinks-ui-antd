@@ -129,8 +129,7 @@ export default observer(() => {
         if (resp.status === 200) {
           console.log('defaultBranches', defaultBranches);
           const branches = resp.result.branches || defaultBranches;
-          if (branches[0]?.when?.length) {
-            // 设备
+          if (resp.result.branches && !resp.result.branches.length) {
             branches.push({
               when: [],
               key: 'branches_' + new Date().getTime(),
@@ -142,6 +141,21 @@ export default observer(() => {
               },
               then: [],
             });
+          } else {
+            if (branches[0]?.when?.length) {
+              // 设备
+              branches.push({
+                when: [],
+                key: 'branches_' + new Date().getTime(),
+                shakeLimit: {
+                  enabled: false,
+                  time: 0,
+                  threshold: 0,
+                  alarmFirst: false,
+                },
+                then: [],
+              });
+            }
           }
           FormModel.current = {
             ...resp.result,

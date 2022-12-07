@@ -188,7 +188,6 @@ export default (props: ParamsDropdownProps) => {
 
   const valueLabel = useCallback(
     (v: any, type: string) => {
-      console.log(type, v);
       switch (type) {
         case 'boolean':
           setLabel(v ? '是' : '否');
@@ -237,7 +236,7 @@ export default (props: ParamsDropdownProps) => {
 
   useEffect(() => {
     if (props.BuiltInOptions) {
-      let _value = props.value.value;
+      let _value = props.value?.value;
       if ('name' in props) {
         _value = props.value?.value[props.name!];
       }
