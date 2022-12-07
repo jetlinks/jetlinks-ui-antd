@@ -80,6 +80,10 @@ export default (props: Props) => {
     }
   }, [source]);
 
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
+
   const renderNode = (type: string) => {
     switch (type) {
       case 'int':
@@ -175,6 +179,17 @@ export default (props: Props) => {
               if (props.onChange) {
                 props.onChange(timeString);
               }
+            }}
+          />
+        );
+      case 'password':
+        return (
+          <Input.Password
+            value={value}
+            style={{ width: '100%', textAlign: 'left' }}
+            placeholder={'请输入'}
+            onChange={(e) => {
+              onChange(e.target.value);
             }}
           />
         );

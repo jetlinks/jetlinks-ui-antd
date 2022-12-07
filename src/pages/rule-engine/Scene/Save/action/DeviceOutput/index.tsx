@@ -64,6 +64,15 @@ export default observer((props: Props) => {
     DeviceModel.current -= 1;
   };
 
+  const init = () => {
+    DeviceModel.selector = 'fixed';
+    DeviceModel.source = 'fixed';
+    DeviceModel.selectorValues = [];
+    DeviceModel.productId = '';
+    DeviceModel.message = {};
+    DeviceModel.current = 0;
+  };
+
   const save = async () => {
     const value = await formRef.current?.validateFields();
     const item = {
@@ -111,14 +120,14 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    console.log(item);
+    // console.log(item);
     props.save(item, _options);
-    DeviceModel.current = 0;
+
+    init();
   };
 
   useEffect(() => {
     if (props.value) {
-      console.log('----------', props.value);
       DeviceModel.selector = props.value.selector;
       DeviceModel.productId = props.value.productId;
       DeviceModel.selector = props.value.selector;
