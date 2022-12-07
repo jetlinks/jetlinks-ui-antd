@@ -250,6 +250,7 @@ export default observer(() => {
             TriggerDeviceModel.operation = {
               operator: 'online',
             };
+            TriggerDeviceModel.selectorValues = [];
           },
         }}
         onPageChange={(page, size) => {

@@ -195,11 +195,15 @@ export const request: RequestConfig = {
         .text()
         .then((resp: string) => {
           if (resp) {
+            let respObj: any = {};
+            try {
+              respObj = JSON.parse(resp || '{}');
+            } catch (e) {}
             notification.error({
               key: 'error',
-              message: JSON.parse(resp || '{}').message || '服务器内部错误！',
+              message: respObj.message || '服务器内部错误！',
             });
-            if (JSON.parse(resp || '{}').code === 'license required') {
+            if (respObj.code === 'license required') {
               //判断按钮权限
               let buttons = {};
               const buttonString = localStorage.getItem('MENUS_BUTTONS_CACHE');

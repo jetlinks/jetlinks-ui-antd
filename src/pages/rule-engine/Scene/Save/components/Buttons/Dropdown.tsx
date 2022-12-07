@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dropdown, Tree } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
 import { onlyMessage } from '@/utils/util';
+import { useOption } from '@/pages/rule-engine/Scene/Save/components/Buttons/index';
 
 type DropdownButtonOptions = {
   title: string;
@@ -33,10 +34,25 @@ const TypeStyle = {
 const DropdownButton = (props: DropdownButtonProps) => {
   const [myValue, setMyValue] = useState(props.value);
   const [label, setLabel] = useState('');
-  const [, setLoading] = useState(false);
+  // const [, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const typeClassName = TypeStyle[props.type];
+
+  const { paramOptions, valueOptions } = useOption(props.options, props.fieldNames?.value);
+
+  const convertLabelValue = useCallback(
+    (key?: string) => {
+      if (key && paramOptions.length) {
+        const labelOptions = valueOptions.get(key);
+        const nameKey = props.showLabelKey || 'title';
+        setLabel(labelOptions[nameKey]);
+      } else {
+        setLabel(key!);
+      }
+    },
+    [paramOptions, valueOptions, props.fieldNames],
+  );
 
   const menuOnSelect = ({ key, item }: { key: string; item: any }) => {
     setOpen(false);
@@ -84,39 +100,37 @@ const DropdownButton = (props: DropdownButtonProps) => {
 
   const _options = !props.isTree ? { menu: menuOptions } : { dropdownRender: () => DropdownRender };
 
-  const findLabel = (value: string, data: DropdownButtonOptions[]): boolean => {
-    let isLabel = false;
-    return data.some((item) => {
-      if (item.key === value) {
-        let titleKey = 'title';
-        if (props.showLabelKey) {
-          titleKey = props.showLabelKey;
-        }
-        setLabel(item[titleKey]);
-        setLoading(false);
-        isLabel = true;
-      } else if (item.children) {
-        isLabel = findLabel(value, item.children);
-      }
-      return isLabel;
-    });
-  };
+  // const findLabel = (value: string, data: DropdownButtonOptions[]): boolean => {
+  //   let isLabel = false;
+  //   return data.some((item) => {
+  //     if (item.key === value) {
+  //       let titleKey = 'title';
+  //       if (props.showLabelKey) {
+  //         titleKey = props.showLabelKey;
+  //       }
+  //       setLabel(item[titleKey]);
+  //       setLoading(false);
+  //       isLabel = true;
+  //     } else if (item.children) {
+  //       isLabel = findLabel(value, item.children);
+  //     }
+  //     return isLabel;
+  //   });
+  // };
 
   useEffect(() => {
     setMyValue(props.value);
     if (!props.value) {
       setLabel('');
     } else {
-      setLoading(true);
-      findLabel(props.value, props.options);
+      // setLoading(true);
+      // findLabel(props.value, props.options);
     }
+    convertLabelValue(props.value);
   }, [props.value]);
 
   useEffect(() => {
-    if (props.value) {
-      findLabel(props.value, props.options);
-      setLoading(true);
-    }
+    convertLabelValue(props.value);
   }, [props.options]);
 
   return (
@@ -133,7 +147,7 @@ const DropdownButton = (props: DropdownButtonProps) => {
           }
         }}
       >
-        {label || props.placeholder}
+        {label ? label : props.placeholder}
       </div>
     </Dropdown>
   );

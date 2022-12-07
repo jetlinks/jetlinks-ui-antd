@@ -20,7 +20,35 @@ interface FilterProps {
   onDelete: () => void;
 }
 
-const DoubleFilter = ['nbtw', 'btw'];
+const handleName = (_data: any) => (
+  <Space>
+    {_data.name}
+    <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
+    {_data.description && (
+      <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
+    )}
+  </Space>
+);
+//
+// const handleOptions = (options: any[]): any[] => {
+//   if (!options) return []
+//
+//   return options.map(item => {
+//     const disabled = item.children?.length > 0;
+//     return {
+//       ...item,
+//       column: item.column,
+//       key: item.column,
+//       value: item.column,
+//       title: handleName(item),
+//       disabled: disabled,
+//       children: handleOptions(item.children),
+//     };
+//   })
+// }
+
+const DoubleFilter = ['nbtw', 'btw', 'in', 'nin'];
+const columnOptionsMap = new Map<string, any>();
 export default observer((props: FilterProps) => {
   const [value, setValue] = useState<Partial<TermsVale> | undefined>({});
   const [termType, setTermType] = useState('');
@@ -65,21 +93,22 @@ export default observer((props: FilterProps) => {
     setValueType(node.dataType || node.type);
   };
 
-  const handleName = (data: any) => {
-    return (
-      <Space>
-        {data.name}
-        {data.description && (
-          <div style={{ color: 'grey', marginLeft: '5px' }}>({data.description})</div>
-        )}
-      </Space>
-    );
+  const convertLabelValue = (columnValue?: string) => {
+    if (columnValue) {
+      console.log(columnOptionsMap, columnValue);
+      const labelOptions = columnOptionsMap.get(columnValue);
+      const _termTypeOptions: any[] =
+        labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
+      setTtOptions(_termTypeOptions);
+      setValueType(labelOptions?.type);
+    }
   };
 
   const handleTreeData = (data: any): any[] => {
     if (data.length > 0) {
       return data.map((item: any) => {
         const name = handleName(item);
+        columnOptionsMap.set(item.column, item);
         if (item.children) {
           return {
             ...item,
@@ -96,12 +125,13 @@ export default observer((props: FilterProps) => {
     return [];
   };
 
-  const getParams = () => {
+  const getParams = useCallback(() => {
     const _params = {
       branch: props.thenName,
       branchGroup: props.branchGroup,
       action: props.action,
     };
+    columnOptionsMap.clear();
     queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
         const params = handleTreeData(
@@ -110,9 +140,10 @@ export default observer((props: FilterProps) => {
         );
         setColumnOptions(params);
         setBuiltInOptions(params);
+        convertLabelValue(props.data?.column);
       }
     });
-  };
+  }, [props.data?.column]);
 
   const handleOptionsLabel = (c: string, t: string, v: any) => {
     const termsTypeKey = {
@@ -126,6 +157,8 @@ export default observer((props: FilterProps) => {
       nbtw: '不在_value和_value2之间',
       time_gt_now: '距离当前时间大于_value秒',
       time_lt_now: '距离当前时间小于_value秒',
+      in: '在_value,_value2之中',
+      nin: '不在_value,_value2之中',
     };
 
     if (DoubleFilter.includes(t)) {
@@ -148,9 +181,9 @@ export default observer((props: FilterProps) => {
     if (props.data) {
       setColumn(props.data.column || '');
       setTermType(props.data.termType || '');
-      console.log('valueChange-filter-effect', props.data.value);
       setValue(props.data.value);
       ValueRef.current = props.data || {};
+      convertLabelValue(props.data.column);
     }
   }, [props.data]);
 
@@ -250,12 +283,15 @@ export default observer((props: FilterProps) => {
                 showLabelKey="fullName"
                 name={0}
                 onChange={(v, lb) => {
-                  setValue({
-                    ...v,
-                  });
+                  const _myValue = {
+                    value: [v.value, ValueRef.current.value?.value?.[1]],
+                    source: v.source,
+                  };
+                  ValueRef.current.value = _myValue;
+                  setValue(_myValue);
                   label[2] = { ...label[2], 0: lb };
                   setLabel([...label]);
-                  valueEventChange(v);
+                  valueEventChange(_myValue);
                 }}
               />
               <ParamsDropdown
@@ -268,12 +304,15 @@ export default observer((props: FilterProps) => {
                 showLabelKey="fullName"
                 name={1}
                 onChange={(v, lb) => {
-                  setValue({
-                    ...v,
-                  });
+                  const _myValue = {
+                    value: [ValueRef.current.value?.value?.[0], v.value],
+                    source: v.source,
+                  };
+                  ValueRef.current.value = _myValue;
+                  setValue(_myValue);
                   label[2] = { ...label[2], 1: lb };
                   setLabel([...label]);
-                  valueEventChange(v);
+                  valueEventChange(_myValue);
                 }}
               />
             </>

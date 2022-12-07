@@ -74,6 +74,7 @@ export default observer((props: Props) => {
         addonAfter={TimeTypeAfter}
         style={{ maxWidth: 220 }}
         value={value}
+        precision={0}
         onChange={(v) => setValue(v!)}
         min={0}
         max={59}
