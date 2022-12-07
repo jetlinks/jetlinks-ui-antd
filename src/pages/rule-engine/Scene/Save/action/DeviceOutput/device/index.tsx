@@ -323,6 +323,7 @@ export default observer((props: Props) => {
             <SearchComponent
               field={columns}
               model={'simple'}
+              bodyStyle={{ padding: 0, paddingBottom: 16 }}
               enableSave={false}
               onSearch={async (data) => {
                 actionRef.current?.reset?.();

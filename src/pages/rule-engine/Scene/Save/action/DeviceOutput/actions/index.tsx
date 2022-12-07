@@ -1,10 +1,10 @@
 import { observer } from '@formily/reactive-react';
 import { Form, Select } from 'antd';
 import { useEffect, useState } from 'react';
-import ReadProperty from '../../device/readProperty';
 import TopCard from '../device/TopCard';
 import DeviceModel from '../model';
 import FunctionCall from './functionCall';
+import ReadProperty from './ReadProperty';
 import WriteProperty from './WriteProperty';
 
 interface Props {
