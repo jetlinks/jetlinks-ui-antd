@@ -172,6 +172,7 @@ export default (props: Props) => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
+              tooltip: '统一配置所有点位的大小端',
             },
             'x-component-props': {
               placeholder: '请选择大小端',

@@ -676,7 +676,7 @@ export default () => {
   return (
     <PageContainer>
       <div className={'link-dash-board'}>
-        {serverNode && serverNode.length ? (
+        {serverNode && serverNode.length > 1 ? (
           <div style={{ backgroundColor: '#fff', padding: '24px 24px 0 24px' }}>
             <Select
               value={serverId}
@@ -691,7 +691,7 @@ export default () => {
         <div className={'echarts-items'}>
           <TopEchartsItemNode title={'CPU使用率'} value={topValues.cpu} />
           <TopEchartsItemNode
-            title={'JVM内存'}
+            title={'JVM内存占用'}
             formatter={'G'}
             value={topValues.jvm}
             max={topValues.jvmTotal}
@@ -705,11 +705,11 @@ export default () => {
             bottom={`总磁盘大小  ${topValues.usageTotal}G`}
           />
           <TopEchartsItemNode
-            title={'系统内存'}
+            title={'系统内存占用'}
             formatter={'G'}
             value={topValues.systemUsage}
             max={topValues.systemUsageTotal}
-            bottom={`系统内存  ${topValues.systemUsageTotal}G`}
+            bottom={`总系统内存  ${topValues.systemUsageTotal}G`}
           />
         </div>
         <div style={{ marginBottom: 24 }}>

@@ -28,11 +28,12 @@ export default () => {
   const [current, setCurrent] = useState<Partial<ResourceItem>>({});
   const [visible, setVisible] = useState<boolean>(false);
   const [issueVisible, setIssueVisible] = useState<boolean>(false);
+  const { permission } = PermissionButton.usePermission('edge/Resource');
 
   const tools = (record: ResourceItem, type: 'card' | 'list') => [
     <PermissionButton
       type={'link'}
-      isPermission={true}
+      isPermission={permission.update}
       onClick={() => {
         setCurrent(record);
         setVisible(true);
@@ -56,7 +57,7 @@ export default () => {
         title: type !== 'list' ? '' : '下发',
       }}
       style={{ padding: 0 }}
-      isPermission={true}
+      isPermission={permission.setting}
       key={'reset'}
     >
       <DownSquareOutlined />
@@ -99,7 +100,7 @@ export default () => {
           }
         },
       }}
-      isPermission={true}
+      isPermission={permission.action}
       tooltip={{
         title: type === 'list' ? (record.state.value !== 'disabled' ? '禁用' : '启用') : '',
       }}
@@ -117,7 +118,7 @@ export default () => {
       type={'link'}
       key={'delete'}
       style={{ padding: 0 }}
-      isPermission={true}
+      isPermission={permission.delete}
       tooltip={record.state.value !== 'notActive' ? { title: '请先禁用，再删除。' } : undefined}
       disabled={record.state.value !== 'notActive'}
       popConfirm={{

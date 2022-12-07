@@ -22,11 +22,20 @@
   }
   .card-item-content-box {
     .card-item-content-trigger {
-      color: rgba(0, 0, 0, 0.85);
-      font-weight: bold;
-      font-size: 15px;
+      display: flex;
+      .card-item-content-trigger-item {
+        width: max-content;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: bold;
+        font-size: 15px;
+        &:not(:last-child) {
+          margin-right: 10px;
+        }
+      }
       .trigger-device {
         color: rgba(47, 84, 235);
+        font-weight: bold;
+        font-size: 15px;
       }
     }
     .card-item-content-action-item {
@@ -48,7 +57,6 @@
           width: 100%;
           .trigger-contents {
             color: rgba(0, 0, 0, 0.85);
-            //width: calc(85% - 110px);
           }
           .right-item-left {
             width: 15%;
@@ -61,13 +69,11 @@
           }
           .right-item-right {
             width: 85%;
-            padding-left: 20px;
             .right-item-right-item {
               display: flex;
               width: 100%;
               .trigger-ways {
-                width: 75px;
-                margin-right: 20px;
+                width: 70px;
                 color: rgba(0, 0, 0, 0.85);
                 font-size: 16px;
               }
@@ -81,6 +87,9 @@
                   color: rgba(0, 0, 0, 0.65);
                 }
               }
+            }
+            &:not(:first-child) {
+              padding-left: 20px;
             }
           }
         }

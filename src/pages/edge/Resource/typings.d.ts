@@ -5,6 +5,7 @@ type ResourceItem = {
   targetType: string;
   sourceId: string;
   sourceType: string;
+  sourceName: string;
   metadata: string;
   state: {
     value: string;

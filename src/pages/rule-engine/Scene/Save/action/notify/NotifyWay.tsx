@@ -53,7 +53,7 @@ export default forwardRef((props: NotifyWayProps, ref) => {
           name="notifyType"
           label="应用"
           required
-          rules={[{ required: true, message: '请选择类型' }]}
+          rules={[{ required: true, message: '请选择通知方式' }]}
         >
           <NotifyType options={list} />
         </Form.Item>
