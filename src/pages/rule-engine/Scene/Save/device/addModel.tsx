@@ -226,7 +226,7 @@ export default observer((props: AddProps) => {
         Store.set('TriggerDeviceModel', {
           update: !isUpdate,
         });
-        console.log('isUpdate', isUpdate);
+        console.log('isUpdate', _options);
         props.onSave?.(saveData, _options);
       }
     }
@@ -293,7 +293,36 @@ export default observer((props: AddProps) => {
       }
     >
       <div className="steps-steps">
-        <Steps current={TriggerDeviceModel.stepNumber} items={TriggerDeviceModel.steps} />
+        <Steps
+          current={TriggerDeviceModel.stepNumber}
+          items={TriggerDeviceModel.steps}
+          onChange={(num) => {
+            if (num === 1) {
+              if (TriggerDeviceModel.productId) {
+                TriggerDeviceModel.stepNumber = num;
+              } else {
+                onlyMessage('请选择产品', 'error');
+              }
+            } else if (num === 2) {
+              if (
+                TriggerDeviceModel.selector === 'fixed' &&
+                !TriggerDeviceModel.selectorValues?.length
+              ) {
+                onlyMessage('请选择设备', 'error');
+                return;
+              } else if (
+                TriggerDeviceModel.selector === 'org' &&
+                !TriggerDeviceModel.selectorValues?.length
+              ) {
+                onlyMessage('请选择部门', 'error');
+                return;
+              }
+              TriggerDeviceModel.stepNumber = num;
+            } else {
+              TriggerDeviceModel.stepNumber = num;
+            }
+          }}
+        />
       </div>
       <div className="steps-content">
         {loading && renderComponent(TriggerDeviceModel.steps[TriggerDeviceModel.stepNumber]?.key)}

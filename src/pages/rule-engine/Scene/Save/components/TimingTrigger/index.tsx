@@ -140,6 +140,7 @@ export default (props: TimmingTriggerProps) => {
                 placeholder={'请输入时间'}
                 addonAfter={TimeTypeAfter}
                 style={{ maxWidth: 170 }}
+                precision={0}
                 min={0}
                 max={59}
               />

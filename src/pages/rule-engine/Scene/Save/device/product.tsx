@@ -239,7 +239,7 @@ export default observer(() => {
           type: 'radio',
           selectedRowKeys: [TriggerDeviceModel.productId],
           onChange: (_, selectedRows) => {
-            console.log('onChange',selectedRows);
+            console.log('onChange', selectedRows);
             TriggerDeviceModel.productId = selectedRows.map((item) => item.id)[0];
             TriggerDeviceModel.productDetail = selectedRows?.[0];
             handleMetadata(TriggerDeviceModel.productDetail.metadata);
@@ -250,7 +250,8 @@ export default observer(() => {
             TriggerDeviceModel.operation = {
               operator: 'online',
             };
-          }
+            TriggerDeviceModel.selectorValues = [];
+          },
         }}
         onPageChange={(page, size) => {
           TriggerDeviceModel.productPage = page;

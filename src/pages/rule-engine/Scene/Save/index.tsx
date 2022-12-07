@@ -7,14 +7,14 @@ import Timer from '../Save/timer/index';
 import { TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
 import { observer } from '@formily/react';
-import type { FormModelType, ActionBranchesProps } from '@/pages/rule-engine/Scene/typings';
+import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
 import { useEffect, useCallback } from 'react';
 import { service } from '@/pages/rule-engine/Scene';
 import './index.less';
-import { onlyMessage } from '@/utils/util';
+import { onlyMessage, randomString } from '@/utils/util';
 import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isArray } from 'lodash';
 
 export const defaultBranches = [
   {
@@ -33,7 +33,7 @@ export const defaultBranches = [
         key: 'terms_1',
       },
     ],
-    key: 'branckes_1',
+    key: 'branches_1',
     shakeLimit: {
       enabled: false,
       time: 0,
@@ -72,7 +72,7 @@ export default observer(() => {
   const triggerType = location?.query?.triggerType || '';
   const id = location?.query?.id || '';
   const history = useHistory();
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
 
   const FormModelInit = () => {
     FormModel.current = {
@@ -84,7 +84,7 @@ export default observer(() => {
         ...defaultBranches,
         {
           when: [],
-          key: 'branches_2',
+          key: 'branches_' + new Date().getTime(),
           shakeLimit: {
             enabled: false,
             time: 0,
@@ -97,7 +97,24 @@ export default observer(() => {
     };
   };
 
+  const assignmentKey = (data: any[]): any[] => {
+    const onlyKey = ['when', 'then', 'terms', 'actions'];
+    if (!data) return [];
+
+    return data.map((item: any) => {
+      item.key = randomString();
+      Object.keys(item).some((key) => {
+        if (onlyKey.includes(key) && isArray(item[key])) {
+          item[key] = assignmentKey(item[key]);
+        }
+      });
+
+      return item;
+    });
+  };
+
   useEffect(() => {
+    window.scrollTo(0, 0);
     return () => {
       // 销毁
       console.log('销毁');
@@ -111,44 +128,12 @@ export default observer(() => {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
           console.log('defaultBranches', defaultBranches);
-          let branches = resp.result.branches || cloneDeep(defaultBranches);
-          // 处理 branches 的 key
-          if (branches) {
-            branches = branches.map((bItem: ActionBranchesProps, bIndex: number) => {
-              if (!bItem.key) {
-                bItem.key = `branches_${new Date().getTime() + bIndex}`;
-                if (bItem.then && bItem.then.length) {
-                  bItem.then = bItem.then.map((tItem,tIndex) => {
-                    tItem.key = `then_${new Date().getTime() + tIndex}`;
-                    if (tItem.actions) {
-                      tItem.actions = tItem.actions.map((aItem, index) => {
-                        aItem.key = `${aItem.executor}_${new Date().getTime() + index}`;
-                        return aItem;
-                      });
-                    }
-                    return tItem;
-                  });
-                }
-                if (bItem.when && bItem.when.length) {
-                  bItem.when = bItem.when.map((wItem, index) => {
-                    wItem.key = `when_${new Date().getTime() + index}`;
-                    if (wItem.terms) {
-                      wItem.terms = wItem.terms.map((wtItem, wtIndex) => {
-                        wtItem.key = `terms_${new Date().getTime() + wtIndex}`;
-                        return wtItem;
-                      });
-                    }
-                    return wItem;
-                  });
-                }
-              }
-              return bItem;
-            });
-          }
+          const branches = resp.result.branches || defaultBranches;
           if (branches[0]?.when?.length) {
+            // 设备
             branches.push({
               when: [],
-              key: 'branckes_2',
+              key: 'branches_' + new Date().getTime(),
               shakeLimit: {
                 enabled: false,
                 time: 0,
@@ -163,9 +148,9 @@ export default observer(() => {
           };
           FormModel.current.options = { ...defaultOptions, ...resp.result.options };
           FormModel.current.trigger = resp.result.trigger || {};
-          FormModel.current.branches = branches;
+          FormModel.current.branches = cloneDeep(assignmentKey(branches));
 
-          form.setFieldValue('description', resp.result.description)
+          form.setFieldValue('description', resp.result.description);
         }
       });
     }
@@ -198,7 +183,7 @@ export default observer(() => {
   };
 
   const submit = useCallback(() => {
-    const baseData = form.getFieldsValue()
+    const baseData = form.getFieldsValue();
     const FormData = cloneDeep(FormModel.current);
     const { options, branches } = FormData;
     if (options?.terms) {
@@ -216,10 +201,10 @@ export default observer(() => {
     }
 
     if (baseData) {
-      FormData.description = baseData.description
+      FormData.description = baseData.description;
     }
 
-    service.updateScene(FormData).then((res) => {
+    service.updateScene(FormData).then((res: any) => {
       if (res.status === 200) {
         onlyMessage('操作成功', 'success');
         const url = getMenuPathByCode('rule-engine/Scene');

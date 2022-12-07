@@ -1,6 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import type { TermsType, TermsVale } from '@/pages/rule-engine/Scene/typings';
-import { DropdownButton, ParamsDropdown } from '@/pages/rule-engine/Scene/Save/components/Buttons';
+import {
+  DropdownButton,
+  ParamsDropdown,
+  useOption,
+} from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { observer } from '@formily/react';
@@ -20,16 +24,47 @@ interface ParamsItemProps {
   onDelete: () => void;
 }
 
-const DoubleFilter = ['nbtw', 'btw'];
+const handleName = (_data: any) => (
+  <Space>
+    {_data.name}
+    <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
+    {_data.description && (
+      <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
+    )}
+  </Space>
+);
+
+const handleOptions = (options: any[]): any[] => {
+  if (!options) return [];
+
+  return options.map((item) => {
+    const disabled = item.children?.length > 0;
+    return {
+      ...item,
+      column: item.column,
+      key: item.column,
+      value: item.column,
+      title: handleName(item),
+      disabled: disabled,
+      children: handleOptions(item.children),
+    };
+  });
+};
+
+const DoubleFilter = ['nbtw', 'btw', 'in', 'nin'];
 const ParamsItem = observer((props: ParamsItemProps) => {
   const [deleteVisible, setDeleteVisible] = useState(false);
-  const [paramOptions, setParamOptions] = useState<any[]>([]);
   const [ttOptions, setTtOptions] = useState<any[]>([]);
   const [valueOptions] = useState<any>(undefined);
   const [metricsOptions, setMetricsOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
 
-  const [value, setValue] = useState<Partial<TermsVale> | undefined>({});
+  const { paramOptions, valueOptions: paramsValueOptions } = useOption(props.options, 'column');
+
+  const [value, setValue] = useState<Partial<TermsVale> | undefined>({
+    value: undefined,
+    source: 'fixed',
+  });
   const [termType, setTermType] = useState('');
   const [column, setColumn] = useState('');
   const [label, setLabel] = useState<any[]>([undefined, undefined, {}]);
@@ -61,90 +96,39 @@ const ParamsItem = observer((props: ParamsItemProps) => {
     [column, termType],
   );
 
-  const paramChange = (item: any) => {
-    const node = item.node;
-    const _termTypeOptions: any[] =
-      node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
-    setTtOptions(_termTypeOptions);
-    setValueType(node.dataType);
-    if (node.metrics) {
-      // 指标值
-      const _metrics = node.metrics.map((mItem: any) => ({ title: mItem.name, key: mItem.id }));
-      setMetricsOptions(_metrics);
-    }
-  };
-
-  const findParams = (key: string, data: any[]): boolean => {
-    let has = false;
-    return data.some((item) => {
-      if (item.value === key) {
-        paramChange({ node: item });
-        has = true;
-      } else if (item.children) {
-        has = findParams(key, item.children);
+  const convertLabelValue = useCallback(
+    (columnValue?: string) => {
+      if (columnValue && paramOptions.length) {
+        console.log('paramsValueOptions ===>>', paramsValueOptions);
+        const labelOptions = paramsValueOptions.get(columnValue);
+        const _termTypeOptions: any[] =
+          labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
+          [];
+        setTtOptions(_termTypeOptions);
+        setValueType(labelOptions.dataType);
+        if (labelOptions.metrics) {
+          // 指标值
+          const _metrics = labelOptions.metrics.map((mItem: any) => ({
+            title: mItem.name,
+            key: mItem.id,
+          }));
+          setMetricsOptions(_metrics);
+        }
       }
-      return has;
-    });
-  };
-
-  const handleName = (_data: any): any => (
-    <Space>
-      {_data.name}
-      <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
-      {_data.description && (
-        <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
-      )}
-    </Space>
+    },
+    [paramOptions, paramsValueOptions],
   );
 
-  const handleChildrenName = (_data: any[]): any[] => {
-    if (_data?.length > 0) {
-      return _data.map((it) => {
-        if (it.children) {
-          return {
-            ...it,
-            key: it.column,
-            value: it.column,
-            title: handleName(it),
-            disabled: true,
-            children: handleChildrenName(it.children),
-          };
-        }
-        return { ...it, key: it.column, title: handleName(it) };
-      });
-    } else {
-      return [];
-    }
-  };
-
   useEffect(() => {
-    console.log('paramsChange', props.data);
-
     setTermType(props.data.termType || '');
     setValue(props.data.value);
     setColumn(props.data.column || '');
     ValueRef.current = props.data || {};
+    convertLabelValue(props.data.column);
   }, [props.data]);
 
   useEffect(() => {
-    const _data = props.options.map((item: any) => {
-      const disabled = item.children?.length > 0;
-      return {
-        ...item,
-        column: item.column,
-        key: item.column,
-        value: item.column,
-        title: handleName(item),
-        disabled: disabled,
-        children: handleChildrenName(item.children),
-      };
-    });
-
-    setParamOptions(_data);
-
-    if (column) {
-      findParams(column, _data);
-    }
+    convertLabelValue(props.data.column);
   }, [props.options]);
 
   const handleOptionsLabel = useCallback(
@@ -160,6 +144,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
         nbtw: '不在_value和_value2之间',
         time_gt_now: '距离当前时间大于_value秒',
         time_lt_now: '距离当前时间小于_value秒',
+        in: '在_value,_value2之中',
+        nin: '不在_value,_value2之中',
       };
       const typeKey = {
         and: '并且',
@@ -196,7 +182,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
         }}
       >
         <DropdownButton
-          options={paramOptions}
+          options={handleOptions(paramOptions)}
           type="param"
           placeholder="请选择参数"
           value={column}
@@ -211,7 +197,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               value: undefined,
               source: 'manual',
             });
-            paramChange(item);
+            // convertLabelValue(item);
             setColumn(_value!);
             ValueRef.current.column = _value!;
             const node = item.node;
@@ -261,7 +247,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             ValueRef.current.termType = v;
             valueChange({
               column: props.data.column,
-              value: value as TermsVale,
+              value: _value as TermsVale,
               termType: v,
             });
           }}
@@ -277,12 +263,15 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               value={value}
               name={0}
               onChange={(v, lb) => {
-                setValue({
-                  ...v,
-                });
+                const _myValue = {
+                  value: [v.value, ValueRef.current.value?.value?.[1]],
+                  source: v.source,
+                };
+                ValueRef.current.value = _myValue;
+                setValue(_myValue);
                 label[2] = { ...label[2], 0: lb };
                 setLabel([...label]);
-                valueEventChange(v);
+                valueEventChange(_myValue);
               }}
             />
             <ParamsDropdown
@@ -294,12 +283,15 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               value={value}
               name={1}
               onChange={(v, lb) => {
-                setValue({
-                  ...v,
-                });
+                const _myValue = {
+                  value: [ValueRef.current.value?.value?.[0], v.value],
+                  source: v.source,
+                };
+                ValueRef.current.value = _myValue;
+                setValue(_myValue);
                 label[2] = { ...label[2], 1: lb };
                 setLabel([...label]);
-                valueEventChange(v);
+                valueEventChange(_myValue);
               }}
             />
           </>
@@ -316,7 +308,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 ...v,
               });
               label[2] = { 0: lb };
-
+              ValueRef.current.value = v;
               setLabel([...label]);
               valueEventChange(v);
             }}

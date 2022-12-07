@@ -7,7 +7,7 @@ import moment from 'moment';
 import ParamsSelect from '../ParamsSelect';
 import './index.less';
 
-interface ParamsDropdownProps {
+export interface ParamsDropdownProps {
   value?: any;
   source?: string;
   placeholder?: string;
@@ -72,7 +72,6 @@ export default (props: ParamsDropdownProps) => {
         value: value,
         source: activeKey,
       };
-      setOpen(false)
       props.onChange?.(changeValue, _label);
     },
     [activeKey],
@@ -101,7 +100,16 @@ export default (props: ParamsDropdownProps) => {
             />
           );
         case 'enum':
-          return <Menus value={_value} options={props.options} onChange={onValueChange} />;
+          return (
+            <Menus
+              value={_value}
+              options={props.options}
+              onChange={(v, l) => {
+                onValueChange(v, l);
+                setOpen(false);
+              }}
+            />
+          );
         case 'boolean':
           const _options = [
             { label: '是', value: 'true', key: 'true' },
@@ -113,7 +121,7 @@ export default (props: ParamsDropdownProps) => {
               options={_options}
               onChange={(v, l) => {
                 onValueChange(v === 'true' ? true : false, l);
-                setOpen(false)
+                setOpen(false);
               }}
             />
           );
@@ -122,9 +130,8 @@ export default (props: ParamsDropdownProps) => {
             <MTimePicker
               value={_value ? moment(_value, 'HH:mm:ss') : undefined}
               onChange={(_: any, timeString: string) => {
-                console.log('timeString', timeString);
                 onValueChange(timeString, timeString);
-                setOpen(false)
+                setOpen(false);
               }}
             />
           );
@@ -139,7 +146,7 @@ export default (props: ParamsDropdownProps) => {
                     titleKey = props.showLabelKey;
                   }
                   onValueChange(selectedKeys[0], e.node[titleKey]);
-                  setOpen(false)
+                  setOpen(false);
                 }}
                 style={{ width: 300 }}
                 treeData={props.BuiltInOptions}
@@ -179,36 +186,48 @@ export default (props: ParamsDropdownProps) => {
     });
   };
 
-  useEffect(() => {
-    if (props.value?.value === undefined || props.value?.value === '') {
-      setLabel('');
-    } else if (props.valueType === 'boolean') {
-      if (props.name) {
-        if (props.value.value[props.name] === true) {
-          setLabel('是');
-        } else if (props.value.value[props.name] === false) {
-          setLabel('否');
-        } else {
-          setLabel('');
-        }
-      } else {
-        if (props.value.value === true) {
-          setLabel('是');
-        } else if (props.value.value === false) {
-          setLabel('否');
-        } else {
-          setLabel('');
-        }
+  const valueLabel = useCallback(
+    (v: any, type: string) => {
+      console.log(type, v);
+      switch (type) {
+        case 'boolean':
+          setLabel(v ? '是' : '否');
+          break;
+        case 'enum':
+        case 'object':
+          findLabel(v, props.options || []);
+          break;
+        case 'built':
+          findLabel(v, props.BuiltInOptions || []);
+          break;
+        default:
+          setLabel(v);
       }
-    } else if (['enum', 'boolean'].includes(props.valueType)) {
-      setLabel(props.name ? props.value.value[props.name] : props.value.value);
-    } else if (props.BuiltInOptions) {
-      findLabel(props.value?.value, props.BuiltInOptions || []);
-    } else {
-      setLabel(props.value?.value);
+    },
+    [props.options, props.BuiltInOptions],
+  );
+
+  const initData = useCallback(() => {
+    let _value = props.value?.value;
+    if ('name' in props) {
+      _value = props.value?.value[props.name!];
     }
+    console.log('initData', _value);
+    setMyValue(_value);
+    if (_value === undefined || _value === '') {
+      setLabel('');
+    } else {
+      if (props.BuiltInOptions && props.value.source === 'upper') {
+        valueLabel(_value, 'built');
+      } else {
+        valueLabel(_value, props.valueType);
+      }
+    }
+  }, [props.value, props.options, props.valueType, props.BuiltInOptions]);
+
+  useEffect(() => {
+    initData();
     console.log('valueChange-params-effect', props.value?.source, props.value?.value);
-    setMyValue(props.value?.value);
     if (props.value?.source) {
       setActiveKey(props.value?.source);
     } else {
@@ -218,7 +237,11 @@ export default (props: ParamsDropdownProps) => {
 
   useEffect(() => {
     if (props.BuiltInOptions) {
-      findLabel(props.value?.value, props.BuiltInOptions || []);
+      let _value = props.value.value;
+      if ('name' in props) {
+        _value = props.value?.value[props.name!];
+      }
+      findLabel(_value, props.BuiltInOptions || []);
     }
   }, [props.BuiltInOptions]);
 
