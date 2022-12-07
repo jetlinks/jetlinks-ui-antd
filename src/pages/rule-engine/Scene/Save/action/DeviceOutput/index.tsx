@@ -79,26 +79,29 @@ export default observer((props: Props) => {
       name: '-', //设备名称
       type: '', //类型
       properties: '', //属性功能
+      propertiesValue: '', //设置功能
       selector: DeviceModel.selector, //选择器标识
       productName: DeviceModel.productDetail.name,
       relationName: DeviceModel.relationName,
       taglist: [],
     };
-    _options.name = DeviceModel.deviceDetail.name;
+    _options.name = DeviceModel.deviceDetail?.name;
     const _type = value.message.messageType;
     if (_type === 'INVOKE_FUNCTION') {
       _options.type = '执行';
-      _options.properties = value.message.functionId;
+      // _options.properties = value.message.functionId;
+      _options.properties = DeviceModel.propertiesName;
     }
     if (_type === 'READ_PROPERTY') {
       _options.type = '读取';
-      _options.properties = value.message.properties?.[0];
+      _options.properties = DeviceModel.propertiesName;
       // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
-      _options.properties = Object.keys(value.message.properties)?.[0];
-      // _options.name = DeviceModel.selectorValues[0].name;
+      // _options.properties = Object.keys(value.message.properties)?.[0];
+      _options.properties = DeviceModel.propertiesName;
+      _options.propertiesValue = DeviceModel.propertiesValue;
     }
     if (_options.selector === 'tag') {
       _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
@@ -132,7 +135,7 @@ export default observer((props: Props) => {
     <Modal
       title={'执行动作'}
       open
-      width={880}
+      width={810}
       onCancel={() => {
         props.cancel();
         DeviceModel.current = 0;

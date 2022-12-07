@@ -35,14 +35,17 @@ export default (props: Props) => {
     });
     return lable?.description;
   };
+
   const filterTree = (nodes: any[]) => {
     if (!nodes?.length) {
       return nodes;
     }
     return nodes.filter((it) => {
-      if (it.children.find((item: any) => item.type === props.type)) {
+      const children = it.children.filter((item: any) => item.type === props.type);
+      if (children && children.length !== 0) {
         return true;
       }
+      it.children = filterTree(it.children);
       return false;
     });
   };
@@ -53,7 +56,8 @@ export default (props: Props) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const filterData = filterTree(_data);
-        // console.log('_data',_data,)
+        console.log('_data', _data);
+        console.log('filterData', filterData);
         // console.log('type',props.type)
         setBuiltInList(filterData);
         const label = filterLabel(filterData);
@@ -208,7 +212,8 @@ export default (props: Props) => {
             defaultExpandAll
             fieldNames={{ title: 'name', key: 'id' }}
             onSelect={(selectedKeys, e) => {
-              // console.log(e.node);
+              console.log(e.node);
+              setDateOpen(false);
               setLabelValue(e.node.description);
               setValue(selectedKeys[0]);
               if (props.onChange) {

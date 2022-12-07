@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import '../index.less';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
 
 interface Props {
   typeList: any[];
@@ -9,6 +11,7 @@ interface Props {
   onChange?: (type: string) => void;
   onSelect?: (type: string) => void;
   disabled?: boolean;
+  labelBottom?: boolean;
 }
 
 const TopCard = (props: Props) => {
@@ -21,6 +24,7 @@ const TopCard = (props: Props) => {
   const onSelect = (_type: string) => {
     if (!props.disabled) {
       setType(_type);
+
       if (props.onChange) {
         props.onChange(_type);
       }
@@ -34,17 +38,19 @@ const TopCard = (props: Props) => {
           key={item.value}
           className={classNames('trigger-way-item', {
             active: type === item.value,
+            labelBottom: props.labelBottom,
           })}
           onClick={() => {
             onSelect(item.value);
-            if (props.onChange) {
-              props.onChange(item.value);
-            }
           }}
         >
           <div className={'way-item-title'}>
-            <p>{item.label}</p>
-            <span>{item.tip}</span>
+            <span className={'way-item-label'}>{item.label}</span>
+            {item.tip && (
+              <Popover content={item.tip}>
+                <QuestionCircleOutlined className={'way-item-icon'} />
+              </Popover>
+            )}
           </div>
           <div className={'way-item-image'}>
             <img width={48} src={item.image} />

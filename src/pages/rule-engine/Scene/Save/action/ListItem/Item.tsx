@@ -152,9 +152,12 @@ export default (props: ItemProps) => {
       case 'fixed':
         return (
           <div>
-            {data?.options?.type}
+            {`${data?.options?.type} ${data?.options?.name} ${data?.options?.properties} ${
+              data?.options?.propertiesValue || ''
+            }`}
+            {/* {data?.options?.type}
             <span>{data?.options?.name}</span>
-            {data?.options?.properties}
+            {data?.options?.properties} */}
           </div>
         );
       case 'tag':

@@ -42,6 +42,7 @@ export default (props: Props) => {
   }, [props.value]);
 
   useEffect(() => {
+    // console.log(props.open)
     if (props.open !== undefined) {
       setOpen(props.open);
     }
@@ -87,10 +88,6 @@ export default (props: Props) => {
           onChange={(e) => {
             setValue(e.target.value);
             props.onChange(value, tabKey);
-          }}
-          onFocus={() => {
-            // setOpen(true);
-            props.openChange?.(true);
           }}
         />
       )}

@@ -457,7 +457,14 @@ export default observer((props: Props) => {
       form.setFieldsValue({ selector: DeviceModel.selector });
     }
     sourceChangeEvent();
-    console.log('-----deviceid-----', DeviceModel.deviceId);
+    // console.log('-----deviceid-----', DeviceModel.deviceId);
+    if (DeviceModel.deviceId) {
+      service.detail(DeviceModel.deviceId).then((res) => {
+        if (res.status === 200) {
+          DeviceModel.deviceDetail = res.result || {};
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {

@@ -22,6 +22,8 @@ type ModelType = {
   source: string;
   relationName: string;
   message: any;
+  propertiesName: string;
+  propertiesValue: string;
 };
 
 const DeviceModel = model<ModelType>({
@@ -39,6 +41,8 @@ const DeviceModel = model<ModelType>({
   source: 'fixed',
   relationName: '',
   message: {},
+  propertiesName: '',
+  propertiesValue: '',
 });
 
 export default DeviceModel;

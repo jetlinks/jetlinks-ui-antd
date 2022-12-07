@@ -3,7 +3,7 @@ import { Select } from 'antd';
 interface ReadPropertyProps {
   properties: any[];
   value?: any;
-  onChange?: (value?: any) => void;
+  onChange?: (value?: any, text?: any) => void;
   propertiesChange?: (value?: string) => void;
   id?: string;
 }
@@ -21,9 +21,10 @@ export default (props: ReadPropertyProps) => {
       })}
       fieldNames={{ label: 'name', value: 'id' }}
       style={{ width: '100%' }}
-      onSelect={(key: any) => {
+      onSelect={(key: any, option: any) => {
+        // console.log(key,option)
         if (props.onChange) {
-          props.onChange([key]);
+          props.onChange([key], option.name);
           props.propertiesChange?.(key);
         }
       }}
