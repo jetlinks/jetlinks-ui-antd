@@ -50,7 +50,7 @@ export default observer(() => {
         tableAlertRender={false}
         options={false}
         scroll={{
-          y: 350
+          y: 350,
         }}
         rowSelection={{
           type: 'radio',

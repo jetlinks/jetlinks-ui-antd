@@ -318,25 +318,65 @@ const ContentRender = (data: SceneCardProps) => {
   const type = data.triggerType;
   if (!!type && (data.branches || [])?.length) {
     const trigger = data?.options?.trigger;
-    const text =
-      (trigger?.name || '') +
-      (trigger?.productName || '') +
-      (trigger?.when || '') +
-      (trigger?.time || '') +
-      (trigger?.extraTime || '') +
-      (trigger?.type || '');
     return (
       <div className={styles['card-item-content-box']}>
-        <MyTooltip placement="topLeft" title={text}>
-          <div className={classNames(styles['card-item-content-trigger'], 'ellipsis')}>
-            {trigger?.name || ''}
-            <span className={styles['trigger-device']}>{trigger?.productName || ''}</span>
-            {(trigger?.when || '') +
-              (trigger?.time || '') +
-              (trigger?.extraTime || '') +
-              (trigger?.type || '')}
-          </div>
-        </MyTooltip>
+        <div className={classNames(styles['card-item-content-trigger'])}>
+          {trigger?.name && (
+            <MyTooltip placement="topLeft" title={trigger?.name || ''}>
+              <div
+                className={classNames(styles['card-item-content-trigger-item'], 'ellipsis')}
+                style={{ maxWidth: '15%', color: 'rgba(47, 84, 235)' }}
+              >
+                {trigger?.name || ''}
+              </div>
+            </MyTooltip>
+          )}
+          {trigger?.productName && (
+            <MyTooltip placement="topLeft" title={trigger?.productName || ''}>
+              <div
+                className={classNames(styles['card-item-content-trigger-item'], 'ellipsis')}
+                style={{ maxWidth: '15%', color: 'rgba(47, 84, 235)' }}
+              >
+                {trigger?.productName || ''}
+              </div>
+            </MyTooltip>
+          )}
+          {trigger?.when && (
+            <MyTooltip placement="topLeft" title={trigger?.when || ''}>
+              <div
+                className={classNames(styles['card-item-content-trigger-item'], 'ellipsis')}
+                style={{ maxWidth: '15%' }}
+              >
+                {trigger?.when || ''}
+              </div>
+            </MyTooltip>
+          )}
+          {trigger?.time && (
+            <div className={classNames(styles['card-item-content-trigger-item'])}>
+              {trigger?.time || ''}
+            </div>
+          )}
+          {trigger?.extraTime && (
+            <div className={classNames(styles['card-item-content-trigger-item'])}>
+              {trigger?.extraTime || ''}
+            </div>
+          )}
+          {trigger?.action && (
+            <MyTooltip placement="topLeft" title={trigger?.action || ''}>
+              <div
+                className={classNames(styles['card-item-content-trigger-item'], 'ellipsis')}
+                style={{ maxWidth: '15%' }}
+              >
+                {trigger?.action || ''}
+              </div>
+            </MyTooltip>
+          )}
+          {trigger?.type && (
+            <div className={classNames(styles['card-item-content-trigger-item'])}>
+              {trigger?.type || ''}
+            </div>
+          )}
+        </div>
         <div className={styles['card-item-content-action']}>
           {(visible ? data.branches || [] : (data?.branches || []).slice(0, 2)).map(
             (item: any, index) => {
@@ -350,7 +390,9 @@ const ContentRender = (data: SceneCardProps) => {
                       {type === 'device' && (
                         <div
                           className={styles['right-item-left']}
-                          style={{ width: item?.then && item?.then.length ? '15%' : '100%' }}
+                          style={{
+                            width: Array.isArray(item.then) && item?.then.length ? '15%' : '100%',
+                          }}
                         >
                           <MyTooltip
                             placement={'topLeft'}
@@ -373,7 +415,7 @@ const ContentRender = (data: SceneCardProps) => {
                           )}
                         </div>
                       )}
-                      {item?.then && item?.then.length && (
+                      {Array.isArray(item.then) && item?.then.length ? (
                         <div
                           className={styles['right-item-right']}
                           style={{ width: type === 'device' ? '85%' : '100%' }}
@@ -389,6 +431,8 @@ const ContentRender = (data: SceneCardProps) => {
                             </div>
                           ))}
                         </div>
+                      ) : (
+                        ''
                       )}
                     </div>
                   </div>

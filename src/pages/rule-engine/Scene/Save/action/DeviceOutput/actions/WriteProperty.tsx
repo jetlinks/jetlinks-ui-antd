@@ -1,5 +1,5 @@
 import { Col, Row, Select } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TypeModel from './TypeModel';
 // import { useEffect, useState } from "react";
 
@@ -7,7 +7,7 @@ interface Props {
   properties: any[];
   value?: any;
   id?: string;
-  onChange?: (value?: any) => void;
+  onChange?: (value?: any, text?: any) => void;
   propertiesChange?: (value?: string) => void;
   name?: any;
 }
@@ -24,6 +24,7 @@ export default (props: Props) => {
   const [propertiesValue, setPropertiesValue] = useState(undefined);
   const [propertiesType, setPropertiesType] = useState('');
   const [source, setSource] = useState<string>('fixed');
+  const textRef = useRef<any>('');
 
   useEffect(() => {
     console.log(props.value);
@@ -58,7 +59,7 @@ export default (props: Props) => {
           source: source,
         },
       };
-      props.onChange(obj);
+      props.onChange(obj, textRef.current);
     }
   }, [propertiesValue, source]);
 
@@ -80,7 +81,9 @@ export default (props: Props) => {
           onChange={(e, option) => {
             setPropertiesId(e);
             setPropertiesType(option.valueType.type);
+            textRef.current = option.name;
             console.log(option);
+            setPropertiesValue(undefined);
           }}
         ></Select>
       </Col>

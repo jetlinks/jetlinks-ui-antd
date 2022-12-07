@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import Modal from '../Modal/add';
+import Modal, { ActionTypeComponent } from '../Modal/add';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import { DeleteOutlined } from '@ant-design/icons';
 import './index.less';
@@ -45,6 +45,7 @@ export default (props: ItemProps) => {
   const [triggerVisible, setTriggerVisible] = useState<boolean>(false);
   const [op, setOp] = useState<any>(props.options);
   const cacheValueRef = useRef<any>({});
+  const [actionType, setActionType] = useState<string>('');
 
   useEffect(() => {
     setOp(props.options);
@@ -152,9 +153,12 @@ export default (props: ItemProps) => {
       case 'fixed':
         return (
           <div>
-            {data?.options?.type}
+            {`${data?.options?.type} ${data?.options?.name} ${data?.options?.properties} ${
+              data?.options?.propertiesValue || ''
+            }`}
+            {/* {data?.options?.type}
             <span>{data?.options?.name}</span>
-            {data?.options?.properties}
+            {data?.options?.properties} */}
           </div>
         );
       case 'tag':
@@ -186,7 +190,6 @@ export default (props: ItemProps) => {
   };
 
   const contentRender = () => {
-    // console.log('props.data', props.data)
     if (props?.data?.alarm?.mode === 'trigger') {
       return (
         <div className={'item-options-content'}>
@@ -203,12 +206,7 @@ export default (props: ItemProps) => {
       );
     } else if (props?.data?.alarm?.mode === 'relieve') {
       return (
-        <div
-          className={'item-options-content'}
-          onClick={() => {
-            setVisible(true);
-          }}
-        >
+        <div className={'item-options-content'}>
           满足条件后将解除关联
           <a
             onClick={() => {
@@ -224,7 +222,7 @@ export default (props: ItemProps) => {
         <div
           className={'item-options-content'}
           onClick={() => {
-            setVisible(true);
+            setActionType(props?.data?.executor);
           }}
         >
           {notifyRender(props?.data, props?.options)}
@@ -235,7 +233,7 @@ export default (props: ItemProps) => {
         <div
           className={'item-options-content'}
           onClick={() => {
-            setVisible(true);
+            setActionType(props?.data?.executor);
           }}
         >
           {props.options.name}
@@ -246,7 +244,7 @@ export default (props: ItemProps) => {
         <div
           className={'item-options-content'}
           onClick={() => {
-            setVisible(true);
+            setActionType(props?.data?.executor);
           }}
         >
           {deviceRender(props?.data)}
@@ -272,7 +270,12 @@ export default (props: ItemProps) => {
     <div className="actions-item-warp">
       <div className="actions-item">
         <div className="item-options-warp">
-          <div className="item-options-type">
+          <div
+            className="item-options-type"
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
             <img
               style={{ width: 18 }}
               src={iconMap.get(
@@ -337,7 +340,6 @@ export default (props: ItemProps) => {
             setVisible(false);
           }}
           save={(data: ActionsType, options) => {
-            // FormModel.actions[props.name] = data;
             setOp(options);
             props.onUpdate(data, options);
             setVisible(false);
@@ -352,6 +354,20 @@ export default (props: ItemProps) => {
           }}
         />
       )}
+      <ActionTypeComponent
+        name={props.name}
+        data={props.data}
+        type={actionType}
+        close={() => {
+          setActionType('');
+        }}
+        save={(data: ActionsType, options) => {
+          setOp(options);
+          props.onUpdate(data, options);
+          setActionType('');
+        }}
+        parallel={props.parallel}
+      />
     </div>
   );
 };

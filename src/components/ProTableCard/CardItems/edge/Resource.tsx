@@ -44,7 +44,7 @@ export default (props: ResourceCardProps) => {
             </div>
             <div>
               <label>所属边缘网关</label>
-              <Ellipsis title={props?.category || ''} />
+              <Ellipsis title={props?.sourceName || ''} />
             </div>
           </div>
         </div>

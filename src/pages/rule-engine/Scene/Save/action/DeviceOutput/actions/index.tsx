@@ -1,10 +1,10 @@
 import { observer } from '@formily/reactive-react';
 import { Form, Select } from 'antd';
 import { useEffect, useState } from 'react';
-import ReadProperty from '../../device/readProperty';
 import TopCard from '../device/TopCard';
 import DeviceModel from '../model';
 import FunctionCall from './functionCall';
+import ReadProperty from './ReadProperty';
 import WriteProperty from './WriteProperty';
 
 interface Props {
@@ -131,8 +131,10 @@ export default observer((props: Props) => {
                 filterOption={(input: string, option: any) =>
                   option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
                 }
-                onChange={(value) => {
+                onChange={(value, option) => {
                   setFunctionId(value);
+                  // console.log(option.name)
+                  DeviceModel.propertiesName = option.name;
                 }}
               />
             </Form.Item>
@@ -152,7 +154,13 @@ export default observer((props: Props) => {
             label="读取属性"
             rules={[{ required: true, message: '请选择读取属性' }]}
           >
-            <ReadProperty properties={properties} />
+            <ReadProperty
+              properties={properties}
+              onChange={(_, text) => {
+                console.log(text);
+                DeviceModel.propertiesName = text;
+              }}
+            />
           </Form.Item>
         )}
         {deviceMessageType === 'WRITE_PROPERTY' && (
@@ -161,7 +169,17 @@ export default observer((props: Props) => {
             label="设置属性"
             rules={[{ required: true, message: '请选择属性' }]}
           >
-            <WriteProperty properties={properties} name={props.name} />
+            <WriteProperty
+              properties={properties}
+              name={props.name}
+              onChange={(value, text) => {
+                console.log(Object.keys(value));
+                const item = value[Object.keys(value)?.[0]]?.value;
+                console.log(item);
+                DeviceModel.propertiesName = text;
+                DeviceModel.propertiesValue = item;
+              }}
+            />
           </Form.Item>
         )}
       </Form>

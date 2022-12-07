@@ -223,27 +223,31 @@ export default observer(() => {
             tableAlertRender={false}
             rowSelection={{
               selectedRowKeys: [...TriggerDeviceModel.deviceKeys],
-              onSelect: (record, selected, selectedRows) => {
-                console.log(record)
+              onSelect: (record, selected) => {
+                console.log(record);
                 if (selected) {
-                  TriggerDeviceModel.deviceKeys.push(record.id)
+                  TriggerDeviceModel.deviceKeys.push(record.id);
                   if (TriggerDeviceModel.selectorValues) {
                     TriggerDeviceModel.selectorValues?.push({
                       name: record.name,
-                      value: record.id
-                    })
+                      value: record.id,
+                    });
                   } else {
-                    TriggerDeviceModel.selectorValues = [{
-                      name: record.name,
-                      value: record.id
-                    }]
+                    TriggerDeviceModel.selectorValues = [
+                      {
+                        name: record.name,
+                        value: record.id,
+                      },
+                    ];
                   }
                 } else {
-                  const newArray = TriggerDeviceModel.selectorValues?.filter((item) => item.value !== record.id);
-                  TriggerDeviceModel.deviceKeys = newArray?.map(item => item.value) || []
-                  TriggerDeviceModel.selectorValues = newArray || []
+                  const newArray = TriggerDeviceModel.selectorValues?.filter(
+                    (item) => item.value !== record.id,
+                  );
+                  TriggerDeviceModel.deviceKeys = newArray?.map((item) => item.value) || [];
+                  TriggerDeviceModel.selectorValues = newArray || [];
                 }
-              }
+              },
             }}
             onPageChange={(page, size) => {
               TriggerDeviceModel.devicePage = page;

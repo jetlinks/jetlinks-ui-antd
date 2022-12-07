@@ -101,10 +101,10 @@ export default observer((props: Props) => {
               text: '错误',
               status: 'failed',
             },
-            stopped: {
-              text: '已停止',
-              status: 'stopped',
-            },
+            // stopped: {
+            //   text: '已停止',
+            //   status: 'stopped',
+            // },
           },
         },
         {
@@ -149,10 +149,10 @@ export default observer((props: Props) => {
               text: '错误',
               status: 'failed',
             },
-            stopped: {
-              text: '已停止',
-              status: 'stopped',
-            },
+            // stopped: {
+            //   text: '已停止',
+            //   status: 'stopped',
+            // },
           },
         },
         {
@@ -279,9 +279,11 @@ export default observer((props: Props) => {
                                   record?.state?.value !== 'disabled'
                                     ? await service.updateCollector(record.id, {
                                         state: 'disabled',
+                                        runningState: 'stopped',
                                       })
                                     : await service.updateCollector(record.id, {
                                         state: 'enabled',
+                                        runningState: 'running',
                                       });
                                 if (resp.status === 200) {
                                   onlyMessage('操作成功！');
@@ -315,7 +317,7 @@ export default observer((props: Props) => {
                             tooltip={
                               record?.state?.value !== 'disabled'
                                 ? {
-                                    title: '已启用的采集器不能删除',
+                                    title: '正常的采集器不能删除',
                                   }
                                 : undefined
                             }

@@ -210,18 +210,14 @@ export default observer((props: Props) => {
         field={columns}
         model={'simple'}
         enableSave={false}
+        bodyStyle={{ padding: 0, paddingBottom: 16 }}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
           setSearchParam(data);
         }}
         target="department-assets-product"
       />
-      <div
-        style={{
-          height: 'calc(100vh - 440px)',
-          overflowY: 'auto',
-        }}
-      >
+      <div>
         <ProTableCard<ProductItem>
           noPadding
           cardScrollY={460}

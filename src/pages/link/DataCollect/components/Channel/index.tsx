@@ -6,7 +6,7 @@ import { useDomFullHeight } from '@/hooks';
 import service from '@/pages/link/DataCollect/service';
 import ChannelCard from '@/components/ProTableCard/CardItems/DataCollect/channel';
 import { Empty, PermissionButton } from '@/components';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { Card, Col, Pagination, Row } from 'antd';
@@ -62,7 +62,6 @@ export default observer((props: Props) => {
       title: '状态',
       dataIndex: 'state',
       valueType: 'select',
-      hideInSearch: true,
       valueEnum: {
         enabled: {
           text: '正常',
@@ -78,7 +77,6 @@ export default observer((props: Props) => {
       title: '运行状态',
       dataIndex: 'runningState',
       valueType: 'select',
-      hideInSearch: true,
       valueEnum: {
         running: {
           text: '运行中',
@@ -92,10 +90,10 @@ export default observer((props: Props) => {
           text: '错误',
           status: 'failed',
         },
-        stopped: {
-          text: '已停止',
-          status: 'stopped',
-        },
+        // stopped: {
+        //   text: '已停止',
+        //   status: 'stopped',
+        // },
       },
     },
     {
@@ -179,18 +177,62 @@ export default observer((props: Props) => {
                         })}
                       </PermissionButton>,
                       <PermissionButton
+                        key={'action'}
+                        type={'link'}
+                        style={{ padding: 0 }}
+                        isPermission={permission.action}
+                        popConfirm={{
+                          title: intl.formatMessage({
+                            id: `pages.data.option.${
+                              record?.state?.value !== 'disabled' ? 'disabled' : 'enabled'
+                            }.tips`,
+                            defaultMessage: '确认禁用？',
+                          }),
+                          onConfirm: async () => {
+                            const resp =
+                              record?.state?.value !== 'disabled'
+                                ? await service.updateChannel(record.id, {
+                                    state: 'disabled',
+                                    runningState: 'stopped',
+                                  })
+                                : await service.updateChannel(record.id, {
+                                    state: 'enabled',
+                                    runningState: 'running',
+                                  });
+                            if (resp.status === 200) {
+                              onlyMessage('操作成功！');
+                              handleSearch(param);
+                            } else {
+                              onlyMessage('操作失败！', 'error');
+                            }
+                          },
+                        }}
+                      >
+                        {record?.state?.value !== 'disabled' ? (
+                          <StopOutlined />
+                        ) : (
+                          <PlayCircleOutlined />
+                        )}
+                        {intl.formatMessage({
+                          id: `pages.data.option.${
+                            record?.state?.value !== 'disabled' ? 'disabled' : 'enabled'
+                          }`,
+                          defaultMessage: record?.state?.value !== 'disabled' ? '禁用' : '启用',
+                        })}
+                      </PermissionButton>,
+                      <PermissionButton
                         key="delete"
                         isPermission={permission.delete}
                         type={'link'}
                         style={{ padding: 0 }}
-                        // disabled={record?.state?.value !== 'disabled'}
-                        // tooltip={
-                        //   record?.state?.value !== 'disabled'
-                        //     ? {
-                        //         title: '正常的通道不能删除',
-                        //       }
-                        //     : undefined
-                        // }
+                        disabled={record?.state?.value !== 'disabled'}
+                        tooltip={
+                          record?.state?.value !== 'disabled'
+                            ? {
+                                title: '正常的通道不能删除',
+                              }
+                            : undefined
+                        }
                         popConfirm={{
                           title: '该操作将会删除下属采集器与点位，确定删除？',
                           placement: 'topRight',
