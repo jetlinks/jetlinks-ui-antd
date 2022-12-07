@@ -83,6 +83,7 @@ export default (props: Props) => {
             setPropertiesType(option.valueType.type);
             textRef.current = option.name;
             console.log(option);
+            setPropertiesValue(undefined);
           }}
         ></Select>
       </Col>
