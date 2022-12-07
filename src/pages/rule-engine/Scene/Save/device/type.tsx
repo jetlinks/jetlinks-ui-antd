@@ -166,7 +166,7 @@ export default forwardRef((props: Props, ref) => {
       style={{
         maxHeight: 'calc(100vh - 350px)',
         overflowY: 'auto',
-        overflowX: 'hidden'
+        overflowX: 'hidden',
       }}
     >
       <Form form={form} layout={'vertical'}>
