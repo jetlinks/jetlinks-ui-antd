@@ -48,6 +48,10 @@ export default observer(() => {
         actionRef={actionRef}
         columnEmptyText={''}
         tableAlertRender={false}
+        options={false}
+        scroll={{
+          y: 350,
+        }}
         rowSelection={{
           type: 'radio',
           selectedRowKeys: [TriggerDeviceModel.orgId],

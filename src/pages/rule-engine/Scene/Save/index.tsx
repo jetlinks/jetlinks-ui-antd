@@ -16,7 +16,7 @@ import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
 import { cloneDeep } from 'lodash';
 
-const defaultBranches = [
+export const defaultBranches = [
   {
     when: [
       {
@@ -72,6 +72,7 @@ export default observer(() => {
   const triggerType = location?.query?.triggerType || '';
   const id = location?.query?.id || '';
   const history = useHistory();
+  const [form] = Form.useForm();
 
   const FormModelInit = () => {
     FormModel.current = {
@@ -116,8 +117,9 @@ export default observer(() => {
             branches = branches.map((bItem: ActionBranchesProps, bIndex: number) => {
               if (!bItem.key) {
                 bItem.key = `branches_${new Date().getTime() + bIndex}`;
-                if (bItem.then && bItem.then) {
-                  bItem.then = bItem.then.map((tItem) => {
+                if (bItem.then && bItem.then.length) {
+                  bItem.then = bItem.then.map((tItem, tIndex) => {
+                    tItem.key = `then_${new Date().getTime() + tIndex}`;
                     if (tItem.actions) {
                       tItem.actions = tItem.actions.map((aItem, index) => {
                         aItem.key = `${aItem.executor}_${new Date().getTime() + index}`;
@@ -127,7 +129,7 @@ export default observer(() => {
                     return tItem;
                   });
                 }
-                if (bItem.when) {
+                if (bItem.when && bItem.when.length) {
                   bItem.when = bItem.when.map((wItem, index) => {
                     wItem.key = `when_${new Date().getTime() + index}`;
                     if (wItem.terms) {
@@ -143,27 +145,31 @@ export default observer(() => {
               return bItem;
             });
           }
-          branches.push({
-            when: [],
-            key: 'branckes_2',
-            shakeLimit: {
-              enabled: false,
-              time: 0,
-              threshold: 0,
-              alarmFirst: false,
-            },
-            then: [],
-          });
+          if (branches[0]?.when?.length) {
+            branches.push({
+              when: [],
+              key: 'branckes_2',
+              shakeLimit: {
+                enabled: false,
+                time: 0,
+                threshold: 0,
+                alarmFirst: false,
+              },
+              then: [],
+            });
+          }
           FormModel.current = {
             ...resp.result,
           };
           FormModel.current.options = { ...defaultOptions, ...resp.result.options };
           FormModel.current.trigger = resp.result.trigger || {};
           FormModel.current.branches = branches;
+
+          form.setFieldValue('description', resp.result.description);
         }
       });
     }
-  }, [id]);
+  }, [id, form]);
 
   const triggerRender = (type: string) => {
     FormModel.current.trigger!.type = type;
@@ -192,6 +198,7 @@ export default observer(() => {
   };
 
   const submit = useCallback(() => {
+    const baseData = form.getFieldsValue();
     const FormData = cloneDeep(FormModel.current);
     const { options, branches } = FormData;
     if (options?.terms) {
@@ -207,6 +214,11 @@ export default observer(() => {
     if (branches) {
       FormData.branches = branches.filter((item) => !!item.then.length || !!item.when.length);
     }
+
+    if (baseData) {
+      FormData.description = baseData.description;
+    }
+
     service.updateScene(FormData).then((res) => {
       if (res.status === 200) {
         onlyMessage('操作成功', 'success');
@@ -219,7 +231,7 @@ export default observer(() => {
   return (
     <PageContainer>
       <Card>
-        <Form name="timer" layout={'vertical'}>
+        <Form name="timer" layout={'vertical'} form={form}>
           {triggerRender(triggerType)}
           <Form.Item
             label={<TitleComponent style={{ fontSize: 14 }} data={'说明'} />}

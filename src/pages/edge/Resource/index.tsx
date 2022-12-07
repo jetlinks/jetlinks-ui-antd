@@ -1,394 +1,273 @@
 import { PageContainer } from '@ant-design/pro-layout';
-// import {DeviceInstance} from "@/pages/device/Instance/typings";
-// import SearchComponent from "@/components/SearchComponent";
-// import {ActionType, ProColumns} from "@jetlinks/pro-table";
-// import moment from "moment";
-// import {Badge, Button, Tooltip} from "antd";
-// import {service as categoryService} from "@/pages/device/Category";
-// import {InstanceModel, service, statusMap} from "@/pages/device/Instance";
-// import {useIntl} from "@@/plugin-locale/localeExports";
-// import {
-//   DeleteOutlined,
-//   DownSquareOutlined,
-//   EditOutlined,
-//   EyeOutlined,
-//   PlayCircleOutlined,
-//   StopOutlined,
-// } from "@ant-design/icons";
-// import {PermissionButton, ProTableCard} from "@/components";
-// import {useRef, useState} from "react";
-// import DeviceCard from "@/components/ProTableCard/CardItems/device";
-// import {onlyMessage} from "@/utils/util";
-// import {getMenuPathByParams, MENUS_CODE} from "@/utils/menu";
-// import {useHistory} from "umi";
-// import Save from './Save';
+import SearchComponent from '@/components/SearchComponent';
+import { ActionType, ProColumns } from '@jetlinks/pro-table';
+import { Badge } from 'antd';
+import { useIntl } from '@@/plugin-locale/localeExports';
+import {
+  DeleteOutlined,
+  DownSquareOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
+import { PermissionButton, ProTableCard } from '@/components';
+import { useRef, useState } from 'react';
+import { onlyMessage } from '@/utils/util';
+import Save from './Save';
+import Issue from './Issue';
+import Service from './service';
+import ResourceCard from '@/components/ProTableCard/CardItems/edge/Resource';
+import moment from 'moment';
+
+export const service = new Service('entity/template');
 
 export default () => {
-  // const intl = useIntl();
-  // const actionRef = useRef<ActionType>();
-  // const [searchParams, setSearchParams] = useState<any>({});
-  // const [current, setCurrent] = useState<Partial<DeviceInstance>>({});
-  // const [visible, setVisible] = useState<boolean>(false);
-  // const history = useHistory<Record<string, string>>();
+  const intl = useIntl();
+  const actionRef = useRef<ActionType>();
+  const [searchParams, setSearchParams] = useState<any>({});
+  const [current, setCurrent] = useState<Partial<ResourceItem>>({});
+  const [visible, setVisible] = useState<boolean>(false);
+  const [issueVisible, setIssueVisible] = useState<boolean>(false);
 
-  // const tools = (record: DeviceInstance, type: 'card' | 'list') => [
-  //   type === 'list' && <Button
-  //     type={'link'}
-  //     style={{ padding: 0 }}
-  //     key={'detail'}
-  //     onClick={() => {
-  //       InstanceModel.current = record;
-  //       const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
-  //       history.push(url);
-  //     }}
-  //   >
-  //     <Tooltip
-  //       title={intl.formatMessage({
-  //         id: 'pages.data.option.detail',
-  //         defaultMessage: '查看',
-  //       })}
-  //     >
-  //       <EyeOutlined />
-  //     </Tooltip>
-  //   </Button>,
-  //   <PermissionButton
-  //     type={'link'}
-  //     isPermission={true}
-  //     onClick={() => {
-  //       setCurrent(record);
-  //       setVisible(true);
-  //     }}
-  //     tooltip={{
-  //       title: type === 'list' ? '编辑' : '',
-  //     }}
-  //     style={{ padding: 0 }}
-  //     key={'edit'}
-  //   >
-  //     <EditOutlined />
-  //     {type === 'list' ? '' : '编辑'}
-  //   </PermissionButton>,
-  //   <PermissionButton
-  //     type={'link'}
-  //     onClick={() => {
-  //     }}
-  //     tooltip={{
-  //       title: type !== 'list' ? '' : '下发'
-  //     }}
-  //     style={{ padding: 0 }}
-  //     isPermission={true}
-  //     key={'reset'}
-  //   >
-  //     <DownSquareOutlined />
-  //     {type === 'list' ? '' : '下发'}
-  //   </PermissionButton>,
-  //   <PermissionButton
-  //     type={'link'}
-  //     key={'state'}
-  //     style={{ padding: 0 }}
-  //     popConfirm={{
-  //       title: intl.formatMessage({
-  //         id: `pages.data.option.${
-  //           record.state.value !== 'notActive' ? 'disabled' : 'enabled'
-  //         }.tips`,
-  //         defaultMessage: '确认禁用？',
-  //       }),
-  //       onConfirm: () => {
-  //         if (record.state.value !== 'notActive') {
-  //           service.undeployDevice(record.id).then((resp: any) => {
-  //             if (resp.status === 200) {
-  //               onlyMessage(
-  //                 intl.formatMessage({
-  //                   id: 'pages.data.option.success',
-  //                   defaultMessage: '操作成功!',
-  //                 }),
-  //               );
-  //               actionRef.current?.reload();
-  //             }
-  //           });
-  //         } else {
-  //           service.deployDevice(record.id).then((resp: any) => {
-  //             if (resp.status === 200) {
-  //               onlyMessage(
-  //                 intl.formatMessage({
-  //                   id: 'pages.data.option.success',
-  //                   defaultMessage: '操作成功!',
-  //                 }),
-  //               );
-  //               actionRef.current?.reload();
-  //             }
-  //           });
-  //         }
-  //       },
-  //     }}
-  //     isPermission={true}
-  //     tooltip={{
-  //       title: intl.formatMessage({
-  //         id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
-  //         defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
-  //       }),
-  //     }}
-  //   >
-  //     {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
-  //     {record.state.value !== 'notActive' ? (type === 'list' ? '' : '禁用') : (type === 'list' ? '' : '启用')}
-  //   </PermissionButton>,
-  //   <PermissionButton
-  //     type={'link'}
-  //     key={'delete'}
-  //     style={{ padding: 0 }}
-  //     isPermission={true}
-  //     tooltip={
-  //       record.state.value !== 'notActive'
-  //         ? { title: intl.formatMessage({ id: 'pages.device.instance.deleteTip' }) }
-  //         : undefined
-  //     }
-  //     disabled={record.state.value !== 'notActive'}
-  //     popConfirm={{
-  //       title: intl.formatMessage({
-  //         id: 'pages.data.option.remove.tips',
-  //       }),
-  //       disabled: record.state.value !== 'notActive',
-  //       onConfirm: async () => {
-  //         if (record.state.value === 'notActive') {
-  //           await service.remove(record.id);
-  //           onlyMessage(
-  //             intl.formatMessage({
-  //               id: 'pages.data.option.success',
-  //               defaultMessage: '操作成功!',
-  //             }),
-  //           );
-  //           actionRef.current?.reload();
-  //         } else {
-  //           onlyMessage(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }), 'error');
-  //         }
-  //       },
-  //     }}
-  //   >
-  //     <DeleteOutlined />
-  //   </PermissionButton>,
-  // ];
-  // const columns: ProColumns<DeviceInstance>[] = [
-  //   {
-  //     title: 'ID',
-  //     dataIndex: 'id',
-  //     width: 200,
-  //     ellipsis: true,
-  //     fixed: 'left',
-  //   },
-  //   {
-  //     title: intl.formatMessage({
-  //       id: 'pages.table.deviceName',
-  //       defaultMessage: '设备名称',
-  //     }),
-  //     dataIndex: 'name',
-  //     ellipsis: true,
-  //     width: 200,
-  //   },
-  //   {
-  //     title: intl.formatMessage({
-  //       id: 'pages.table.productName',
-  //       defaultMessage: '产品名称',
-  //     }),
-  //     dataIndex: 'productId',
-  //     width: 200,
-  //     ellipsis: true,
-  //     valueType: 'select',
-  //     request: async () => {
-  //       const res = await service.getProductList();
-  //       if (res.status === 200) {
-  //         return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
-  //       }
-  //       return [];
-  //     },
-  //     render: (_, row) => row.productName,
-  //     filterMultiple: true,
-  //   },
-  //   {
-  //     title: intl.formatMessage({
-  //       id: 'pages.device.instance.registrationTime',
-  //       defaultMessage: '注册时间',
-  //     }),
-  //     dataIndex: 'registryTime',
-  //     width: '200px',
-  //     valueType: 'dateTime',
-  //     render: (_: any, row) => {
-  //       return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '';
-  //     },
-  //     sorter: true,
-  //   },
-  //   {
-  //     title: intl.formatMessage({
-  //       id: 'pages.searchTable.titleStatus',
-  //       defaultMessage: '状态',
-  //     }),
-  //     dataIndex: 'state',
-  //     width: '90px',
-  //     valueType: 'select',
-  //     renderText: (record) =>
-  //       record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
-  //     valueEnum: {
-  //       notActive: {
-  //         text: intl.formatMessage({
-  //           id: 'pages.device.instance.status.notActive',
-  //           defaultMessage: '禁用',
-  //         }),
-  //         status: 'notActive',
-  //       },
-  //       offline: {
-  //         text: intl.formatMessage({
-  //           id: 'pages.device.instance.status.offLine',
-  //           defaultMessage: '离线',
-  //         }),
-  //         status: 'offline',
-  //       },
-  //       online: {
-  //         text: intl.formatMessage({
-  //           id: 'pages.device.instance.status.onLine',
-  //           defaultMessage: '在线',
-  //         }),
-  //         status: 'online',
-  //       },
-  //     },
-  //     filterMultiple: false,
-  //   },
-  //   {
-  //     dataIndex: 'classifiedId',
-  //     title: '产品分类',
-  //     valueType: 'treeSelect',
-  //     hideInTable: true,
-  //     fieldProps: {
-  //       fieldNames: {
-  //         label: 'name',
-  //         value: 'id',
-  //       },
-  //     },
-  //     request: () =>
-  //       categoryService
-  //         .queryTree({
-  //           paging: false,
-  //         })
-  //         .then((resp: any) => resp.result),
-  //   },
-  //   {
-  //     dataIndex: 'productId$product-info',
-  //     title: '接入方式',
-  //     valueType: 'select',
-  //     hideInTable: true,
-  //     request: () =>
-  //       service.queryGatewayList().then((resp: any) =>
-  //         resp.result.map((item: any) => ({
-  //           label: item.name,
-  //           value: `accessId is ${item.id}`,
-  //         })),
-  //       ),
-  //   },
-  //   {
-  //     dataIndex: 'deviceType',
-  //     title: '设备类型',
-  //     valueType: 'select',
-  //     hideInTable: true,
-  //     valueEnum: {
-  //       device: {
-  //         text: '直连设备',
-  //         status: 'device',
-  //       },
-  //       childrenDevice: {
-  //         text: '网关子设备',
-  //         status: 'childrenDevice',
-  //       },
-  //       gateway: {
-  //         text: '网关设备',
-  //         status: 'gateway',
-  //       },
-  //     },
-  //   },
-  //   {
-  //     title: intl.formatMessage({
-  //       id: 'pages.table.description',
-  //       defaultMessage: '说明',
-  //     }),
-  //     dataIndex: 'describe',
-  //     width: '15%',
-  //     ellipsis: true,
-  //     hideInSearch: true,
-  //   },
-  //   {
-  //     title: intl.formatMessage({
-  //       id: 'pages.data.option',
-  //       defaultMessage: '操作',
-  //     }),
-  //     valueType: 'option',
-  //     width: 250,
-  //     fixed: 'right',
-  //     render: (text, record) => tools(record, 'list'),
-  //   },
-  // ];
+  const tools = (record: ResourceItem, type: 'card' | 'list') => [
+    <PermissionButton
+      type={'link'}
+      isPermission={true}
+      onClick={() => {
+        setCurrent(record);
+        setVisible(true);
+      }}
+      tooltip={{
+        title: type === 'list' ? '编辑' : '',
+      }}
+      style={{ padding: 0 }}
+      key={'edit'}
+    >
+      <EditOutlined />
+      {type === 'list' ? '' : '编辑'}
+    </PermissionButton>,
+    <PermissionButton
+      type={'link'}
+      onClick={() => {
+        setCurrent(record);
+        setIssueVisible(true);
+      }}
+      tooltip={{
+        title: type !== 'list' ? '' : '下发',
+      }}
+      style={{ padding: 0 }}
+      isPermission={true}
+      key={'reset'}
+    >
+      <DownSquareOutlined />
+      {type === 'list' ? '' : '下发'}
+    </PermissionButton>,
+    <PermissionButton
+      type={'link'}
+      key={'state'}
+      style={{ padding: 0 }}
+      popConfirm={{
+        title: intl.formatMessage({
+          id: `pages.data.option.${record.state?.value}.tips`,
+          defaultMessage: '确认禁用？',
+        }),
+        onConfirm: () => {
+          if (record.state?.value !== 'disabled') {
+            service._stop([record.id]).then((resp: any) => {
+              if (resp.status === 200) {
+                onlyMessage(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            });
+          } else {
+            service._start([record.id]).then((resp: any) => {
+              if (resp.status === 200) {
+                onlyMessage(
+                  intl.formatMessage({
+                    id: 'pages.data.option.success',
+                    defaultMessage: '操作成功!',
+                  }),
+                );
+                actionRef.current?.reload();
+              }
+            });
+          }
+        },
+      }}
+      isPermission={true}
+      tooltip={{
+        title: type === 'list' ? (record.state.value !== 'disabled' ? '禁用' : '启用') : '',
+      }}
+    >
+      {record.state.value !== 'disabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+      {record.state.value !== 'disabled'
+        ? type === 'list'
+          ? ''
+          : '禁用'
+        : type === 'list'
+        ? ''
+        : '启用'}
+    </PermissionButton>,
+    <PermissionButton
+      type={'link'}
+      key={'delete'}
+      style={{ padding: 0 }}
+      isPermission={true}
+      tooltip={record.state.value !== 'notActive' ? { title: '请先禁用，再删除。' } : undefined}
+      disabled={record.state.value !== 'notActive'}
+      popConfirm={{
+        title: intl.formatMessage({
+          id: 'pages.data.option.remove.tips',
+        }),
+        disabled: record.state.value !== 'notActive',
+        onConfirm: async () => {
+          if (record.state.value === 'notActive') {
+            await service.remove(record.id);
+            onlyMessage(
+              intl.formatMessage({
+                id: 'pages.data.option.success',
+                defaultMessage: '操作成功!',
+              }),
+            );
+            actionRef.current?.reload();
+          } else {
+            onlyMessage(intl.formatMessage({ id: 'pages.device.instance.deleteTip' }), 'error');
+          }
+        },
+      }}
+    >
+      <DeleteOutlined />
+    </PermissionButton>,
+  ];
+  const columns: ProColumns<ResourceItem>[] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      width: 200,
+      ellipsis: true,
+      fixed: 'left',
+    },
+    {
+      title: '名称',
+      dataIndex: 'name',
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: '通信协议',
+      dataIndex: 'category',
+      width: 150,
+      ellipsis: true,
+    },
+    {
+      title: '所属边缘网关',
+      width: 150,
+      dataIndex: 'sourceId',
+      ellipsis: true,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      width: 200,
+      valueType: 'dateTime',
+      render: (_: any, row) => {
+        return row.createTime ? moment(row.createTime).format('YYYY-MM-DD HH:mm:ss') : '';
+      },
+      sorter: true,
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      width: '90px',
+      valueType: 'select',
+      renderText: (text) =>
+        text ? (
+          <Badge status={text.value === 'enabled' ? 'success' : 'error'} text={text?.text || ''} />
+        ) : (
+          ''
+        ),
+      valueEnum: {
+        enabled: {
+          text: '正常',
+          status: 'enabled',
+        },
+        disabled: {
+          text: '异常',
+          status: 'disabled',
+        },
+      },
+      filterMultiple: false,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.data.option',
+        defaultMessage: '操作',
+      }),
+      valueType: 'option',
+      width: 200,
+      fixed: 'right',
+      render: (text, record) => tools(record, 'list'),
+    },
+  ];
 
   return (
     <PageContainer>
-      开发中。。。。
-      {/*<SearchComponent<DeviceInstance>*/}
-      {/*  field={columns}*/}
-      {/*  target="edge-resource"*/}
-      {/*  onSearch={(data) => {*/}
-      {/*    actionRef.current?.reset?.();*/}
-      {/*    setSearchParams(data);*/}
-      {/*  }}*/}
-      {/*/>*/}
-      {/*<ProTableCard<DeviceInstance>*/}
-      {/*  columns={columns}*/}
-      {/*  scroll={{ x: 1366 }}*/}
-      {/*  actionRef={actionRef}*/}
-      {/*  params={searchParams}*/}
-      {/*  options={{ fullScreen: true }}*/}
-      {/*  columnEmptyText={''}*/}
-      {/*  request={(params) =>*/}
-      {/*    service.query({*/}
-      {/*      ...params,*/}
-      {/*      terms: [*/}
-      {/*        ...(params?.terms || []),*/}
-      {/*        {*/}
-      {/*          terms: [*/}
-      {/*            {*/}
-      {/*              column: 'productId$product-info',*/}
-      {/*              value: 'accessProvider is official-edge-gateway',*/}
-      {/*            },*/}
-      {/*          ],*/}
-      {/*          type: 'and',*/}
-      {/*        },*/}
-      {/*      ],*/}
-      {/*      sorts: [*/}
-      {/*        {*/}
-      {/*          name: 'createTime',*/}
-      {/*          order: 'desc',*/}
-      {/*        },*/}
-      {/*      ],*/}
-      {/*    })*/}
-      {/*  }*/}
-      {/*  rowKey="id"*/}
-      {/*  search={false}*/}
-      {/*  pagination={{ pageSize: 10 }}*/}
-      {/*  cardRender={(record) => (*/}
-      {/*    <DeviceCard*/}
-      {/*      {...record}*/}
-      {/*      detail={*/}
-      {/*        <div*/}
-      {/*          style={{ padding: 8, fontSize: 24 }}*/}
-      {/*          onClick={() => {*/}
-      {/*            InstanceModel.current = record;*/}
-      {/*            const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);*/}
-      {/*            history.push(url);*/}
-      {/*          }}*/}
-      {/*        >*/}
-      {/*          <EyeOutlined />*/}
-      {/*        </div>*/}
-      {/*      }*/}
-      {/*      actions={tools(record, 'card')}*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*/>*/}
-      {/*{*/}
-      {/*  visible && <Save data={current} cancel={() => {setVisible(false)}} />*/}
-      {/*}*/}
+      <SearchComponent<ResourceItem>
+        field={columns}
+        target="edge-resource"
+        onSearch={(data) => {
+          actionRef.current?.reset?.();
+          setSearchParams(data);
+        }}
+      />
+      <ProTableCard<ResourceItem>
+        columns={columns}
+        scroll={{ x: 1366 }}
+        actionRef={actionRef}
+        params={searchParams}
+        options={{ fullScreen: true }}
+        columnEmptyText={''}
+        request={(params) =>
+          service.query({
+            ...params,
+            sorts: [
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
+          })
+        }
+        rowKey="id"
+        search={false}
+        pagination={{ pageSize: 10 }}
+        cardRender={(record) => <ResourceCard {...record} actions={tools(record, 'card')} />}
+      />
+      {visible && (
+        <Save
+          data={current}
+          cancel={() => {
+            setVisible(false);
+          }}
+          reload={() => {
+            actionRef.current?.reload();
+            setVisible(false);
+          }}
+        />
+      )}
+      {issueVisible && (
+        <Issue
+          data={current}
+          cancel={() => {
+            setIssueVisible(false);
+          }}
+        />
+      )}
     </PageContainer>
   );
 };

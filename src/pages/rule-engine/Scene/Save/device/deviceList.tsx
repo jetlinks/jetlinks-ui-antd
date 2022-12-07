@@ -18,7 +18,6 @@ export default observer(() => {
     pageIndex: TriggerDeviceModel.devicePage,
     pageSize: TriggerDeviceModel.devicePageSize,
   });
-  const [isFirst, setIsFirst] = useState(true);
 
   const [loading, setLoading] = useState(true);
 
@@ -212,6 +211,8 @@ export default observer(() => {
       <Observer>
         {() => (
           <ProTableCard<DeviceInstance>
+            noPadding
+            cardScrollY={400}
             actionRef={actionRef}
             columns={columns}
             rowKey="id"
@@ -222,16 +223,29 @@ export default observer(() => {
             tableAlertRender={false}
             rowSelection={{
               selectedRowKeys: [...TriggerDeviceModel.deviceKeys],
-              onChange(selectedRowKeys, selectedRows) {
-                console.log(selectedRowKeys);
-                if (!isFirst) {
-                  TriggerDeviceModel.deviceKeys = selectedRows.map((item) => item.id);
-                  TriggerDeviceModel.selectorValues = selectedRows.map((item) => ({
-                    name: item.name,
-                    value: item.id,
-                  }));
+              onSelect: (record, selected) => {
+                console.log(record);
+                if (selected) {
+                  TriggerDeviceModel.deviceKeys.push(record.id);
+                  if (TriggerDeviceModel.selectorValues) {
+                    TriggerDeviceModel.selectorValues?.push({
+                      name: record.name,
+                      value: record.id,
+                    });
+                  } else {
+                    TriggerDeviceModel.selectorValues = [
+                      {
+                        name: record.name,
+                        value: record.id,
+                      },
+                    ];
+                  }
                 } else {
-                  setIsFirst(false);
+                  const newArray = TriggerDeviceModel.selectorValues?.filter(
+                    (item) => item.value !== record.id,
+                  );
+                  TriggerDeviceModel.deviceKeys = newArray?.map((item) => item.value) || [];
+                  TriggerDeviceModel.selectorValues = newArray || [];
                 }
               },
             }}

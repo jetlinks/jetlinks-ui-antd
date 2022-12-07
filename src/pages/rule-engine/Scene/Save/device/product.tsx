@@ -176,7 +176,7 @@ export default observer(() => {
           .queryOrgThree({
             paging: false,
           })
-          .then((resp) => {
+          .then((resp: any) => {
             const formatValue = (list: any[]) => {
               const _list: any[] = [];
               list.forEach((item) => {
@@ -224,55 +224,50 @@ export default observer(() => {
         }}
         target="department-assets-product"
       />
-      <div
-        style={{
-          height: 'calc(100vh - 440px)',
-          overflowY: 'auto',
+      <ProTableCard<ProductItem>
+        noPadding
+        cardScrollY={460}
+        actionRef={actionRef}
+        columns={columns}
+        rowKey="id"
+        search={false}
+        gridColumn={2}
+        columnEmptyText={''}
+        onlyCard={true}
+        tableAlertRender={false}
+        rowSelection={{
+          type: 'radio',
+          selectedRowKeys: [TriggerDeviceModel.productId],
+          onChange: (_, selectedRows) => {
+            console.log('onChange', selectedRows);
+            TriggerDeviceModel.productId = selectedRows.map((item) => item.id)[0];
+            TriggerDeviceModel.productDetail = selectedRows?.[0];
+            handleMetadata(TriggerDeviceModel.productDetail.metadata);
+            // 初始化选择设备类型以及触发类型
+            TriggerDeviceModel.deviceKeys = [];
+            TriggerDeviceModel.orgId = '';
+            TriggerDeviceModel.selector = 'fixed';
+            TriggerDeviceModel.operation = {
+              operator: 'online',
+            };
+          },
         }}
-      >
-        <ProTableCard<ProductItem>
-          actionRef={actionRef}
-          columns={columns}
-          rowKey="id"
-          search={false}
-          gridColumn={2}
-          columnEmptyText={''}
-          onlyCard={true}
-          tableAlertRender={false}
-          rowSelection={{
-            type: 'radio',
-            selectedRowKeys: [TriggerDeviceModel.productId],
-            onChange: (_, selectedRows) => {
-              console.log(selectedRows);
-              TriggerDeviceModel.productId = selectedRows.map((item) => item.id)[0];
-              TriggerDeviceModel.productDetail = selectedRows?.[0];
-              handleMetadata(TriggerDeviceModel.productDetail.metadata);
-              // 初始化选择设备类型以及触发类型
-              TriggerDeviceModel.deviceKeys = [];
-              TriggerDeviceModel.orgId = '';
-              TriggerDeviceModel.selector = 'fixed';
-              TriggerDeviceModel.operation = {
-                operator: 'online',
-              };
-            },
-          }}
-          onPageChange={(page, size) => {
-            TriggerDeviceModel.productPage = page;
-            TriggerDeviceModel.productPageSize = size;
-          }}
-          request={(params) =>
-            service.query({
-              ...params,
-              sorts: [{ name: 'createTime', order: 'desc' }],
-            })
-          }
-          params={searchParam}
-          cardRender={(record) => (
-            <SceneProductCard showBindBtn={false} showTool={false} {...record} />
-          )}
-          height={'none'}
-        />
-      </div>
+        onPageChange={(page, size) => {
+          TriggerDeviceModel.productPage = page;
+          TriggerDeviceModel.productPageSize = size;
+        }}
+        request={(params) =>
+          service.query({
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          })
+        }
+        params={searchParam}
+        cardRender={(record) => (
+          <SceneProductCard showBindBtn={false} showTool={false} {...record} />
+        )}
+        height={'none'}
+      />
     </div>
   );
 });
