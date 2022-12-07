@@ -6,6 +6,90 @@ import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Device from '../DeviceOutput';
 import Delay from '../Delay';
 
+interface ActionTypeProps {
+  type: string;
+  name: number;
+  save: (data: any, options?: any) => void;
+  data: Partial<ActionsType>;
+  close: () => void;
+  parallel: boolean;
+}
+
+export const ActionTypeComponent = (props: ActionTypeProps) => {
+  const { type } = props;
+  switch (type) {
+    case 'device':
+      return (
+        <Device
+          value={props.data?.device}
+          save={(data: any, options: any) => {
+            props.save(
+              {
+                type: 'device',
+                executor: 'device',
+                key: props.data.key || `device_${new Date().getTime()}`,
+                device: {
+                  ...data,
+                },
+              },
+              options,
+            );
+          }}
+          name={props.name}
+          cancel={() => {
+            props.close();
+          }}
+          parallel={props.parallel}
+        />
+      );
+    case 'notify':
+      return (
+        <Notify
+          value={props.data?.notify || {}}
+          options={props.data?.options || {}}
+          save={(data: any, option: any) => {
+            props.save(
+              {
+                ...data,
+                executor: 'notify',
+                key: props.data.key || `notify_${new Date().getTime()}`,
+              },
+              option,
+            );
+          }}
+          name={props.name}
+          cancel={() => {
+            props.close();
+          }}
+        />
+      );
+    case 'delay':
+      return (
+        <Delay
+          value={props.data?.delay || {}}
+          save={(data: any, options) => {
+            props.save(
+              {
+                type: 'delay',
+                executor: 'delay',
+                key: props.data.key || `delay_${new Date().getTime()}`,
+                delay: {
+                  ...data,
+                },
+              },
+              options,
+            );
+          }}
+          cancel={() => {
+            props.close();
+          }}
+        />
+      );
+    default:
+      return null;
+  }
+};
+
 interface Props {
   close: () => void;
   save: (data: any, options?: any) => void;
@@ -22,87 +106,10 @@ export default (props: Props) => {
   useEffect(() => {
     if (props.data?.executor) {
       form.setFieldsValue({
-        type: props.data.executor,
+        type: props.data.executor === 'alarm' ? props.data.alarm?.mode : props.data.executor,
       });
     }
   }, [props.data]);
-
-  const actionTypeComponent = (type: string) => {
-    switch (type) {
-      case 'device':
-        return (
-          <Device
-            value={props.data?.device}
-            save={(data: any, options: any) => {
-              setActionType('');
-              props.save(
-                {
-                  type: 'device',
-                  executor: 'device',
-                  key: props.data.key || `device_${new Date().getTime()}`,
-                  device: {
-                    ...data,
-                  },
-                },
-                options,
-              );
-            }}
-            name={props.name}
-            cancel={() => {
-              setActionType('');
-            }}
-            parallel={props.parallel}
-          />
-        );
-      case 'notify':
-        return (
-          <Notify
-            value={props.data?.notify || {}}
-            options={props.data?.options || {}}
-            save={(data: any, option: any) => {
-              setActionType('');
-              props.save(
-                {
-                  ...data,
-                  executor: 'notify',
-                  key: props.data.key || `notify_${new Date().getTime()}`,
-                },
-                option,
-              );
-            }}
-            name={props.name}
-            cancel={() => {
-              setActionType('');
-            }}
-          />
-        );
-      case 'delay':
-        return (
-          <Delay
-            value={props.data?.delay || {}}
-            save={(data: any, options) => {
-              setActionType('');
-              props.save(
-                {
-                  type: 'delay',
-                  executor: 'delay',
-                  key: props.data.key || `delay_${new Date().getTime()}`,
-                  delay: {
-                    ...data,
-                  },
-                },
-                options,
-              );
-            }}
-            cancel={() => {
-              setActionType('');
-            }}
-          />
-        );
-      default:
-        return null;
-    }
-  };
 
   return (
     <Modal
@@ -116,8 +123,7 @@ export default (props: Props) => {
         const values = await form.validateFields();
         setActionType(values.type);
         if (values.type === 'relieve' || values.type === 'trigger') {
-          console.log(values.type, props.data);
-          props.save({ ...props.data, type: values.type, executor: values.type });
+          props.save({ ...props.data, type: values.type, executor: 'alarm' });
         }
       }}
     >
@@ -131,7 +137,17 @@ export default (props: Props) => {
           <ActionsTypeComponent parallel={props.parallel} />
         </Form.Item>
       </Form>
-      {actionTypeComponent(actionType)}
+      <ActionTypeComponent
+        {...props}
+        type={actionType}
+        save={(data: any, options?: any) => {
+          props.save(data, options);
+          setActionType('');
+        }}
+        close={() => {
+          setActionType('');
+        }}
+      />
     </Modal>
   );
 };

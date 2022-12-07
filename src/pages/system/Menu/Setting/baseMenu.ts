@@ -2334,8 +2334,8 @@ export default [
             owner: 'iot',
             sortIndex: 1,
             url: '/iot/edge/Devic',
-            icon: 'icon-changjingliandong',
-            showPage: ['device-instance'],
+            icon: 'icon-bumenguanli',
+            showPage: ['edge-operations'],
             permissions: [],
             buttons: [
               {
@@ -2415,6 +2415,58 @@ export default [
                   {
                     permission: 'rule-instance',
                     actions: ['save'],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            code: 'edge/Resource',
+            name: '资源库',
+            owner: 'iot',
+            sortIndex: 2,
+            url: '/iot/edge/Resource',
+            icon: 'icon-Vector',
+            showPage: ['edge-operations'],
+            permissions: [],
+            buttons: [
+              {
+                id: 'action',
+                name: '启/禁用',
+                permissions: [
+                  {
+                    permission: 'device-instance',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'delete',
+                name: '删除',
+                permissions: [
+                  {
+                    permission: 'device-instance',
+                    actions: ['query', 'delete'],
+                  },
+                ],
+              },
+              {
+                id: 'update',
+                name: '编辑',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'setting',
+                name: '下发',
+                permissions: [
+                  {
+                    permission: 'rule-instance',
+                    actions: ['query', 'save'],
                   },
                 ],
               },

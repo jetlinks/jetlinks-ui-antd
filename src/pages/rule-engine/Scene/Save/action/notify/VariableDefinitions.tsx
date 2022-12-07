@@ -21,7 +21,7 @@ export default forwardRef((props: Props, ref) => {
     switch (type) {
       case 'user':
         return <User />;
-      case 'org':
+      case '      ':
         return <Org />;
       case 'tag':
         return <Tag />;
@@ -184,6 +184,14 @@ export default forwardRef((props: Props, ref) => {
                     value: undefined,
                   };
           } else if (['date', 'number', 'string'].includes(type)) {
+            initialValue =
+              props?.value && item?.id && props?.value[item.id]
+                ? props?.value[item.id]
+                : {
+                    source: 'fixed',
+                    value: undefined,
+                  };
+          } else if (!['org', 'tag', 'file', 'link'].includes(type)) {
             initialValue =
               props?.value && item?.id && props?.value[item.id]
                 ? props?.value[item.id]

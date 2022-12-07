@@ -20,7 +20,7 @@ interface BuiltInProps {
 }
 
 export default (props: BuiltInProps) => {
-  const [source, setSource] = useState(props.value?.source);
+  const [source, setSource] = useState(props.value?.source || 'fixed');
   const [value, setValue] = useState(props.value?.value);
   const [upperKey, setUpperKey] = useState(props.value?.upperKey);
 
@@ -58,7 +58,7 @@ export default (props: BuiltInProps) => {
   }, [source]);
 
   useEffect(() => {
-    setSource(props.value?.source);
+    setSource(props.value?.source || 'fixed');
     setValue(props.value?.value);
     setUpperKey(props.value?.upperKey);
   }, [props.value]);
