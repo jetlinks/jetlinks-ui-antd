@@ -1,6 +1,6 @@
 @import '../../../../../../../node_modules/antd/es/style/themes/default.less';
 
-.trigger-way-warp {
+.scene-trigger-way-warp {
   display: flex;
   flex-wrap: wrap;
   gap: 16px 24px;
@@ -13,7 +13,6 @@
     border: 1px solid #e0e4e8;
     border-radius: 2px;
     cursor: pointer;
-    opacity: 0.6;
     transition: all 0.3s;
 
     .way-item-title {
@@ -30,17 +29,25 @@
     }
 
     .way-item-image {
+      display: flex;
+      align-items: center;
+      height: 100%;
       margin: 0 !important;
+      opacity: 0.6;
     }
 
     &:hover {
       color: @primary-color-hover;
-      opacity: 0.8;
+      .way-item-image {
+        opacity: 0.8;
+      }
     }
 
     &.active {
       border-color: @primary-color-active;
-      opacity: 1;
+      .way-item-image {
+        opacity: 1;
+      }
     }
   }
 

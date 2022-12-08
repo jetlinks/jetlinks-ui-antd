@@ -57,7 +57,7 @@ export default (props: OrgProps) => {
         if (props.onChange) {
           NotifyModel.notify.options = {
             ...NotifyModel.notify.options,
-            orgName: label,
+            orgName: label.join(','),
           };
           props.onChange({
             source: 'fixed',

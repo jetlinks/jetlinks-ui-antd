@@ -8,9 +8,9 @@ import {
   queryRelationUsers,
   queryWechatUsers,
 } from '@/pages/rule-engine/Scene/Save/action/service';
-import { useLocation } from '@/hooks';
 import { observer } from '@formily/react';
 import { NotifyModel } from '../../index';
+import { FormModel } from '@/pages/rule-engine/Scene/Save';
 
 type ChangeType = {
   source?: string;
@@ -24,42 +24,79 @@ interface UserProps {
   type?: string;
 }
 
+const labelMap = new Map();
+
 export default observer((props: UserProps) => {
   const [source, setSource] = useState<string | undefined>(props.value?.source || '');
-  const [value, setValue] = useState<string | undefined>(undefined);
+  const [value, setValue] = useState<string | string[] | undefined>(undefined);
   const [relationList, setRelationList] = useState<any[]>([]);
   const [treeData, setTreeData] = useState<any[]>([
     { name: '平台用户', id: 'p1', selectable: false, children: [] },
   ]);
 
-  const location = useLocation();
-
   useEffect(() => {
-    setSource(props.value?.source);
-    if (props.value?.source === 'relation') {
-      const relation = props.value?.relation;
-      if (relation) {
-        if (relation.objectId) {
-          // 平台用户
-          setValue(relation.objectId);
+    if (NotifyModel?.notify?.notifyType === 'email' && Array.isArray(props.value)) {
+      setSource('relation');
+      const arr = (props?.value || []).map((item: any) => {
+        if (item?.source === 'relation') {
+          const relation = item?.relation;
+          if (relation) {
+            if (relation.objectId) {
+              // 平台用户
+              return relation.objectId;
+            } else {
+              // 关系用户
+              return relation.related.relation;
+            }
+          }
         } else {
-          // 关系用户
-          setValue(relation.related?.relation);
+          return item?.value;
         }
-      }
+      });
+      setValue(arr);
     } else {
-      setValue(props.value?.value);
+      setSource(props.value?.source);
+      if (props.value?.source === 'relation') {
+        const relation = props.value?.relation;
+        if (relation) {
+          if (relation.objectId) {
+            // 平台用户
+            setValue(relation.objectId);
+          } else {
+            // 关系用户
+            setValue(relation.related?.relation);
+          }
+        }
+      } else {
+        setValue(props.value?.value);
+      }
     }
   }, [props.value]);
 
   const getPlatformUser = async () => {
-    const newTree = [...treeData];
+    const newTree = [{ name: '平台用户', id: 'p1', selectable: false, children: [] }];
     const platformResp = await queryPlatformUsers();
 
     if (platformResp.status === 200) {
       newTree[0].children = platformResp.result;
     }
-
+    if (FormModel.current?.trigger?.type && source === 'relation') {
+      if (FormModel.current?.trigger?.type === 'device') {
+        const relationResp = await queryRelationUsers();
+        if (relationResp.status === 200) {
+          newTree.push({
+            name: '关系用户',
+            id: 'p2',
+            selectable: false,
+            children: relationResp.result,
+          });
+        }
+      } else {
+        if (newTree.length > 1) {
+          newTree.splice(1, 1);
+        }
+      }
+    }
     setTreeData(newTree);
   };
 
@@ -108,12 +145,7 @@ export default observer((props: UserProps) => {
     },
   ];
 
-  const onchange = (
-    _source: string = 'fixed',
-    _value?: string,
-    isRelation?: boolean,
-    _name?: string,
-  ) => {
+  const getObj = (_source: string = 'fixed', _value?: string, isRelation?: boolean) => {
     const obj: any = {
       source: _source,
     };
@@ -139,43 +171,37 @@ export default observer((props: UserProps) => {
     } else {
       obj.value = _value;
     }
+    return obj;
+  };
 
+  const onchange = (
+    _source: string = 'fixed',
+    _value?: string | string[],
+    isRelation?: boolean,
+    _name?: string,
+  ) => {
+    let _values: any = undefined;
+    const _names: string[] = [_name || ''];
+    if (Array.isArray(_value)) {
+      if (NotifyModel?.notify?.notifyType === 'email' && Array.isArray(_value)) {
+        const arr = _value.map((item) => {
+          const _item = labelMap.get(item);
+          _names.push(_item?.name || '');
+          return getObj('relation', item, _item?.relation);
+        });
+        _values = arr;
+      }
+    } else {
+      _values = getObj(_source, _value, isRelation);
+    }
     if (props.onChange) {
       NotifyModel.notify.options = {
         ...NotifyModel.notify.options,
-        sendTo: _name,
+        sendTo: _names.filter((item) => !!item).join(','),
       };
-      props.onChange(obj);
+      props.onChange(_values);
     }
   };
-
-  useEffect(() => {
-    if (props.type && source === 'relation') {
-      const newTree = [...treeData];
-      if (props.type === 'device') {
-        queryRelationUsers().then((relationResp) => {
-          if (relationResp.status === 200) {
-            newTree.push({
-              name: '关系用户',
-              id: 'p2',
-              selectable: false,
-              children: relationResp.result,
-            });
-            setTreeData(newTree);
-          }
-        });
-      } else {
-        if (newTree.length > 1) {
-          newTree.splice(1, 1);
-          setTreeData(newTree);
-        }
-      }
-
-      if (!location.query?.id) {
-        onchange(props.value?.source, '', false, '');
-      }
-    }
-  }, [props.type, source]);
 
   const filterOption = (input: string, option: any) => {
     return option.name ? option.name.toLowerCase().includes(input.toLowerCase()) : false;
@@ -185,15 +211,18 @@ export default observer((props: UserProps) => {
     return data.map((item: any) => {
       if (item.children) {
         return (
-          <TreeSelect.TreeNode value={item.id} title={item.name} selectable={false}>
+          <TreeSelect.TreeNode key={item.id} value={item.id} title={item.name} selectable={false}>
             {createTreeNode(item.children)}
           </TreeSelect.TreeNode>
         );
       } else {
+        labelMap.set(item.id, item);
         return (
           <TreeSelect.TreeNode
+            {...item}
             name={item.name}
             value={item.id}
+            key={item.id}
             title={
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>{item.name}</span>
@@ -216,7 +245,7 @@ export default observer((props: UserProps) => {
         placeholder={'请选择收信人'}
         onSelect={(key: any, node: any) => {
           setValue(key);
-          onchange(source, key, node.isRelation, node.name);
+          onchange(source, key, node?.relation, node.name);
         }}
         filterTreeNode={filterOption}
       >
@@ -231,7 +260,7 @@ export default observer((props: UserProps) => {
         listHeight={200}
         onChange={(key, option) => {
           setValue(key);
-          onchange(source, key, false, option?.label);
+          onchange(source, key, false, option?.label || option?.name);
         }}
         fieldNames={{ label: 'name', value: 'id' }}
         placeholder={'请选择收信人'}
@@ -247,11 +276,12 @@ export default observer((props: UserProps) => {
         showSearch
         allowClear
         value={value}
+        multiple={true}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         placeholder={'请选择收信人'}
-        onSelect={(key: any, node: any) => {
-          setValue(key);
-          onchange(source, key, node.isRelation, node.name);
+        onChange={(val) => {
+          setValue(val);
+          onchange(source, val);
         }}
         filterTreeNode={filterOption}
       >
@@ -277,7 +307,7 @@ export default observer((props: UserProps) => {
         placeholder={'请选择收信人'}
         onSelect={(key: any, node: any) => {
           setValue(key);
-          onchange(source, key, node.isRelation, node.name);
+          onchange(source, key, node?.relation, node.name);
         }}
         filterTreeNode={filterOption}
       >

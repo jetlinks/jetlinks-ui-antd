@@ -62,7 +62,11 @@ export default (props: ActionsTypeProps) => {
   };
 
   return (
-    <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
+    <div
+      className={classNames('scene-trigger-way-warp', props.className, {
+        disabled: props.disabled,
+      })}
+    >
       {TypeList.map((item) =>
         props.parallel && item.value === 'delay' ? null : (
           <div

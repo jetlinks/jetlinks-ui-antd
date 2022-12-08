@@ -54,6 +54,17 @@ export default (props: ItemProps) => {
   const notifyRender = (data: ActionsType | undefined, options: any) => {
     switch (data?.notify?.notifyType) {
       case 'dingTalk':
+        if (options.provider === 'dingTalkRobotWebHook') {
+          return (
+            <div>
+              通过<span className={'notify-text-highlight'}>群机器人消息</span>
+              发送
+              <span className={'notify-text-highlight'}>
+                {options?.templateName || data?.notify?.templateId}
+              </span>
+            </div>
+          );
+        }
         return (
           <div>
             向<span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
@@ -207,7 +218,7 @@ export default (props: ItemProps) => {
     } else if (props?.data?.alarm?.mode === 'relieve') {
       return (
         <div className={'item-options-content'}>
-          满足条件后将解除关联
+          满足条件后将解除
           <a
             onClick={() => {
               setTriggerVisible(true);

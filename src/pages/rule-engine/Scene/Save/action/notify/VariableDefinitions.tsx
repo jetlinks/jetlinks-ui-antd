@@ -7,7 +7,6 @@ import Tag from './components/variableItem/tag';
 import BuildIn from './components/variableItem/buildIn';
 import InputFile from './components/variableItem/inputFile';
 import { forwardRef, useCallback, useImperativeHandle } from 'react';
-import { onlyMessage } from '@/utils/util';
 
 interface Props {
   name: number;
@@ -21,7 +20,7 @@ export default forwardRef((props: Props, ref) => {
     switch (type) {
       case 'user':
         return <User />;
-      case '      ':
+      case 'org':
         return <Org />;
       case 'tag':
         return <Tag />;
@@ -37,43 +36,24 @@ export default forwardRef((props: Props, ref) => {
   const getRules = useCallback(
     (item: any, type: string): any[] => {
       const rules: any[] = [];
-      if (item?.required) {
-        if (type === 'user') {
-          rules.push({
-            validator: async (_: any, value: any) => {
-              if (!value) {
-                return Promise.reject(new Error('请选择' + item.name));
-              } else {
-                if (value.source === 'fixed' && !value.value) {
-                  return Promise.reject(new Error('请输入' + item.name));
-                } else if (value.source === 'relation' && !value.value && !value.relation) {
-                  return Promise.reject(new Error('请选择' + item.name));
-                }
-              }
-              return Promise.resolve();
-            },
-          });
-        } else {
-          rules.push({
-            validator: async (_: any, value: any) => {
-              if (type === 'file' || type === 'link') {
-                if (!value) {
-                  return Promise.reject(new Error('请输入' + item.name));
-                }
-              } else {
-                if (!value || !value.value) {
-                  if (['date', 'org'].includes(type)) {
-                    return Promise.reject(new Error('请选择' + item.name));
-                  } else {
-                    return Promise.reject(new Error('请输入' + item.name));
-                  }
-                }
-              }
-              return Promise.resolve();
-            },
-          });
-        }
-      }
+      rules.push({
+        validator: async (_: any, value: any) => {
+          if ((type === 'file' || type === 'link') && !value) {
+            return Promise.reject(new Error('请输入' + item.name));
+          } else if (type === 'tag' && !value) {
+            return Promise.reject(new Error('请选择' + item.name));
+          } else if (['date', 'org'].includes(type) && (!value || !value.value)) {
+            return Promise.reject(new Error('请选择' + item.name));
+          } else if (value.source === 'fixed' && !value.value) {
+            return Promise.reject(new Error('请输入' + item.name));
+          } else if (value.source === 'relation' && !value.value && !value.relation) {
+            return Promise.reject(new Error('请选择' + item.name));
+          } else if (value.source === 'upper' && !value.upperKey) {
+            return Promise.reject(new Error('请选择' + item.name));
+          }
+          return Promise.resolve();
+        },
+      });
 
       if (type === 'link') {
         rules.push({ max: 64, message: '最多64个字符' });
@@ -111,7 +91,6 @@ export default forwardRef((props: Props, ref) => {
           });
         }
       }
-
       return rules;
     },
     [NotifyModel.notify?.notifyType],
@@ -123,40 +102,45 @@ export default forwardRef((props: Props, ref) => {
         const formData = await form.validateFields().catch(() => {
           resolve(false);
         });
-        if (
-          NotifyModel.notify.notifyType &&
-          ['dingTalk', 'weixin'].includes(NotifyModel.notify.notifyType)
-        ) {
-          const arr = NotifyModel.variable.map((item) => {
-            return { type: item.expands?.businessType || item?.type, id: item.id };
-          });
-          const org = arr.find((i) => i.type === 'org')?.id;
-          const user = arr.find((i) => i.type === 'user')?.id;
-          if (org && user) {
-            if (
-              (formData[org]?.source && formData[org]?.value) ||
-              (!formData[org]?.source && formData[org]) ||
-              (formData[user]?.source && (formData[user]?.value || formData[user]?.relation)) ||
-              (!formData[user]?.source && formData[user])
-            ) {
-              resolve(formData);
-            } else {
-              onlyMessage('收信人和收信部门必填一个', 'error');
-              resolve(false);
-            }
-          } else {
-            if (formData) {
-              resolve(formData);
-            } else {
-              resolve(false);
-            }
-          }
+        // if (
+        //   NotifyModel.notify.notifyType &&
+        //   ['dingTalk', 'weixin'].includes(NotifyModel.notify.notifyType)
+        // ) {
+        //   const arr = NotifyModel.variable.map((item) => {
+        //     return { type: item.expands?.businessType || item?.type, id: item.id };
+        //   });
+        //   const org = arr.find((i) => i.type === 'org')?.id;
+        //   const user = arr.find((i) => i.type === 'user')?.id;
+        //   if (org && user) {
+        //     if (
+        //       (formData[org]?.source && formData[org]?.value) ||
+        //       (!formData[org]?.source && formData[org]) ||
+        //       (formData[user]?.source && (formData[user]?.value || formData[user]?.relation)) ||
+        //       (!formData[user]?.source && formData[user])
+        //     ) {
+        //       resolve(formData);
+        //     } else {
+        //       onlyMessage('收信人和收信部门必填一个', 'error');
+        //       resolve(false);
+        //     }
+        //   } else {
+        //     if (formData) {
+        //       resolve(formData);
+        //     } else {
+        //       resolve(false);
+        //     }
+        //   }
+        // } else {
+        //   if (formData) {
+        //     resolve(formData);
+        //   } else {
+        //     resolve(false);
+        //   }
+        // }
+        if (formData) {
+          resolve(formData);
         } else {
-          if (formData) {
-            resolve(formData);
-          } else {
-            resolve(false);
-          }
+          resolve(false);
         }
       } else {
         resolve({});
@@ -209,7 +193,7 @@ export default forwardRef((props: Props, ref) => {
               name={item.id}
               label={item.name}
               initialValue={initialValue}
-              required={!!item.required}
+              required={true}
               rules={rules}
             >
               {typeComponents(item)}

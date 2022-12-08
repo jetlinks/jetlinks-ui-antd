@@ -12,6 +12,7 @@ import styles from '@/pages/rule-engine/Alarm/Configuration/Save/Base/index.less
 import useLocation from '@/hooks/route/useLocation';
 import { getMenuPathByCode } from '@/utils/menu';
 import { useHistory } from 'umi';
+import { service as sceneService } from '@/pages/rule-engine/Scene';
 
 const alarm1 = require('/public/images/alarm/alarm1.png');
 const alarm2 = require('/public/images/alarm/alarm2.png');
@@ -69,6 +70,31 @@ export default () => {
             if (!id) return;
             const resp = await service.detail(id);
             form1.setInitialValues({ ...resp.result });
+            const resp1 = await sceneService.query({
+              terms: [
+                {
+                  terms: [
+                    {
+                      column: 'id',
+                      termType: 'alarm-bind-rule',
+                      value: id,
+                    },
+                  ],
+                  type: 'and',
+                },
+              ],
+              sorts: [
+                {
+                  name: 'createTime',
+                  order: 'desc',
+                },
+              ],
+            });
+            if (resp1.status === 200) {
+              form1.setFieldState('.targetType', (state) => {
+                state.disabled = !!resp1.result.data?.length;
+              });
+            }
           });
         },
       }),
@@ -92,8 +118,8 @@ export default () => {
     const resp: any = await service.update({ ...data });
     if (resp.status === 200) {
       onlyMessage('操作成功');
-      const url = getMenuPathByCode('rule-engine/Alarm/Configuration');
-      history.push(`${url}`);
+      const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+      history.push(`${url}?id=${resp.result?.id}`);
     }
   };
 

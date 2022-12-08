@@ -20,7 +20,7 @@ export default (props: Props) => {
     queryAlarmCount(
       encodeQuery({
         terms: {
-          sceneId: FormModel.current.id,
+          'id$rule-bind-alarm': FormModel.current.id,
         },
       }),
     ).then((resp) => {
@@ -161,8 +161,9 @@ export default (props: Props) => {
               {
                 terms: [
                   {
-                    column: 'sceneId',
+                    column: 'id',
                     value: FormModel.current.id,
+                    termType: 'rule-bind-alarm',
                   },
                 ],
                 type: 'and',
