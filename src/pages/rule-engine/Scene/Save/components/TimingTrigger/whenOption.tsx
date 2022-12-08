@@ -74,7 +74,7 @@ export default (props: TimerWhenProps) => {
               }
 
               setValue(_value.length ? [..._value] : undefined);
-              props.onChange?.(_value.length ? _value : undefined);
+              props.onChange?.(_value.length ? _value.sort() : undefined);
             }}
           >
             {item.label}

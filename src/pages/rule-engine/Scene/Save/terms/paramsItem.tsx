@@ -146,6 +146,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
         time_lt_now: '距离当前时间小于_value秒',
         in: '在_value,_value2之中',
         nin: '不在_value,_value2之中',
+        like: '包含_value',
+        nlike: '不包含_value',
       };
       const typeKey = {
         and: '并且',

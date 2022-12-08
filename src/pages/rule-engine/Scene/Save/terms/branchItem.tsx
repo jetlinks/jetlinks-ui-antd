@@ -11,7 +11,7 @@ import { Store } from 'jetlinks-store';
 interface BranchesItemProps {
   name: number;
   data: ActionBranchesProps;
-  isFrist: boolean;
+  isFirst: boolean;
   paramsOptions: any[];
   onDelete: () => void;
 }
@@ -71,11 +71,11 @@ export default observer((props: BranchesItemProps) => {
 
   return (
     <div className="actions-terms-warp">
-      <div className="actions-terms-title">{props.isFrist ? '当' : '否则'}</div>
+      <div className="actions-terms-title">{props.isFirst ? '当' : '否则'}</div>
       <div
-        className={classNames('actions-terms-options', { border: !props.isFrist, error: error })}
+        className={classNames('actions-terms-options', { border: !props.isFirst, error: error })}
       >
-        {!props.isFrist && props.data.when.length ? (
+        {!props.isFirst && props.data.when.length ? (
           <div className={classNames('terms-params-delete denger show')} onClick={props.onDelete}>
             <DeleteOutlined />
           </div>
@@ -115,7 +115,7 @@ export default observer((props: BranchesItemProps) => {
                     fontSize: 14,
                     color: '#2F54EB',
                     cursor: 'pointer',
-                    padding: props.isFrist ? '16px 0' : 0,
+                    padding: props.isFirst ? '16px 0' : 0,
                   }}
                   onClick={() => addWhen(props.name)}
                 >
@@ -126,8 +126,37 @@ export default observer((props: BranchesItemProps) => {
             }
           </Observer>
         </div>
-        <div className="actions-branchs">
-          <Actions openShakeLimit={true} name={props.name} thenOptions={props.data.then} />
+        <div className="actions-branches">
+          <Observer>
+            {() => {
+              console.log('action-onAdd', FormModel.current.branches?.[props.name].then);
+              return (
+                <Actions
+                  openShakeLimit={true}
+                  name={props.name}
+                  thenOptions={props.data.then}
+                  onAdd={(data) => {
+                    console.log('action-onAdd', data, FormModel.current.branches);
+                    if (FormModel.current.branches) {
+                      FormModel.current.branches[props.name].then = [
+                        ...FormModel.current.branches[props.name].then,
+                        data,
+                      ];
+                      console.log('action-onAdd2', FormModel.current.branches[props.name].then);
+                    }
+                  }}
+                  onUpdate={(data, type) => {
+                    const indexOf = FormModel.current.branches![props.name].then.findIndex(
+                      (item) => item.parallel === type,
+                    );
+                    if (indexOf !== -1) {
+                      FormModel.current.branches![props.name].then[indexOf] = data;
+                    }
+                  }}
+                />
+              );
+            }}
+          </Observer>
         </div>
       </div>
     </div>

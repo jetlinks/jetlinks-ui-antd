@@ -36,8 +36,6 @@ export default (props: TimmingTriggerProps) => {
   const trigger = Form.useWatch([...name, 'trigger'], form);
   const mod = Form.useWatch([...name, 'mod'], form);
 
-  console.log('trigger', trigger, mod);
-
   const TimeTypeAfter = (
     <Form.Item noStyle name={[...props.name, 'period', 'unit']} initialValue="seconds">
       <Select
@@ -53,7 +51,23 @@ export default (props: TimmingTriggerProps) => {
   return (
     <>
       <Form.Item name={[...name, 'trigger']} initialValue="week">
-        <Radio.Group options={triggerOptions} optionType="button" buttonStyle="solid" />
+        <Radio.Group
+          options={triggerOptions}
+          optionType="button"
+          buttonStyle="solid"
+          onChange={() => {
+            form.setFields([
+              {
+                name: [...name, 'when'],
+                value: [],
+              },
+              {
+                name: [...name, 'mod'],
+                value: 'period',
+              },
+            ]);
+          }}
+        />
       </Form.Item>
       {trigger === 'cron' ? (
         <Form.Item
@@ -91,6 +105,7 @@ export default (props: TimmingTriggerProps) => {
                 },
               },
             ]}
+            initialValue={[]}
           >
             <WhenOption type={trigger} />
           </Form.Item>
@@ -141,7 +156,7 @@ export default (props: TimmingTriggerProps) => {
                 addonAfter={TimeTypeAfter}
                 style={{ maxWidth: 170 }}
                 precision={0}
-                min={0}
+                min={1}
                 max={59}
               />
             </Form.Item>

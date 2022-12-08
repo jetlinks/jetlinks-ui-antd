@@ -76,6 +76,7 @@ const DropdownButton = (props: DropdownButtonProps) => {
     if (props.showLabelKey) {
       titleKey = props.showLabelKey;
     }
+    console.log('drop-tree', e.node, titleKey);
     setLabel(e.node[titleKey]);
   };
 
