@@ -3,14 +3,22 @@ import SearchComponent from '@/components/SearchComponent';
 import { TriggerDeviceModel } from './addModel';
 import type { DepartmentItem } from '@/pages/system/Department/typings';
 import { service } from '@/pages/system/Department';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { observer } from '@formily/reactive-react';
 
+const orgOptions = new Map();
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const [sortParam, setSortParam] = useState<any>({ name: 'sortIndex', order: 'asc' });
   const [param, setParam] = useState({});
+  const [openKeys, setOpenKeys] = useState<any[]>([]);
+
+  useEffect(() => {
+    return () => {
+      orgOptions.clear();
+    };
+  }, []);
 
   const columns: ProColumns<DepartmentItem>[] = [
     {
@@ -25,6 +33,25 @@ export default observer(() => {
       render: (_, record) => <>{record.sortIndex}</>,
     },
   ];
+
+  const handleOptions = (data: any[]) => {
+    if (!data) return;
+    data.forEach((item) => {
+      orgOptions.set(item.id, { id: item.id, parentId: item.parentId });
+      if (item.children) {
+        handleOptions(item.children);
+      }
+    });
+  };
+
+  const findPid = (id: string, keys: string[]): string[] => {
+    const _item = orgOptions.get(id);
+    keys.push(_item.id);
+    if (_item.parentId) {
+      return findPid(_item.parentId, keys);
+    }
+    return keys;
+  };
 
   return (
     <>
@@ -51,6 +78,12 @@ export default observer(() => {
         options={false}
         scroll={{
           y: 350,
+        }}
+        expandable={{
+          expandedRowKeys: openKeys,
+          onExpandedRowsChange: (keys) => {
+            setOpenKeys(keys as any[]);
+          },
         }}
         rowSelection={{
           type: 'radio',
@@ -81,6 +114,12 @@ export default observer(() => {
             sorts: [sortParam],
             ...params,
           });
+
+          handleOptions(response.result);
+          if (TriggerDeviceModel.orgId) {
+            const _openKeys = findPid(TriggerDeviceModel.orgId, []);
+            setOpenKeys(_openKeys);
+          }
           return {
             code: response.message,
             result: {

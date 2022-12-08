@@ -1,8 +1,8 @@
 import Action from '../action';
-import { Observer, observer } from '@formily/react';
+import { Observer } from '@formily/react';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 
-export default observer(() => {
+export default () => {
   return (
     <div>
       <Observer>
@@ -11,8 +11,8 @@ export default observer(() => {
             thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
             name={0}
             onAdd={(data) => {
-              if (FormModel.current.branches) {
-                FormModel.current.branches[0].then.push(data);
+              if (FormModel.current.branches && data) {
+                FormModel.current.branches[0].then = [...FormModel.current.branches[0].then, data];
               }
             }}
             onUpdate={(data, type) => {
@@ -28,4 +28,4 @@ export default observer(() => {
       </Observer>
     </div>
   );
-});
+};

@@ -29,23 +29,28 @@ export default (props: Props) => {
     };
 
     const _timer = value;
-    _options.when =
-      _timer.when!.length === 0
-        ? '每天'
-        : `每${_timer
-            .when!.map((item) => {
-              if (_timer!.trigger === 'week') {
-                return numberToString[item];
-              } else {
-                return item + '号';
-              }
-            })
-            .join(',')}`;
-    if (_timer.once) {
-      _options.time = _timer.once;
-    } else if (_timer.period) {
-      _options.time = _timer.period.from + '-' + _timer.period.to;
-      _options.extraTime = `每${_timer.period.every}${timeUnitEnum[_timer.period.unit]}执行1次`;
+    if (_timer.trigger === 'cron') {
+      _options.time = _timer.cron;
+    } else {
+      _options.when =
+        _timer.when!.length === 0
+          ? '每天'
+          : `每${_timer
+              .when!.map((item) => {
+                if (_timer!.trigger === 'week') {
+                  return numberToString[item];
+                } else {
+                  return item + '号';
+                }
+              })
+              .join(',')}`;
+
+      if (_timer.once) {
+        _options.time = _timer.once.time + ' 执行1次';
+      } else if (_timer.period) {
+        _options.time = _timer.period.from + '-' + _timer.period.to;
+        _options.extraTime = `每${_timer.period.every}${timeUnitEnum[_timer.period.unit]}执行1次`;
+      }
     }
     return _options;
   };

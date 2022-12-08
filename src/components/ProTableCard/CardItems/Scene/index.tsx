@@ -9,6 +9,8 @@ import { CheckOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { ActionsType, BranchesThen } from '@/pages/rule-engine/Scene/typings';
 import MyTooltip from './MyTooltip';
+import { handleOptionsLabel } from '@/pages/rule-engine/Scene/Save/terms/paramsItem';
+import { isArray } from 'lodash';
 
 const imageMap = new Map();
 imageMap.set('timer', require('/public/images/scene/scene-timer.png'));
@@ -284,16 +286,28 @@ const actionRender = (action: ActionsType, index: number) => {
 };
 
 const conditionsRender = (when: any[], index: number) => {
+  let whenStr: string = '';
   if (when.length && when[index]) {
-    let str: string = '';
-    (when[index]?.terms || []).map((i: any, _index: number) => {
-      str += `${i?.terms.join(' ') || ''}${
-        i?.termType && when[index]?.terms.length !== _index + 1 ? i?.termType : ''
-      }`;
+    const terms = when[index]?.terms || [];
+    const termsLength = terms.length;
+    terms.map((termsItem: any, tIndex: number) => {
+      const tLast = tIndex < termsLength - 1;
+      let tSer = '';
+      if (termsItem.terms) {
+        tSer = isArray(termsItem.terms)
+          ? termsItem.terms
+              .map((bTermItem: any, bIndex: number) => {
+                const bLast = bIndex < termsItem.terms.length - 1;
+                return handleOptionsLabel(bTermItem, bLast ? '' : bTermItem[3]);
+              })
+              .join('')
+          : '';
+        whenStr += tLast ? tSer : tLast + termsItem.termType;
+      }
     });
-    return str;
+    return whenStr;
   }
-  return '';
+  return whenStr;
 };
 
 const branchesActionRender = (actions: any[]) => {
@@ -311,7 +325,10 @@ const branchesActionRender = (actions: any[]) => {
           {actions[index]?.options?.terms && (
             <div className={'ellipsis'} style={{ minWidth: 40 }}>
               动作{index + 1}
-              {actions[index]?.options?.terms}
+              {handleOptionsLabel(
+                actions[index]?.options?.terms,
+                index < actions.length - 1 ? actions[index].terms?.[0]?.type : undefined,
+              )}
             </div>
           )}
         </MyTooltip>
@@ -431,7 +448,7 @@ const ContentRender = (data: SceneCardProps) => {
                           {(item?.then || []).map((i: BranchesThen, _index: number) => (
                             <div key={i?.key || _index} className={styles['right-item-right-item']}>
                               <div className={styles['trigger-ways']}>
-                                {i.parallel ? '并行执行' : '串行执行'}
+                                {i ? (i.parallel ? '并行执行' : '串行执行') : ''}
                               </div>
                               <div className={classNames(styles['right-item-right-item-contents'])}>
                                 {branchesActionRender(Array.isArray(i?.actions) ? i?.actions : [])}

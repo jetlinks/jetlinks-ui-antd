@@ -8,6 +8,7 @@ import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/servic
 import '../index.less';
 import { FormModel } from '../..';
 import { Space } from 'antd';
+import { cloneDeep } from 'lodash';
 
 interface FilterProps {
   thenName: number;
@@ -15,7 +16,8 @@ interface FilterProps {
   action?: number;
   data?: TermsType;
   onChange: (value: TermsType) => void;
-  onLabelChange: (lb: string) => void;
+  onLabelChange: (lb: string[]) => void;
+  label?: any[];
   onAdd: () => void;
   onDelete: () => void;
 }
@@ -59,7 +61,7 @@ export default observer((props: FilterProps) => {
   const [ttOptions, setTtOptions] = useState<any>([]);
   const [valueOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
-  const [label, setLabel] = useState<any[]>([undefined, undefined, {}]);
+  const labelCache = useRef<any[]>([undefined, undefined, {}]);
 
   const ValueRef = useRef<Partial<TermsType>>({
     column: '',
@@ -85,18 +87,11 @@ export default observer((props: FilterProps) => {
     [column, termType],
   );
 
-  const paramChange = (item: any) => {
-    const node = item.node;
-    const _termTypeOptions: any[] =
-      node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
-    setTtOptions(_termTypeOptions);
-    setValueType(node.dataType || node.type);
-  };
-
   const convertLabelValue = (columnValue?: string) => {
     if (columnValue) {
-      console.log('filter-convertLabelValue', columnOptionsMap, columnValue);
       const labelOptions = columnOptionsMap.get(columnValue);
+      if (!labelOptions) return;
+
       const _termTypeOptions: any[] =
         labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
       setTtOptions(_termTypeOptions);
@@ -108,7 +103,7 @@ export default observer((props: FilterProps) => {
     if (data.length > 0) {
       return data.map((item: any) => {
         const name = handleName(item);
-        columnOptionsMap.set(item.column, item);
+        columnOptionsMap.set(item.id || item.column, item);
         if (item.children) {
           return {
             ...item,
@@ -132,7 +127,9 @@ export default observer((props: FilterProps) => {
       action: props.action,
     };
     columnOptionsMap.clear();
-    queryBuiltInParams(FormModel.current, _params).then((res: any) => {
+    const newData = cloneDeep(FormModel.current);
+    newData.branches = newData.branches?.filter((item) => !!item);
+    queryBuiltInParams(newData, _params).then((res: any) => {
       if (res.status === 200) {
         const params = handleTreeData(
           // res.result.filter((item: any) => !item.id.includes(`action_${props.action}`)),
@@ -144,40 +141,6 @@ export default observer((props: FilterProps) => {
       }
     });
   }, [props.data?.column]);
-
-  const handleOptionsLabel = (c: string, t: string, v: any) => {
-    const termsTypeKey = {
-      eq: '等于_value',
-      neq: '不等于_value',
-      gt: '大于_value',
-      gte: '大于等于_value',
-      lt: '小于_value',
-      lte: '小于等于_value',
-      btw: '在_value和_value2之间',
-      nbtw: '不在_value和_value2之间',
-      time_gt_now: '距离当前时间大于_value秒',
-      time_lt_now: '距离当前时间小于_value秒',
-      in: '在_value,_value2之中',
-      nin: '不在_value,_value2之中',
-      like: '包含_value',
-      nlike: '不包含_value',
-    };
-
-    if (DoubleFilter.includes(t)) {
-      const str = termsTypeKey[t].replace('_value', v[0]).replace('_value2', v[1]);
-      return `${c} ${str}`;
-    }
-    const str = termsTypeKey[t].replace('_value', v);
-    return `${c} ${str}`;
-  };
-
-  useEffect(() => {
-    const _v = Object.values(label[2]);
-    if (_v.length && label[1]) {
-      const _l = handleOptionsLabel(label[0], label[1], _v.length > 1 ? _v : _v[0]);
-      props.onLabelChange?.(_l);
-    }
-  }, [label]);
 
   useEffect(() => {
     if (props.data) {
@@ -195,12 +158,16 @@ export default observer((props: FilterProps) => {
     }
   }, []);
 
+  useEffect(() => {
+    labelCache.current = props.label || [undefined, undefined, {}];
+  }, [props.label]);
+
   return (
     <div className="filter-condition-warp">
       {props.data ? (
         <div className="filter-condition-content">
           <div
-            className={classNames('filter-condition-delete denger show')}
+            className={classNames('filter-condition-delete danger show')}
             onClick={props.onDelete}
           >
             <DeleteOutlined />
@@ -217,7 +184,7 @@ export default observer((props: FilterProps) => {
                 value: undefined,
                 source: 'fixed',
               });
-              paramChange(item);
+              // paramChange(item);
               setColumn(_value!);
               const node = item.node;
               const _termTypeOptions: any[] =
@@ -227,15 +194,14 @@ export default observer((props: FilterProps) => {
               let _termTypeValue = undefined;
               if (_termTypeOptions.length) {
                 _termTypeValue = _termTypeOptions[0].key;
-                label[1] = _termTypeValue;
+                labelCache.current[1] = _termTypeValue;
                 setTermType(_termTypeValue);
               } else {
-                label[1] = '';
+                labelCache.current[1] = '';
                 setTermType('');
               }
               ValueRef.current.column = _value!;
-              label[0] = node.fullName;
-              setLabel([...label]);
+              labelCache.current[0] = node.fullName;
               valueChange({
                 column: _value,
                 value: {
@@ -263,8 +229,7 @@ export default observer((props: FilterProps) => {
               setValue(_value);
               setTermType(v!);
 
-              label[1] = v;
-              setLabel([...label]);
+              labelCache.current[1] = v;
               ValueRef.current.termType = v;
               valueChange({
                 column: props.data!.column,
@@ -291,8 +256,8 @@ export default observer((props: FilterProps) => {
                   };
                   ValueRef.current.value = _myValue;
                   setValue(_myValue);
-                  label[2] = { ...label[2], 0: lb };
-                  setLabel([...label]);
+                  labelCache.current[2] = { ...labelCache.current[2], 0: lb };
+                  props.onLabelChange?.(labelCache.current);
                   valueEventChange(_myValue);
                 }}
               />
@@ -312,8 +277,8 @@ export default observer((props: FilterProps) => {
                   };
                   ValueRef.current.value = _myValue;
                   setValue(_myValue);
-                  label[2] = { ...label[2], 1: lb };
-                  setLabel([...label]);
+                  labelCache.current[2] = { ...labelCache.current[2], 1: lb };
+                  props.onLabelChange?.(labelCache.current);
                   valueEventChange(_myValue);
                 }}
               />
@@ -331,8 +296,8 @@ export default observer((props: FilterProps) => {
                 setValue({
                   ...v,
                 });
-                label[2] = { 0: lb };
-                setLabel([...label]);
+                labelCache.current[2] = { 0: lb };
+                props.onLabelChange?.(labelCache.current);
                 valueEventChange(v);
               }}
             />

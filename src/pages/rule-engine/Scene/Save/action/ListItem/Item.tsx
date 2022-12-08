@@ -6,6 +6,7 @@ import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import FilterCondition from './FilterCondition';
+import { set } from 'lodash';
 
 export enum ParallelEnum {
   'parallel' = 'parallel',
@@ -304,6 +305,7 @@ export default (props: ItemProps) => {
           branchGroup={props.branchGroup}
           thenName={props.thenName}
           data={props.data.terms?.[0]}
+          label={props.data.options?.terms}
           onAdd={() => {
             let _data = props.data;
             if (!_data.terms) {
@@ -312,19 +314,16 @@ export default (props: ItemProps) => {
                 terms: [{}],
               };
               cacheValueRef.current = _data;
-              console.log('FilterCondition-add', _data);
               props.onUpdate(_data, op);
             }
           }}
           onChange={(termsData) => {
             const _data = props.data;
-            if (_data.terms) {
-              _data.terms = [termsData];
-              cacheValueRef.current = _data;
-              props.onUpdate(_data, {
-                ...op,
-              });
-            }
+            set(_data, 'terms', [termsData]);
+            cacheValueRef.current = _data;
+            props.onUpdate(_data, {
+              ...op,
+            });
           }}
           onLabelChange={(lb) => {
             props.onUpdate(cacheValueRef.current, {

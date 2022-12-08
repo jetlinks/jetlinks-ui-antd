@@ -58,8 +58,11 @@ export default observer(() => {
               thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
               name={0}
               onAdd={(data) => {
-                if (FormModel.current.branches) {
-                  FormModel.current.branches[0].then.push(data);
+                if (FormModel.current.branches && data) {
+                  FormModel.current.branches[0].then = [
+                    ...FormModel.current.branches[0].then,
+                    data,
+                  ];
                 }
               }}
               onUpdate={(data, type) => {

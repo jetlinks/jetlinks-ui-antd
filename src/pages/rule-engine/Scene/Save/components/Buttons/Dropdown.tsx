@@ -45,13 +45,15 @@ const DropdownButton = (props: DropdownButtonProps) => {
     (key?: string) => {
       if (key && paramOptions.length) {
         const labelOptions = valueOptions.get(key);
-        const nameKey = props.showLabelKey || 'title';
-        setLabel(labelOptions[nameKey]);
+        if (labelOptions) {
+          const nameKey = props.showLabelKey || 'title';
+          setLabel(labelOptions[nameKey]);
+        }
       } else {
         setLabel(key!);
       }
     },
-    [paramOptions, valueOptions, props.fieldNames],
+    [paramOptions, valueOptions, props.fieldNames, props.showLabelKey],
   );
 
   const menuOnSelect = ({ key, item }: { key: string; item: any }) => {

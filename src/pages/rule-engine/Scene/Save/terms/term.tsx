@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
 import { get, set } from 'lodash';
 import './index.less';
+import { Popconfirm } from 'antd';
 interface TermsProps {
   data: TermsType;
   pName: (number | string)[];
@@ -72,6 +73,11 @@ export default observer((props: TermsProps) => {
                   key={item.key}
                   isLast={index === props.data.terms!.length - 1}
                   options={props.paramsOptions}
+                  label={
+                    FormModel.current.options?.when?.[props.whenName]?.terms?.[props.name]?.terms?.[
+                      index
+                    ]
+                  }
                   onDelete={() => {
                     terms.splice(index, 1);
                     // setTerms([...terms]);
@@ -117,11 +123,10 @@ export default observer((props: TermsProps) => {
               ));
             }}
           </Observer>
-          <div
-            className={classNames('terms-params-delete', { show: deleteVisible })}
-            onClick={props.onDelete}
-          >
-            <CloseOutlined />
+          <div className={classNames('terms-params-delete', { show: deleteVisible })}>
+            <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+              <CloseOutlined />
+            </Popconfirm>
           </div>
         </div>
         {!props.isLast ? (

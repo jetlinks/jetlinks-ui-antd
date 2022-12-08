@@ -28,6 +28,7 @@ const TopCard = (props: Props) => {
       if (props.onChange) {
         props.onChange(_type);
       }
+      props.onSelect?.(_type);
     }
   };
 

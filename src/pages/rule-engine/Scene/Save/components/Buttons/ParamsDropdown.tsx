@@ -199,7 +199,7 @@ export default (props: ParamsDropdownProps) => {
           findLabel(v, props.BuiltInOptions || []);
           break;
         default:
-          setLabel(v);
+          setLabel(v + '');
       }
     },
     [props.options, props.BuiltInOptions],

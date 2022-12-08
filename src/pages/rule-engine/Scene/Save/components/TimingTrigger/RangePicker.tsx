@@ -14,7 +14,7 @@ interface RangePickerProps {
   onChange?: (value: RangePickerValue) => void;
   id?: string;
   form?: FormInstance<any>;
-  name: (string | number)[];
+  name?: (string | number)[];
 }
 export default (props: RangePickerProps) => {
   return (
@@ -28,7 +28,7 @@ export default (props: RangePickerProps) => {
       ]}
       onChange={(_, dateString) => {
         if (props.onChange) {
-          const { every, unit } = props.form?.getFieldValue([...props.name]);
+          const { every, unit } = props.form?.getFieldValue([...props.name!]);
           console.log(every, unit);
           props.onChange({
             from: dateString[0],

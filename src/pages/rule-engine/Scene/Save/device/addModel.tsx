@@ -95,7 +95,6 @@ export default observer((props: AddProps) => {
   }, []);
 
   useEffect(() => {
-    console.log('productPage', props.value);
     if (props.value) {
       TriggerDeviceModel.selector = props.value.selector;
       TriggerDeviceModel.productId = props.value.productId;
@@ -112,8 +111,6 @@ export default observer((props: AddProps) => {
   }, [props.value]);
 
   useEffect(() => {
-    console.log('productPage', props.options);
-
     if (props.options) {
       TriggerDeviceModel.devicePage = props.options.devicePage;
       TriggerDeviceModel.devicePageSize = props.options.devicePageSize;
@@ -151,23 +148,27 @@ export default observer((props: AddProps) => {
 
     if (data.timer) {
       const _timer = data.timer;
-      _options.when =
-        _timer.when!.length === 0
-          ? '每天'
-          : `每${_timer
-              .when!.map((item) => {
-                if (_timer!.trigger === 'week') {
-                  return numberToString[item];
-                } else {
-                  return item + '号';
-                }
-              })
-              .join(',')}`;
-      if (_timer.once) {
-        _options.time = _timer.once;
-      } else if (_timer.period) {
-        _options.time = _timer.period.from + '-' + _timer.period.to;
-        _options.extraTime = `每${_timer.period.every}${timeUnitEnum[_timer.period.unit]}执行1次`;
+      if (_timer.trigger === 'cron') {
+        _options.time = _timer.cron;
+      } else {
+        _options.when =
+          _timer.when!.length === 0
+            ? '每天'
+            : `每${_timer
+                .when!.map((item) => {
+                  if (_timer!.trigger === 'week') {
+                    return numberToString[item];
+                  } else {
+                    return item + '号';
+                  }
+                })
+                .join(',')}`;
+        if (_timer.once) {
+          _options.time = _timer.once.time + ' 执行1次';
+        } else if (_timer.period) {
+          _options.time = _timer.period.from + '-' + _timer.period.to;
+          _options.extraTime = `每${_timer.period.every}${timeUnitEnum[_timer.period.unit]}执行1次`;
+        }
       }
     }
 
@@ -226,7 +227,6 @@ export default observer((props: AddProps) => {
         Store.set('TriggerDeviceModel', {
           update: !isUpdate,
         });
-        console.log('isUpdate', _options);
         props.onSave?.(saveData, _options);
       }
     }

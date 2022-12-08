@@ -26,7 +26,6 @@ export default (props: ActionsProps) => {
   useEffect(() => {
     setParallelArray(props.thenOptions.filter((item) => item.parallel));
     setSerialArray(props.thenOptions.filter((item) => !item.parallel));
-    console.log('action-effect', props.thenOptions);
   }, [props.thenOptions]);
 
   return (
@@ -72,7 +71,6 @@ export default (props: ActionsProps) => {
                 parallel={false}
                 actions={serialArray.length ? serialArray[0].actions : []}
                 onAdd={(actionItem) => {
-                  console.log('action-onAdd');
                   if (serialArray.length) {
                     const indexOf = serialArray[0].actions?.findIndex(
                       (aItem) => aItem.key === actionItem.key,
@@ -144,7 +142,8 @@ export default (props: ActionsProps) => {
                   if (aIndex !== -1) {
                     parallelArray[0].actions?.splice(aIndex, 1);
                     setParallelArray([...parallelArray]);
-                    props.onUpdate(serialArray[0], true);
+
+                    props.onUpdate(parallelArray[0], true);
                   }
                 }}
               />

@@ -146,17 +146,6 @@ export default forwardRef((props: Props, ref) => {
     }
   }, [props.data]);
 
-  useEffect(() => {
-    if (TimeFilterArray.includes(operator)) {
-      form.setFieldsValue({
-        timer: {
-          trigger: 'week',
-          mod: 'period',
-        },
-      });
-    }
-  }, [operator]);
-
   useImperativeHandle(ref, () => ({
     validateFields: form.validateFields,
   }));
@@ -171,7 +160,20 @@ export default forwardRef((props: Props, ref) => {
     >
       <Form form={form} layout={'vertical'}>
         <Form.Item name="operator" label="触发类型" required initialValue={'online'}>
-          <TopCard typeList={TypeList} labelBottom={true} />
+          <TopCard
+            typeList={TypeList}
+            labelBottom={true}
+            onSelect={() => {
+              if (TimeFilterArray.includes(operator)) {
+                form.setFieldsValue({
+                  timer: {
+                    trigger: 'week',
+                    mod: 'period',
+                  },
+                });
+              }
+            }}
+          />
         </Form.Item>
         {TimeFilterArray.includes(operator) && <TimingTrigger name={['timer']} form={form} />}
         {operator === OperatorType.readProperty && (

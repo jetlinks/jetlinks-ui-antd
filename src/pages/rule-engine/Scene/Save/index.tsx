@@ -8,7 +8,7 @@ import { TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { service } from '@/pages/rule-engine/Scene';
 import './index.less';
 import { onlyMessage, randomString } from '@/utils/util';
@@ -73,6 +73,7 @@ export default observer(() => {
   const id = location?.query?.id || '';
   const history = useHistory();
   const [form] = Form.useForm();
+  const [saveLoading, setSaveLoading] = useState(false);
 
   const FormModelInit = () => {
     FormModel.current = {
@@ -80,20 +81,7 @@ export default observer(() => {
         type: '',
       },
       options: defaultOptions,
-      branches: [
-        ...defaultBranches,
-        {
-          when: [],
-          key: 'branches_' + new Date().getTime(),
-          shakeLimit: {
-            enabled: false,
-            time: 0,
-            threshold: 0,
-            alarmFirst: false,
-          },
-          then: [],
-        },
-      ],
+      branches: [...defaultBranches],
     };
   };
 
@@ -102,13 +90,14 @@ export default observer(() => {
     if (!data) return [];
 
     return data.map((item: any) => {
-      item.key = randomString();
-      Object.keys(item).some((key) => {
-        if (onlyKey.includes(key) && isArray(item[key])) {
-          item[key] = assignmentKey(item[key]);
-        }
-      });
-
+      if (item) {
+        item.key = randomString();
+        Object.keys(item).some((key) => {
+          if (onlyKey.includes(key) && isArray(item[key])) {
+            item[key] = assignmentKey(item[key]);
+          }
+        });
+      }
       return item;
     });
   };
@@ -127,43 +116,30 @@ export default observer(() => {
     if (id) {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
-          console.log('defaultBranches', defaultBranches);
-          const branches = resp.result.branches || defaultBranches;
-          if (resp.result.branches && !resp.result.branches.length) {
-            branches.push({
-              when: [],
-              key: 'branches_' + new Date().getTime(),
-              shakeLimit: {
-                enabled: false,
-                time: 0,
-                threshold: 0,
-                alarmFirst: false,
-              },
-              then: [],
-            });
+          let branches = resp.result.branches;
+          if (!branches) {
+            branches = defaultBranches;
+            if (resp.result.triggerType === 'device') {
+              branches.push(null);
+            }
           } else {
-            if (branches[0]?.when?.length) {
-              // 设备
-              branches.push({
-                when: [],
-                key: 'branches_' + new Date().getTime(),
-                shakeLimit: {
-                  enabled: false,
-                  time: 0,
-                  threshold: 0,
-                  alarmFirst: false,
-                },
-                then: [],
-              });
+            const branchesLength = branches.length;
+            if (
+              resp.result.triggerType === 'device' &&
+              ((branchesLength === 1 && !!branches[0]?.when?.length) || // 有一组数据并且when有值
+                (branchesLength > 1 && !branches[branchesLength - 1]?.when?.length)) // 有多组否则数据，并且最后一组when有值
+            ) {
+              branches.push(null);
             }
           }
+
           FormModel.current = {
             ...resp.result,
           };
+          const newBranches = cloneDeep(assignmentKey(branches));
           FormModel.current.options = { ...defaultOptions, ...resp.result.options };
           FormModel.current.trigger = resp.result.trigger || {};
-          FormModel.current.branches = cloneDeep(assignmentKey(branches));
-
+          FormModel.current.branches = newBranches;
           form.setFieldValue('description', resp.result.description);
         }
       });
@@ -209,16 +185,16 @@ export default observer(() => {
         delete options.terms;
       }
     }
-
     if (branches) {
-      FormData.branches = branches.filter((item) => !!item.then.length || !!item.when.length);
+      FormData.branches = branches.filter((item) => item);
     }
 
     if (baseData) {
       FormData.description = baseData.description;
     }
-
+    setSaveLoading(true);
     service.updateScene(FormData).then((res: any) => {
+      setSaveLoading(false);
       if (res.status === 200) {
         onlyMessage('操作成功', 'success');
         const url = getMenuPathByCode('rule-engine/Scene');
@@ -239,7 +215,7 @@ export default observer(() => {
             <Input.TextArea showCount maxLength={200} placeholder={'请输入说明'} rows={4} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" onClick={submit}>
+            <Button type="primary" htmlType="submit" onClick={submit} loading={saveLoading}>
               保存
             </Button>
           </Form.Item>

@@ -9,6 +9,9 @@ import { Switch } from 'antd';
 import type { TriggerType } from '@/pages/rule-engine/Scene/typings';
 import Actions from '@/pages/rule-engine/Scene/Save/action';
 import { cloneDeep, set } from 'lodash';
+import classNames from 'classnames';
+import { PlusCircleOutlined } from '@ant-design/icons';
+import { randomString } from '@/utils/util';
 
 interface TermsModelProps {
   columnOptions: any[];
@@ -24,32 +27,30 @@ export default observer(() => {
   useEffect(() => {
     if (FormModel.current.branches && FormModel.current.branches.length === 1) {
       setOpen(false);
+    } else {
+      setOpen(true);
     }
   }, [FormModel.current.branches]);
 
+  useEffect(() => {
+    return () => {
+      TermsModel.columnOptions = [];
+    };
+  }, []);
+
   const queryColumn = (data: TriggerType) => {
-    service.getParseTerm({ trigger: data }).then((res: any) => {
+    const newData: any = cloneDeep(data);
+    newData.branches = newData.branches?.filter((item: any) => !!item);
+    service.getParseTerm({ trigger: newData }).then((res: any) => {
       TermsModel.columnOptions = res;
     });
   };
 
   const openChange = (checked: boolean) => {
     setOpen(checked);
+    const key = randomString();
     if (checked) {
-      FormModel.current.branches = cloneDeep([
-        ...defaultBranches,
-        {
-          when: [],
-          key: 'branches_2',
-          shakeLimit: {
-            enabled: false,
-            time: 0,
-            threshold: 0,
-            alarmFirst: false,
-          },
-          then: [],
-        },
-      ]);
+      FormModel.current.branches = cloneDeep([...defaultBranches, null as any]);
       set(FormModel.current.options!, 'when', [
         {
           terms: [
@@ -63,7 +64,7 @@ export default observer(() => {
       FormModel.current.branches = [
         {
           when: [],
-          key: 'branches_' + new Date().getTime(),
+          key: 'branches_' + key,
           shakeLimit: {
             enabled: false,
             time: 0,
@@ -75,6 +76,22 @@ export default observer(() => {
       ];
       set(FormModel.current.options!, 'when', []);
     }
+  };
+
+  const addBranches = () => {
+    const key = randomString();
+    const branchesLength = FormModel.current.branches!.length;
+    FormModel.current.branches![branchesLength - 1] = {
+      when: [],
+      key: key,
+      shakeLimit: {
+        enabled: false,
+        time: 0,
+        threshold: 0,
+        alarmFirst: false,
+      },
+      then: [],
+    };
   };
 
   useEffect(() => {
@@ -104,7 +121,7 @@ export default observer(() => {
           {() =>
             FormModel.current.branches?.map((item, index) => {
               const isFirst = index === 0;
-              return (
+              return item ? (
                 <BranchItem
                   data={item}
                   isFirst={isFirst}
@@ -112,10 +129,34 @@ export default observer(() => {
                   key={item.key}
                   paramsOptions={TermsModel.columnOptions}
                   onDelete={() => {
-                    FormModel.current.branches?.splice(index, 1);
+                    if (FormModel.current.branches?.length === 2) {
+                      FormModel.current.branches?.splice(index, 1, null as any);
+                    } else {
+                      FormModel.current.branches?.splice(index, 1);
+                    }
                     FormModel.current.options?.when?.splice(index, 1);
                   }}
+                  onDeleteAll={() => {
+                    FormModel.current.branches?.splice(
+                      index,
+                      FormModel.current.branches!.length - 1,
+                      null as any,
+                    );
+                  }}
                 />
+              ) : (
+                <div className="actions-terms-warp" style={{ alignItems: 'center' }}>
+                  <div className="actions-terms-title" style={{ padding: 0 }}>
+                    否则
+                  </div>
+                  <div className={classNames('actions-terms-options no-when')}>
+                    <PlusCircleOutlined
+                      className={'add-button-color'}
+                      style={{ fontSize: 32 }}
+                      onClick={addBranches}
+                    />
+                  </div>
+                </div>
               );
             })
           }
@@ -126,8 +167,8 @@ export default observer(() => {
           name={0}
           thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
           onAdd={(data) => {
-            if (FormModel.current.branches) {
-              FormModel.current.branches[0].then.push(data);
+            if (FormModel.current.branches && data) {
+              FormModel.current.branches[0].then = [...FormModel.current.branches[0].then, data];
             }
           }}
           onUpdate={(data, type) => {
