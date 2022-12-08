@@ -25,6 +25,8 @@ export default (props: Props) => {
   const [propertiesType, setPropertiesType] = useState('');
   const [source, setSource] = useState<string>('fixed');
   const textRef = useRef<any>('');
+  const [format, setFormat] = useState<any>('HH:mm:ss');
+  const [enumList, setEnumList] = useState<any>([]);
 
   useEffect(() => {
     console.log(props.value);
@@ -79,10 +81,12 @@ export default (props: Props) => {
           style={{ width: '100%' }}
           placeholder={'请选择属性'}
           onChange={(e, option) => {
+            // console.log(option);
             setPropertiesId(e);
             setPropertiesType(option.valueType.type);
+            setFormat(option.valueType?.format);
+            setEnumList(option.valueType?.elements);
             textRef.current = option.name;
-            console.log(option);
             setPropertiesValue(undefined);
           }}
         ></Select>
@@ -94,8 +98,10 @@ export default (props: Props) => {
             type={propertiesType}
             name={props.name}
             source={source}
+            format={format}
+            elements={enumList}
             onChange={(value, sources) => {
-              console.log(value, sources);
+              // console.log(value, sources);
               setPropertiesValue(value);
               setSource(sources);
             }}

@@ -49,8 +49,8 @@ export default observer((props: Props) => {
   ];
   const next = () => {
     if (
-      (DeviceModel.current === 0 && DeviceModel.productId.length !== 0) ||
-      (DeviceModel.current === 1 && DeviceModel.deviceId.length !== 0)
+      (DeviceModel.current === 0 && DeviceModel.productId) ||
+      (DeviceModel.current === 1 && DeviceModel.deviceId)
     ) {
       return (DeviceModel.current += 1);
     } else {
@@ -120,13 +120,13 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    // console.log(item);
+    console.log(item);
     props.save(item, _options);
-
     init();
   };
 
   useEffect(() => {
+    console.log(props.value);
     if (props.value) {
       DeviceModel.selector = props.value.selector;
       DeviceModel.productId = props.value.productId;
@@ -186,7 +186,24 @@ export default observer((props: Props) => {
       }
     >
       <div className="steps-steps">
-        <Steps current={DeviceModel.current} items={DeviceModel.steps} />
+        <Steps
+          current={DeviceModel.current}
+          items={DeviceModel.steps}
+          onChange={(value) => {
+            console.log(value);
+            if (value === 1) {
+              return DeviceModel.productId
+                ? (DeviceModel.current = 1)
+                : onlyMessage('请选择产品', 'error');
+            } else if (value === 2) {
+              return DeviceModel.deviceId
+                ? (DeviceModel.current = 2)
+                : onlyMessage('请选择设备', 'error');
+            } else {
+              return (DeviceModel.current = 0);
+            }
+          }}
+        />
       </div>
       <div className="steps-content">{DeviceModel.steps[DeviceModel.current]?.content}</div>
     </Modal>

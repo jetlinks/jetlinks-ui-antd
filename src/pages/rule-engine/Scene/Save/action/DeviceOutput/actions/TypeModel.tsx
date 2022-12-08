@@ -14,9 +14,11 @@ interface Props {
   value: any;
   type: string;
   onChange?: (data: any, source?: any) => void;
-  record?: any; //枚举值使用
+  record?: any; //功能-枚举
+  elements?: []; //属性-枚举
   name?: any;
   source?: string;
+  format?: any;
 }
 
 export default (props: Props) => {
@@ -35,19 +37,20 @@ export default (props: Props) => {
     });
     return lable?.description;
   };
-
-  const filterTree = (nodes: any[]) => {
-    if (!nodes?.length) {
-      return nodes;
+  const filterParamsData = (type?: string, data?: any[]): any[] => {
+    if (type && data) {
+      return data.filter((item) => {
+        if (item.children) {
+          const _children = filterParamsData(type, item.children);
+          item.children = _children;
+          return _children.length ? true : false;
+        } else if (item.type === type) {
+          return true;
+        }
+        return false;
+      });
     }
-    return nodes.filter((it) => {
-      const children = it.children.filter((item: any) => item.type === props.type);
-      if (children && children.length !== 0) {
-        return true;
-      }
-      it.children = filterTree(it.children);
-      return false;
-    });
+    return data || [];
   };
 
   const sourceChangeEvent = async () => {
@@ -55,7 +58,7 @@ export default (props: Props) => {
     queryBuiltInParams(FormModel.current, params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
-        const filterData = filterTree(_data);
+        const filterData = filterParamsData(props.type, _data);
         console.log('_data', _data);
         console.log('filterData', filterData);
         // console.log('type',props.type)
@@ -82,6 +85,7 @@ export default (props: Props) => {
 
   useEffect(() => {
     setValue(props.value);
+    console.log('typemodel', props.value);
   }, [props.value]);
 
   const renderNode = (type: string) => {
@@ -105,7 +109,7 @@ export default (props: Props) => {
           <Select
             value={value}
             style={{ width: '100%', textAlign: 'left' }}
-            options={props.record?.options || []}
+            options={props.record?.options || props.elements || []}
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
             mode="multiple"
@@ -172,7 +176,11 @@ export default (props: Props) => {
             onOpen={(param) => {
               setDateOpen(param);
             }}
-            value={moment(value, 'HH:mm:ss')}
+            type={props.format}
+            value={moment(
+              value ? value : new Date(),
+              props.format === 'HH:mm:ss' ? 'HH:mm:ss' : 'yyyy-MM-dd HH:mm:ss',
+            )}
             onChange={(_: any, timeString: string) => {
               setValue(timeString);
               setLabelValue(timeString);
@@ -227,7 +235,7 @@ export default (props: Props) => {
             defaultExpandAll
             fieldNames={{ title: 'name', key: 'id' }}
             onSelect={(selectedKeys, e) => {
-              console.log(e.node);
+              // console.log(e.node);
               setDateOpen(false);
               setLabelValue(e.node.description);
               setValue(selectedKeys[0]);
