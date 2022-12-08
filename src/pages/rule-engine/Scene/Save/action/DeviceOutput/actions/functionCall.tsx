@@ -23,6 +23,7 @@ export default (props: FunctionCallProps) => {
   const formRef = useRef<ProFormInstance<any>>();
 
   useEffect(() => {
+    console.log(props.value, props.functionData);
     if (props.functionData && props.functionData.length) {
       setEditableRowKeys(props.functionData.map((d) => d.id));
       if (props.value) {
@@ -53,7 +54,15 @@ export default (props: FunctionCallProps) => {
 
   const getItemNode = (record: any) => {
     const type = record.type;
-    return <TypeModel value={record.value} type={type} record={record} name={props.name} />;
+    return (
+      <TypeModel
+        value={record.value}
+        type={type}
+        record={record}
+        name={props.name}
+        format={record?.format}
+      />
+    );
   };
 
   const columns: ProColumns<FunctionTableDataType>[] = [

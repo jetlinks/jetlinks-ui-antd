@@ -42,6 +42,10 @@ export default (props: Props) => {
   }, [props.value]);
 
   useEffect(() => {
+    setValue(props.labelValue);
+  }, [props.labelValue]);
+
+  useEffect(() => {
     // console.log(props.open)
     if (props.open !== undefined) {
       setOpen(props.open);
@@ -62,8 +66,10 @@ export default (props: Props) => {
                   key={item.key}
                   className={classNames('select-header-title', item.key === tabKey ? 'active' : '')}
                   onClick={() => {
+                    // console.log('----------',item.key)
                     setTabKey(item.key);
-                    props.onChange(value, item.key);
+                    setValue(undefined);
+                    props.onChange(undefined, item.key);
                   }}
                 >
                   {item.label}
@@ -84,7 +90,7 @@ export default (props: Props) => {
           suffix={<DownOutlined style={{ color: 'rgba(0, 0, 0, 0.25)' }} />}
           {...props.inputProps}
           readOnly
-          value={props.labelValue ? props.labelValue : value}
+          value={value}
           onChange={(e) => {
             setValue(e.target.value);
             props.onChange(value, tabKey);

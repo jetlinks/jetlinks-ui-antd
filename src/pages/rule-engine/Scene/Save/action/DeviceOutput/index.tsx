@@ -49,8 +49,8 @@ export default observer((props: Props) => {
   ];
   const next = () => {
     if (
-      (DeviceModel.current === 0 && DeviceModel.productId.length !== 0) ||
-      (DeviceModel.current === 1 && DeviceModel.deviceId.length !== 0)
+      (DeviceModel.current === 0 && DeviceModel.productId) ||
+      (DeviceModel.current === 1 && DeviceModel.deviceId)
     ) {
       return (DeviceModel.current += 1);
     } else {
@@ -120,13 +120,13 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    // console.log(item);
+    console.log(item);
     props.save(item, _options);
-
     init();
   };
 
   useEffect(() => {
+    console.log(props.value);
     if (props.value) {
       DeviceModel.selector = props.value.selector;
       DeviceModel.productId = props.value.productId;
