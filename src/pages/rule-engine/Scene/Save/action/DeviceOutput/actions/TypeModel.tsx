@@ -85,6 +85,7 @@ export default (props: Props) => {
 
   useEffect(() => {
     setValue(props.value);
+    console.log('typemodel', props.value);
   }, [props.value]);
 
   const renderNode = (type: string) => {

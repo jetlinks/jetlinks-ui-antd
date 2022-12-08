@@ -154,11 +154,8 @@ export default (props: ItemProps) => {
         return (
           <div>
             {`${data?.options?.type} ${data?.options?.name} ${data?.options?.properties} ${
-              data?.options?.propertiesValue || ''
+              data?.options?.propertiesValue ? `为 ${data?.options?.propertiesValue}` : ''
             }`}
-            {/* {data?.options?.type}
-            <span>{data?.options?.name}</span>
-            {data?.options?.properties} */}
           </div>
         );
       case 'tag':

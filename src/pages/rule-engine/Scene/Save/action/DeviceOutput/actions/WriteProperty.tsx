@@ -29,7 +29,7 @@ export default (props: Props) => {
   const [enumList, setEnumList] = useState<any>([]);
 
   useEffect(() => {
-    // console.log(props.value);
+    console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {

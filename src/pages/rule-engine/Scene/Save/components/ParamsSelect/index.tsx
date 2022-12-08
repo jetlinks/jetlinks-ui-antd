@@ -42,7 +42,9 @@ export default (props: Props) => {
   }, [props.value]);
 
   useEffect(() => {
-    setValue(props.labelValue);
+    if (props.labelValue) {
+      setValue(props.labelValue);
+    }
   }, [props.labelValue]);
 
   useEffect(() => {
