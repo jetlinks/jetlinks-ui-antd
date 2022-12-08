@@ -37,7 +37,11 @@ export default (props: TriggerWayProps) => {
   };
 
   return (
-    <div className={classNames('trigger-way-warp', props.className, { disabled: props.disabled })}>
+    <div
+      className={classNames('scene-trigger-way-warp', props.className, {
+        disabled: props.disabled,
+      })}
+    >
       <div
         className={classNames('trigger-way-item', {
           active: type === TriggerWayType.device,

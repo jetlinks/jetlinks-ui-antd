@@ -129,6 +129,14 @@ enum UnitEnum {
 const notifyRender = (data: ActionsType | undefined) => {
   switch (data?.notify?.notifyType) {
     case 'dingTalk':
+      if (data?.options?.provider === 'dingTalkRobotWebHook') {
+        return (
+          <div>
+            通过<span className={'notify-text-highlight'}>群机器人消息</span>
+            发送<span>{data?.options?.templateName || data?.notify?.templateId}</span>
+          </div>
+        );
+      }
       return (
         <div className={styles['notify-img-highlight']}>
           向<span>{data?.options?.notifierName || data?.notify?.notifierId}</span>
@@ -279,7 +287,7 @@ const conditionsRender = (when: any[], index: number) => {
   if (when.length && when[index]) {
     let str: string = '';
     (when[index]?.terms || []).map((i: any, _index: number) => {
-      str += `${i?.terms[0] || ''}${
+      str += `${i?.terms.join(' ') || ''}${
         i?.termType && when[index]?.terms.length !== _index + 1 ? i?.termType : ''
       }`;
     });

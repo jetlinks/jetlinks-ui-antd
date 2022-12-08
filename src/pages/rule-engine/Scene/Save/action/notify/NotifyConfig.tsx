@@ -73,7 +73,7 @@ export default observer((props: Props) => {
                 NotifyModel.notify.notifierId = String(selectedRowKeys[selectedRowKeys.length - 1]);
                 NotifyModel.notify.options = {
                   ...NotifyModel.notify.options,
-                  notifierName: list[list.length - 1]?.name,
+                  provider: list[list.length - 1]?.provider,
                 };
               }
             },
