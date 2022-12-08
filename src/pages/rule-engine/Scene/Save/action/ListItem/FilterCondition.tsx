@@ -95,7 +95,7 @@ export default observer((props: FilterProps) => {
 
   const convertLabelValue = (columnValue?: string) => {
     if (columnValue) {
-      console.log(columnOptionsMap, columnValue);
+      console.log('filter-convertLabelValue', columnOptionsMap, columnValue);
       const labelOptions = columnOptionsMap.get(columnValue);
       const _termTypeOptions: any[] =
         labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
@@ -159,6 +159,8 @@ export default observer((props: FilterProps) => {
       time_lt_now: '距离当前时间小于_value秒',
       in: '在_value,_value2之中',
       nin: '不在_value,_value2之中',
+      like: '包含_value',
+      nlike: '不包含_value',
     };
 
     if (DoubleFilter.includes(t)) {
@@ -266,7 +268,7 @@ export default observer((props: FilterProps) => {
               ValueRef.current.termType = v;
               valueChange({
                 column: props.data!.column,
-                value: value as TermsVale,
+                value: _value as TermsVale,
                 termType: v,
               });
             }}
@@ -326,7 +328,6 @@ export default observer((props: FilterProps) => {
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
               onChange={(v, lb) => {
-                console.log('valueChange4', v);
                 setValue({
                   ...v,
                 });

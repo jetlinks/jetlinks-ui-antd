@@ -304,6 +304,7 @@ export default (props: ItemProps) => {
                 terms: [{}],
               };
               cacheValueRef.current = _data;
+              console.log('FilterCondition-add', _data);
               props.onUpdate(_data, op);
             }
           }}

@@ -65,7 +65,6 @@ export default (props: ParamsDropdownProps) => {
 
   const onValueChange = useCallback(
     (value: any, _label: any) => {
-      console.log('valueChange-activeKey', activeKey);
       setMyValue(value);
       setLabel(_label);
       const changeValue = {
@@ -208,10 +207,9 @@ export default (props: ParamsDropdownProps) => {
 
   const initData = useCallback(() => {
     let _value = props.value?.value;
-    if ('name' in props) {
-      _value = props.value?.value[props.name!];
+    if ('name' in props && _value) {
+      _value = props.value?.value?.[props.name!];
     }
-    console.log('initData', _value);
     setMyValue(_value);
     if (_value === undefined || _value === '') {
       setLabel('');
@@ -226,7 +224,6 @@ export default (props: ParamsDropdownProps) => {
 
   useEffect(() => {
     initData();
-    console.log('valueChange-params-effect', props.value?.source, props.value?.value);
     if (props.value?.source) {
       setActiveKey(props.value?.source);
     } else {

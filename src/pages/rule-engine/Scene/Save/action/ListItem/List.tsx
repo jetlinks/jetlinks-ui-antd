@@ -11,7 +11,7 @@ interface ListProps {
   actions: ActionsType[];
   parallel: boolean;
   onAdd: (data: any) => void;
-  onDelete: (index: number) => void;
+  onDelete: (key: string) => void;
 }
 
 export default (props: ListProps) => {
@@ -36,7 +36,7 @@ export default (props: ListProps) => {
           parallel={props.parallel}
           options={item.options}
           onDelete={() => {
-            props.onDelete(index);
+            props.onDelete(item.key!);
           }}
           onUpdate={(data, options) => {
             props.onAdd({

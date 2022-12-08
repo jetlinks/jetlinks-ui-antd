@@ -4,8 +4,10 @@ import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import ShakeLimit from '../components/ShakeLimit';
 import './index.less';
 import { Observer } from '@formily/react';
-import { get, set } from 'lodash';
+import { get } from 'lodash';
 import type { ShakeLimitType, BranchesThen } from '../../typings';
+import { randomString } from '@/utils/util';
+import { useEffect, useState } from 'react';
 
 const { Panel } = Collapse;
 
@@ -13,9 +15,20 @@ interface ActionsProps {
   name: number;
   openShakeLimit?: boolean;
   thenOptions: BranchesThen[];
+  onAdd: (data: BranchesThen) => void;
+  onUpdate: (data: BranchesThen, type: boolean) => void;
 }
 
 export default (props: ActionsProps) => {
+  const [parallelArray, setParallelArray] = useState<BranchesThen[]>([]); // 并行行
+  const [serialArray, setSerialArray] = useState<BranchesThen[]>([]); // 串行
+
+  useEffect(() => {
+    setParallelArray(props.thenOptions.filter((item) => item.parallel));
+    setSerialArray(props.thenOptions.filter((item) => !item.parallel));
+    console.log('action-effect', props.thenOptions);
+  }, [props.thenOptions]);
+
   return (
     <div className="actions">
       <div className="actions-title">
@@ -53,42 +66,42 @@ export default (props: ActionsProps) => {
             key="1"
           >
             <div className="actions-list">
-              <Observer>
-                {() => {
-                  const parallelThens = props.thenOptions.filter((item) => !item.parallel);
-                  return (
-                    <List
-                      thenName={props.name}
-                      type="serial"
-                      parallel={false}
-                      actions={parallelThens.length ? parallelThens[0].actions : []}
-                      onAdd={(actionItem) => {
-                        const thenIndex = props.thenOptions.findIndex((item) => !item.parallel);
-                        if (thenIndex !== -1) {
-                          const indexOf = props.thenOptions[thenIndex].actions?.findIndex(
-                            (aItem) => aItem.key === actionItem.key,
-                          );
-                          if (indexOf !== -1) {
-                            props.thenOptions[thenIndex].actions.splice(indexOf, 1, actionItem);
-                          } else {
-                            props.thenOptions[thenIndex].actions.push(actionItem);
-                          }
-                        } else {
-                          props.thenOptions.push({
-                            parallel: false,
-                            actions: [actionItem],
-                          });
-                        }
-                        set(FormModel.current, ['branches', props.name, 'then'], props.thenOptions);
-                      }}
-                      onDelete={(_index) => {
-                        parallelThens[0].actions.splice(_index, 1);
-                        set(FormModel.current, ['branches', props.name, 'then'], props.thenOptions);
-                      }}
-                    />
-                  );
+              <List
+                thenName={props.name}
+                type="serial"
+                parallel={false}
+                actions={serialArray.length ? serialArray[0].actions : []}
+                onAdd={(actionItem) => {
+                  console.log('action-onAdd');
+                  if (serialArray.length) {
+                    const indexOf = serialArray[0].actions?.findIndex(
+                      (aItem) => aItem.key === actionItem.key,
+                    );
+                    if (indexOf !== -1) {
+                      serialArray[0].actions.splice(indexOf, 1, actionItem);
+                    } else {
+                      serialArray[0].actions.push(actionItem);
+                    }
+                    setSerialArray([...serialArray]);
+                    props.onUpdate(serialArray[0], false);
+                  } else {
+                    actionItem.key = randomString();
+                    props.onAdd({
+                      parallel: false,
+                      key: randomString(),
+                      actions: [actionItem],
+                    });
+                  }
                 }}
-              </Observer>
+                onDelete={(key) => {
+                  const aIndex = serialArray[0].actions?.findIndex((aItem) => aItem.key === key);
+                  if (aIndex !== -1) {
+                    serialArray[0].actions?.splice(aIndex, 1);
+                    setSerialArray([...serialArray]);
+                    props.onUpdate(serialArray[0], false);
+                  }
+                }}
+              />
             </div>
           </Panel>
           <Panel
@@ -100,42 +113,41 @@ export default (props: ActionsProps) => {
             key="2"
           >
             <div className="actions-list">
-              <Observer>
-                {() => {
-                  const parallelThens = props.thenOptions.filter((item) => item.parallel);
-                  return (
-                    <List
-                      thenName={props.name}
-                      type="parallel"
-                      parallel={true}
-                      actions={parallelThens.length ? parallelThens[0].actions : []}
-                      onAdd={(actionItem) => {
-                        const thenIndex = props.thenOptions.findIndex((item) => item.parallel);
-                        if (thenIndex !== -1) {
-                          const indexOf = props.thenOptions[thenIndex].actions?.findIndex(
-                            (aItem) => aItem.key === actionItem.key,
-                          );
-                          if (indexOf !== -1) {
-                            props.thenOptions[thenIndex].actions.splice(indexOf, 1, actionItem);
-                          } else {
-                            props.thenOptions[thenIndex].actions.push(actionItem);
-                          }
-                        } else {
-                          props.thenOptions.push({
-                            parallel: true,
-                            actions: [actionItem],
-                          });
-                        }
-                        set(FormModel.current, ['branches', props.name, 'then'], props.thenOptions);
-                      }}
-                      onDelete={(_index) => {
-                        parallelThens[0].actions.splice(_index, 1);
-                        set(FormModel.current, ['branches', props.name, 'then'], props.thenOptions);
-                      }}
-                    />
-                  );
+              <List
+                thenName={props.name}
+                type="parallel"
+                parallel={true}
+                actions={parallelArray.length ? parallelArray[0].actions : []}
+                onAdd={(actionItem) => {
+                  if (parallelArray.length) {
+                    const indexOf = parallelArray[0].actions?.findIndex(
+                      (aItem) => aItem.key === actionItem.key,
+                    );
+                    if (indexOf !== -1) {
+                      parallelArray[0].actions.splice(indexOf, 1, actionItem);
+                    } else {
+                      parallelArray[0].actions.push(actionItem);
+                    }
+                    setParallelArray([...parallelArray]);
+                    props.onUpdate(parallelArray[0], true);
+                  } else {
+                    actionItem.key = randomString();
+                    props.onAdd({
+                      parallel: true,
+                      key: randomString(),
+                      actions: [actionItem],
+                    });
+                  }
                 }}
-              </Observer>
+                onDelete={(key) => {
+                  const aIndex = parallelArray[0].actions?.findIndex((aItem) => aItem.key === key);
+                  if (aIndex !== -1) {
+                    parallelArray[0].actions?.splice(aIndex, 1);
+                    setParallelArray([...parallelArray]);
+                    props.onUpdate(serialArray[0], true);
+                  }
+                }}
+              />
             </div>
           </Panel>
         </Collapse>

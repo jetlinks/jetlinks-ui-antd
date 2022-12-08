@@ -22,7 +22,6 @@ export default observer(() => {
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    console.log('terms-effect', FormModel.current.branches);
     if (FormModel.current.branches && FormModel.current.branches.length === 1) {
       setOpen(false);
     }
@@ -35,7 +34,6 @@ export default observer(() => {
   };
 
   const openChange = (checked: boolean) => {
-    console.log('terms-effect-change');
     setOpen(checked);
     if (checked) {
       FormModel.current.branches = cloneDeep([
@@ -105,12 +103,13 @@ export default observer(() => {
         <Observer>
           {() =>
             FormModel.current.branches?.map((item, index) => {
-              const isFrist = index === 0;
+              const isFirst = index === 0;
               return (
                 <BranchItem
                   data={item}
-                  isFrist={isFrist}
+                  isFirst={isFirst}
                   name={index}
+                  key={item.key}
                   paramsOptions={TermsModel.columnOptions}
                   onDelete={() => {
                     FormModel.current.branches?.splice(index, 1);
@@ -126,6 +125,19 @@ export default observer(() => {
           openShakeLimit={true}
           name={0}
           thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
+          onAdd={(data) => {
+            if (FormModel.current.branches) {
+              FormModel.current.branches[0].then.push(data);
+            }
+          }}
+          onUpdate={(data, type) => {
+            const indexOf = FormModel.current.branches![0].then.findIndex(
+              (item) => item.parallel === type,
+            );
+            if (indexOf !== -1) {
+              FormModel.current.branches![0].then[indexOf] = data;
+            }
+          }}
         />
       )}
     </div>
