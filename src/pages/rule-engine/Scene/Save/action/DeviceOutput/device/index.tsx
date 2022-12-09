@@ -25,6 +25,8 @@ import Tag from './Tag';
 interface Props {
   name: number;
   parallel: boolean;
+  thenName: number;
+  branchGroup?: number;
 }
 
 export default observer((props: Props) => {
@@ -274,8 +276,13 @@ export default observer((props: Props) => {
   };
 
   const sourceChangeEvent = async () => {
-    const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
-    queryBuiltInParams(FormModel.current, params).then((res: any) => {
+    // const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
+    const _params = {
+      branch: props.thenName,
+      branchGroup: props.branchGroup,
+      action: props.name,
+    };
+    queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const array = filterTree(_data);
@@ -457,7 +464,7 @@ export default observer((props: Props) => {
       form.setFieldsValue({ selector: DeviceModel.selector });
     }
     sourceChangeEvent();
-    console.log('-----deviceid-----', DeviceModel.deviceId);
+    // console.log('-----deviceid-----', DeviceModel.deviceId);
     if (DeviceModel.deviceId) {
       service.detail(DeviceModel.deviceId).then((res) => {
         if (res.status === 200) {
@@ -466,6 +473,10 @@ export default observer((props: Props) => {
       });
     }
   }, []);
+
+  // useEffect(()=>{
+  //   console.log('----------------',props.branchGroup,props.thenName,props.name)
+  // },[props.branchGroup,props.thenName])
 
   useEffect(() => {
     if (DeviceModel.productDetail) {

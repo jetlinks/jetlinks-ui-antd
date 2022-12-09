@@ -31,6 +31,7 @@ export default (props: Props) => {
       visible
       title="编辑"
       width={700}
+      zIndex={1050}
       onCancel={() => props.close()}
       onOk={() => {
         props.ok(value);

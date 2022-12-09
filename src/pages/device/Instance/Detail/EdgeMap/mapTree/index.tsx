@@ -49,11 +49,10 @@ const MapTree = (props: Props) => {
   };
 
   const save = async () => {
-    // console.log(list,'list')
     const params: any[] = [];
     // const metadataId = metaData.map((item: any) => item.metadataId);
     list.forEach((item: any) => {
-      const array = item.points.map((element: any) => ({
+      const array = item.points?.map((element: any) => ({
         channelId: item.parentId,
         collectorId: element.collectorId,
         pointId: element.id,

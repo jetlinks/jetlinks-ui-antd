@@ -17,6 +17,8 @@ interface Props {
   save: (data: any, _options?: any) => void;
   cancel: () => void;
   name: number;
+  thenName: number;
+  branchGroup?: number;
   parallel: boolean;
 }
 
@@ -32,7 +34,14 @@ export default observer((props: Props) => {
     {
       key: 'device',
       title: '选择设备',
-      content: <Device name={props.name} parallel={props.parallel} />,
+      content: (
+        <Device
+          name={props.name}
+          parallel={props.parallel}
+          branchGroup={props.branchGroup}
+          thenName={props.thenName}
+        />
+      ),
     },
     {
       key: 'action',
@@ -40,6 +49,8 @@ export default observer((props: Props) => {
       content: (
         <Action
           name={props.name}
+          branchGroup={props.branchGroup}
+          thenName={props.thenName}
           get={(item: any) => {
             formRef.current = item;
           }}
@@ -93,6 +104,7 @@ export default observer((props: Props) => {
       productName: DeviceModel.productDetail.name,
       relationName: DeviceModel.relationName,
       taglist: [],
+      columns: [],
     };
     _options.name = DeviceModel.deviceDetail?.name;
     const _type = value.message.messageType;
@@ -111,6 +123,7 @@ export default observer((props: Props) => {
       // _options.properties = Object.keys(value.message.properties)?.[0];
       _options.properties = DeviceModel.propertiesName;
       _options.propertiesValue = DeviceModel.propertiesValue;
+      _options.columns = DeviceModel.columns;
     }
     if (_options.selector === 'tag') {
       _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
