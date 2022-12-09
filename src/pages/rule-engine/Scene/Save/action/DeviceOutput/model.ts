@@ -24,6 +24,7 @@ type ModelType = {
   message: any;
   propertiesName: string;
   propertiesValue: string;
+  columns: string[];
 };
 
 const DeviceModel = model<ModelType>({
@@ -43,6 +44,7 @@ const DeviceModel = model<ModelType>({
   message: {},
   propertiesName: '',
   propertiesValue: '',
+  columns: [],
 });
 
 export default DeviceModel;

@@ -19,6 +19,9 @@ interface Props {
   name?: any;
   source?: string;
   format?: any;
+  onColumns?: (col: any) => void;
+  thenName: number;
+  branchGroup?: number;
 }
 
 export default (props: Props) => {
@@ -54,8 +57,13 @@ export default (props: Props) => {
   };
 
   const sourceChangeEvent = async () => {
-    const params = props?.name - 1 >= 0 ? { action: props?.name - 1 } : undefined;
-    queryBuiltInParams(FormModel.current, params).then((res: any) => {
+    // const params = props?.name - 1 >= 0 ? { action: props?.name - 1 } : undefined;
+    const _params = {
+      branch: props.thenName,
+      branchGroup: props.branchGroup,
+      action: props.name,
+    };
+    queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const filterData = filterParamsData(props.type, _data);
@@ -190,17 +198,17 @@ export default (props: Props) => {
             }}
           />
         );
-      case 'password':
-        return (
-          <Input.Password
-            value={value}
-            style={{ width: '100%', textAlign: 'left' }}
-            placeholder={'请输入'}
-            onChange={(e) => {
-              onChange(e.target.value);
-            }}
-          />
-        );
+      // case 'password':
+      //   return (
+      //     <Input.Password
+      //       value={value}
+      //       style={{ width: '100%', textAlign: 'left' }}
+      //       placeholder={'请输入'}
+      //       onChange={(e) => {
+      //         onChange(e.target.value);
+      //       }}
+      //     />
+      //   );
       default:
         return (
           <Input
@@ -235,7 +243,12 @@ export default (props: Props) => {
             defaultExpandAll
             fieldNames={{ title: 'name', key: 'id' }}
             onSelect={(selectedKeys, e) => {
-              // console.log(e.node);
+              console.log('e.node', e.node);
+              if (e.node.metadata) {
+                if (props.onColumns) {
+                  props.onColumns(e.node.column);
+                }
+              }
               setDateOpen(false);
               setLabelValue(e.node.description);
               setValue(selectedKeys[0]);

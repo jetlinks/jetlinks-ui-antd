@@ -46,6 +46,7 @@ export default (props: Props) => {
       visible
       title="地理位置"
       width={'55vw'}
+      zIndex={1050}
       onCancel={() => props.close()}
       onOk={() => {
         props.ok(value);
