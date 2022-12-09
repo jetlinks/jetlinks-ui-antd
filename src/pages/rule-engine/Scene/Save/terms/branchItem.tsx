@@ -8,7 +8,7 @@ import Actions from '@/pages/rule-engine/Scene/Save/action';
 import classNames from 'classnames';
 import { set } from 'lodash';
 import { Store } from 'jetlinks-store';
-import { Popconfirm } from 'antd';
+import { Form, FormInstance, Popconfirm } from 'antd';
 
 interface BranchesItemProps {
   name: number;
@@ -17,6 +17,8 @@ interface BranchesItemProps {
   paramsOptions: any[];
   onDelete: () => void;
   onDeleteAll?: () => void;
+  form: FormInstance;
+  className?: string;
 }
 
 export default observer((props: BranchesItemProps) => {
@@ -64,7 +66,7 @@ export default observer((props: BranchesItemProps) => {
   };
 
   return (
-    <div className="actions-terms-warp">
+    <div className={classNames('actions-terms-warp', props.className)}>
       <div className="actions-terms-title">{props.isFirst ? '当' : '否则'}</div>
       <div
         className={classNames('actions-terms-options', { border: !props.isFirst, error: error })}
@@ -140,27 +142,43 @@ export default observer((props: BranchesItemProps) => {
           <Observer>
             {() => {
               return (
-                <Actions
-                  openShakeLimit={true}
-                  name={props.name}
-                  thenOptions={props.data.then}
-                  onAdd={(data) => {
-                    if (FormModel.current.branches && data) {
-                      FormModel.current.branches[props.name].then = [
-                        ...FormModel.current.branches[props.name].then,
-                        data,
-                      ];
-                    }
-                  }}
-                  onUpdate={(data, type) => {
-                    const indexOf = FormModel.current.branches![props.name].then.findIndex(
-                      (item) => item.parallel === type,
-                    );
-                    if (indexOf !== -1) {
-                      FormModel.current.branches![props.name].then[indexOf] = data;
-                    }
-                  }}
-                />
+                <Form.Item
+                  name={['branches', props.name, 'then']}
+                  rules={[
+                    {
+                      validator(_, v) {
+                        if (!v || (v && !v.length)) {
+                          return Promise.reject('至少配置一个执行动作');
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <Actions
+                    openShakeLimit={true}
+                    name={props.name}
+                    thenOptions={props.data.then}
+                    onAdd={(data) => {
+                      if (FormModel.current.branches && data) {
+                        const newThen = [...FormModel.current.branches[props.name].then, data];
+                        FormModel.current.branches[props.name].then = newThen;
+                      }
+                    }}
+                    onUpdate={(data, type) => {
+                      const indexOf = FormModel.current.branches![props.name].then.findIndex(
+                        (item) => item.parallel === type,
+                      );
+                      if (indexOf !== -1) {
+                        if (data.actions?.length) {
+                          FormModel.current.branches![props.name].then[indexOf] = data;
+                        } else {
+                          FormModel.current.branches![props.name].then = [];
+                        }
+                      }
+                    }}
+                  />
+                </Form.Item>
               );
             }}
           </Observer>

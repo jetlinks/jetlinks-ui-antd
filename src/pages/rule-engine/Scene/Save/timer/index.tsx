@@ -80,7 +80,7 @@ export default observer((props: Props) => {
               rules={[
                 {
                   validator(_, v) {
-                    if (v && !v.length) {
+                    if (!v || (v && !v.length)) {
                       return Promise.reject('至少配置一个执行动作');
                     }
                     return Promise.resolve();
@@ -95,8 +95,6 @@ export default observer((props: Props) => {
                   if (FormModel.current.branches && data) {
                     const newThen = [...FormModel.current.branches[0].then, data];
                     FormModel.current.branches[0].then = newThen;
-                    props.form.setFieldValue(['branches', 0, 'then'], newThen);
-                    props.form.validateFields(['branches', 0, 'then']);
                   }
                 }}
                 onUpdate={(data, type) => {
@@ -109,10 +107,6 @@ export default observer((props: Props) => {
                     } else {
                       FormModel.current.branches![0].then = [];
                     }
-                    props.form.setFieldValue(
-                      ['branches', 0, 'then'],
-                      FormModel.current.branches![0].then,
-                    );
                   }
                 }}
               />

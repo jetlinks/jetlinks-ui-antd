@@ -6,9 +6,9 @@ import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { DropdownButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import classNames from 'classnames';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
-import { get, set } from 'lodash';
+import { get, isArray, set } from 'lodash';
 import './index.less';
-import { Popconfirm } from 'antd';
+import { Form, Popconfirm } from 'antd';
 
 interface TermsProps {
   data: TermsType;
@@ -66,61 +66,93 @@ export default observer((props: TermsProps) => {
               const _when = get(FormModel.current.branches, [...props.pName, props.name]);
               const terms: TermsType[] = _when?.terms || [];
               return terms.map((item, index) => (
-                <ParamsItem
-                  pName={[...props.pName, props.name]}
-                  isDelete={terms.length > 1}
-                  name={index}
-                  data={item}
-                  key={item.key}
-                  isLast={index === props.data.terms!.length - 1}
-                  options={props.paramsOptions}
-                  label={
-                    FormModel.current.options?.when?.[props.whenName]?.terms?.[props.name]?.terms?.[
-                      index
-                    ]
-                  }
-                  onDelete={() => {
-                    terms.splice(index, 1);
-                    // setTerms([...terms]);
-                    // props.onValueChange({
-                    //   terms: terms,
-                    // });
-                  }}
-                  onAdd={() => {
-                    const key = `params_${new Date().getTime()}`;
-                    terms.push({
-                      type: 'and',
-                      column: undefined,
-                      value: undefined,
-                      termType: undefined,
-                      key,
-                    });
+                <Form.Item
+                  name={['branches', ...props.pName, props.name, 'terms', index]}
+                  rules={[
+                    {
+                      validator(_, v) {
+                        if (v) {
+                          if (!v.column) {
+                            return Promise.reject(new Error('请选择参数'));
+                          }
 
-                    // setTerms([...terms]);
-                    props.onValueChange({
-                      ..._when,
-                      terms: terms,
-                    });
-                  }}
-                  onValueChange={(data) => {
-                    terms[index] = {
-                      ...terms[index],
-                      ...data,
-                    };
+                          if (!v.termType) {
+                            return Promise.reject(new Error('请选择操作符'));
+                          }
 
-                    // setTerms([...terms]);
-                    props.onValueChange({
-                      ..._when,
-                      terms: terms,
-                    });
-                  }}
-                  onLabelChange={(options) => {
-                    FormModel.current.options!.when[props.whenName].terms[props.name].terms[index] =
-                      options;
-                    FormModel.current.options!.when[props.whenName].terms[props.name].termType =
-                      props.data.type === 'and' ? '并且' : '或者';
-                  }}
-                />
+                          if (!v.value) {
+                            return Promise.reject(new Error('请选择或输入参数值'));
+                          } else {
+                            if (isArray(v.value.value) && v.value.value.some((_v: any) => !_v)) {
+                              return Promise.reject(new Error('请选择或输入参数值'));
+                            } else if (!v.value.value) {
+                              return Promise.reject(new Error('请选择或输入参数值'));
+                            }
+                          }
+                        } else {
+                          return Promise.reject(new Error('请选择参数'));
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <ParamsItem
+                    pName={[...props.pName, props.name]}
+                    isDelete={terms.length > 1}
+                    name={index}
+                    data={item}
+                    key={item.key}
+                    isLast={index === props.data.terms!.length - 1}
+                    options={props.paramsOptions}
+                    label={
+                      FormModel.current.options?.when?.[props.whenName]?.terms?.[props.name]
+                        ?.terms?.[index]
+                    }
+                    onDelete={() => {
+                      terms.splice(index, 1);
+                      // setTerms([...terms]);
+                      // props.onValueChange({
+                      //   terms: terms,
+                      // });
+                    }}
+                    onAdd={() => {
+                      const key = `params_${new Date().getTime()}`;
+                      terms.push({
+                        type: 'and',
+                        column: undefined,
+                        value: undefined,
+                        termType: undefined,
+                        key,
+                      });
+
+                      // setTerms([...terms]);
+                      props.onValueChange({
+                        ..._when,
+                        terms: terms,
+                      });
+                    }}
+                    onValueChange={(data) => {
+                      terms[index] = {
+                        ...terms[index],
+                        ...data,
+                      };
+
+                      // setTerms([...terms]);
+                      props.onValueChange({
+                        ..._when,
+                        terms: terms,
+                      });
+                    }}
+                    onLabelChange={(options) => {
+                      FormModel.current.options!.when[props.whenName].terms[props.name].terms[
+                        index
+                      ] = options;
+                      FormModel.current.options!.when[props.whenName].terms[props.name].termType =
+                        props.data.type === 'and' ? '并且' : '或者';
+                    }}
+                  />
+                </Form.Item>
               ));
             }}
           </Observer>

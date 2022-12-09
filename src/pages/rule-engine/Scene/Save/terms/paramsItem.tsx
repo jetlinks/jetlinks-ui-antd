@@ -20,6 +20,7 @@ interface ParamsItemProps {
   isDelete: boolean;
   options: any[];
   onValueChange?: (value: TermsType) => void;
+  onChange?: (value: TermsType) => void;
   onLabelChange?: (label: string[]) => void;
   label?: any[];
   onAdd: () => void;
@@ -108,6 +109,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   const [termType, setTermType] = useState('');
   const [column, setColumn] = useState('');
   const labelCache = useRef<any[]>([undefined, undefined, {}, 'and']);
+  const firstLockRef = useRef(true);
 
   const ValueRef = useRef<Partial<TermsType>>({
     column: '',
@@ -164,6 +166,11 @@ const ParamsItem = observer((props: ParamsItemProps) => {
     setColumn(props.data.column || '');
     ValueRef.current = props.data || {};
     convertLabelValue(props.data.column);
+    if (!firstLockRef.current) {
+      props.onChange?.(props.data);
+    } else {
+      firstLockRef.current = false;
+    }
   }, [props.data]);
 
   useEffect(() => {
@@ -171,7 +178,6 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   }, [props.options]);
 
   useEffect(() => {
-    console.log('params-effect', props.label);
     labelCache.current = props.label || [undefined, undefined, {}, 'and'];
   }, [props.label]);
 
@@ -273,7 +279,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 ValueRef.current.value = _myValue;
                 setValue(_myValue);
                 labelCache.current[2] = { ...labelCache.current[2], 0: lb };
-                props.onLabelChange?.([...labelCache.current, props.data.type]);
+                labelCache.current[3] = props.data.type;
+                props.onLabelChange?.([...labelCache.current]);
                 valueEventChange(_myValue);
               }}
             />
@@ -293,7 +300,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 ValueRef.current.value = _myValue;
                 setValue(_myValue);
                 labelCache.current[2] = { ...labelCache.current[2], 1: lb };
-                props.onLabelChange?.([...labelCache.current, props.data.type]);
+                labelCache.current[3] = props.data.type;
+                props.onLabelChange?.([...labelCache.current]);
                 valueEventChange(_myValue);
               }}
             />
@@ -313,7 +321,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               ValueRef.current.value = v;
               labelCache.current[2] = { 0: lb };
               console.log('valueChange', labelCache.current);
-              props.onLabelChange?.([...labelCache.current, props.data.type]);
+              labelCache.current[3] = props.data.type;
+              props.onLabelChange?.([...labelCache.current]);
               valueEventChange(v);
             }}
           />
@@ -336,7 +345,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             value={props.data.type}
             onChange={(v) => {
               props.data.type = v;
-              props.onLabelChange?.([...labelCache.current, v]);
+              labelCache.current[3] = v;
+              props.onLabelChange?.([...labelCache.current]);
             }}
           />
         </div>
