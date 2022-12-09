@@ -7,6 +7,7 @@ import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import FilterCondition from './FilterCondition';
 import { set } from 'lodash';
+import { Popconfirm } from 'antd';
 
 export enum ParallelEnum {
   'parallel' = 'parallel',
@@ -14,6 +15,7 @@ export enum ParallelEnum {
 }
 
 export type ParallelType = keyof typeof ParallelEnum;
+
 interface ItemProps {
   thenName: number;
   branchGroup?: number;
@@ -116,7 +118,7 @@ export default (props: ItemProps) => {
       case 'voice':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.calledNumber || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -199,33 +201,35 @@ export default (props: ItemProps) => {
   };
 
   const contentRender = () => {
-    if (props?.data?.alarm?.mode === 'trigger') {
-      return (
-        <div className={'item-options-content'}>
-          满足条件后将触发
-          <a
-            onClick={(e) => {
-              e.stopPropagation();
-              setTriggerVisible(true);
-            }}
-          >
-            关联此场景的告警
-          </a>
-        </div>
-      );
-    } else if (props?.data?.alarm?.mode === 'relieve') {
-      return (
-        <div className={'item-options-content'}>
-          满足条件后将解除
-          <a
-            onClick={() => {
-              setTriggerVisible(true);
-            }}
-          >
-            关联此场景的告警
-          </a>
-        </div>
-      );
+    if (props?.data?.executor === 'alarm') {
+      if (props?.data?.alarm?.mode === 'trigger') {
+        return (
+          <div className={'item-options-content'}>
+            满足条件后将触发
+            <a
+              onClick={(e) => {
+                e.stopPropagation();
+                setTriggerVisible(true);
+              }}
+            >
+              关联此场景的告警
+            </a>
+          </div>
+        );
+      } else if (props?.data?.alarm?.mode === 'relieve') {
+        return (
+          <div className={'item-options-content'}>
+            满足条件后将解除
+            <a
+              onClick={() => {
+                setTriggerVisible(true);
+              }}
+            >
+              关联此场景的告警
+            </a>
+          </div>
+        );
+      }
     } else if (props?.data?.executor === 'notify') {
       return (
         <div
@@ -295,9 +299,11 @@ export default (props: ItemProps) => {
           {contentRender()}
         </div>
         <div className="item-number">{props.name + 1}</div>
-        <div className="item-delete" onClick={props.onDelete}>
-          <DeleteOutlined />
-        </div>
+        <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+          <div className="item-delete">
+            <DeleteOutlined />
+          </div>
+        </Popconfirm>
       </div>
       {props.parallel ? null : (
         <FilterCondition

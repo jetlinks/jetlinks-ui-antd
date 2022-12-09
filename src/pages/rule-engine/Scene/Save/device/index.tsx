@@ -12,6 +12,8 @@ import { Store } from 'jetlinks-store';
 import { TriggerDeviceModel } from './addModel';
 import { handleMetadata } from './product';
 import { set } from 'lodash';
+import { Form, FormInstance } from 'antd';
+import { TitleComponent } from '@/components';
 
 const defaultDeviceValue = {
   productId: '',
@@ -19,7 +21,11 @@ const defaultDeviceValue = {
   selectorValues: [],
 };
 
-export default observer(() => {
+interface Props {
+  form: FormInstance;
+}
+
+export default observer((props: Props) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -38,7 +44,6 @@ export default observer(() => {
   }, [FormModel.current.trigger!.device?.productId]);
 
   const handleLabel = (options: any): ReactChild | ReactChild[] => {
-    console.log('FormModel', options);
     if (!options || !Object.keys(options).length) return '点击配置设备触发';
 
     const _label = [<span className="trigger-options-name">{options.name}</span>];
@@ -66,26 +71,41 @@ export default observer(() => {
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: 24 }}>
       <div style={{ marginBottom: 16 }}>
         <Observer>
           {() => {
             const label = handleLabel(FormModel.current.options?.trigger);
             return (
-              <AddButton
-                style={{ width: '100%' }}
-                onClick={() => {
-                  setVisible(true);
-                }}
+              <Form.Item
+                label={<TitleComponent style={{ fontSize: 14 }} data={'设备触发'} />}
+                name={'device'}
+                rules={[
+                  {
+                    validator(_, v) {
+                      if (!v) {
+                        return Promise.reject(new Error('请配置设备触发规则'));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
-                <div
-                  className={classNames('trigger-options-content', {
-                    'is-add': !!Object.keys(FormModel.current.options?.trigger || {}).length,
-                  })}
+                <AddButton
+                  style={{ width: '100%' }}
+                  onClick={() => {
+                    setVisible(true);
+                  }}
                 >
-                  {label}
-                </div>
-              </AddButton>
+                  <div
+                    className={classNames('trigger-options-content', {
+                      'is-add': !!Object.keys(FormModel.current.options?.trigger || {}).length,
+                    })}
+                  >
+                    {label}
+                  </div>
+                </AddButton>
+              </Form.Item>
             );
           }}
         </Observer>
@@ -100,6 +120,8 @@ export default observer(() => {
             console.log('FormModel.current.options', data);
             set(FormModel.current, ['options', 'trigger'], options);
             set(FormModel.current, ['trigger', 'device'], data);
+            props.form.setFieldValue('device', data);
+            props.form.validateFields(['device']);
           }}
           onCancel={() => {
             setVisible(false);

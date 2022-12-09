@@ -129,7 +129,7 @@ export default (props: Props) => {
         const values = await form.validateFields();
         setActionType(values.type);
         if (values.type === 'relieve' || values.type === 'trigger') {
-          props.save({ ...props.data, type: values.type, executor: 'alarm' });
+          props.save({ ...props.data, executor: 'alarm', alarm: { mode: values.type } }, {});
         }
       }}
     >
@@ -147,7 +147,7 @@ export default (props: Props) => {
         {...props}
         type={actionType}
         save={(data: any, options?: any) => {
-          props.save(data, options);
+          props.save({ ...data, executor: data.type }, options);
           setActionType('');
         }}
         close={() => {

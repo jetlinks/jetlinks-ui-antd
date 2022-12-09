@@ -17,15 +17,24 @@ interface ActionsProps {
   thenOptions: BranchesThen[];
   onAdd: (data: BranchesThen) => void;
   onUpdate: (data: BranchesThen, type: boolean) => void;
+  onChange?: (data: BranchesThen) => void;
 }
 
 export default (props: ActionsProps) => {
   const [parallelArray, setParallelArray] = useState<BranchesThen[]>([]); // 并行行
   const [serialArray, setSerialArray] = useState<BranchesThen[]>([]); // 串行
+  const [activeKeys, setActiveKey] = useState<any | any[]>(['1']);
+  const [lock, setLock] = useState(false);
 
   useEffect(() => {
-    setParallelArray(props.thenOptions.filter((item) => item.parallel));
-    setSerialArray(props.thenOptions.filter((item) => !item.parallel));
+    const parallelArr = props.thenOptions.filter((item) => item.parallel);
+    const serialArr = props.thenOptions.filter((item) => !item.parallel);
+    setParallelArray(parallelArr);
+    setSerialArray(serialArr);
+    if (!lock && parallelArr.length && !serialArr.length) {
+      setActiveKey(['2']);
+      setLock(true);
+    }
   }, [props.thenOptions]);
 
   return (
@@ -55,7 +64,7 @@ export default (props: ActionsProps) => {
         ) : null}
       </div>
       <div className="actions-warp">
-        <Collapse defaultActiveKey={['1']}>
+        <Collapse activeKey={activeKeys} onChange={setActiveKey}>
           <Panel
             header={
               <span>

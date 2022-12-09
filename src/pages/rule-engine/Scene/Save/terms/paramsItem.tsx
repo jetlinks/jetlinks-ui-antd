@@ -318,11 +318,11 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             }}
           />
         )}
-        <div className={classNames('button-delete', { show: deleteVisible })}>
-          <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+        <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+          <div className={classNames('button-delete', { show: deleteVisible })}>
             <CloseOutlined />
-          </Popconfirm>
-        </div>
+          </div>
+        </Popconfirm>
       </div>
       {!props.isLast ? (
         <div className="term-type-warp">

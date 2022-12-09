@@ -24,6 +24,7 @@ export const NotifyModel = model<{
   current: number;
   notify: Partial<NotifyProps>;
   variable: any[];
+  loading: boolean;
 }>({
   steps: [
     {
@@ -50,6 +51,7 @@ export const NotifyModel = model<{
     templateId: '',
   },
   variable: [],
+  loading: false,
 });
 
 export default observer((props: Props) => {
@@ -89,10 +91,16 @@ export default observer((props: Props) => {
   };
 
   const next = async () => {
+    NotifyModel.loading = true;
     if (NotifyModel.current === 0) {
       const val = await WayRef.current?.save();
       if (val) {
-        NotifyModel.notify.notifyType = val;
+        NotifyModel.notify = {
+          notifyType: val,
+          notifierId: '',
+          templateId: '',
+        };
+        NotifyModel.variable = [];
         NotifyModel.current += 1;
       }
     } else if (NotifyModel.current === 1) {
@@ -126,6 +134,7 @@ export default observer((props: Props) => {
         NotifyModel.current = 0;
       }
     }
+    NotifyModel.loading = false;
   };
 
   return (
@@ -157,6 +166,7 @@ export default observer((props: Props) => {
           {NotifyModel.current < NotifyModel.steps.length - 1 && (
             <Button
               type="primary"
+              loading={NotifyModel.loading}
               onClick={() => {
                 next();
               }}
@@ -178,7 +188,38 @@ export default observer((props: Props) => {
       }
     >
       <div className="steps-steps">
-        <Steps current={NotifyModel.current} items={NotifyModel.steps} />
+        <Steps
+          onChange={async (value: number) => {
+            if (value === 0) {
+              NotifyModel.current = value;
+            }
+            if (value === 1) {
+              if (NotifyModel.notify.notifyType) {
+                NotifyModel.current = value;
+              } else {
+                onlyMessage('请选择通知方式', 'error');
+              }
+            } else if (value === 2) {
+              if (NotifyModel.notify.notifierId) {
+                NotifyModel.current = value;
+              } else {
+                onlyMessage('请选择通知配置', 'error');
+              }
+            } else if (value === 3) {
+              if (NotifyModel.notify.templateId) {
+                const resp = await queryMessageTemplateDetail(NotifyModel.notify.templateId);
+                if (resp.status === 200) {
+                  NotifyModel.variable = resp.result?.variableDefinitions || [];
+                  NotifyModel.current = value;
+                }
+              } else {
+                onlyMessage('请选择通知模板', 'error');
+              }
+            }
+          }}
+          current={NotifyModel.current}
+          items={NotifyModel.steps}
+        />
       </div>
       <div className="steps-content">
         {renderComponent(NotifyModel.steps[NotifyModel.current]?.key)}

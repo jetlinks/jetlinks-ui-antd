@@ -71,6 +71,8 @@ export default observer((props: Props) => {
             onChange: (selectedRowKeys, list) => {
               if (selectedRowKeys.length) {
                 NotifyModel.notify.notifierId = String(selectedRowKeys[selectedRowKeys.length - 1]);
+                NotifyModel.notify.templateId = '';
+                NotifyModel.variable = [];
                 NotifyModel.notify.options = {
                   ...NotifyModel.notify.options,
                   provider: list[list.length - 1]?.provider,
