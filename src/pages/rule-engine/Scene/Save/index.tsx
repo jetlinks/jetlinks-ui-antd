@@ -4,7 +4,7 @@ import useLocation from '@/hooks/route/useLocation';
 import Device from '../Save/device/index';
 import Manual from '../Save/manual/index';
 import Timer from '../Save/timer/index';
-import { TitleComponent } from '@/components';
+import { Ellipsis, TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
@@ -15,6 +15,7 @@ import { onlyMessage, randomString } from '@/utils/util';
 import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
 import { cloneDeep, isArray } from 'lodash';
+import { TriggerWayType, iconMap } from '@/components/ProTableCard/CardItems/Scene';
 
 export const defaultBranches = [
   {
@@ -156,11 +157,7 @@ export default observer(() => {
       case 'device':
         return <Device form={_form} />;
       case 'manual':
-        return (
-          <Form.Item label={<TitleComponent style={{ fontSize: 14 }} data={'手动触发'} />}>
-            <Manual form={_form} />
-          </Form.Item>
-        );
+        return <Manual form={_form} />;
       case 'timer':
         return <Timer form={_form} />;
       default:
@@ -205,6 +202,22 @@ export default observer(() => {
   return (
     <PageContainer>
       <Card>
+        <div className={'scene-header'}>
+          <Ellipsis
+            title={FormModel.current?.name}
+            style={{
+              fontSize: 20,
+              color: 'rgba(0, 0, 0, 0.8)',
+              fontWeight: 'bold',
+              maxWidth: '50%',
+              width: 'max-content',
+            }}
+          />
+          <div className={'scene-header-type'}>
+            <img height={16} src={iconMap.get(triggerType)} style={{ marginRight: 8 }} />
+            {TriggerWayType[triggerType]}
+          </div>
+        </div>
         <Form layout={'vertical'} form={form}>
           {triggerRender(triggerType, form)}
           <Form.Item

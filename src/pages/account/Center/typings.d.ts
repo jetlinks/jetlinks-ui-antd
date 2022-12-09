@@ -12,6 +12,10 @@ type UserItem = {
   roleList?: { id: string; name: string }[] | string[];
   orgIdList?: string[];
   roleIdList?: string[];
+  type?: {
+    name: string;
+    id: string;
+  };
 };
 type UserDetail = {
   name: string;

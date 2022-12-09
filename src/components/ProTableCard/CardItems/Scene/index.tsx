@@ -17,7 +17,7 @@ imageMap.set('timer', require('/public/images/scene/scene-timer.png'));
 imageMap.set('manual', require('/public/images/scene/scene-hand.png'));
 imageMap.set('device', require('/public/images/scene/scene-device.png'));
 
-const iconMap = new Map();
+export const iconMap = new Map();
 iconMap.set('timer', require('/public/images/scene/trigger-type-icon/timing.png'));
 iconMap.set('manual', require('/public/images/scene/trigger-type-icon/manual.png'));
 iconMap.set('device', require('/public/images/scene/trigger-type-icon/device.png'));
@@ -35,7 +35,7 @@ export interface SceneCardProps extends SceneItem {
   onClick?: () => void;
 }
 
-enum TriggerWayType {
+export enum TriggerWayType {
   manual = '手动触发',
   timer = '定时触发',
   device = '设备触发',
@@ -47,145 +47,33 @@ enum UnitEnum {
   hours = '小时',
 }
 
-// const selectorRender = (obj: any) => {
-//   switch (obj?.selector) {
-//     case 'all':
-//       return (
-//         <span>
-//           所有的<span className={styles['trigger-device']}>{obj?.productId}</span>
-//         </span>
-//       );
-//     case 'fixed':
-//       return (
-//         <span>
-//           设备
-//           <span className={styles['trigger-device']}>
-//             {(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}
-//           </span>
-//         </span>
-//       );
-//     case 'org':
-//       return (
-//         <span>
-//           部门
-//           <span className={styles['trigger-device']}>
-//             {(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}
-//           </span>
-//         </span>
-//       );
-//     default:
-//       return '';
-//   }
-// };
-
-// const selectorContextRender = (obj: any) => {
-//   switch (obj?.selector) {
-//     case 'all':
-//       return `所有的${obj?.productId}`;
-//     case 'fixed':
-//       return `设备${(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}`;
-//     case 'org':
-//       return `部门${(obj?.selectorValues || '').map((item: any) => item?.name).join(',')}`;
-//     default:
-//       return '';
-//   }
-// };
-
-// const timerRender = (timer: any) => {
-//   if (timer?.trigger && timer?.mod) {
-//     const trigger = timer?.trigger;
-//     const mod = timer?.mod;
-//     const str: string = trigger === 'week' ? '星期' : trigger === 'month' ? '月' : timer?.cron;
-//     if (mod === 'once') {
-//       return `，每${str}${timer.when.join('/')}，${timer?.once.time}执行一次`;
-//     } else {
-//       return `每${str}${timer.when.join('/')}，${timer?.period?.from}-${timer?.period.to}，每${
-//         timer?.period.every
-//       }${UnitEnum[timer?.period?.unit]}执行一次`;
-//     }
-//   }
-//   return '';
-// };
-
-// const operatorRender = (operation: any) => {
-//   switch (operation?.operator) {
-//     case 'online':
-//       return '上线';
-//     case 'offline':
-//       return '离线';
-//     case 'reportEvent':
-//       return `上报事件${operation?.options?.eventName}`;
-//     case 'reportProperty':
-//       return `上报属性${(operation?.options?.propertiesName || []).join(',')}`;
-//     case 'readProperty':
-//       return `读取属性${(operation?.options?.propertiesName || []).join(',')}`;
-//     case 'writeProperty':
-//       return `修改属性${(operation?.options?.propertiesName || []).join(',')}`;
-//     case 'invokeFunction':
-//       return `调用功能${operation?.options?.functionName}`;
-//     default:
-//       return '';
-//   }
-// };
-
 const notifyRender = (data: ActionsType | undefined) => {
   switch (data?.notify?.notifyType) {
     case 'dingTalk':
       if (data?.options?.provider === 'dingTalkRobotWebHook') {
-        return (
-          <div className={styles['notify-img-highlight']}>
-            通过<span className={'notify-text-highlight'}>群机器人消息</span>
-            发送<span>{data?.options?.templateName || data?.notify?.templateId}</span>
-          </div>
-        );
+        return `通过群机器人消息发送${data?.options?.templateName || data?.notify?.templateId}`;
       }
-      return (
-        <div className={styles['notify-img-highlight']}>
-          向<span>{data?.options?.notifierName || data?.notify?.notifierId}</span>
-          通过<span>钉钉</span>发送
-          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
-        </div>
-      );
+      return `向${data?.options?.notifierName || data?.notify?.notifierId}通过钉钉发送${
+        data?.options?.templateName || data?.notify?.templateId
+      }`;
     case 'weixin':
-      return (
-        <div className={styles['notify-img-highlight']}>
-          向<span>{data?.options?.sendTo || ''}</span>
-          <span>{data?.options?.orgName || ''}</span>
-          <span>{data?.options?.tagName || ''}</span>
-          通过<span>微信</span>发送
-          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
-        </div>
-      );
+      return `向${data?.options?.sendTo || ''}${data?.options?.orgName || ''}${
+        data?.options?.tagName || ''
+      }通过微信发送${data?.options?.templateName || data?.notify?.templateId}`;
     case 'email':
-      return (
-        <div className={styles['notify-img-highlight']}>
-          向<span>{data?.options?.sendTo || ''}</span>
-          通过<span>邮件</span>发送
-          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
-        </div>
-      );
+      return `向${data?.options?.sendTo || ''}通过邮件发送${
+        data?.options?.templateName || data?.notify?.templateId
+      }`;
     case 'voice':
-      return (
-        <div className={styles['notify-img-highlight']}>
-          向<span>{data?.options?.sendTo || ''}</span>
-          通过<span>语音</span>发送
-          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
-        </div>
-      );
+      return `向${data?.options?.sendTo || ''}通过语音发送 ${
+        data?.options?.templateName || data?.notify?.templateId
+      }`;
     case 'sms':
-      return (
-        <div className={styles['notify-img-highlight']}>
-          向{data?.options?.sendTo || ''}通过短信发送
-          {data?.options?.templateName || data?.notify?.templateId}
-        </div>
-      );
+      return `向${data?.options?.sendTo || ''}通过短信发送${
+        data?.options?.templateName || data?.notify?.templateId
+      }`;
     case 'webhook':
-      return (
-        <div className={styles['notify-img-highlight']}>
-          通过<span>webhook</span>发送
-          <span>{data?.options?.templateName || data?.notify?.templateId}</span>
-        </div>
-      );
+      return `通过webhook发送${data?.options?.templateName || data?.notify?.templateId}`;
     default:
       return null;
   }
@@ -194,100 +82,55 @@ const notifyRender = (data: ActionsType | undefined) => {
 const deviceRender = (data: ActionsType | undefined) => {
   switch (data?.device?.selector) {
     case 'fixed':
-      return (
-        <div className={styles['notify-text-highlight']}>
-          {data?.options?.type}
-          <span className={styles['trigger-device']}>{data?.options?.name}</span>
-          {data?.options?.properties}
-        </div>
-      );
+      return `${data?.options?.type}${data?.options?.name}${data?.options?.properties}`;
     case 'tag':
-      return (
-        <div className={styles['notify-text-highlight']}>
-          {data?.options?.type}
-          {data.options?.taglist.map((item: any) => (
-            <span className={styles['trigger-device']}>
-              {item.type}
-              {item.name}
-              {item.value}
-            </span>
-          ))}
-          {data?.options?.productName}
-          {data?.options?.properties}
-        </div>
-      );
+      let tags: string = '';
+      data.options?.taglist.map((item: any) => {
+        tags += item.type || '' + item.name || '' + item.value || '';
+      });
+      return `${
+        data?.options?.type + tags + data?.options?.productName + data?.options?.properties
+      }`;
     case 'relation':
-      return (
-        <div className={styles['notify-text-highlight']}>
-          {data?.options?.type}与
-          <span className={styles['trigger-device']}>{data?.options?.name}</span>具有相同
-          {data?.options?.relationName}的{data?.options?.productName}设备的
-          {data?.options?.properties}
-        </div>
-      );
+      return `${data?.options?.type}与${data?.options?.name}具有相同${data?.options?.relationName}的${data?.options?.productName}设备的${data?.options?.properties}`;
     default:
       return null;
   }
 };
 
-const actionRender = (action: ActionsType, index: number) => {
+const actionRender = (action: ActionsType) => {
   switch (action?.executor) {
     case 'notify':
-      return (
-        <div
-          className={styles['card-item-content-action-item-right-item']}
-          key={action?.key || index}
-        >
-          <div className={classNames(styles['trigger-contents'], 'ellipsis')}>
-            {notifyRender(action)}
-          </div>
-        </div>
-      );
+      return notifyRender(action);
     case 'delay':
-      return (
-        <div
-          className={styles['card-item-content-action-item-right-item']}
-          key={action?.key || index}
-        >
-          <div className={classNames(styles['trigger-contents'], 'ellipsis')}>
-            <span style={{ fontWeight: 'bold' }}>
-              {action?.delay?.time}
-              {UnitEnum[action?.delay?.unit || '']}
-            </span>
-            后执行后续动作
-          </div>
-        </div>
-      );
+      return `${action?.delay?.time}${UnitEnum[action?.delay?.unit || '']}后执行后续动作`;
     case 'device':
-      return (
-        <div
-          className={styles['card-item-content-action-item-right-item']}
-          key={action?.key || index}
-        >
-          <div className={classNames(styles['trigger-contents'], 'ellipsis')}>
-            {deviceRender(action)}
-          </div>
-        </div>
-      );
+      return deviceRender(action);
     case 'alarm':
-      return (
-        <div
-          className={styles['card-item-content-action-item-right-item']}
-          key={action?.key || index}
-        >
-          <div className={classNames(styles['trigger-contents'], 'ellipsis')}>
-            满足条件后将触发关联此场景的告警
-          </div>
-        </div>
-      );
+      if (action?.alarm?.mode === 'relieve') {
+        return '满足条件后将解除关联此场景的告警';
+      }
+      return '满足条件后将触发关联此场景的告警';
     default:
       return null;
   }
+};
+// 过滤器
+const actionFilter = (terms: any, isLast: boolean, index: number) => {
+  if (isArray(terms)) {
+    return `动作${index + 1}${handleOptionsLabel(terms, isLast ? terms?.[0]?.type : undefined)}`;
+  }
+  return '';
 };
 
 const conditionsRender = (when: any[], index: number) => {
   let whenStr: string = '';
-  if (when.length && when[index]) {
+  if (
+    when.length &&
+    when[index] &&
+    (when[index]?.terms).length &&
+    when[index]?.terms[0]?.terms?.length
+  ) {
     const terms = when[index]?.terms || [];
     const termsLength = terms.length;
     terms.map((termsItem: any, tIndex: number) => {
@@ -298,11 +141,11 @@ const conditionsRender = (when: any[], index: number) => {
           ? termsItem.terms
               .map((bTermItem: any, bIndex: number) => {
                 const bLast = bIndex < termsItem.terms.length - 1;
-                return handleOptionsLabel(bTermItem, bLast ? '' : bTermItem[3]);
+                return handleOptionsLabel(bTermItem, !bLast ? '' : bTermItem[3]);
               })
               .join('')
           : '';
-        whenStr += tLast ? tSer : tLast + termsItem.termType;
+        whenStr += !tLast ? tSer : tSer + termsItem.termType;
       }
     });
     return whenStr;
@@ -312,28 +155,40 @@ const conditionsRender = (when: any[], index: number) => {
 
 const branchesActionRender = (actions: any[]) => {
   if (actions && actions?.length) {
-    const list: any[] = [];
-    actions.map((item, index) => {
-      const dt = actionRender(item, index);
-      list.push(dt);
-    });
-
-    return list.map((item, index) => (
-      <div className={styles['right-item-right-item-contents-item']}>
-        <div style={{ margin: '0 10px' }}>{item}</div>
-        <MyTooltip title={actions[index]?.options?.terms || ''}>
-          {actions[index]?.options?.terms && (
-            <div className={'ellipsis'} style={{ minWidth: 40 }}>
-              动作{index + 1}
-              {handleOptionsLabel(
-                actions[index]?.options?.terms,
-                index < actions.length - 1 ? actions[index].terms?.[0]?.type : undefined,
+    const list = actions.slice(0, 3);
+    return list.map((item, index) => {
+      const isLast = index < actions.length - 1;
+      return (
+        <div
+          className={styles['right-item-right-item-contents-item']}
+          style={{ maxWidth: `(${100 / list.length})%` }}
+        >
+          <MyTooltip placement={'topLeft'} title={actionRender(item)}>
+            <div
+              className={classNames(
+                styles['right-item-right-item-contents-item-action'],
+                styles['item-ellipsis'],
               )}
+            >
+              {actionRender(item)}
             </div>
-          )}
-        </MyTooltip>
-      </div>
-    ));
+          </MyTooltip>
+          <MyTooltip
+            placement={'topLeft'}
+            title={actionFilter(actions[index]?.options?.terms, isLast, index)}
+          >
+            <div
+              className={classNames(
+                styles['right-item-right-item-contents-item-filter'],
+                styles['item-ellipsis'],
+              )}
+            >
+              {actionFilter(actions[index]?.options?.terms, isLast, index)}
+            </div>
+          </MyTooltip>
+        </div>
+      );
+    });
   }
   return '';
 };
@@ -451,9 +306,28 @@ const ContentRender = (data: SceneCardProps) => {
                               <div className={styles['trigger-ways']}>
                                 {i ? (i.parallel ? '并行执行' : '串行执行') : ''}
                               </div>
-                              <div className={classNames(styles['right-item-right-item-contents'])}>
-                                {branchesActionRender(Array.isArray(i?.actions) ? i?.actions : [])}
-                              </div>
+                              {Array.isArray(i?.actions) && (
+                                <div
+                                  className={classNames(styles['right-item-right-item-contents'])}
+                                >
+                                  <div
+                                    className={classNames(
+                                      styles['right-item-right-item-contents-text'],
+                                    )}
+                                  >
+                                    {branchesActionRender(i?.actions)}
+                                  </div>
+                                  {i?.actions.length > 3 && (
+                                    <div
+                                      className={classNames(
+                                        styles['right-item-right-item-contents-extra'],
+                                      )}
+                                    >
+                                      等{i?.actions.length}个执行动作
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
