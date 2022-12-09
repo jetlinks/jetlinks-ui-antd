@@ -1,12 +1,9 @@
 import Action from '../action';
 import { Observer } from '@formily/react';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
-import { Form, FormInstance } from 'antd';
-interface Props {
-  form: FormInstance;
-}
+import { Form } from 'antd';
 
-export default (props: Props) => {
+export default () => {
   return (
     <div>
       <Observer>
@@ -16,7 +13,7 @@ export default (props: Props) => {
             rules={[
               {
                 validator(_, v) {
-                  if (v && !v.length) {
+                  if (!v || (v && !v.length)) {
                     return Promise.reject('至少配置一个执行动作');
                   }
                   return Promise.resolve();
@@ -31,8 +28,6 @@ export default (props: Props) => {
                 if (FormModel.current.branches && data) {
                   const newThen = [...FormModel.current.branches[0].then, data];
                   FormModel.current.branches[0].then = newThen;
-                  props.form.setFieldValue(['branches', 0, 'then'], newThen);
-                  props.form.validateFields(['branches', 0, 'then']);
                 }
               }}
               onUpdate={(data, type) => {
@@ -45,10 +40,6 @@ export default (props: Props) => {
                   } else {
                     FormModel.current.branches![0].then = [];
                   }
-                  props.form.setFieldValue(
-                    ['branches', 0, 'then'],
-                    FormModel.current.branches![0].then,
-                  );
                 }
               }}
             />

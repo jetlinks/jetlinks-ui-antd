@@ -7,7 +7,7 @@ import { Observer } from '@formily/react';
 import { get } from 'lodash';
 import type { ShakeLimitType, BranchesThen } from '../../typings';
 import { randomString } from '@/utils/util';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const { Panel } = Collapse;
 
@@ -17,14 +17,16 @@ interface ActionsProps {
   thenOptions: BranchesThen[];
   onAdd: (data: BranchesThen) => void;
   onUpdate: (data: BranchesThen, type: boolean) => void;
-  onChange?: (data: BranchesThen) => void;
+  onChange?: (data?: BranchesThen[]) => void;
 }
 
 export default (props: ActionsProps) => {
   const [parallelArray, setParallelArray] = useState<BranchesThen[]>([]); // 并行行
   const [serialArray, setSerialArray] = useState<BranchesThen[]>([]); // 串行
   const [activeKeys, setActiveKey] = useState<any | any[]>(['1']);
+
   const [lock, setLock] = useState(false);
+  const firstLockRef = useRef(true);
 
   useEffect(() => {
     const parallelArr = props.thenOptions.filter((item) => item.parallel);
@@ -34,6 +36,11 @@ export default (props: ActionsProps) => {
     if (!lock && parallelArr.length && !serialArr.length) {
       setActiveKey(['2']);
       setLock(true);
+    }
+    if (!firstLockRef.current) {
+      props.onChange?.(props.thenOptions);
+    } else {
+      firstLockRef.current = false;
     }
   }, [props.thenOptions]);
 

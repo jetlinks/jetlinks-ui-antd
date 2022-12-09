@@ -78,7 +78,7 @@ export default observer((props: Props) => {
             const label = handleLabel(FormModel.current.options?.trigger);
             return (
               <Form.Item
-                label={<TitleComponent style={{ fontSize: 14 }} data={'设备触发'} />}
+                label={<TitleComponent style={{ fontSize: 14 }} data={'触发规则'} />}
                 name={'device'}
                 rules={[
                   {
@@ -110,14 +110,13 @@ export default observer((props: Props) => {
           }}
         </Observer>
       </div>
-      <Terms />
+      <Terms form={props.form} />
       {visible && (
         <AddModel
           value={FormModel.current.trigger?.device || defaultDeviceValue}
           options={FormModel.current.options?.trigger}
           onSave={(data, options) => {
             setVisible(false);
-            console.log('FormModel.current.options', data);
             set(FormModel.current, ['options', 'trigger'], options);
             set(FormModel.current, ['trigger', 'device'], data);
             props.form.setFieldValue('device', data);
