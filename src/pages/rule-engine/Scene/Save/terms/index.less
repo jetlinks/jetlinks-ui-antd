@@ -30,9 +30,11 @@
 .actions-terms {
   .actions-terms-warp {
     display: flex;
+    margin-bottom: 24px;
 
-    &:not(:last-child) {
-      margin-bottom: 24px;
+    &.first-children,
+    &:last-child {
+      margin-bottom: 0;
     }
 
     .actions-terms-title {
@@ -51,7 +53,7 @@
       width: 0;
 
       &.border {
-        padding: 10px 18px 18px 18px;
+        padding: 10px 18px 0 18px;
         border: 1px dashed #999;
         border-radius: 2px;
       }
@@ -62,6 +64,13 @@
 
       .actions-terms-list {
         position: relative;
+        margin-bottom: 16px;
+
+        .ant-form-item-has-error {
+          .params-item_button {
+            border-color: @error-color;
+          }
+        }
 
         .actions-terms-list-content {
           display: flex;
@@ -103,6 +112,7 @@
     display: flex;
     // flex-wrap: wrap;
     padding: 8px;
+    padding-bottom: 0;
     background-color: #fafafa;
     row-gap: 16px;
     .terms-params-item {
@@ -156,6 +166,7 @@
     padding: 4px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 2px;
+    transition: border 0.3s;
 
     // > div {
     //   flex-shrink: 0;

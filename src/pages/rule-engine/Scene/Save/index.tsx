@@ -116,23 +116,23 @@ export default observer(() => {
     if (id) {
       service.detail(id).then((resp) => {
         if (resp.status === 200) {
+          const _triggerType = resp.result.triggerType;
           let branches = resp.result.branches;
           if (!branches) {
-            branches = defaultBranches;
-            if (resp.result.triggerType === 'device') {
+            branches = cloneDeep(defaultBranches);
+            if (_triggerType === 'device') {
               branches.push(null);
             }
           } else {
             const branchesLength = branches.length;
             if (
-              resp.result.triggerType === 'device' &&
+              _triggerType === 'device' &&
               ((branchesLength === 1 && !!branches[0]?.when?.length) || // 有一组数据并且when有值
                 (branchesLength > 1 && !branches[branchesLength - 1]?.when?.length)) // 有多组否则数据，并且最后一组when有值
             ) {
               branches.push(null);
             }
           }
-
           FormModel.current = {
             ...resp.result,
           };
@@ -141,8 +141,9 @@ export default observer(() => {
           FormModel.current.trigger = resp.result.trigger || {};
           FormModel.current.branches = newBranches;
           form.setFieldValue('description', resp.result.description);
-          if (['device', 'timer'].includes(resp.result.triggerType)) {
-            form.setFieldValue(resp.result.triggerType, resp.result.trigger);
+
+          if (['device', 'timer'].includes(_triggerType)) {
+            form.setFieldValue(_triggerType, resp.result.trigger[_triggerType]);
           }
           form.setFieldValue('branches', newBranches);
         }
@@ -158,7 +159,7 @@ export default observer(() => {
       case 'manual':
         return (
           <Form.Item label={<TitleComponent style={{ fontSize: 14 }} data={'手动触发'} />}>
-            <Manual form={_form} />
+            <Manual />
           </Form.Item>
         );
       case 'timer':

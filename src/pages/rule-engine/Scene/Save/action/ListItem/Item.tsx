@@ -6,8 +6,8 @@ import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import FilterCondition from './FilterCondition';
-import { set } from 'lodash';
-import { Popconfirm } from 'antd';
+import { isArray, set } from 'lodash';
+import { Form, Popconfirm } from 'antd';
 
 export enum ParallelEnum {
   'parallel' = 'parallel',
@@ -306,45 +306,83 @@ export default (props: ItemProps) => {
         </Popconfirm>
       </div>
       {props.parallel ? null : (
-        <FilterCondition
-          action={props.name}
-          branchGroup={props.branchGroup}
-          thenName={props.thenName}
-          data={props.data.terms?.[0]}
-          label={props.data.options?.terms}
-          onAdd={() => {
-            let _data = props.data;
-            if (!_data.terms) {
-              _data = {
-                ..._data,
-                terms: [{}],
-              };
+        <Form.Item
+          name={[
+            'branches',
+            props.thenName,
+            'then',
+            props.branchGroup || 0,
+            'actions',
+            props.name,
+            'terms',
+          ]}
+          rules={[
+            {
+              validator(_, v) {
+                if (v) {
+                  if (!v.column) {
+                    return Promise.reject(new Error('请选择参数'));
+                  }
+
+                  if (!v.termType) {
+                    return Promise.reject(new Error('请选择操作符'));
+                  }
+
+                  if (!v.value) {
+                    return Promise.reject(new Error('请选择或输入参数值'));
+                  } else {
+                    if (isArray(v.value.value) && v.value.value.some((_v: any) => !_v)) {
+                      return Promise.reject(new Error('请选择或输入参数值'));
+                    } else if (!v.value.value) {
+                      return Promise.reject(new Error('请选择或输入参数值'));
+                    }
+                  }
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
+          <FilterCondition
+            action={props.name}
+            branchGroup={props.branchGroup}
+            thenName={props.thenName}
+            data={props.data.terms?.[0]}
+            label={props.data.options?.terms}
+            onAdd={() => {
+              let _data = props.data;
+              if (!_data.terms) {
+                _data = {
+                  ..._data,
+                  terms: [{}],
+                };
+                cacheValueRef.current = _data;
+                props.onUpdate(_data, op);
+              }
+            }}
+            onChange={(termsData) => {
+              const _data = props.data;
+              set(_data, 'terms', [termsData]);
               cacheValueRef.current = _data;
-              props.onUpdate(_data, op);
-            }
-          }}
-          onChange={(termsData) => {
-            const _data = props.data;
-            set(_data, 'terms', [termsData]);
-            cacheValueRef.current = _data;
-            props.onUpdate(_data, {
-              ...op,
-            });
-          }}
-          onLabelChange={(lb) => {
-            props.onUpdate(cacheValueRef.current, {
-              ...op,
-              terms: lb,
-            });
-          }}
-          onDelete={() => {
-            const _data = props.data;
-            if (_data.terms) {
-              delete _data.terms;
-              props.onUpdate(_data, op);
-            }
-          }}
-        />
+              props.onUpdate(_data, {
+                ...op,
+              });
+            }}
+            onLabelChange={(lb) => {
+              props.onUpdate(cacheValueRef.current, {
+                ...op,
+                terms: lb,
+              });
+            }}
+            onDelete={() => {
+              const _data = props.data;
+              if (_data.terms) {
+                delete _data.terms;
+                props.onUpdate(_data, op);
+              }
+            }}
+          />
+        </Form.Item>
       )}
       {visible && (
         <Modal
