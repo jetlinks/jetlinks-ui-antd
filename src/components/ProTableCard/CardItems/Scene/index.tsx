@@ -133,7 +133,7 @@ const notifyRender = (data: ActionsType | undefined) => {
     case 'dingTalk':
       if (data?.options?.provider === 'dingTalkRobotWebHook') {
         return (
-          <div>
+          <div className={styles['notify-img-highlight']}>
             通过<span className={'notify-text-highlight'}>群机器人消息</span>
             发送<span>{data?.options?.templateName || data?.notify?.templateId}</span>
           </div>
@@ -167,7 +167,7 @@ const notifyRender = (data: ActionsType | undefined) => {
     case 'voice':
       return (
         <div className={styles['notify-img-highlight']}>
-          向<span>{data?.options?.calledNumber || ''}</span>
+          向<span>{data?.options?.sendTo || ''}</span>
           通过<span>语音</span>发送
           <span>{data?.options?.templateName || data?.notify?.templateId}</span>
         </div>

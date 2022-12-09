@@ -118,7 +118,7 @@ export default (props: ItemProps) => {
       case 'voice':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.calledNumber || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
@@ -201,33 +201,35 @@ export default (props: ItemProps) => {
   };
 
   const contentRender = () => {
-    if (props?.data?.alarm?.mode === 'trigger') {
-      return (
-        <div className={'item-options-content'}>
-          满足条件后将触发
-          <a
-            onClick={(e) => {
-              e.stopPropagation();
-              setTriggerVisible(true);
-            }}
-          >
-            关联此场景的告警
-          </a>
-        </div>
-      );
-    } else if (props?.data?.alarm?.mode === 'relieve') {
-      return (
-        <div className={'item-options-content'}>
-          满足条件后将解除
-          <a
-            onClick={() => {
-              setTriggerVisible(true);
-            }}
-          >
-            关联此场景的告警
-          </a>
-        </div>
-      );
+    if (props?.data?.executor === 'alarm') {
+      if (props?.data?.alarm?.mode === 'trigger') {
+        return (
+          <div className={'item-options-content'}>
+            满足条件后将触发
+            <a
+              onClick={(e) => {
+                e.stopPropagation();
+                setTriggerVisible(true);
+              }}
+            >
+              关联此场景的告警
+            </a>
+          </div>
+        );
+      } else if (props?.data?.alarm?.mode === 'relieve') {
+        return (
+          <div className={'item-options-content'}>
+            满足条件后将解除
+            <a
+              onClick={() => {
+                setTriggerVisible(true);
+              }}
+            >
+              关联此场景的告警
+            </a>
+          </div>
+        );
+      }
     } else if (props?.data?.executor === 'notify') {
       return (
         <div
