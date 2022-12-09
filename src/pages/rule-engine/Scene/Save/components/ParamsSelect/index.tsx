@@ -43,6 +43,7 @@ export default (props: Props) => {
 
   useEffect(() => {
     if (props.labelValue) {
+      console.log(props.labelValue);
       setValue(props.labelValue);
     }
   }, [props.labelValue]);
