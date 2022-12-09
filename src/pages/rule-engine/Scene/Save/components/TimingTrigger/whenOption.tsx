@@ -66,15 +66,15 @@ export default (props: TimerWhenProps) => {
             key={item}
             onClick={() => {
               const _value = value ? [...value] : [];
-              const indexof = _value.findIndex((t) => t === item.value);
-              if (indexof === -1) {
+              const indexOf = _value.findIndex((t) => t === item.value);
+              if (indexOf === -1) {
                 _value.push(item.value);
               } else {
-                _value.splice(indexof, 1);
+                _value.splice(indexOf, 1);
               }
 
               setValue(_value.length ? [..._value] : undefined);
-              props.onChange?.(_value.length ? _value.sort() : undefined);
+              props.onChange?.(_value.length ? _value.sort((a, b) => a - b) : undefined);
             }}
           >
             {item.label}

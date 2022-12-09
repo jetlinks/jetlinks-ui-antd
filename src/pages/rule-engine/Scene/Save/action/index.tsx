@@ -75,7 +75,10 @@ export default (props: ActionsProps) => {
           <Panel
             header={
               <span>
-                串行<span className="panel-tip">按顺序依次执行动作</span>
+                串行
+                <span className="panel-tip">
+                  按顺序依次执行动作，适用于基于动作输出参数，判断是否执行后续动作的场景
+                </span>
               </span>
             }
             key="1"
@@ -121,7 +124,10 @@ export default (props: ActionsProps) => {
           <Panel
             header={
               <span>
-                并行<span className="panel-tip">同时执行所有动作</span>
+                并行
+                <span className="panel-tip">
+                  同时执行所有动作，适用于不需要关注执行动作先后顺序和结果的场景
+                </span>
               </span>
             }
             key="2"
