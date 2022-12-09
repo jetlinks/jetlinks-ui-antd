@@ -78,7 +78,7 @@ export default observer((props: Props) => {
             const label = handleLabel(FormModel.current.options?.trigger);
             return (
               <Form.Item
-                label={<TitleComponent style={{ fontSize: 14 }} data={'设备触发'} />}
+                label={<TitleComponent style={{ fontSize: 14 }} data={'触发规则'} />}
                 name={'device'}
                 rules={[
                   {
