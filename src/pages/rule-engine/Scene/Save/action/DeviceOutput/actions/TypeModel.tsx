@@ -22,6 +22,7 @@ interface Props {
   onColumns?: (col: any) => void;
   thenName: number;
   branchGroup?: number;
+  label?: string; //枚举回显
 }
 
 export default (props: Props) => {
@@ -93,7 +94,8 @@ export default (props: Props) => {
 
   useEffect(() => {
     setValue(props.value);
-    console.log('typemodel', props.value);
+    setLabelValue(props.label);
+    // console.log('typemodel', props.value);
   }, [props.value]);
 
   const renderNode = (type: string) => {
@@ -120,10 +122,14 @@ export default (props: Props) => {
             options={props.record?.options || props.elements || []}
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
-            mode="multiple"
-            onChange={(e) => {
-              console.log(e);
-              onChange(e);
+            onChange={(e, options: any) => {
+              console.log(options);
+              setValue(e);
+              setLabelValue(options?.text);
+              if (props.onChange) {
+                props.onChange(e, source);
+              }
+              // onChange(e)
             }}
           />
         );
@@ -243,7 +249,7 @@ export default (props: Props) => {
             defaultExpandAll
             fieldNames={{ title: 'name', key: 'id' }}
             onSelect={(selectedKeys, e) => {
-              console.log('e.node', e.node);
+              // console.log('e.node', e.node);
               if (e.node.metadata) {
                 if (props.onColumns) {
                   props.onColumns(e.node.column);
