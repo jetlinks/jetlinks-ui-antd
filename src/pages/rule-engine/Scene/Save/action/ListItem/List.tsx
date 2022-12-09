@@ -20,7 +20,6 @@ export default (props: ListProps) => {
 
   useEffect(() => {
     setActions(props.actions);
-    // console.log('list-change', props.actions);
   }, [props.actions]);
 
   return (
@@ -67,26 +66,12 @@ export default (props: ListProps) => {
             setVisible(false);
           }}
           save={(data: any, options) => {
-            console.log(data);
-
             const { type, ...extra } = data;
-            console.log('list', options);
             const item: ActionsType = {
               ...extra,
-              executor: data.type === 'trigger' || data.type === 'relieve' ? 'alarm' : data.type,
               key: data.key,
               options,
             };
-
-            if (data.type === 'trigger' || data.type === 'relieve') {
-              item.alarm = {
-                mode: data.type,
-              };
-            }
-            // const index = FormModel?.actions.findIndex((i) => {
-            //   return i.key === item.key ? item : i;
-            // });
-            // FormModel.actions[index] = { ...item };
             props.onAdd(item);
             setVisible(false);
           }}
