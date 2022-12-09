@@ -23,9 +23,10 @@ export default (props: Props) => {
   const textRef = useRef<any>('');
   const [format, setFormat] = useState<any>('HH:mm:ss');
   const [enumList, setEnumList] = useState<any>([]);
+  const [label, setLabel] = useState<any>();
 
   useEffect(() => {
-    // console.log(props.value);
+    console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -38,8 +39,18 @@ export default (props: Props) => {
             setPropertiesValue(props.value[key].value);
             setSource(props.value[key].source);
             const propertiesItem = props.properties.find((item: any) => item.id === key);
+            // console.log(propertiesItem,'11111111')
             if (propertiesItem) {
               setPropertiesType(propertiesItem.valueType.type);
+              if (propertiesItem.valueType.type === 'enum') {
+                console.log(propertiesItem.valueType.elements, props.value[key].value);
+                setEnumList(propertiesItem.valueType.elements);
+                const text = propertiesItem.valueType.elements.find(
+                  (item: any) => item.value === props.value[key].value?.[0],
+                ).text;
+                setLabel(text);
+                console.log(text);
+              }
             }
           });
         }
@@ -91,6 +102,7 @@ export default (props: Props) => {
         <Col span={12}>
           <TypeModel
             value={propertiesValue}
+            label={label}
             type={propertiesType}
             name={props.name}
             branchGroup={props.branchGroup}
