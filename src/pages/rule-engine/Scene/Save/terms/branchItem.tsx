@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import { set } from 'lodash';
 import { Store } from 'jetlinks-store';
 import { Popconfirm } from 'antd';
+
 interface BranchesItemProps {
   name: number;
   data: ActionBranchesProps;
@@ -84,15 +85,15 @@ export default observer((props: BranchesItemProps) => {
             if (!props.isFirst && when.length) setDeleteVisible(false);
           }}
         >
-          <div className={classNames('terms-params-delete', { show: deleteVisible })}>
-            <Popconfirm
-              title={'该操作将清空其它所有否则条件，确认删除？'}
-              placement="topRight"
-              onConfirm={props.onDeleteAll}
-            >
+          <Popconfirm
+            title={'该操作将清空其它所有否则条件，确认删除？'}
+            placement="topRight"
+            onConfirm={props.onDeleteAll}
+          >
+            <div className={classNames('terms-params-delete', { show: deleteVisible })}>
               <CloseOutlined />
-            </Popconfirm>
-          </div>
+            </div>
+          </Popconfirm>
           <div className="actions-terms-list-content">
             <Observer>
               {() =>

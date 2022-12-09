@@ -7,6 +7,7 @@ import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import FilterCondition from './FilterCondition';
 import { set } from 'lodash';
+import { Popconfirm } from 'antd';
 
 export enum ParallelEnum {
   'parallel' = 'parallel',
@@ -14,6 +15,7 @@ export enum ParallelEnum {
 }
 
 export type ParallelType = keyof typeof ParallelEnum;
+
 interface ItemProps {
   thenName: number;
   branchGroup?: number;
@@ -295,9 +297,11 @@ export default (props: ItemProps) => {
           {contentRender()}
         </div>
         <div className="item-number">{props.name + 1}</div>
-        <div className="item-delete" onClick={props.onDelete}>
-          <DeleteOutlined />
-        </div>
+        <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+          <div className="item-delete">
+            <DeleteOutlined />
+          </div>
+        </Popconfirm>
       </div>
       {props.parallel ? null : (
         <FilterCondition

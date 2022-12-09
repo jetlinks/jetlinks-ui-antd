@@ -7,7 +7,7 @@ import { observer } from '@formily/react';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import '../index.less';
 import { FormModel } from '../..';
-import { Space } from 'antd';
+import { Popconfirm, Space } from 'antd';
 import { cloneDeep } from 'lodash';
 
 interface FilterProps {
@@ -166,12 +166,11 @@ export default observer((props: FilterProps) => {
     <div className="filter-condition-warp">
       {props.data ? (
         <div className="filter-condition-content">
-          <div
-            className={classNames('filter-condition-delete danger show')}
-            onClick={props.onDelete}
-          >
-            <DeleteOutlined />
-          </div>
+          <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+            <div className={classNames('filter-condition-delete danger show')}>
+              <DeleteOutlined />
+            </div>
+          </Popconfirm>
           <DropdownButton
             options={columnOptions}
             type="param"

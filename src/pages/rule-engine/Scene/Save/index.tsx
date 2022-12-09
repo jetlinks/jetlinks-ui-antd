@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input } from 'antd';
+import { Button, Card, Form, FormInstance, Input } from 'antd';
 import useLocation from '@/hooks/route/useLocation';
 import Device from '../Save/device/index';
 import Manual from '../Save/manual/index';
@@ -141,39 +141,38 @@ export default observer(() => {
           FormModel.current.trigger = resp.result.trigger || {};
           FormModel.current.branches = newBranches;
           form.setFieldValue('description', resp.result.description);
+          if (['device', 'timer'].includes(resp.result.triggerType)) {
+            form.setFieldValue(resp.result.triggerType, resp.result.trigger);
+          }
+          form.setFieldValue('branches', newBranches);
         }
       });
     }
   }, [id, form]);
 
-  const triggerRender = (type: string) => {
+  const triggerRender = (type: string, _form: FormInstance) => {
     FormModel.current.trigger!.type = type;
     switch (type) {
       case 'device':
-        return (
-          <Form.Item label={<TitleComponent style={{ fontSize: 14 }} data={'设备触发'} />}>
-            <Device />
-          </Form.Item>
-        );
+        return <Device form={_form} />;
       case 'manual':
         return (
           <Form.Item label={<TitleComponent style={{ fontSize: 14 }} data={'手动触发'} />}>
-            <Manual />
+            <Manual form={_form} />
           </Form.Item>
         );
       case 'timer':
-        return (
-          <Form.Item label={<TitleComponent style={{ fontSize: 14 }} data={'定时触发'} />}>
-            <Timer />
-          </Form.Item>
-        );
+        return <Timer form={_form} />;
       default:
         return null;
     }
   };
 
-  const submit = useCallback(() => {
-    const baseData = form.getFieldsValue();
+  const submit = useCallback(async () => {
+    const baseData = await form.validateFields();
+    console.log('submit', baseData);
+    if (!baseData) return;
+
     const FormData = cloneDeep(FormModel.current);
     const { options, branches } = FormData;
     if (options?.terms) {
@@ -206,8 +205,8 @@ export default observer(() => {
   return (
     <PageContainer>
       <Card>
-        <Form name="timer" layout={'vertical'} form={form}>
-          {triggerRender(triggerType)}
+        <Form layout={'vertical'} form={form}>
+          {triggerRender(triggerType, form)}
           <Form.Item
             label={<TitleComponent style={{ fontSize: 14 }} data={'说明'} />}
             name="description"

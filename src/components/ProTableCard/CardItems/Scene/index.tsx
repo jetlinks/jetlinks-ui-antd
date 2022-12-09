@@ -341,6 +341,7 @@ const branchesActionRender = (actions: any[]) => {
 const ContentRender = (data: SceneCardProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const type = data.triggerType;
+
   if (!!type && (data.branches || [])?.length) {
     const trigger = data?.options?.trigger;
     return (

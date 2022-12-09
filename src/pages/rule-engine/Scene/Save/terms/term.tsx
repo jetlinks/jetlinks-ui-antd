@@ -9,6 +9,7 @@ import type { TermsType } from '@/pages/rule-engine/Scene/typings';
 import { get, set } from 'lodash';
 import './index.less';
 import { Popconfirm } from 'antd';
+
 interface TermsProps {
   data: TermsType;
   pName: (number | string)[];
@@ -123,11 +124,11 @@ export default observer((props: TermsProps) => {
               ));
             }}
           </Observer>
-          <div className={classNames('terms-params-delete', { show: deleteVisible })}>
-            <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+          <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+            <div className={classNames('terms-params-delete', { show: deleteVisible })}>
               <CloseOutlined />
-            </Popconfirm>
-          </div>
+            </div>
+          </Popconfirm>
         </div>
         {!props.isLast ? (
           <div className="term-type-warp">

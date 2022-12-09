@@ -5,7 +5,7 @@ import { model } from '@formily/reactive';
 import { FormModel, defaultBranches } from '@/pages/rule-engine/Scene/Save';
 import BranchItem from './branchItem';
 import { service } from '@/pages/rule-engine/Scene/index';
-import { Switch } from 'antd';
+import { Form, Switch } from 'antd';
 import type { TriggerType } from '@/pages/rule-engine/Scene/typings';
 import Actions from '@/pages/rule-engine/Scene/Save/action';
 import { cloneDeep, set } from 'lodash';
@@ -162,24 +162,26 @@ export default observer(() => {
           }
         </Observer>
       ) : (
-        <Actions
-          openShakeLimit={true}
-          name={0}
-          thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
-          onAdd={(data) => {
-            if (FormModel.current.branches && data) {
-              FormModel.current.branches[0].then = [...FormModel.current.branches[0].then, data];
-            }
-          }}
-          onUpdate={(data, type) => {
-            const indexOf = FormModel.current.branches![0].then.findIndex(
-              (item) => item.parallel === type,
-            );
-            if (indexOf !== -1) {
-              FormModel.current.branches![0].then[indexOf] = data;
-            }
-          }}
-        />
+        <Form.Item>
+          <Actions
+            openShakeLimit={true}
+            name={0}
+            thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
+            onAdd={(data) => {
+              if (FormModel.current.branches && data) {
+                FormModel.current.branches[0].then = [...FormModel.current.branches[0].then, data];
+              }
+            }}
+            onUpdate={(data, type) => {
+              const indexOf = FormModel.current.branches![0].then.findIndex(
+                (item) => item.parallel === type,
+              );
+              if (indexOf !== -1) {
+                FormModel.current.branches![0].then[indexOf] = data;
+              }
+            }}
+          />
+        </Form.Item>
       )}
     </div>
   );

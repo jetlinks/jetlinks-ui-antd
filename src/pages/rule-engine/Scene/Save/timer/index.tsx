@@ -6,8 +6,14 @@ import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import TimerTrigger from './TimerTrigger';
 import Action from '../action';
 import classNames from 'classnames';
+import { Form, FormInstance } from 'antd';
+import { TitleComponent } from '@/components';
 
-export default observer(() => {
+interface Props {
+  form: FormInstance;
+}
+
+export default observer((props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
 
   const handleLabel = (options: any): ReactChild | ReactChild[] => {
@@ -27,26 +33,41 @@ export default observer(() => {
   };
 
   return (
-    <div>
-      <div style={{ marginBottom: 16 }}>
+    <div style={{ marginBottom: 24 }}>
+      <div>
         <Observer>
           {() => {
             const label = handleLabel(FormModel.current.options?.trigger);
             return (
-              <AddButton
-                style={{ width: '100%' }}
-                onClick={() => {
-                  setVisible(true);
-                }}
+              <Form.Item
+                label={<TitleComponent style={{ fontSize: 14 }} data={'定时触发'} />}
+                name={'timer'}
+                rules={[
+                  {
+                    validator(_, v) {
+                      if (!v) {
+                        return Promise.reject(new Error('请配置定时触发规则'));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
-                <div
-                  className={classNames('trigger-options-content', {
-                    'is-add': !!Object.keys(FormModel.current.options?.trigger || {}).length,
-                  })}
+                <AddButton
+                  style={{ width: '100%' }}
+                  onClick={() => {
+                    setVisible(true);
+                  }}
                 >
-                  {label}
-                </div>
-              </AddButton>
+                  <div
+                    className={classNames('trigger-options-content', {
+                      'is-add': !!Object.keys(FormModel.current.options?.trigger || {}).length,
+                    })}
+                  >
+                    {label}
+                  </div>
+                </AddButton>
+              </Form.Item>
             );
           }}
         </Observer>
@@ -54,26 +75,48 @@ export default observer(() => {
       <div>
         <Observer>
           {() => (
-            <Action
-              thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
-              name={0}
-              onAdd={(data) => {
-                if (FormModel.current.branches && data) {
-                  FormModel.current.branches[0].then = [
-                    ...FormModel.current.branches[0].then,
-                    data,
-                  ];
-                }
-              }}
-              onUpdate={(data, type) => {
-                const indexOf = FormModel.current.branches![0].then.findIndex(
-                  (item) => item.parallel === type,
-                );
-                if (indexOf !== -1) {
-                  FormModel.current.branches![0].then[indexOf] = data;
-                }
-              }}
-            />
+            <Form.Item
+              name={['branches', 0, 'then']}
+              rules={[
+                {
+                  validator(_, v) {
+                    if (v && !v.length) {
+                      return Promise.reject('至少配置一个执行动作');
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <Action
+                thenOptions={FormModel.current.branches ? FormModel.current.branches[0].then : []}
+                name={0}
+                onAdd={(data) => {
+                  if (FormModel.current.branches && data) {
+                    const newThen = [...FormModel.current.branches[0].then, data];
+                    FormModel.current.branches[0].then = newThen;
+                    props.form.setFieldValue(['branches', 0, 'then'], newThen);
+                    props.form.validateFields(['branches', 0, 'then']);
+                  }
+                }}
+                onUpdate={(data, type) => {
+                  const indexOf = FormModel.current.branches![0].then.findIndex(
+                    (item) => item.parallel === type,
+                  );
+                  if (indexOf !== -1) {
+                    if (data.actions?.length) {
+                      FormModel.current.branches![0].then[indexOf] = data;
+                    } else {
+                      FormModel.current.branches![0].then = [];
+                    }
+                    props.form.setFieldValue(
+                      ['branches', 0, 'then'],
+                      FormModel.current.branches![0].then,
+                    );
+                  }
+                }}
+              />
+            </Form.Item>
           )}
         </Observer>
       </div>
@@ -84,6 +127,8 @@ export default observer(() => {
             setVisible(false);
             FormModel.current.options!['trigger'] = options;
             FormModel.current.trigger!.timer = data;
+            props.form.setFieldValue('timer', data);
+            props.form.validateFields(['timer']);
           }}
           close={() => {
             setVisible(false);
