@@ -10,14 +10,10 @@ interface Props {
   onChange?: (value?: any, text?: any) => void;
   propertiesChange?: (value?: string) => void;
   name?: any;
+  onColumns?: (col: any) => void;
+  thenName: number;
+  branchGroup?: number;
 }
-
-// const item = {
-//   a1: {
-//     "value": 10,
-//     "source": "fixed",
-//   }
-// }
 
 export default (props: Props) => {
   const [propertiesId, setPropertiesId] = useState<string | undefined>(undefined);
@@ -29,7 +25,7 @@ export default (props: Props) => {
   const [enumList, setEnumList] = useState<any>([]);
 
   useEffect(() => {
-    console.log(props.value);
+    // console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -97,9 +93,16 @@ export default (props: Props) => {
             value={propertiesValue}
             type={propertiesType}
             name={props.name}
+            branchGroup={props.branchGroup}
+            thenName={props.thenName}
             source={source}
             format={format}
             elements={enumList}
+            onColumns={(col) => {
+              if (props.onColumns) {
+                props.onColumns(col);
+              }
+            }}
             onChange={(value, sources) => {
               // console.log(value, sources);
               setPropertiesValue(value);

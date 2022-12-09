@@ -343,6 +343,8 @@ export default (props: ItemProps) => {
       {visible && (
         <Modal
           name={props.name}
+          branchGroup={props.branchGroup}
+          thenName={props.thenName}
           data={props.data}
           close={() => {
             setVisible(false);
@@ -364,6 +366,8 @@ export default (props: ItemProps) => {
       )}
       <ActionTypeComponent
         name={props.name}
+        branchGroup={props.branchGroup}
+        thenName={props.thenName}
         data={props.data}
         type={actionType}
         close={() => {

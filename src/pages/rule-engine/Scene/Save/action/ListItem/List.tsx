@@ -59,7 +59,9 @@ export default (props: ListProps) => {
         <Modal
           // type={props.type}
           parallel={props.parallel}
-          name={props.actions.length + 1}
+          name={props.actions.length}
+          branchGroup={props.parallel ? 1 : 0}
+          thenName={props.thenName}
           data={{
             key: `${props.type}_${props.actions.length}`,
           }}

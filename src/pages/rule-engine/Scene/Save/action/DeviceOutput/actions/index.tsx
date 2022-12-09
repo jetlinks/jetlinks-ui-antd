@@ -10,6 +10,8 @@ import WriteProperty from './WriteProperty';
 interface Props {
   get: (data: any) => void;
   name: number;
+  thenName: number;
+  branchGroup?: number;
 }
 
 export default observer((props: Props) => {
@@ -172,10 +174,14 @@ export default observer((props: Props) => {
             <WriteProperty
               properties={properties}
               name={props.name}
+              branchGroup={props.branchGroup}
+              thenName={props.thenName}
+              onColumns={(col) => {
+                // console.log('col',col,[col])
+                DeviceModel.columns = [col];
+              }}
               onChange={(value, text) => {
-                console.log(Object.keys(value));
                 const item = value[Object.keys(value)?.[0]]?.value;
-                console.log(item);
                 DeviceModel.propertiesName = text;
                 DeviceModel.propertiesValue = item;
               }}
