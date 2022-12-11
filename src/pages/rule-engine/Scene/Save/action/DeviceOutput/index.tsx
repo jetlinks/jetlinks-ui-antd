@@ -86,6 +86,7 @@ export default observer((props: Props) => {
 
   const save = async () => {
     const value = await formRef.current?.validateFields();
+
     const item = {
       selector: DeviceModel.selector,
       source: DeviceModel.source,
@@ -133,7 +134,7 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    console.log(item);
+    // console.log(item);
     props.save(item, _options);
     init();
   };

@@ -107,6 +107,7 @@ export default (props: Props) => {
         return (
           <InputNumber
             value={value}
+            min={0}
             onChange={(e: any) => {
               onChange(e);
             }}
@@ -123,7 +124,7 @@ export default (props: Props) => {
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
             onChange={(e, options: any) => {
-              console.log(options);
+              // console.log(options);
               setValue(e);
               setLabelValue(options?.text);
               if (props.onChange) {
