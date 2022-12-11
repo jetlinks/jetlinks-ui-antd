@@ -108,6 +108,7 @@ export default (props: Props) => {
           <InputNumber
             value={value}
             min={0}
+            precision={type === 'double' || type === 'float' ? 2 : 0}
             onChange={(e: any) => {
               onChange(e);
             }}
