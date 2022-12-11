@@ -13,6 +13,7 @@ interface Props {
   onColumns?: (col: any) => void;
   thenName: number;
   branchGroup?: number;
+  onRest?: (value: any) => void;
 }
 
 export default (props: Props) => {
@@ -95,6 +96,9 @@ export default (props: Props) => {
             setEnumList(option.valueType?.elements);
             textRef.current = option.name;
             setPropertiesValue(undefined);
+            if (props.onRest) {
+              props?.onRest(e);
+            }
           }}
         ></Select>
       </Col>

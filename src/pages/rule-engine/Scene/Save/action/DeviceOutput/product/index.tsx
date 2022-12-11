@@ -236,6 +236,7 @@ export default observer((props: Props) => {
               DeviceModel.productId = selectedRows.map((item) => item.id)?.[0];
               DeviceModel.productDetail = selectedRows?.[0];
               DeviceModel.message = {};
+              DeviceModel.deviceId = '';
             },
           }}
           request={(params) =>

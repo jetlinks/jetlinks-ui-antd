@@ -169,7 +169,20 @@ export default observer((props: Props) => {
           <Form.Item
             name={['message', 'properties']}
             label="设置属性"
-            rules={[{ required: true, message: '请选择属性' }]}
+            rules={[
+              // { required: true, message: '请选择属性' },
+              () => ({
+                validator(_, value) {
+                  console.log('---------', value);
+                  const isValue = Object.values(value)?.[0];
+                  console.log(isValue);
+                  if (isValue) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('请选择属性'));
+                },
+              }),
+            ]}
           >
             <WriteProperty
               properties={properties}
@@ -184,6 +197,12 @@ export default observer((props: Props) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
                 DeviceModel.propertiesName = text;
                 DeviceModel.propertiesValue = item;
+              }}
+              onRest={(value: any) => {
+                console.log(1111111);
+                form.setFieldValue(['message', 'properties'], {
+                  [value]: undefined,
+                });
               }}
             />
           </Form.Item>
