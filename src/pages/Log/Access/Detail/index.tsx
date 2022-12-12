@@ -17,7 +17,7 @@ const Detail = (props: Props) => {
 
   return (
     <Modal title={'详情'} visible onCancel={props.close} onOk={props.close} width={1000}>
-      <Descriptions bordered>
+      <Descriptions bordered labelStyle={{ width: 120, textAlign: 'center' }}>
         <Descriptions.Item label="URL">{data?.url}</Descriptions.Item>
         <Descriptions.Item label="请求方法" span={2}>
           {data?.httpMethod}

@@ -183,32 +183,36 @@ const Finish = (props: Props) => {
         <div style={{ marginLeft: 10 }}>
           <TitleComponent data={'配置概览'} />
           <div>
-            <p>接入方式：{props.provider?.name || ''}</p>
-            {props.provider?.description && <p>{props.provider?.description || ''}</p>}
-            <p>消息协议：{props.config.protocol}</p>
+            <div style={{ marginBottom: 10 }}>接入方式：{props.provider?.name || ''}</div>
+            {props.provider?.description && (
+              <div style={{ marginBottom: 10 }}>{props.provider?.description || ''}</div>
+            )}
+            <div style={{ marginBottom: 10 }}>消息协议：{props.config.protocol}</div>
             {config?.document && (
-              <div>{<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}</div>
+              <div style={{ marginBottom: 10 }}>
+                {<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}
+              </div>
             )}
           </div>
           <TitleComponent data={'设备接入指引'} />
           <div>
-            <p>
+            <div style={{ marginBottom: 10 }}>
               1、创建类型为{props?.provider?.id === 'OneNet' ? 'OneNet' : 'CTWing'}的设备接入网关
-            </p>
-            <p>
+            </div>
+            <div style={{ marginBottom: 10 }}>
               2、创建产品，并选中接入方式为
               {props?.provider?.id === 'OneNet'
                 ? 'OneNet'
                 : 'CTWing,选中后需填写CTWing平台中的产品ID、Master-APIkey。'}
-            </p>
+            </div>
             {props?.provider?.id === 'OneNet' ? (
-              <p>
+              <div style={{ marginBottom: 10 }}>
                 3、添加设备，为每一台设备设置唯一的IMEI、IMSI码（需与OneNet平台中填写的值一致，若OneNet平台没有对应的设备，将会通过OneNet平台提供的LWM2M协议自动创建）
-              </p>
+              </div>
             ) : (
-              <p>
+              <div style={{ marginBottom: 10 }}>
                 3、添加设备，为每一台设备设置唯一的IMEI、SN、IMSI、PSK码（需与CTWingt平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
-              </p>
+              </div>
             )}
           </div>
         </div>
@@ -218,11 +222,15 @@ const Finish = (props: Props) => {
         <div>
           <TitleComponent data={'配置概览'} />
           <div>
-            <p>接入方式：{props.provider?.name || ''}</p>
-            {props.provider?.description && <p>{props.provider?.description || ''}</p>}
-            <p>消息协议：{props.config.protocol}</p>
+            <div style={{ marginBottom: 10 }}>接入方式：{props.provider?.name || ''}</div>
+            {props.provider?.description && (
+              <div style={{ marginBottom: 10 }}>{props.provider?.description || ''}</div>
+            )}
+            <div style={{ marginBottom: 10 }}>消息协议：{props.config.protocol}</div>
             {config?.document && (
-              <div>{<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}</div>
+              <div style={{ marginBottom: 10 }}>
+                {<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}
+              </div>
             )}
           </div>
         </div>

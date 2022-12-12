@@ -130,14 +130,18 @@ const Save = observer(() => {
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
               const data = resp?.result || {};
-              console.log(data);
               if (data?.shareCluster === false) {
-                data.cluster = data.cluster?.map((item: any) => ({
-                  ...item.configuration,
-                  configuration: item,
-                }));
+                const cluster = (data?.cluster || []).map((item: any) => {
+                  return {
+                    ...item.configuration,
+                    configuration: item,
+                  };
+                });
+                const obj = _.cloneDeep({ ...data, cluster });
+                form1.setValues(obj);
+              } else {
+                form1.setValues({ ...data });
               }
-              form1.setValues({ ...data });
             }
           });
           onFieldValueChange('type', (field, f) => {
@@ -966,6 +970,10 @@ const Save = observer(() => {
                     type: 'void',
                     title: '新增',
                     'x-component': 'ArrayCollapse.Addition',
+                    'x-component-props': {
+                      ghost: true,
+                      type: 'primary',
+                    },
                   },
                 },
               },
@@ -1024,7 +1032,7 @@ const Save = observer(() => {
       <Card>
         <Row gutter={24}>
           <Col span={16}>
-            <Form form={form} layout="vertical" style={{ padding: 30 }}>
+            <Form form={form} layout="vertical">
               <SchemaField
                 schema={schema}
                 scope={{

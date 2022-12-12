@@ -63,6 +63,7 @@ const System = () => {
       }),
       dataIndex: 'message',
       ellipsis: true,
+      width: 200,
     },
     {
       title: intl.formatMessage({
