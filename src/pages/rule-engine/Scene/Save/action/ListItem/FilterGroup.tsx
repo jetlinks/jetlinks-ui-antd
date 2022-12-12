@@ -1,53 +1,39 @@
 import { observer, Observer } from '@formily/react';
-import { FormModel } from '@/pages/rule-engine/Scene/Save';
-import ParamsItem from './paramsItem';
-import { useState } from 'react';
+import ParamsItem from './FilterCondition';
+import { useEffect, useRef, useState } from 'react';
 import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { DropdownButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import classNames from 'classnames';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
-import { get, isArray, set } from 'lodash';
+import { isArray } from 'lodash';
 import './index.less';
 import { Form, Popconfirm } from 'antd';
 
 interface TermsProps {
   data: TermsType;
-  pName: (number | string)[];
-  whenName: number;
   name: number;
+  action: number;
+  branchesName: number;
+  branchGroup: number;
   isLast: boolean;
+  label?: any;
   paramsOptions: any[];
+  actionColumns: any[];
   onValueChange: (data: TermsType) => void;
   onLabelChange: (label: any) => void;
   onDelete: () => void;
+  onAddGroup: () => void;
+  onColumnsChange: (columns: any[]) => void;
 }
 
 export default observer((props: TermsProps) => {
   const [deleteVisible, setDeleteVisible] = useState(false);
+  const _name = [props.branchesName, 'then', props.branchGroup, 'actions', props.action, 'terms'];
+  const labelRef = useRef<any>({});
 
-  const addTerms = () => {
-    const data = get(FormModel.current.branches, [...props.pName]);
-
-    FormModel.current.options?.when[props.whenName]?.terms?.push({
-      terms: [],
-    });
-    const key = `terms_${new Date().getTime()}`;
-    const defaultValue = {
-      type: 'and',
-      terms: [
-        {
-          column: undefined,
-          value: undefined,
-          key: 'params_1',
-          type: 'and',
-        },
-      ],
-      key,
-    };
-    data?.push(defaultValue);
-    set(FormModel.current.branches!, [...props.pName], data);
-    // setTerms([...terms])
-  };
+  useEffect(() => {
+    labelRef.current = props.label || {};
+  }, [props.label]);
 
   return (
     <div className="terms-params">
@@ -55,26 +41,22 @@ export default observer((props: TermsProps) => {
         <div
           className="terms-params-content"
           onMouseOver={() => {
-            if (props.name !== 0) setDeleteVisible(true);
+            setDeleteVisible(true);
           }}
           onMouseOut={() => {
-            if (props.name !== 0) setDeleteVisible(false);
+            setDeleteVisible(false);
           }}
         >
           <Observer>
             {() => {
-              const _when = get(FormModel.current.branches, [...props.pName, props.name]);
-              const terms: TermsType[] = _when?.terms || [];
+              const terms = props.data.terms || [];
               return terms.map((item, index) => (
                 <Form.Item
-                  name={['branches', ...props.pName, props.whenName, 'terms', props.name]}
+                  name={['branches', ..._name, props.name, 'terms', index]}
                   rules={[
                     {
                       validator(_, v) {
                         if (v) {
-                          if (!Object.keys(v).length) {
-                            return Promise.reject(new Error('该数据已发生变更，请重新配置'));
-                          }
                           if (!v.column) {
                             return Promise.reject(new Error('请选择参数'));
                           }
@@ -101,23 +83,24 @@ export default observer((props: TermsProps) => {
                   ]}
                 >
                   <ParamsItem
-                    pName={[...props.pName, props.name]}
-                    isDelete={terms.length > 1}
-                    name={index}
+                    branchesName={props.branchesName}
+                    branchGroup={props.branchGroup}
+                    action={props.action}
                     data={item}
                     key={item.key}
-                    isLast={index === props.data.terms!.length - 1}
                     options={props.paramsOptions}
-                    label={
-                      FormModel.current.options?.when?.[props.whenName]?.terms?.[props.name]
-                        ?.terms?.[index]
-                    }
+                    label={labelRef.current?.terms?.[index]}
+                    isLast={index === props.data.terms!.length - 1}
                     onDelete={() => {
                       terms.splice(index, 1);
-                      // setTerms([...terms]);
-                      // props.onValueChange({
-                      //   terms: terms,
-                      // });
+                      if (terms.length === 0) {
+                        props.onDelete();
+                      } else {
+                        props.onValueChange({
+                          ...props.data,
+                          terms: terms,
+                        });
+                      }
                     }}
                     onAdd={() => {
                       const key = `params_${new Date().getTime()}`;
@@ -128,31 +111,37 @@ export default observer((props: TermsProps) => {
                         termType: undefined,
                         key,
                       });
-
-                      // setTerms([...terms]);
                       props.onValueChange({
-                        ..._when,
+                        ...props.data,
                         terms: terms,
                       });
                     }}
-                    onValueChange={(data) => {
+                    onChange={(data) => {
                       terms[index] = {
                         ...terms[index],
                         ...data,
                       };
 
-                      // setTerms([...terms]);
                       props.onValueChange({
-                        ..._when,
+                        ...props.data,
                         terms: terms,
                       });
                     }}
                     onLabelChange={(options) => {
-                      FormModel.current.options!.when[props.whenName].terms[props.name].terms[
-                        index
-                      ] = options;
-                      FormModel.current.options!.when[props.whenName].terms[props.name].termType =
-                        props.data.type === 'and' ? '并且' : '或者';
+                      let newLabel: any = [];
+                      const typeLabel = props.data.type === 'and' ? '并且' : '或者';
+                      if (labelRef.current?.terms) {
+                        labelRef.current?.terms.splice(index, 1, options);
+                        newLabel = labelRef.current;
+                      } else {
+                        newLabel = {
+                          terms: [options],
+                          termType: typeLabel,
+                        };
+                      }
+
+                      labelRef.current = newLabel;
+                      props.onLabelChange(newLabel);
                     }}
                   />
                 </Form.Item>
@@ -181,7 +170,7 @@ export default observer((props: TermsProps) => {
             />
           </div>
         ) : (
-          <div className="terms-add" onClick={addTerms}>
+          <div className="terms-add" onClick={props.onAddGroup}>
             <div className="terms-content">
               <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
               <span>分组</span>

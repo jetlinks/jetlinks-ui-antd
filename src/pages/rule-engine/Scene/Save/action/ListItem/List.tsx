@@ -5,8 +5,10 @@ import './index.less';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Item from './Item';
 import type { ParallelType } from './Item';
+import { Observer } from '@formily/react';
+
 interface ListProps {
-  thenName: number;
+  branchesName: number;
   type: ParallelType;
   actions: ActionsType[];
   parallel: boolean;
@@ -24,29 +26,35 @@ export default (props: ListProps) => {
 
   return (
     <div className="action-list-content">
-      {actions.map((item, index) => (
-        <Item
-          thenName={props.thenName}
-          branchGroup={props.parallel ? 1 : 0}
-          name={index}
-          data={item}
-          type={props.type}
-          key={item.key}
-          parallel={props.parallel}
-          options={item.options}
-          onDelete={() => {
-            props.onDelete(item.key!);
-          }}
-          onUpdate={(data, options) => {
-            props.onAdd({
-              ...item,
-              ...data,
-              options,
-            });
-            setVisible(false);
-          }}
-        />
-      ))}
+      <Observer>
+        {() => {
+          return actions.map((item, index) => (
+            <Item
+              branchesName={props.branchesName}
+              branchGroup={props.parallel ? 1 : 0}
+              name={index}
+              data={item}
+              type={props.type}
+              key={item.key}
+              parallel={props.parallel}
+              options={item.options}
+              onDelete={() => {
+                props.onDelete(item.key!);
+              }}
+              onUpdate={(data, options) => {
+                props.onAdd({
+                  ...item,
+                  ...data,
+                  options,
+                });
+                console.log('update-options', options);
+                setVisible(false);
+              }}
+            />
+          ));
+        }}
+      </Observer>
+
       <AddButton
         onClick={() => {
           setVisible(true);
@@ -60,7 +68,7 @@ export default (props: ListProps) => {
           parallel={props.parallel}
           name={props.actions.length}
           branchGroup={props.parallel ? 1 : 0}
-          thenName={props.thenName}
+          branchesName={props.branchesName}
           data={{
             key: `${props.type}_${props.actions.length}`,
           }}

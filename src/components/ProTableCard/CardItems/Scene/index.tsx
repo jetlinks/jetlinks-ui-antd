@@ -117,10 +117,20 @@ const actionRender = (action: ActionsType) => {
 };
 // 过滤器
 const actionFilter = (terms: any, isLast: boolean, index: number) => {
-  if (isArray(terms)) {
-    return `动作${index + 1}${handleOptionsLabel(terms, isLast ? terms?.[0]?.type : undefined)}`;
-  }
-  return '';
+  let str = `动作${index + 1} `;
+  terms?.forEach((item: any, iindex: number) => {
+    if (isArray(item.terms)) {
+      item.terms.map((iItem: number, iIndex: number) => {
+        str += `${handleOptionsLabel(
+          iItem,
+          iIndex < item.terms.length - 1 ? iItem[3] : undefined,
+        )}`;
+      });
+    }
+    str += iindex < terms.length - 1 ? item.termType : '';
+  });
+
+  return str;
 };
 
 const conditionsRender = (when: any[], index: number) => {

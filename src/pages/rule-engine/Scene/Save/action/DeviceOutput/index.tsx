@@ -106,6 +106,7 @@ export default observer((props: Props) => {
       relationName: DeviceModel.relationName,
       taglist: [],
       columns: [],
+      otherColumns: [],
     };
     _options.name = DeviceModel.deviceDetail?.name;
     const _type = value.message.messageType;
@@ -125,6 +126,7 @@ export default observer((props: Props) => {
       _options.properties = DeviceModel.propertiesName;
       _options.propertiesValue = DeviceModel.propertiesValue;
       _options.columns = DeviceModel.columns;
+      _options.otherColumns = DeviceModel.columns;
     }
     if (_options.selector === 'tag') {
       _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({

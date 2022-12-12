@@ -13,7 +13,7 @@ interface ActionTypeProps {
   data: Partial<ActionsType>;
   close: () => void;
   parallel: boolean;
-  thenName: number;
+  branchesName: number;
   branchGroup?: number;
 }
 
@@ -39,7 +39,7 @@ export const ActionTypeComponent = (props: ActionTypeProps) => {
           }}
           name={props.name}
           branchGroup={props.branchGroup}
-          thenName={props.thenName}
+          thenName={props.branchesName}
           cancel={() => {
             props.close();
           }}
@@ -99,7 +99,7 @@ interface Props {
   save: (data: any, options?: any) => void;
   data: Partial<ActionsType>;
   name: number;
-  thenName: number;
+  branchesName: number;
   branchGroup?: number;
   // type: ParallelType;
   parallel: boolean;

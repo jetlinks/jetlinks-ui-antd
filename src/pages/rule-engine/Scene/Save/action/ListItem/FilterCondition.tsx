@@ -1,22 +1,21 @@
 import type { TermsType, TermsVale } from '@/pages/rule-engine/Scene/typings';
 import { DropdownButton, ParamsDropdown } from '@/pages/rule-engine/Scene/Save/components/Buttons';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import classNames from 'classnames';
 import { observer } from '@formily/react';
-import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
-import '../index.less';
-import { FormModel } from '../..';
 import { Popconfirm, Space } from 'antd';
-import { cloneDeep } from 'lodash';
+import './index.less';
 
 interface FilterProps {
-  thenName: number;
+  branchesName: number;
   branchGroup?: number;
   action?: number;
-  data?: TermsType;
+  data: TermsType;
+  isLast: boolean;
   onChange: (value: TermsType) => void;
-  onLabelChange: (lb: string[]) => void;
+  onLabelChange: (lb: any[]) => void;
+  options: any[];
   label?: any[];
   onAdd: () => void;
   onDelete: () => void;
@@ -25,29 +24,12 @@ interface FilterProps {
 const handleName = (_data: any) => (
   <Space>
     {_data.name}
-    <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
+    {/*<div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>*/}
     {_data.description && (
       <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
     )}
   </Space>
 );
-//
-// const handleOptions = (options: any[]): any[] => {
-//   if (!options) return []
-//
-//   return options.map(item => {
-//     const disabled = item.children?.length > 0;
-//     return {
-//       ...item,
-//       column: item.column,
-//       key: item.column,
-//       value: item.column,
-//       title: handleName(item),
-//       disabled: disabled,
-//       children: handleOptions(item.children),
-//     };
-//   })
-// }
 
 const DoubleFilter = ['nbtw', 'btw', 'in', 'nin'];
 const columnOptionsMap = new Map<string, any>();
@@ -61,7 +43,9 @@ export default observer((props: FilterProps) => {
   const [ttOptions, setTtOptions] = useState<any>([]);
   const [valueOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
-  const labelCache = useRef<any[]>([undefined, undefined, {}]);
+  const labelCache = useRef<any[]>([undefined, undefined, {}, 'and']);
+
+  const [deleteVisible, setDeleteVisible] = useState(false);
 
   const ValueRef = useRef<Partial<TermsType>>({
     column: '',
@@ -120,169 +104,112 @@ export default observer((props: FilterProps) => {
     return [];
   };
 
-  const getParams = useCallback(() => {
-    const _params = {
-      branch: props.thenName,
-      branchGroup: props.branchGroup,
-      action: props.action,
-    };
-    columnOptionsMap.clear();
-    const newData = cloneDeep(FormModel.current);
-    newData.branches = newData.branches?.filter((item) => !!item);
-    queryBuiltInParams(newData, _params).then((res: any) => {
-      if (res.status === 200) {
-        const params = handleTreeData(
-          // res.result.filter((item: any) => !item.id.includes(`action_${props.action}`)),
-          res.result,
-        );
-        setColumnOptions(params);
-        setBuiltInOptions(params);
-        convertLabelValue(props.data?.column);
-      }
-    });
-  }, [props.data?.column]);
-
   useEffect(() => {
     if (props.data) {
       setColumn(props.data.column || '');
       setTermType(props.data.termType || '');
       setValue(props.data.value);
       ValueRef.current = props.data || {};
+      handleTreeData(props.options || []);
       convertLabelValue(props.data.column);
     }
   }, [props.data]);
 
   useEffect(() => {
-    if (props.data) {
-      getParams();
-    }
-  }, []);
+    const newOptions = handleTreeData(props.options || []);
+    convertLabelValue(props.data?.column);
+    setBuiltInOptions(newOptions);
+    setColumnOptions(newOptions);
+  }, [props.options]);
 
   useEffect(() => {
-    labelCache.current = props.label || [undefined, undefined, {}];
+    labelCache.current = props.label || [undefined, undefined, {}, 'and'];
   }, [props.label]);
 
   return (
     <div className="filter-condition-warp">
-      {props.data ? (
-        <div className="filter-condition-content">
-          <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
-            <div className={classNames('filter-condition-delete danger show')}>
-              <DeleteOutlined />
-            </div>
-          </Popconfirm>
-          <DropdownButton
-            options={columnOptions}
-            type="param"
-            placeholder="请选择参数"
-            value={column}
-            showLabelKey="fullName"
-            isTree={true}
-            onChange={(_value, item) => {
-              setValue({
+      <div
+        className="filter-condition-content"
+        onMouseOver={() => {
+          setDeleteVisible(true);
+        }}
+        onMouseOut={() => {
+          setDeleteVisible(false);
+        }}
+      >
+        <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
+          <div className={classNames('filter-condition-delete', { show: deleteVisible })}>
+            <CloseOutlined />
+          </div>
+        </Popconfirm>
+        <DropdownButton
+          options={columnOptions}
+          type="param"
+          placeholder="请选择参数"
+          value={column}
+          showLabelKey="fullName"
+          isTree={true}
+          onChange={(_value, item) => {
+            setValue({
+              value: undefined,
+              source: 'fixed',
+            });
+            // paramChange(item);
+            setColumn(_value!);
+            const node = item.node;
+            const _termTypeOptions: any[] =
+              node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
+            setTtOptions(_termTypeOptions);
+            // 默认选中第一个
+            let _termTypeValue = undefined;
+            if (_termTypeOptions.length) {
+              _termTypeValue = _termTypeOptions[0].key;
+              labelCache.current[1] = _termTypeValue;
+              setTermType(_termTypeValue);
+            } else {
+              labelCache.current[1] = '';
+              setTermType('');
+            }
+            ValueRef.current.column = _value!;
+            labelCache.current[0] = node.fullName;
+            valueChange({
+              column: _value,
+              value: {
                 value: undefined,
                 source: 'fixed',
-              });
-              // paramChange(item);
-              setColumn(_value!);
-              const node = item.node;
-              const _termTypeOptions: any[] =
-                node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
-              setTtOptions(_termTypeOptions);
-              // 默认选中第一个
-              let _termTypeValue = undefined;
-              if (_termTypeOptions.length) {
-                _termTypeValue = _termTypeOptions[0].key;
-                labelCache.current[1] = _termTypeValue;
-                setTermType(_termTypeValue);
-              } else {
-                labelCache.current[1] = '';
-                setTermType('');
-              }
-              ValueRef.current.column = _value!;
-              labelCache.current[0] = node.fullName;
-              valueChange({
-                column: _value,
-                value: {
-                  value: undefined,
-                  source: 'fixed',
-                },
-                termType: _termTypeValue,
-              });
-            }}
-          />
-          <DropdownButton
-            options={ttOptions}
-            type="termType"
-            placeholder="操作符"
-            value={termType}
-            onChange={(v) => {
-              const _value = {
-                ...value,
-              };
-              if (value && DoubleFilter.includes(v!)) {
-                _value.value = [undefined, undefined];
-              } else {
-                _value.value = undefined;
-              }
-              setValue(_value);
-              setTermType(v!);
+              },
+              termType: _termTypeValue,
+            });
+          }}
+        />
+        <DropdownButton
+          options={ttOptions}
+          type="termType"
+          placeholder="操作符"
+          value={termType}
+          onChange={(v) => {
+            const _value = {
+              ...value,
+            };
+            if (value && DoubleFilter.includes(v!)) {
+              _value.value = [undefined, undefined];
+            } else {
+              _value.value = undefined;
+            }
+            setValue(_value);
+            setTermType(v!);
 
-              labelCache.current[1] = v;
-              ValueRef.current.termType = v;
-              valueChange({
-                column: props.data!.column,
-                value: _value as TermsVale,
-                termType: v,
-              });
-            }}
-          />
-          {DoubleFilter.includes(termType) ? (
-            <>
-              <ParamsDropdown
-                options={valueOptions}
-                type="value"
-                placeholder="参数值"
-                valueType={valueType}
-                value={value}
-                BuiltInOptions={BuiltInOptions}
-                showLabelKey="fullName"
-                name={0}
-                onChange={(v, lb) => {
-                  const _myValue = {
-                    value: [v.value, ValueRef.current.value?.value?.[1]],
-                    source: v.source,
-                  };
-                  ValueRef.current.value = _myValue;
-                  setValue(_myValue);
-                  labelCache.current[2] = { ...labelCache.current[2], 0: lb };
-                  props.onLabelChange?.(labelCache.current);
-                  valueEventChange(_myValue);
-                }}
-              />
-              <ParamsDropdown
-                options={valueOptions}
-                type="value"
-                placeholder="参数值"
-                valueType={valueType}
-                value={value}
-                BuiltInOptions={BuiltInOptions}
-                showLabelKey="fullName"
-                name={1}
-                onChange={(v, lb) => {
-                  const _myValue = {
-                    value: [ValueRef.current.value?.value?.[0], v.value],
-                    source: v.source,
-                  };
-                  ValueRef.current.value = _myValue;
-                  setValue(_myValue);
-                  labelCache.current[2] = { ...labelCache.current[2], 1: lb };
-                  props.onLabelChange?.(labelCache.current);
-                  valueEventChange(_myValue);
-                }}
-              />
-            </>
-          ) : (
+            labelCache.current[1] = v;
+            ValueRef.current.termType = v;
+            valueChange({
+              column: props.data!.column,
+              value: _value as TermsVale,
+              termType: v,
+            });
+          }}
+        />
+        {DoubleFilter.includes(termType) ? (
+          <>
             <ParamsDropdown
               options={valueOptions}
               type="value"
@@ -291,26 +218,87 @@ export default observer((props: FilterProps) => {
               value={value}
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
+              name={0}
               onChange={(v, lb) => {
-                setValue({
-                  ...v,
-                });
-                labelCache.current[2] = { 0: lb };
+                const _myValue = {
+                  value: [v.value, ValueRef.current.value?.value?.[1]],
+                  source: v.source,
+                };
+                ValueRef.current.value = _myValue;
+                setValue(_myValue);
+                labelCache.current[2] = { ...labelCache.current[2], 0: lb };
+                labelCache.current[3] = props.data.type;
                 props.onLabelChange?.(labelCache.current);
-                valueEventChange(v);
+                valueEventChange(_myValue);
               }}
             />
-          )}
+            <ParamsDropdown
+              options={valueOptions}
+              type="value"
+              placeholder="参数值"
+              valueType={valueType}
+              value={value}
+              BuiltInOptions={BuiltInOptions}
+              showLabelKey="fullName"
+              name={1}
+              onChange={(v, lb) => {
+                const _myValue = {
+                  value: [ValueRef.current.value?.value?.[0], v.value],
+                  source: v.source,
+                };
+                ValueRef.current.value = _myValue;
+                setValue(_myValue);
+                labelCache.current[2] = { ...labelCache.current[2], 1: lb };
+                labelCache.current[3] = props.data.type;
+                props.onLabelChange?.(labelCache.current);
+                valueEventChange(_myValue);
+              }}
+            />
+          </>
+        ) : (
+          <ParamsDropdown
+            options={valueOptions}
+            type="value"
+            placeholder="参数值"
+            valueType={valueType}
+            value={value}
+            BuiltInOptions={BuiltInOptions}
+            showLabelKey="fullName"
+            onChange={(v, lb) => {
+              setValue({
+                ...v,
+              });
+              labelCache.current[2] = { 0: lb };
+              labelCache.current[3] = props.data.type;
+              props.onLabelChange?.(labelCache.current);
+              valueEventChange(v);
+            }}
+          />
+        )}
+      </div>
+      {!props.isLast ? (
+        <div className="term-type-warp">
+          <DropdownButton
+            options={[
+              { title: '并且', key: 'and' },
+              { title: '或者', key: 'or' },
+            ]}
+            isTree={false}
+            type="type"
+            value={props.data.type}
+            onChange={(v) => {
+              props.data.type = v;
+              labelCache.current[3] = v;
+              props.onLabelChange?.([...labelCache.current]);
+            }}
+          />
         </div>
       ) : (
-        <div
-          className="filter-add-button"
-          onClick={() => {
-            props.onAdd();
-            getParams();
-          }}
-        >
-          <PlusOutlined style={{ paddingRight: 16 }} /> 添加过滤条件
+        <div className="terms-filter-add" onClick={props.onAdd}>
+          <div className="terms-filter-content">
+            <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
+            <span>条件</span>
+          </div>
         </div>
       )}
     </div>

@@ -30,7 +30,7 @@ interface ParamsItemProps {
 const handleName = (_data: any) => (
   <Space>
     {_data.name}
-    <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
+    {/*<div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>*/}
     {_data.description && (
       <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
     )}
@@ -58,37 +58,41 @@ const DoubleFilter = ['nbtw', 'btw', 'in', 'nin'];
 
 export const handleOptionsLabel = (data: any, type?: string) => {
   if (isArray(data)) {
-    const c = data[0];
-    const t = data[1];
-    const v = data[2];
-    const termsTypeKey = {
-      eq: '等于_value',
-      neq: '不等于_value',
-      gt: '大于_value',
-      gte: '大于等于_value',
-      lt: '小于_value',
-      lte: '小于等于_value',
-      btw: '在_value和_value2之间',
-      nbtw: '不在_value和_value2之间',
-      time_gt_now: '距离当前时间大于_value秒',
-      time_lt_now: '距离当前时间小于_value秒',
-      in: '在_value,_value2之中',
-      nin: '不在_value,_value2之中',
-      like: '包含_value',
-      nlike: '不包含_value',
-    };
-    const typeKey = {
-      and: '并且',
-      or: '或者',
-    };
-    const _value = isObject(v) ? Object.values(v) : [v];
-    const typeStr = type ? typeKey[type] : '';
-    if (DoubleFilter.includes(t)) {
-      const str = termsTypeKey[t].replace('_value', _value[0]).replace('_value2', _value[1]);
-      return `${c} ${str} ${typeStr}`;
+    try {
+      const c = data[0];
+      const t = data[1];
+      const v = data[2];
+      const termsTypeKey = {
+        eq: '等于_value',
+        neq: '不等于_value',
+        gt: '大于_value',
+        gte: '大于等于_value',
+        lt: '小于_value',
+        lte: '小于等于_value',
+        btw: '在_value和_value2之间',
+        nbtw: '不在_value和_value2之间',
+        time_gt_now: '距离当前时间大于_value秒',
+        time_lt_now: '距离当前时间小于_value秒',
+        in: '在_value,_value2之中',
+        nin: '不在_value,_value2之中',
+        like: '包含_value',
+        nlike: '不包含_value',
+      };
+      const typeKey = {
+        and: '并且',
+        or: '或者',
+      };
+      const _value = isObject(v) ? Object.values(v) : [v];
+      const typeStr = type ? typeKey[type] : '';
+      if (DoubleFilter.includes(t)) {
+        const str = termsTypeKey[t].replace('_value', _value[0]).replace('_value2', _value[1]);
+        return `${c} ${str} ${typeStr} `;
+      }
+      const str = termsTypeKey[t].replace('_value', _value[0]);
+      return `${c} ${str} ${typeStr} `;
+    } catch (e) {
+      return data;
     }
-    const str = termsTypeKey[t].replace('_value', _value[0]);
-    return `${c} ${str} ${typeStr}`;
   }
   return data;
 };
@@ -138,8 +142,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   const convertLabelValue = useCallback(
     (columnValue?: string) => {
       if (columnValue && paramOptions.length) {
-        console.log('paramsValueOptions ===>>', paramsValueOptions, columnValue);
         const labelOptions = paramsValueOptions.get(columnValue);
+        console.log('paramsValueOptions ===>>', columnValue, labelOptions);
         if (labelOptions) {
           const _termTypeOptions: any[] =
             labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
@@ -154,6 +158,9 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             }));
             setMetricsOptions(_metrics);
           }
+        } else {
+          setTtOptions([]);
+          setValueType('');
         }
       }
     },
@@ -203,6 +210,9 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           }}
           showLabelKey="fullName"
           isTree={true}
+          onVailChange={(v) => {
+            console.log('onVailChange', v);
+          }}
           onChange={(_value, item) => {
             setValue({
               value: undefined,

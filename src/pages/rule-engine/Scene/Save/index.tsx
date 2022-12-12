@@ -158,7 +158,7 @@ export default observer(() => {
       case 'device':
         return <Device form={_form} />;
       case 'manual':
-        return <Manual form={_form} />;
+        return <Manual />;
       case 'timer':
         return <Timer form={_form} />;
       default:

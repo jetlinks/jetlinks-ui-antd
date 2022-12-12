@@ -85,7 +85,7 @@ export default (props: ActionsProps) => {
           >
             <div className="actions-list">
               <List
-                thenName={props.name}
+                branchesName={props.name}
                 type="serial"
                 parallel={false}
                 actions={serialArray.length ? serialArray[0].actions : []}
@@ -134,7 +134,7 @@ export default (props: ActionsProps) => {
           >
             <div className="actions-list">
               <List
-                thenName={props.name}
+                branchesName={props.name}
                 type="parallel"
                 parallel={true}
                 actions={parallelArray.length ? parallelArray[0].actions : []}

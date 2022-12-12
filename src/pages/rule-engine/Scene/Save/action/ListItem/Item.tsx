@@ -1,13 +1,17 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Modal, { ActionTypeComponent } from '../Modal/add';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
-import FilterCondition from './FilterCondition';
-import { isArray, set } from 'lodash';
-import { Form, Popconfirm } from 'antd';
+import FilterGroup from './FilterGroup';
+import { cloneDeep, set } from 'lodash';
+import { Popconfirm, Space } from 'antd';
+import { TermsType } from '@/pages/rule-engine/Scene/typings';
+import { FormModel } from '@/pages/rule-engine/Scene/Save';
+import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
+import { randomString } from '@/utils/util';
 
 export enum ParallelEnum {
   'parallel' = 'parallel',
@@ -17,8 +21,8 @@ export enum ParallelEnum {
 export type ParallelType = keyof typeof ParallelEnum;
 
 interface ItemProps {
-  thenName: number;
-  branchGroup?: number;
+  branchesName: number;
+  branchGroup: number;
   name: number;
   data: ActionsType;
   type: ParallelType;
@@ -43,16 +47,67 @@ itemNotifyIconMap.set('voice', require('/public/images/scene/notify-item-img/voi
 itemNotifyIconMap.set('sms', require('/public/images/scene/notify-item-img/sms.png'));
 itemNotifyIconMap.set('webhook', require('/public/images/scene/notify-item-img/webhook.png'));
 
+const handleName = (_data: any) => (
+  <Space>
+    {_data.name}
+    <div style={{ color: 'grey', marginLeft: '5px' }}>{_data.fullName}</div>
+    {_data.description && (
+      <div style={{ color: 'grey', marginLeft: '5px' }}>({_data.description})</div>
+    )}
+  </Space>
+);
+
 export default (props: ItemProps) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [triggerVisible, setTriggerVisible] = useState<boolean>(false);
-  const [op, setOp] = useState<any>(props.options);
+  // const [op, setOp] = useState<any>(props.options);
   const cacheValueRef = useRef<any>({});
   const [actionType, setActionType] = useState<string>('');
+  const [thenTerms, setThenTerms] = useState<TermsType[] | undefined>([]);
+  const [paramsOptions, setParamsOptions] = useState<any[]>([]);
+
+  const optionsRef = useRef<any[]>([]);
 
   useEffect(() => {
-    setOp(props.options);
+    // setOp(props.options);
+    optionsRef.current = props.options;
   }, [props.options]);
+
+  const handleTreeData = (data: any): any[] => {
+    if (data.length > 0) {
+      return data.map((item: any) => {
+        const name = handleName(item);
+        if (item.children) {
+          return {
+            ...item,
+            key: item.id,
+            fullName: item.name,
+            title: name,
+            disabled: true,
+            children: handleTreeData(item.children),
+          };
+        }
+        return { ...item, key: item.id, fullName: item.name, title: name };
+      });
+    }
+    return [];
+  };
+
+  const getParams = useCallback(() => {
+    const _params = {
+      branch: props.branchesName,
+      branchGroup: props.branchGroup,
+      action: props.name,
+    };
+    const newData = cloneDeep(FormModel.current);
+    newData.branches = newData.branches?.filter((item) => !!item);
+    queryBuiltInParams(newData, _params).then((res: any) => {
+      if (res.status === 200) {
+        const params = handleTreeData(res.result);
+        setParamsOptions(params);
+      }
+    });
+  }, [props.name, props.branchesName, props.branchGroup]);
 
   const notifyRender = (data: ActionsType | undefined, options: any) => {
     switch (data?.notify?.notifyType) {
@@ -277,7 +332,12 @@ export default (props: ItemProps) => {
 
   useEffect(() => {
     cacheValueRef.current = props.data;
+    setThenTerms(props.data.terms);
   }, [props.data]);
+
+  useEffect(() => {
+    getParams();
+  }, []);
 
   return (
     <div className="actions-item-warp">
@@ -305,98 +365,139 @@ export default (props: ItemProps) => {
           </div>
         </Popconfirm>
       </div>
-      {props.parallel ? null : (
-        <Form.Item
-          name={[
-            'branches',
-            props.thenName,
-            'then',
-            props.branchGroup || 0,
-            'actions',
-            props.name,
-            'terms',
-          ]}
-          rules={[
-            {
-              validator(_, v) {
-                if (v) {
-                  if (!v.column) {
-                    return Promise.reject(new Error('请选择参数'));
-                  }
-
-                  if (!v.termType) {
-                    return Promise.reject(new Error('请选择操作符'));
-                  }
-
-                  if (!v.value) {
-                    return Promise.reject(new Error('请选择或输入参数值'));
-                  } else {
-                    if (isArray(v.value.value) && v.value.value.some((_v: any) => !_v)) {
-                      return Promise.reject(new Error('请选择或输入参数值'));
-                    } else if (!v.value.value) {
-                      return Promise.reject(new Error('请选择或输入参数值'));
-                    }
-                  }
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
-          <FilterCondition
-            action={props.name}
-            branchGroup={props.branchGroup}
-            thenName={props.thenName}
-            data={props.data.terms?.[0]}
-            label={props.data.options?.terms}
-            onAdd={() => {
+      <div className={'actions-item-filter-warp'}>
+        {props.parallel ? null : thenTerms && thenTerms.length ? (
+          thenTerms.map((termsItem, index) => (
+            <FilterGroup
+              action={props.name}
+              key={termsItem.key}
+              branchGroup={props.branchGroup}
+              branchesName={props.branchesName}
+              name={index}
+              data={termsItem}
+              isLast={index === thenTerms.length - 1}
+              paramsOptions={paramsOptions}
+              label={props.options?.terms?.[index]}
+              actionColumns={props.options?.otherColumns}
+              onColumnsChange={(columns) => {
+                optionsRef.current['columns'] = columns;
+                props.onUpdate(props.data, optionsRef.current);
+              }}
+              onAddGroup={() => {
+                const newThenTerms = [...thenTerms];
+                newThenTerms.push({
+                  type: 'and',
+                  key: randomString(),
+                  terms: [
+                    {
+                      column: undefined,
+                      value: undefined,
+                      termType: undefined,
+                      type: 'and',
+                      key: randomString(),
+                    },
+                  ],
+                });
+                const _data = props.data;
+                set(_data, 'terms', newThenTerms);
+                props.onUpdate(_data, optionsRef.current);
+              }}
+              onValueChange={(termsData) => {
+                const _data = props.data;
+                console.log('update-onValueChange', termsData, optionsRef.current);
+                set(_data, ['terms', index], termsData);
+                // cacheValueRef.current = _data;
+                props.onUpdate(_data, {
+                  ...optionsRef.current,
+                });
+              }}
+              onLabelChange={(lb) => {
+                const newLabel: any[] = props.options?.terms || [];
+                newLabel.splice(index, 1, lb);
+                optionsRef.current['terms'] = newLabel;
+                props.onUpdate(props.data, optionsRef.current);
+              }}
+              onDelete={() => {
+                const _data = thenTerms.filter((a) => a.key !== termsItem.key);
+                console.log(_data, thenTerms, termsItem);
+                props.onUpdate(
+                  {
+                    ...props.data,
+                    terms: _data,
+                  },
+                  optionsRef.current,
+                );
+              }}
+            />
+          ))
+        ) : (
+          <div
+            className="filter-add-button"
+            onClick={() => {
+              getParams();
               let _data = props.data;
+              optionsRef.current['terms'] = [];
               if (!_data.terms) {
                 _data = {
                   ..._data,
-                  terms: [{}],
+                  terms: [
+                    {
+                      type: 'and',
+                      key: randomString(),
+                      terms: [
+                        {
+                          column: undefined,
+                          value: undefined,
+                          termType: undefined,
+                          type: 'and',
+                          key: randomString(),
+                        },
+                      ],
+                    },
+                  ],
                 };
-                cacheValueRef.current = _data;
-                props.onUpdate(_data, op);
+                props.onUpdate(_data, optionsRef.current);
+              } else {
+                _data.terms = [
+                  {
+                    type: 'and',
+                    key: randomString(),
+                    terms: [
+                      {
+                        column: undefined,
+                        value: undefined,
+                        termType: undefined,
+                        type: 'and',
+                        key: randomString(),
+                      },
+                    ],
+                  },
+                ];
+                props.onUpdate(_data, optionsRef.current);
               }
             }}
-            onChange={(termsData) => {
-              const _data = props.data;
-              set(_data, 'terms', [termsData]);
-              cacheValueRef.current = _data;
-              props.onUpdate(_data, {
-                ...op,
-              });
-            }}
-            onLabelChange={(lb) => {
-              props.onUpdate(cacheValueRef.current, {
-                ...op,
-                terms: lb,
-              });
-            }}
-            onDelete={() => {
-              const _data = props.data;
-              if (_data.terms) {
-                delete _data.terms;
-                props.onUpdate(_data, op);
-              }
-            }}
-          />
-        </Form.Item>
-      )}
+          >
+            <PlusOutlined style={{ paddingRight: 16 }} /> 添加过滤条件
+          </div>
+        )}
+      </div>
       {visible && (
         <Modal
           name={props.name}
           branchGroup={props.branchGroup}
-          thenName={props.thenName}
+          branchesName={props.branchesName}
           data={props.data}
           close={() => {
             setVisible(false);
           }}
           save={(data: ActionsType, options) => {
-            setOp(options);
+            // setOp(options);
+            optionsRef.current = options;
             props.onUpdate(data, options);
             setVisible(false);
+            setTimeout(() => {
+              getParams();
+            }, 10);
           }}
           parallel={props.parallel}
         />
@@ -411,14 +512,15 @@ export default (props: ItemProps) => {
       <ActionTypeComponent
         name={props.name}
         branchGroup={props.branchGroup}
-        thenName={props.thenName}
+        branchesName={props.branchesName}
         data={props.data}
         type={actionType}
         close={() => {
           setActionType('');
         }}
         save={(data: ActionsType, options) => {
-          setOp(options);
+          // setOp(options);
+          optionsRef.current = options;
           props.onUpdate(data, options);
           setActionType('');
         }}
