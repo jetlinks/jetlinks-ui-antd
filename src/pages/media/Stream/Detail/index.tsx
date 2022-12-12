@@ -271,7 +271,7 @@ const Detail = () => {
             }
           }}
         >
-          <Row gutter={[16, 16]}>
+          <Row gutter={24}>
             <Col span={12}>
               <Form.Item
                 label="流媒体名称"

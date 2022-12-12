@@ -105,6 +105,10 @@ const Protocol = (props: Props) => {
                     styles.cardRender,
                     protocolCurrent === item.id ? styles.checked : '',
                   )}
+                  style={{
+                    background: `url("/images/access-protocol.png") no-repeat`,
+                    backgroundSize: '100% 100%',
+                  }}
                   hoverable
                   onClick={() => {
                     if (!props.dt?.id) {

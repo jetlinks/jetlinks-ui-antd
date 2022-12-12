@@ -98,9 +98,15 @@ const Network = (props: Props) => {
                     styles.cardRender,
                     networkCurrent === item.id ? styles.checked : '',
                   )}
+                  style={{
+                    background: `url("/images/access-network.png") no-repeat`,
+                    backgroundSize: '100% 100%',
+                  }}
                   hoverable
                   onClick={() => {
-                    setNetworkCurrent(item.id);
+                    if (!props.view) {
+                      setNetworkCurrent(item.id);
+                    }
                   }}
                 >
                   <div className={styles.title}>

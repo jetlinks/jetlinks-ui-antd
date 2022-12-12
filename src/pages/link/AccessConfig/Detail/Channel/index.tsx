@@ -111,19 +111,23 @@ const Media = (props: Props) => {
             <div style={{ marginLeft: 10 }}>
               <TitleComponent data={'配置概览'} />
               <div>
-                <p>接入方式：{props.provider?.name || ''}</p>
-                {props.provider?.description && <p>{props.provider?.description || ''}</p>}
-                <p>消息协议：{protocol}</p>
+                <div style={{ marginBottom: 10 }}>接入方式：{props.provider?.name || ''}</div>
+                {props.provider?.description && (
+                  <div style={{ marginBottom: 10 }}>{props.provider?.description || ''}</div>
+                )}
+                <div style={{ marginBottom: 10 }}>消息协议：{protocol}</div>
                 {config?.document && (
-                  <div>{<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}</div>
+                  <div style={{ marginBottom: 10 }}>
+                    {<ReactMarkdown>{config?.document}</ReactMarkdown> || ''}
+                  </div>
                 )}
               </div>
               <TitleComponent data={'设备接入指引'} />
               <div>
-                <p>1、配置{name}通道</p>
-                <p>2、创建{name}设备接入网关</p>
-                <p>3、创建产品，并选中接入方式为{name}</p>
-                <p>4、添加设备，单独为每一个设备进行数据点绑定</p>
+                <div style={{ marginBottom: 10 }}>1、配置{name}通道</div>
+                <div style={{ marginBottom: 10 }}>2、创建{name}设备接入网关</div>
+                <div style={{ marginBottom: 10 }}>3、创建产品，并选中接入方式为{name}</div>
+                <div style={{ marginBottom: 10 }}>4、添加设备，单独为每一个设备进行数据点绑定</div>
               </div>
             </div>
           </Col>

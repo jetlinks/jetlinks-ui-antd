@@ -27,6 +27,7 @@ const Access = () => {
       dataIndex: 'ip',
       ellipsis: true,
       fixed: 'left',
+      width: 150,
     },
     {
       title: intl.formatMessage({
@@ -35,6 +36,7 @@ const Access = () => {
       }),
       dataIndex: 'url',
       ellipsis: true,
+      // width: 250,
     },
     {
       title: '请求方法',
@@ -72,6 +74,7 @@ const Access = () => {
       }),
       dataIndex: 'requestTime',
       sorter: true,
+      width: 200,
       valueType: 'dateTime',
       defaultSortOrder: 'descend',
       ellipsis: true,
@@ -93,6 +96,7 @@ const Access = () => {
         defaultMessage: '请求用户',
       }),
       dataIndex: 'context.username',
+      width: 100,
       render: (text, record: any) =>
         record?.context?.username ? <Tag color="geekblue">{record?.context?.username}</Tag> : '',
     },
@@ -136,7 +140,7 @@ const Access = () => {
         columnEmptyText={''}
         tableClassName={'accessLog'}
         tableStyle={{ minHeight }}
-        scroll={{ x: 1366 }}
+        // scroll={{ x: 1366 }}
         request={async (params) =>
           service.query({ ...params, sorts: [{ name: 'responseTime', order: 'desc' }] })
         }
