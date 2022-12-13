@@ -33,7 +33,7 @@ const Network = (props: Props) => {
   };
 
   useEffect(() => {
-    queryNetworkList(props.provider?.id);
+    queryNetworkList(props.provider?.id, encodeQuery({ include: networkCurrent || '' }));
   }, [props.provider?.id]);
 
   useEffect(() => {
