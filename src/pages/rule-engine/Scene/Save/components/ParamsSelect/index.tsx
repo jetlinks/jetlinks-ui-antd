@@ -43,13 +43,11 @@ export default (props: Props) => {
 
   useEffect(() => {
     if (props.labelValue) {
-      console.log(props.labelValue);
       setValue(props.labelValue);
     }
   }, [props.labelValue]);
 
   useEffect(() => {
-    // console.log(props.open)
     if (props.open !== undefined) {
       setOpen(props.open);
     }
@@ -59,7 +57,11 @@ export default (props: Props) => {
     <Dropdown
       trigger={['click']}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(val) => {
+        if (props.openChange) {
+          props.openChange(val);
+        }
+      }}
       dropdownRender={() => (
         <div className="select-box">
           <div className={'select-box-header-top'}>
@@ -69,7 +71,6 @@ export default (props: Props) => {
                   key={item.key}
                   className={classNames('select-header-title', item.key === tabKey ? 'active' : '')}
                   onClick={() => {
-                    // console.log('----------',item.key)
                     setTabKey(item.key);
                     setValue(undefined);
                     props.onChange(undefined, item.key);

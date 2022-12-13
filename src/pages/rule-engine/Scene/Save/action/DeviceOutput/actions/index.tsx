@@ -173,9 +173,7 @@ export default observer((props: Props) => {
               // { required: true, message: '请选择属性' },
               () => ({
                 validator(_, value) {
-                  console.log('---------', value);
                   const isValue = Object.values(value)?.[0];
-                  console.log(isValue);
                   if (isValue) {
                     return Promise.resolve();
                   }
@@ -189,9 +187,11 @@ export default observer((props: Props) => {
               name={props.name}
               branchGroup={props.branchGroup}
               thenName={props.thenName}
-              onColumns={(col) => {
+              onColumns={(col, text) => {
                 // console.log('col',col,[col])
                 DeviceModel.columns = [col];
+                DeviceModel.actionName = text;
+                // console.log(text)
               }}
               onChange={(value, text) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
@@ -199,7 +199,6 @@ export default observer((props: Props) => {
                 DeviceModel.propertiesValue = item;
               }}
               onRest={(value: any) => {
-                console.log(1111111);
                 form.setFieldValue(['message', 'properties'], {
                   [value]: undefined,
                 });

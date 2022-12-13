@@ -10,7 +10,7 @@ interface Props {
   onChange?: (value?: any, text?: any) => void;
   propertiesChange?: (value?: string) => void;
   name?: any;
-  onColumns?: (col: any) => void;
+  onColumns?: (col: any, text?: any) => void;
   thenName: number;
   branchGroup?: number;
   onRest?: (value: any) => void;
@@ -27,7 +27,7 @@ export default (props: Props) => {
   const [label, setLabel] = useState<any>();
 
   useEffect(() => {
-    console.log(props.value);
+    // console.log(props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -50,7 +50,7 @@ export default (props: Props) => {
                   (item: any) => item.value === props.value[key].value?.[0],
                 ).text;
                 setLabel(text);
-                console.log(text);
+                // console.log(text);
               }
             }
           });
