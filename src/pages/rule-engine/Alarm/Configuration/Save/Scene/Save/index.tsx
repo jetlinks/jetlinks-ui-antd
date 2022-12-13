@@ -12,6 +12,7 @@ interface Props {
   close: () => void;
   id: string;
   ok: () => void;
+  type: string;
 }
 
 export default (props: Props) => {
@@ -147,6 +148,12 @@ export default (props: Props) => {
                       column: 'id',
                       termType: 'alarm-bind-rule$not',
                       value: id,
+                      type: 'and',
+                    },
+                    {
+                      column: 'triggerType',
+                      termType: 'eq',
+                      value: props.type,
                     },
                   ],
                   type: 'and',
@@ -163,7 +170,6 @@ export default (props: Props) => {
           rowSelection={{
             selectedRowKeys: selectKeys,
             onChange: (selectedRowKeys) => {
-              console.log(selectedRowKeys);
               setSelectKeys(selectedRowKeys);
             },
           }}

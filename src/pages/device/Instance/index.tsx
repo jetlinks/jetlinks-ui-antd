@@ -89,6 +89,8 @@ const Instance = () => {
         });
       });
 
+      console.log(_terms);
+
       if (location.state && location.state?.save) {
         setVisible(true);
         setCurrent({});

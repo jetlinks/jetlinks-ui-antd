@@ -10,6 +10,7 @@ import { service as sceneService } from '@/pages/rule-engine/Scene';
 import Save from './Save';
 import { service } from '@/pages/rule-engine/Alarm/Configuration';
 import { onlyMessage } from '@/utils/util';
+import { Store } from 'jetlinks-store';
 
 export default () => {
   const intl = useIntl();
@@ -83,14 +84,6 @@ export default () => {
 
   return (
     <>
-      {/*<SearchComponent*/}
-      {/*  field={columns}*/}
-      {/*  target={'alarm-scene'}*/}
-      {/*  onSearch={(data) => {*/}
-      {/*    actionRef.current?.reset?.();*/}
-      {/*    setSearchParams(data);*/}
-      {/*  }}*/}
-      {/*/>*/}
       <ProTableCard<SceneItem>
         columns={columns}
         actionRef={actionRef}
@@ -186,6 +179,7 @@ export default () => {
       {visible && (
         <Save
           id={id}
+          type={Store.get('configuration-data')?.targetType}
           close={() => {
             setVisible(false);
           }}

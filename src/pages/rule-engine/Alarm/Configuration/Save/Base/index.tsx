@@ -1,10 +1,10 @@
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import { Typography } from 'antd';
 import { service as ConfigService } from '@/pages/rule-engine/Alarm/Config';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { createForm, onFormInit } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import { Form, FormButtonGroup, FormGrid, FormItem, Input, Radio, Select } from '@formily/antd';
+import { Form, FormGrid, FormItem, Input, Radio, Select } from '@formily/antd';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { PermissionButton } from '@/components';
 import { ISchema } from '@formily/json-schema';
@@ -13,6 +13,7 @@ import useLocation from '@/hooks/route/useLocation';
 import { getMenuPathByCode } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { service as sceneService } from '@/pages/rule-engine/Scene';
+import { Store } from 'jetlinks-store';
 
 const alarm1 = require('/public/images/alarm/alarm1.png');
 const alarm2 = require('/public/images/alarm/alarm2.png');
@@ -38,6 +39,7 @@ export default () => {
   const history = useHistory();
   const location = useLocation();
   const id = location?.query?.id || '';
+  const [loading, setLoading] = useState<boolean>(false);
 
   const LevelMap = {
     1: alarm1,
@@ -69,6 +71,7 @@ export default () => {
           onFormInit(async (form1) => {
             if (!id) return;
             const resp = await service.detail(id);
+            Store.set('configuration-data', resp.result);
             form1.setInitialValues({ ...resp.result });
             const resp1 = await sceneService.query({
               terms: [
@@ -114,12 +117,17 @@ export default () => {
   });
 
   const handleSave = async () => {
+    setLoading(true);
     const data: any = await form.submit();
     const resp: any = await service.update({ ...data });
+    setLoading(false);
     if (resp.status === 200) {
       onlyMessage('操作成功');
       const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
-      history.push(`${url}?id=${resp.result?.id}`);
+      history.push(`${url}?id=${resp.result?.id || id}`);
+      if (!id) {
+        Store.set('configuration-data', resp.result);
+      }
     }
   };
 
@@ -221,17 +229,14 @@ export default () => {
     <div>
       <Form className={styles.form} form={form} layout="vertical">
         <SchemaField schema={schema} scope={{ useAsyncDataSource, getSupports, getLevel }} />
-        <FormButtonGroup.Sticky>
-          <FormButtonGroup.FormItem>
-            <PermissionButton
-              type="primary"
-              isPermission={getOtherPermission(['add', 'update'])}
-              onClick={() => handleSave()}
-            >
-              保存
-            </PermissionButton>
-          </FormButtonGroup.FormItem>
-        </FormButtonGroup.Sticky>
+        <PermissionButton
+          type="primary"
+          loading={loading}
+          isPermission={getOtherPermission(['add', 'update'])}
+          onClick={() => handleSave()}
+        >
+          保存
+        </PermissionButton>
       </Form>
     </div>
   );
