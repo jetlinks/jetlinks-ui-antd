@@ -360,7 +360,7 @@ const Dashboard = observer(() => {
           top: '2%',
           bottom: '5%',
           left: '24px',
-          right: '24px',
+          right: '48px',
         },
         series: [
           {

@@ -84,7 +84,6 @@ const Product = observer(() => {
 
   useEffect(() => {
     const { state } = location;
-    console.log(state);
 
     if (state && state.save) {
       setCurrent(undefined);
@@ -248,7 +247,7 @@ const Product = observer(() => {
     {
       title: 'ID',
       dataIndex: 'id',
-      width: 300,
+      width: 200,
       ellipsis: true,
       fixed: 'left',
     },
@@ -324,7 +323,7 @@ const Product = observer(() => {
           status: 'gateway',
         },
       },
-      width: 150,
+      width: 120,
       render: (_, row) => <>{row.deviceType ? row.deviceType.text : undefined}</>,
     },
     {
