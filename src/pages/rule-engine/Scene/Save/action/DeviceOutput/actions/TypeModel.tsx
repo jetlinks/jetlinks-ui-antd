@@ -9,11 +9,12 @@ import ObjModel from './ObjModel';
 import { FormModel } from '../../..';
 import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
-
+import { observer } from '@formily/reactive-react';
+import DeviceModel from '../model';
 interface Props {
   value: any;
   type: string;
-  onChange?: (data: any, source?: any) => void;
+  onChange?: (data: any, source?: any, text?: any) => void;
   record?: any; //功能-枚举
   elements?: []; //属性-枚举
   name?: any;
@@ -25,14 +26,14 @@ interface Props {
   label?: string; //枚举回显
 }
 
-export default (props: Props) => {
+export default observer((props: Props) => {
   const [value, setValue] = useState<any>(props.value || undefined);
   const [visible, setVisible] = useState<boolean>(false);
   const [objVisiable, setObjVisable] = useState<boolean>(false);
   const [source, setSource] = useState<string>(props.source || 'fixed');
   const [builtInList, setBuiltInList] = useState<any[]>([]);
   const [labelValue, setLabelValue] = useState<any>('');
-  const [dateOpen, setDateOpen] = useState<boolean>();
+  const [open, setOpen] = useState<boolean>(false);
 
   const filterLabel = (nodes: any[]) => {
     let lable: any;
@@ -68,8 +69,8 @@ export default (props: Props) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const filterData = filterParamsData(props.type, _data);
-        console.log('_data', _data);
-        console.log('filterData', filterData);
+        // console.log('_data', _data);
+        // console.log('filterData', filterData);
         // console.log('type',props.type)
         setBuiltInList(filterData);
         const label = filterLabel(filterData);
@@ -189,34 +190,26 @@ export default (props: Props) => {
       case 'date':
         return (
           <MTimePicker
-            onOpen={(param) => {
-              setDateOpen(param);
-            }}
             type={props.format}
             value={moment(
               value ? value : new Date(),
               props.format === 'HH:mm:ss' ? 'HH:mm:ss' : 'yyyy-MM-dd HH:mm:ss',
             )}
+            onOpen={() => {
+              setOpen(false);
+            }}
             onChange={(_: any, timeString: string) => {
+              // setDateOpen(false)
+              console.log('timeString', timeString);
               setValue(timeString);
               setLabelValue(timeString);
               if (props.onChange) {
                 props.onChange(timeString);
               }
+              // setOpen(false)
             }}
           />
         );
-      // case 'password':
-      //   return (
-      //     <Input.Password
-      //       value={value}
-      //       style={{ width: '100%', textAlign: 'left' }}
-      //       placeholder={'请输入'}
-      //       onChange={(e) => {
-      //         onChange(e.target.value);
-      //       }}
-      //     />
-      //   );
       default:
         return (
           <Input
@@ -257,11 +250,12 @@ export default (props: Props) => {
                   props.onColumns(e.node.column);
                 }
               }
-              setDateOpen(false);
+              setOpen(false);
               setLabelValue(e.node.description);
+              DeviceModel.actionName = e.node.description;
               setValue(selectedKeys[0]);
               if (props.onChange) {
-                props.onChange(selectedKeys[0], source);
+                props.onChange(selectedKeys[0], source, e.node.description);
               }
             }}
           />
@@ -277,19 +271,20 @@ export default (props: Props) => {
         style={{ width: '100%', height: '100%' }}
         inputProps={{
           placeholder: '请选择',
-          disabled: true,
         }}
         tabKey={source}
         itemList={itemList}
         value={value}
         onChange={(val: any, tabKey: any) => {
+          // setOpen(false)
           setValue(val);
           setSource(tabKey);
           if (props.onChange) {
             props.onChange(val, tabKey);
           }
         }}
-        open={dateOpen}
+        open={open}
+        openChange={setOpen}
         type={props.type}
         labelValue={labelValue}
       />
@@ -326,4 +321,4 @@ export default (props: Props) => {
       )}
     </div>
   );
-};
+});
