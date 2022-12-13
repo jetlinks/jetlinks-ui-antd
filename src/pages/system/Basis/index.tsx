@@ -131,7 +131,7 @@ const Basis = () => {
                       </>
                     }
                   >
-                    <UploadImage />
+                    <UploadImage errorMessage={'请上传.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片'} />
                   </Form.Item>
                 </Col>
                 <Col>
@@ -146,7 +146,12 @@ const Basis = () => {
                       </>
                     }
                   >
-                    <UploadImage size={1} types={['image/x-icon']} backgroundSize={'inherit'} />
+                    <UploadImage
+                      size={1}
+                      types={['image/x-icon', 'image/jpeg', 'image/png']}
+                      backgroundSize={'inherit'}
+                      errorMessage={'请上传.ico.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片'}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -163,7 +168,11 @@ const Basis = () => {
                 }
                 rules={[{ required: true, message: '请上传背景图' }]}
               >
-                <UploadImage size={4} style={{ width: 570, height: 415 }} />
+                <UploadImage
+                  size={4}
+                  style={{ width: 570, height: 415 }}
+                  errorMessage={'请上传.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片'}
+                />
               </Form.Item>
             </Col>
           </Row>
