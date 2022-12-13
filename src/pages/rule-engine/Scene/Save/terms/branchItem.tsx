@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import { set } from 'lodash';
 import { Store } from 'jetlinks-store';
 import { Form, FormInstance, Popconfirm } from 'antd';
-import { BranchesThen } from '@/pages/rule-engine/Scene/typings';
 
 interface BranchesItemProps {
   name: number;
@@ -24,7 +23,6 @@ interface BranchesItemProps {
 
 export default observer((props: BranchesItemProps) => {
   const [when, setWhen] = useState<TermsType[]>([]);
-  const [actions, setActions] = useState<BranchesThen[]>([]);
   const [error, setError] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
 
@@ -39,9 +37,6 @@ export default observer((props: BranchesItemProps) => {
   useEffect(() => {
     if (props.data.when) {
       setWhen(props.data.when);
-    }
-    if (props.data.then) {
-      setActions(props.data.then);
     }
   }, [props.data]);
 
@@ -162,7 +157,7 @@ export default observer((props: BranchesItemProps) => {
                   <Actions
                     openShakeLimit={true}
                     name={props.name}
-                    thenOptions={actions}
+                    thenOptions={FormModel.current.branches?.[props.name].then || []}
                     onAdd={(data) => {
                       if (FormModel.current.branches && data) {
                         const newThen = [...FormModel.current.branches[props.name].then, data];

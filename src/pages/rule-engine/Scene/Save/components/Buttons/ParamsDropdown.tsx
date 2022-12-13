@@ -11,7 +11,7 @@ export interface ParamsDropdownProps {
   value?: any;
   source?: string;
   placeholder?: string;
-  onChange?: (value: any, lb?: any) => void;
+  onChange?: (value: any, lb?: any, node?: any) => void;
   isMetric?: boolean;
   metricOptions?: any[];
   type?: string;
@@ -64,14 +64,14 @@ export default (props: ParamsDropdownProps) => {
   const [open, setOpen] = useState(false);
 
   const onValueChange = useCallback(
-    (value: any, _label: any) => {
+    (value: any, _label: any, item?: any) => {
       setMyValue(value);
       setLabel(_label);
       const changeValue = {
         value: value,
         source: activeKey,
       };
-      props.onChange?.(changeValue, _label);
+      props.onChange?.(changeValue, _label, item);
     },
     [activeKey],
   );
@@ -144,7 +144,7 @@ export default (props: ParamsDropdownProps) => {
                   if (props.showLabelKey) {
                     titleKey = props.showLabelKey;
                   }
-                  onValueChange(selectedKeys[0], e.node[titleKey]);
+                  onValueChange(selectedKeys[0], e.node[titleKey], e.node);
                   setOpen(false);
                 }}
                 style={{ width: 300 }}

@@ -6,7 +6,7 @@ import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import FilterGroup from './FilterGroup';
-import { cloneDeep, set } from 'lodash';
+import { cloneDeep, flattenDeep, set } from 'lodash';
 import { Popconfirm, Space } from 'antd';
 import { TermsType } from '@/pages/rule-engine/Scene/typings';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
@@ -65,12 +65,16 @@ export default (props: ItemProps) => {
   const [actionType, setActionType] = useState<string>('');
   const [thenTerms, setThenTerms] = useState<TermsType[] | undefined>([]);
   const [paramsOptions, setParamsOptions] = useState<any[]>([]);
+  const [optionsColumns, setOptionsColumns] = useState<string[][]>([]);
 
-  const optionsRef = useRef<any[]>([]);
+  const optionsRef = useRef<any>({});
 
   useEffect(() => {
     // setOp(props.options);
     optionsRef.current = props.options;
+    if (props.options?.termsColumns) {
+      setOptionsColumns(props.options?.termsColumns || []);
+    }
   }, [props.options]);
 
   const handleTreeData = (data: any): any[] => {
@@ -375,13 +379,20 @@ export default (props: ItemProps) => {
               branchesName={props.branchesName}
               name={index}
               data={termsItem}
+              columns={optionsColumns}
               isLast={index === thenTerms.length - 1}
               paramsOptions={paramsOptions}
               label={props.options?.terms?.[index]}
               actionColumns={props.options?.otherColumns}
               onColumnsChange={(columns) => {
-                optionsRef.current['columns'] = columns;
-                props.onUpdate(props.data, optionsRef.current);
+                const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
+                let newColumns = [...filterColumns.values()];
+                if (optionsRef.current?.otherColumns) {
+                  newColumns = [...optionsRef.current.otherColumns, ...newColumns];
+                }
+                optionsRef.current['columns'] = newColumns;
+                optionsRef.current['termsColumns'] = columns;
+                props.onUpdate(cacheValueRef.current, optionsRef.current);
               }}
               onAddGroup={() => {
                 const newThenTerms = [...thenTerms];
@@ -398,13 +409,12 @@ export default (props: ItemProps) => {
                     },
                   ],
                 });
-                const _data = props.data;
+                const _data = cacheValueRef.current;
                 set(_data, 'terms', newThenTerms);
                 props.onUpdate(_data, optionsRef.current);
               }}
               onValueChange={(termsData) => {
-                const _data = props.data;
-                console.log('update-onValueChange', termsData, optionsRef.current);
+                const _data = cacheValueRef.current;
                 set(_data, ['terms', index], termsData);
                 // cacheValueRef.current = _data;
                 props.onUpdate(_data, {
@@ -415,14 +425,22 @@ export default (props: ItemProps) => {
                 const newLabel: any[] = props.options?.terms || [];
                 newLabel.splice(index, 1, lb);
                 optionsRef.current['terms'] = newLabel;
-                props.onUpdate(props.data, optionsRef.current);
+                props.onUpdate(cacheValueRef.current, optionsRef.current);
               }}
               onDelete={() => {
                 const _data = thenTerms.filter((a) => a.key !== termsItem.key);
-                console.log(_data, thenTerms, termsItem);
+                if (optionsRef.current?.termsColumns) {
+                  optionsRef.current.termsColumns[index] = [];
+                  const filterColumns = new Set(flattenDeep(optionsRef.current.termsColumns)); // 平铺去重
+                  let newColumns = [...filterColumns.values()];
+                  if (optionsRef.current?.otherColumns) {
+                    newColumns = [...optionsRef.current.otherColumns, ...newColumns];
+                  }
+                  optionsRef.current['columns'] = newColumns;
+                }
                 props.onUpdate(
                   {
-                    ...props.data,
+                    ...cacheValueRef.current,
                     terms: _data,
                   },
                   optionsRef.current,
@@ -435,7 +453,7 @@ export default (props: ItemProps) => {
             className="filter-add-button"
             onClick={() => {
               getParams();
-              let _data = props.data;
+              let _data = cacheValueRef.current;
               optionsRef.current['terms'] = [];
               if (!_data.terms) {
                 _data = {
