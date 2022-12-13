@@ -6,6 +6,7 @@ import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
 import Item from './Item';
 import type { ParallelType } from './Item';
 import { Observer } from '@formily/react';
+import { pick } from 'lodash';
 
 interface ListProps {
   branchesName: number;
@@ -42,7 +43,9 @@ export default (props: ListProps) => {
                 props.onDelete(item.key!);
               }}
               onUpdate={(data, options) => {
+                const olData = pick(item, ['terms']);
                 props.onAdd({
+                  ...olData,
                   ...data,
                   options,
                 });

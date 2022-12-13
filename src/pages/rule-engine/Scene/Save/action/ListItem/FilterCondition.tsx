@@ -20,6 +20,8 @@ interface FilterProps {
   label?: any[];
   onAdd: () => void;
   onDelete: () => void;
+  onColumns: (columns: string[]) => void;
+  columns?: string[];
 }
 
 const handleName = (_data: any) => (
@@ -47,6 +49,7 @@ export default observer((props: FilterProps) => {
   const labelCache = useRef<any[]>([undefined, undefined, {}, 'and']);
 
   const [deleteVisible, setDeleteVisible] = useState(false);
+  const columnsRef = useRef<string[]>([]);
 
   const ValueRef = useRef<Partial<TermsType>>({
     column: '',
@@ -76,6 +79,7 @@ export default observer((props: FilterProps) => {
     (columnValue?: string) => {
       if (columnValue) {
         const labelOptions = columnOptionsMap.get(columnValue);
+        console.log('filter-convertLabelValue', labelOptions);
         if (labelOptions) {
           const _termTypeOptions: any[] =
             labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
@@ -126,6 +130,7 @@ export default observer((props: FilterProps) => {
   }, [props.data]);
 
   useEffect(() => {
+    columnOptionsMap.clear();
     const newOptions = handleTreeData(props.options || []);
     convertLabelValue(props.data?.column);
     setBuiltInOptions(newOptions);
@@ -135,6 +140,10 @@ export default observer((props: FilterProps) => {
   useEffect(() => {
     labelCache.current = props.label || [undefined, undefined, {}, 'and'];
   }, [props.label]);
+
+  useEffect(() => {
+    columnsRef.current = props.columns || [];
+  }, [props.columns]);
 
   return (
     <div className="filter-condition-warp">
@@ -170,6 +179,11 @@ export default observer((props: FilterProps) => {
             const _termTypeOptions: any[] =
               node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
             setTtOptions(_termTypeOptions);
+            if (!node.metadata) {
+              columnsRef.current = [node.column];
+            } else {
+              columnsRef.current = [];
+            }
             // 默认选中第一个
             let _termTypeValue = undefined;
             if (_termTypeOptions.length) {
@@ -211,6 +225,7 @@ export default observer((props: FilterProps) => {
 
             labelCache.current[1] = v;
             ValueRef.current.termType = v;
+            columnsRef.current.length = 1;
             valueChange({
               column: props.data!.column,
               value: _value as TermsVale,
@@ -229,7 +244,7 @@ export default observer((props: FilterProps) => {
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
               name={0}
-              onChange={(v, lb) => {
+              onChange={(v, lb, node) => {
                 const _myValue = {
                   value: [v.value, ValueRef.current.value?.value?.[1]],
                   source: v.source,
@@ -238,6 +253,17 @@ export default observer((props: FilterProps) => {
                 setValue(_myValue);
                 labelCache.current[2] = { ...labelCache.current[2], 0: lb };
                 labelCache.current[3] = props.data.type;
+
+                if (v.source === 'upper') {
+                  if (!node.metadata) {
+                    columnsRef.current[1] = node.column;
+                  } else {
+                    columnsRef.current.splice(1, 1);
+                  }
+                } else {
+                  columnsRef.current.length = 1;
+                }
+                props.onColumns(columnsRef.current);
                 props.onLabelChange?.(labelCache.current);
                 valueEventChange(_myValue);
               }}
@@ -251,7 +277,7 @@ export default observer((props: FilterProps) => {
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
               name={1}
-              onChange={(v, lb) => {
+              onChange={(v, lb, node) => {
                 const _myValue = {
                   value: [ValueRef.current.value?.value?.[0], v.value],
                   source: v.source,
@@ -260,6 +286,17 @@ export default observer((props: FilterProps) => {
                 setValue(_myValue);
                 labelCache.current[2] = { ...labelCache.current[2], 1: lb };
                 labelCache.current[3] = props.data.type;
+
+                if (v.source === 'upper') {
+                  if (!node.metadata) {
+                    columnsRef.current[2] = node.column;
+                  } else {
+                    columnsRef.current.splice(2, 1);
+                  }
+                } else {
+                  columnsRef.current.length = 1;
+                }
+                props.onColumns(columnsRef.current);
                 props.onLabelChange?.(labelCache.current);
                 valueEventChange(_myValue);
               }}
@@ -274,10 +311,21 @@ export default observer((props: FilterProps) => {
             value={value}
             BuiltInOptions={BuiltInOptions}
             showLabelKey="fullName"
-            onChange={(v, lb) => {
+            onChange={(v, lb, node) => {
               setValue({
                 ...v,
               });
+
+              if (v.source === 'upper') {
+                if (!node.metadata) {
+                  columnsRef.current[1] = node.column;
+                } else {
+                  columnsRef.current.splice(1, 1);
+                }
+              } else {
+                columnsRef.current.length = 1;
+              }
+              props.onColumns(columnsRef.current);
               labelCache.current[2] = { 0: lb };
               labelCache.current[3] = props.data.type;
               props.onLabelChange?.(labelCache.current);

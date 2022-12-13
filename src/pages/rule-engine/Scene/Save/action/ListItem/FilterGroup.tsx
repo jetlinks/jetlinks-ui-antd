@@ -5,7 +5,7 @@ import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { DropdownButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import classNames from 'classnames';
 import type { TermsType } from '@/pages/rule-engine/Scene/typings';
-import { isArray } from 'lodash';
+import { isArray, set } from 'lodash';
 import './index.less';
 import { Form, Popconfirm } from 'antd';
 
@@ -24,16 +24,31 @@ interface TermsProps {
   onDelete: () => void;
   onAddGroup: () => void;
   onColumnsChange: (columns: any[]) => void;
+  columns: string[][];
 }
 
 export default observer((props: TermsProps) => {
   const [deleteVisible, setDeleteVisible] = useState(false);
   const _name = [props.branchesName, 'then', props.branchGroup, 'actions', props.action, 'terms'];
+  const [filterList, setFilterList] = useState<TermsType[]>([]);
   const labelRef = useRef<any>({});
+  const listRef = useRef<any[]>([]);
+  const optionsColumnsRef = useRef<any[]>([]);
+  const [columns, setColumns] = useState<any[]>([]);
 
   useEffect(() => {
     labelRef.current = props.label || {};
   }, [props.label]);
+
+  useEffect(() => {
+    setFilterList(props.data?.terms || []);
+    listRef.current = props.data?.terms || [];
+  }, [props.data]);
+
+  useEffect(() => {
+    optionsColumnsRef.current = props.columns;
+    setColumns(props.columns);
+  }, [props.columns]);
 
   return (
     <div className="terms-params">
@@ -49,7 +64,7 @@ export default observer((props: TermsProps) => {
         >
           <Observer>
             {() => {
-              const terms = props.data.terms || [];
+              const terms = filterList || [];
               return terms.map((item, index) => (
                 <Form.Item
                   name={['branches', ..._name, props.name, 'terms', index]}
@@ -91,6 +106,7 @@ export default observer((props: TermsProps) => {
                     action={props.action}
                     data={item}
                     key={item.key}
+                    columns={columns?.[props.name]?.[index]}
                     options={props.paramsOptions}
                     label={labelRef.current?.terms?.[index]}
                     isLast={index === props.data.terms!.length - 1}
@@ -104,6 +120,8 @@ export default observer((props: TermsProps) => {
                           terms: terms,
                         });
                       }
+                      set(optionsColumnsRef.current, [props.name, index], []);
+                      props.onColumnsChange(optionsColumnsRef.current);
                     }}
                     onAdd={() => {
                       const key = `params_${new Date().getTime()}`;
@@ -120,15 +138,19 @@ export default observer((props: TermsProps) => {
                       });
                     }}
                     onValueChange={(data) => {
-                      terms[index] = {
+                      const newList = [...listRef.current];
+                      newList[index] = {
                         ...item,
                         ...data,
                       };
-                      debugger;
                       props.onValueChange({
                         ...props.data,
-                        terms: terms,
+                        terms: newList,
                       });
+                    }}
+                    onColumns={(_columns) => {
+                      set(optionsColumnsRef.current, [props.name, index], _columns);
+                      props.onColumnsChange(optionsColumnsRef.current);
                     }}
                     onLabelChange={(options) => {
                       let newLabel: any = [];
