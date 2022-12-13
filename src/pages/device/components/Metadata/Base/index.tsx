@@ -121,6 +121,7 @@ const BaseMetadata = observer((props: Props) => {
 
   const initData = useCallback(async () => {
     const result = await DB.getDB().table(`${type}`).toArray();
+    console.log(result);
     setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
   }, [param.id, type]);
 
@@ -178,7 +179,7 @@ const BaseMetadata = observer((props: Props) => {
           },
         }}
         toolBarRender={() => [
-          props.type === 'properties' && (
+          props.type === 'properties' && target === 'device' && (
             <PermissionButton
               isPermission={props.permission.update}
               onClick={() => {

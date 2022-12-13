@@ -2,6 +2,12 @@ import type { ProColumns } from '@jetlinks/pro-table';
 import type { MetadataItem } from '@/pages/device/Product/typings';
 import { Tag } from 'antd';
 
+const SourceMap = {
+  device: '设备',
+  manual: '手动',
+  rule: '规则',
+};
+
 const BaseColumns: ProColumns<MetadataItem>[] = [
   // {
   //   dataIndex: 'index',
@@ -64,6 +70,11 @@ const PropertyColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
     title: '数据类型',
     dataIndex: 'valueType',
     render: (text: any) => text?.type,
+  },
+  {
+    title: '数据类型',
+    dataIndex: 'expands',
+    render: (text: any) => SourceMap[text?.source],
   },
   {
     title: '读写类型',

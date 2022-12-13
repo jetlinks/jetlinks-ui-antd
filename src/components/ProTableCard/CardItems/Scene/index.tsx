@@ -117,6 +117,7 @@ const actionRender = (action: ActionsType) => {
 };
 // 过滤器
 const actionFilter = (terms: any, isLast: boolean, index: number) => {
+  if (!Array.isArray(terms)) return '';
   let str = `动作${index + 1} `;
   terms?.forEach((item: any, iindex: number) => {
     if (isArray(item.terms)) {

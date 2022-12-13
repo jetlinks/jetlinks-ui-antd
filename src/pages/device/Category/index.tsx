@@ -60,15 +60,12 @@ const Category = observer(() => {
 
   const columns: ProColumns<CategoryItem>[] = [
     {
-      title: intl.formatMessage({
-        id: 'pages.device.category.name',
-        defaultMessage: '分类名称',
-      }),
+      title: '名称',
       dataIndex: 'name',
       ellipsis: true,
     },
     {
-      title: '分类排序',
+      title: '排序',
       dataIndex: 'sortIndex',
       valueType: 'digit',
       sorter: true,

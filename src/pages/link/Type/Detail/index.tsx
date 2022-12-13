@@ -130,15 +130,23 @@ const Save = observer(() => {
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
               const data = resp?.result || {};
+              // if (data?.shareCluster === false) {
+              //   const cluster = (data?.cluster || []).map((item: any) => {
+              //     return {
+              //       ...item.configuration,
+              //       configuration: item,
+              //     };
+              //   });
+              //   console.log(cluster, 'cluster')
+              //   const obj = _.cloneDeep({ ...data, cluster });
+              //   form1.setValues({ ...obj });
+              // }
               if (data?.shareCluster === false) {
-                const cluster = (data?.cluster || []).map((item: any) => {
-                  return {
-                    ...item.configuration,
-                    configuration: item,
-                  };
-                });
-                const obj = _.cloneDeep({ ...data, cluster });
-                form1.setValues(obj);
+                const _cluster = _.cloneDeep(data.cluster[0]);
+                data.cluster[0] = {
+                  ..._cluster.configuration,
+                };
+                form1.setValues({ ...data });
               } else {
                 form1.setValues({ ...data });
               }
@@ -225,7 +233,7 @@ const Save = observer(() => {
           });
         },
       }),
-    [],
+    [param.id],
   );
 
   const SchemaField = createSchemaField({

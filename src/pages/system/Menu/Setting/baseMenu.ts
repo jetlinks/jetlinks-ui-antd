@@ -1375,7 +1375,7 @@ export default [
         permissions: [],
         children: [
           {
-            code: 'DataCollect/Dashboard',
+            code: 'link/DataCollect/Dashboard',
             name: '仪表盘',
             owner: 'iot',
             sortIndex: 1,
@@ -1398,7 +1398,7 @@ export default [
             buttons: [],
           },
           {
-            code: 'DataCollect/DataGathering',
+            code: 'link/DataCollect/DataGathering',
             name: '数据采集',
             owner: 'iot',
             sortIndex: 2,
@@ -1529,7 +1529,7 @@ export default [
             ],
           },
           {
-            code: 'DataCollect/IntegratedQuery',
+            code: 'link/DataCollect/IntegratedQuery',
             name: '综合查询',
             owner: 'iot',
             sortIndex: 3,

@@ -1,7 +1,7 @@
 import PermissionButton from '@/components/PermissionButton';
 import usePermissions from '@/hooks/permission';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Form, FormButtonGroup, FormItem } from '@formily/antd';
+import { Form, FormItem } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { Card, Col, Input, Row } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
@@ -144,28 +144,24 @@ const Detail = observer(() => {
           <Col span={12}>
             <Form form={form} layout="vertical">
               <SchemaField schema={schema} />
-              <FormButtonGroup.Sticky>
-                <FormButtonGroup.FormItem>
-                  {!view && (
-                    <PermissionButton
-                      type="primary"
-                      isPermission={getOtherPermission(['add', 'update'])}
-                      onClick={async () => {
-                        const data: any = await form.submit();
-                        const response: any = data.id
-                          ? await service.update(data)
-                          : await service.save(data);
-                        if (response.status === 200) {
-                          onlyMessage('操作成功');
-                          history.back();
-                        }
-                      }}
-                    >
-                      保存
-                    </PermissionButton>
-                  )}
-                </FormButtonGroup.FormItem>
-              </FormButtonGroup.Sticky>
+              {!view && (
+                <PermissionButton
+                  type="primary"
+                  isPermission={getOtherPermission(['add', 'update'])}
+                  onClick={async () => {
+                    const data: any = await form.submit();
+                    const response: any = data.id
+                      ? await service.update(data)
+                      : await service.save(data);
+                    if (response.status === 200) {
+                      onlyMessage('操作成功');
+                      history.back();
+                    }
+                  }}
+                >
+                  保存
+                </PermissionButton>
+              )}
             </Form>
           </Col>
           <Col span={12}>
