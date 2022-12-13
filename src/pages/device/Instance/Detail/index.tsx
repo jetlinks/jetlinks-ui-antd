@@ -193,7 +193,7 @@ const InstanceDetail = observer(() => {
       if (response.result.protocol === 'modbus-tcp') {
         datalist.push({
           key: 'modbus',
-          tab: 'Modbus',
+          tab: 'Modbus TCP',
           component: <MapChannel data={InstanceModel.detail} type="MODBUS_TCP" />,
         });
       }

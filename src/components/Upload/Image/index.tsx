@@ -21,6 +21,7 @@ interface UploadImageProps {
   size?: number;
   style?: React.CSSProperties;
   backgroundSize?: string;
+  errorMessage?: string;
 }
 
 export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
@@ -49,7 +50,11 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
   const beforeUpload = (file: RcFile) => {
     const isType = imageTypes.includes(file.type);
     if (!isType) {
-      message.error(`图片格式错误，必须是${imageTypes.toString()}格式`);
+      if (extraProps.errorMessage) {
+        message.error(extraProps.errorMessage);
+      } else {
+        message.error(`图片格式错误，必须是${imageTypes.toString()}格式`);
+      }
       return false;
     }
     const isSize = file.size / 1024 / 1024 < (extraProps.size || 4);

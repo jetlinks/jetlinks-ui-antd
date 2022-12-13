@@ -76,7 +76,7 @@ export default (props: FunctionProps) => {
           //   }
           // </>
           // @ts-ignore
-          <DatePicker format={'YYYY-MM-DD HH:mm:ss'} style={{ width: '100%' }} />
+          <DatePicker format={'YYYY-MM-DD HH:mm:ss'} style={{ width: '100%' }} showTime />
         );
       default:
         return <Input placeholder={'请输入' + name} />;

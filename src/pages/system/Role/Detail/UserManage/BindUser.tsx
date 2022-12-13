@@ -1,7 +1,7 @@
 import type { ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Modal } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { service } from '@/pages/system/User/index';
 import Service from '@/pages/system/Role/service';
@@ -52,6 +52,10 @@ const BindUser = (props: Props) => {
       onFilter: true,
     },
   ];
+
+  useEffect(() => {
+    actionRef.current?.reset?.();
+  }, [props.visible]);
 
   return (
     <Modal
