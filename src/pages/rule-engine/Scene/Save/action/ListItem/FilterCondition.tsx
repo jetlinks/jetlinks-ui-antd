@@ -13,7 +13,8 @@ interface FilterProps {
   action?: number;
   data: TermsType;
   isLast: boolean;
-  onChange: (value: TermsType) => void;
+  onChange?: (value: TermsType | any) => void;
+  onValueChange: (value: TermsType) => void;
   onLabelChange: (lb: any[]) => void;
   options: any[];
   label?: any[];
@@ -55,7 +56,7 @@ export default observer((props: FilterProps) => {
 
   const valueChange = useCallback(
     (_value: any) => {
-      props.onChange?.({ ..._value });
+      props.onValueChange?.({ ..._value });
     },
     [column, termType, value],
   );
@@ -71,17 +72,26 @@ export default observer((props: FilterProps) => {
     [column, termType],
   );
 
-  const convertLabelValue = (columnValue?: string) => {
-    if (columnValue) {
-      const labelOptions = columnOptionsMap.get(columnValue);
-      if (!labelOptions) return;
-
-      const _termTypeOptions: any[] =
-        labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
-      setTtOptions(_termTypeOptions);
-      setValueType(labelOptions?.type);
-    }
-  };
+  const convertLabelValue = useCallback(
+    (columnValue?: string) => {
+      if (columnValue) {
+        const labelOptions = columnOptionsMap.get(columnValue);
+        if (labelOptions) {
+          const _termTypeOptions: any[] =
+            labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
+            [];
+          setTtOptions(_termTypeOptions);
+          setValueType(labelOptions?.type);
+          props.onChange?.(props.data);
+        } else {
+          props.onChange?.({});
+          setTtOptions([]);
+          setValueType('');
+        }
+      }
+    },
+    [props.data],
+  );
 
   const handleTreeData = (data: any): any[] => {
     if (data.length > 0) {

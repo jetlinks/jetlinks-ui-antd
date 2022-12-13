@@ -20,7 +20,7 @@ interface ParamsItemProps {
   isDelete: boolean;
   options: any[];
   onValueChange?: (value: TermsType) => void;
-  onChange?: (value: TermsType) => void;
+  onChange?: (value: TermsType | any) => void;
   onLabelChange?: (label: string[]) => void;
   label?: any[];
   onAdd: () => void;
@@ -159,6 +159,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             setMetricsOptions(_metrics);
           }
         } else {
+          props.onChange?.({});
           setTtOptions([]);
           setValueType('');
         }
@@ -210,9 +211,6 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           }}
           showLabelKey="fullName"
           isTree={true}
-          onVailChange={(v) => {
-            console.log('onVailChange', v);
-          }}
           onChange={(_value, item) => {
             setValue({
               value: undefined,

@@ -43,11 +43,9 @@ export default (props: ListProps) => {
               }}
               onUpdate={(data, options) => {
                 props.onAdd({
-                  ...item,
                   ...data,
                   options,
                 });
-                console.log('update-options', options);
                 setVisible(false);
               }}
             />
@@ -82,6 +80,7 @@ export default (props: ListProps) => {
               key: data.key,
               options,
             };
+            console.log('addModel', item);
             props.onAdd(item);
             setVisible(false);
           }}

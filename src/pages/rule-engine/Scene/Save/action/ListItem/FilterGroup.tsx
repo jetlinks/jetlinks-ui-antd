@@ -57,6 +57,9 @@ export default observer((props: TermsProps) => {
                     {
                       validator(_, v) {
                         if (v) {
+                          if (!Object.keys(v).length) {
+                            return Promise.reject(new Error('该数据已发生变更，请重新配置'));
+                          }
                           if (!v.column) {
                             return Promise.reject(new Error('请选择参数'));
                           }
@@ -116,12 +119,12 @@ export default observer((props: TermsProps) => {
                         terms: terms,
                       });
                     }}
-                    onChange={(data) => {
+                    onValueChange={(data) => {
                       terms[index] = {
-                        ...terms[index],
+                        ...item,
                         ...data,
                       };
-
+                      debugger;
                       props.onValueChange({
                         ...props.data,
                         terms: terms,

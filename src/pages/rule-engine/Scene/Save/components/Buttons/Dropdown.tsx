@@ -22,7 +22,6 @@ interface DropdownButtonProps {
   type: 'param' | 'termType' | 'value' | 'type';
   fieldNames?: any;
   showLabelKey?: string;
-  onVailChange?: (vail: boolean) => void;
 }
 
 const TypeStyle = {
@@ -46,14 +45,11 @@ const DropdownButton = (props: DropdownButtonProps) => {
     (key?: string) => {
       if (key && paramOptions.length) {
         const labelOptions = valueOptions.get(key);
-        console.log('dropdown', key, labelOptions);
         if (labelOptions) {
           const nameKey = props.showLabelKey || 'title';
           setLabel(labelOptions[nameKey]);
-          props.onVailChange?.(true);
         } else {
           setLabel(key);
-          props.onVailChange?.(false);
         }
       } else {
         setLabel(key!);
@@ -145,7 +141,6 @@ const DropdownButton = (props: DropdownButtonProps) => {
       <div
         className={classNames(styles['dropdown-button'], props.className, typeClassName)}
         onClick={() => {
-          console.log(props.options);
           if (props.options.length === 0 && props.type !== 'termType') {
             onlyMessage('请先配置设备触发规则', 'warning');
           }

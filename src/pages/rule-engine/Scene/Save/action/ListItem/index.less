@@ -13,7 +13,8 @@
 
   .filter-add-button {
     display: inline-block;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    margin-left: 8px;
     color: #2f54eb;
     cursor: pointer;
   }
@@ -105,7 +106,7 @@
     position: relative;
     display: flex;
     padding: 4px;
-    border: 1px dashed rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(#000, 0.1);
     border-radius: 2px;
     transition: border 0.3s;
 
@@ -148,16 +149,18 @@
 
 .actions-item-filter-warp {
   display: flex;
+  margin-bottom: 24px;
   padding-top: 10px;
   overflow-x: auto;
   overflow-y: visible;
+  border: 1px dashed #999;
+  border-radius: 2px;
   row-gap: 16px;
 
   .terms-params {
     // display: inline-block;
     display: flex;
     flex-shrink: 0;
-    margin-bottom: 24px;
 
     // &:not(:first-child) {
     //   margin-bottom: 16px;
@@ -165,7 +168,7 @@
 
     .terms-params-warp {
       display: flex;
-      align-items: center;
+      align-items: baseline;
     }
 
     .terms-params-content {
@@ -174,7 +177,7 @@
       // flex-wrap: wrap;
       padding: 8px;
       padding-bottom: 0;
-      background-color: #fafafa;
+      background-color: #fff;
       row-gap: 16px;
 
       .terms-params-item {

@@ -90,6 +90,7 @@ export default (props: ActionsProps) => {
                 parallel={false}
                 actions={serialArray.length ? serialArray[0].actions : []}
                 onAdd={(actionItem) => {
+                  console.log('addModel', serialArray);
                   if (serialArray.length) {
                     const indexOf = serialArray[0].actions?.findIndex(
                       (aItem) => aItem.key === actionItem.key,

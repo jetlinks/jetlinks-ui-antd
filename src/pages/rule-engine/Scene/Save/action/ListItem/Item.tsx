@@ -333,6 +333,7 @@ export default (props: ItemProps) => {
   useEffect(() => {
     cacheValueRef.current = props.data;
     setThenTerms(props.data.terms);
+    console.log('optionsRef.current-change', props.data);
   }, [props.data]);
 
   useEffect(() => {
@@ -381,7 +382,7 @@ export default (props: ItemProps) => {
               actionColumns={props.options?.otherColumns}
               onColumnsChange={(columns) => {
                 optionsRef.current['columns'] = columns;
-                props.onUpdate(props.data, optionsRef.current);
+                props.onUpdate(cacheValueRef.current, optionsRef.current);
               }}
               onAddGroup={() => {
                 const newThenTerms = [...thenTerms];
@@ -398,15 +399,15 @@ export default (props: ItemProps) => {
                     },
                   ],
                 });
-                const _data = props.data;
+                const _data = cacheValueRef.current;
                 set(_data, 'terms', newThenTerms);
                 props.onUpdate(_data, optionsRef.current);
               }}
               onValueChange={(termsData) => {
-                const _data = props.data;
-                console.log('update-onValueChange', termsData, optionsRef.current);
+                const _data = cacheValueRef.current;
                 set(_data, ['terms', index], termsData);
                 // cacheValueRef.current = _data;
+                console.log('optionsRef.current', _data, cacheValueRef.current);
                 props.onUpdate(_data, {
                   ...optionsRef.current,
                 });
@@ -415,14 +416,14 @@ export default (props: ItemProps) => {
                 const newLabel: any[] = props.options?.terms || [];
                 newLabel.splice(index, 1, lb);
                 optionsRef.current['terms'] = newLabel;
-                props.onUpdate(props.data, optionsRef.current);
+                console.log('optionsRef.current2', props.data);
+                props.onUpdate(cacheValueRef.current, optionsRef.current);
               }}
               onDelete={() => {
                 const _data = thenTerms.filter((a) => a.key !== termsItem.key);
-                console.log(_data, thenTerms, termsItem);
                 props.onUpdate(
                   {
-                    ...props.data,
+                    ...cacheValueRef.current,
                     terms: _data,
                   },
                   optionsRef.current,
@@ -435,7 +436,7 @@ export default (props: ItemProps) => {
             className="filter-add-button"
             onClick={() => {
               getParams();
-              let _data = props.data;
+              let _data = cacheValueRef.current;
               optionsRef.current['terms'] = [];
               if (!_data.terms) {
                 _data = {
