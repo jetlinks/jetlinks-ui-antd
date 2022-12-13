@@ -127,6 +127,10 @@ export default observer((props: Props) => {
       _options.propertiesValue = DeviceModel.propertiesValue;
       _options.columns = DeviceModel.columns;
       _options.otherColumns = DeviceModel.columns;
+      const cur: any = Object.values(value.message.properties)?.[0];
+      if (cur?.source === 'upper') {
+        _options.propertiesValue = DeviceModel.actionName;
+      }
     }
     if (_options.selector === 'tag') {
       _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
@@ -136,7 +140,7 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    // console.log(item);
+    // console.log(item,_options);
     props.save(item, _options);
     init();
   };

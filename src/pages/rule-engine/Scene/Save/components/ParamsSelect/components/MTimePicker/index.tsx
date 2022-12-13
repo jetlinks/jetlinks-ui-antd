@@ -4,7 +4,7 @@ import type { TimePickerProps } from 'antd/lib/time-picker';
 import { useEffect, useState } from 'react';
 
 type Props = TimePickerProps & {
-  onOpen?: (open: boolean) => void;
+  onOpen?: (open?: boolean) => void;
   type?: string;
 };
 
@@ -33,7 +33,7 @@ export default (props: Props) => {
             open
             onOk={() => {
               if (props.onOpen) {
-                props.onOpen(false);
+                props.onOpen();
               }
             }}
             // @ts-ignore
@@ -56,12 +56,13 @@ export default (props: Props) => {
             }}
             value={myValue}
             onChange={(value, timeString) => {
+              // console.log(value)
               setMyValue(value);
               props.onChange?.(value, timeString);
             }}
             onOk={() => {
               if (props.onOpen) {
-                props.onOpen(false);
+                props.onOpen();
               }
             }}
           />
