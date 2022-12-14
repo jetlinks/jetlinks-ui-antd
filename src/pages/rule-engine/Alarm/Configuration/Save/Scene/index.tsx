@@ -11,6 +11,7 @@ import Save from './Save';
 import { service } from '@/pages/rule-engine/Alarm/Configuration';
 import { onlyMessage } from '@/utils/util';
 import { Store } from 'jetlinks-store';
+import styles from './index.less';
 
 export default () => {
   const intl = useIntl();
@@ -83,7 +84,7 @@ export default () => {
   ];
 
   return (
-    <>
+    <div className={styles['alarm-scene-table']}>
       <ProTableCard<SceneItem>
         columns={columns}
         actionRef={actionRef}
@@ -189,6 +190,6 @@ export default () => {
           }}
         />
       )}
-    </>
+    </div>
   );
 };
