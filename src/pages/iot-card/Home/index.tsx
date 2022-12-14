@@ -10,6 +10,7 @@ import Echarts from '@/components/DashBoard/echarts';
 import { EChartsOption } from 'echarts';
 import moment from 'moment';
 import Service from './service';
+import './index.less';
 
 export const service = new Service('');
 
@@ -210,8 +211,9 @@ export default () => {
             }
           />
         </Col>
-        <Col span={24}>
+        <Col span={24} style={{ backgroundColor: 'white', minHeight: 580 }}>
           <Body
+            className="bottomImg"
             title={'平台架构图'}
             english={'PLATFORM ARCHITECTURE DIAGRAM'}
             url={require('/public/images/iot-card/iotcard-home.png')}

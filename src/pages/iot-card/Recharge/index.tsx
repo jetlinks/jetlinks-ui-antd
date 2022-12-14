@@ -10,6 +10,7 @@ import { useRef, useState } from 'react';
 import Service from '../CardManagement/service';
 import Detail from './detail';
 import TopUp from './topUp';
+import './index.less';
 
 export const service = new Service('network/card');
 
