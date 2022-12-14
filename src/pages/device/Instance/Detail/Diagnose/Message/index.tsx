@@ -1,13 +1,13 @@
 import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
-import { Badge, Button, Col, DatePicker, Empty, Input, InputNumber, Row, Select } from 'antd';
+import { Badge, Button, Col, Empty, Row } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
-import type { Field } from '@formily/core';
-import { createForm, onFieldReact } from '@formily/core';
+import { Field, onFieldReact } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import {
   ArrayTable,
@@ -16,6 +16,7 @@ import {
   Input as FInput,
   NumberPicker,
   PreviewText,
+  FormGrid,
   Select as FSelect,
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
@@ -23,32 +24,10 @@ import Log from './Log';
 import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Status/model';
 import { observer } from '@formily/reactive-react';
 
-// const DataTypeComponent = (value: string) => {
-//   switch (value) {
-//     case 'array':
-//       return <div>{value}array</div>
-//     // case 'enum':
-//     //   return <div>{value}</div>
-//     case 'geo':
-//       return <div>{value}geo</div>
-//     case 'file':
-//       return <div>{value}file</div>
-//     default:
-//       return <div>{value}</div>
-//   }
-// }
-
-const DatePicker1: any = DatePicker;
-
 const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const [type, setType] = useState<'property' | 'function'>('function');
   const [input, setInput] = useState<any>({});
   const [inputs, setInputs] = useState<any[]>([]);
-
-  const [propertyType, setPropertyType] = useState<'read' | 'setting'>('read');
-  const [property, setProperty] = useState<any>({});
-  const [propertyValue, setPropertyValue] = useState<any>('');
 
   const metadata = JSON.parse(InstanceModel.detail?.metadata || '{}');
 
@@ -130,56 +109,6 @@ const Message = observer(() => {
       });
   };
 
-  const getItemNode = (t: string) => {
-    switch (t) {
-      case 'boolean':
-        return (
-          <Select
-            style={{ width: '100%', textAlign: 'left' }}
-            options={[
-              { label: 'true', value: true },
-              { label: 'false', value: false },
-            ]}
-            placeholder={'请选择'}
-            onChange={(value) => {
-              setPropertyValue(value);
-            }}
-          />
-        );
-      case 'int':
-      case 'long':
-      case 'float':
-      case 'double':
-        return (
-          <InputNumber
-            style={{ width: '100%' }}
-            placeholder={'请输入'}
-            onChange={(value) => {
-              setPropertyValue(value);
-            }}
-          />
-        );
-      case 'date':
-        return (
-          <DatePicker1
-            style={{ width: '100%' }}
-            onChange={(value: any) => {
-              setPropertyValue(value);
-            }}
-          />
-        );
-      default:
-        return (
-          <Input
-            onChange={(e) => {
-              setPropertyValue(e.target.value);
-            }}
-            placeholder="填写属性值"
-            style={{ width: '100%' }}
-          />
-        );
-    }
-  };
   useEffect(() => {
     if (DiagnoseStatusModel.state === 'success') {
       subscribeLog();
@@ -222,81 +151,76 @@ const Message = observer(() => {
     [],
   );
 
-  const dataRender = () => {
-    switch (type) {
-      case 'function':
-        return (
-          <Col span={5}>
-            <Select
-              style={{ width: '100%' }}
-              onChange={(value: any) => {
-                const data = (metadata?.functions || []).find((item: any) => item.id === value);
-                setInput(data);
-                setInputs(data?.inputs || []);
-                form.setValues({
-                  data: data?.inputs || [],
+  const _form = useMemo(
+    () =>
+      createForm({
+        initialValues: {
+          type: 'function',
+        },
+        effects() {
+          onFieldValueChange('property', (field) => {
+            const value = (field as Field).value;
+            const valueType = (metadata?.properties || []).find((it: any) => it.id === value)
+              ?.valueType?.type;
+            const format = field.query('.propertyValue').take() as any;
+            format.setValue('');
+            switch (valueType) {
+              case 'date':
+                format.setComponent(FDatePicker);
+                format.setComponentProps({
+                  placeholder: '请选择',
                 });
-              }}
-            >
-              {(metadata?.functions || []).map((i: any) => (
-                <Select.Option key={i.id} value={i.id}>
-                  {i.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-        );
-      case 'property':
-        return (
-          <>
-            <Col span={5}>
-              <Select
-                style={{ width: '100%' }}
-                value={propertyType}
-                placeholder="请选择"
-                onChange={(value: any) => {
-                  setPropertyType(value);
-                }}
-              >
-                <Select.Option value={'read'}>读取属性</Select.Option>
-                <Select.Option value={'setting'}>设置属性</Select.Option>
-              </Select>
-            </Col>
-            <Col span={5}>
-              <Select
-                style={{ width: '100%' }}
-                value={property}
-                placeholder="选择属性"
-                onChange={(value: any) => {
-                  setProperty(value);
-                }}
-              >
-                {(metadata?.properties || []).map((i: any) => (
-                  <Select.Option key={i.id} value={i.id}>
-                    {i.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-            {!!property && propertyType === 'setting' && (
-              <Col span={5}>
-                {getItemNode(
-                  (metadata?.properties || []).find((it: any) => it.id === property)?.valueType
-                    ?.type || '',
-                )}
-              </Col>
-            )}
-          </>
-        );
-      default:
-        return null;
-    }
-  };
+                break;
+              case 'boolean':
+                format.setComponent(FSelect);
+                format.setDataSource([
+                  { label: '是', value: true },
+                  { label: '否', value: false },
+                ]);
+                format.setComponentProps({
+                  placeholder: '请选择',
+                });
+                break;
+              case 'int':
+              case 'long':
+              case 'float':
+              case 'double':
+                format.setComponent(NumberPicker);
+                format.setComponentProps({
+                  placeholder: '请输入',
+                });
+                break;
+              default:
+                format.setComponent(FInput);
+                format.setComponentProps({
+                  placeholder: '请输入',
+                });
+                break;
+            }
+          });
+          onFieldValueChange('function', (field) => {
+            const value = (field as Field).value;
+            setInputs([]);
+            setInput({});
+            if (value) {
+              const data = (metadata?.functions || []).find((item: any) => item.id === value);
+              setInput(data);
+              setInputs(data?.inputs || []);
+              form.setValues({
+                data: data?.inputs || [],
+              });
+            }
+          });
+        },
+      }),
+    [],
+  );
 
   const SchemaField = createSchemaField({
     components: {
       FormItem,
       FInput,
+      FormGrid,
       ArrayTable,
       PreviewText,
       FSelect,
@@ -304,6 +228,147 @@ const Message = observer(() => {
       NumberPicker,
     },
   });
+
+  const _schema = {
+    type: 'object',
+    properties: {
+      grid: {
+        type: 'void',
+        'x-component': 'FormGrid',
+        'x-component-props': {
+          minColumns: [4],
+        },
+        properties: {
+          type: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择',
+            },
+            enum: [
+              { label: '调用功能', value: 'function' },
+              { label: '操作属性', value: 'property' },
+            ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
+              },
+            ],
+          },
+          function: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择',
+            },
+            enum: (metadata?.functions || []).map((item: any) => {
+              return { label: item.name, value: item.id };
+            }),
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "function"}}',
+                  },
+                },
+              },
+            ],
+          },
+          propertyType: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择',
+            },
+            enum: [
+              { label: '读取属性', value: 'read' },
+              { label: '设置属性', value: 'setting' },
+            ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "property"}}',
+                  },
+                },
+              },
+            ],
+          },
+          property: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择属性',
+            },
+            enum: (metadata?.properties || []).map((item: any) => {
+              return { label: item.name, value: item.id };
+            }),
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择属性',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "property"}}',
+                  },
+                },
+              },
+            ],
+          },
+          propertyValue: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FInput',
+            'x-validator': [
+              {
+                required: true,
+                message: '改字段必填',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.property', 'propertyType'],
+                fulfill: {
+                  state: {
+                    visible: '{{!!$deps[0] && $deps[1] === "setting"}}',
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+    },
+  };
 
   const schema = {
     type: 'object',
@@ -356,7 +421,13 @@ const Message = observer(() => {
                 value: {
                   type: 'string',
                   'x-decorator': 'FormItem',
-                  'x-component': FInput,
+                  'x-component': 'FInput',
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: '改字段必填',
+                    },
+                  ],
                 },
               },
             },
@@ -377,7 +448,7 @@ const Message = observer(() => {
                 return (
                   <Col key={key} span={12}>
                     <div style={messageStyleMap.get(obj.status)} className="message-status">
-                      <Badge status={messageStatusMap.get(obj.status)} />
+                      <Badge status={messageStatusMap.get(obj.status)} style={{ marginRight: 5 }} />
                       {obj.text}
                     </div>
                   </Col>
@@ -395,53 +466,48 @@ const Message = observer(() => {
               </div>
             </div>
             <div className="function">
-              <Row gutter={24}>
-                <Col span={5}>
-                  <Select
-                    value={type}
-                    placeholder="请选择"
-                    style={{ width: '100%' }}
-                    onChange={(value) => {
-                      setType(value);
-                      setInputs([]);
-                      setInput({});
-                    }}
-                  >
-                    <Select.Option value="function">调用功能</Select.Option>
-                    <Select.Option value="property">操作属性</Select.Option>
-                  </Select>
-                </Col>
-                {dataRender()}
-                <Col span={3}>
-                  <Button
-                    type="primary"
-                    onClick={async () => {
-                      if (type === 'function') {
-                        const list = (form?.values?.data || []).filter((it) => !!it.value);
-                        const obj = {};
-                        list.map((it) => {
-                          obj[it.id] = it.value;
-                        });
-                        await service.executeFunctions(InstanceModel.detail?.id || '', input.id, {
-                          ...obj,
-                        });
+              <div className={'function-item'}>
+                <div className={'function-item-form'}>
+                  <FormProvider form={_form}>
+                    <SchemaField schema={_schema} />
+                  </FormProvider>
+                </div>
+                <Button
+                  type="primary"
+                  className={'function-item-btn'}
+                  onClick={async () => {
+                    const values = await _form.submit<any>();
+                    let _inputs = undefined;
+                    if (inputs.length) {
+                      _inputs = await form.submit<any>();
+                    }
+                    if (values.type === 'function') {
+                      const list = (_inputs?.data || []).filter((it: any) => !!it.value);
+                      const obj = {};
+                      list.map((it: any) => {
+                        obj[it.id] = it.value;
+                      });
+                      await service.executeFunctions(InstanceModel.detail?.id || '', input.id, {
+                        ...obj,
+                      });
+                    } else {
+                      if (values.propertyType === 'read') {
+                        await service.readProperties(InstanceModel.detail?.id || '', [
+                          values.property,
+                        ]);
                       } else {
-                        if (propertyType === 'read') {
-                          await service.readProperties(InstanceModel.detail?.id || '', [property]);
-                        } else {
-                          await service.settingProperties(InstanceModel.detail?.id || '', {
-                            [property]: propertyValue,
-                          });
-                        }
+                        await service.settingProperties(InstanceModel.detail?.id || '', {
+                          [values.property]: values.propertyValue,
+                        });
                       }
-                    }}
-                  >
-                    发送
-                  </Button>
-                </Col>
-              </Row>
+                    }
+                  }}
+                >
+                  发送
+                </Button>
+              </div>
               {inputs.length > 0 && (
-                <div className="parameter">
+                <div className="inputs-parameter">
                   <h4>功能参数</h4>
                   <FormProvider form={form}>
                     <SchemaField schema={schema} />
