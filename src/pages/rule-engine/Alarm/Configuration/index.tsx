@@ -17,7 +17,7 @@ import ProTableCard from '@/components/ProTableCard';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import AlarmConfig from '@/components/ProTableCard/CardItems/AlarmConfig';
 import { Store } from 'jetlinks-store';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { onlyMessage } from '@/utils/util';
 import encodeQuery from '@/utils/encodeQuery';
@@ -104,33 +104,35 @@ const Configuration = () => {
       title: '关联场景联动',
       dataIndex: 'sceneId',
       width: 250,
-      render: (text: any, record: any) => (
-        <PermissionButton
-          type={'link'}
-          isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
-          style={{ padding: 0, height: 'auto' }}
-          tooltip={{
-            title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
-              ? text
-              : '没有权限，请联系管理员',
-          }}
-          onClick={() => {
-            const url = getMenuPathByCode('rule-engine/Scene/Save');
-            history.push(`${url}?id=${record.sceneId}`);
-          }}
-        >
-          <span
-            style={{
-              width: '200px',
-              overflow: 'hidden',
-              textAlign: 'left',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {record?.sceneName}
-          </span>
-        </PermissionButton>
-      ),
+      render: (text: any, record: any) =>
+        (record?.scene || []).map((item: any) => item?.name).join(',') || '',
+      // (
+      // <PermissionButton
+      //   type={'link'}
+      //   isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
+      //   style={{ padding: 0, height: 'auto' }}
+      //   tooltip={{
+      //     title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
+      //       ? text
+      //       : '没有权限，请联系管理员',
+      //   }}
+      //   onClick={() => {
+      //     const url = getMenuPathByCode('rule-engine/Scene/Save');
+      //     history.push(`${url}?id=${record.sceneId}`);
+      //   }}
+      // >
+      //   <span
+      //     style={{
+      //       width: '200px',
+      //       overflow: 'hidden',
+      //       textAlign: 'left',
+      //       textOverflow: 'ellipsis',
+      //     }}
+      //   >
+      //     {(record?.scene || []).map((item: any) => item?.name).join(',')}
+      //   </span>
+      // </PermissionButton>
+      // ),
       valueType: 'select',
       request: async () => {
         const res: any = await service.getScene(
@@ -312,7 +314,7 @@ const Configuration = () => {
         columns={columns}
         columnEmptyText={''}
         request={(params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.queryList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
         gridColumn={3}
         cardRender={(record) => (

@@ -3,6 +3,11 @@ import { request } from 'umi';
 import SystemConst from '@/utils/const';
 
 class Service extends BaseService<ConfigItem> {
+  public queryList = (data: any) =>
+    request(`/${SystemConst.API_BASE}/alarm/config/detail/_query`, {
+      method: 'POST',
+      data,
+    });
   public getTargetTypes = () =>
     request(`/${SystemConst.API_BASE}/alarm/config/target-type/supports`, {
       method: 'GET',
