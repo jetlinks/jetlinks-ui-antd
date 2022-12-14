@@ -15,7 +15,7 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Field, FieldDataSource } from '@formily/core';
+import { Field, FieldDataSource, registerValidateRules } from '@formily/core';
 import { onFormInit } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card, Col, Row } from 'antd';
@@ -261,6 +261,16 @@ const Save = observer(() => {
         value: item.id,
       })),
     );
+
+  registerValidateRules({
+    IpOrDomain(value) {
+      if (!value) return '';
+      const regIp = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
+      const regDomain = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/;
+      return regIp.test(value) || regDomain.test(value) ? '' : '请输入IP或者域名';
+    },
+  });
+
   const clusterConfig: ISchema = {
     type: 'void',
     'x-component': 'FormGrid',
@@ -374,7 +384,11 @@ const Save = observer(() => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
-        'x-validator': ['ipv4'],
+        'x-validator': [
+          {
+            IpOrDomain: true,
+          },
+        ],
         'x-component-props': {
           placeholder: '请输入公网地址',
         },
@@ -447,7 +461,11 @@ const Save = observer(() => {
               placeholder: '请输入远程地址',
             },
             required: true,
-            'x-validator': ['ipv4'],
+            'x-validator': [
+              {
+                IpOrDomain: true,
+              },
+            ],
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },

@@ -2,7 +2,7 @@ import { TitleComponent } from '@/components';
 import ReactJson from 'react-json-view';
 import { request } from 'umi';
 import MonacoEditor from 'react-monaco-editor';
-import { Button, Input } from 'antd';
+import { Button, Input, Popconfirm } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createSchemaField, FormProvider, observer } from '@formily/react';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
@@ -11,12 +11,29 @@ import { ArrayTable, Editable, FormItem, Input as FormilyInput } from '@formily/
 import type { ISchema } from '@formily/json-schema';
 import SystemConst from '@/utils/const';
 import classNames from 'classnames';
+import { DeleteOutlined } from '@ant-design/icons';
 
 export default observer(() => {
   const [result, setResult] = useState({});
   const [body, setBody] = useState({});
 
   const editor: any = useRef(null);
+
+  const RemoveButton = () => {
+    const index = ArrayTable.useIndex!();
+    const array = ArrayTable.useArray!();
+    return (
+      <Popconfirm
+        title="确定删除"
+        onConfirm={() => {
+          array.field?.remove?.(index);
+          array.props?.onRemove?.(index);
+        }}
+      >
+        <DeleteOutlined />
+      </Popconfirm>
+    );
+  };
 
   useEffect(() => {
     if (ApiModel.debugger.body && editor.current) {
@@ -36,6 +53,7 @@ export default observer(() => {
       Editable,
       Input: FormilyInput,
       ArrayTable,
+      RemoveButton,
     },
   });
 
@@ -100,6 +118,7 @@ export default observer(() => {
   }, [body]);
 
   useEffect(() => {
+    // console.log('ApiModel.debugger',ApiModel.debugger)
     if (form && ApiModel.debugger && ApiModel.debugger.params) {
       const arr = ApiModel.debugger.params.map((item: any) => {
         return {
@@ -168,7 +187,7 @@ export default observer(() => {
                   properties: {
                     remove: {
                       type: 'void',
-                      'x-component': 'ArrayTable.Remove',
+                      'x-component': 'RemoveButton',
                     },
                   },
                 },
@@ -200,6 +219,7 @@ export default observer(() => {
               width: `calc(100% - ${ApiModel.swagger.method !== 'delete' ? '140px' : '150px'})`,
             }}
             value={ApiModel.swagger.url}
+            disabled
           />
           <Button type="primary" onClick={onSearch}>
             发送

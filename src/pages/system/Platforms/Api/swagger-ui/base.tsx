@@ -246,6 +246,7 @@ export default observer(() => {
             }}
             value={ApiModel.swagger.url}
             readOnly
+            disabled
           />
         </Input.Group>
       </div>

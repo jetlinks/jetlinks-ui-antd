@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import SipComponent from '@/components/SipComponent';
 import SipSelectComponent from '@/components/SipSelectComponent';
-import { testIP } from '@/utils/util';
+// import { testIP } from '@/utils/util';
 import { useEffect, useState } from 'react';
 import { service } from '../index';
 import { useLocation } from 'umi';
@@ -31,13 +31,14 @@ const Save = () => {
   const id = location?.query?.id || '';
   const [list, setList] = useState<any[]>([]);
   const [transport, setTransport] = useState<'UDP' | 'TCP'>('UDP');
+  const regDomain = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/;
 
   const checkSIP = (_: any, value: { host: string; port: number }) => {
     if (!value) {
       return Promise.resolve();
     } else if (!value.host) {
       return Promise.reject(new Error('请输入IP 地址'));
-    } else if (value?.host && !testIP(value.host)) {
+    } else if (value?.host && !regDomain.test(value.host)) {
       return Promise.reject(new Error('请输入正确的IP地址'));
     } else if (!value?.port) {
       return Promise.reject(new Error('请输入端口'));
