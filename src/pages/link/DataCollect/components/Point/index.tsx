@@ -212,6 +212,7 @@ const PointCard = observer((props: PointCardProps) => {
         bordered={false}
         className={'data-collect-point'}
         style={{ position: 'relative', minHeight }}
+        bodyStyle={{ paddingTop: !props.type ? 4 : 24 }}
       >
         <div>
           <div style={{ height: '100%', paddingBottom: 48 }}>

@@ -139,13 +139,18 @@ const DataSource = observer(() => {
           type="link"
           isPermission={userPermission.manage}
           key="manage"
-          disabled={record.state?.value !== 'enabled'}
+          disabled={record.state?.value !== 'enabled' || record?.typeId === 'rabbitmq'}
           onClick={() => {
             const url = getMenuPathByCode(MENUS_CODE[`system/DataSource/Management`]);
             history.push(`${url}?id=${record.id}`);
           }}
           tooltip={{
-            title: record.state?.value !== 'enabled' ? '请先启用数据源' : '管理',
+            title:
+              record?.typeId === 'rabbitmq'
+                ? '暂不支持管理功能'
+                : record.state?.value !== 'enabled'
+                ? '请先启用数据源'
+                : '管理',
           }}
         >
           <DatabaseOutlined />

@@ -196,7 +196,12 @@ const Configuration = () => {
               disabled: record.state?.value === 'disabled',
               title: '确认手动触发?',
               onConfirm: async () => {
-                await service._execute(record.sceneId);
+                const scene = (record?.scene || [])
+                  .filter((item: any) => item?.triggerType === 'manual')
+                  .map((i) => {
+                    return { id: i?.id };
+                  });
+                await service._execute(scene);
                 onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
@@ -334,7 +339,12 @@ const Configuration = () => {
                     title: '确认手动触发?',
                     disabled: record.state?.value === 'disabled',
                     onConfirm: async () => {
-                      await service._execute(record.sceneId);
+                      const scene = (record?.scene || [])
+                        .filter((item: any) => item?.triggerType === 'manual')
+                        .map((i: any) => {
+                          return { id: i?.id };
+                        });
+                      await service._execute(scene);
                       onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',

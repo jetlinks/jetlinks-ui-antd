@@ -33,10 +33,10 @@ class Service extends BaseService<ConfigItem> {
     request(`/${SystemConst.API_BASE}/alarm/config/${id}/_disable`, {
       method: 'POST',
     });
-  public _execute = (id: string) =>
-    request(`/${SystemConst.API_BASE}/scene/${id}/_execute`, {
+  public _execute = (data: any) =>
+    request(`/${SystemConst.API_BASE}/scene/batch/_execute`, {
       method: 'POST',
-      data: {},
+      data,
     });
 
   public getAlarmCountById = (id: string) =>
