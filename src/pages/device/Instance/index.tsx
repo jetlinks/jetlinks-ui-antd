@@ -258,17 +258,16 @@ const Instance = () => {
       filterMultiple: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.device.instance.registrationTime',
-        defaultMessage: '注册时间',
-      }),
-      dataIndex: 'registryTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
       width: '200px',
       valueType: 'dateTime',
       render: (_: any, row) => {
         return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '';
       },
+      defaultSortOrder: 'descend',
       sorter: true,
+      sortDirections: ['ascend', 'descend'],
     },
     {
       title: intl.formatMessage({
@@ -656,17 +655,46 @@ const Instance = () => {
         params={searchParams}
         options={{ fullScreen: true }}
         columnEmptyText={''}
-        request={(params) =>
-          service.query({
+        // request={(params,sort) =>
+        //   service.query({
+        //     ...params,
+        //     sorts: [
+        //       {
+        //         name: 'createTime',
+        //         order: 'desc',
+        //       },
+        //     ],
+        //   })
+        // }
+        request={async (params, sort) => {
+          let sorts;
+          if (sort.createTime) {
+            sorts = sort.createTime === 'descend' ? 'desc' : 'asc';
+          } else {
+            sorts = 'desc';
+          }
+          console.log(sorts);
+          const res = await service.query({
             ...params,
             sorts: [
               {
                 name: 'createTime',
-                order: 'desc',
+                order: sorts,
               },
             ],
-          })
-        }
+          });
+          return {
+            code: res.message,
+            result: {
+              data: res.result.data,
+              pageIndex: res.result.pageIndex,
+              pageSize: res.result.pageSize,
+              total: res.result.total,
+            },
+            status: res.status,
+          };
+          // return service.queryLog(InstanceModel.detail.id!, params);
+        }}
         rowKey="id"
         search={false}
         tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
