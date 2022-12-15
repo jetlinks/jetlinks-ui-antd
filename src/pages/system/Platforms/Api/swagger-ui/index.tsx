@@ -13,6 +13,8 @@ export default (props: SwaggerProps) => {
       <Button
         onClick={() => {
           ApiModel.showTable = true;
+          ApiModel.swagger = {};
+          ApiModel.debugger = {};
         }}
         className={'platforms-api-swagger-back'}
       >

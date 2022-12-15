@@ -142,12 +142,18 @@ const BaseMetadata = observer((props: Props) => {
 
   const handleSearch = async (name: string) => {
     if (name) {
-      const result = await DB.getDB()
-        .table(`${type}`)
-        .where('id')
-        .startsWithAnyOfIgnoreCase(name)
-        .toArray();
-      setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
+      // const result = await DB.getDB()
+      //   .table(`${type}`)
+      //   .where('name')
+      //   .startsWithAnyOfIgnoreCase(name)
+      //   .toArray();
+      // setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
+      const result = await DB.getDB().table(`${type}`).toArray();
+      const arr = result
+        .filter((item) => item.name.indexOf(name) > -1)
+        .sort((a, b) => b?.sortsIndex - a?.sortsIndex);
+      // console.log(result, arr)
+      setData(arr);
     } else {
       await initData();
     }

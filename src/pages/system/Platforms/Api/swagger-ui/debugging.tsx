@@ -35,7 +35,20 @@ export default observer(() => {
     );
   };
 
+  const isBody = () => {
+    const obj = Object.keys(ApiModel.debugger?.body || {});
+    const url = ApiModel.swagger.url.indexOf('{' || '}');
+    if (ApiModel.debugger.body && obj.length !== 0) {
+      return true;
+    } else if (url !== -1) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   useEffect(() => {
+    console.log('ApiModel.debugger.body', ApiModel.debugger.body);
     if (ApiModel.debugger.body && editor.current) {
       const { editor: MEditor } = editor.current;
       MEditor.setValue(JSON.stringify(ApiModel.debugger.body));
@@ -234,7 +247,7 @@ export default observer(() => {
               <SchemaField schema={schema} />
             </FormProvider>
           )}
-          {ApiModel.debugger.body && (
+          {isBody() && (
             <MonacoEditor
               height={200}
               language={'json'}

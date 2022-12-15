@@ -148,9 +148,9 @@ const Basis = () => {
                   >
                     <UploadImage
                       size={1}
-                      types={['image/x-icon', 'image/jpeg', 'image/png']}
+                      types={['image/x-icon']}
                       backgroundSize={'inherit'}
-                      errorMessage={'请上传.ico.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片'}
+                      errorMessage={'请上传ico格式的图片'}
                     />
                   </Form.Item>
                 </Col>
