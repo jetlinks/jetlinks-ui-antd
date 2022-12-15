@@ -45,9 +45,19 @@ const Relationship = () => {
       },
     },
     {
-      dataIndex: 'targetTypeName',
+      dataIndex: 'targetType',
       title: '被关联方',
       ellipsis: true,
+      valueType: 'select',
+      render: (_, row) => {
+        return row.targetTypeName;
+      },
+      valueEnum: {
+        user: {
+          text: '用户',
+          status: 'user',
+        },
+      },
     },
     {
       dataIndex: 'description',

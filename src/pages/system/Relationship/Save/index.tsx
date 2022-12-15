@@ -1,6 +1,11 @@
 import { useIntl } from 'umi';
 import type { Field } from '@formily/core';
-import { createForm, onFieldInputValueChange, onFieldValueChange } from '@formily/core';
+import {
+  createForm,
+  onFieldInputValueChange,
+  onFieldValueChange,
+  registerValidateRules,
+} from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React from 'react';
 import * as ICONS from '@ant-design/icons';
@@ -114,6 +119,14 @@ const Save = (props: Props) => {
     },
   });
 
+  registerValidateRules({
+    validateId(value) {
+      if (!value) return '';
+      const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
+      return reg.exec(value) ? '' : '标识只能由数字、字母、下划线、中划线组成';
+    },
+  });
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -169,6 +182,10 @@ const Save = (props: Props) => {
               {
                 required: true,
                 message: '请输入标识',
+              },
+              {
+                validateId: true,
+                message: '标识只能由数字、26个英文字母或者下划线组成',
               },
             ],
             name: 'relation',

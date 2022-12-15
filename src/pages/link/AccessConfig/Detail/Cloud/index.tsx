@@ -81,7 +81,7 @@ const Cloud = (props: Props) => {
             provider={props.provider}
             data={props.data}
             config={{
-              config,
+              ...config,
               protocol: protocolCurrent,
             }}
             prev={prev}

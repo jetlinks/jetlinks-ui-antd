@@ -50,7 +50,10 @@ const Dialog = (props: Props) => {
             <div className="dialog-box">
               <div className="dialog-header">
                 <div className="dialog-title">
-                  <Badge color={statusColor.get(item.error ? 'error' : 'success')} />
+                  <Badge
+                    color={statusColor.get(item.error ? 'error' : 'success')}
+                    style={{ marginRight: 5 }}
+                  />
                   {operationMap.get(item.operation) || item?.operation}
                 </div>
                 <div className="dialog-time">

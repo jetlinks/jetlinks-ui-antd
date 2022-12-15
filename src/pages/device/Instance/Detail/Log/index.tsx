@@ -80,7 +80,7 @@ const Log = () => {
   ];
 
   return (
-    <Card className={'device-detail-log'} style={{ minHeight }}>
+    <Card className={'device-detail-log'} style={{ minHeight }} bodyStyle={{ padding: 0 }}>
       <SearchComponent<LogItem>
         field={[...columns]}
         target="logs"
@@ -108,6 +108,7 @@ const Log = () => {
         pagination={{
           pageSize: 10,
         }}
+        style={{ padding: '0 24px' }}
         request={async (params, sort) => {
           let sorts;
           if (sort.timestamp) {

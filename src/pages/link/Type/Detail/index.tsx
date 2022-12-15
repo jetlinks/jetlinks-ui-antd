@@ -598,7 +598,8 @@ const Save = observer(() => {
           dependencies: ['type'],
           fulfill: {
             state: {
-              title: '{{$deps[0] === "TCP_SERVER" ? "开启TLS" : "开启DTLS"}}',
+              title:
+                '{{!["TCP_SERVER", "UDP", "COAP_SERVER"].includes($deps[0]) ? "开启TLS" : "开启DTLS"}}',
             },
           },
         },
