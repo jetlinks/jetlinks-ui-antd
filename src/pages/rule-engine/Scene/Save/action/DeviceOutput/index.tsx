@@ -140,7 +140,7 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    // console.log(item,_options);
+    // console.log(DeviceModel.propertiesValue,_options);
     props.save(item, _options);
     init();
   };

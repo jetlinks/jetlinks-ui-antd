@@ -95,9 +95,13 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     setValue(props.value);
-    setLabelValue(props.label);
+    // setLabelValue(props.label);
     // console.log('typemodel', props.value);
   }, [props.value]);
+
+  useEffect(() => {
+    setLabelValue(props.label);
+  }, []);
 
   const renderNode = (type: string) => {
     switch (type) {
@@ -126,11 +130,12 @@ export default observer((props: Props) => {
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
             onChange={(e, options: any) => {
-              // console.log(options);
+              console.log(options?.text);
               setValue(e);
               setLabelValue(options?.text);
+              // DeviceModel.propertiesValue = options?.text
               if (props.onChange) {
-                props.onChange(e, source);
+                props.onChange(e, source, options?.text);
               }
               // onChange(e)
             }}

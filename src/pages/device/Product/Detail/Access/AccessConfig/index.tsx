@@ -61,25 +61,25 @@ const AccessConfig = (props: Props) => {
                     termType: 'in',
                     value: 'child-device,edge-child-device',
                   },
-                  {
-                    column: 'state',
-                    termType: 'eq',
-                    value: 'enabled',
-                  },
+                  // {
+                  //   column: 'state',
+                  //   termType: 'eq',
+                  //   value: 'enabled',
+                  // },
                 ],
               },
             ]
           : [
               ...params?.terms,
-              {
-                terms: [
-                  {
-                    column: 'state',
-                    termType: 'eq',
-                    value: 'enabled',
-                  },
-                ],
-              },
+              // {
+              //   terms: [
+              //     {
+              //       column: 'state',
+              //       termType: 'eq',
+              //       value: 'enabled',
+              //     },
+              //   ],
+              // },
             ],
     };
     service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
@@ -230,7 +230,7 @@ const AccessConfig = (props: Props) => {
         <Row gutter={[16, 16]}>
           {(dataSource?.data || []).map((item: any) => (
             <Col
-              key={item.name}
+              key={item.id}
               span={12}
               onClick={() => {
                 setCurrrent(item);

@@ -2,7 +2,7 @@ export const ProtocolMapping = new Map();
 ProtocolMapping.set('websocket-server', 'WebSocket');
 ProtocolMapping.set('http-server-gateway', 'HTTP');
 ProtocolMapping.set('udp-device-gateway', 'UDP');
-ProtocolMapping.set('coap-server-gateway', 'COAP');
+ProtocolMapping.set('coap-server-gateway', 'CoAP');
 ProtocolMapping.set('mqtt-client-gateway', 'MQTT');
 ProtocolMapping.set('mqtt-server-gateway', 'MQTT');
 ProtocolMapping.set('tcp-server-gateway', 'TCP');

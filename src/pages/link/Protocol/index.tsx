@@ -1,20 +1,20 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
-import { Badge } from 'antd';
+// import { Badge } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import {
   DeleteOutlined,
   EditOutlined,
-  PlayCircleOutlined,
+  // PlayCircleOutlined,
   PlusOutlined,
-  StopOutlined,
+  // StopOutlined,
 } from '@ant-design/icons';
 import Service from '@/pages/link/Protocol/service';
 import { useIntl, useLocation } from 'umi';
 import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton, ProTableCard } from '@/components';
-import ProcotolCard from '@/components/ProTableCard/CardItems/protocol';
+import ProtocolCard from '@/components/ProTableCard/CardItems/protocol';
 import Save from './save';
 import { onlyMessage } from '@/utils/util';
 
@@ -28,15 +28,15 @@ const Protocol = () => {
   const { permission } = PermissionButton.usePermission('link/Protocol');
   const intl = useIntl();
 
-  const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
-    const resp = await service.modifyState(id, type);
-    if (resp.status === 200) {
-      onlyMessage('操作成功!');
-    } else {
-      onlyMessage(resp?.message || '操作失败', 'error');
-    }
-    actionRef.current?.reload();
-  };
+  // const modifyState = async (id: string, type: 'deploy' | 'un-deploy') => {
+  //   const resp = await service.modifyState(id, type);
+  //   if (resp.status === 200) {
+  //     onlyMessage('操作成功!');
+  //   } else {
+  //     onlyMessage(resp?.message || '操作失败', 'error');
+  //   }
+  //   actionRef.current?.reload();
+  // };
 
   const columns: ProColumns<ProtocolItem>[] = [
     {
@@ -71,24 +71,24 @@ const Protocol = () => {
         },
       },
     },
-    {
-      dataIndex: 'state',
-      title: '状态',
-      valueType: 'select',
-      valueEnum: {
-        0: {
-          text: '禁用',
-          status: 0,
-        },
-        1: {
-          text: '正常',
-          status: 1,
-        },
-      },
-      renderText: (text) => (
-        <Badge color={text !== 1 ? 'red' : 'green'} text={text !== 1 ? '禁用' : '正常'} />
-      ),
-    },
+    // {
+    //   dataIndex: 'state',
+    //   title: '状态',
+    //   valueType: 'select',
+    //   valueEnum: {
+    //     0: {
+    //       text: '禁用',
+    //       status: 0,
+    //     },
+    //     1: {
+    //       text: '正常',
+    //       status: 1,
+    //     },
+    //   },
+    //   renderText: (text) => (
+    //     <Badge color={text !== 1 ? 'red' : 'green'} text={text !== 1 ? '禁用' : '正常'} />
+    //   ),
+    // },
     {
       dataIndex: 'description',
       ellipsis: true,
@@ -120,37 +120,38 @@ const Protocol = () => {
         >
           <EditOutlined />
         </PermissionButton>,
-        <PermissionButton
-          isPermission={permission.action}
-          key="action"
-          type={'link'}
-          style={{ padding: 0 }}
-          tooltip={{
-            title: record.state === 1 ? '禁用' : '启用',
-          }}
-          popConfirm={{
-            title: `确认${record.state === 1 ? '禁用' : '启用'}`,
-            onConfirm: () => {
-              if (record.state === 1) {
-                modifyState(record.id, 'un-deploy');
-              } else {
-                modifyState(record.id, 'deploy');
-              }
-            },
-          }}
-        >
-          {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
-        </PermissionButton>,
+        // <PermissionButton
+        //   isPermission={permission.action}
+        //   key="action"
+        //   type={'link'}
+        //   style={{ padding: 0 }}
+        //   tooltip={{
+        //     title: record.state === 1 ? '禁用' : '启用',
+        //   }}
+        //   popConfirm={{
+        //     title: `确认${record.state === 1 ? '禁用' : '启用'}`,
+        //     onConfirm: () => {
+        //       if (record.state === 1) {
+        //         modifyState(record.id, 'un-deploy');
+        //       } else {
+        //         modifyState(record.id, 'deploy');
+        //       }
+        //     },
+        //   }}
+        // >
+        //   {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
+        // </PermissionButton>,
         <PermissionButton
           isPermission={permission.delete}
           tooltip={{
-            title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
+            // title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
+            title: '删除',
           }}
           style={{ padding: 0 }}
-          disabled={record.state === 1}
+          // disabled={record.state === 1}
           popConfirm={{
             title: '确认删除',
-            disabled: record.state === 1,
+            // disabled: record.state === 1,
             onConfirm: async () => {
               const resp: any = await service.remove(record.id);
               if (resp.status === 200) {
@@ -234,7 +235,7 @@ const Protocol = () => {
           </PermissionButton>,
         ]}
         cardRender={(record) => (
-          <ProcotolCard
+          <ProtocolCard
             {...record}
             actions={[
               <PermissionButton
@@ -256,37 +257,38 @@ const Protocol = () => {
                 <EditOutlined />
                 编辑
               </PermissionButton>,
-              <PermissionButton
-                isPermission={permission.action}
-                key="action"
-                type={'link'}
-                style={{ padding: 0 }}
-                tooltip={{
-                  title: record.state === 1 ? '禁用' : '启用',
-                }}
-                popConfirm={{
-                  title: `确认${record.state === 1 ? '禁用' : '启用'}`,
-                  onConfirm: () => {
-                    if (record.state === 1) {
-                      modifyState(record.id, 'un-deploy');
-                    } else {
-                      modifyState(record.id, 'deploy');
-                    }
-                  },
-                }}
-              >
-                {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
-                {record.state === 1 ? '禁用' : '启用'}
-              </PermissionButton>,
+              // <PermissionButton
+              //   isPermission={permission.action}
+              //   key="action"
+              //   type={'link'}
+              //   style={{ padding: 0 }}
+              //   tooltip={{
+              //     title: record.state === 1 ? '禁用' : '启用',
+              //   }}
+              //   popConfirm={{
+              //     title: `确认${record.state === 1 ? '禁用' : '启用'}`,
+              //     onConfirm: () => {
+              //       if (record.state === 1) {
+              //         modifyState(record.id, 'un-deploy');
+              //       } else {
+              //         modifyState(record.id, 'deploy');
+              //       }
+              //     },
+              //   }}
+              // >
+              //   {record.state === 1 ? <StopOutlined /> : <PlayCircleOutlined />}
+              //   {record.state === 1 ? '禁用' : '启用'}
+              // </PermissionButton>,
               <PermissionButton
                 isPermission={permission.delete}
                 tooltip={{
-                  title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
+                  // title: record.state !== 1 ? '删除' : '请先禁用该协议，再删除',
+                  title: '删除',
                 }}
-                disabled={record.state === 1}
+                // disabled={record.state === 1}
                 popConfirm={{
                   title: '确认删除',
-                  disabled: record.state === 1,
+                  // disabled: record.state === 1,
                   onConfirm: async () => {
                     const resp: any = await service.remove(record.id);
                     if (resp.status === 200) {

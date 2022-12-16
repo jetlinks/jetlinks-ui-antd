@@ -7,7 +7,7 @@ interface Props {
   properties: any[];
   value?: any;
   id?: string;
-  onChange?: (value?: any, text?: any) => void;
+  onChange?: (value?: any, text?: any, valueLable?: any) => void;
   propertiesChange?: (value?: string) => void;
   name?: any;
   onColumns?: (col: any, text?: any) => void;
@@ -25,6 +25,7 @@ export default (props: Props) => {
   const [format, setFormat] = useState<any>('HH:mm:ss');
   const [enumList, setEnumList] = useState<any>([]);
   const [label, setLabel] = useState<any>();
+  const ref = useRef<any>('');
 
   useEffect(() => {
     // console.log(props.value);
@@ -47,8 +48,8 @@ export default (props: Props) => {
                 console.log(propertiesItem.valueType.elements, props.value[key].value);
                 setEnumList(propertiesItem.valueType.elements);
                 const text = propertiesItem.valueType.elements.find(
-                  (item: any) => item.value === props.value[key].value?.[0],
-                ).text;
+                  (item: any) => item.value === props.value[key].value,
+                )?.text;
                 setLabel(text);
                 // console.log(text);
               }
@@ -69,7 +70,12 @@ export default (props: Props) => {
           source: source,
         },
       };
-      props.onChange(obj, textRef.current);
+      //处理枚举外部回显
+      if (ref.current) {
+        props.onChange(obj, textRef.current, ref.current);
+      } else {
+        props.onChange(obj, textRef.current);
+      }
     }
   }, [propertiesValue, source]);
 
@@ -119,8 +125,10 @@ export default (props: Props) => {
                 props.onColumns(col);
               }
             }}
-            onChange={(value, sources) => {
+            onChange={(value, sources, text) => {
               // console.log(value, sources);
+              console.log(text);
+              ref.current = text;
               setPropertiesValue(value);
               setSource(sources);
             }}

@@ -2,11 +2,11 @@ import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
 import { Badge, Button, Col, Empty, Row } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
-import { Field, onFieldReact } from '@formily/core';
+import { Field } from '@formily/core';
 import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import {
@@ -23,11 +23,13 @@ import { randomString } from '@/utils/util';
 import Log from './Log';
 import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Status/model';
 import { observer } from '@formily/reactive-react';
+import DiagnoseForm from './form';
 
 const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const [input, setInput] = useState<any>({});
   const [inputs, setInputs] = useState<any[]>([]);
+  const DiagnoseFormRef = useRef<{ save: any }>();
 
   const metadata = JSON.parse(InstanceModel.detail?.metadata || '{}');
 
@@ -115,42 +117,6 @@ const Message = observer(() => {
     }
   }, [DiagnoseStatusModel.state]);
 
-  const form = useMemo(
-    () =>
-      createForm({
-        initialValues: {
-          data: [...inputs],
-        },
-        effects() {
-          onFieldReact('data.*.valueType.type', (field) => {
-            const value = (field as Field).value;
-            const format = field.query('..value').take() as any;
-            if (format) {
-              switch (value) {
-                case 'date':
-                  format.setComponent(FDatePicker);
-                  break;
-                case 'boolean':
-                  format.setComponent(FSelect);
-                  format.setDataSource([
-                    { label: '是', value: true },
-                    { label: '否', value: false },
-                  ]);
-                  break;
-                case 'int':
-                  format.setComponent(NumberPicker);
-                  break;
-                default:
-                  format.setComponent(FInput);
-                  break;
-              }
-            }
-          });
-        },
-      }),
-    [],
-  );
-
   const _form = useMemo(
     () =>
       createForm({
@@ -206,9 +172,6 @@ const Message = observer(() => {
               const data = (metadata?.functions || []).find((item: any) => item.id === value);
               setInput(data);
               setInputs(data?.inputs || []);
-              form.setValues({
-                data: data?.inputs || [],
-              });
             }
           });
         },
@@ -370,73 +333,6 @@ const Message = observer(() => {
     },
   };
 
-  const schema = {
-    type: 'object',
-    properties: {
-      data: {
-        type: 'array',
-        'x-decorator': 'FormItem',
-        'x-component': 'ArrayTable',
-        'x-component-props': {
-          scroll: { x: '100%' },
-        },
-        items: {
-          type: 'object',
-          properties: {
-            column1: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: '参数名称',
-              },
-              properties: {
-                name: {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
-                },
-              },
-            },
-            column2: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: '输入类型',
-              },
-              properties: {
-                'valueType.type': {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
-                },
-              },
-            },
-            column3: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: '值',
-              },
-              properties: {
-                value: {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'FInput',
-                  'x-validator': [
-                    {
-                      required: true,
-                      message: '改字段必填',
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
-
   return (
     <Row gutter={24}>
       <Col span={16}>
@@ -479,7 +375,10 @@ const Message = observer(() => {
                     const values = await _form.submit<any>();
                     let _inputs = undefined;
                     if (inputs.length) {
-                      _inputs = await form.submit<any>();
+                      _inputs = await DiagnoseFormRef.current?.save();
+                      if (!_inputs) {
+                        return;
+                      }
                     }
                     if (values.type === 'function') {
                       const list = (_inputs?.data || []).filter((it: any) => !!it.value);
@@ -509,9 +408,7 @@ const Message = observer(() => {
               {inputs.length > 0 && (
                 <div className="inputs-parameter">
                   <h4>功能参数</h4>
-                  <FormProvider form={form}>
-                    <SchemaField schema={schema} />
-                  </FormProvider>
+                  <DiagnoseForm data={inputs} ref={DiagnoseFormRef} />
                 </div>
               )}
             </div>

@@ -26,11 +26,13 @@ const SolveComponent = (props: Props) => {
         layout="vertical"
         form={form}
         onFinish={async (values: any) => {
-          const resp = await service.handleLog(data?.id || '', {
-            id: data?.id || '',
+          const resp = await service.handleLog({
             describe: values.describe,
             type: 'user',
             state: 'normal',
+            alarmRecordId: data?.id || '',
+            alarmConfigId: data?.alarmConfigId || '',
+            alarmTime: data?.alarmTime || '',
           });
           if (resp.status === 200) {
             onlyMessage('操作成功！');

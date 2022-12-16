@@ -1,12 +1,13 @@
-import { createForm } from '@formily/core';
+import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
-import { ArrayTable, FormItem, Input } from '@formily/antd';
+import { ArrayTable, FormItem, Input, NumberPicker, DatePicker, Select } from '@formily/antd';
 import { Modal } from 'antd';
 import { useIntl } from 'umi';
 import GeoComponent from './location/GeoComponent';
 import { onlyMessage } from '@/utils/util';
 import RemoveData from './RemoveData';
+import { MetadataJsonInput } from '@/components';
 
 interface Props {
   close: () => void;
@@ -22,15 +23,98 @@ const Edit = (props: Props) => {
     initialValues: {
       tags: tags,
     },
+    effects() {
+      onFieldReact('tags.*.id', (field, f) => {
+        const value = (field as Field).value;
+        const item = (tags || []).find((it: any) => it.id === value);
+        const valueType = item?.type || item?.dataType?.type;
+        const nextPath = FormPath.transform(field.path, /\d+/, (index) => {
+          return `tags.${index}.value`;
+        });
+        switch (valueType) {
+          case 'enum':
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'Select';
+              state.dataSource = (item?.dataType?.elements || []).map((i: any) => {
+                return {
+                  label: i?.text,
+                  value: i?.value,
+                };
+              });
+              state.componentProps = {
+                placeholder: '请选择',
+              };
+            });
+            break;
+          case 'boolean':
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'Select';
+              state.dataSource = [
+                { label: '是', value: true },
+                { label: '否', value: false },
+              ];
+              state.componentProps = {
+                placeholder: '请选择',
+              };
+            });
+            break;
+          case 'int':
+          case 'long':
+          case 'float':
+          case 'double':
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'NumberPicker';
+              state.componentProps = {
+                placeholder: '请输入',
+              };
+            });
+            break;
+          case 'geoPoint':
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'GeoComponent';
+              state.componentProps = {
+                json: item?.json?.properties?.[0],
+              };
+            });
+            break;
+          case 'object':
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'MetadataJsonInput';
+            });
+            break;
+          case 'date':
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'DatePicker';
+              state.componentProps = {
+                placeholder: '请选择',
+                format: 'YYYY-MM-DD HH:mm:ss',
+              };
+            });
+            break;
+          default:
+            f.setFieldState(nextPath, (state) => {
+              state.componentType = 'Input';
+              state.componentProps = {
+                placeholder: '请输入',
+              };
+            });
+            break;
+        }
+      });
+    },
   });
 
   const SchemaField = createSchemaField({
     components: {
       FormItem,
       Input,
+      Select,
       ArrayTable,
+      DatePicker,
+      NumberPicker,
       RemoveData,
       GeoComponent,
+      MetadataJsonInput,
     },
   });
 
@@ -53,6 +137,12 @@ const Edit = (props: Props) => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { width: 200, title: 'ID' },
               properties: {
+                id: {
+                  type: 'string',
+                  'x-decorator': 'FormItem',
+                  'x-component': 'Input',
+                  'x-hidden': true,
+                },
                 key: {
                   type: 'string',
                   'x-decorator': 'FormItem',
@@ -100,14 +190,14 @@ const Edit = (props: Props) => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
-                  'x-reactions': {
-                    dependencies: ['.type'],
-                    fulfill: {
-                      state: {
-                        componentType: '{{$deps[0]==="geoPoint"?"GeoComponent":"Input"}}',
-                      },
-                    },
-                  },
+                  // 'x-reactions': {
+                  //   dependencies: ['.type'],
+                  //   fulfill: {
+                  //     state: {
+                  //       componentType: '{{$deps[0]==="geoPoint"?"GeoComponent":"Input"}}',
+                  //     },
+                  //   },
+                  // },
                 },
               },
             },
@@ -161,7 +251,12 @@ const Edit = (props: Props) => {
         if (values?.tags.length === 0) {
           props.close();
         } else {
-          const list = (values?.tags || []).filter((item: any) => item?.key);
+          const list = (values?.tags || [])
+            .filter((item: any) => item?.key)
+            .map((i: any) => {
+              const { dataType, ...extra } = i;
+              return { ...extra };
+            });
           const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
           if (resp.status === 200) {
             props.refresh();

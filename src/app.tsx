@@ -446,9 +446,9 @@ export function render(oldRender: any) {
         ],
       },
     ];
-    Service.settingDetail('api').then((res) => {
+    Service.settingDetail('amap').then((res) => {
       if (res && res.status === 200 && res.result) {
-        localStorage.setItem(SystemConst.AMAP_KEY, res.result.api);
+        localStorage.setItem(SystemConst.AMAP_KEY, res.result.apiKey);
       }
     });
     Service.getSystemVersion().then((resp) => {

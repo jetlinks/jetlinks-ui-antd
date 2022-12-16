@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ProtocolItem } from '@/pages/link/Protocol/typings';
-import { StatusColorEnum } from '@/components/BadgeStatus';
+// import { StatusColorEnum } from '@/components/BadgeStatus';
 import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
@@ -19,12 +19,13 @@ export default (props: ProcotolCardProps) => {
     <TableCard
       showMask={false}
       actions={props.actions}
-      status={props.state === 1 ? 'enabled' : 'disabled'}
-      statusText={props.state === 1 ? '正常' : '禁用'}
-      statusNames={{
-        enabled: StatusColorEnum.success,
-        disabled: StatusColorEnum.error,
-      }}
+      showStatus={false}
+      // status={props.state === 1 ? 'enabled' : 'disabled'}
+      // statusText={props.state === 1 ? '正常' : '禁用'}
+      // statusNames={{
+      //   enabled: StatusColorEnum.success,
+      //   disabled: StatusColorEnum.error,
+      // }}
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>

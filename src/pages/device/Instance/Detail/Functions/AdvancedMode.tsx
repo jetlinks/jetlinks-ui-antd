@@ -51,7 +51,7 @@ export default (props: FunctionProps) => {
     for (const datum of properties) {
       switch (datum.valueType.type) {
         case 'object':
-          obj[datum.id] = MetaDataJsonHandle(datum['json']['properties'][0]);
+          obj[datum.id] = MetaDataJsonHandle(datum?.json?.properties?.[0]);
           break;
         case 'array':
           obj[datum.id] = [];
