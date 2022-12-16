@@ -61,10 +61,19 @@ export default (props: ShakeLimitProps) => {
         unCheckedChildren="关闭防抖"
         checked={enabled}
         onChange={enabledChange}
+        style={{ marginRight: 12 }}
       />
       {enabled ? (
         <>
-          <InputNumber min={0} max={100} precision={0} value={time} onChange={timeChange} />
+          <InputNumber
+            min={0}
+            max={100}
+            precision={0}
+            value={time}
+            onChange={timeChange}
+            style={{ width: 32 }}
+            size={'small'}
+          />
           <span>秒内发送</span>
           <InputNumber
             min={0}
@@ -72,12 +81,15 @@ export default (props: ShakeLimitProps) => {
             precision={0}
             value={threshold}
             onChange={thresholdChange}
+            style={{ width: 32 }}
+            size={'small'}
           />
           <span>次及以上时，处理</span>
           <Radio.Group
             options={alarmFirstOptions}
             optionType="button"
             value={alarmFirst}
+            size={'small'}
             onChange={(e) => alarmFirstChange(e.target.value)}
           />
         </>

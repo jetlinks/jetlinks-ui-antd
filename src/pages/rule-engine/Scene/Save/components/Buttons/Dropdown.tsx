@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { Dropdown, Empty, Tree } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
@@ -22,6 +22,7 @@ interface DropdownButtonProps {
   type: 'param' | 'termType' | 'value' | 'type';
   fieldNames?: any;
   showLabelKey?: string;
+  icon?: ReactNode;
 }
 
 const TypeStyle = {
@@ -149,6 +150,7 @@ const DropdownButton = (props: DropdownButtonProps) => {
           }
         }}
       >
+        {props.icon}
         {label ? label : props.placeholder}
       </div>
     </Dropdown>

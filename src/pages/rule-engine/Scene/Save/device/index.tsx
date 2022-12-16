@@ -13,7 +13,7 @@ import { TriggerDeviceModel } from './addModel';
 import { handleMetadata } from './product';
 import { set } from 'lodash';
 import { Form, FormInstance } from 'antd';
-import { TitleComponent } from '@/components';
+import { AIcon, TitleComponent } from '@/components';
 
 const defaultDeviceValue = {
   productId: '',
@@ -46,7 +46,13 @@ export default observer((props: Props) => {
   const handleLabel = (options: any): ReactChild | ReactChild[] => {
     if (!options || !Object.keys(options).length) return '点击配置设备触发';
 
-    const _label = [<span className="trigger-options-name">{options.name}</span>];
+    const _label = [
+      <div style={{ display: 'flex' }}>
+        {options.selectorIcon ? <AIcon type={options.selectorIcon} /> : null}
+        <span className="trigger-options-name">{options.name}</span>
+        {options.extraName ? <span>{options.extraName}</span> : null}
+      </div>,
+    ];
     if (!options.onlyName) {
       if (options.productName) {
         _label.push(<span className="trigger-options-type">{options.productName}</span>);

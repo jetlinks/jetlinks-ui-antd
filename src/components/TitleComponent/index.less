@@ -1,21 +1,27 @@
 @import '~antd/es/style/themes/default.less';
 
 .title {
-  position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
   margin-bottom: 10px;
-  padding-left: 10px;
-  color: rgba(0, 0, 0, 0.8);
-  font-weight: 600;
-  line-height: 1;
 
-  .title-before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: calc(100% - 2px);
-    background-color: @primary-color;
-    border-radius: 0 3px 3px 0;
+  .title-content {
+    position: relative;
+    padding-left: 10px;
+    color: rgba(0, 0, 0, 0.8);
+    font-weight: 600;
+    line-height: 1;
+
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: @primary-color;
+      border-radius: 0 3px 3px 0;
+      content: ' ';
+    }
   }
 }

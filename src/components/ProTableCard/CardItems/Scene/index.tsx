@@ -53,23 +53,23 @@ const notifyRender = (data: ActionsType | undefined) => {
       if (data?.options?.provider === 'dingTalkRobotWebHook') {
         return `通过群机器人消息发送${data?.options?.templateName || data?.notify?.templateId}`;
       }
-      return `向${data?.options?.notifierName || data?.notify?.notifierId}通过钉钉发送${
+      return `通过钉钉向${data?.options?.notifierName || data?.notify?.notifierId}发送${
         data?.options?.templateName || data?.notify?.templateId
       }`;
     case 'weixin':
-      return `向${data?.options?.sendTo || ''}${data?.options?.orgName || ''}${
+      return `通过微信向${data?.options?.sendTo || ''}${data?.options?.orgName || ''}${
         data?.options?.tagName || ''
-      }通过微信发送${data?.options?.templateName || data?.notify?.templateId}`;
+      }发送${data?.options?.templateName || data?.notify?.templateId}`;
     case 'email':
-      return `向${data?.options?.sendTo || ''}通过邮件发送${
+      return `通过邮件向${data?.options?.sendTo || ''}发送${
         data?.options?.templateName || data?.notify?.templateId
       }`;
     case 'voice':
-      return `向${data?.options?.sendTo || ''}通过语音发送 ${
+      return `通过语音向${data?.options?.sendTo || ''}发送 ${
         data?.options?.templateName || data?.notify?.templateId
       }`;
     case 'sms':
-      return `向${data?.options?.sendTo || ''}通过短信发送${
+      return `通过短信向${data?.options?.sendTo || ''}发送${
         data?.options?.templateName || data?.notify?.templateId
       }`;
     case 'webhook':

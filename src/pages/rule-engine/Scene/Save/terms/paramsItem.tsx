@@ -11,6 +11,7 @@ import { observer } from '@formily/react';
 import './index.less';
 import { Popconfirm, Space } from 'antd';
 import { isArray, isObject } from 'lodash';
+import { AIcon } from '@/components';
 
 interface ParamsItemProps {
   data: TermsType;
@@ -242,6 +243,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               termType: _termTypeValue,
             });
           }}
+          icon={<AIcon type={'icon-zhihangdongzuoxie-1'} />}
         />
         <DropdownButton
           options={ttOptions}
@@ -291,6 +293,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 props.onLabelChange?.([...labelCache.current]);
                 valueEventChange(_myValue);
               }}
+              icon={<AIcon type={'icon-canshu'} />}
             />
             <ParamsDropdown
               options={valueOptions}
@@ -312,6 +315,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 props.onLabelChange?.([...labelCache.current]);
                 valueEventChange(_myValue);
               }}
+              icon={<AIcon type={'icon-canshu'} />}
             />
           </>
         ) : (
@@ -333,6 +337,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               props.onLabelChange?.([...labelCache.current]);
               valueEventChange(v);
             }}
+            icon={<AIcon type={'icon-canshu'} />}
           />
         )}
         <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
@@ -361,8 +366,8 @@ const ParamsItem = observer((props: ParamsItemProps) => {
       ) : (
         <div className="term-add" onClick={props.onAdd}>
           <div className="terms-content">
-            <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
-            <span>条件</span>
+            <PlusOutlined style={{ fontSize: 12 }} />
+            {/*<span>条件</span>*/}
           </div>
         </div>
       )}

@@ -181,7 +181,7 @@ export default observer((props: TermsProps) => {
             />
           </div>
         ) : (
-          <div className="terms-add" onClick={addTerms}>
+          <div className="terms-group-add" onClick={addTerms}>
             <div className="terms-content">
               <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
               <span>分组</span>

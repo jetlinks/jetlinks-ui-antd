@@ -12,6 +12,8 @@ import { TermsType } from '@/pages/rule-engine/Scene/typings';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { randomString } from '@/utils/util';
+import classNames from 'classnames';
+import { AIcon } from '@/components';
 
 export enum ParallelEnum {
   'parallel' = 'parallel',
@@ -85,13 +87,12 @@ export default (props: ItemProps) => {
           return {
             ...item,
             key: item.id,
-            fullName: item.name,
             title: name,
             disabled: true,
             children: handleTreeData(item.children),
           };
         }
-        return { ...item, key: item.id, fullName: item.name, title: name };
+        return { ...item, key: item.id, title: name };
       });
     }
     return [];
@@ -129,13 +130,13 @@ export default (props: ItemProps) => {
         }
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
-            <span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               钉钉
             </span>
+            向<span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             发送
             <span className={'notify-text-highlight'}>
               {options?.templateName || data?.notify?.templateId}
@@ -145,14 +146,14 @@ export default (props: ItemProps) => {
       case 'weixin':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
-            <span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
-            <span className={'notify-text-highlight'}>{options?.tagName || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               微信
             </span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.tagName || ''}</span>
             发送
             <span className={'notify-text-highlight'}>
               {options?.templateName || data?.notify?.templateId}
@@ -162,12 +163,12 @@ export default (props: ItemProps) => {
       case 'email':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               邮件
             </span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             发送
             <span className={'notify-text-highlight'}>
               {options?.templateName || data?.notify?.templateId}
@@ -177,12 +178,12 @@ export default (props: ItemProps) => {
       case 'voice':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               语音
             </span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             发送
             <span className={'notify-text-highlight'}>
               {options?.templateName || data?.notify?.templateId}
@@ -192,12 +193,12 @@ export default (props: ItemProps) => {
       case 'sms':
         return (
           <div>
-            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             通过
             <span className={'notify-img-highlight'}>
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               短信
             </span>
+            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             发送
             <span className={'notify-text-highlight'}>
               {options?.templateName || data?.notify?.templateId}
@@ -222,11 +223,19 @@ export default (props: ItemProps) => {
   };
 
   const deviceRender = (data: ActionsType | undefined) => {
+    const typeIconMap = {
+      READ_PROPERTY: 'icon-zhihangdongzuodu',
+      INVOKE_FUNCTION: 'icon-zhihangdongzuoxie-1',
+      WRITE_PROPERTY: 'icon-zhihangdongzuoxie',
+    };
     switch (data?.device?.selector) {
       case 'fixed':
         return (
           <div>
-            {`${data?.options?.type} ${data?.options?.name} ${data?.options?.properties} ${
+            <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
+            <span style={{ paddingRight: 4 }}>{data?.options?.type}</span>
+            <AIcon type={'icon-mubiao'} style={{ paddingRight: 2 }} />
+            {`${data?.options?.name} ${data?.options?.properties} ${
               data?.options?.propertiesValue ? `为 ${data?.options?.propertiesValue}` : ''
             }`}
           </div>
@@ -234,6 +243,7 @@ export default (props: ItemProps) => {
       case 'tag':
         return (
           <div>
+            <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
             {data?.options?.type}
             {data.options?.taglist.map((item: any) => (
               <span>
@@ -249,6 +259,7 @@ export default (props: ItemProps) => {
       case 'relation':
         return (
           <div>
+            <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
             {data?.options?.type}与<span>{data?.options?.name}</span>具有相同
             {data?.options?.relationName}的{data?.options?.productName}设备的
             {data?.options?.properties}
@@ -369,96 +380,120 @@ export default (props: ItemProps) => {
           </div>
         </Popconfirm>
       </div>
-      <div className={'actions-item-filter-warp'}>
-        {props.parallel ? null : thenTerms && thenTerms.length ? (
-          thenTerms.map((termsItem, index) => (
-            <FilterGroup
-              action={props.name}
-              key={termsItem.key}
-              branchGroup={props.branchGroup}
-              branchesName={props.branchesName}
-              name={index}
-              data={termsItem}
-              columns={optionsColumns}
-              isLast={index === thenTerms.length - 1}
-              paramsOptions={paramsOptions}
-              label={props.options?.terms?.[index]}
-              actionColumns={props.options?.otherColumns}
-              onColumnsChange={(columns) => {
-                const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
-                let newColumns = [...filterColumns.values()];
-                if (optionsRef.current?.otherColumns) {
-                  newColumns = [...optionsRef.current.otherColumns, ...newColumns];
-                }
-                optionsRef.current['columns'] = newColumns;
-                optionsRef.current['termsColumns'] = columns;
-                props.onUpdate(cacheValueRef.current, optionsRef.current);
-              }}
-              onAddGroup={() => {
-                const newThenTerms = [...thenTerms];
-                newThenTerms.push({
-                  type: 'and',
-                  key: randomString(),
-                  terms: [
-                    {
-                      column: undefined,
-                      value: undefined,
-                      termType: undefined,
-                      type: 'and',
-                      key: randomString(),
-                    },
-                  ],
-                });
-                const _data = cacheValueRef.current;
-                set(_data, 'terms', newThenTerms);
-                props.onUpdate(_data, optionsRef.current);
-              }}
-              onValueChange={(termsData) => {
-                const _data = cacheValueRef.current;
-                set(_data, ['terms', index], termsData);
-                // cacheValueRef.current = _data;
-                props.onUpdate(_data, {
-                  ...optionsRef.current,
-                });
-              }}
-              onLabelChange={(lb) => {
-                const newLabel: any[] = props.options?.terms || [];
-                newLabel.splice(index, 1, lb);
-                optionsRef.current['terms'] = newLabel;
-                props.onUpdate(cacheValueRef.current, optionsRef.current);
-              }}
-              onDelete={() => {
-                const _data = thenTerms.filter((a) => a.key !== termsItem.key);
-                if (optionsRef.current?.termsColumns) {
-                  optionsRef.current.termsColumns[index] = [];
-                  const filterColumns = new Set(flattenDeep(optionsRef.current.termsColumns)); // 平铺去重
+      <div
+        className={classNames('actions-item-filter-warp', { 'filter-border': !!thenTerms?.length })}
+      >
+        {!!thenTerms?.length && (
+          <div className={'actions-item-filter-warp-tip'}>满足此条件后才会执行后续条件</div>
+        )}
+        <div className={classNames('actions-item-filter-overflow')}>
+          {props.parallel ? null : thenTerms && thenTerms.length ? (
+            thenTerms.map((termsItem, index) => (
+              <FilterGroup
+                action={props.name}
+                key={termsItem.key}
+                branchGroup={props.branchGroup}
+                branchesName={props.branchesName}
+                name={index}
+                data={termsItem}
+                columns={optionsColumns}
+                isLast={index === thenTerms.length - 1}
+                paramsOptions={paramsOptions}
+                label={props.options?.terms?.[index]}
+                actionColumns={props.options?.otherColumns}
+                onColumnsChange={(columns) => {
+                  const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
                   let newColumns = [...filterColumns.values()];
                   if (optionsRef.current?.otherColumns) {
                     newColumns = [...optionsRef.current.otherColumns, ...newColumns];
                   }
                   optionsRef.current['columns'] = newColumns;
-                }
-                props.onUpdate(
-                  {
-                    ...cacheValueRef.current,
-                    terms: _data,
-                  },
-                  optionsRef.current,
-                );
-              }}
-            />
-          ))
-        ) : (
-          <div
-            className="filter-add-button"
-            onClick={() => {
-              getParams();
-              let _data = cacheValueRef.current;
-              optionsRef.current['terms'] = [];
-              if (!_data.terms) {
-                _data = {
-                  ..._data,
-                  terms: [
+                  optionsRef.current['termsColumns'] = columns;
+                  props.onUpdate(cacheValueRef.current, optionsRef.current);
+                }}
+                onAddGroup={() => {
+                  const newThenTerms = [...thenTerms];
+                  newThenTerms.push({
+                    type: 'and',
+                    key: randomString(),
+                    terms: [
+                      {
+                        column: undefined,
+                        value: undefined,
+                        termType: undefined,
+                        type: 'and',
+                        key: randomString(),
+                      },
+                    ],
+                  });
+                  const _data = cacheValueRef.current;
+                  set(_data, 'terms', newThenTerms);
+                  props.onUpdate(_data, optionsRef.current);
+                }}
+                onValueChange={(termsData) => {
+                  const _data = cacheValueRef.current;
+                  set(_data, ['terms', index], termsData);
+                  // cacheValueRef.current = _data;
+                  props.onUpdate(_data, {
+                    ...optionsRef.current,
+                  });
+                }}
+                onLabelChange={(lb) => {
+                  const newLabel: any[] = props.options?.terms || [];
+                  newLabel.splice(index, 1, lb);
+                  optionsRef.current['terms'] = newLabel;
+                  props.onUpdate(cacheValueRef.current, optionsRef.current);
+                }}
+                onDelete={() => {
+                  const _data = thenTerms.filter((a) => a.key !== termsItem.key);
+                  if (optionsRef.current?.termsColumns) {
+                    optionsRef.current.termsColumns[index] = [];
+                    const filterColumns = new Set(flattenDeep(optionsRef.current.termsColumns)); // 平铺去重
+                    let newColumns = [...filterColumns.values()];
+                    if (optionsRef.current?.otherColumns) {
+                      newColumns = [...optionsRef.current.otherColumns, ...newColumns];
+                    }
+                    optionsRef.current['columns'] = newColumns;
+                  }
+                  props.onUpdate(
+                    {
+                      ...cacheValueRef.current,
+                      terms: _data,
+                    },
+                    optionsRef.current,
+                  );
+                }}
+              />
+            ))
+          ) : (
+            <div
+              className="filter-add-button"
+              onClick={() => {
+                getParams();
+                let _data = cacheValueRef.current;
+                optionsRef.current['terms'] = [];
+                if (!_data.terms) {
+                  _data = {
+                    ..._data,
+                    terms: [
+                      {
+                        type: 'and',
+                        key: randomString(),
+                        terms: [
+                          {
+                            column: undefined,
+                            value: undefined,
+                            termType: undefined,
+                            type: 'and',
+                            key: randomString(),
+                          },
+                        ],
+                      },
+                    ],
+                  };
+                  props.onUpdate(_data, optionsRef.current);
+                } else {
+                  _data.terms = [
                     {
                       type: 'and',
                       key: randomString(),
@@ -472,32 +507,15 @@ export default (props: ItemProps) => {
                         },
                       ],
                     },
-                  ],
-                };
-                props.onUpdate(_data, optionsRef.current);
-              } else {
-                _data.terms = [
-                  {
-                    type: 'and',
-                    key: randomString(),
-                    terms: [
-                      {
-                        column: undefined,
-                        value: undefined,
-                        termType: undefined,
-                        type: 'and',
-                        key: randomString(),
-                      },
-                    ],
-                  },
-                ];
-                props.onUpdate(_data, optionsRef.current);
-              }
-            }}
-          >
-            <PlusOutlined style={{ paddingRight: 16 }} /> 添加过滤条件
-          </div>
-        )}
+                  ];
+                  props.onUpdate(_data, optionsRef.current);
+                }
+              }}
+            >
+              <PlusOutlined style={{ paddingRight: 4 }} /> 添加过滤条件
+            </div>
+          )}
+        </div>
       </div>
       {visible && (
         <Modal
@@ -509,7 +527,6 @@ export default (props: ItemProps) => {
             setVisible(false);
           }}
           save={(data: ActionsType, options) => {
-            // setOp(options);
             optionsRef.current = options;
             props.onUpdate(data, options);
             setVisible(false);
@@ -537,10 +554,12 @@ export default (props: ItemProps) => {
           setActionType('');
         }}
         save={(data: ActionsType, options) => {
-          // setOp(options);
           optionsRef.current = options;
           props.onUpdate(data, options);
           setActionType('');
+          setTimeout(() => {
+            getParams();
+          }, 10);
         }}
         parallel={props.parallel}
       />
