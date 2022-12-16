@@ -230,7 +230,7 @@ const AccessConfig = (props: Props) => {
         <Row gutter={[16, 16]}>
           {(dataSource?.data || []).map((item: any) => (
             <Col
-              key={item.name}
+              key={item.id}
               span={12}
               onClick={() => {
                 setCurrrent(item);

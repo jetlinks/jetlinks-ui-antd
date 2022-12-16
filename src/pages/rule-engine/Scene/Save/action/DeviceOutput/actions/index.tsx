@@ -193,10 +193,15 @@ export default observer((props: Props) => {
                 DeviceModel.actionName = text;
                 // console.log(text)
               }}
-              onChange={(value, text) => {
+              onChange={(value, text, valueLable) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
+                // console.log(`valueLable`,valueLable)
                 DeviceModel.propertiesName = text;
-                DeviceModel.propertiesValue = item;
+                if (valueLable) {
+                  DeviceModel.propertiesValue = valueLable;
+                } else {
+                  DeviceModel.propertiesValue = item;
+                }
               }}
               onRest={(value: any) => {
                 form.setFieldValue(['message', 'properties'], {

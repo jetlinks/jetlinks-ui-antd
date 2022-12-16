@@ -49,11 +49,11 @@ export const downloadFileByUrl = (url: string, name: string, type: string) => {
  * @param record
  * @param fileName
  */
-export const downloadObject = (record: Record<string, any>, fileName: string) => {
+export const downloadObject = (record: Record<string, any>, fileName: string, format?: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
   ghostLink.download = `${record?.name || ''}${fileName}_${moment(new Date()).format(
-    'YYYY/MM/DD HH:mm:ss',
+    format || 'YYYY/MM/DD HH:mm:ss',
   )}.json`;
   ghostLink.style.display = 'none';
   //字符串内容转成Blob地址
