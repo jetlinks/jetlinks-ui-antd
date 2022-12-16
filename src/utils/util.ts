@@ -4,6 +4,7 @@ import { action } from '@formily/reactive';
 import Token from '@/utils/token';
 import { message } from 'antd';
 import SystemConst from '@/utils/const';
+
 /**
  * 下载文件
  * @param url 下载链接
@@ -163,4 +164,34 @@ export const phoneRegEx = (value: string) => {
   );
   const mobile = /(0[0-9]{2,3})([2-9][0-9]{6,7})+([0-9]{8,11})?$/;
   return phone.test(value) || mobile.test(value);
+};
+
+export const ArrayToTree = (list: any[]): any[] => {
+  const treeList: any[] = [];
+  // 所有项都使用对象存储起来
+  const map = {};
+
+  // 建立一个映射关系：通过id快速找到对应的元素
+  list.forEach((item) => {
+    if (!item.children) {
+      item.children = [];
+    }
+    map[item.id] = item;
+  });
+
+  list.forEach((item) => {
+    // 对于每一个元素来说，先找它的上级
+    //    如果能找到，说明它有上级，则要把它添加到上级的children中去
+    //    如果找不到，说明它没有上级，直接添加到 treeList
+    const parent = map[item.parentId];
+    // 如果存在则表示item不是最顶层的数据
+    if (parent) {
+      parent.children.push(item);
+    } else {
+      // 如果不存在 则是顶层数据
+      treeList.push(item);
+    }
+  });
+  // 返回出去
+  return treeList;
 };

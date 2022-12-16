@@ -10,11 +10,11 @@ import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/system/Department';
 import { Ellipsis, Empty, PermissionButton } from '@/components';
 import { useIntl, useLocation } from 'umi';
-import { debounce } from 'lodash';
+import { cloneDeep, debounce, omit } from 'lodash';
 import Save from '../save';
 import { ISchema } from '@formily/json-schema';
 import { DepartmentItem } from '@/pages/system/Department/typings';
-import { onlyMessage } from '@/utils/util';
+import { ArrayToTree, onlyMessage } from '@/utils/util';
 import classnames from 'classnames';
 import _ from 'lodash';
 
@@ -43,6 +43,8 @@ export const getSortIndex = (data: DepartmentItem[], pId?: string): number => {
   return sortIndex;
 };
 
+const TreeMap = new Map();
+
 export default (props: TreeProps) => {
   const intl = useIntl();
   const [treeData, setTreeData] = useState<undefined | any[]>(undefined);
@@ -59,6 +61,17 @@ export default (props: TreeProps) => {
 
   const { permission } = PermissionButton.usePermission('system/Department');
 
+  const handleTreeMap = (_data: any[]) => {
+    if (_data) {
+      _data.map((item) => {
+        TreeMap.set(item.id, omit(cloneDeep(item), ['children']));
+        if (item.children) {
+          handleTreeMap(item.children);
+        }
+      });
+    }
+  };
+
   const queryTreeData = async () => {
     setKeys([]);
     const terms: Record<string, any> = {};
@@ -74,6 +87,7 @@ export default (props: TreeProps) => {
     setLoading(false);
 
     if (resp.status === 200) {
+      handleTreeMap(resp.result);
       setTreeData(resp.result);
       if (resp.result && resp.result.length) {
         setKeys([resp.result[0].id]);
@@ -115,9 +129,42 @@ export default (props: TreeProps) => {
     }
   };
 
+  const searchByTreeMap = (key: string) => {
+    const searchTree: string[] = [];
+    const treeArray = new Map();
+    if (key) {
+      TreeMap.forEach((item) => {
+        if (item.name.includes(key)) {
+          searchTree.push(item.parentId);
+          treeArray.set(item.id, item);
+        }
+      });
+
+      function dig(_data: any[]): any {
+        const pIds: string[] = [];
+        if (!_data.length) return;
+        _data.forEach((item) => {
+          if (TreeMap.has(item)) {
+            const _item = TreeMap.get(item);
+            pIds.push(_item.parentId);
+            treeArray.set(item, _item);
+          }
+        });
+      }
+
+      dig(searchTree);
+
+      const arr = ArrayToTree([...treeArray.values()]);
+      setTreeData(arr);
+    } else {
+      setTreeData([...TreeMap.values()]);
+    }
+  };
+
   const onSearchChange = (e: any) => {
     searchKey.current = e.target.value;
-    queryTreeData();
+    // queryTreeData();
+    searchByTreeMap(e.target.value);
   };
 
   const schema: ISchema = {
@@ -196,6 +243,7 @@ export default (props: TreeProps) => {
 
   useEffect(() => {
     queryTreeData();
+    TreeMap.clear();
   }, []);
 
   useEffect(() => {

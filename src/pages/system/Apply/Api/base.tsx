@@ -3,28 +3,12 @@ import Table from '@/pages/system/Platforms/Api/basePage';
 import SwaggerUI from '@/pages/system/Platforms/Api/swagger-ui';
 import { useCallback, useEffect, useState } from 'react';
 import { service } from '@/pages/system/Platforms';
-import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import './index.less';
 import { useLocation } from 'umi';
 import { useDomFullHeight } from '@/hooks';
 import Home from '../Home';
-
-export const ApiModel = model<{
-  data: any[] | undefined;
-  baseUrl: string;
-  showTable: boolean;
-  components: any;
-  swagger: any;
-  debugger: any;
-}>({
-  data: [],
-  baseUrl: '',
-  showTable: true,
-  components: {},
-  swagger: {},
-  debugger: {},
-});
+import { ApiModel } from '@/pages/system/Platforms/Api/base';
 
 interface ApiPageProps {
   showDebugger?: boolean;
@@ -96,6 +80,7 @@ export default observer((props: ApiPageProps) => {
   useEffect(() => {
     console.log(ApiModel.data);
   }, [ApiModel.data]);
+  console.log(ApiModel.showTable);
 
   return (
     <div className={'platforms-api'} style={{ minHeight }}>
