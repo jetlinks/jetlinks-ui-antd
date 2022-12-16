@@ -219,6 +219,7 @@ export default observer((props: Props) => {
         loading={loading}
         style={{ minHeight, position: 'relative' }}
         className={'data-collect-collector'}
+        bodyStyle={{ paddingTop: !props.type ? 4 : 24 }}
       >
         <div>
           <div style={{ paddingBottom: 48, height: '100%' }}>
@@ -361,7 +362,8 @@ export default observer((props: Props) => {
                     justifyContent: 'flex-end',
                     position: 'absolute',
                     width: '100%',
-                    bottom: 0,
+                    bottom: 10,
+                    right: '2%',
                   }}
                 >
                   <Pagination

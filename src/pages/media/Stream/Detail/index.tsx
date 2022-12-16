@@ -5,7 +5,7 @@ import { service, StreamModel } from '@/pages/media/Stream';
 import { useParams } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import SipComponent from '@/components/SipComponent';
-import { onlyMessage, testIP } from '@/utils/util';
+import { onlyMessage } from '@/utils/util';
 import useLocation from '@/hooks/route/useLocation';
 
 interface RTPComponentProps {
@@ -167,14 +167,15 @@ const Detail = () => {
     }
   }, [params.id]);
 
+  const regDomain = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/;
   const checkSIP = (_: any, value: { host: string; port: number }) => {
     if (!value) {
       return Promise.resolve();
     }
     if (!value || !value.host) {
       return Promise.reject(new Error('请输入API HOST'));
-    } else if (value?.host && !testIP(value.host)) {
-      return Promise.reject(new Error('请输入正确的IP地址'));
+    } else if (value?.host && !regDomain.test(value.host)) {
+      return Promise.reject(new Error('请输入正确的IP地址或者域名'));
     } else if (!value?.port) {
       return Promise.reject(new Error('请输入端口'));
     } else if ((value?.port && Number(value.port) < 1) || Number(value.port) > 65535) {
@@ -201,11 +202,11 @@ const Detail = () => {
     }
     if (!value || !value.rtpIp) {
       return Promise.reject(new Error('请输入RTP IP'));
-    } else if (value?.rtpIp && !testIP(value.rtpIp)) {
-      return Promise.reject(new Error('请输入正确的IP地址'));
+    } else if (value?.rtpIp && !regDomain.test(value.rtpIp)) {
+      return Promise.reject(new Error('请输入正确的IP地址或者域名'));
     } else if (!value.dynamicRtpPort) {
-      if (value.rtpIp && !testIP(value.rtpIp)) {
-        return Promise.reject(new Error('请输入正确的IP地址'));
+      if (value.rtpIp && !regDomain.test(value.rtpIp)) {
+        return Promise.reject(new Error('请输入正确的IP地址或者域名'));
       }
       if (!value?.rtpPort) {
         return Promise.reject(new Error('请输入端口'));

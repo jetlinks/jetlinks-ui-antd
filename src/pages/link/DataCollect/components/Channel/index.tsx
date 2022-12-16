@@ -268,7 +268,8 @@ export default observer((props: Props) => {
               justifyContent: 'flex-end',
               position: 'absolute',
               width: '100%',
-              bottom: 0,
+              bottom: 10,
+              right: '2%',
             }}
           >
             <Pagination

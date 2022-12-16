@@ -212,6 +212,7 @@ const PointCard = observer((props: PointCardProps) => {
         bordered={false}
         className={'data-collect-point'}
         style={{ position: 'relative', minHeight }}
+        bodyStyle={{ paddingTop: !props.type ? 4 : 24 }}
       >
         <div>
           <div style={{ height: '100%', paddingBottom: 48 }}>
@@ -321,7 +322,8 @@ const PointCard = observer((props: PointCardProps) => {
                     justifyContent: 'flex-end',
                     position: 'absolute',
                     width: '100%',
-                    bottom: 0,
+                    bottom: 10,
+                    right: '2%',
                   }}
                 >
                   <Pagination

@@ -13,6 +13,8 @@ import SearchComponent from '@/components/SearchComponent';
 import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
+import { service as api } from '@/pages/device/Product';
+import { Spin } from 'antd';
 
 export const service = new Service('device/category');
 
@@ -55,6 +57,8 @@ const Category = observer(() => {
   const permissionCode = 'device/Category';
   const { permission } = PermissionButton.usePermission(permissionCode);
   const { minHeight } = useDomFullHeight(`.device-category`, 24);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [title, setTitle] = useState<string>('');
 
   const intl = useIntl();
 
@@ -135,11 +139,30 @@ const Category = observer(() => {
           type="link"
           key="delete"
           style={{ padding: 0 }}
+          onClick={async () => {
+            const res: any = await api.queryNoPagingPost({
+              terms: [{ terms: [{ column: 'classifiedId', value: record.id }] }],
+            });
+            if (res.status === 200) {
+              if (res.result.length === 0) {
+                setTitle('确定删除？');
+              } else {
+                setTitle('该数据已被产品引用，确定删除？');
+              }
+              setLoading(false);
+            } else {
+              setLoading(false);
+            }
+          }}
           popConfirm={{
-            title: intl.formatMessage({
-              id: 'pages.system.role.option.delete',
-              defaultMessage: '确定要删除吗',
-            }),
+            title: <>{loading ? <Spin /> : title}</>,
+            okButtonProps: {
+              loading: loading,
+            },
+            onCancel: () => {
+              setTitle('');
+              setLoading(true);
+            },
             onConfirm: async () => {
               const resp = (await service.remove(record.id)) as Response<any>;
               if (resp.status === 200) {
@@ -180,7 +203,13 @@ const Category = observer(() => {
         request={async (params) => {
           const response = await service.queryTree({
             paging: false,
-            sorts: [sortParam],
+            sorts: [
+              sortParam,
+              {
+                name: 'createTime',
+                order: 'desc',
+              },
+            ],
             ...params,
           });
           setTreeData(response.result);

@@ -338,8 +338,10 @@ const Save = (props: Props) => {
               gridSpan: 1,
               addonAfter: (
                 <PermissionButton
-                  type="link"
-                  style={{ padding: 0 }}
+                  // type="link"
+                  type="primary"
+                  ghost
+                  style={{ padding: '0 8px' }}
                   isPermission={rolePermission.add}
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/role?save=true`);
@@ -383,8 +385,11 @@ const Save = (props: Props) => {
               gridSpan: 1,
               addonAfter: (
                 <PermissionButton
-                  type="link"
-                  style={{ padding: 0 }}
+                  // type="link"
+                  // style={{ padding: 0 }}
+                  type="primary"
+                  ghost
+                  style={{ padding: '0 8px' }}
                   isPermission={deptPermission.add}
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/department?save=true`);

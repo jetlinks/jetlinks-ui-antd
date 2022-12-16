@@ -46,7 +46,7 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <Card bordered={false}>
+      <Card bordered={false} bodyStyle={{ paddingTop: 0 }}>
         <div className={styles.container}>
           <div className={styles.left}>
             <ChannelTree

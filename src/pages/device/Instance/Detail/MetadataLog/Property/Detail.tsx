@@ -23,7 +23,7 @@ const Detail = (props: Props) => {
                 displayDataTypes={false}
                 style={{ marginTop: 10 }}
                 name={false}
-                src={value}
+                src={value?.formatValue}
               />
             }
           </div>
@@ -33,14 +33,14 @@ const Detail = (props: Props) => {
       return (
         <div>
           <div>自定义属性</div>
-          <Input.TextArea value={value} rows={3} />
+          <Input.TextArea value={value?.formatValue} rows={3} />
         </div>
       );
     } else {
       return (
         <div>
           <div>自定义属性</div>
-          <Input value={value} disabled />
+          <Input value={value?.formatValue} disabled />
         </div>
       );
     }

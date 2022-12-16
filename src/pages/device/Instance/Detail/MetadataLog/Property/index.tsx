@@ -93,7 +93,7 @@ const PropertyLog = (props: Props) => {
             <SearchOutlined
               onClick={() => {
                 setDetailVisible(true);
-                setCurrent(record.value);
+                setCurrent(record);
               }}
             />
           )}

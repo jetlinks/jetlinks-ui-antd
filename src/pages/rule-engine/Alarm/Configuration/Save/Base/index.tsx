@@ -117,8 +117,8 @@ export default () => {
   });
 
   const handleSave = async () => {
-    setLoading(true);
     const data: any = await form.submit();
+    setLoading(true);
     const resp: any = await service.update({ ...data });
     setLoading(false);
     if (resp.status === 200) {

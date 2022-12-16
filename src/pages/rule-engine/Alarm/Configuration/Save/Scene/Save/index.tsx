@@ -153,7 +153,7 @@ export default (props: Props) => {
                     {
                       column: 'triggerType',
                       termType: 'eq',
-                      value: props.type,
+                      value: props.type === 'other' ? undefined : 'device',
                     },
                   ],
                   type: 'and',

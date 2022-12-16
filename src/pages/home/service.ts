@@ -33,10 +33,15 @@ class Service {
     request(`/${SystemConst.API_BASE}/user/detail`, {
       method: 'GET',
     });
-  apiDetail = (data: any) =>
-    request(`/${SystemConst.API_BASE}/api-client/_query`, {
-      method: 'POST',
-      data,
+  // apiDetail = (data: any) =>
+  //   request(`/${SystemConst.API_BASE}/api-client/_query`, {
+  //     method: 'POST',
+  //     data,
+  //   });
+  apiDetail = (id: any) =>
+    request(`/${SystemConst.API_BASE}/application/${id}`, {
+      method: 'GET',
+      // data,
     });
   // settingDetail = (data?: any) =>
   //   request(`/${SystemConst.API_BASE}/system/config/scopes`, {

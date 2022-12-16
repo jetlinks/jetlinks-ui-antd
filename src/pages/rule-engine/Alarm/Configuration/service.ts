@@ -3,6 +3,11 @@ import { request } from 'umi';
 import SystemConst from '@/utils/const';
 
 class Service extends BaseService<ConfigItem> {
+  public queryList = (data: any) =>
+    request(`/${SystemConst.API_BASE}/alarm/config/detail/_query`, {
+      method: 'POST',
+      data,
+    });
   public getTargetTypes = () =>
     request(`/${SystemConst.API_BASE}/alarm/config/target-type/supports`, {
       method: 'GET',
@@ -28,10 +33,10 @@ class Service extends BaseService<ConfigItem> {
     request(`/${SystemConst.API_BASE}/alarm/config/${id}/_disable`, {
       method: 'POST',
     });
-  public _execute = (id: string) =>
-    request(`/${SystemConst.API_BASE}/scene/${id}/_execute`, {
+  public _execute = (data: any) =>
+    request(`/${SystemConst.API_BASE}/scene/batch/_execute`, {
       method: 'POST',
-      data: {},
+      data,
     });
 
   public getAlarmCountById = (id: string) =>

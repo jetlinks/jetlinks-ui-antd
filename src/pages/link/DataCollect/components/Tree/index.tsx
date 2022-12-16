@@ -139,7 +139,9 @@ export default observer((props: Props) => {
         {TreeModel.dataSource.length ? (
           <Tree
             style={{ overflow: 'hidden' }}
+            className={styles['data-collect-tree']}
             showIcon
+            height={500}
             selectedKeys={TreeModel.selectedKeys}
             switcherIcon={<DownOutlined />}
           >

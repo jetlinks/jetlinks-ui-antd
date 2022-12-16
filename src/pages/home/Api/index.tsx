@@ -12,12 +12,16 @@ export default () => {
   const [clientId, setClientId] = useState('');
   const [secureKey, setSecureKey] = useState('');
   const [sdkDetail, setSdkDetail] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getDetail = async (id: string) => {
     const resp = await service.getDetail(id);
     if (resp.status === 200) {
       setClientId(resp.result?.id);
-      setSecureKey(resp.result?.secureKey);
+      setSecureKey(resp.result?.apiServer?.secureKey);
+      setLoading(true);
+    } else {
+      setLoading(true);
     }
   };
 
@@ -46,20 +50,12 @@ export default () => {
     getSDKDetail();
     api.userDetail().then((res) => {
       if (res.status === 200) {
-        api
-          .apiDetail({
-            terms: [
-              {
-                column: 'userId',
-                value: res.result.id,
-              },
-            ],
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              getDetail(response.result.data[0].id);
-            }
-          });
+        api.apiDetail(res.result.id).then((response) => {
+          if (response.status === 200) {
+            console.log(response.result);
+            getDetail(response.result.id);
+          }
+        });
       }
     });
   }, []);
@@ -118,7 +114,15 @@ export default () => {
       </Col>
       <Col span={24}>
         <Card title={'API文档'}>
-          <ApiPage type={'authorize'} showDebugger={true} isShowGranted={true} showHome={true} />
+          {loading && (
+            <ApiPage
+              type={'authorize'}
+              showDebugger={true}
+              isShowGranted={true}
+              showHome={true}
+              code={clientId}
+            />
+          )}
         </Card>
       </Col>
     </Row>

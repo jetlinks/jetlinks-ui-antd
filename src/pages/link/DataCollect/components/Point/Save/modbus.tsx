@@ -355,6 +355,9 @@ export default (props: Props) => {
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
+              style: {
+                marginBottom: 8,
+              },
             },
             default: 3000,
             'x-component-props': {
