@@ -47,7 +47,7 @@ export default observer((props: Props) => {
     if (!options || !Object.keys(options).length) return '点击配置设备触发';
 
     const _label = [
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         {options.selectorIcon ? <AIcon type={options.selectorIcon} /> : null}
         <span className="trigger-options-name">{options.name}</span>
         {options.extraName ? <span>{options.extraName}</span> : null}

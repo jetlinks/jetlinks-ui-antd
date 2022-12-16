@@ -39,6 +39,7 @@ export default (props: ListProps) => {
               data={item}
               type={props.type}
               key={item.key}
+              isLast={index === actions.length - 1}
               parallel={props.parallel}
               options={item.options}
               onDelete={() => {

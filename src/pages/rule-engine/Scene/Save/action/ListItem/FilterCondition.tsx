@@ -14,6 +14,7 @@ interface FilterProps {
   action?: number;
   data: TermsType;
   isLast: boolean;
+  isFirst: boolean;
   onChange?: (value: TermsType | any) => void;
   onValueChange: (value: TermsType) => void;
   onLabelChange: (lb: any[]) => void;
@@ -146,6 +147,24 @@ export default observer((props: FilterProps) => {
 
   return (
     <div className="filter-condition-warp">
+      {!props.isFirst && (
+        <div className="term-type-warp">
+          <DropdownButton
+            options={[
+              { title: '并且', key: 'and' },
+              { title: '或者', key: 'or' },
+            ]}
+            isTree={false}
+            type="type"
+            value={props.data.type}
+            onChange={(v) => {
+              props.data.type = v;
+              labelCache.current[3] = v;
+              props.onLabelChange?.([...labelCache.current]);
+            }}
+          />
+        </div>
+      )}
       <div
         className="filter-condition-content"
         onMouseOver={() => {
@@ -337,24 +356,7 @@ export default observer((props: FilterProps) => {
           />
         )}
       </div>
-      {!props.isLast ? (
-        <div className="term-type-warp">
-          <DropdownButton
-            options={[
-              { title: '并且', key: 'and' },
-              { title: '或者', key: 'or' },
-            ]}
-            isTree={false}
-            type="type"
-            value={props.data.type}
-            onChange={(v) => {
-              props.data.type = v;
-              labelCache.current[3] = v;
-              props.onLabelChange?.([...labelCache.current]);
-            }}
-          />
-        </div>
-      ) : (
+      {props.isLast && (
         <div className="terms-add" onClick={props.onAdd}>
           <div className="terms-content">
             <PlusOutlined style={{ fontSize: 12 }} />

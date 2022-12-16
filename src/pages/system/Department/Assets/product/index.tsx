@@ -1,7 +1,7 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Modal } from 'antd';
+import { Badge, Modal, Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
@@ -20,6 +20,11 @@ import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets'
 import UpdateModal from '../updateModal';
 
 export const service = new Service<ProductItem>('assets');
+
+const status = {
+  1: <Badge status="success" text={'正常'} />,
+  0: <Badge status="error" text={'禁用'} />,
+};
 
 export default observer((props: { parentId: string }) => {
   const intl = useIntl();
@@ -107,6 +112,36 @@ export default observer((props: { parentId: string }) => {
       hideInSearch: true,
       ellipsis: true,
       width: 200,
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
+      valueType: 'select',
+      width: '90px',
+      valueEnum: {
+        // 2: {
+        //   text: intl.formatMessage({
+        //     id: 'pages.searchTable.titleStatus.all',
+        //     defaultMessage: '全部',
+        //   }),
+        //   status: 2,
+        // },
+        0: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.disabled',
+            defaultMessage: '禁用',
+          }),
+          status: 0,
+        },
+        1: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.enabled',
+            defaultMessage: '正常',
+          }),
+          status: 1,
+        },
+      },
     },
     {
       title: intl.formatMessage({

@@ -104,6 +104,8 @@ export default () => {
   const deviceId = param.get('id');
   const channelId = param.get('channelId');
 
+  const [deviceType, setDeviceType] = useState('');
+
   const queryLocalRecords = async (date: Moment) => {
     setPlayStatus(0);
     setUrl('');
@@ -198,9 +200,22 @@ export default () => {
   };
 
   useEffect(() => {
-    setTime(moment(new Date()));
-    queryLocalRecords(moment(new Date()));
-  }, []);
+    const _param = new URLSearchParams(location.search);
+    const _type = _param.get('type');
+
+    if (_type) {
+      setDeviceType(_type);
+      const _timeStr = moment(new Date());
+      setTime(_timeStr);
+      if (_type === 'fixed-media') {
+        setType('cloud');
+        queryServiceRecords(_timeStr);
+      } else {
+        queryLocalRecords(_timeStr);
+        setType('local');
+      }
+    }
+  }, [location]);
 
   return (
     <PageContainer>
@@ -299,6 +314,7 @@ export default () => {
                   label: '本地',
                   value: 'local',
                   imgUrl: require('/public/images/local.png'),
+                  disabled: deviceType === 'fixed-media',
                 },
               ]}
             />

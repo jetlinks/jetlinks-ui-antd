@@ -18,6 +18,7 @@ interface ParamsItemProps {
   pName: (number | string)[];
   name: number;
   isLast: boolean;
+  isFirst: boolean;
   isDelete: boolean;
   options: any[];
   onValueChange?: (value: TermsType) => void;
@@ -144,7 +145,6 @@ const ParamsItem = observer((props: ParamsItemProps) => {
     (columnValue?: string) => {
       if (columnValue && paramOptions.length) {
         const labelOptions = paramsValueOptions.get(columnValue);
-        console.log('paramsValueOptions ===>>', columnValue, labelOptions);
         if (labelOptions) {
           const _termTypeOptions: any[] =
             labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
@@ -192,6 +192,24 @@ const ParamsItem = observer((props: ParamsItemProps) => {
 
   return (
     <div className="terms-params-item">
+      {!props.isFirst && (
+        <div className="term-type-warp">
+          <DropdownButton
+            options={[
+              { title: '并且', key: 'and' },
+              { title: '或者', key: 'or' },
+            ]}
+            isTree={false}
+            type="type"
+            value={props.data.type}
+            onChange={(v) => {
+              props.data.type = v;
+              labelCache.current[3] = v;
+              props.onLabelChange?.([...labelCache.current]);
+            }}
+          />
+        </div>
+      )}
       <div
         className="params-item_button"
         onMouseOver={() => {
@@ -332,7 +350,6 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               });
               ValueRef.current.value = v;
               labelCache.current[2] = { 0: lb };
-              console.log('valueChange', labelCache.current);
               labelCache.current[3] = props.data.type;
               props.onLabelChange?.([...labelCache.current]);
               valueEventChange(v);
@@ -346,24 +363,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           </div>
         </Popconfirm>
       </div>
-      {!props.isLast ? (
-        <div className="term-type-warp">
-          <DropdownButton
-            options={[
-              { title: '并且', key: 'and' },
-              { title: '或者', key: 'or' },
-            ]}
-            isTree={false}
-            type="type"
-            value={props.data.type}
-            onChange={(v) => {
-              props.data.type = v;
-              labelCache.current[3] = v;
-              props.onLabelChange?.([...labelCache.current]);
-            }}
-          />
-        </div>
-      ) : (
+      {props.isLast && (
         <div className="term-add" onClick={props.onAdd}>
           <div className="terms-content">
             <PlusOutlined style={{ fontSize: 12 }} />

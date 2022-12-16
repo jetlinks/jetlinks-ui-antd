@@ -67,7 +67,15 @@ export default observer((props: TermsProps) => {
               const terms: TermsType[] = _when?.terms || [];
               return terms.map((item, index) => (
                 <Form.Item
-                  name={['branches', ...props.pName, props.whenName, 'terms', props.name]}
+                  name={[
+                    'branches',
+                    ...props.pName,
+                    props.whenName,
+                    'terms',
+                    props.name,
+                    'terms',
+                    index,
+                  ]}
                   rules={[
                     {
                       validator(_, v) {
@@ -107,6 +115,7 @@ export default observer((props: TermsProps) => {
                     data={item}
                     key={item.key}
                     isLast={index === props.data.terms!.length - 1}
+                    isFirst={index === 0}
                     options={props.paramsOptions}
                     label={
                       FormModel.current.options?.when?.[props.whenName]?.terms?.[props.name]

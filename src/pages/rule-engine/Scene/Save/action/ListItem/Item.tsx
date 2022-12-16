@@ -32,6 +32,7 @@ interface ItemProps {
   options: any;
   onUpdate: (data: any, options: any) => void;
   onDelete: () => void;
+  isLast: boolean;
 }
 
 const iconMap = new Map();
@@ -380,102 +381,123 @@ export default (props: ItemProps) => {
           </div>
         </Popconfirm>
       </div>
-      <div
-        className={classNames('actions-item-filter-warp', { 'filter-border': !!thenTerms?.length })}
-      >
-        {!!thenTerms?.length && (
-          <div className={'actions-item-filter-warp-tip'}>满足此条件后才会执行后续条件</div>
-        )}
-        <div className={classNames('actions-item-filter-overflow')}>
-          {props.parallel ? null : thenTerms && thenTerms.length ? (
-            thenTerms.map((termsItem, index) => (
-              <FilterGroup
-                action={props.name}
-                key={termsItem.key}
-                branchGroup={props.branchGroup}
-                branchesName={props.branchesName}
-                name={index}
-                data={termsItem}
-                columns={optionsColumns}
-                isLast={index === thenTerms.length - 1}
-                paramsOptions={paramsOptions}
-                label={props.options?.terms?.[index]}
-                actionColumns={props.options?.otherColumns}
-                onColumnsChange={(columns) => {
-                  const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
-                  let newColumns = [...filterColumns.values()];
-                  if (optionsRef.current?.otherColumns) {
-                    newColumns = [...optionsRef.current.otherColumns, ...newColumns];
-                  }
-                  optionsRef.current['columns'] = newColumns;
-                  optionsRef.current['termsColumns'] = columns;
-                  props.onUpdate(cacheValueRef.current, optionsRef.current);
-                }}
-                onAddGroup={() => {
-                  const newThenTerms = [...thenTerms];
-                  newThenTerms.push({
-                    type: 'and',
-                    key: randomString(),
-                    terms: [
-                      {
-                        column: undefined,
-                        value: undefined,
-                        termType: undefined,
-                        type: 'and',
-                        key: randomString(),
-                      },
-                    ],
-                  });
-                  const _data = cacheValueRef.current;
-                  set(_data, 'terms', newThenTerms);
-                  props.onUpdate(_data, optionsRef.current);
-                }}
-                onValueChange={(termsData) => {
-                  const _data = cacheValueRef.current;
-                  set(_data, ['terms', index], termsData);
-                  // cacheValueRef.current = _data;
-                  props.onUpdate(_data, {
-                    ...optionsRef.current,
-                  });
-                }}
-                onLabelChange={(lb) => {
-                  const newLabel: any[] = props.options?.terms || [];
-                  newLabel.splice(index, 1, lb);
-                  optionsRef.current['terms'] = newLabel;
-                  props.onUpdate(cacheValueRef.current, optionsRef.current);
-                }}
-                onDelete={() => {
-                  const _data = thenTerms.filter((a) => a.key !== termsItem.key);
-                  if (optionsRef.current?.termsColumns) {
-                    optionsRef.current.termsColumns[index] = [];
-                    const filterColumns = new Set(flattenDeep(optionsRef.current.termsColumns)); // 平铺去重
+      {!props.isLast && (
+        <div
+          className={classNames('actions-item-filter-warp', {
+            'filter-border': !!thenTerms?.length,
+          })}
+        >
+          {!!thenTerms?.length && (
+            <div className={'actions-item-filter-warp-tip'}>满足此条件后才会执行后续条件</div>
+          )}
+          <div className={classNames('actions-item-filter-overflow')}>
+            {props.parallel ? null : thenTerms && thenTerms.length ? (
+              thenTerms.map((termsItem, index) => (
+                <FilterGroup
+                  action={props.name}
+                  key={termsItem.key}
+                  branchGroup={props.branchGroup}
+                  branchesName={props.branchesName}
+                  name={index}
+                  data={termsItem}
+                  columns={optionsColumns}
+                  isLast={index === thenTerms.length - 1}
+                  paramsOptions={paramsOptions}
+                  label={props.options?.terms?.[index]}
+                  actionColumns={props.options?.otherColumns}
+                  onColumnsChange={(columns) => {
+                    const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
                     let newColumns = [...filterColumns.values()];
                     if (optionsRef.current?.otherColumns) {
                       newColumns = [...optionsRef.current.otherColumns, ...newColumns];
                     }
                     optionsRef.current['columns'] = newColumns;
-                  }
-                  props.onUpdate(
-                    {
-                      ...cacheValueRef.current,
-                      terms: _data,
-                    },
-                    optionsRef.current,
-                  );
-                }}
-              />
-            ))
-          ) : (
-            <div
-              className="filter-add-button"
-              onClick={() => {
-                getParams();
-                let _data = cacheValueRef.current;
-                optionsRef.current['terms'] = [];
-                if (!_data.terms) {
-                  _data = {
-                    ..._data,
-                    terms: [
+                    optionsRef.current['termsColumns'] = columns;
+                    props.onUpdate(cacheValueRef.current, optionsRef.current);
+                  }}
+                  onAddGroup={() => {
+                    const newThenTerms = [...thenTerms];
+                    newThenTerms.push({
+                      type: 'and',
+                      key: randomString(),
+                      terms: [
+                        {
+                          column: undefined,
+                          value: undefined,
+                          termType: undefined,
+                          type: 'and',
+                          key: randomString(),
+                        },
+                      ],
+                    });
+                    const _data = cacheValueRef.current;
+                    set(_data, 'terms', newThenTerms);
+                    props.onUpdate(_data, optionsRef.current);
+                  }}
+                  onValueChange={(termsData) => {
+                    const _data = cacheValueRef.current;
+                    set(_data, ['terms', index], termsData);
+                    // cacheValueRef.current = _data;
+                    props.onUpdate(_data, {
+                      ...optionsRef.current,
+                    });
+                  }}
+                  onLabelChange={(lb) => {
+                    const newLabel: any[] = props.options?.terms || [];
+                    newLabel.splice(index, 1, lb);
+                    optionsRef.current['terms'] = newLabel;
+                    props.onUpdate(cacheValueRef.current, optionsRef.current);
+                  }}
+                  onDelete={() => {
+                    const _data = thenTerms.filter((a) => a.key !== termsItem.key);
+                    if (optionsRef.current?.termsColumns) {
+                      optionsRef.current.termsColumns[index] = [];
+                      const filterColumns = new Set(flattenDeep(optionsRef.current.termsColumns)); // 平铺去重
+                      let newColumns = [...filterColumns.values()];
+                      if (optionsRef.current?.otherColumns) {
+                        newColumns = [...optionsRef.current.otherColumns, ...newColumns];
+                      }
+                      optionsRef.current['columns'] = newColumns;
+                    }
+                    props.onUpdate(
+                      {
+                        ...cacheValueRef.current,
+                        terms: _data,
+                      },
+                      optionsRef.current,
+                    );
+                  }}
+                />
+              ))
+            ) : (
+              <div
+                className="filter-add-button"
+                onClick={() => {
+                  getParams();
+                  let _data = cacheValueRef.current;
+                  optionsRef.current['terms'] = [];
+                  if (!_data.terms) {
+                    _data = {
+                      ..._data,
+                      terms: [
+                        {
+                          type: 'and',
+                          key: randomString(),
+                          terms: [
+                            {
+                              column: undefined,
+                              value: undefined,
+                              termType: undefined,
+                              type: 'and',
+                              key: randomString(),
+                            },
+                          ],
+                        },
+                      ],
+                    };
+                    props.onUpdate(_data, optionsRef.current);
+                  } else {
+                    _data.terms = [
                       {
                         type: 'and',
                         key: randomString(),
@@ -489,34 +511,17 @@ export default (props: ItemProps) => {
                           },
                         ],
                       },
-                    ],
-                  };
-                  props.onUpdate(_data, optionsRef.current);
-                } else {
-                  _data.terms = [
-                    {
-                      type: 'and',
-                      key: randomString(),
-                      terms: [
-                        {
-                          column: undefined,
-                          value: undefined,
-                          termType: undefined,
-                          type: 'and',
-                          key: randomString(),
-                        },
-                      ],
-                    },
-                  ];
-                  props.onUpdate(_data, optionsRef.current);
-                }
-              }}
-            >
-              <PlusOutlined style={{ paddingRight: 4 }} /> 添加过滤条件
-            </div>
-          )}
+                    ];
+                    props.onUpdate(_data, optionsRef.current);
+                  }
+                }}
+              >
+                <PlusOutlined style={{ paddingRight: 4 }} /> 添加过滤条件
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       {visible && (
         <Modal
           name={props.name}

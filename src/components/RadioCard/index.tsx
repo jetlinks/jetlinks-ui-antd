@@ -11,6 +11,7 @@ interface RadioCardItem {
   value: string;
   imgUrl?: string;
   imgSize?: number[];
+  disabled?: boolean;
 }
 
 export interface RadioCardProps {
@@ -72,11 +73,12 @@ export default (props: RadioCardProps) => {
           <div
             className={classNames('radio-card-item', {
               checked: keys?.includes(item.value),
+              disabled: item.disabled,
             })}
             style={props.itemStyle}
             key={item.value}
             onClick={() => {
-              if (!props.disabled) {
+              if (!props.disabled && !item.disabled) {
                 toggleOption(item.value);
               }
             }}

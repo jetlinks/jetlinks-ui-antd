@@ -5,7 +5,6 @@ import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { Badge, Popconfirm } from 'antd';
 import {
-  DatabaseOutlined,
   DeleteOutlined,
   EditOutlined,
   PlayCircleOutlined,
@@ -15,7 +14,7 @@ import {
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
-import { PermissionButton } from '@/components';
+import { AIcon, PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import Save from './Save';
 import { Store } from 'jetlinks-store';
@@ -153,7 +152,7 @@ const DataSource = observer(() => {
                 : '管理',
           }}
         >
-          <DatabaseOutlined />
+          <AIcon type={'icon-ziyuankuguanli'} />
         </PermissionButton>,
         <PermissionButton
           style={{ padding: 0 }}

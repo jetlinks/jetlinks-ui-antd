@@ -1,7 +1,7 @@
 // 资产-产品分类-绑定
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { service } from './index';
-import { message, Modal } from 'antd';
+import { Badge, message, Modal, Space } from 'antd';
 import Models from './model';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
@@ -19,6 +19,11 @@ interface Props {
   onCancel: () => void;
   parentId: string;
 }
+
+const status = {
+  1: <Badge status="success" text={'正常'} />,
+  0: <Badge status="error" text={'禁用'} />,
+};
 
 const Bind = observer((props: Props) => {
   const intl = useIntl();
@@ -50,6 +55,36 @@ const Bind = observer((props: Props) => {
         defaultMessage: '说明',
       }),
       hideInSearch: true,
+    },
+    {
+      title: '状态',
+      dataIndex: 'state',
+      render: (_, row) => <Space size={0}>{status[row.state]}</Space>,
+      valueType: 'select',
+      width: '90px',
+      valueEnum: {
+        // 2: {
+        //   text: intl.formatMessage({
+        //     id: 'pages.searchTable.titleStatus.all',
+        //     defaultMessage: '全部',
+        //   }),
+        //   status: 2,
+        // },
+        0: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.disabled',
+            defaultMessage: '禁用',
+          }),
+          status: 0,
+        },
+        1: {
+          text: intl.formatMessage({
+            id: 'pages.device.product.status.enabled',
+            defaultMessage: '正常',
+          }),
+          status: 1,
+        },
+      },
     },
   ];
 

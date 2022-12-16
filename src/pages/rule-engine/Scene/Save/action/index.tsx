@@ -90,18 +90,18 @@ export default (props: ActionsProps) => {
                 parallel={false}
                 actions={serialArray.length ? serialArray[0].actions : []}
                 onAdd={(actionItem) => {
-                  console.log('addModel', serialArray);
-                  if (serialArray.length) {
-                    const indexOf = serialArray[0].actions?.findIndex(
+                  const newSerialArray = [...serialArray];
+                  if (newSerialArray.length) {
+                    const indexOf = newSerialArray[0].actions?.findIndex(
                       (aItem) => aItem.key === actionItem.key,
                     );
                     if (indexOf !== -1) {
-                      serialArray[0].actions.splice(indexOf, 1, actionItem);
+                      newSerialArray[0].actions.splice(indexOf, 1, actionItem);
                     } else {
-                      serialArray[0].actions.push(actionItem);
+                      newSerialArray[0].actions.push(actionItem);
                     }
-                    setSerialArray([...serialArray]);
-                    props.onUpdate(serialArray[0], false);
+                    setSerialArray([...newSerialArray]);
+                    props.onUpdate(newSerialArray[0], false);
                   } else {
                     actionItem.key = randomString();
                     props.onAdd({

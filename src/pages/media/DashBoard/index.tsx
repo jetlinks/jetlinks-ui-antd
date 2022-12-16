@@ -9,6 +9,7 @@ import type { EChartsOption } from 'echarts';
 import moment from 'moment';
 import { Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { useDomFullHeight } from '@/hooks';
 
 const service = new Service('media');
 
@@ -18,6 +19,7 @@ export default () => {
   const [channelOnline, setChannelOnline] = useState(0);
   const [channelOffline, setChannelOffline] = useState(0);
   const [options, setOptions] = useState<EChartsOption>({});
+  const { minHeight } = useDomFullHeight(`.media-dash-board-body`);
 
   const { data: deviceTotal } = useRequest(service.deviceCount, {
     formatResult: (res) => res.result,
@@ -142,7 +144,7 @@ export default () => {
           // minInterval: 1,
         },
         grid: {
-          left: 0,
+          left: '80px',
           right: 0,
           top: '2%',
         },
@@ -269,7 +271,7 @@ export default () => {
           className={'media-dash-board-body'}
           title={'播放数量(人次)'}
           options={options}
-          height={500}
+          height={minHeight < 500 ? 500 : minHeight}
           defaultTime={'week'}
           onParamsChange={getEcharts}
         />

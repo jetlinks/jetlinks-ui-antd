@@ -138,15 +138,17 @@ export default observer(() => {
             ...resp.result,
           };
           const newBranches = cloneDeep(assignmentKey(branches));
-          FormModel.current.options = { ...defaultOptions, ...resp.result.options };
-          FormModel.current.trigger = resp.result.trigger || {};
-          FormModel.current.branches = newBranches;
+
           form.setFieldValue('description', resp.result.description);
 
           if (['device', 'timer'].includes(_triggerType)) {
             form.setFieldValue(_triggerType, resp.result.trigger[_triggerType]);
           }
           form.setFieldValue('branches', newBranches);
+
+          FormModel.current.options = { ...defaultOptions, ...resp.result.options };
+          FormModel.current.trigger = resp.result.trigger || {};
+          FormModel.current.branches = newBranches;
         }
       });
     }

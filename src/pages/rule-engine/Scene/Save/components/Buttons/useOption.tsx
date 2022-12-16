@@ -7,7 +7,7 @@ interface OptionsProps {
 
 const useOptions = (options: any[], key?: any): OptionsProps => {
   return useMemo(() => {
-    const _options = options;
+    const _options = options || [];
     const valueOptions = new Map<string, any>();
 
     function dig(optionsList: any[]) {

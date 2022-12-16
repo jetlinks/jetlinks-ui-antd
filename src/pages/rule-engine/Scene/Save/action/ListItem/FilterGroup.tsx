@@ -110,6 +110,7 @@ export default observer((props: TermsProps) => {
                     options={props.paramsOptions}
                     label={labelRef.current?.terms?.[index]}
                     isLast={index === props.data.terms!.length - 1}
+                    isFirst={index === 0}
                     onDelete={() => {
                       terms.splice(index, 1);
                       if (terms.length === 0) {
@@ -119,9 +120,9 @@ export default observer((props: TermsProps) => {
                           ...props.data,
                           terms: terms,
                         });
+                        props.onColumnsChange(optionsColumnsRef.current);
                       }
                       set(optionsColumnsRef.current, [props.name, index], []);
-                      props.onColumnsChange(optionsColumnsRef.current);
                     }}
                     onAdd={() => {
                       const key = `params_${new Date().getTime()}`;

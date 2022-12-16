@@ -37,10 +37,17 @@
 }
 
 .actions-terms {
-  width: 66.66%;
   .actions-terms-warp {
     display: flex;
+    width: 66.66%;
     margin-bottom: 24px;
+
+    &.first-children {
+      width: 100%;
+      .actions-branches {
+        width: 66.66%;
+      }
+    }
 
     &.first-children,
     &:last-child {
@@ -125,6 +132,14 @@
     .terms-params-item {
       display: flex;
       align-items: center;
+    }
+
+    .ant-form-item {
+      &:not(:first-child) {
+        .ant-form-item-explain-error {
+          padding-left: 80px !important;
+        }
+      }
     }
   }
 

@@ -170,12 +170,12 @@ const Save = () => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={8}>
+                  <Col flex={'184px'}>
                     <Form.Item name={'photoUrl'}>
                       <UploadImage />
                     </Form.Item>
                   </Col>
-                  <Col span={16}>
+                  <Col flex={'auto'}>
                     {accessType === DefaultAccessType ? (
                       <Form.Item
                         label={'ID'}

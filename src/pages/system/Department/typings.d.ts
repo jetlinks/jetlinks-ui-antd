@@ -28,6 +28,7 @@ export type ProductItem = {
   name: string;
   description: string;
   grantedPermissions?: string[];
+  state: number;
 };
 
 // 产品分类
