@@ -50,15 +50,6 @@ const Tags = () => {
               <EditOutlined />
               编辑
             </PermissionButton>
-            {/* <Button
-              type="link"
-              onClick={() => {
-                setVisible(true);
-              }}
-            >
-              <EditOutlined />
-              编辑
-            </Button> */}
           </span>
         }
       >

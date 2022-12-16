@@ -61,25 +61,25 @@ const AccessConfig = (props: Props) => {
                     termType: 'in',
                     value: 'child-device,edge-child-device',
                   },
-                  {
-                    column: 'state',
-                    termType: 'eq',
-                    value: 'enabled',
-                  },
+                  // {
+                  //   column: 'state',
+                  //   termType: 'eq',
+                  //   value: 'enabled',
+                  // },
                 ],
               },
             ]
           : [
               ...params?.terms,
-              {
-                terms: [
-                  {
-                    column: 'state',
-                    termType: 'eq',
-                    value: 'enabled',
-                  },
-                ],
-              },
+              // {
+              //   terms: [
+              //     {
+              //       column: 'state',
+              //       termType: 'eq',
+              //       value: 'enabled',
+              //     },
+              //   ],
+              // },
             ],
     };
     service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
