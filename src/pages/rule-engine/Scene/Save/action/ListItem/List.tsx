@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import Modal from '../Modal/add';
 import './index.less';
 import type { ActionsType } from '@/pages/rule-engine/Scene/typings';
@@ -7,6 +6,9 @@ import Item from './Item';
 import type { ParallelType } from './Item';
 import { Observer } from '@formily/react';
 import { pick } from 'lodash';
+import { Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import classNames from 'classnames';
 
 interface ListProps {
   branchesName: number;
@@ -55,14 +57,27 @@ export default (props: ListProps) => {
           ));
         }}
       </Observer>
+      <div className={classNames('actions-add-list', { border: actions.length })}>
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setVisible(true);
+          }}
+          type="primary"
+          ghost
+          style={{ width: '100%' }}
+        >
+          添加执行动作
+        </Button>
+      </div>
 
-      <AddButton
-        onClick={() => {
-          setVisible(true);
-        }}
-      >
-        点击配置执行动作
-      </AddButton>
+      {/*<AddButton*/}
+      {/*  onClick={() => {*/}
+      {/*    setVisible(true);*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  点击配置执行动作*/}
+      {/*</AddButton>*/}
       {visible && (
         <Modal
           // type={props.type}

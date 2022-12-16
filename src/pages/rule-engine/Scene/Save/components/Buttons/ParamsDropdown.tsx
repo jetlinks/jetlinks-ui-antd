@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Input, InputNumber, Menu, Tree } from 'antd';
 import classNames from 'classnames';
 import styles from './index.less';
@@ -21,6 +21,7 @@ export interface ParamsDropdownProps {
   name?: number;
   valueType: string;
   showLabelKey?: string;
+  icon?: ReactNode;
 }
 
 interface MenusProps {
@@ -299,6 +300,7 @@ export default (props: ParamsDropdownProps) => {
           setOpen(true);
         }}
       >
+        {props.icon}
         {label || props.placeholder}
       </div>
     </ParamsSelect>

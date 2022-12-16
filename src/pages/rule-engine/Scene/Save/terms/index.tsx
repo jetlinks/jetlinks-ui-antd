@@ -10,7 +10,7 @@ import type { TriggerType } from '@/pages/rule-engine/Scene/typings';
 import Actions from '@/pages/rule-engine/Scene/Save/action';
 import { cloneDeep, set } from 'lodash';
 import classNames from 'classnames';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { randomString } from '@/utils/util';
 
 interface TermsModelProps {
@@ -114,16 +114,15 @@ export default observer((props: Props) => {
     <div className="actions-terms">
       <TitleComponent
         style={{ fontSize: 14 }}
-        data={
-          <span>
-            触发条件{' '}
-            <Switch
-              checked={open}
-              onChange={openChange}
-              checkedChildren={'开'}
-              unCheckedChildren={'关'}
-            />
-          </span>
+        data={'触发条件'}
+        after={
+          <Switch
+            checked={open}
+            onChange={openChange}
+            checkedChildren={'开'}
+            unCheckedChildren={'关'}
+            style={{ marginLeft: 4 }}
+          />
         }
       />
       {open ? (
@@ -168,11 +167,7 @@ export default observer((props: Props) => {
                     否则
                   </div>
                   <div className={classNames('actions-terms-options no-when')}>
-                    <PlusCircleOutlined
-                      className={'add-button-color'}
-                      style={{ fontSize: 32 }}
-                      onClick={addBranches}
-                    />
+                    <PlusOutlined className={'when-add-button'} onClick={addBranches} />
                   </div>
                 </div>
               );

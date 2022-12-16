@@ -11,7 +11,7 @@ import { numberToString } from '../components/TimingTrigger/whenOption';
 import { timeUnitEnum } from '../components/TimingTrigger';
 import { Store } from 'jetlinks-store';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
-import { isEqual } from 'lodash';
+import { isArray, isEqual } from 'lodash';
 
 interface AddProps {
   options?: any;
@@ -19,6 +19,42 @@ interface AddProps {
   onCancel?: () => void;
   onSave?: (data: TriggerDevice, options: any) => void;
 }
+
+type continuousValueFn = (data: (string | number)[], type: string) => (number | string)[];
+
+const continuousValue: continuousValueFn = (data, type) => {
+  let start = 0;
+  const newArray: (number | string)[] = [];
+  const isWeek = type === 'week';
+  if (isArray(data)) {
+    data.forEach((item, index) => {
+      const _item = Number(item);
+      const nextValue = data[index + 1];
+      const previousValue = data[index - 1];
+      const nextItemValue = _item + 1;
+      const previousItemValue = _item - 1;
+      if (nextItemValue === nextValue && previousItemValue !== previousValue) {
+        start = _item;
+      } else if (previousItemValue === previousValue && nextItemValue !== nextValue) {
+        // 表示前start和item连续，并且item与nextValue不连续
+        if (_item - start >= 2) {
+          // 至少三位连续
+          newArray.push(
+            isWeek
+              ? `${numberToString[start]} - ${numberToString[_item]}`
+              : `${start} - ${_item}号`,
+          );
+        } else {
+          newArray.push(isWeek ? numberToString[start] : `${start}号`);
+          newArray.push(isWeek ? numberToString[_item] : `${_item}号`);
+        }
+      } else if (previousItemValue !== previousValue && nextItemValue !== nextValue) {
+        newArray.push(isWeek ? numberToString[_item] : `${_item}号`);
+      }
+    });
+  }
+  return newArray;
+};
 
 export interface DeviceModelProps extends Partial<TriggerDevice> {
   steps: { key: string; title: string }[];
@@ -127,21 +163,48 @@ export default observer((props: AddProps) => {
   const handleOptions = (data: TriggerDeviceOptions) => {
     // console.log(data);
 
+    const typeIconMap = {
+      writeProperty: 'icon-bianji1',
+      invokeFunction: 'icon-widgets',
+      reportEvent: 'icon-shijian',
+      readProperty: 'icon-Group',
+    };
+
     const _options: any = {
       name: '', // 名称
+      extraName: '', // 拓展参数
       onlyName: false,
       type: '', // 触发类型
+      typeIcon: typeIconMap[TriggerDeviceModel.options.action],
       productName: '',
+      selectorIcon: '',
       time: undefined,
       when: undefined,
       extraTime: undefined,
       action: TriggerDeviceModel.options.action,
     };
     if (TriggerDeviceModel.selector === 'fixed') {
-      _options.name = TriggerDeviceModel.selectorValues?.map((item) => item.name).join(',');
+      let isLimit = false;
+      let indexOf = 0;
+      const nameStr = TriggerDeviceModel.selectorValues!.reduce((_prev, next, index) => {
+        if (_prev.length <= 30) {
+          indexOf = index;
+          return index === 0 ? next.name : _prev + '、' + next.name;
+        } else {
+          isLimit = true;
+        }
+        return _prev;
+      }, '');
+      // _options.name = TriggerDeviceModel.selectorValues?.map((item) => item.name).join('、');
+      _options.name = nameStr;
+      if (isLimit && TriggerDeviceModel.selectorValues!.length > indexOf) {
+        _options.extraName = `等${TriggerDeviceModel.selectorValues!.length}台设备`;
+      }
+      _options.selectorIcon = 'icon-shebei1';
     } else if (TriggerDeviceModel.selector === 'org') {
       _options.name = TriggerDeviceModel.selectorValues?.[0].name + '的';
       _options.productName = TriggerDeviceModel.productDetail.name; // 产品名称
+      _options.selectorIcon = 'icon-zuzhi';
     } else {
       _options.name = '所有的' + TriggerDeviceModel.productDetail.name;
     }
@@ -151,18 +214,16 @@ export default observer((props: AddProps) => {
       if (_timer.trigger === 'cron') {
         _options.time = _timer.cron;
       } else {
-        _options.when =
-          _timer.when!.length === 0
-            ? '每天'
-            : `每${_timer
-                .when!.map((item) => {
-                  if (_timer!.trigger === 'week') {
-                    return numberToString[item];
-                  } else {
-                    return item + '号';
-                  }
-                })
-                .join(',')}`;
+        // console.log('continuousValue', continuousValue(_timer.when! || [], _timer!.trigger))
+        let whenStr = '每天';
+        if (_timer.when!.length) {
+          whenStr = _timer!.trigger === 'week' ? '每周' : '每月';
+          const whenStrArr = continuousValue(_timer.when! || [], _timer!.trigger);
+          whenStrArr.length = 3;
+          whenStr += whenStrArr.join('、');
+          whenStr += `等${_timer.when!.length}天`;
+        }
+        _options.when = whenStr;
         if (_timer.once) {
           _options.time = _timer.once.time + ' 执行1次';
         } else if (_timer.period) {
@@ -175,16 +236,19 @@ export default observer((props: AddProps) => {
     if (data.operator === 'online') {
       _options.type = '上线';
       _options.action = '';
+      _options.typeIcon = 'icon-a-Group4713';
     }
 
     if (data.operator === 'offline') {
       _options.type = '离线';
       _options.action = '';
+      _options.typeIcon = 'icon-a-Group4892';
     }
 
     if (data.operator === 'reportProperty') {
       _options.type = '属性上报';
       _options.action = '';
+      _options.typeIcon = 'icon-file-upload-outline';
     }
     return _options;
   };

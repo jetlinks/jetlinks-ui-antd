@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { observer } from '@formily/react';
 import { Popconfirm, Space } from 'antd';
 import './index.less';
+import { AIcon } from '@/components';
 
 interface FilterProps {
   branchesName: number;
@@ -79,7 +80,6 @@ export default observer((props: FilterProps) => {
     (columnValue?: string) => {
       if (columnValue) {
         const labelOptions = columnOptionsMap.get(columnValue);
-        console.log('filter-convertLabelValue', labelOptions);
         if (labelOptions) {
           const _termTypeOptions: any[] =
             labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
@@ -106,13 +106,12 @@ export default observer((props: FilterProps) => {
           return {
             ...item,
             key: item.id,
-            fullName: item.name,
             title: name,
             disabled: true,
             children: handleTreeData(item.children),
           };
         }
-        return { ...item, key: item.id, fullName: item.name, title: name };
+        return { ...item, key: item.id, title: name };
       });
     }
     return [];
@@ -205,6 +204,7 @@ export default observer((props: FilterProps) => {
               termType: _termTypeValue,
             });
           }}
+          icon={<AIcon type={'icon-zhihangdongzuoxie-1'} />}
         />
         <DropdownButton
           options={ttOptions}
@@ -267,6 +267,7 @@ export default observer((props: FilterProps) => {
                 props.onLabelChange?.(labelCache.current);
                 valueEventChange(_myValue);
               }}
+              icon={<AIcon type={'icon-canshu'} style={{ fontSize: 16 }} />}
             />
             <ParamsDropdown
               options={valueOptions}
@@ -300,6 +301,7 @@ export default observer((props: FilterProps) => {
                 props.onLabelChange?.(labelCache.current);
                 valueEventChange(_myValue);
               }}
+              icon={<AIcon type={'icon-canshu'} style={{ fontSize: 16 }} />}
             />
           </>
         ) : (
@@ -331,6 +333,7 @@ export default observer((props: FilterProps) => {
               props.onLabelChange?.(labelCache.current);
               valueEventChange(v);
             }}
+            icon={<AIcon type={'icon-canshu'} style={{ fontSize: 16 }} />}
           />
         )}
       </div>
@@ -352,10 +355,9 @@ export default observer((props: FilterProps) => {
           />
         </div>
       ) : (
-        <div className="terms-filter-add" onClick={props.onAdd}>
-          <div className="terms-filter-content">
-            <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
-            <span>条件</span>
+        <div className="terms-add" onClick={props.onAdd}>
+          <div className="terms-content">
+            <PlusOutlined style={{ fontSize: 12 }} />
           </div>
         </div>
       )}

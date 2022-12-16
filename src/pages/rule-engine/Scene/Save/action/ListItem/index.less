@@ -1,3 +1,26 @@
+.deleteBtn() {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: none;
+  width: 20px;
+  height: 20px;
+  color: #999;
+  line-height: 20px;
+  text-align: center;
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &.show {
+    display: block;
+  }
+
+  &:hover {
+    background-color: #f3f3f3;
+  }
+}
+
 .action-list-content {
   padding: 8px;
 
@@ -12,11 +35,17 @@
   }
 
   .filter-add-button {
-    display: inline-block;
-    margin-bottom: 16px;
-    margin-left: 8px;
-    color: #2f54eb;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.3);
+    text-align: center;
     cursor: pointer;
+  }
+
+  .actions-add-list {
+    &.border {
+      padding-top: 16px;
+      border-top: 1px solid @primary-color;
+    }
   }
 }
 
@@ -28,17 +57,19 @@
   border-radius: 2px;
 
   .item-options-warp {
-    display: flex;
+    display: inline-flex;
     height: 48px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
 
     .item-options-type {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 48px;
-      height: 48px;
-      margin-right: 8px;
-      background-color: #fafafa;
+      background-color: #f0f0f0;
+      border-radius: 6px 0 0 6px;
+      cursor: pointer;
     }
 
     .item-options-content {
@@ -46,6 +77,7 @@
       align-items: center;
       padding: 0 8px;
       background: #fafafa;
+      border-radius: 0 6px 6px 0;
       cursor: pointer;
 
       div {
@@ -98,6 +130,19 @@
   }
 }
 
+.terms-params-delete {
+  .deleteBtn();
+
+  &.danger {
+    color: #e50012;
+    background-color: rgba(229, 0, 18, 0.1);
+  }
+
+  &.filter-terms-params-delete {
+    transform: translateY(6px);
+  }
+}
+
 .filter-condition-warp {
   display: flex;
   align-items: center;
@@ -105,8 +150,7 @@
   .filter-condition-content {
     position: relative;
     display: flex;
-    padding: 4px;
-    border: 1px solid rgba(#000, 0.1);
+    gap: 2px;
     border-radius: 2px;
     transition: border 0.3s;
 
@@ -136,7 +180,6 @@
 
   .terms-filter-add {
     // display: inline-block;
-    width: 66px;
     margin-left: 16px;
     padding: 4px 8px;
     color: #333;
@@ -145,17 +188,53 @@
     border-radius: 30px;
     cursor: pointer;
   }
+
+  .terms-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 16px;
+    color: rgba(0, 0, 0, 0.3);
+    border: 1px dashed rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+  }
 }
 
 .actions-item-filter-warp {
-  display: flex;
+  position: relative;
   margin-bottom: 24px;
-  padding-top: 10px;
-  overflow-x: auto;
-  overflow-y: visible;
+  padding: 2px 0;
   border: 1px dashed #999;
-  border-radius: 2px;
-  row-gap: 16px;
+  border-radius: 30px;
+
+  &.filter-border {
+    padding: 2px 16px;
+    border-radius: 2px;
+  }
+
+  .actions-item-filter-overflow {
+    display: flex;
+    padding-top: 4px;
+    overflow-x: auto;
+    overflow-y: visible;
+    row-gap: 16px;
+  }
+
+  .actions-item-filter-warp-tip {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    z-index: 2;
+    color: rgba(0, 0, 0, 0.55);
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1;
+    background-color: #fff;
+    transform: translateY(-50%);
+  }
 
   .terms-params {
     // display: inline-block;
@@ -174,10 +253,8 @@
     .terms-params-content {
       position: relative;
       display: flex;
-      // flex-wrap: wrap;
-      padding: 8px;
-      padding-bottom: 0;
-      background-color: #fff;
+      background-color: #fafafa;
+      border: unset;
       row-gap: 16px;
 
       .terms-params-item {

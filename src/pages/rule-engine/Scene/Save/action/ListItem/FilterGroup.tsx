@@ -174,7 +174,11 @@ export default observer((props: TermsProps) => {
             }}
           </Observer>
           <Popconfirm title={'确认删除？'} onConfirm={props.onDelete}>
-            <div className={classNames('terms-params-delete', { show: deleteVisible })}>
+            <div
+              className={classNames('terms-params-delete filter-terms-params-delete', {
+                show: deleteVisible,
+              })}
+            >
               <CloseOutlined />
             </div>
           </Popconfirm>
@@ -195,7 +199,7 @@ export default observer((props: TermsProps) => {
             />
           </div>
         ) : (
-          <div className="terms-add" onClick={props.onAddGroup}>
+          <div className="terms-group-add" onClick={props.onAddGroup}>
             <div className="terms-content">
               <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
               <span>分组</span>

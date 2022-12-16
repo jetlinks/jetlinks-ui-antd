@@ -1,7 +1,16 @@
 @import '~antd/es/style/themes/default.less';
 
-.add-button-color {
-  color: @primary-color;
+.add-button() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  border: 1px dashed rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .deleteBtn() {
@@ -28,6 +37,7 @@
 }
 
 .actions-terms {
+  width: 66.66%;
   .actions-terms-warp {
     display: flex;
     margin-bottom: 24px;
@@ -35,6 +45,10 @@
     &.first-children,
     &:last-child {
       margin-bottom: 0;
+    }
+
+    .when-add-button {
+      .add-button();
     }
 
     .actions-terms-title {
@@ -82,15 +96,6 @@
       }
     }
   }
-
-  .terms-params-delete {
-    .deleteBtn();
-
-    &.danger {
-      color: #e50012;
-      background-color: rgba(229, 0, 18, 0.1);
-    }
-  }
 }
 
 .terms-params {
@@ -113,7 +118,9 @@
     // flex-wrap: wrap;
     padding: 8px;
     padding-bottom: 0;
-    background-color: #fafafa;
+    border: 1px dashed #e0e0e0;
+    //background-color: #fafafa;
+    border-radius: 6px;
     row-gap: 16px;
     .terms-params-item {
       display: flex;
@@ -121,7 +128,7 @@
     }
   }
 
-  .terms-add {
+  .terms-group-add {
     // display: inline-block;
     width: 66px;
     margin-left: 16px;
@@ -163,11 +170,11 @@
     position: relative;
     // display: inline-block;
     display: flex;
-    padding: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
-    transition: border 0.3s;
-
+    //padding: 4px;
+    //border: 1px solid rgba(0, 0, 0, 0.1);
+    //border-radius: 2px;
+    //transition: border 0.3s;
+    gap: 2px;
     // > div {
     //   flex-shrink: 0;
     // }
@@ -179,13 +186,7 @@
 
   .term-add {
     // display: inline-block;
-    width: 66px;
     margin-left: 16px;
-    padding: 4px 8px;
-    color: #333;
-    background: #e8e8e8;
-    border: 1px solid #f0f0f0;
-    border-radius: 30px;
-    cursor: pointer;
+    .add-button();
   }
 }
