@@ -46,7 +46,7 @@ const Comprehensive = () => {
       setProductCount(resp.result);
     }
     if (resp.status === 403) {
-      setProductMessage('暂无产品权限');
+      setProductMessage('暂无权限');
     }
   };
 
@@ -56,7 +56,7 @@ const Comprehensive = () => {
       setDeviceCount(resp.result);
     }
     if (resp.status === 403) {
-      setDeviceMessage('暂无设备权限');
+      setDeviceMessage('暂无权限');
     }
   };
 

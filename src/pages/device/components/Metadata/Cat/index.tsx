@@ -71,7 +71,7 @@ const Cat = observer((props: Props) => {
             type="primary"
             onClick={async () => {
               try {
-                downloadObject(JSON.parse(value), `设备-物模型`);
+                downloadObject(JSON.parse(value), `设备-物模型`, 'YYYY/MM/DD');
               } catch (e) {
                 message.error('物模型格式错误!');
               }

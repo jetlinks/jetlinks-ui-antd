@@ -19,6 +19,7 @@ export default (props: AMapProps) => {
   const isOpenUi = 'AMapUI' in props || props.AMapUI;
 
   const amapKey = localStorage.getItem(SystemConst.AMAP_KEY);
+  console.log(amapKey);
 
   const getAMapUI = () => {
     const version = typeof props.AMapUI === 'string' ? props.AMapUI : '1.1';
@@ -36,7 +37,7 @@ export default (props: AMapProps) => {
     }
   };
 
-  console.log(isOpenUi, uiLoading);
+  // console.log(isOpenUi, uiLoading);
 
   return (
     <div style={style || { width: '100%', height: '100%' }} className={className}>

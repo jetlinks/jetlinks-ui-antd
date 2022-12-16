@@ -1,6 +1,6 @@
 import { Col, Empty, Input, Pagination, Row, Space, Spin, Table, Tooltip } from 'antd';
 import CheckButton from '@/components/CheckButton';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import PropertyCard from './PropertyCard';
 import {
@@ -229,6 +229,18 @@ const Property = (props: Props) => {
     });
   };
 
+  const memo = useMemo(
+    () => (
+      <EditProperty
+        data={currentInfo}
+        onCancel={() => {
+          setVisible(false);
+        }}
+      />
+    ),
+    [propertyValue],
+  );
+
   useEffect(() => {
     if (!loading1) {
       subscribeProperty();
@@ -352,14 +364,7 @@ const Property = (props: Props) => {
           </div>
         )}
       </Spin>
-      {visible && (
-        <EditProperty
-          data={currentInfo}
-          onCancel={() => {
-            setVisible(false);
-          }}
-        />
-      )}
+      {visible && memo}
       {infoVisible && <PropertyLog data={currentInfo} close={() => setInfoVisible(false)} />}
       {indicatorVisible && (
         <Indicators

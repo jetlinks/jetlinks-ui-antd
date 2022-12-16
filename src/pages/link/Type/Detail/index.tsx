@@ -130,26 +130,14 @@ const Save = observer(() => {
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
               const data = resp?.result || {};
-              // if (data?.shareCluster === false) {
-              //   const cluster = (data?.cluster || []).map((item: any) => {
-              //     return {
-              //       ...item.configuration,
-              //       configuration: item,
-              //     };
-              //   });
-              //   console.log(cluster, 'cluster')
-              //   const obj = _.cloneDeep({ ...data, cluster });
-              //   form1.setValues({ ...obj });
-              // }
               if (data?.shareCluster === false) {
-                const _cluster = _.cloneDeep(data.cluster[0]);
-                data.cluster[0] = {
-                  ..._cluster.configuration,
-                };
-                form1.setValues({ ...data });
-              } else {
-                form1.setValues({ ...data });
+                data.cluster = (data?.cluster || []).map((item: any) => {
+                  return {
+                    ...item.configuration,
+                  };
+                });
               }
+              form1.setValues({ ...data });
             }
           });
           onFieldValueChange('type', (field, f) => {
@@ -525,21 +513,21 @@ const Save = observer(() => {
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
-          maxMessageSize: {
-            title: '最大消息长度',
-            'x-decorator-props': {
-              gridSpan: 1,
-              tooltip: '单次收发消息的最大长度,单位:字节;设置过大可能会影响性能',
-              layout: 'vertical',
-              labelAlign: 'left',
-            },
-            'x-component-props': {
-              placeholder: '请输入最大消息长度',
-            },
-            required: true,
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-          },
+          // maxMessageSize: {
+          //   title: '最大消息长度',
+          //   'x-decorator-props': {
+          //     gridSpan: 1,
+          //     tooltip: '单次收发消息的最大长度,单位:字节;设置过大可能会影响性能',
+          //     layout: 'vertical',
+          //     labelAlign: 'left',
+          //   },
+          //   'x-component-props': {
+          //     placeholder: '请输入最大消息长度',
+          //   },
+          //   required: true,
+          //   'x-decorator': 'FormItem',
+          //   'x-component': 'Input',
+          // },
           topicPrefix: {
             title: '订阅前缀',
             'x-component-props': {
@@ -574,7 +562,8 @@ const Save = observer(() => {
           fulfill: {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["MQTT_SERVER"].includes($deps[0])}}',
+              visible: '{{["MQTT_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+              // hidden:'{{["MQTT_SERVER"].includes($deps[0])}}'
             },
           },
         },
