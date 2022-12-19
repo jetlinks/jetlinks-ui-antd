@@ -231,6 +231,7 @@ const ChildDevice = (props: Props) => {
               <Popconfirm
                 key="unbind"
                 onConfirm={async () => {
+                  if (bindKeys.length === 0) return onlyMessage('请先勾选数据！', 'error');
                   const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
                   if (resp.status === 200) {
                     onlyMessage('操作成功！');
