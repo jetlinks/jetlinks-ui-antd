@@ -190,7 +190,7 @@ const ChildDevice = (props: Props) => {
           <ProTable<LogItem>
             search={false}
             columns={columns}
-            size="small"
+            // size="small"
             scroll={{ x: 1366 }}
             actionRef={actionRef}
             params={searchParams}
