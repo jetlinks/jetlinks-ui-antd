@@ -53,7 +53,8 @@ export default ({ onChange, value, ...extraProps }: UploadImageProps) => {
       if (extraProps.errorMessage) {
         message.error(extraProps.errorMessage);
       } else {
-        message.error(`图片格式错误，必须是${imageTypes.toString()}格式`);
+        message.error(`请上传正确格式的图片`);
+        // message.error(`图片格式错误，必须是${imageTypes.toString()}格式`);
       }
       return false;
     }
