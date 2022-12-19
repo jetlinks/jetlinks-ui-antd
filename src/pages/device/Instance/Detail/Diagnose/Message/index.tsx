@@ -113,6 +113,7 @@ const Message = observer(() => {
 
   useEffect(() => {
     if (DiagnoseStatusModel.state === 'success') {
+      DiagnoseStatusModel.dialogList = [];
       subscribeLog();
     }
   }, [DiagnoseStatusModel.state]);
