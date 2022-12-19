@@ -21,7 +21,8 @@ const Running = () => {
     <Input.Search
       style={{ maxWidth: 200, marginBottom: 10 }}
       allowClear
-      placeholder="请输入名称"
+      placeholder="请输入事件名称"
+      // placeholder="请输入名称"
       onSearch={(value: string) => {
         console.log(list);
         if (value) {
