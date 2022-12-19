@@ -59,7 +59,7 @@ const handleOptions = (options: any[]): any[] => {
 const DoubleFilter = ['nbtw', 'btw', 'in', 'nin'];
 
 export const handleOptionsLabel = (data: any, type?: string) => {
-  if (isArray(data)) {
+  if (data && isArray(data)) {
     try {
       const c = data[0];
       const t = data[1];

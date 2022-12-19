@@ -172,7 +172,7 @@ export default observer((props: BranchesItemProps) => {
                         if (data.actions?.length) {
                           FormModel.current.branches![props.name].then[indexOf] = data;
                         } else {
-                          FormModel.current.branches![props.name].then = [];
+                          FormModel.current.branches![props.name].then[indexOf].actions = [];
                         }
                       }
                     }}

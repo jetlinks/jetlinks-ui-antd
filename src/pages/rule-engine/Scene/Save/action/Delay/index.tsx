@@ -55,6 +55,8 @@ export default observer((props: Props) => {
     <Modal
       title={'执行动作'}
       open
+      keyboard={false}
+      maskClosable={false}
       width={400}
       onCancel={() => {
         props.cancel();

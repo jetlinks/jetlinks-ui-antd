@@ -38,7 +38,7 @@ export default () => {
                   if (data.actions?.length) {
                     FormModel.current.branches![0].then[indexOf] = data;
                   } else {
-                    FormModel.current.branches![0].then = [];
+                    FormModel.current.branches![0].then[indexOf].actions = [];
                   }
                 }
               }}

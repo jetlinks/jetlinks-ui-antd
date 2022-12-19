@@ -122,10 +122,8 @@ const actionFilter = (terms: any, isLast: boolean, index: number) => {
   terms?.forEach((item: any, iindex: number) => {
     if (isArray(item.terms)) {
       item.terms.map((iItem: number, iIndex: number) => {
-        str += `${handleOptionsLabel(
-          iItem,
-          iIndex < item.terms.length - 1 ? iItem[3] : undefined,
-        )}`;
+        const _isLast = iIndex < item.terms.length - 1;
+        str += `${handleOptionsLabel(iItem, _isLast ? item.terms[iIndex + 1]?.[3] : undefined)}`;
       });
     }
     str += iindex < terms.length - 1 ? item.termType : '';
@@ -152,7 +150,7 @@ const conditionsRender = (when: any[], index: number) => {
           ? termsItem.terms
               .map((bTermItem: any, bIndex: number) => {
                 const bLast = bIndex < termsItem.terms.length - 1;
-                return handleOptionsLabel(bTermItem, !bLast ? '' : bTermItem[3]);
+                return handleOptionsLabel(bTermItem, bLast ? termsItem.terms[bIndex + 1]?.[3] : '');
               })
               .join('')
           : '';

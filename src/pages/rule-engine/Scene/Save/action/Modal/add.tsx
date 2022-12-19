@@ -121,6 +121,8 @@ export default (props: Props) => {
     <Modal
       title="类型"
       open
+      keyboard={false}
+      maskClosable={false}
       width={860}
       onCancel={() => {
         props.close();

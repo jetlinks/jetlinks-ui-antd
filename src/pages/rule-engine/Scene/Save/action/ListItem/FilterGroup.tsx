@@ -71,7 +71,7 @@ export default observer((props: TermsProps) => {
                   rules={[
                     {
                       validator(_, v) {
-                        if (v) {
+                        if (v !== undefined) {
                           if (!Object.keys(v).length) {
                             return Promise.reject(new Error('该数据已发生变更，请重新配置'));
                           }
@@ -83,12 +83,15 @@ export default observer((props: TermsProps) => {
                             return Promise.reject(new Error('请选择操作符'));
                           }
 
-                          if (!v.value) {
+                          if (v.value === undefined) {
                             return Promise.reject(new Error('请选择或输入参数值'));
                           } else {
-                            if (isArray(v.value.value) && v.value.value.some((_v: any) => !_v)) {
+                            if (
+                              isArray(v.value.value) &&
+                              v.value.value.some((_v: any) => _v === undefined)
+                            ) {
                               return Promise.reject(new Error('请选择或输入参数值'));
-                            } else if (!v.value.value) {
+                            } else if (v.value.value === undefined) {
                               return Promise.reject(new Error('请选择或输入参数值'));
                             }
                           }

@@ -91,12 +91,15 @@ export default observer((props: TermsProps) => {
                             return Promise.reject(new Error('请选择操作符'));
                           }
 
-                          if (!v.value) {
+                          if (v.value === undefined) {
                             return Promise.reject(new Error('请选择或输入参数值'));
                           } else {
-                            if (isArray(v.value.value) && v.value.value.some((_v: any) => !_v)) {
+                            if (
+                              isArray(v.value.value) &&
+                              v.value.value.some((_v: any) => _v === undefined)
+                            ) {
                               return Promise.reject(new Error('请选择或输入参数值'));
-                            } else if (!v.value.value) {
+                            } else if (v.value.value === undefined) {
                               return Promise.reject(new Error('请选择或输入参数值'));
                             }
                           }
