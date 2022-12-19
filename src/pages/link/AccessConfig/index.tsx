@@ -129,6 +129,7 @@ const AccessConfig = () => {
                   <Col key={item.id} span={12}>
                     <AccessConfigCard
                       {...item}
+                      showMask={true}
                       detail={
                         <PermissionButton
                           key={'view'}

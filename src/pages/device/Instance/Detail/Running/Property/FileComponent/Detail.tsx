@@ -17,8 +17,8 @@ const Detail = (props: Props) => {
     } else if (['.flv', '.m3u8', '.mp4'].includes(type)) {
       return <LivePlayer live={false} url={value?.formatValue} />;
     } else if (type === 'obj') {
-      // @ts-ignore
       return (
+        // @ts-ignore
         <ReactJson
           displayObjectSize={false}
           displayDataTypes={false}

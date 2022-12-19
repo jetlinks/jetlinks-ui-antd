@@ -4,6 +4,7 @@ import { DatePicker, Input, InputNumber, Select, Tooltip } from 'antd';
 import { GeoPoint, MetadataJsonInput } from '@/components';
 import { EditableProTable, ProColumns } from '@jetlinks/pro-table';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { DiagnoseMessageModel } from '@/pages/device/Instance/Detail/Diagnose/Message/index';
 
 type DiagnoseFormProps = {
   data: any[];
@@ -173,6 +174,10 @@ const DiagnoseForm = forwardRef((props: DiagnoseFormProps, ref) => {
     },
   ];
 
+  useEffect(() => {
+    formRef.current?.setFieldsValue(DiagnoseMessageModel._inputs);
+  }, [props.data]);
+
   const handleDataSource = (data: any) => {
     const array = [];
     for (const datum of data) {
@@ -184,7 +189,7 @@ const DiagnoseForm = forwardRef((props: DiagnoseFormProps, ref) => {
         format: datum.valueType ? datum.valueType.format : undefined,
         options: datum.valueType ? datum.valueType.elements : undefined,
         json: type === 'object' ? datum?.json?.properties?.[0] : undefined,
-        value: undefined,
+        value: DiagnoseMessageModel._inputs?.[datum.id] || undefined,
       });
     }
     setEditableRowKeys(array.map((d) => d.id));
@@ -193,15 +198,15 @@ const DiagnoseForm = forwardRef((props: DiagnoseFormProps, ref) => {
     });
   };
 
-  /**
-   * 执行
-   */
   const actionRun = () => {
     return new Promise(async (resolve) => {
       const formData = await formRef.current?.validateFields().catch(() => {
         resolve(false);
       });
       if (formData?.table) {
+        (formData?.table || []).forEach((item: any) => {
+          DiagnoseMessageModel._inputs[item.id] = item.value;
+        });
         resolve(formData.table);
       } else {
         resolve(false);

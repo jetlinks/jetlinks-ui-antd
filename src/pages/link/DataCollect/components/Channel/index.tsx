@@ -20,9 +20,11 @@ interface Props {
 const ChannelModel = model<{
   visible: boolean;
   current: Partial<ChannelItem>;
+  currentPage: number;
 }>({
   visible: false,
   current: {},
+  currentPage: 0,
 });
 
 export default observer((props: Props) => {
@@ -133,6 +135,24 @@ export default observer((props: Props) => {
       return {};
     }
   };
+
+  const onPageChange = (page: number, size: number) => {
+    if (ChannelModel.currentPage === size) {
+      handleSearch({
+        ...param,
+        pageIndex: page - 1,
+        pageSize: size,
+      });
+    } else {
+      ChannelModel.currentPage = size;
+      handleSearch({
+        ...param,
+        pageIndex: 0,
+        pageSize: size,
+      });
+    }
+  };
+
   return (
     <div>
       <SearchComponent<ChannelItem>
@@ -279,9 +299,12 @@ export default observer((props: Props) => {
               total={dataSource?.total || 0}
               current={dataSource?.pageIndex + 1}
               onChange={(page, size) => {
+                onPageChange(page, size);
+              }}
+              onShowSizeChange={(current, size) => {
                 handleSearch({
                   ...param,
-                  pageIndex: page - 1,
+                  pageIndex: 1,
                   pageSize: size,
                 });
               }}

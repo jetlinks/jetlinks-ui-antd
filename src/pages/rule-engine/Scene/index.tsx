@@ -68,11 +68,11 @@ const Scene = () => {
           style={{ padding: 0 }}
           isPermission={permission.tigger}
           tooltip={{
-            title: record.state?.value === 'disabled' ? '未启用，不能手动触发' : '',
+            title: record.state?.value === 'disable' ? '未启用，不能手动触发' : '',
           }}
-          disabled={record.state?.value === 'disabled'}
+          disabled={record.state?.value === 'disable'}
           popConfirm={{
-            disabled: record.state?.value === 'disabled',
+            disabled: record.state?.value === 'disable',
             title: '确认手动触发?',
             onConfirm: async () => {
               await service._execute(record.id);
@@ -95,10 +95,16 @@ const Scene = () => {
         type={'link'}
         style={{ padding: 0 }}
         isPermission={permission.action}
+        disabled={!(!!record?.triggerType && (record?.branches || [])?.length)}
+        tooltip={{
+          title: !(!!record.triggerType && (record.branches || [])?.length)
+            ? '未配置规则的不能启用'
+            : '',
+        }}
         popConfirm={{
           title: intl.formatMessage({
             id: `pages.data.option.${
-              record.state.value === 'started' ? 'disabled' : 'enabled'
+              record.state.value === 'started' ? 'disable' : 'enabled'
             }.tips`,
             defaultMessage: '确认禁用？',
           }),
@@ -131,7 +137,7 @@ const Scene = () => {
       >
         {record.state.value === 'started' ? <StopOutlined /> : <PlayCircleOutlined />}
         {intl.formatMessage({
-          id: `pages.data.option.${record.state.value === 'started' ? 'disabled' : 'enabled'}`,
+          id: `pages.data.option.${record.state.value === 'started' ? 'disable' : 'enabled'}`,
           defaultMessage: record.state.value === 'started' ? '禁用' : '启用',
         })}
       </PermissionButton>,

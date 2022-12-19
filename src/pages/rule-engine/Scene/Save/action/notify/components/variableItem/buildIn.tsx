@@ -86,8 +86,8 @@ export default (props: BuiltInProps) => {
     } else {
       const type = props.data?.type;
       if (type === 'date') {
-        // @ts-ignore
         return (
+          // @ts-ignore
           <DatePicker
             value={value ? moment(value, 'YYYY-MM-DD HH:mm:ss') : undefined}
             style={{ width: '100%' }}

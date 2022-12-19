@@ -95,11 +95,18 @@ export default observer((props: Props) => {
     if (NotifyModel.current === 0) {
       const val = await WayRef.current?.save();
       if (val) {
-        NotifyModel.notify = {
-          notifyType: val,
-          notifierId: '',
-          templateId: '',
-        };
+        if (val !== NotifyModel.notify.notifyType) {
+          NotifyModel.notify = {
+            notifyType: val,
+            notifierId: '',
+            templateId: '',
+          };
+        } else {
+          NotifyModel.notify = {
+            ...NotifyModel.notify,
+            notifyType: val,
+          };
+        }
         NotifyModel.variable = [];
         NotifyModel.current += 1;
       }

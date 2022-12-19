@@ -2,7 +2,7 @@ import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
 import { Badge, Button, Col, Empty, Row } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
@@ -24,11 +24,24 @@ import Log from './Log';
 import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Status/model';
 import { observer } from '@formily/reactive-react';
 import DiagnoseForm from './form';
+import { model } from '@formily/reactive';
+
+export const DiagnoseMessageModel = model<{
+  input: any;
+  inputs: any[];
+  data: any;
+  _inputs: any;
+}>({
+  input: {},
+  inputs: [],
+  data: {
+    type: 'function',
+  },
+  _inputs: {},
+});
 
 const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const [input, setInput] = useState<any>({});
-  const [inputs, setInputs] = useState<any[]>([]);
   const DiagnoseFormRef = useRef<{ save: any }>();
 
   const metadata = JSON.parse(InstanceModel.detail?.metadata || '{}');
@@ -120,9 +133,7 @@ const Message = observer(() => {
   const _form = useMemo(
     () =>
       createForm({
-        initialValues: {
-          type: 'function',
-        },
+        initialValues: DiagnoseMessageModel.data,
         effects() {
           onFieldValueChange('property', (field) => {
             const value = (field as Field).value;
@@ -166,12 +177,16 @@ const Message = observer(() => {
           });
           onFieldValueChange('function', (field) => {
             const value = (field as Field).value;
-            setInputs([]);
-            setInput({});
+            // setInputs([]);
+            // setInput({});
+            DiagnoseMessageModel.inputs = [];
+            DiagnoseMessageModel.input = {};
             if (value) {
               const data = (metadata?.functions || []).find((item: any) => item.id === value);
-              setInput(data);
-              setInputs(data?.inputs || []);
+              // setInput(data);
+              // setInputs(data?.inputs || []);
+              DiagnoseMessageModel.inputs = data?.inputs || [];
+              DiagnoseMessageModel.input = data;
             }
           });
         },
@@ -373,8 +388,9 @@ const Message = observer(() => {
                   className={'function-item-btn'}
                   onClick={async () => {
                     const values = await _form.submit<any>();
+                    DiagnoseMessageModel.data = values;
                     let _inputs = undefined;
-                    if (inputs.length) {
+                    if (DiagnoseMessageModel.inputs.length) {
                       _inputs = await DiagnoseFormRef.current?.save();
                       if (!_inputs) {
                         return;
@@ -386,9 +402,13 @@ const Message = observer(() => {
                       list.map((it: any) => {
                         obj[it.id] = it.value;
                       });
-                      await service.executeFunctions(InstanceModel.detail?.id || '', input.id, {
-                        ...obj,
-                      });
+                      await service.executeFunctions(
+                        InstanceModel.detail?.id || '',
+                        DiagnoseMessageModel?.input?.id,
+                        {
+                          ...obj,
+                        },
+                      );
                     } else {
                       if (values.propertyType === 'read') {
                         await service.readProperties(InstanceModel.detail?.id || '', [
@@ -405,10 +425,10 @@ const Message = observer(() => {
                   发送
                 </Button>
               </div>
-              {inputs.length > 0 && (
+              {DiagnoseMessageModel?.inputs?.length > 0 && (
                 <div className="inputs-parameter">
                   <h4>功能参数</h4>
-                  <DiagnoseForm data={inputs} ref={DiagnoseFormRef} />
+                  <DiagnoseForm data={DiagnoseMessageModel.inputs} ref={DiagnoseFormRef} />
                 </div>
               )}
             </div>

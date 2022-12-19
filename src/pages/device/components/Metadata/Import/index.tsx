@@ -298,43 +298,46 @@ const Import = (props: Props) => {
           onlyMessage('发生错误!', 'error');
         },
       });
+      Store.set(SystemConst.GET_METADATA, true);
+      Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      props.close();
     } else {
-      const params = {
-        id: param.id,
-        metadata: JSON.stringify(
+      try {
+        const params = {
+          id: param.id,
+          metadata: JSON.stringify(
+            operateLimits(
+              JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}'),
+            ),
+          ),
+        };
+        const paramsDevice = JSON.stringify(
           operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-        ),
-      };
-      // const paramsDevice = {
-      //   id: param.id,
-      //   deriveMetadata: JSON.stringify(
-      //     operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-      //   ),
-      // };
-      const paramsDevice = JSON.stringify(
-        operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-      );
-      let resp: any = undefined;
-      if (props?.type === 'device') {
-        resp = await deviceService.saveMetadata(param.id, paramsDevice);
-      } else {
-        resp = await service.modify(param.id, params);
-      }
-      if (resp.status === 200) {
+        );
+        let resp: any = undefined;
         if (props?.type === 'device') {
-          const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
-          MetadataAction.insert(metadata);
-          onlyMessage('导入成功');
+          resp = await deviceService.saveMetadata(param.id, paramsDevice);
         } else {
-          const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
-          MetadataAction.insert(metadata);
-          onlyMessage('导入成功');
+          resp = await service.modify(param.id, params);
         }
+        if (resp.status === 200) {
+          if (props?.type === 'device') {
+            const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
+            MetadataAction.insert(metadata);
+            onlyMessage('导入成功');
+          } else {
+            const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
+            MetadataAction.insert(metadata);
+            onlyMessage('导入成功');
+          }
+        }
+        Store.set(SystemConst.GET_METADATA, true);
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+        props.close();
+      } catch (err) {
+        onlyMessage('请上传正确的json格式文件', 'error');
       }
     }
-    Store.set(SystemConst.GET_METADATA, true);
-    Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
-    props.close();
   };
   return (
     <Modal

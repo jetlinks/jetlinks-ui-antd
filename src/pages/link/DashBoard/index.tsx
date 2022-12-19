@@ -250,8 +250,10 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '50px',
-        right: '50px',
+        left: 50,
+        right: 0,
+        top: 10,
+        bottom: 10,
       },
       color: ['#979AFF'],
       series: Object.keys(data).length
@@ -297,8 +299,10 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '50px',
-        right: '30px',
+        left: 30,
+        right: 0,
+        top: 10,
+        bottom: 10,
       },
       dataZoom: [
         {
@@ -356,8 +360,10 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '50px',
-        right: '30px',
+        left: 30,
+        right: 0,
+        top: 10,
+        bottom: 10,
       },
       dataZoom: [
         {

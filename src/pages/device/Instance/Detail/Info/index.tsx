@@ -1,12 +1,12 @@
 import { Card, Descriptions } from 'antd';
-import { InstanceModel } from '@/pages/device/Instance';
+import { InstanceModel, service } from '@/pages/device/Instance';
 import moment from 'moment';
 import { observer } from '@formily/react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import Config from '@/pages/device/Instance/Detail/Config';
 import Reation from '@/pages/device/Instance/Detail/Reation';
 import Save from '../../Save';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { DeviceInstance } from '../../typings';
 import { EditOutlined } from '@ant-design/icons';
 import Tags from '@/pages/device/Instance/Detail/Tags';
@@ -18,6 +18,20 @@ const Info = observer(() => {
   const [visible, setVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('device/Instance');
   const { minHeight } = useDomFullHeight(`.device-detail-body`);
+  const [parent, setParent] = useState<Partial<DeviceInstance>>({});
+
+  useEffect(() => {
+    if (
+      InstanceModel.detail?.deviceType?.value === 'childrenDevice' &&
+      InstanceModel.detail?.parentId
+    ) {
+      service.detail(InstanceModel.detail?.parentId).then((resp) => {
+        if (resp.status === 200) {
+          setParent(resp.result);
+        }
+      });
+    }
+  }, [InstanceModel.detail?.parentId]);
 
   return (
     <>
@@ -144,6 +158,11 @@ const Info = observer(() => {
               ? moment(InstanceModel.detail?.onlineTime).format('YYYY-MM-DD HH:mm:ss')
               : ''}
           </Descriptions.Item>
+          {InstanceModel.detail?.deviceType?.value === 'childrenDevice' && (
+            <Descriptions.Item label={'父设备'}>
+              {parent?.name || InstanceModel.detail?.parentId}
+            </Descriptions.Item>
+          )}
           <Descriptions.Item
             label={intl.formatMessage({
               id: 'pages.table.description',

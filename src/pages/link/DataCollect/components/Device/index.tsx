@@ -30,9 +30,11 @@ interface Props {
 const CollectorModel = model<{
   visible: boolean;
   current: Partial<CollectorItem>;
+  currentPage: number;
 }>({
   visible: false,
   current: {},
+  currentPage: 0,
 });
 
 export default observer((props: Props) => {
@@ -198,6 +200,23 @@ export default observer((props: Props) => {
       }
     } else {
       return {};
+    }
+  };
+
+  const onPageChange = (page: number, size: number) => {
+    if (CollectorModel.currentPage === size) {
+      handleSearch({
+        ...param,
+        pageIndex: page - 1,
+        pageSize: size,
+      });
+    } else {
+      CollectorModel.currentPage = size;
+      handleSearch({
+        ...param,
+        pageIndex: 0,
+        pageSize: size,
+      });
     }
   };
 
@@ -373,11 +392,7 @@ export default observer((props: Props) => {
                     total={dataSource?.total || 0}
                     current={dataSource?.pageIndex + 1}
                     onChange={(page, size) => {
-                      handleSearch({
-                        ...param,
-                        pageIndex: page - 1,
-                        pageSize: size,
-                      });
+                      onPageChange(page, size);
                     }}
                     pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}

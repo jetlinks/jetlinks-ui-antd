@@ -32,6 +32,80 @@ const FileComponent = (props: Props) => {
   const isHttps = document.location.protocol === 'https:';
   const [temp, setTemp] = useState<boolean>(false);
 
+  const renderFile = () => {
+    if (['.jpg', '.png', '.swf', '.tiff'].some((item) => value?.formatValue.includes(item))) {
+      // 图片
+      return (
+        <div
+          className={props.type === 'card' ? styles.cardValue : styles.otherValue}
+          onClick={() => {
+            if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
+              message.error('域名为https时，不支持访问http地址');
+            } else if (temp) {
+              message.error('该图片无法访问');
+            } else {
+              const flag =
+                ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '--';
+              setType(flag);
+              setVisible(true);
+            }
+          }}
+        >
+          <img
+            src={value?.formatValue}
+            onError={(e: any) => {
+              e.target.src = imgMap.get('error');
+              setTemp(true);
+            }}
+          />
+        </div>
+      );
+    }
+    if (
+      ['.m3u8', '.flv', '.mp4', '.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))
+    ) {
+      return (
+        <div
+          className={props.type === 'card' ? styles.cardValue : styles.otherValue}
+          onClick={() => {
+            if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
+              message.error('域名为https时，不支持访问http地址');
+            } else if (['.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))) {
+              message.error('当前仅支持播放.mp4,.flv,.m3u8格式的视频');
+            } else {
+              const flag =
+                ['.m3u8', '.flv', '.mp4'].find((item) => value?.formatValue.includes(item)) || '--';
+              setType(flag);
+              setVisible(true);
+            }
+          }}
+        >
+          <img src={imgMap.get('video')} />
+        </div>
+      );
+    } else if (
+      ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].some((item) =>
+        value?.formatValue.includes(item),
+      )
+    ) {
+      const flag =
+        ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].find((item) =>
+          value?.formatValue.includes(item),
+        ) || '--';
+      return (
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
+          <img src={imgMap.get(flag.slice(1))} />
+        </div>
+      );
+    } else {
+      return (
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
+          <img src={imgMap.get('other')} />
+        </div>
+      );
+    }
+  };
+
   const renderValue = () => {
     if (value?.formatValue !== 0 && !value?.formatValue) {
       return (
@@ -42,85 +116,22 @@ const FileComponent = (props: Props) => {
         data?.valueType?.fileType === 'base64' ||
         data?.valueType?.fileType === 'Binary(二进制)'
       ) {
+        // if(data?.valueType?.fileType === 'base64') {
+        //   console.log(value?.formatValue.split(',')[0])
+        // }
+        // if(data?.valueType?.fileType === 'Binary(二进制)') {
+        //
+        // }
         return (
           <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
             <Tooltip placement="topLeft" title={String(value?.formatValue)}>
               {String(value?.formatValue)}
             </Tooltip>
-          </div>
-        );
-      }
-      if (['.jpg', '.png', '.swf', '.tiff'].some((item) => value?.formatValue.includes(item))) {
-        // 图片
-        return (
-          <div
-            className={props.type === 'card' ? styles.cardValue : styles.otherValue}
-            onClick={() => {
-              if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
-                message.error('域名为https时，不支持访问http地址');
-              } else if (temp) {
-                message.error('该图片无法访问');
-              } else {
-                const flag =
-                  ['.jpg', '.png'].find((item) => value?.formatValue.includes(item)) || '--';
-                setType(flag);
-                setVisible(true);
-              }
-            }}
-          >
-            <img
-              src={value?.formatValue}
-              onError={(e: any) => {
-                e.target.src = imgMap.get('error');
-                setTemp(true);
-              }}
-            />
-          </div>
-        );
-      }
-      if (
-        ['.m3u8', '.flv', '.mp4', '.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))
-      ) {
-        return (
-          <div
-            className={props.type === 'card' ? styles.cardValue : styles.otherValue}
-            onClick={() => {
-              if (isHttps && value?.formatValue.indexOf('http:') !== -1) {
-                message.error('域名为https时，不支持访问http地址');
-              } else if (['.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))) {
-                message.error('当前仅支持播放.mp4,.flv,.m3u8格式的视频');
-              } else {
-                const flag =
-                  ['.m3u8', '.flv', '.mp4'].find((item) => value?.formatValue.includes(item)) ||
-                  '--';
-                setType(flag);
-                setVisible(true);
-              }
-            }}
-          >
-            <img src={imgMap.get('video')} />
-          </div>
-        );
-      } else if (
-        ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].some((item) =>
-          value?.formatValue.includes(item),
-        )
-      ) {
-        const flag =
-          ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].find((item) =>
-            value?.formatValue.includes(item),
-          ) || '--';
-        return (
-          <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
-            <img src={imgMap.get(flag.slice(1))} />
+            {/*<img src={value?.formatValue} />*/}
           </div>
         );
       } else {
-        return (
-          <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
-            <img src={imgMap.get('other')} />
-          </div>
-        );
+        return renderFile();
       }
     } else if (data?.valueType?.type === 'object') {
       return (

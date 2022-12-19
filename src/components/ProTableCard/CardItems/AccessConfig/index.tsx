@@ -15,6 +15,7 @@ export interface AccessConfigCardProps extends AccessItem {
   avatarSize?: number;
   showTool?: boolean;
   activeStyle?: string;
+  showMask?: boolean;
 }
 
 const defaultImage = require('/public/images/device-access.png');
@@ -22,7 +23,7 @@ const defaultImage = require('/public/images/device-access.png');
 export default (props: AccessConfigCardProps) => {
   return (
     <TableCard
-      // showMask={false}
+      showMask={props.showMask}
       detail={props.detail}
       actions={props.actions}
       status={props.state.value}

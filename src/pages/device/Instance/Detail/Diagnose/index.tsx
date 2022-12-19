@@ -1,6 +1,6 @@
 import { Card, Progress } from 'antd';
 import { useEffect, useState } from 'react';
-import Message from './Message';
+import Message, { DiagnoseMessageModel } from './Message';
 import Status from './Status';
 import './index.less';
 import { useDomFullHeight } from '@/hooks';
@@ -51,6 +51,12 @@ const Diagnose = observer(() => {
       DiagnoseStatusModel.status = 'loading';
       DiagnoseStatusModel.state = 'loading';
       DiagnoseStatusModel.flag = false;
+      DiagnoseMessageModel.inputs = [];
+      DiagnoseMessageModel.data = { type: 'function' };
+      DiagnoseMessageModel.input = {};
+      DiagnoseMessageModel._inputs = {};
+      DiagnoseStatusModel.logList = [];
+      DiagnoseStatusModel.dialogList = [];
     };
   }, [InstanceModel.active]);
 
@@ -121,7 +127,7 @@ const Diagnose = observer(() => {
               }}
             >
               {i.text}
-              {current === i.key ? '(诊断中)' : ''}
+              {/*{current === i.key ? '(诊断中)' : ''}*/}
             </div>
           ))}
         </div>

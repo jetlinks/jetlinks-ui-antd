@@ -36,7 +36,7 @@ const AccessConfig = (props: Props) => {
     terms: [],
   });
 
-  const [currrent, setCurrrent] = useState<any>({
+  const [current, setCurrent] = useState<any>({
     id: productModel.current?.accessId,
     name: productModel.current?.accessName,
     protocol: productModel.current?.messageProtocol,
@@ -84,7 +84,7 @@ const AccessConfig = (props: Props) => {
     };
     service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
       setDataSource(resp?.result);
-      setCurrrent(resp?.result?.data?.[0]);
+      setCurrent(resp?.result?.data?.[0]);
     });
   };
 
@@ -151,15 +151,15 @@ const AccessConfig = (props: Props) => {
       width={1200}
       title={'设备接入配置'}
       onOk={async () => {
-        if (!!currrent) {
+        if (!!current) {
           const obj: any = {
             ...productModel.current,
-            transportProtocol: currrent.transport,
-            protocolName: currrent.protocolDetail.name,
-            accessId: currrent.id,
-            accessName: currrent.name,
-            accessProvider: currrent.provider,
-            messageProtocol: currrent.protocol,
+            transportProtocol: current?.transport,
+            protocolName: current?.protocolDetail?.name,
+            accessId: current.id,
+            accessName: current.name,
+            accessProvider: current.provider,
+            messageProtocol: current.protocol,
           };
           const metatdata = JSON.parse(productModel.current?.metadata || '{}');
           if (!productModel.current?.metadata) {
@@ -233,13 +233,14 @@ const AccessConfig = (props: Props) => {
               key={item.id}
               span={12}
               onClick={() => {
-                setCurrrent(item);
+                setCurrent(item);
               }}
             >
               <AccessConfigCard
                 {...item}
+                showMask={false}
                 showTool={false}
-                activeStyle={currrent?.id === item.id ? 'active' : ''}
+                activeStyle={current?.id === item.id ? 'active' : ''}
               />
             </Col>
           ))}

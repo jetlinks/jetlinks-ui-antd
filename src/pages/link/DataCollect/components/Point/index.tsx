@@ -43,6 +43,7 @@ const PointModel = model<{
   selectKey: string[];
   arr: any[];
   checkAll: boolean;
+  currentPage: number;
 }>({
   m_visible: false,
   p_visible: false,
@@ -55,6 +56,7 @@ const PointModel = model<{
   selectKey: [],
   arr: [],
   checkAll: false,
+  currentPage: 0,
 });
 
 const PointCard = observer((props: PointCardProps) => {
@@ -141,6 +143,23 @@ const PointCard = observer((props: PointCardProps) => {
       subRef.current && subRef.current?.unsubscribe();
     };
   }, []);
+
+  const onPageChange = (page: number, size: number) => {
+    if (PointModel.currentPage === size) {
+      handleSearch({
+        ...param,
+        pageIndex: page - 1,
+        pageSize: size,
+      });
+    } else {
+      PointModel.currentPage = size;
+      handleSearch({
+        ...param,
+        pageIndex: 0,
+        pageSize: size,
+      });
+    }
+  };
 
   const menu = (
     <Menu>
@@ -333,11 +352,7 @@ const PointCard = observer((props: PointCardProps) => {
                     total={dataSource?.total || 0}
                     current={dataSource?.pageIndex + 1}
                     onChange={(page, size) => {
-                      handleSearch({
-                        ...param,
-                        pageIndex: page - 1,
-                        pageSize: size,
-                      });
+                      onPageChange(page, size);
                     }}
                     pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
