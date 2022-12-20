@@ -144,9 +144,10 @@ export default () => {
           // minInterval: 1,
         },
         grid: {
-          left: '80px',
+          left: 50,
           right: 0,
           top: '2%',
+          bottom: 20,
         },
         color: ['#2F54EB'],
         series: [

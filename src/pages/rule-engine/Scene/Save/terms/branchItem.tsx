@@ -106,6 +106,7 @@ export default observer((props: BranchesItemProps) => {
                       name={dIndex}
                       data={item}
                       key={item.key}
+                      isFirst={dIndex === 0}
                       paramsOptions={props.paramsOptions}
                       isLast={dIndex === when!.length - 1}
                       onValueChange={(data) => {
@@ -116,6 +117,7 @@ export default observer((props: BranchesItemProps) => {
                       }}
                       onDelete={() => {
                         FormModel.current.branches![props.name].when.splice(dIndex, 1);
+                        FormModel.current.options?.when[props.name].terms?.splice(dIndex, 1);
                       }}
                     />
                   ))
