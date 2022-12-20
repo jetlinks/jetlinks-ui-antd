@@ -43,7 +43,7 @@ const MapChannel = (props: Props) => {
     const res = await service.removeMap('device', data.id, [params]);
     if (res.status === 200) {
       onlyMessage('解绑成功');
-      setReload('remove');
+      setReload(params);
     }
   };
   const ActionButton = () => {
