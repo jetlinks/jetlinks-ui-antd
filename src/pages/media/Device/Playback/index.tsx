@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Calendar, Empty, List, Spin, Tooltip } from 'antd';
+import { Calendar, List, Spin, Tooltip } from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
 import './index.less';
@@ -10,6 +10,8 @@ import { recordsItemType } from '@/pages/media/Device/Playback/typings';
 import type { Moment } from 'moment';
 import * as moment from 'moment';
 import classNames from 'classnames';
+import { Empty } from '@/components';
+
 import {
   CloudDownloadOutlined,
   DownloadOutlined,

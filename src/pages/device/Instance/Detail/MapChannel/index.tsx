@@ -1,7 +1,7 @@
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
-import { Badge, Button, Card, Empty, Tooltip } from 'antd';
+import { Badge, Button, Card, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { FormItem, ArrayTable, Editable, Select } from '@formily/antd';
 import PermissionButton from '@/components/PermissionButton';
@@ -12,6 +12,7 @@ import type { Response } from '@/utils/typings';
 import './index.less';
 import { onlyMessage } from '@/utils/util';
 import ChannelTree from './Tree';
+import { Empty } from '@/components';
 
 interface Props {
   type: 'MODBUS_TCP' | 'OPC_UA';

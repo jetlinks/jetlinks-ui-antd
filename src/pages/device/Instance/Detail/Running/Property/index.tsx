@@ -1,4 +1,4 @@
-import { Col, Empty, Input, Pagination, Row, Space, Spin, Table, Tooltip } from 'antd';
+import { Col, Input, Pagination, Row, Space, Spin, Table, Tooltip } from 'antd';
 import CheckButton from '@/components/CheckButton';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PropertyMetadata } from '@/pages/device/Product/typings';
@@ -20,6 +20,7 @@ import { groupBy, throttle, toArray } from 'lodash';
 import PropertyTable from './PropertyTable';
 import { onlyMessage } from '@/utils/util';
 import Indicators from './Indicators';
+import { Empty } from '@/components';
 
 interface Props {
   data: Partial<PropertyMetadata>[];

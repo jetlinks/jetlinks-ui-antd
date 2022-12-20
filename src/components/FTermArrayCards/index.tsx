@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Empty } from 'antd';
+import { Card } from 'antd';
 import { CardProps } from 'antd/lib/card';
 import { ArrayField } from '@formily/core';
 import { observer, RecursionField, useField, useFieldSchema } from '@formily/react';
@@ -7,6 +7,7 @@ import cls from 'classnames';
 import { ISchema } from '@formily/json-schema';
 import { usePrefixCls } from '@formily/antd/lib/__builtins__';
 import { ArrayBase, ArrayBaseMixins } from '@formily/antd';
+import { Empty } from '@/components';
 
 type ComposedArrayCards = React.FC<CardProps> & ArrayBaseMixins;
 

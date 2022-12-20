@@ -1,4 +1,4 @@
-import { Badge, Button, Col, Empty, Row, Table, Tooltip } from 'antd';
+import { Badge, Button, Col, Row, Table, Tooltip } from 'antd';
 import { service } from '@/pages/link/AccessConfig';
 import { productModel, service as productService } from '@/pages/device/Product';
 import styles from './index.less';
@@ -28,6 +28,7 @@ import Driver from 'driver.js';
 import 'driver.js/dist/driver.min.css';
 import './index.less';
 import { Ellipsis, PermissionButton } from '@/components';
+import { Empty } from '@/components';
 
 const componentMap = {
   string: 'Input',

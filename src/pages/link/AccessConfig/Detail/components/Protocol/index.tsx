@@ -1,5 +1,5 @@
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { Button, Card, Col, Empty, Input, Row, Space, Tooltip } from 'antd';
+import { Button, Card, Col, Input, Row, Space, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { service } from '@/pages/link/AccessConfig';
 import styles from './index.less';
@@ -10,6 +10,7 @@ import { CheckOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { Store } from 'jetlinks-store';
 import encodeQuery from '@/utils/encodeQuery';
+import { Empty } from '@/components';
 
 interface Props {
   provider: any;

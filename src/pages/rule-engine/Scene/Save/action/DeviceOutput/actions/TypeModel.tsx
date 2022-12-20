@@ -1,6 +1,6 @@
 import ParamsSelect, { ItemProps } from '@/pages/rule-engine/Scene/Save/components/ParamsSelect';
 import { useEffect, useState } from 'react';
-import { Empty, Input, InputNumber, Select, Tree } from 'antd';
+import { Input, InputNumber, Select, Tree } from 'antd';
 import MTimePicker from '../../../components/ParamsSelect/components/MTimePicker';
 import moment from 'moment';
 import { EditOutlined, EnvironmentOutlined } from '@ant-design/icons';
@@ -11,6 +11,8 @@ import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/comp
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
 import { observer } from '@formily/reactive-react';
 import DeviceModel from '../model';
+import { Empty } from '@/components';
+
 interface Props {
   value: any;
   type: string;

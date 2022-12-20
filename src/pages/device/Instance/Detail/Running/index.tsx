@@ -1,11 +1,12 @@
 import { InstanceModel } from '@/pages/device/Instance';
-import { Card, Empty, Input, Tabs } from 'antd';
+import { Card, Input, Tabs } from 'antd';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import Property from '@/pages/device/Instance/Detail/Running/Property';
 import Event from '@/pages/device/Instance/Detail/Running/Event';
 import { useEffect, useState } from 'react';
 import Emptys from '@/pages/device/components/Empty';
 import { useDomFullHeight } from '@/hooks';
+import { Empty } from '@/components';
 
 const Running = () => {
   const metadata = JSON.parse((InstanceModel.detail?.metadata || '{}') as string) as DeviceMetadata;

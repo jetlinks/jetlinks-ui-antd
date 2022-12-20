@@ -1,8 +1,9 @@
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
-import { Card, Empty } from 'antd';
+import { Card } from 'antd';
 import { useEffect, useState } from 'react';
 import MapTable from './mapTable';
 import Service from './service';
+import { Empty } from '@/components';
 
 interface Props {
   data: any;

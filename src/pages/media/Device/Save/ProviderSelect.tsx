@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Badge, Button, Empty } from 'antd';
+import { Badge, Button } from 'antd';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import styles from '@/pages/link/AccessConfig/index.less';
 import { TableCard } from '@/components';
@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useRequest } from '@@/plugin-request/request';
 import { CheckOutlined } from '@ant-design/icons';
+import { Empty } from '@/components';
 
 interface ProviderProps {
   value?: string;

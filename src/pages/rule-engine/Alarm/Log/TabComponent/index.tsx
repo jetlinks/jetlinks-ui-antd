@@ -1,7 +1,7 @@
 import SearchComponent from '@/components/SearchComponent';
 import { FileFilled, FileTextFilled, ToolFilled } from '@ant-design/icons';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Badge, Button, Card, Col, Empty, Pagination, Row, Tooltip } from 'antd';
+import { Badge, Button, Card, Col, Pagination, Row, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import './index.less';
 import SolveComponent from '../SolveComponent';
@@ -15,7 +15,7 @@ import { useHistory } from 'umi';
 import classNames from 'classnames';
 import { useDomFullHeight } from '@/hooks';
 import PermissionButton from '@/components/PermissionButton';
-import { Ellipsis } from '@/components';
+import { Ellipsis, Empty } from '@/components';
 import { Store } from 'jetlinks-store';
 
 interface Props {
@@ -334,8 +334,8 @@ const TabComponent = observer((props: Props) => {
         />
       )}
 
-      <Card bordered={false}>
-        <div className="alarm-log-card" style={{ minHeight, position: 'relative' }}>
+      <Card bordered={false} style={{ minHeight, position: 'relative' }} className={'alarmLog'}>
+        <div className="alarm-log-card">
           <div style={{ height: '100%', paddingBottom: 48 }}>
             {dataSource?.data.length ? (
               <>
@@ -456,7 +456,9 @@ const TabComponent = observer((props: Props) => {
                 </div>
               </>
             ) : (
-              <Empty style={{ marginTop: '10%' }} />
+              <div style={{ height: minHeight - 150 }}>
+                <Empty />
+              </div>
             )}
           </div>
         </div>

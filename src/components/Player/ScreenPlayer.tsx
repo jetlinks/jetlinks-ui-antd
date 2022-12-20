@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import classNames from 'classnames';
 import LivePlayer from './index';
-import { Button, Dropdown, Empty, Menu, Popconfirm, Popover, Radio, Tooltip } from 'antd';
+import { Button, Dropdown, Menu, Popconfirm, Popover, Radio, Tooltip } from 'antd';
 import { createSchemaField } from '@formily/react';
 import { Form, FormItem, Input } from '@formily/antd';
 import { useFullscreen } from 'ahooks';
@@ -11,6 +11,7 @@ import Service from './service';
 import MediaTool from '@/components/Player/mediaTool';
 import { createForm } from '@formily/core';
 import { onlyMessage } from '@/utils/util';
+import { Empty } from '@/components';
 
 type Player = {
   id?: string;

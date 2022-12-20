@@ -24,7 +24,7 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Empty, Menu, Popconfirm, Popover, Typography } from 'antd';
+import { Button, Card, Dropdown, Menu, Popconfirm, Popover, Typography } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -35,6 +35,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
 import { onlyMessage, randomString } from '@/utils/util';
 import { useHistory, useLocation } from 'umi';
+import { Empty } from '@/components';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
