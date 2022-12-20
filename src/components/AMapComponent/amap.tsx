@@ -3,7 +3,7 @@ import type { MapProps } from 'react-amap';
 import { Map } from 'react-amap';
 import { getAMapUiPromise } from './APILoader';
 import SystemConst from '@/utils/const';
-import { Empty } from 'antd';
+import { Empty } from '@/components';
 
 interface AMapProps extends Omit<MapProps, 'amapkey' | 'useAMapUI'> {
   style?: React.CSSProperties;

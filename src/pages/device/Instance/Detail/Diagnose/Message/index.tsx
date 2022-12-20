@@ -1,7 +1,7 @@
 import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
-import { Badge, Button, Col, Empty, Row } from 'antd';
+import { Badge, Button, Col, Row } from 'antd';
 import { useEffect, useMemo, useRef } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
@@ -25,6 +25,7 @@ import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Statu
 import { observer } from '@formily/reactive-react';
 import DiagnoseForm from './form';
 import { model } from '@formily/reactive';
+import { Empty } from '@/components';
 
 export const DiagnoseMessageModel = model<{
   input: any;
@@ -126,6 +127,7 @@ const Message = observer(() => {
 
   useEffect(() => {
     if (DiagnoseStatusModel.state === 'success') {
+      DiagnoseStatusModel.dialogList = [];
       subscribeLog();
     }
   }, [DiagnoseStatusModel.state]);

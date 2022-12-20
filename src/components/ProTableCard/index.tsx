@@ -3,12 +3,13 @@ import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
 import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { isFunction } from 'lodash';
-import { Empty, Pagination, Space } from 'antd';
+import { Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import LoadingComponent from '@ant-design/pro-layout/es/PageLoading';
 import './index.less';
 import { useDomFullHeight } from '@/hooks';
+import { Empty } from '@/components';
 
 enum ModelEnum {
   TABLE = 'TABLE',

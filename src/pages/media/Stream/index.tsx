@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
-import { Card, Col, Empty, Pagination, Row } from 'antd';
+import { Card, Col, Pagination, Row } from 'antd';
 import { useEffect, useState } from 'react';
 import Service from '@/pages/media/Stream/service';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
@@ -19,6 +19,7 @@ import { PermissionButton } from '@/components';
 import { useDomFullHeight } from '@/hooks';
 import StreamCard from '@/components/ProTableCard/CardItems/Stream';
 import { onlyMessage } from '@/utils/util';
+import { Empty } from '@/components';
 
 export const service = new Service('media/server');
 

@@ -24,7 +24,7 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Empty, Menu, Popconfirm, Popover, Typography } from 'antd';
+import { Button, Card, Dropdown, Menu, Popconfirm, Popover, Typography } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -35,6 +35,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
 import { onlyMessage, randomString } from '@/utils/util';
 import { useHistory, useLocation } from 'umi';
+import { Empty } from '@/components';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -509,51 +510,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     handleForm(_expand);
   };
 
-  const historyDom = (
-    <Menu className={styles.history}>
-      {history.length > 0 ? (
-        history.map((item: SearchHistory) => (
-          <Menu.Item key={item.id || randomString(9)}>
-            <div className={styles.list}>
-              <Typography.Text
-                ellipsis={{ tooltip: item.name }}
-                onClick={() => handleHistory(item)}
-              >
-                {item.name}
-              </Typography.Text>
-              <Popconfirm
-                title="确定删除嘛"
-                onConfirm={async () => {
-                  const response = await service.history.remove(`${target}-search`, item.key);
-                  if (response.status === 200) {
-                    onlyMessage('操作成功');
-                    const temp = history.filter((h: any) => h.key !== item.key);
-                    setHistory(temp);
-                  }
-                }}
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </div>
-          </Menu.Item>
-        ))
-      ) : (
-        <Menu.Item>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '148px',
-            }}
-          >
-            <Empty />
-          </div>
-        </Menu.Item>
-      )}
-    </Menu>
-  );
-
   const formatValue = (value: SearchTermsUI): SearchTermsServer => {
     let _value = ui2Server(value);
     // 处理默认查询参数
@@ -677,6 +633,55 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       handleSearch(!(props.model === 'simple'));
     }
   }, []);
+
+  const historyDom = (
+    <Menu className={styles.history}>
+      {history.length > 0 ? (
+        history.map((item: SearchHistory) => (
+          <Menu.Item
+            key={item.id || randomString(9)}
+            onClick={() => {
+              handleHistory(item);
+              handleSearch();
+            }}
+          >
+            <div className={styles.list}>
+              <Typography.Text className={styles['list-text']} ellipsis={{ tooltip: item.name }}>
+                {item.name}
+              </Typography.Text>
+              <Popconfirm
+                title="确定删除嘛"
+                onConfirm={async (e) => {
+                  e?.stopPropagation();
+                  const response = await service.history.remove(`${target}-search`, item.key);
+                  if (response.status === 200) {
+                    onlyMessage('操作成功');
+                    const temp = history.filter((h: any) => h.key !== item.key);
+                    setHistory(temp);
+                  }
+                }}
+              >
+                <DeleteOutlined />
+              </Popconfirm>
+            </div>
+          </Menu.Item>
+        ))
+      ) : (
+        <Menu.Item>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '148px',
+            }}
+          >
+            <Empty />
+          </div>
+        </Menu.Item>
+      )}
+    </Menu>
+  );
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();

@@ -16,6 +16,7 @@ interface TermsProps {
   branchesName: number;
   branchGroup: number;
   isLast: boolean;
+  isFirst: boolean;
   label?: any;
   paramsOptions: any[];
   actionColumns: any[];
@@ -53,6 +54,22 @@ export default observer((props: TermsProps) => {
   return (
     <div className="terms-params">
       <div className="terms-params-warp">
+        {!props.isFirst && (
+          <div className="term-type-warp">
+            <DropdownButton
+              options={[
+                { title: '并且', key: 'and' },
+                { title: '或者', key: 'or' },
+              ]}
+              isTree={false}
+              type="type"
+              value={props.data.type}
+              onChange={(v) => {
+                props.data.type = v;
+              }}
+            />
+          </div>
+        )}
         <div
           className="terms-params-content"
           onMouseOver={() => {
@@ -187,22 +204,7 @@ export default observer((props: TermsProps) => {
             </div>
           </Popconfirm>
         </div>
-        {!props.isLast ? (
-          <div className="term-type-warp">
-            <DropdownButton
-              options={[
-                { title: '并且', key: 'and' },
-                { title: '或者', key: 'or' },
-              ]}
-              isTree={false}
-              type="type"
-              value={props.data.type}
-              onChange={(v) => {
-                props.data.type = v;
-              }}
-            />
-          </div>
-        ) : (
+        {!props.isLast && (
           <div className="terms-group-add" onClick={props.onAddGroup}>
             <div className="terms-content">
               <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
