@@ -105,6 +105,16 @@ const ChildDevice = (props: Props) => {
     },
     {
       title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
+      dataIndex: 'describe',
+      width: '15%',
+      ellipsis: true,
+      // hideInSearch: true,
+    },
+    {
+      title: intl.formatMessage({
         id: 'pages.data.option',
         defaultMessage: '操作',
       }),
@@ -190,7 +200,7 @@ const ChildDevice = (props: Props) => {
           <ProTable<LogItem>
             search={false}
             columns={columns}
-            size="small"
+            // size="small"
             scroll={{ x: 1366 }}
             actionRef={actionRef}
             params={searchParams}
@@ -231,6 +241,7 @@ const ChildDevice = (props: Props) => {
               <Popconfirm
                 key="unbind"
                 onConfirm={async () => {
+                  if (bindKeys.length === 0) return onlyMessage('请先勾选数据！', 'error');
                   const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
                   if (resp.status === 200) {
                     onlyMessage('操作成功！');

@@ -29,7 +29,7 @@ const DiagnosticAdvice = (props: Props) => {
         <div className={styles.advice}>
           <div className={styles.alert}>
             <InfoCircleOutlined style={{ marginRight: 10 }} />
-            所有诊断均无异常但设备任未上线，请检查以下内容
+            所有诊断均无异常但设备仍未上线，请检查以下内容
           </div>
           <div style={{ marginLeft: 10 }}>
             {(data?.list || []).map((item: any) => (

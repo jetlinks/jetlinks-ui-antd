@@ -245,11 +245,11 @@ const Save = (props: Props) => {
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item label={intlFormat('pages.table.description', '说明')} name={'description'}>
+            <Form.Item label={intlFormat('pages.table.description', '说明')} name={'describe'}>
               <Input.TextArea
                 placeholder={
                   intlFormat('pages.form.tip.input', '请输入') +
-                  intlFormat('pages.table.description', '说明')
+                  intlFormat('pages.table.describe', '说明')
                 }
                 rows={4}
                 style={{ width: '100%' }}
