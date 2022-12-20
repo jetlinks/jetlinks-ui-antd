@@ -105,6 +105,16 @@ const ChildDevice = (props: Props) => {
     },
     {
       title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
+      dataIndex: 'describe',
+      width: '15%',
+      ellipsis: true,
+      // hideInSearch: true,
+    },
+    {
+      title: intl.formatMessage({
         id: 'pages.data.option',
         defaultMessage: '操作',
       }),
