@@ -28,7 +28,6 @@ export default (props: ChannelCardProps) => {
       status={props.state?.value}
       statusText={props.state?.text}
       showMask={false}
-      showStatus={false}
       statusNames={{
         running: StatusColorEnum.success,
         disabled: StatusColorEnum.processing,

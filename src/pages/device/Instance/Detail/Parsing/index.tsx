@@ -325,7 +325,8 @@ const Parsing = (props: Props) => {
                 </div>
               </div>
               <Input.TextArea
-                autoSize={{ minRows: 5 }}
+                rows={5}
+                // autoSize={{ minRows: 5 ,maxRows:5}}
                 placeholder="// 二进制数据以0x开头的十六进制输入，字符串数据输入原始字符串"
                 style={{ marginTop: 10 }}
                 onChange={(e) => {

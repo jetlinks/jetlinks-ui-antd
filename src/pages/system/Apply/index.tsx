@@ -305,6 +305,7 @@ const Apply = () => {
               paddingLeft: 24,
               background: '#fff',
               fontSize: 14,
+              color: 'rgba(0, 0, 0, 0.55)',
             }}
           >
             <span style={{ marginRight: 8, fontSize: 16 }}>

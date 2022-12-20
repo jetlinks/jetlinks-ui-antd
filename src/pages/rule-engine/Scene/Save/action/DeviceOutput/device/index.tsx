@@ -268,7 +268,13 @@ export default observer((props: Props) => {
       return nodes;
     }
     return nodes.filter((it) => {
-      if (it.children.find((item: any) => item.id.indexOf('deviceId' || 'device_id') > -1)) {
+      if (
+        it.children.find(
+          (item: any) =>
+            item.id.indexOf('deviceId' || 'device_id' || 'device_Id') > -1 &&
+            item.type === 'string',
+        )
+      ) {
         return true;
       }
       return false;
@@ -307,13 +313,13 @@ export default observer((props: Props) => {
         _list.push(...array);
       }
       //变量
-      if (builtInList.length !== 0 && !props.parallel) {
+      if (builtInList.length !== 0 && !props.parallel && props.name !== 0) {
         const array = TypeList.filter((item) => item.value === 'variable');
         _list.push(...array);
       }
       setList(_list);
     } else {
-      if (builtInList.length !== 0 && !props.parallel) {
+      if (builtInList.length !== 0 && !props.parallel && props.name !== 0) {
         const array = TypeList.filter((item) => item.value === 'variable');
         _list.push(...array);
       }
