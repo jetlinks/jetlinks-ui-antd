@@ -132,7 +132,6 @@ export default observer((props: Props) => {
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
             onChange={(e, options: any) => {
-              console.log(options?.text);
               setValue(e);
               setLabelValue(options?.text);
               // DeviceModel.propertiesValue = options?.text
@@ -162,6 +161,10 @@ export default observer((props: Props) => {
         return (
           <Input
             value={value}
+            readOnly
+            onClick={() => {
+              setVisible(true);
+            }}
             style={{ width: '100%', textAlign: 'left' }}
             addonAfter={
               <EnvironmentOutlined

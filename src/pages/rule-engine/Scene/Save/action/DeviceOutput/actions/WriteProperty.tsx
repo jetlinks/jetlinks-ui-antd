@@ -63,7 +63,7 @@ export default (props: Props) => {
   }, [props.properties]);
 
   useEffect(() => {
-    if (props.onChange && propertiesValue) {
+    if (props.onChange) {
       const obj = {
         [propertiesId || 0]: {
           value: propertiesValue,
@@ -127,7 +127,7 @@ export default (props: Props) => {
             }}
             onChange={(value, sources, text) => {
               // console.log(value, sources);
-              console.log(text);
+              // console.log(text);
               ref.current = text;
               setPropertiesValue(value);
               setSource(sources);

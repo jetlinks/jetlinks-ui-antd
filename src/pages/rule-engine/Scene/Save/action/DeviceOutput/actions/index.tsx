@@ -174,6 +174,7 @@ export default observer((props: Props) => {
               () => ({
                 validator(_, value) {
                   const isValue = Object.values(value)?.[0];
+                  // console.log('-------',isValue,value)
                   if (isValue) {
                     return Promise.resolve();
                   }
@@ -188,19 +189,16 @@ export default observer((props: Props) => {
               branchGroup={props.branchGroup}
               thenName={props.thenName}
               onColumns={(col, text) => {
-                // console.log('col',col,[col])
                 DeviceModel.columns = [col];
                 DeviceModel.actionName = text;
-                // console.log(text)
               }}
               onChange={(value, text, valueLable) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
-                // console.log(`valueLable`,valueLable)
                 DeviceModel.propertiesName = text;
                 if (valueLable) {
                   DeviceModel.propertiesValue = valueLable;
                 } else {
-                  DeviceModel.propertiesValue = item;
+                  DeviceModel.propertiesValue = `${item}`;
                 }
               }}
               onRest={(value: any) => {

@@ -160,6 +160,7 @@ input[type='tel'] {
 #driver-page-overlay {
   opacity: 0.35 !important;
 }
+
 .ant-pagination-mini .ant-pagination-jump-prev,
 .ant-pagination-mini .ant-pagination-jump-next {
   display: none;
@@ -168,4 +169,24 @@ input[type='tel'] {
 .ant-popover-buttons {
   display: flex;
   justify-content: flex-end;
+}
+
+.ant-formily-array-table
+  .ant-table
+  td
+  .ant-formily-item:not(.ant-formily-item-feedback-layout-popover)
+  .ant-formily-item-help {
+  position: inherit;
+  top: 100%;
+  z-index: 1;
+  width: 100%;
+  margin-top: 3px;
+  padding: 3px;
+  font-size: 12px;
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 0 10px #eee;
+  transform: translateY(0);
+  opacity: 1;
+  animation: none;
 }

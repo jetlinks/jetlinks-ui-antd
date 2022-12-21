@@ -39,6 +39,7 @@ export default observer((props: Props) => {
   const [tagList, setTagList] = useState([]);
   const [list, setList] = useState<any>([]);
   const [isFirst, setIsFirst] = useState(true);
+  const [oldRowKey] = useState(DeviceModel.deviceId);
 
   const TypeList = [
     {
@@ -270,10 +271,9 @@ export default observer((props: Props) => {
     return nodes.filter((it) => {
       if (
         it.children.find(
-          (item: any) =>
-            item.id.indexOf('deviceId' || 'device_id' || 'device_Id') > -1 &&
-            item.type === 'string',
-        )
+          (item: any) => item.id.indexOf('deviceId' || 'device_id' || 'device_Id') > -1,
+        ) &&
+        !it.children.find((item: any) => item.id.indexOf('bolaen') > -1)
       ) {
         return true;
       }
@@ -292,6 +292,7 @@ export default observer((props: Props) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const array = filterTree(_data);
+        console.log('--------', array);
         setBuiltInList(array);
       }
     });
@@ -387,12 +388,21 @@ export default observer((props: Props) => {
                     }
                   },
                 }}
-                request={(params) =>
-                  service.query({
+                request={(params) => {
+                  const sorts: any = [{ name: 'createTime', order: 'desc' }];
+
+                  if (oldRowKey) {
+                    sorts.push({
+                      name: 'id',
+                      value: oldRowKey,
+                    });
+                  }
+
+                  return service.query({
                     ...params,
-                    sorts: [{ name: 'createTime', order: 'desc' }],
-                  })
-                }
+                    sorts: sorts,
+                  });
+                }}
                 params={searchParam}
                 cardRender={(record) => (
                   <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
