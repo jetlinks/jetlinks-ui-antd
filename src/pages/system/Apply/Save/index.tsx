@@ -248,22 +248,18 @@ const Save = () => {
       });
       onFieldReact('apiServer.ipWhiteList', (field: any) => {
         const value = (field as Field).value;
-        console.log(value);
         const pattern =
           /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
         if (value) {
           const str = value?.split(/[\n,]/g).filter((i: any) => i && i.trim());
-          console.log(str);
-          str.forEach((item: any) => {
-            const ip = pattern.test(item);
-            console.log(ip);
-            if (!ip) {
-              field.selfErrors = `[${item}]不是正确的IP地址`;
-              return;
-            } else {
-              field.selfErrors = '';
-            }
-          });
+          // console.log(str);
+          const NoIP = str.find((item: any) => !pattern.test(item));
+          console.log(NoIP);
+          if (NoIP) {
+            field.selfErrors = `[${NoIP}]不是正确的IP地址`;
+          } else {
+            field.selfErrors = '';
+          }
         } else {
           field.selfErrors = '';
         }
@@ -675,6 +671,9 @@ const Save = () => {
         labelAlign: 'left',
       },
       'x-component': 'UploadImage',
+      'x-component-props': {
+        errorMessage: '请上传.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片',
+      },
     },
     'sso.configuration.oauth2.userInfoUrl': {
       type: 'string',
@@ -1625,7 +1624,7 @@ const Save = () => {
                 default: [{}],
                 title: '参数',
                 'x-decorator': 'FormItem',
-                required: true,
+                // required: true,
                 'x-component': 'ArrayTable',
                 'x-reactions': {
                   dependencies: ['provider'],
