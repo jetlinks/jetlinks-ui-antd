@@ -204,7 +204,7 @@ export default observer((props: TermsProps) => {
             </div>
           </Popconfirm>
         </div>
-        {!props.isLast && (
+        {props.isLast && (
           <div className="terms-group-add" onClick={props.onAddGroup}>
             <div className="terms-content">
               <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />
