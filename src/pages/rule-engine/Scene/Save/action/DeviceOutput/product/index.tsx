@@ -20,6 +20,7 @@ export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [searchParam, setSearchParam] = useState({});
+  const [oldRowKey] = useState(props.productId);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -239,12 +240,21 @@ export default observer((props: Props) => {
               DeviceModel.deviceId = '';
             },
           }}
-          request={(params) =>
-            service.query({
+          request={(params) => {
+            const sorts: any = [{ name: 'createTime', order: 'desc' }];
+
+            if (oldRowKey) {
+              sorts.push({
+                name: 'id',
+                value: oldRowKey,
+              });
+            }
+
+            return service.query({
               ...params,
-              sorts: [{ name: 'createTime', order: 'desc' }],
-            })
-          }
+              sorts: sorts,
+            });
+          }}
           params={searchParam}
           cardRender={(record) => (
             <SceneProductCard showBindBtn={false} showTool={false} {...record} />

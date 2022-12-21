@@ -9,6 +9,7 @@ import './index.less';
 import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
+import { service as api } from '@/pages/device/Instance/index';
 
 export const service = new Service<any>('');
 
@@ -112,17 +113,14 @@ export default observer((props: Props) => {
     const _type = value.message.messageType;
     if (_type === 'INVOKE_FUNCTION') {
       _options.type = '执行';
-      // _options.properties = value.message.functionId;
       _options.properties = DeviceModel.propertiesName;
     }
     if (_type === 'READ_PROPERTY') {
       _options.type = '读取';
       _options.properties = DeviceModel.propertiesName;
-      // _options.name = DeviceModel.selectorValues[0].name;
     }
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
-      // _options.properties = Object.keys(value.message.properties)?.[0];
       _options.properties = DeviceModel.propertiesName;
       _options.propertiesValue = DeviceModel.propertiesValue;
       _options.columns = DeviceModel.columns;
@@ -140,13 +138,13 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    // console.log(DeviceModel.propertiesValue,_options);
+    console.log(DeviceModel.propertiesValue, _options);
     props.save(item, _options);
     init();
   };
 
   useEffect(() => {
-    console.log(props.value);
+    // console.log(props.value);
     if (props.value) {
       DeviceModel.selector = props.value.selector;
       DeviceModel.productId = props.value.productId;
@@ -158,6 +156,9 @@ export default observer((props: Props) => {
           ? props.value.selectorValues?.map((item: any) => item.value)[0]
           : 'deviceId';
     }
+    return () => {
+      init();
+    };
   }, [props.value]);
 
   return (
@@ -216,6 +217,13 @@ export default observer((props: Props) => {
                 ? (DeviceModel.current = 1)
                 : onlyMessage('请选择产品', 'error');
             } else if (value === 2) {
+              if (DeviceModel.deviceId) {
+                api.detail(DeviceModel.deviceId).then((res) => {
+                  if (res.status === 200) {
+                    DeviceModel.deviceDetail = res.result || {};
+                  }
+                });
+              }
               return DeviceModel.deviceId
                 ? (DeviceModel.current = 2)
                 : onlyMessage('请选择设备', 'error');

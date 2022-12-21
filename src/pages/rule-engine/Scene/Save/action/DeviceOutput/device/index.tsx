@@ -39,6 +39,7 @@ export default observer((props: Props) => {
   const [tagList, setTagList] = useState([]);
   const [list, setList] = useState<any>([]);
   const [isFirst, setIsFirst] = useState(true);
+  const [oldRowKey] = useState(DeviceModel.deviceId);
 
   const TypeList = [
     {
@@ -387,12 +388,21 @@ export default observer((props: Props) => {
                     }
                   },
                 }}
-                request={(params) =>
-                  service.query({
+                request={(params) => {
+                  const sorts: any = [{ name: 'createTime', order: 'desc' }];
+
+                  if (oldRowKey) {
+                    sorts.push({
+                      name: 'id',
+                      value: oldRowKey,
+                    });
+                  }
+
+                  return service.query({
                     ...params,
-                    sorts: [{ name: 'createTime', order: 'desc' }],
-                  })
-                }
+                    sorts: sorts,
+                  });
+                }}
                 params={searchParam}
                 cardRender={(record) => (
                   <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
