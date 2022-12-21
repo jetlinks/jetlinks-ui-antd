@@ -161,6 +161,10 @@ export default observer((props: Props) => {
         return (
           <Input
             value={value}
+            readOnly
+            onClick={() => {
+              setVisible(true);
+            }}
             style={{ width: '100%', textAlign: 'left' }}
             addonAfter={
               <EnvironmentOutlined

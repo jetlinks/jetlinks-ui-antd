@@ -271,10 +271,9 @@ export default observer((props: Props) => {
     return nodes.filter((it) => {
       if (
         it.children.find(
-          (item: any) =>
-            item.id.indexOf('deviceId' || 'device_id' || 'device_Id') > -1 &&
-            item.type === 'string',
-        )
+          (item: any) => item.id.indexOf('deviceId' || 'device_id' || 'device_Id') > -1,
+        ) &&
+        !it.children.find((item: any) => item.id.indexOf('bolaen') > -1)
       ) {
         return true;
       }
@@ -293,6 +292,7 @@ export default observer((props: Props) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const array = filterTree(_data);
+        console.log('--------', array);
         setBuiltInList(array);
       }
     });
