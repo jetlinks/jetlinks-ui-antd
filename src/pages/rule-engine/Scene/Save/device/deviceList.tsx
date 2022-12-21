@@ -10,16 +10,16 @@ import { useIntl } from 'umi';
 import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { TriggerDeviceModel } from './addModel';
 import { observer, Observer } from '@formily/reactive-react';
+import { isArray } from 'lodash';
 
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const [searchParam, setSearchParam] = useState<any>({
-    pageIndex: TriggerDeviceModel.devicePage,
-    pageSize: TriggerDeviceModel.devicePageSize,
-  });
+  const [searchParam, setSearchParam] = useState<any>({});
 
-  const [loading, setLoading] = useState(true);
+  const [oldRowKey] = useState(TriggerDeviceModel.deviceKeys);
+
+  // const [loading, setLoading] = useState(true);
 
   const columns: ProColumns<DeviceInstance>[] = [
     {
@@ -184,17 +184,14 @@ export default observer(() => {
         enableSave={false}
         bodyStyle={{ padding: 0, paddingBottom: 16 }}
         onSearch={async (data) => {
-          if (loading) {
-            setSearchParam({
-              pageIndex: TriggerDeviceModel.devicePage,
-              pageSize: TriggerDeviceModel.devicePageSize,
-              ...data,
-            });
-            setLoading(true);
-          } else {
-            actionRef.current?.reset?.();
-            setSearchParam(data);
-          }
+          // if (loading) {
+          //   setSearchParam(data);
+          //   setLoading(true);
+          // } else {
+          //
+          // }
+          actionRef.current?.reset?.();
+          setSearchParam(data);
         }}
         target="scene-trugger-device"
         defaultParam={[
@@ -224,7 +221,6 @@ export default observer(() => {
             rowSelection={{
               selectedRowKeys: [...TriggerDeviceModel.deviceKeys],
               onSelect: (record, selected) => {
-                console.log(record);
                 if (selected) {
                   TriggerDeviceModel.deviceKeys.push(record.id);
                   if (TriggerDeviceModel.selectorValues) {
@@ -253,12 +249,21 @@ export default observer(() => {
               TriggerDeviceModel.devicePage = page;
               TriggerDeviceModel.devicePageSize = size;
             }}
-            request={(params) =>
-              service.query({
+            request={(params) => {
+              const sorts: any[] = [{ name: 'createTime', order: 'desc' }];
+              if (oldRowKey && isArray(oldRowKey)) {
+                oldRowKey.forEach((v) => {
+                  sorts.push({
+                    name: 'id',
+                    value: v,
+                  });
+                });
+              }
+              return service.query({
                 ...params,
-                sorts: [{ name: 'createTime', order: 'desc' }],
-              })
-            }
+                sorts: sorts,
+              });
+            }}
             params={searchParam}
             cardRender={(record) => (
               <SceneDeviceCard showBindBtn={false} showTool={false} {...record} />
