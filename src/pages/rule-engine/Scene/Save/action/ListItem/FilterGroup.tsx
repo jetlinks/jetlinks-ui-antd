@@ -66,6 +66,9 @@ export default observer((props: TermsProps) => {
               value={props.data.type}
               onChange={(v) => {
                 props.data.type = v;
+                const typeLabel = v === 'and' ? '并且' : '或者';
+                labelRef.current.termType = typeLabel;
+                props.onLabelChange(labelRef.current);
               }}
             />
           </div>
@@ -174,10 +177,11 @@ export default observer((props: TermsProps) => {
                       props.onColumnsChange(optionsColumnsRef.current);
                     }}
                     onLabelChange={(options) => {
-                      let newLabel: any = [];
+                      let newLabel: any = {};
                       const typeLabel = props.data.type === 'and' ? '并且' : '或者';
                       if (labelRef.current?.terms) {
                         labelRef.current?.terms.splice(index, 1, options);
+                        labelRef.current.termType = typeLabel;
                         newLabel = labelRef.current;
                       } else {
                         newLabel = {

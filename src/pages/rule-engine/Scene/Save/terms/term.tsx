@@ -65,6 +65,8 @@ export default observer((props: TermsProps) => {
               value={props.data.type}
               onChange={(v) => {
                 props.data.type = v;
+                FormModel.current.options!.when[props.whenName].terms[props.name].termType =
+                  v === 'and' ? '并且' : '或者';
               }}
             />
           </div>

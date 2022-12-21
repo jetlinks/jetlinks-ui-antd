@@ -241,7 +241,7 @@ export default observer(() => {
           onChange: (_, selectedRows) => {
             TriggerDeviceModel.productId = selectedRows.map((item) => item.id)[0];
             TriggerDeviceModel.productDetail = selectedRows?.[0];
-            handleMetadata(TriggerDeviceModel.productDetail.metadata);
+            handleMetadata(TriggerDeviceModel.productDetail?.metadata);
             // 初始化选择设备类型以及触发类型
             TriggerDeviceModel.deviceKeys = [];
             TriggerDeviceModel.orgId = '';
