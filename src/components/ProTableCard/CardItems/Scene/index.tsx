@@ -126,7 +126,7 @@ const actionFilter = (terms: any, isLast: boolean, index: number) => {
         str += `${handleOptionsLabel(iItem, _isLast ? item.terms[iIndex + 1]?.[3] : undefined)}`;
       });
     }
-    str += iindex < terms.length - 1 ? item.termType : '';
+    str += iindex < terms.length - 1 ? terms[iindex + 1].termType : '';
   });
 
   return str;
@@ -154,7 +154,7 @@ const conditionsRender = (when: any[], index: number) => {
               })
               .join('')
           : '';
-        whenStr += !tLast ? tSer : tSer + termsItem.termType;
+        whenStr += !tLast ? tSer : tSer + terms[tIndex + 1].termType;
       }
     });
     return whenStr;

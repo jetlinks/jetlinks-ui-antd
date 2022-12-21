@@ -34,8 +34,6 @@ export default observer(() => {
 
   useEffect(() => {
     if (form) {
-      console.log('TriggerDeviceModel.selector', TriggerDeviceModel.selector);
-
       form.setFieldsValue({ selector: TriggerDeviceModel.selector });
     }
   }, []);
