@@ -63,6 +63,10 @@ export default observer((props: Props) => {
       ...props.value,
       options: { ...props.options },
     };
+    return () => {
+      NotifyModel.current = 0;
+      NotifyModel.notify = {};
+    };
   }, [props.value, props.options]);
 
   const renderComponent = (type: string) => {

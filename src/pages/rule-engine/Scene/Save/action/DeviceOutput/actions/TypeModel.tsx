@@ -132,7 +132,6 @@ export default observer((props: Props) => {
             fieldNames={{ label: 'text', value: 'value' }}
             placeholder={'请选择'}
             onChange={(e, options: any) => {
-              console.log(options?.text);
               setValue(e);
               setLabelValue(options?.text);
               // DeviceModel.propertiesValue = options?.text
