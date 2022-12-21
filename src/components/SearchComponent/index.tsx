@@ -244,7 +244,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   }
 
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
-                    console.log(state.value);
                     state.componentType = 'Select';
                     state.dataSource = __option;
                     state.componentProps = {
@@ -485,7 +484,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     // 合并初始化的值
 
     //expand false 6组条件 true 1组条件
-
     if (initParam && initParam[0].terms && initParam[0].terms.length > 1) {
       handleExpand();
     }
@@ -572,7 +570,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     uiParamRef.current = ui2Server(value);
     if (
       (_terms.terms1 && _terms.terms1.length > 1) ||
-      (_terms.terms2 && _terms.terms2.length > 1)
+      (_terms.terms2 && _terms.terms2.length >= 1)
     ) {
       // 展开高级搜索
       setExpand(false);
@@ -615,7 +613,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     if (q && props.model !== 'simple' && value && !value.terms1?.[0].value && !value.terms2) {
       // 表单有值的情况下，不改变表单
       if (_target && tar && _target === tar) {
-        form.setInitialValues(JSON.parse(q));
+        const _qJson: any = JSON.parse(q);
+        form.setInitialValues(_qJson);
         handleSearch(false);
         return;
       }
