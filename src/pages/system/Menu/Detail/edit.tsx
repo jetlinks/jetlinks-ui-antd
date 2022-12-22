@@ -181,7 +181,7 @@ export default (props: EditProps) => {
                     required={true}
                     rules={[
                       { required: true, message: '请输入页面地址' },
-                      { max: 120, message: '最多可输入120字符' },
+                      { max: 128, message: '最多可输入128字符' },
                     ]}
                   >
                     <Input placeholder={'请输入页面地址'} />
