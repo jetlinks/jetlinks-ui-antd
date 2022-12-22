@@ -26,6 +26,7 @@ import { observer } from '@formily/reactive-react';
 import DiagnoseForm from './form';
 import { model } from '@formily/reactive';
 import { Empty } from '@/components';
+import _ from 'lodash';
 
 export const DiagnoseMessageModel = model<{
   input: any;
@@ -44,13 +45,14 @@ export const DiagnoseMessageModel = model<{
 const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const DiagnoseFormRef = useRef<{ save: any }>();
+  const diagnoseRef = useRef<any>();
 
   const metadata = JSON.parse(InstanceModel.detail?.metadata || '{}');
 
   const subscribeLog = () => {
     const id = `device-debug-${InstanceModel.detail?.id}`;
     const topic = `/debug/device/${InstanceModel.detail?.id}/trace`;
-    subscribeTopic!(id, topic, {})
+    diagnoseRef.current = subscribeTopic!(id, topic, {})
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
         if (payload.type === 'log') {
@@ -62,20 +64,18 @@ const Message = observer(() => {
             },
           ];
         } else {
-          DiagnoseStatusModel.allDialogList = [
-            ...DiagnoseStatusModel.logList,
-            { key: randomString(), ...payload },
-          ];
+          const data = { key: randomString(), ...payload };
+          DiagnoseStatusModel.allDialogList.push(data);
           const flag = [...DiagnoseStatusModel.allDialogList]
             .filter(
               (i) =>
-                i.traceId === payload.traceId &&
-                (payload.downstream === i.downstream || payload.upstream === i.upstream),
+                i.traceId === data.traceId &&
+                (data.downstream === i.downstream || data.upstream === i.upstream),
             )
             .every((item) => {
               return !item.error;
             });
-          if (!payload.upstream) {
+          if (!data.upstream) {
             DiagnoseStatusModel.message.down = {
               text: !flag ? '下行消息通信异常' : '下行消息通信正常',
               status: !flag ? 'error' : 'success',
@@ -86,37 +86,31 @@ const Message = observer(() => {
               status: !flag ? 'error' : 'success',
             };
           }
-          const list = [...DiagnoseStatusModel.dialogList];
+          const list: any[] = _.cloneDeep(DiagnoseStatusModel.dialogList);
           const t = list.find(
             (item) =>
-              item.traceId === payload.traceId &&
-              payload.downstream === item.downstream &&
-              payload.upstream === item.upstream,
+              item.traceId === data.traceId &&
+              data.downstream === item.downstream &&
+              data.upstream === item.upstream,
           );
           if (t) {
-            list.map((item) => {
-              if (item.key === payload.traceId) {
-                item.list.push({
-                  key: randomString(),
-                  ...payload,
-                });
+            const arr = list.map((item) => {
+              if (item.traceId === data.traceId) {
+                item.list.push(data);
               }
+              return item;
             });
+            DiagnoseStatusModel.dialogList = _.cloneDeep(arr);
           } else {
             list.push({
               key: randomString(),
-              traceId: payload.traceId,
-              downstream: payload.downstream,
-              upstream: payload.upstream,
-              list: [
-                {
-                  key: randomString(),
-                  ...payload,
-                },
-              ],
+              traceId: data.traceId,
+              downstream: data.downstream,
+              upstream: data.upstream,
+              list: [data],
             });
+            DiagnoseStatusModel.dialogList = _.cloneDeep(list);
           }
-          DiagnoseStatusModel.dialogList = [...list];
         }
         const chatBox = document.getElementById('dialog');
         if (chatBox) {
@@ -127,9 +121,13 @@ const Message = observer(() => {
 
   useEffect(() => {
     if (DiagnoseStatusModel.state === 'success') {
-      DiagnoseStatusModel.dialogList = [];
       subscribeLog();
     }
+    return () => {
+      if (diagnoseRef.current) {
+        diagnoseRef.current.unsubscribe();
+      }
+    };
   }, [DiagnoseStatusModel.state]);
 
   const _form = useMemo(

@@ -78,7 +78,11 @@ export default () => {
     <PermissionButton
       type={'link'}
       onClick={() => {
-        onlyMessage('暂未开发', 'error');
+        service._control(record.id).then((resp: any) => {
+          if (resp.status === 200) {
+            window.open(resp.result);
+          }
+        });
       }}
       isPermission={permission.setting}
       style={{ padding: 0 }}

@@ -272,73 +272,91 @@ const ContentRender = (data: SceneCardProps) => {
             (item: any, index) => {
               return (
                 <div className={styles['card-item-content-action-item']} key={item?.key || index}>
-                  <div className={styles['card-item-content-action-item-left']}>
-                    {type === 'device' ? (index === 0 ? '当' : '否则') : '执行'}
-                  </div>
-                  <div className={styles['card-item-content-action-item-right']}>
+                  {type === 'device' && (
+                    <div className={styles['card-item-content-action-item-left']}>
+                      {index === 0 ? '当' : '否则'}
+                    </div>
+                  )}
+                  <div
+                    style={{ width: type === 'device' ? 'calc(100% - 48px)' : '100%' }}
+                    className={styles['card-item-content-action-item-right']}
+                  >
                     <div className={styles['card-item-content-action-item-right-item']}>
-                      {type === 'device' && (
-                        <div
-                          className={styles['right-item-left']}
-                          style={{
-                            width: Array.isArray(item.then) && item?.then.length ? '15%' : '100%',
-                          }}
-                        >
-                          <MyTooltip
-                            placement={'topLeft'}
-                            title={conditionsRender(data.options?.when || [], index)}
+                      {type === 'device' &&
+                        (item.shakeLimit?.enabled || data.options?.when?.[index]) && (
+                          <div
+                            className={styles['right-item-left']}
+                            style={{
+                              width: Array.isArray(item.then) && item?.then.length ? '15%' : '100%',
+                            }}
                           >
-                            <div className={classNames(styles['trigger-conditions'], 'ellipsis')}>
-                              {conditionsRender(data.options?.when || [], index)}
-                            </div>
-                          </MyTooltip>
-                          {item.shakeLimit?.enabled && (
                             <MyTooltip
-                              title={`(${item.shakeLimit?.time}秒内发生${item.shakeLimit?.threshold}
-                            次以上时执行一次)`}
+                              placement={'topLeft'}
+                              title={conditionsRender(data.options?.when || [], index)}
                             >
-                              <div className={classNames(styles['trigger-shake'], 'ellipsis')}>
-                                ({item.shakeLimit?.time}秒内发生{item.shakeLimit?.threshold}
-                                次以上时执行一次)
+                              <div className={classNames(styles['trigger-conditions'], 'ellipsis')}>
+                                {conditionsRender(data.options?.when || [], index)}
                               </div>
                             </MyTooltip>
-                          )}
-                        </div>
-                      )}
+                            {item.shakeLimit?.enabled && (
+                              <MyTooltip
+                                title={`(${item.shakeLimit?.time}秒内发生${item.shakeLimit?.threshold}
+                            次以上时执行一次)`}
+                              >
+                                <div className={classNames(styles['trigger-shake'], 'ellipsis')}>
+                                  ({item.shakeLimit?.time}秒内发生{item.shakeLimit?.threshold}
+                                  次以上时执行一次)
+                                </div>
+                              </MyTooltip>
+                            )}
+                          </div>
+                        )}
                       {Array.isArray(item.then) && item?.then.length ? (
                         <div
                           className={styles['right-item-right']}
                           style={{ width: type === 'device' ? '85%' : '100%' }}
                         >
-                          {(item?.then || []).map((i: BranchesThen, _index: number) => (
-                            <div key={i?.key || _index} className={styles['right-item-right-item']}>
-                              <div className={styles['trigger-ways']}>
-                                {i ? (i.parallel ? '并行执行' : '串行执行') : ''}
-                              </div>
-                              {Array.isArray(i?.actions) && (
+                          {(item?.then || []).map((i: BranchesThen, _index: number) => {
+                            if (Array.isArray(i?.actions) && i?.actions.length) {
+                              return (
                                 <div
-                                  className={classNames(styles['right-item-right-item-contents'])}
+                                  key={i?.key || _index}
+                                  className={styles['right-item-right-item']}
                                 >
-                                  <div
-                                    className={classNames(
-                                      styles['right-item-right-item-contents-text'],
-                                    )}
-                                  >
-                                    {branchesActionRender(i?.actions)}
-                                  </div>
-                                  {i?.actions.length > 3 && (
+                                  {item?.then?.length > 1 && (
+                                    <div className={styles['trigger-ways']}>
+                                      {i ? (i.parallel ? '并行执行' : '串行执行') : ''}
+                                    </div>
+                                  )}
+                                  {Array.isArray(i?.actions) && (
                                     <div
                                       className={classNames(
-                                        styles['right-item-right-item-contents-extra'],
+                                        styles['right-item-right-item-contents'],
                                       )}
                                     >
-                                      等{i?.actions.length}个执行动作
+                                      <div
+                                        className={classNames(
+                                          styles['right-item-right-item-contents-text'],
+                                        )}
+                                      >
+                                        {branchesActionRender(i?.actions)}
+                                      </div>
+                                      {i?.actions.length > 3 && (
+                                        <div
+                                          className={classNames(
+                                            styles['right-item-right-item-contents-extra'],
+                                          )}
+                                        >
+                                          等{i?.actions.length}个执行动作
+                                        </div>
+                                      )}
                                     </div>
                                   )}
                                 </div>
-                              )}
-                            </div>
-                          ))}
+                              );
+                            }
+                            return null;
+                          })}
                         </div>
                       ) : (
                         ''

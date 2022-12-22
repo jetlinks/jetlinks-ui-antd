@@ -235,6 +235,16 @@ export default () => {
     }
   };
 
+  const networkValueRender = (value: number) => {
+    if (value >= 1024 && value < 1024 * 1024) {
+      return `${Number((value / 1024).toFixed(2))}M`;
+    } else if (value >= 1024 * 1024) {
+      return `${Number((value / 1024 / 1024).toFixed(2))}KB`;
+    } else {
+      return `${value}B`;
+    }
+  };
+
   const handleNetworkOptions = (data: Record<string, any>, xAxis: string[]) => {
     setNetworkOptions({
       xAxis: {
@@ -244,7 +254,7 @@ export default () => {
       },
       tooltip: {
         trigger: 'axis',
-        valueFormatter: (value) => `${value}M`,
+        valueFormatter: (value) => networkValueRender(Number(value)),
       },
       yAxis: {
         type: 'value',
@@ -253,12 +263,12 @@ export default () => {
         left: 50,
         right: 0,
         top: 10,
-        bottom: 10,
+        bottom: 20,
       },
       color: ['#979AFF'],
       series: Object.keys(data).length
         ? Object.keys(data).map((key) => ({
-            data: data[key]._data.map((item: number) => Number((item / 1024 / 1024).toFixed(2))),
+            data: data[key]._data, //.map((item: number) => Number((item / 1024 / 1024).toFixed(2))),
             name: key,
             type: 'line',
             smooth: true,

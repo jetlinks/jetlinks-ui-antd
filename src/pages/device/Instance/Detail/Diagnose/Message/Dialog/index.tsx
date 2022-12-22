@@ -31,6 +31,7 @@ const Dialog = (props: Props) => {
   return (
     <div className={classNames('dialog-item', { 'dialog-active': !data?.upstream })} key={data.key}>
       <div className="dialog-card">
+        {/*<div>{data.key}</div>*/}
         {data.list.map((item: any) => (
           <div key={item.key} className="dialog-list">
             <div

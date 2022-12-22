@@ -390,6 +390,10 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/edge/operations/${id}/auth-user-password-reset/invoke`, {
       method: 'POST',
     });
+  public _control = (deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/edge/remote/${deviceId}/url`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

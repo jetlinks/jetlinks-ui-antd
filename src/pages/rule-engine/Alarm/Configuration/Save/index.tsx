@@ -27,7 +27,7 @@ export default () => {
             {
               label: `基础配置`,
               key: '1',
-              children: <Base />,
+              children: <Base tab={tab} />,
             },
             {
               label: `关联场景联动`,

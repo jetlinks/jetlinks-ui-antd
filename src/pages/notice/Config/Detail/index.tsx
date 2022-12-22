@@ -443,11 +443,11 @@ const Detail = observer(() => {
                           value: 465,
                         },
                       },
-                      otherwise: {
-                        state: {
-                          value: 25,
-                        },
-                      },
+                      // otherwise: {
+                      //   state: {
+                      //     value: 25,
+                      //   },
+                      // },
                     },
                   },
                   ssl: {

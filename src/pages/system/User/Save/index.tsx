@@ -41,7 +41,7 @@ const Save = (props: Props) => {
 
   const getRole = () => service.queryRoleList();
 
-  const getOrg = () => service.queryOrgList();
+  const getOrg = () => service.queryOrgList({ paging: false });
 
   const useAsyncDataSource = (api: any) => (field: Field) => {
     field.loading = true;

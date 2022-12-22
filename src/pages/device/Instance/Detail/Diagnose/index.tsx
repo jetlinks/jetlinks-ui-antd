@@ -30,6 +30,29 @@ const Diagnose = observer(() => {
   };
 
   useEffect(() => {
+    DiagnoseStatusModel.list = [];
+    DiagnoseStatusModel.count = 0;
+    DiagnoseStatusModel.percent = 0;
+    DiagnoseStatusModel.status = 'loading';
+    DiagnoseStatusModel.state = 'loading';
+    DiagnoseStatusModel.flag = false;
+    DiagnoseStatusModel.logList = [];
+    DiagnoseStatusModel.dialogList = [];
+    DiagnoseStatusModel.allDialogList = [];
+    DiagnoseStatusModel.message = {
+      up: {
+        text: '上行消息诊断中',
+        status: 'loading',
+      },
+      down: {
+        text: '下行消息诊断中',
+        status: 'loading',
+      },
+    };
+    DiagnoseMessageModel.inputs = [];
+    DiagnoseMessageModel.data = { type: 'function' };
+    DiagnoseMessageModel.input = {};
+    DiagnoseMessageModel._inputs = {};
     setCurrent('status');
     const provider = InstanceModel.detail?.accessProvider;
     if (provider === 'fixed-media' || provider === 'gb28181-2016') {
@@ -44,20 +67,7 @@ const Diagnose = observer(() => {
       setProviderType('network');
     }
     DiagnoseStatusModel.state = 'loading';
-    return () => {
-      DiagnoseStatusModel.list = [];
-      DiagnoseStatusModel.count = 0;
-      DiagnoseStatusModel.percent = 0;
-      DiagnoseStatusModel.status = 'loading';
-      DiagnoseStatusModel.state = 'loading';
-      DiagnoseStatusModel.flag = false;
-      DiagnoseMessageModel.inputs = [];
-      DiagnoseMessageModel.data = { type: 'function' };
-      DiagnoseMessageModel.input = {};
-      DiagnoseMessageModel._inputs = {};
-      DiagnoseStatusModel.logList = [];
-      DiagnoseStatusModel.dialogList = [];
-    };
+    return () => {};
   }, [InstanceModel.active]);
 
   const activeStyle = {
