@@ -4,6 +4,7 @@ import moment from 'moment';
 import { service } from '@/pages/account/NotificationRecord';
 import { service as service1 } from '@/pages/rule-engine/Alarm/Log';
 import { Store } from 'jetlinks-store';
+import ReactJson from 'react-json-view';
 
 interface Props {
   data: Partial<NotifitionRecord>;
@@ -15,14 +16,19 @@ const Detail = (props: Props) => {
 
   useEffect(() => {
     if (props.data.dataId) {
-      service.getAlarmList(props.data.dataId).then((resp) => {
-        if (resp.status === 200) {
-          setDada(resp.result);
-        }
-      });
       service1.queryDefaultLevel().then((resp) => {
         if (resp.status === 200) {
           Store.set('default-level', resp.result?.levels || []);
+          if (props.data.detailJson) {
+            const detailJson = props.data.detailJson || '{}';
+            setDada(JSON.parse(detailJson));
+          } else {
+            service.getAlarmList(props.data.dataId).then((res) => {
+              if (res.status === 200) {
+                setDada(res.result);
+              }
+            });
+          }
         }
       });
     }
@@ -42,20 +48,28 @@ const Detail = (props: Props) => {
           </>
         )}
         <Descriptions.Item label="告警名称" span={1}>
-          {data?.alarmName || ''}
+          {data?.alarmName || data?.alarmConfigName || ''}
         </Descriptions.Item>
         <Descriptions.Item label="告警时间" span={1}>
           {moment(data?.alarmTime).format('YYYY-MM-DD HH:mm:ss')}
         </Descriptions.Item>
         <Descriptions.Item label="告警级别" span={1}>
-          {(Store.get('default-level') || []).find((item: any) => item?.level === data?.level)
-            ?.title || data?.level}
+          {(Store.get('default-level') || []).find(
+            (item: any) => Number(item?.level) === Number(data?.level),
+          )?.title || data?.level}
         </Descriptions.Item>
         <Descriptions.Item label="告警说明" span={1}>
           {data?.description || ''}
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
-          {JSON.stringify(props.data?.detailJson || '') || ''}
+          <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+            <ReactJson
+              displayObjectSize={false}
+              displayDataTypes={false}
+              name={false}
+              src={JSON.parse(data?.alarmInfo || '{}')}
+            />
+          </div>
         </Descriptions.Item>
       </Descriptions>
     </Modal>
