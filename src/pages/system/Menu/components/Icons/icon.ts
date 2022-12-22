@@ -38,7 +38,6 @@ export default [
   'icon-Vector',
   'icon-Union',
   'icon-shebeigaojing',
-  'icon-chanpinfenlei1',
   'icon-bianyuanwangguan',
   'icon-wuguanli',
   'icon-yunyunjieru',

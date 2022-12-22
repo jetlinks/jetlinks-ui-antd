@@ -43,13 +43,13 @@
       margin-top: 5px;
       .card-item-content-action-item-left {
         width: 40px;
-        margin-right: 20px;
+        margin-right: 8px;
         color: #6968be;
         font-weight: bold;
         font-size: 18px;
       }
       .card-item-content-action-item-right {
-        width: calc(100% - 58px);
+        width: calc(100% - 48px);
         padding: 5px;
         border: 1px solid rgba(0, 0, 0, 0.08);
         .card-item-content-action-item-right-item {
@@ -60,6 +60,9 @@
             font-weight: bold;
           }
           .right-item-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             width: 15%;
             .trigger-conditions {
               color: #fab247;
@@ -73,17 +76,19 @@
             .right-item-right-item {
               display: flex;
               width: 100%;
+              overflow: hidden;
               .trigger-ways {
                 width: 70px;
                 margin-right: 18px;
                 color: rgba(0, 0, 0, 0.85);
                 font-size: 16px;
+                white-space: nowrap;
               }
               .right-item-right-item-contents {
                 display: flex;
                 align-items: center;
-                width: calc(100% - 88px);
-                overflow: hidden;
+                min-width: calc(100% - 88px);
+                max-width: 100%;
                 .right-item-right-item-contents-text {
                   display: flex;
                   .right-item-right-item-contents-item {

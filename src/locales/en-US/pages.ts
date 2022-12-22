@@ -26,6 +26,7 @@ export default {
   'pages.data.option.error': 'Operation failed!',
   'pages.data.option.detail': 'Detail',
   'pages.data.option.download': 'Download',
+  'pages.data.option.export': 'Export',
   'pages.data.option.record': 'Records',
   'pages.data.option.save': 'Save',
   'pages.searchTable.new': 'New',

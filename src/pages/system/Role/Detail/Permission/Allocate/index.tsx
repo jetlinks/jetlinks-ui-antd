@@ -98,12 +98,16 @@ const Allocate = (props: Props) => {
       return arr.map((item) => {
         let li: any[] = [];
         if (item?.assetAccesses.length > 0) {
-          li = item.assetAccesses.map((i: any) => {
-            return {
-              ...i,
-              granted: i.supportId === str,
-            };
-          });
+          if (_.map(item.assetAccesses, 'supportId').includes(str)) {
+            li = item.assetAccesses.map((i: any) => {
+              return {
+                ...i,
+                granted: i.supportId === str,
+              };
+            });
+          } else {
+            li = item.assetAccesses;
+          }
         }
         return {
           ...item,

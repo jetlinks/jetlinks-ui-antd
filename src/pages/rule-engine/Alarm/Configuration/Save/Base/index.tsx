@@ -34,7 +34,11 @@ const createImageLabel = (image: string, text: string) => {
   );
 };
 
-export default () => {
+interface Props {
+  tab: string;
+}
+
+export default (props: Props) => {
   const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Alarm/Configuration');
   const history = useHistory();
   const location = useLocation();
@@ -101,7 +105,7 @@ export default () => {
           });
         },
       }),
-    [id],
+    [id, props.tab],
   );
 
   const getSupports = () => service.getTargetTypes();

@@ -228,7 +228,7 @@ export const mediaInitList: ListProps[] = [
   },
 ];
 
-export const DiagnoseStatusModel = model<{
+interface DiagnoseStatusModelProps {
   list: ListProps[];
   product: Partial<ProductItem>;
   gateway: any;
@@ -255,7 +255,9 @@ export const DiagnoseStatusModel = model<{
     };
   };
   flag: boolean; // 离开页面后让还未执行的方法停止
-}>({
+}
+
+export const DiagnoseStatusModelInit: DiagnoseStatusModelProps = {
   list: [],
   product: {},
   parent: {},
@@ -282,7 +284,9 @@ export const DiagnoseStatusModel = model<{
     },
   },
   flag: true,
-});
+};
+
+export const DiagnoseStatusModel = model<DiagnoseStatusModelProps>({ ...DiagnoseStatusModelInit });
 
 export const gatewayList = [
   'websocket-server',

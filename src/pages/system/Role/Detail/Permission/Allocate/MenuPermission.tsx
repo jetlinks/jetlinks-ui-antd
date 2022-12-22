@@ -12,6 +12,7 @@ interface Props {
   assetsList?: any[];
   change: (data: any) => void;
   checkChange?: (data: any) => void;
+  checkBoxChange?: (data: boolean) => void;
 }
 
 const MenuPermission = (props: Props) => {
@@ -151,6 +152,9 @@ const MenuPermission = (props: Props) => {
                   buttons: [...buttons],
                   children: checkAllData(value.children || [], e.target.checked, cvalue),
                 });
+                if (props.checkBoxChange) {
+                  props?.checkBoxChange(false);
+                }
               }}
             >
               {value?.name}
@@ -214,6 +218,9 @@ const MenuPermission = (props: Props) => {
                     buttons: [...buttons],
                   };
                   props.change(d);
+                  if (props.checkBoxChange) {
+                    props?.checkBoxChange(false);
+                  }
                 }}
                 style={{ width: '100%' }}
                 options={(value?.buttons || []).map((i: any) => ({
@@ -300,6 +307,9 @@ const MenuPermission = (props: Props) => {
                         assetAccesses: [...access],
                       };
                       props.change(d);
+                      if (props.checkBoxChange) {
+                        props?.checkBoxChange(false);
+                      }
                     }}
                   >
                     {value?.assetAccesses.map((item: any) => (
@@ -342,6 +352,13 @@ const MenuPermission = (props: Props) => {
                   check = 2;
                 }
                 props.change({ ...value, check, children });
+              }}
+              checkBoxChange={(dt: boolean) => {
+                if (props.checkBoxChange) {
+                  props?.checkBoxChange(false);
+                } else {
+                  setCheckbox(dt);
+                }
               }}
             />
           </div>
