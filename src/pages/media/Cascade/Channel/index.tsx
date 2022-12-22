@@ -95,7 +95,7 @@ const Channel = () => {
       dataIndex: 'channelId',
       title: '国标ID',
       // ellipsis:true,
-      tooltip: '国标级联有18位、20位两种格式。在当前页面修改不会修改视频设备-通道页面中的国标ID',
+      tooltip: '国标级联有16位、20位两种格式。在当前页面修改不会修改视频设备-通道页面中的国标ID',
       render: (text: any, record: any) => (
         <div style={{ display: 'flex' }}>
           <Ellipsis title={record.gbChannelId || ''} />

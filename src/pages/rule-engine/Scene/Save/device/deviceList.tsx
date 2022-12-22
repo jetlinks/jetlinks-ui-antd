@@ -46,6 +46,7 @@ export default observer(() => {
       dataIndex: 'productId',
       width: 200,
       ellipsis: true,
+      hideInSearch: true,
       valueType: 'select',
       request: async () => {
         const res = await service.getProductList();
@@ -58,11 +59,10 @@ export default observer(() => {
       filterMultiple: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.device.instance.registrationTime',
-        defaultMessage: '注册时间',
-      }),
-      dataIndex: 'registryTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
+      width: '200px',
+      valueType: 'dateTime',
     },
     {
       title: intl.formatMessage({
@@ -102,6 +102,7 @@ export default observer(() => {
       title: '产品分类',
       valueType: 'treeSelect',
       hideInTable: true,
+      hideInSearch: true,
       fieldProps: {
         fieldNames: {
           label: 'name',
@@ -118,6 +119,7 @@ export default observer(() => {
     {
       title: '网关类型',
       dataIndex: 'accessProvider',
+      hideInSearch: true,
       width: 150,
       ellipsis: true,
       valueType: 'select',
@@ -145,6 +147,7 @@ export default observer(() => {
       dataIndex: 'productId$product-info',
       title: '接入方式',
       valueType: 'select',
+      hideInSearch: true,
       hideInTable: true,
       request: () =>
         service.queryGatewayList().then((resp: any) =>
@@ -159,6 +162,7 @@ export default observer(() => {
       title: '设备类型',
       valueType: 'select',
       hideInTable: true,
+      hideInSearch: true,
       valueEnum: {
         device: {
           text: '直连设备',

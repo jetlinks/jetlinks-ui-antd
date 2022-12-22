@@ -21,7 +21,7 @@ import { TreeSelect as ATreeSelect } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { createSchemaField } from '@formily/react';
 import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
-import { onlyMessage, randomString, useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, randomString, testIP, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
 import { PlusOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
@@ -248,13 +248,9 @@ const Save = () => {
       });
       onFieldReact('apiServer.ipWhiteList', (field: any) => {
         const value = (field as Field).value;
-        const pattern =
-          /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
         if (value) {
           const str = value?.split(/[\n,]/g).filter((i: any) => i && i.trim());
-          // console.log(str);
-          const NoIP = str.find((item: any) => !pattern.test(item));
-          console.log(NoIP);
+          const NoIP = str.find((item: any) => !testIP(item.replace(/\s*/g, '')));
           if (NoIP) {
             field.selfErrors = `[${NoIP}]不是正确的IP地址`;
           } else {
