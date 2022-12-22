@@ -581,6 +581,8 @@ const Instance = () => {
                 service.batchDeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
+                    setBindKeys([]);
+                    InstanceModel.selectedRows.clear();
                     actionRef.current?.reset?.();
                   }
                 });
@@ -604,6 +606,8 @@ const Instance = () => {
                 service.batchUndeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
+                    setBindKeys([]);
+                    InstanceModel.selectedRows.clear();
                     actionRef.current?.reset?.();
                   }
                 });
@@ -694,7 +698,6 @@ const Instance = () => {
           } else {
             sorts = 'desc';
           }
-          console.log(sorts);
           const res = await service.query({
             ...params,
             sorts: [
@@ -733,9 +736,9 @@ const Instance = () => {
         pagination={{ pageSize: 10 }}
         rowSelection={{
           selectedRowKeys: bindKeys,
-          onChange: (selectedRowKeys) => {
-            setBindKeys(selectedRowKeys);
-          },
+          // onChange: (selectedRowKeys) => {
+          //   setBindKeys(selectedRowKeys); //多选事件触发时重置setBindKeys，会导致翻页再多选 原来的bindKeys被覆盖
+          // },
           onSelect: (record, selected) => {
             if (selected) {
               InstanceModel.selectedRows.set(record.id, record?.state?.value);
