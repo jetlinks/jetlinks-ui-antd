@@ -92,12 +92,31 @@ export default forwardRef((props: Props, ref) => {
     OperatorType.invokeFunction,
   ];
 
+  const handleFunction = (fcItem: any) => {
+    if (fcItem) {
+      const _properties = fcItem.valueType ? fcItem.valueType.properties : fcItem.inputs;
+      const array = [];
+      for (const datum of _properties) {
+        array.push({
+          id: datum.id,
+          name: datum.name,
+          type: datum.valueType ? datum.valueType.type : '-',
+          format: datum.valueType ? datum.valueType.format : undefined,
+          options: datum.valueType ? datum.valueType.elements : undefined,
+          value: undefined,
+        });
+      }
+      setFunctionItem(array);
+    }
+  };
+
   const handleInit = (data: DeviceModelProps) => {
     form.setFieldsValue({
       ...data.operation,
     });
 
     const newTypeList = [...TypeList];
+    console.log('handleInit', data);
 
     if (data.metadata.events?.length) {
       newTypeList.push(TypeEnum.reportEvent);
@@ -129,12 +148,18 @@ export default forwardRef((props: Props, ref) => {
       if (_reportProperty.length) {
         newTypeList.push(TypeEnum.reportProperty);
       }
-      console.log('data.metadata.properties', data.metadata.properties);
     }
 
     if (data.metadata.functions?.length) {
       newTypeList.push(TypeEnum.invokeFunction);
       setFunctions(data.metadata.functions);
+
+      if (data.operation?.functionId) {
+        const fcItem = data.metadata.functions.find(
+          (item) => item.id === data.operation!.functionId,
+        );
+        handleFunction(fcItem);
+      }
     }
 
     setTypeList(newTypeList);
@@ -191,7 +216,6 @@ export default forwardRef((props: Props, ref) => {
                   style={{ width: '100%' }}
                   fieldNames={{ label: 'name', value: 'id' }}
                   onSelect={(v: any, propertyItem: any) => {
-                    console.log(v);
                     TriggerDeviceModel.options.action = '读取' + propertyItem.name;
                   }}
                 />
@@ -207,7 +231,6 @@ export default forwardRef((props: Props, ref) => {
             <Operation
               propertiesList={writeProperty}
               onSelect={(a, item) => {
-                console.log(a);
                 TriggerDeviceModel.options.action = '修改' + item.name;
               }}
             />
@@ -221,7 +244,6 @@ export default forwardRef((props: Props, ref) => {
               style={{ width: '100%' }}
               fieldNames={{ label: 'name', value: 'id' }}
               onSelect={(v: any, evenItem: any) => {
-                console.log(v);
                 TriggerDeviceModel.options.action = evenItem.name + '上报';
               }}
             />
@@ -245,25 +267,8 @@ export default forwardRef((props: Props, ref) => {
                     option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
                   }
                   onSelect={(v: any, fcItem: any) => {
-                    console.log(v);
                     TriggerDeviceModel.options.action = '执行' + fcItem.name;
-                    if (fcItem) {
-                      const _properties = fcItem.valueType
-                        ? fcItem.valueType.properties
-                        : fcItem.inputs;
-                      const array = [];
-                      for (const datum of _properties) {
-                        array.push({
-                          id: datum.id,
-                          name: datum.name,
-                          type: datum.valueType ? datum.valueType.type : '-',
-                          format: datum.valueType ? datum.valueType.format : undefined,
-                          options: datum.valueType ? datum.valueType.elements : undefined,
-                          value: undefined,
-                        });
-                      }
-                      setFunctionItem(array);
-                    }
+                    handleFunction(fcItem);
                   }}
                 />
               </Form.Item>

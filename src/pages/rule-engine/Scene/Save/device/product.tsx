@@ -23,12 +23,10 @@ export const handleMetadata = (metadata?: string) => {
 export default observer(() => {
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
-  const [searchParam, setSearchParam] = useState<any>({
-    pageIndex: TriggerDeviceModel.productPage,
-    pageSize: TriggerDeviceModel.productPageSize,
-  });
+  const [searchParam, setSearchParam] = useState<any>({});
+  const [oldRowKey] = useState(TriggerDeviceModel.productId);
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   const columns: ProColumns<ProductItem>[] = [
     {
@@ -210,17 +208,19 @@ export default observer(() => {
         enableSave={false}
         bodyStyle={{ padding: 0, paddingBottom: 16 }}
         onSearch={async (data) => {
-          if (loading) {
-            setSearchParam({
-              pageIndex: TriggerDeviceModel.devicePage,
-              pageSize: TriggerDeviceModel.devicePageSize,
-              ...data,
-            });
-            setLoading(true);
-          } else {
-            actionRef.current?.reset?.();
-            setSearchParam(data);
-          }
+          // if (loading) {
+          //   setSearchParam({
+          //     pageIndex: TriggerDeviceModel.devicePage,
+          //     pageSize: TriggerDeviceModel.devicePageSize,
+          //     ...data,
+          //   });
+          //   setLoading(true);
+          // } else {
+          //   actionRef.current?.reset?.();
+          //   setSearchParam(data);
+          // }
+          actionRef.current?.reset?.();
+          setSearchParam(data);
         }}
         target="department-assets-product"
       />
@@ -239,10 +239,9 @@ export default observer(() => {
           type: 'radio',
           selectedRowKeys: [TriggerDeviceModel.productId],
           onChange: (_, selectedRows) => {
-            console.log('onChange', selectedRows);
             TriggerDeviceModel.productId = selectedRows.map((item) => item.id)[0];
             TriggerDeviceModel.productDetail = selectedRows?.[0];
-            handleMetadata(TriggerDeviceModel.productDetail.metadata);
+            handleMetadata(TriggerDeviceModel.productDetail?.metadata);
             // 初始化选择设备类型以及触发类型
             TriggerDeviceModel.deviceKeys = [];
             TriggerDeviceModel.orgId = '';
@@ -257,12 +256,21 @@ export default observer(() => {
           TriggerDeviceModel.productPage = page;
           TriggerDeviceModel.productPageSize = size;
         }}
-        request={(params) =>
-          service.query({
+        request={(params) => {
+          const sorts: any = [{ name: 'createTime', order: 'desc' }];
+
+          if (oldRowKey) {
+            sorts.push({
+              name: 'id',
+              value: oldRowKey,
+            });
+          }
+
+          return service.query({
             ...params,
-            sorts: [{ name: 'createTime', order: 'desc' }],
-          })
-        }
+            sorts: sorts,
+          });
+        }}
         params={searchParam}
         cardRender={(record) => (
           <SceneProductCard showBindBtn={false} showTool={false} {...record} />

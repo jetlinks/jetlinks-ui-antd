@@ -402,6 +402,7 @@ export default (props: ItemProps) => {
                   data={termsItem}
                   columns={optionsColumns}
                   isLast={index === thenTerms.length - 1}
+                  isFirst={index === 0}
                   paramsOptions={paramsOptions}
                   label={props.options?.terms?.[index]}
                   actionColumns={props.options?.otherColumns}

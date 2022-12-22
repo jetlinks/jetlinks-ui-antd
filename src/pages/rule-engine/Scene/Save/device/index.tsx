@@ -48,14 +48,21 @@ export default observer((props: Props) => {
 
     const _label = [
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        {options.selectorIcon ? <AIcon type={options.selectorIcon} /> : null}
+        {options.selectorIcon ? (
+          <AIcon type={options.selectorIcon} style={{ paddingRight: 4 }} />
+        ) : null}
         <span className="trigger-options-name">{options.name}</span>
         {options.extraName ? <span>{options.extraName}</span> : null}
       </div>,
     ];
     if (!options.onlyName) {
       if (options.productName) {
-        _label.push(<span className="trigger-options-type">{options.productName}</span>);
+        _label.push(
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AIcon type={'icon-chanpin1'} style={{ paddingRight: 4 }} />
+            <span className="trigger-options-type">{options.productName}</span>
+          </div>,
+        );
       }
       if (options.when) {
         _label.push(<span className="trigger-options-when">{options.when}</span>);
@@ -70,7 +77,12 @@ export default observer((props: Props) => {
         _label.push(<span className="trigger-options-action">{options.action}</span>);
       }
       if (options.type) {
-        _label.push(<span className="trigger-options-type">{options.type}</span>);
+        _label.push(
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AIcon type={options.typeIcon} style={{ paddingRight: 4 }} />
+            <span className="trigger-options-type">{options.type}</span>
+          </div>,
+        );
       }
     }
     return _label;

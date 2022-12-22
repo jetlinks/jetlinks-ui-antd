@@ -66,6 +66,9 @@ export default observer((props: TermsProps) => {
               value={props.data.type}
               onChange={(v) => {
                 props.data.type = v;
+                const typeLabel = v === 'and' ? '并且' : '或者';
+                labelRef.current.termType = typeLabel;
+                props.onLabelChange(labelRef.current);
               }}
             />
           </div>
@@ -174,10 +177,11 @@ export default observer((props: TermsProps) => {
                       props.onColumnsChange(optionsColumnsRef.current);
                     }}
                     onLabelChange={(options) => {
-                      let newLabel: any = [];
+                      let newLabel: any = {};
                       const typeLabel = props.data.type === 'and' ? '并且' : '或者';
                       if (labelRef.current?.terms) {
                         labelRef.current?.terms.splice(index, 1, options);
+                        labelRef.current.termType = typeLabel;
                         newLabel = labelRef.current;
                       } else {
                         newLabel = {
@@ -204,7 +208,7 @@ export default observer((props: TermsProps) => {
             </div>
           </Popconfirm>
         </div>
-        {!props.isLast && (
+        {props.isLast && (
           <div className="terms-group-add" onClick={props.onAddGroup}>
             <div className="terms-content">
               <PlusOutlined style={{ fontSize: 12, paddingRight: 4 }} />

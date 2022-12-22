@@ -23,7 +23,7 @@ type ModelType = {
   relationName: string;
   message: any;
   propertiesName: string;
-  propertiesValue: string;
+  propertiesValue: string | any;
   columns: string[];
   actionName: string;
 };
