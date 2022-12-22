@@ -16,6 +16,7 @@ import {
   PlusOutlined,
   StopOutlined,
   SyncOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
@@ -565,6 +566,28 @@ const Instance = () => {
             }}
           >
             删除选中设备
+          </PermissionButton>
+        </Menu.Item>
+      )}
+      {bindKeys.length > 0 && (
+        <Menu.Item key="6">
+          <PermissionButton
+            isPermission={permission.action}
+            icon={<CheckOutlined />}
+            type="primary"
+            popConfirm={{
+              title: '确认激活选中设备?',
+              onConfirm() {
+                service.batchDeployDevice(bindKeys).then((resp) => {
+                  if (resp.status === 200) {
+                    onlyMessage('操作成功');
+                    actionRef.current?.reset?.();
+                  }
+                });
+              },
+            }}
+          >
+            激活选中设备
           </PermissionButton>
         </Menu.Item>
       )}
