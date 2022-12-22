@@ -8,6 +8,7 @@ import { InstanceModel } from '@/pages/device/Instance';
 import { observer } from '@formily/reactive-react';
 import {
   DiagnoseStatusModel,
+  DiagnoseStatusModelInit,
   headerColorMap,
   headerDescMap,
   headerImgMap,
@@ -45,20 +46,16 @@ const Diagnose = observer(() => {
     }
     DiagnoseStatusModel.state = 'loading';
     return () => {
-      DiagnoseStatusModel.list = [];
-      DiagnoseStatusModel.count = 0;
-      DiagnoseStatusModel.percent = 0;
-      DiagnoseStatusModel.status = 'loading';
-      DiagnoseStatusModel.state = 'loading';
-      DiagnoseStatusModel.flag = false;
+      console.log('ren');
+      Object.keys(DiagnoseStatusModelInit).map((key) => {
+        DiagnoseStatusModel[key] = DiagnoseStatusModelInit[key];
+      });
       DiagnoseMessageModel.inputs = [];
       DiagnoseMessageModel.data = { type: 'function' };
       DiagnoseMessageModel.input = {};
       DiagnoseMessageModel._inputs = {};
-      DiagnoseStatusModel.logList = [];
-      DiagnoseStatusModel.dialogList = [];
     };
-  }, [InstanceModel.active]);
+  }, []); // InstanceModel.active
 
   const activeStyle = {
     background: '#FFFFFF',

@@ -156,6 +156,8 @@ const Config = () => {
               size="small"
               column={3}
               bordered
+              labelStyle={{ width: 150 }}
+              contentStyle={{ minWidth: 100 }}
               title={<h4 style={{ fontSize: 15 }}>{i.name}</h4>}
             >
               {(i?.properties || []).map((item: any) => (

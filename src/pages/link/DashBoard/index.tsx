@@ -253,7 +253,7 @@ export default () => {
         left: 50,
         right: 0,
         top: 10,
-        bottom: 10,
+        bottom: 20,
       },
       color: ['#979AFF'],
       series: Object.keys(data).length
