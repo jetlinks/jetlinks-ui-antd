@@ -8,7 +8,6 @@ import { InstanceModel } from '@/pages/device/Instance';
 import { observer } from '@formily/reactive-react';
 import {
   DiagnoseStatusModel,
-  DiagnoseStatusModelInit,
   headerColorMap,
   headerDescMap,
   headerImgMap,
@@ -31,6 +30,29 @@ const Diagnose = observer(() => {
   };
 
   useEffect(() => {
+    DiagnoseStatusModel.list = [];
+    DiagnoseStatusModel.count = 0;
+    DiagnoseStatusModel.percent = 0;
+    DiagnoseStatusModel.status = 'loading';
+    DiagnoseStatusModel.state = 'loading';
+    DiagnoseStatusModel.flag = false;
+    DiagnoseStatusModel.logList = [];
+    DiagnoseStatusModel.dialogList = [];
+    DiagnoseStatusModel.allDialogList = [];
+    DiagnoseStatusModel.message = {
+      up: {
+        text: '上行消息诊断中',
+        status: 'loading',
+      },
+      down: {
+        text: '下行消息诊断中',
+        status: 'loading',
+      },
+    };
+    DiagnoseMessageModel.inputs = [];
+    DiagnoseMessageModel.data = { type: 'function' };
+    DiagnoseMessageModel.input = {};
+    DiagnoseMessageModel._inputs = {};
     setCurrent('status');
     const provider = InstanceModel.detail?.accessProvider;
     if (provider === 'fixed-media' || provider === 'gb28181-2016') {
@@ -45,17 +67,8 @@ const Diagnose = observer(() => {
       setProviderType('network');
     }
     DiagnoseStatusModel.state = 'loading';
-    return () => {
-      console.log('ren');
-      Object.keys(DiagnoseStatusModelInit).map((key) => {
-        DiagnoseStatusModel[key] = DiagnoseStatusModelInit[key];
-      });
-      DiagnoseMessageModel.inputs = [];
-      DiagnoseMessageModel.data = { type: 'function' };
-      DiagnoseMessageModel.input = {};
-      DiagnoseMessageModel._inputs = {};
-    };
-  }, []); // InstanceModel.active
+    return () => {};
+  }, [InstanceModel.active]);
 
   const activeStyle = {
     background: '#FFFFFF',

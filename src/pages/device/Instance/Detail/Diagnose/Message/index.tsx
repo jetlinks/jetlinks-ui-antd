@@ -45,13 +45,14 @@ export const DiagnoseMessageModel = model<{
 const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
   const DiagnoseFormRef = useRef<{ save: any }>();
+  const diagnoseRef = useRef<any>();
 
   const metadata = JSON.parse(InstanceModel.detail?.metadata || '{}');
 
   const subscribeLog = () => {
     const id = `device-debug-${InstanceModel.detail?.id}`;
     const topic = `/debug/device/${InstanceModel.detail?.id}/trace`;
-    subscribeTopic!(id, topic, {})
+    diagnoseRef.current = subscribeTopic!(id, topic, {})
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
         if (payload.type === 'log') {
@@ -120,9 +121,13 @@ const Message = observer(() => {
 
   useEffect(() => {
     if (DiagnoseStatusModel.state === 'success') {
-      DiagnoseStatusModel.dialogList = [];
       subscribeLog();
     }
+    return () => {
+      if (diagnoseRef.current) {
+        diagnoseRef.current.unsubscribe();
+      }
+    };
   }, [DiagnoseStatusModel.state]);
 
   const _form = useMemo(
