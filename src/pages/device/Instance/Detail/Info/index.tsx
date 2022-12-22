@@ -41,6 +41,7 @@ const Info = observer(() => {
           column={3}
           bordered
           labelStyle={{ width: 150 }}
+          contentStyle={{ minWidth: 'calc(100% / 3 - 150px)' }}
           title={[
             <span key={1}>设备信息</span>,
             <PermissionButton

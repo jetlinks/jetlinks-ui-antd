@@ -106,7 +106,7 @@ const Detail = observer(() => {
       },
       'configs.key': {
         title: '证书私钥',
-        'x-component': 'Input.TextArea',
+        'x-component': 'CertificateFile',
         'x-decorator': 'FormItem',
         required: true,
         'x-component-props': {

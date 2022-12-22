@@ -310,7 +310,7 @@ export default observer((props: AddProps) => {
   return (
     <Modal
       visible
-      title="执行规则"
+      title="触发规则"
       width={820}
       keyboard={false}
       maskClosable={false}

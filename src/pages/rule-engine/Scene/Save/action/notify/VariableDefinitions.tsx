@@ -38,12 +38,29 @@ export default forwardRef((props: Props, ref) => {
       const rules: any[] = [];
       rules.push({
         validator: async (_: any, value: any) => {
+          console.log(value, type);
           if ((type === 'file' || type === 'link') && !value) {
             return Promise.reject(new Error('请输入' + item.name));
           } else if (type === 'tag' && !value) {
             return Promise.reject(new Error('请选择' + item.name));
-          } else if (['date', 'org'].includes(type) && (!value || !value.value)) {
-            return Promise.reject(new Error('请选择' + item.name));
+          } else if (['date', 'org'].includes(type)) {
+            if (!value) {
+              return Promise.reject(new Error('请选择' + item.name));
+            } else {
+              if (value?.source === 'upper') {
+                if (!value.upperKey) {
+                  return Promise.reject(new Error('请选择' + item.name));
+                } else {
+                  return Promise.resolve();
+                }
+              } else {
+                if (!value.value) {
+                  return Promise.reject(new Error('请选择' + item.name));
+                } else {
+                  return Promise.resolve();
+                }
+              }
+            }
           } else if (value.source === 'fixed' && !value.value) {
             return Promise.reject(new Error('请输入' + item.name));
           } else if (value.source === 'relation' && !value.value && !value.relation) {
@@ -102,41 +119,6 @@ export default forwardRef((props: Props, ref) => {
         const formData = await form.validateFields().catch(() => {
           resolve(false);
         });
-        // if (
-        //   NotifyModel.notify.notifyType &&
-        //   ['dingTalk', 'weixin'].includes(NotifyModel.notify.notifyType)
-        // ) {
-        //   const arr = NotifyModel.variable.map((item) => {
-        //     return { type: item.expands?.businessType || item?.type, id: item.id };
-        //   });
-        //   const org = arr.find((i) => i.type === 'org')?.id;
-        //   const user = arr.find((i) => i.type === 'user')?.id;
-        //   if (org && user) {
-        //     if (
-        //       (formData[org]?.source && formData[org]?.value) ||
-        //       (!formData[org]?.source && formData[org]) ||
-        //       (formData[user]?.source && (formData[user]?.value || formData[user]?.relation)) ||
-        //       (!formData[user]?.source && formData[user])
-        //     ) {
-        //       resolve(formData);
-        //     } else {
-        //       onlyMessage('收信人和收信部门必填一个', 'error');
-        //       resolve(false);
-        //     }
-        //   } else {
-        //     if (formData) {
-        //       resolve(formData);
-        //     } else {
-        //       resolve(false);
-        //     }
-        //   }
-        // } else {
-        //   if (formData) {
-        //     resolve(formData);
-        //   } else {
-        //     resolve(false);
-        //   }
-        // }
         if (formData) {
           resolve(formData);
         } else {

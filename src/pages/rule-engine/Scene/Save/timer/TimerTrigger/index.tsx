@@ -57,7 +57,7 @@ export default (props: Props) => {
 
   return (
     <Modal
-      title={'定时触发'}
+      title={'触发规则'}
       maskClosable={false}
       visible
       onCancel={() => {
