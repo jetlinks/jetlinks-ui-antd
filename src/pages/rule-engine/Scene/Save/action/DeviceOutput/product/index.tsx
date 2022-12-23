@@ -168,7 +168,7 @@ export default observer((props: Props) => {
           .queryOrgThree({
             paging: false,
           })
-          .then((resp) => {
+          .then((resp: any) => {
             const formatValue = (list: any[]) => {
               const _list: any[] = [];
               list.forEach((item) => {
@@ -241,7 +241,7 @@ export default observer((props: Props) => {
             },
           }}
           request={(params) => {
-            const sorts: any = [{ name: 'createTime', order: 'desc' }];
+            const sorts: any = [];
 
             if (oldRowKey) {
               sorts.push({
@@ -249,7 +249,7 @@ export default observer((props: Props) => {
                 value: oldRowKey,
               });
             }
-
+            sorts.push({ name: 'createTime', order: 'desc' });
             return service.query({
               ...params,
               sorts: sorts,

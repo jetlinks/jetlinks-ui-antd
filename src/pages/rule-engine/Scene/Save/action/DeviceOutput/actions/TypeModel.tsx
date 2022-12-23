@@ -204,10 +204,10 @@ export default observer((props: Props) => {
       case 'date':
         return (
           <MTimePicker
-            type={props.format}
+            type={props.format === 'yyyy-MM-dd' ? 'time' : 'date'}
             value={moment(
               value ? value : new Date(),
-              props.format === 'HH:mm:ss' ? 'HH:mm:ss' : 'yyyy-MM-dd HH:mm:ss',
+              props.format === 'yyyy-MM-dd' ? 'HH:mm:ss' : 'yyyy-MM-dd HH:mm:ss',
             )}
             onOpen={() => {
               setOpen(false);

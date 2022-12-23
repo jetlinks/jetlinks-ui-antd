@@ -16,6 +16,8 @@ interface FunctionCallProps {
   value?: any;
   onChange?: (data: any) => void;
   name?: any;
+  thenName: number;
+  branchGroup?: number;
 }
 
 export default (props: FunctionCallProps) => {
@@ -60,6 +62,8 @@ export default (props: FunctionCallProps) => {
         type={type}
         record={record}
         name={props.name}
+        branchGroup={props.branchGroup}
+        thenName={props.thenName}
         format={record?.format}
       />
     );

@@ -145,7 +145,12 @@ export default observer((props: Props) => {
                 name={['message', 'inputs']}
                 rules={[{ required: true, message: '请输入功能值' }]}
               >
-                <FunctionCall functionData={functionList} name={props.name} />
+                <FunctionCall
+                  functionData={functionList}
+                  name={props.name}
+                  branchGroup={props.branchGroup}
+                  thenName={props.thenName}
+                />
               </Form.Item>
             )}
           </>
