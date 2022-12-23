@@ -334,7 +334,12 @@ const TabComponent = observer((props: Props) => {
         />
       )}
 
-      <Card bordered={false} style={{ minHeight, position: 'relative' }} className={'alarmLog'}>
+      <Card
+        bordered={false}
+        bodyStyle={{ paddingTop: props.type === 'detail' ? 0 : 24 }}
+        style={{ minHeight, position: 'relative' }}
+        className={'alarmLog'}
+      >
         <div className="alarm-log-card">
           <div style={{ height: '100%', paddingBottom: 48 }}>
             {dataSource?.data.length ? (
