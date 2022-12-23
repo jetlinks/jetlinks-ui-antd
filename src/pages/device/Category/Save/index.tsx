@@ -12,7 +12,7 @@ import {
   Switch,
   Upload,
 } from '@formily/antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import FUpload from '@/components/Upload';
@@ -33,7 +33,7 @@ interface Props {
 
 const Save = (props: Props) => {
   const intl = useIntl();
-
+  const [loading, setLoading] = useState(false);
   const form = createForm({
     validateFirst: true,
     initialValues: props.data,
@@ -62,6 +62,7 @@ const Save = (props: Props) => {
   });
 
   const save = async () => {
+    setLoading(true);
     const value: CategoryItem = await form.submit();
     if (!!state.parentId) {
       value.parentId = state.parentId;
@@ -71,11 +72,13 @@ const Save = (props: Props) => {
       : ((await service.save(value as any)) as Response<CategoryItem>);
     if (resp.status === 200) {
       onlyMessage('操作成功');
+      setLoading(false);
       if (props.reload) {
         props.reload();
       }
     } else {
       onlyMessage('操作失败', 'error');
+      setLoading(false);
     }
     props.close();
   };
@@ -164,6 +167,7 @@ const Save = (props: Props) => {
       visible={props.visible}
       onCancel={() => props.close()}
       onOk={save}
+      confirmLoading={loading}
     >
       <Form layout={'vertical'} form={form}>
         <SchemaField schema={schema} />
