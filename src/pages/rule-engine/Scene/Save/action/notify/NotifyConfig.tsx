@@ -14,6 +14,7 @@ interface Props {
 export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
+  const [oldRowKey] = useState(NotifyModel.notify?.notifierId);
 
   const columns: ProColumns<ConfigItem>[] = [
     {
@@ -80,8 +81,17 @@ export default observer((props: Props) => {
               }
             },
           }}
-          request={(params) =>
-            queryMessageConfigPaging({
+          request={(params) => {
+            const sorts: any = [];
+
+            if (oldRowKey) {
+              sorts.push({
+                name: 'id',
+                value: oldRowKey,
+              });
+            }
+            sorts.push({ name: 'createTime', order: 'desc' });
+            return queryMessageConfigPaging({
               ...params,
               terms: params?.terms
                 ? [
@@ -103,9 +113,9 @@ export default observer((props: Props) => {
                       value: NotifyModel.notify?.notifyType || props.type,
                     },
                   ],
-              sorts: [{ name: 'createTime', order: 'desc' }],
-            })
-          }
+              sorts: sorts,
+            });
+          }}
           params={searchParam}
           height={'none'}
         />

@@ -74,7 +74,12 @@ export default observer((props: Props) => {
         _label.push(<span className="trigger-options-extraTime">{options.extraTime}</span>);
       }
       if (options.action) {
-        _label.push(<span className="trigger-options-action">{options.action}</span>);
+        _label.push(
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <AIcon type={options.typeIcon} style={{ paddingRight: 4 }} />
+            <span className="trigger-options-action">{options.action}</span>
+          </div>,
+        );
       }
       if (options.type) {
         _label.push(

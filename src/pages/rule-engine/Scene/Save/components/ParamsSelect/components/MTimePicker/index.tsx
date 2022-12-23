@@ -18,7 +18,7 @@ export default (props: Props) => {
 
   return (
     <div>
-      {props.type === 'yyyy-MM-dd' ? (
+      {props.type === 'time' ? (
         <div id={'manual-box'} className={'manual-box'}>
           <TimePicker
             {...props}
