@@ -16,7 +16,7 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import { useEffect, useState } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { onlyMessage } from '@/utils/util';
-
+import styles from './Indicators.less';
 interface Props {
   data: Partial<PropertyMetadata>;
   onCancel: () => void;
@@ -101,45 +101,45 @@ const Indicators = (props: Props) => {
             },
             space: {
               type: 'void',
-              title: '指标值',
               'x-decorator': 'FormItem',
               'x-component': 'FormGrid',
-              'x-decorator-props': {
-                labelAlign: 'left',
-                layout: 'vertical',
-              },
               'x-component-props': {
                 maxColumns: 12,
                 minColumns: 12,
               },
-              'x-reactions': [
-                {
-                  dependencies: ['.name'],
-                  fulfill: {
-                    state: {
-                      title: '{{$deps[0]}}',
-                    },
-                  },
-                },
-              ],
               properties: {
                 'value[0]': {
                   'x-decorator': 'FormItem',
+                  title: '指标值',
                   'x-component': componentMap[data.valueType?.type || ''] || 'Input',
                   'x-reactions': [
                     {
-                      dependencies: ['..range', data.valueType?.type],
+                      dependencies: ['..range', data.valueType?.type, '..name'],
                       fulfill: {
                         state: {
                           decoratorProps: {
-                            gridSpan: '{{!!$deps[0]?5:$deps[1]==="boolean"?12:10}}',
+                            gridSpan: '{{!!$deps[0]?6:12}}',
                           },
+                          title: '{{$deps[2]}}',
                         },
                       },
                     },
                   ],
+                  required: true,
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: `请${
+                        ['date', 'boolean'].includes(data?.valueType?.type as string)
+                          ? '选择'
+                          : '输入'
+                      }指标值`,
+                    },
+                  ],
                   'x-decorator-props': {
-                    gridSpan: 5,
+                    gridSpan: 6,
+                    labelAlign: 'left',
+                    layout: 'vertical',
                   },
                 },
                 'value[1]': {
@@ -156,8 +156,24 @@ const Indicators = (props: Props) => {
                       },
                     },
                   ],
+                  required: true,
+                  'x-validator': [
+                    {
+                      required: true,
+                      message: `请${
+                        ['date', 'boolean'].includes(data?.valueType?.type as string)
+                          ? '选择'
+                          : '输入'
+                      }指标值`,
+                    },
+                  ],
                   'x-decorator-props': {
-                    gridSpan: 5,
+                    gridSpan: 6,
+                    style: {
+                      marginTop: 30,
+                      color: 'white',
+                    },
+                    className: styles['indicators-asterisk'],
                   },
                 },
                 range: {
@@ -243,7 +259,7 @@ const Indicators = (props: Props) => {
       >
         场景联动页面可引用指标配置触发条件
       </div>
-      <div style={{ marginTop: '30px' }}>
+      <div style={{ marginTop: '30px' }} className={styles['indicators']}>
         <Form form={form} layout="vertical">
           <SchemaField schema={schema} />
         </Form>

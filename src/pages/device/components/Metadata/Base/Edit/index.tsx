@@ -760,6 +760,23 @@ const Edit = observer((props: Props) => {
             'x-decorator-props': {
               tooltip: '场景联动页面可引用指标配置作为触发条件',
             },
+            'x-validator': [
+              {
+                triggerType: 'onBlur',
+                validator: (value: any[]) => {
+                  return new Promise((resolve) => {
+                    const flag = value.every((item) => {
+                      return item.id && item.name && item.value;
+                    });
+                    if (flag) {
+                      resolve('');
+                    } else {
+                      resolve('请输入指标配置');
+                    }
+                  });
+                },
+              },
+            ],
             // 'x-visible': props.type === 'product',
             items: {
               type: 'object',
