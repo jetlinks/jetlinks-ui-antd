@@ -65,8 +65,9 @@ const Info = (props: Props) => {
           </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
-          <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+          <div style={{ maxHeight: 500, overflowY: 'auto' }}>
             <ReactJson
+              enableClipboard={false}
               displayObjectSize={false}
               displayDataTypes={false}
               name={false}
