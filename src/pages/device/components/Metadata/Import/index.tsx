@@ -303,17 +303,12 @@ const Import = (props: Props) => {
       props.close();
     } else {
       try {
+        const _object = JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}');
         const params = {
           id: param.id,
-          metadata: JSON.stringify(
-            operateLimits(
-              JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}'),
-            ),
-          ),
+          metadata: JSON.stringify(operateLimits(_object as DeviceMetadata)),
         };
-        const paramsDevice = JSON.stringify(
-          operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-        );
+        const paramsDevice = JSON.stringify(operateLimits(_object as DeviceMetadata));
         let resp: any = undefined;
         if (props?.type === 'device') {
           resp = await deviceService.saveMetadata(param.id, paramsDevice);
@@ -334,7 +329,7 @@ const Import = (props: Props) => {
         Store.set(SystemConst.GET_METADATA, true);
         Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
         props.close();
-      } catch (err) {
+      } catch (e) {
         onlyMessage('请上传正确的json格式文件', 'error');
       }
     }

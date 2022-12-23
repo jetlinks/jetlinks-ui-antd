@@ -86,7 +86,11 @@ const FIndicators = (props: Props) => {
           <DatePicker1
             showTime
             allowClear={false}
-            value={value?.value ? moment(value.value[0], 'YYYY-MM-DD HH:mm:ss') : ''}
+            value={
+              value?.value && value.value?.[0]
+                ? moment(value.value[0], 'YYYY-MM-DD HH:mm:ss')
+                : undefined
+            }
             onChange={(_: any, date: string) => {
               onChange({
                 ...value,

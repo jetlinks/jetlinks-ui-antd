@@ -3,11 +3,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Input } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
-import MonacoEditor from 'react-monaco-editor';
 import { isObject } from 'lodash';
 
 import './index.less';
 import { MetaDataJsonHandle } from '@/components/FormItems/MetadataJsonInput';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 
 type FunctionProps = {
   data: FunctionMetadata;
@@ -94,13 +94,13 @@ export default (props: FunctionProps) => {
     <div className="device-function-content">
       <div className="left">
         <div style={{ marginBottom: 12 }}>
-          <MonacoEditor
+          <JMonacoEditor
             width={'100%'}
             height={400}
             theme="vs-dark"
             language={'json'}
             value={value}
-            onChange={(newValue) => {
+            onChange={(newValue: any) => {
               setValue(newValue);
             }}
             editorDidMount={editorDidMountHandle}
