@@ -630,7 +630,7 @@ export default [
             //id: '1-3-4',
             sortIndex: 4,
             url: '/iot/device/Category',
-            icon: 'icon-chanpinfenlei1',
+            icon: 'icon-chanpinfenlei',
             accessSupport: 'support',
             assetType: 'deviceCategory',
             showPage: ['device-category'],
