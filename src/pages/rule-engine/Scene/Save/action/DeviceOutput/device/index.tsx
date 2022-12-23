@@ -8,7 +8,7 @@ import { SceneDeviceCard } from '@/components/ProTableCard/CardItems/device';
 import { isNoCommunity } from '@/utils/util';
 import { useIntl } from 'umi';
 import { service as categoryService } from '@/pages/device/Category';
-import { service as deptService } from '@/pages/system/Department';
+// import { service as deptService } from '@/pages/system/Department';
 import DeviceModel from '../model';
 import { observer } from '@formily/reactive-react';
 import { Form, TreeSelect } from 'antd';
@@ -93,6 +93,7 @@ export default observer((props: Props) => {
       dataIndex: 'productId',
       width: 200,
       ellipsis: true,
+      hideInSearch: true,
       valueType: 'select',
       request: async () => {
         const res = await service.getProductList();
@@ -105,11 +106,10 @@ export default observer((props: Props) => {
       filterMultiple: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.device.instance.registrationTime',
-        defaultMessage: '注册时间',
-      }),
-      dataIndex: 'registryTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
+      width: '200px',
+      valueType: 'dateTime',
     },
     {
       title: intl.formatMessage({
@@ -149,6 +149,7 @@ export default observer((props: Props) => {
       title: '产品分类',
       valueType: 'treeSelect',
       hideInTable: true,
+      hideInSearch: true,
       fieldProps: {
         fieldNames: {
           label: 'name',
@@ -165,6 +166,7 @@ export default observer((props: Props) => {
     {
       title: '网关类型',
       dataIndex: 'accessProvider',
+      hideInSearch: true,
       width: 150,
       ellipsis: true,
       valueType: 'select',
@@ -192,6 +194,7 @@ export default observer((props: Props) => {
       dataIndex: 'productId$product-info',
       title: '接入方式',
       valueType: 'select',
+      hideInSearch: true,
       hideInTable: true,
       request: () =>
         service.queryGatewayList().then((resp: any) =>
@@ -206,6 +209,7 @@ export default observer((props: Props) => {
       title: '设备类型',
       valueType: 'select',
       hideInTable: true,
+      hideInSearch: true,
       valueEnum: {
         device: {
           text: '直连设备',
@@ -220,47 +224,6 @@ export default observer((props: Props) => {
           status: 'gateway',
         },
       },
-    },
-    {
-      dataIndex: 'id$dim-assets',
-      title: '所属组织',
-      valueType: 'treeSelect',
-      hideInTable: true,
-      fieldProps: {
-        fieldNames: {
-          label: 'name',
-          value: 'value',
-        },
-      },
-      request: () =>
-        deptService
-          .queryOrgThree({
-            paging: false,
-          })
-          .then((resp) => {
-            const formatValue = (lists: any[]) => {
-              const _list: any[] = [];
-              lists.forEach((item) => {
-                if (item.children) {
-                  item.children = formatValue(item.children);
-                }
-                _list.push({
-                  ...item,
-                  value: JSON.stringify({
-                    assetType: 'device',
-                    targets: [
-                      {
-                        type: 'org',
-                        id: item.id,
-                      },
-                    ],
-                  }),
-                });
-              });
-              return _list;
-            };
-            return formatValue(resp.result);
-          }),
     },
   ];
 
@@ -389,7 +352,7 @@ export default observer((props: Props) => {
                   },
                 }}
                 request={(params) => {
-                  const sorts: any = [{ name: 'createTime', order: 'desc' }];
+                  const sorts: any = [];
 
                   if (oldRowKey) {
                     sorts.push({
@@ -397,7 +360,7 @@ export default observer((props: Props) => {
                       value: oldRowKey,
                     });
                   }
-
+                  sorts.push({ name: 'createTime', order: 'desc' });
                   return service.query({
                     ...params,
                     sorts: sorts,
