@@ -36,6 +36,7 @@ interface ProTableCardProps<T> {
   cardBodyClass?: string;
   noPadding?: boolean;
   cardScrollY?: number;
+  modelChange?: (type: ModelType) => void;
 }
 
 const ProTableCard = <
@@ -162,6 +163,18 @@ const ProTableCard = <
     }
   };
 
+  const pageChange = (page: number, size: number) => {
+    let _current = page;
+    if (pageSize !== size) {
+      _current = 1;
+    }
+    console.log(_current);
+    setCurrent(_current);
+    setPageIndex(_current - 1);
+    setPageSize(size);
+    props.onPageChange?.(_current - 1, size);
+  };
+
   useEffect(() => {
     window.addEventListener('resize', windowChange);
     windowChange();
@@ -228,12 +241,7 @@ const ProTableCard = <
           setLoading(!!l);
         }}
         pagination={{
-          onChange: (page, size) => {
-            setCurrent(page);
-            setPageIndex(page - 1);
-            setPageSize(size);
-            props.onPageChange?.(page - 1, size);
-          },
+          onChange: pageChange,
           pageSize: pageSize,
           current: current,
           pageSizeOptions: pageSizeOptions,
@@ -252,6 +260,7 @@ const ProTableCard = <
               })}
               onClick={() => {
                 setModel(ModelEnum.TABLE);
+                props.modelChange?.(ModelEnum.TABLE);
               }}
             >
               <BarsOutlined />
@@ -265,6 +274,7 @@ const ProTableCard = <
               })}
               onClick={() => {
                 setModel(ModelEnum.CARD);
+                props.modelChange?.(ModelEnum.CARD);
               }}
             >
               <AppstoreOutlined />
@@ -291,12 +301,7 @@ const ProTableCard = <
               className={'pro-table-card-pagination'}
               total={total}
               current={current}
-              onChange={(page, size) => {
-                setCurrent(page);
-                setPageIndex(page - 1);
-                setPageSize(size);
-                props.onPageChange?.(page - 1, size);
-              }}
+              onChange={pageChange}
               pageSizeOptions={pageSizeOptions}
               pageSize={pageSize}
               showTotal={(num) => {
