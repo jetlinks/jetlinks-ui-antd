@@ -470,6 +470,11 @@ const Instance = () => {
     return url.toString();
   };
 
+  const unSelect = () => {
+    setBindKeys([]);
+    InstanceModel.selectedRows.clear();
+  };
+
   const menu = (
     <Menu>
       <Menu.Item key="1">
@@ -547,19 +552,20 @@ const Instance = () => {
             popConfirm={{
               title: '已启用的设备无法删除，确认删除选中的禁用状态设备？',
               onConfirm: () => {
-                const array: any = [];
-                InstanceModel.selectedRows.forEach((value, key) => {
-                  if (value !== 'notActive') {
-                    InstanceModel.selectedRows.delete(key);
-                    array.push(key);
-                  }
-                });
+                // const array: any = [];
+                // InstanceModel.selectedRows.forEach((value, key) => {
+                //   if (value !== 'notActive') {
+                //     InstanceModel.selectedRows.delete(key);
+                //     array.push(key);
+                //   }
+                // });
                 if (!InstanceModel.selectedRows.size) return;
                 service.batchDeleteDevice([...InstanceModel.selectedRows.keys()]).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
                     actionRef.current?.reset?.();
-                    setBindKeys(array);
+                    // setBindKeys(array);
+                    unSelect();
                   }
                 });
               },
@@ -581,8 +587,7 @@ const Instance = () => {
                 service.batchDeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
-                    setBindKeys([]);
-                    InstanceModel.selectedRows.clear();
+                    unSelect();
                     actionRef.current?.reset?.();
                   }
                 });
@@ -606,8 +611,7 @@ const Instance = () => {
                 service.batchUndeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
-                    setBindKeys([]);
-                    InstanceModel.selectedRows.clear();
+                    unSelect();
                     actionRef.current?.reset?.();
                   }
                 });
@@ -726,7 +730,7 @@ const Instance = () => {
           return (
             <a
               onClick={() => {
-                setBindKeys([]);
+                unSelect();
               }}
             >
               取消选择
@@ -781,6 +785,9 @@ const Instance = () => {
             <Button>批量操作</Button>
           </Dropdown>,
         ]}
+        modelChange={() => {
+          unSelect();
+        }}
         cardRender={(record) => (
           <DeviceCard
             {...record}

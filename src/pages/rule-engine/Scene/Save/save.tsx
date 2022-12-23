@@ -2,7 +2,7 @@ import { Modal } from '@/components';
 import { Form, Input } from 'antd';
 import TriggerWay from '@/pages/rule-engine/Scene/Save/components/TriggerWay';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getMenuPathByCode } from '@/utils/menu';
 import useHistory from '@/hooks/route/useHistory';
 import { service } from '../index';
@@ -15,6 +15,7 @@ interface Props {
 export default (props: Props) => {
   const [form] = Form.useForm();
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -31,6 +32,7 @@ export default (props: Props) => {
         props.close();
       }}
       width={750}
+      confirmLoading={loading}
       onOk={async () => {
         const values = await form.validateFields();
         const obj = {
@@ -41,9 +43,11 @@ export default (props: Props) => {
             ...values.trigger,
           },
         };
+        setLoading(true);
         const resp = props.data?.id
           ? await service.modify(props.data?.id, { ...obj })
           : await service.save(obj);
+        setLoading(false);
         if (resp.status === 200) {
           props.close();
           const url = getMenuPathByCode('rule-engine/Scene/Save');

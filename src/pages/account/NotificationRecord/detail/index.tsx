@@ -62,8 +62,9 @@ const Detail = (props: Props) => {
           {data?.description || ''}
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
-          <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+          <div style={{ maxHeight: 400, overflowY: 'auto' }}>
             <ReactJson
+              enableClipboard={false}
               displayObjectSize={false}
               displayDataTypes={false}
               name={false}

@@ -152,7 +152,7 @@ const Save = () => {
                           console.log(key);
                           setAccessType(key);
                           queryProduct(key);
-                          form.resetFields(['id']);
+                          form.resetFields(['id', 'productId']);
                         }}
                         disabled={id}
                         options={[
