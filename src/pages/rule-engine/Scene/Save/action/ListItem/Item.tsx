@@ -388,7 +388,7 @@ export default (props: ItemProps) => {
           })}
         >
           {!!thenTerms?.length && (
-            <div className={'actions-item-filter-warp-tip'}>满足此条件后才会执行后续条件</div>
+            <div className={'actions-item-filter-warp-tip'}>满足此条件后执行后续动作</div>
           )}
           <div className={classNames('actions-item-filter-overflow')}>
             {props.parallel ? null : thenTerms && thenTerms.length ? (

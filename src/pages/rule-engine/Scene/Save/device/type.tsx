@@ -209,14 +209,24 @@ export default forwardRef((props: Props, ref) => {
                 rules={[{ required: true, message: '请选择属性' }]}
               >
                 <Select
+                  showSearch
                   mode={'multiple'}
                   options={readProperty}
                   maxTagCount={'responsive'}
                   placeholder={'请选择属性'}
                   style={{ width: '100%' }}
                   fieldNames={{ label: 'name', value: 'id' }}
-                  onSelect={(v: any, propertyItem: any) => {
-                    TriggerDeviceModel.options.action = '读取' + propertyItem.name;
+                  filterOption={(input: string, option: any) =>
+                    String(option?.name)?.toLowerCase()?.indexOf(String(input).toLowerCase()) >= 0
+                  }
+                  onChange={(v: any, propertyItems: any[]) => {
+                    const names = propertyItems.map((item) => item.name);
+                    let extraStr = '';
+                    if (names.length >= 2) {
+                      names.length = 2;
+                      extraStr = `等${propertyItems.length}个属性`;
+                    }
+                    TriggerDeviceModel.options.action = `读取 ${names.join('、')}${extraStr}`;
                   }}
                 />
               </Form.Item>

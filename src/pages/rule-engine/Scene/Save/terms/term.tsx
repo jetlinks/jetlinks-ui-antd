@@ -145,11 +145,9 @@ export default observer((props: TermsProps) => {
                     }
                     onDelete={() => {
                       terms.splice(index, 1);
-                      FormModel.current.options?.when[props.whenName]?.terms?.splice(index, 1);
-                      // setTerms([...terms]);
-                      // props.onValueChange({
-                      //   terms: terms,
-                      // });
+                      FormModel.current.options?.when[props.whenName]?.terms?.[
+                        props.name
+                      ]?.terms?.splice(index, 1);
                     }}
                     onAdd={() => {
                       const key = `params_${new Date().getTime()}`;

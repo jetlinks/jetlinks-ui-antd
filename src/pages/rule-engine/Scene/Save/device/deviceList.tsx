@@ -254,7 +254,7 @@ export default observer(() => {
               TriggerDeviceModel.devicePageSize = size;
             }}
             request={(params) => {
-              const sorts: any[] = [{ name: 'createTime', order: 'desc' }];
+              const sorts: any[] = [];
               if (oldRowKey && isArray(oldRowKey)) {
                 oldRowKey.forEach((v) => {
                   sorts.push({
@@ -263,6 +263,7 @@ export default observer(() => {
                   });
                 });
               }
+              sorts.push({ name: 'createTime', order: 'desc' });
               return service.query({
                 ...params,
                 sorts: sorts,

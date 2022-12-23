@@ -129,8 +129,12 @@ export default (props: ParamsDropdownProps) => {
           return (
             <MTimePicker
               value={_value ? moment(_value, 'HH:mm:ss') : undefined}
+              type={'time'}
               onChange={(_: any, timeString: string) => {
                 onValueChange(timeString, timeString);
+                setOpen(false);
+              }}
+              onOpen={() => {
                 setOpen(false);
               }}
             />

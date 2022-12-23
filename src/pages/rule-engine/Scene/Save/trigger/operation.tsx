@@ -84,6 +84,7 @@ export default (props: OperatorProps) => {
       <Col span={6}>
         <Select
           // mode="multiple"
+          showSearch
           id={props.id}
           options={props.propertiesList || []}
           value={key}
@@ -100,6 +101,9 @@ export default (props: OperatorProps) => {
             }
             props.onSelect?.(id, item);
           }}
+          filterOption={(input: string, option: any) =>
+            String(option?.name)?.toLowerCase()?.indexOf(String(input).toLowerCase()) >= 0
+          }
           onDeselect={(id: any) => {
             const _value: any = { ...props.value };
             if (id in props.value) {

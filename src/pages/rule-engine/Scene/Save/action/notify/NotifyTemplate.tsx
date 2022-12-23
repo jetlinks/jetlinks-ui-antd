@@ -14,6 +14,7 @@ interface Props {
 export default observer((props: Props) => {
   const actionRef = useRef<ActionType>();
   const [searchParam, setSearchParam] = useState({});
+  const [oldRowKey] = useState(NotifyModel.notify?.templateId);
 
   const columns: ProColumns<TemplateItem>[] = [
     {
@@ -80,11 +81,20 @@ export default observer((props: Props) => {
             },
           }}
           request={async (params) => {
+            const sorts: any = [];
+
+            if (oldRowKey) {
+              sorts.push({
+                name: 'id',
+                value: oldRowKey,
+              });
+            }
+            sorts.push({ name: 'createTime', order: 'desc' });
             const resp = await queryMessageTemplatePaging(
               NotifyModel.notify?.notifierId || props?.type,
               {
                 ...params,
-                sorts: [{ name: 'createTime', order: 'desc' }],
+                sorts: sorts,
               },
             );
             return {

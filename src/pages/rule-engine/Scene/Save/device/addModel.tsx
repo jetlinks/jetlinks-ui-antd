@@ -152,6 +152,7 @@ export default observer((props: AddProps) => {
       TriggerDeviceModel.devicePageSize = props.options.devicePageSize;
       TriggerDeviceModel.productPage = props.options.productPage;
       TriggerDeviceModel.productPageSize = props.options.productPageSize;
+      TriggerDeviceModel.options = props.options;
     }
     setLoading(true);
   }, [props.options]);
@@ -175,7 +176,7 @@ export default observer((props: AddProps) => {
       extraName: '', // 拓展参数
       onlyName: false,
       type: '', // 触发类型
-      typeIcon: typeIconMap[TriggerDeviceModel.options.action],
+      typeIcon: typeIconMap[data.operator],
       productName: '',
       selectorIcon: '',
       time: undefined,
