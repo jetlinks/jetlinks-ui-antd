@@ -14,6 +14,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Models from '@/pages/system/Department/Assets/productCategory/model';
 import { onlyMessage } from '@/utils/util';
 import PermissionButton from '@/components/PermissionButton';
+import '../index.less';
 
 export const service = new Service('tenant');
 
@@ -191,7 +192,7 @@ const Member = observer((props: { parentId: string }) => {
   }, [props.parentId]);
 
   return (
-    <>
+    <div className="content">
       {MemberModel.bind && (
         <Bind
           visible={MemberModel.bind}
@@ -280,7 +281,7 @@ const Member = observer((props: { parentId: string }) => {
           },
         }}
         params={searchParam}
-        toolBarRender={() => [
+        headerTitle={[
           <PermissionButton
             onClick={() => {
               MemberModel.bind = true;
@@ -288,6 +289,7 @@ const Member = observer((props: { parentId: string }) => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            style={{ marginRight: 12 }}
             disabled={!props.parentId}
             isPermission={permission['bind-user']}
           >
@@ -336,7 +338,7 @@ const Member = observer((props: { parentId: string }) => {
           // </Popconfirm>,
         ]}
       />
-    </>
+    </div>
   );
 });
 

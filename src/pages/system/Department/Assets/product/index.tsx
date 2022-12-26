@@ -18,6 +18,7 @@ import { ProTableCard, PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { ASSETS_TABS_ENUM, AssetsModel } from '@/pages/system/Department/Assets';
 import UpdateModal from '../updateModal';
+import '../index.less';
 
 export const service = new Service<ProductItem>('assets');
 
@@ -257,7 +258,7 @@ export default observer((props: { parentId: string }) => {
   };
 
   return (
-    <>
+    <div className="content">
       {Models.bind && (
         <Bind
           visible={Models.bind}
@@ -441,7 +442,7 @@ export default observer((props: { parentId: string }) => {
             ]}
           />
         )}
-        toolBarRender={() => [
+        headerTitle={[
           <PermissionButton
             onClick={() => {
               Models.bind = true;
@@ -449,6 +450,7 @@ export default observer((props: { parentId: string }) => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            style={{ marginRight: 12 }}
             disabled={!props.parentId}
             isPermission={permission.assert}
           >
@@ -497,6 +499,6 @@ export default observer((props: { parentId: string }) => {
           // </Popconfirm>,
         ]}
       />
-    </>
+    </div>
   );
 });
