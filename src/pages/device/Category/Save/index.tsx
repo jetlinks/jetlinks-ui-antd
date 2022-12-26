@@ -62,24 +62,23 @@ const Save = (props: Props) => {
   });
 
   const save = async () => {
-    setLoading(true);
     const value: CategoryItem = await form.submit();
     if (!!state.parentId) {
       value.parentId = state.parentId;
     }
+    setLoading(true);
     const resp = props.data.id
       ? await service.update(value as CategoryItem)
       : ((await service.save(value as any)) as Response<CategoryItem>);
     if (resp.status === 200) {
       onlyMessage('操作成功');
-      setLoading(false);
       if (props.reload) {
         props.reload();
       }
     } else {
       onlyMessage('操作失败', 'error');
-      setLoading(false);
     }
+    setLoading(false);
     props.close();
   };
 
