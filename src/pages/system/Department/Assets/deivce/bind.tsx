@@ -115,6 +115,15 @@ const Bind = observer((props: Props) => {
     }
   };
 
+  const unSelect = () => {
+    Models.bindKeys = [];
+    AssetsModel.params = {};
+  };
+
+  const getSelectedRowsKey = (selectedRows) => {
+    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
+  };
+
   useEffect(() => {
     if (props.visible) {
       actionRef.current?.reload();
@@ -192,6 +201,7 @@ const Bind = observer((props: Props) => {
         )}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
+          unSelect();
           setSearchParam(data);
         }}
         // onReset={() => {
@@ -217,10 +227,43 @@ const Bind = observer((props: Props) => {
           cardRender={(record) => (
             <ExtraDeviceCard showBindBtn={false} showTool={false} {...record} cardType={'bind'} />
           )}
+          tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
+          tableAlertOptionRender={() => {
+            return (
+              <a
+                onClick={() => {
+                  unSelect();
+                }}
+              >
+                取消选择
+              </a>
+            );
+          }}
           rowSelection={{
             selectedRowKeys: Models.bindKeys,
-            onChange: (selectedRowKeys, selectedRows) => {
-              Models.bindKeys = selectedRows.map((item) => item.id);
+            // onChange: (selectedRowKeys, selectedRows) => {
+            //   Models.bindKeys = selectedRows.map((item) => item.id);
+            // },
+            onSelect: (record, selected, selectedRows) => {
+              if (selected) {
+                Models.bindKeys = [
+                  ...new Set([...Models.bindKeys, ...getSelectedRowsKey(selectedRows)]),
+                ];
+              } else {
+                Models.bindKeys = Models.bindKeys.filter((item) => item !== record.id);
+              }
+            },
+            onSelectAll: (selected, selectedRows, changeRows) => {
+              if (selected) {
+                Models.bindKeys = [
+                  ...new Set([...Models.bindKeys, ...getSelectedRowsKey(selectedRows)]),
+                ];
+              } else {
+                const unChangeRowsKeys = getSelectedRowsKey(changeRows);
+                Models.bindKeys = Models.bindKeys
+                  .concat(unChangeRowsKeys)
+                  .filter((item) => !unChangeRowsKeys.includes(item));
+              }
             },
           }}
           request={(params) =>

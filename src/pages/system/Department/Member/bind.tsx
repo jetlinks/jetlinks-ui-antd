@@ -65,6 +65,14 @@ const Bind = observer((props: Props) => {
     }
   };
 
+  const unSelect = () => {
+    MemberModel.bindUsers = [];
+  };
+
+  const getSelectedRowsKey = (selectedRows) => {
+    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
+  };
+
   return (
     <Modal
       visible={props.visible}
@@ -80,6 +88,7 @@ const Bind = observer((props: Props) => {
         defaultParam={[{ column: 'id$in-dimension$org$not', value: props.parentId }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
+          unSelect();
           setSearchParam(data);
         }}
         // onReset={() => {
@@ -96,10 +105,43 @@ const Bind = observer((props: Props) => {
         columnEmptyText={''}
         search={false}
         params={searchParam}
+        tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
+        tableAlertOptionRender={() => {
+          return (
+            <a
+              onClick={() => {
+                unSelect();
+              }}
+            >
+              取消选择
+            </a>
+          );
+        }}
         rowSelection={{
           selectedRowKeys: MemberModel.bindUsers,
-          onChange: (selectedRowKeys, selectedRows) => {
-            MemberModel.bindUsers = selectedRows.map((item) => item.id);
+          // onChange: (selectedRowKeys, selectedRows) => {
+          //   MemberModel.bindUsers = selectedRows.map((item) => item.id);
+          // },
+          onSelect: (record, selected, selectedRows) => {
+            if (selected) {
+              MemberModel.bindUsers = [
+                ...new Set([...MemberModel.bindUsers, ...getSelectedRowsKey(selectedRows)]),
+              ];
+            } else {
+              MemberModel.bindUsers = MemberModel.bindUsers.filter((item) => item !== record.id);
+            }
+          },
+          onSelectAll: (selected, selectedRows, changeRows) => {
+            if (selected) {
+              MemberModel.bindUsers = [
+                ...new Set([...MemberModel.bindUsers, ...getSelectedRowsKey(selectedRows)]),
+              ];
+            } else {
+              const unChangeRowsKeys = getSelectedRowsKey(changeRows);
+              MemberModel.bindUsers = MemberModel.bindUsers
+                .concat(unChangeRowsKeys)
+                .filter((item) => !unChangeRowsKeys.includes(item));
+            }
           },
         }}
         request={(params) =>

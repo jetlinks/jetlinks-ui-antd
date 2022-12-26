@@ -29,7 +29,6 @@ export const DeviceBadge = (props: DeviceBadgeProps) => {
     offline: 'error',
     online: 'processing',
   };
-  console.log(STATUS[props.type], props);
   return <Badge status={STATUS[props.type]} text={props.text} />;
 };
 
@@ -234,6 +233,15 @@ export default observer((props: { parentId: string }) => {
     }
   };
 
+  const unSelect = () => {
+    Models.bindKeys = [];
+    Models.unBindKeys = [];
+    AssetsModel.params = {};
+  };
+  const getSelectedRowsKey = (selectedRows) => {
+    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
+  };
+
   const getData = (params: any, parentId: string) => {
     return new Promise((resolve) => {
       service.queryDeviceList2(params, parentId).subscribe((data) => {
@@ -310,6 +318,7 @@ export default observer((props: { parentId: string }) => {
         ]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
+          unSelect();
           setSearchParam(data);
         }}
         // onReset={() => {
@@ -350,10 +359,43 @@ export default observer((props: { parentId: string }) => {
             status: resp.status,
           };
         }}
+        tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
+        tableAlertOptionRender={() => {
+          return (
+            <a
+              onClick={() => {
+                unSelect();
+              }}
+            >
+              取消选择
+            </a>
+          );
+        }}
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
-          onChange: (selectedRowKeys, selectedRows) => {
-            Models.unBindKeys = selectedRows.map((item) => item.id);
+          // onChange: (selectedRowKeys, selectedRows) => {
+          //   Models.unBindKeys = selectedRows.map((item) => item.id);
+          // },
+          onSelect: (record, selected, selectedRows) => {
+            if (selected) {
+              Models.unBindKeys = [
+                ...new Set([...Models.unBindKeys, ...getSelectedRowsKey(selectedRows)]),
+              ];
+            } else {
+              Models.unBindKeys = Models.unBindKeys.filter((item) => item !== record.id);
+            }
+          },
+          onSelectAll: (selected, selectedRows, changeRows) => {
+            if (selected) {
+              Models.unBindKeys = [
+                ...new Set([...Models.unBindKeys, ...getSelectedRowsKey(selectedRows)]),
+              ];
+            } else {
+              const unChangeRowsKeys = getSelectedRowsKey(changeRows);
+              Models.unBindKeys = Models.unBindKeys
+                .concat(unChangeRowsKeys)
+                .filter((item) => !unChangeRowsKeys.includes(item));
+            }
           },
         }}
         cardRender={(record) => (
