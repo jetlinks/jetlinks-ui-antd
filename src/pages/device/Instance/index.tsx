@@ -633,6 +633,7 @@ const Instance = () => {
         // initParam={jumpParams}
         onSearch={(data) => {
           actionRef.current?.reset?.();
+          unSelect();
           setSearchParams(data);
           const terms1 = data.terms[0]?.terms?.map((e) => {
             if (e.column === 'classifiedId') {
