@@ -397,7 +397,7 @@ const Message = observer(() => {
                       }
                     }
                     if (values.type === 'function') {
-                      const list = (_inputs?.data || []).filter((it: any) => !!it.value);
+                      const list = (_inputs || []).filter((it: any) => !!it.value);
                       const obj = {};
                       list.map((it: any) => {
                         obj[it.id] = it.value;

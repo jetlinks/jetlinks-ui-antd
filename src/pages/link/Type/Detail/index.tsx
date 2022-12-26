@@ -672,6 +672,7 @@ const Save = observer(() => {
           { value: 'delimited', label: '分隔符' },
           { value: 'script', label: '自定义脚本' },
           { value: 'fixed_length', label: '固定长度' },
+          { value: 'length', label: '长度' },
         ],
         'x-reactions': {
           dependencies: ['type'],
@@ -700,7 +701,7 @@ const Save = observer(() => {
             dependencies: ['.parserType'],
             fulfill: {
               state: {
-                visible: '{{["delimited", "script", "fixed_length"].includes($deps[0])}}',
+                visible: '{{["delimited", "script", "fixed_length", "length"].includes($deps[0])}}',
               },
             },
           },
@@ -827,6 +828,100 @@ const Save = observer(() => {
                 fulfill: {
                   state: {
                     visible: '{{$deps[0] === "fixed_length"}}',
+                  },
+                },
+              },
+            ],
+          },
+          length: {
+            title: '长度',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择长度',
+              },
+            ],
+            enum: [1, 2, 3, 4, 8],
+            default: 4,
+            'x-component-props': {
+              placeholder: '请选择长度',
+            },
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "length"}}',
+                  },
+                },
+              },
+            ],
+          },
+          offset: {
+            title: '偏移量',
+            'x-component': 'NumberPicker',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-validator': [
+              {
+                max: 65535,
+                message: '请输入0-65535之间的正整数',
+              },
+              {
+                min: 0,
+                message: '请输入0-65535之间的正整数',
+              },
+            ],
+            'x-component-props': {
+              placeholder: '请输入偏移量',
+            },
+            default: 0,
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "length"}}',
+                  },
+                },
+              },
+            ],
+          },
+          little: {
+            title: '大小端',
+            type: 'boolean',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-component-props': {
+              placeholder: '请选择大小端',
+            },
+            default: false,
+            enum: [
+              { label: '大端', value: false },
+              { label: '小端', value: true },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "length"}}',
                   },
                 },
               },

@@ -252,6 +252,8 @@ const Edit = observer((props: Props) => {
               ]
             : MetadataModel.type === 'functions'
             ? DataTypeList.filter((item) => item.value !== 'file')
+            : MetadataModel.type === 'tags'
+            ? DataTypeList.filter((item) => item.value !== 'file' && item.value !== 'password')
             : DataTypeList,
       },
       unit: {
@@ -288,6 +290,17 @@ const Edit = observer((props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        default: 2,
+        'x-validator': [
+          {
+            max: 2147483647,
+            message: '请输入0-2147483647之间的正整数',
+          },
+          {
+            min: 0,
+            message: '请输入0-2147483647之间的正整数',
+          },
+        ],
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -322,6 +335,13 @@ const Edit = observer((props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: DateTypeList,
+        default: 'string',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择时间格式',
+          },
+        ],
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -367,9 +387,19 @@ const Edit = observer((props: Props) => {
             'x-component-props': {
               min: 1,
             },
+            // 'x-validator': [
+            //   {
+            //     checkLength: true,
+            //   },
+            // ],
             'x-validator': [
               {
-                checkLength: true,
+                max: 2147483647,
+                message: '请输入1-2147483647之间的正整数',
+              },
+              {
+                min: 1,
+                message: '请输入1-2147483647之间的正整数',
               },
             ],
             'x-reactions': {
@@ -439,6 +469,13 @@ const Edit = observer((props: Props) => {
         'x-component': 'Select',
         'x-visible': false,
         enum: FileTypeList,
+        default: 'url',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择文件类型',
+          },
+        ],
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -1072,9 +1109,14 @@ const Edit = observer((props: Props) => {
           id: 'pages.device.productDetail.metadata.whetherAsync',
           defaultMessage: '是否异步',
         }),
-        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择是否异步',
+          },
+        ],
         enum: [
           {
             label: intl.formatMessage({

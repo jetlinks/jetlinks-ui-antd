@@ -7,7 +7,6 @@ import { Store } from 'jetlinks-store';
 import JsonParam from '@/components/Metadata/JsonParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
-import { registerValidateRules } from '@formily/core';
 
 const ArrayParam = () => {
   const SchemaField = createSchemaField({
@@ -22,27 +21,6 @@ const ArrayParam = () => {
       ArrayParam,
       EnumParam,
       BooleanEnum,
-    },
-  });
-
-  registerValidateRules({
-    checkLength(value) {
-      if (value === undefined) {
-        return '';
-      }
-      if (String(value).length > 64) {
-        return {
-          type: 'error',
-          message: '最多可输入64个字符',
-        };
-      }
-      if (!(value % 1 === 0)) {
-        return {
-          type: 'error',
-          message: '请输入非0正整数',
-        };
-      }
-      return '';
     },
   });
 
@@ -68,7 +46,9 @@ const ArrayParam = () => {
             title: '元素类型',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
-            enum: DataTypeList.filter((item) => item.value !== 'array'),
+            enum: DataTypeList.filter((item) =>
+              ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(item.value),
+            ),
             'x-validator': [
               {
                 required: true,
@@ -83,9 +63,15 @@ const ArrayParam = () => {
             'x-component-props': {
               min: 1,
             },
+            default: 2,
             'x-validator': [
               {
-                checkLength: true,
+                max: 2147483647,
+                message: '请输入0-2147483647之间的正整数',
+              },
+              {
+                min: 0,
+                message: '请输入0-2147483647之间的正整数',
               },
             ],
             'x-reactions': {
@@ -124,6 +110,13 @@ const ArrayParam = () => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: DateTypeList,
+            default: 'string',
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择时间格式',
+              },
+            ],
             'x-reactions': {
               dependencies: ['.type'],
               fulfill: {
@@ -148,7 +141,12 @@ const ArrayParam = () => {
                 },
                 'x-validator': [
                   {
-                    checkLength: true,
+                    max: 2147483647,
+                    message: '请输入1-2147483647之间的正整数',
+                  },
+                  {
+                    min: 1,
+                    message: '请输入1-2147483647之间的正整数',
                   },
                 ],
                 'x-reactions': {

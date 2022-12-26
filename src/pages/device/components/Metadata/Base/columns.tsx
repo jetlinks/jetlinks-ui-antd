@@ -72,7 +72,7 @@ const PropertyColumns: ProColumns<MetadataItem>[] = BaseColumns.concat([
     render: (text: any) => text?.type,
   },
   {
-    title: '数据类型',
+    title: '属性来源',
     dataIndex: 'expands',
     render: (text: any) => SourceMap[text?.source],
   },
