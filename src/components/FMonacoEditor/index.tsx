@@ -1,9 +1,10 @@
 import MonacoEditor from 'react-monaco-editor';
 import { connect, mapProps } from '@formily/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export const JMonacoEditor = (props: any) => {
   const [loading, setLoading] = useState(false);
+  const monacoRef = useRef<any>();
 
   return (
     <div
@@ -14,7 +15,7 @@ export const JMonacoEditor = (props: any) => {
       }}
       style={{ height: '100%', width: '100%' }}
     >
-      {loading && <MonacoEditor {...props} />}
+      {loading && <MonacoEditor ref={monacoRef} {...props} />}
     </div>
   );
 };

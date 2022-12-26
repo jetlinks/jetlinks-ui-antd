@@ -33,7 +33,10 @@ export default (props: ActionsProps) => {
     const serialArr = props.thenOptions.filter((item) => !item.parallel);
     setParallelArray(parallelArr);
     setSerialArray(serialArr);
-    if (!lock && parallelArr.length && !serialArr.length) {
+    const isSerialActions = serialArr.some((item) => {
+      return !!item.actions.length;
+    });
+    if (!lock && parallelArr.length && (!serialArr.length || !isSerialActions)) {
       setActiveKey(['2']);
       setLock(true);
     }
@@ -140,17 +143,18 @@ export default (props: ActionsProps) => {
                 parallel={true}
                 actions={parallelArray.length ? parallelArray[0].actions : []}
                 onAdd={(actionItem) => {
-                  if (parallelArray.length) {
-                    const indexOf = parallelArray[0].actions?.findIndex(
+                  const newParallelArray = [...parallelArray];
+                  if (newParallelArray.length) {
+                    const indexOf = newParallelArray[0].actions?.findIndex(
                       (aItem) => aItem.key === actionItem.key,
                     );
                     if (indexOf !== -1) {
-                      parallelArray[0].actions.splice(indexOf, 1, actionItem);
+                      newParallelArray[0].actions.splice(indexOf, 1, actionItem);
                     } else {
-                      parallelArray[0].actions.push(actionItem);
+                      newParallelArray[0].actions.push(actionItem);
                     }
-                    setParallelArray([...parallelArray]);
-                    props.onUpdate(parallelArray[0], true);
+                    setParallelArray([...newParallelArray]);
+                    props.onUpdate(newParallelArray[0], true);
                   } else {
                     actionItem.key = randomString();
                     props.onAdd({

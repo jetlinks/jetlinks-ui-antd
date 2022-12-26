@@ -310,7 +310,7 @@ const Config = () => {
   const level = (
     <Row>
       <Col span={14}>
-        <Card>
+        <Card style={{ height: 650 }}>
           <TitleComponent data={'告警级别配置'} />
           <Form form={levelForm}>
             <SchemaField schema={levelSchema} />
@@ -327,7 +327,7 @@ const Config = () => {
         </Card>
       </Col>
       <Col span={10}>
-        <div style={{ marginLeft: 20 }} className={styles.doc}>
+        <div style={{ marginLeft: 20, height: 650 }} className={styles.doc}>
           <h1>功能说明</h1>
           <div>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</div>
           <div>2、告警级别将会在告警配置中被引用。</div>
@@ -340,7 +340,7 @@ const Config = () => {
     <Row>
       <Col span={14}>
         <div>
-          <Card>
+          <Card style={{ height: 650 }}>
             <TitleComponent
               data={
                 <span>
@@ -370,7 +370,13 @@ const Config = () => {
                 </span>
               }
             />
-            <Descriptions key={'output'} bordered column={2} labelStyle={{ width: 112 }}>
+            <Descriptions
+              key={'output'}
+              bordered
+              column={2}
+              labelStyle={{ width: 112 }}
+              contentStyle={{ minWidth: 100 }}
+            >
               <Descriptions.Item label="kafka地址" contentStyle={{ minWidth: 200 }}>
                 {output?.data?.config?.config?.address && (
                   <Badge
@@ -421,7 +427,13 @@ const Config = () => {
                 </span>
               }
             />
-            <Descriptions key={'input'} bordered column={2} labelStyle={{ width: 112 }}>
+            <Descriptions
+              key={'input'}
+              bordered
+              column={2}
+              labelStyle={{ width: 112 }}
+              contentStyle={{ minWidth: 150 }}
+            >
               <Descriptions.Item label="kafka地址">
                 {input?.data?.config?.config?.address && (
                   <Badge
@@ -446,7 +458,7 @@ const Config = () => {
         </div>
       </Col>
       <Col span={10}>
-        <div style={{ height: 650, marginLeft: 20, paddingBottom: 24 }}>
+        <div style={{ height: 650, marginLeft: 20, paddingBottom: 24, backgroundColor: '#fff' }}>
           <div className={styles.doc}>
             <h1>功能图示</h1>
             <div className={styles.image}>

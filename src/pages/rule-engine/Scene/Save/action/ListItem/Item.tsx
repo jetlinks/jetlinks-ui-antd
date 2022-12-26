@@ -381,7 +381,7 @@ export default (props: ItemProps) => {
           </div>
         </Popconfirm>
       </div>
-      {!props.isLast && (
+      {!props.isLast && props.type === 'serial' ? (
         <div
           className={classNames('actions-item-filter-warp', {
             'filter-border': !!thenTerms?.length,
@@ -522,7 +522,7 @@ export default (props: ItemProps) => {
             )}
           </div>
         </div>
-      )}
+      ) : null}
       {visible && (
         <Modal
           name={props.name}

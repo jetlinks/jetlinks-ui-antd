@@ -237,9 +237,9 @@ export default () => {
 
   const networkValueRender = (value: number) => {
     if (value >= 1024 && value < 1024 * 1024) {
-      return `${Number((value / 1024).toFixed(2))}M`;
+      return `${Number((value / 1024).toFixed(2))}KB`;
     } else if (value >= 1024 * 1024) {
-      return `${Number((value / 1024 / 1024).toFixed(2))}KB`;
+      return `${Number((value / 1024 / 1024).toFixed(2))}M`;
     } else {
       return `${value}B`;
     }

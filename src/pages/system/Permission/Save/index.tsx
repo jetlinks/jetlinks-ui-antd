@@ -76,18 +76,42 @@ const Save = (props: Props) => {
         'x-component-props': {
           placeholder: '请输入标识(ID)',
         },
+        'x-disabled': model === 'edit',
         name: 'id',
         'x-decorator-props': {
           tooltip: <div>标识ID需与代码中的标识ID一致</div>,
         },
         'x-validator': [
           {
+            required: true,
+            message: '请输入标识(ID)',
+          },
+          {
             max: 64,
             message: '最多可输入64个字符',
           },
           {
-            required: true,
-            message: '请输入标识(ID)',
+            triggerType: 'onBlur',
+            validator: (value: string) => {
+              return new Promise((resolve) => {
+                if (!value) resolve('');
+                service
+                  .validateField({ id: value })
+                  .then((resp) => {
+                    if (resp.status === 200) {
+                      if (resp.result.passed) {
+                        resolve('');
+                      } else {
+                        resolve(model === 'edit' ? '' : resp.result.reason);
+                      }
+                    }
+                    resolve('');
+                  })
+                  .catch(() => {
+                    return '验证失败!';
+                  });
+              });
+            },
           },
         ],
       },
@@ -253,7 +277,7 @@ const Save = (props: Props) => {
   };
 
   const save = async () => {
-    const value = await form.submit<UserItem>();
+    const value = await form.submit<PermissionItem>();
     let response = undefined;
     if (props.model === 'add') {
       response = await service.save(value);

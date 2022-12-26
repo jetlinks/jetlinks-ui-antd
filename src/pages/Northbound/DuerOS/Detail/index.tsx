@@ -15,7 +15,7 @@ import {
   PreviewText,
   Select,
 } from '@formily/antd';
-import { PermissionButton } from '@/components';
+import { PermissionButton, TitleComponent } from '@/components';
 import { useEffect, useMemo, useState } from 'react';
 import {
   createForm,
@@ -693,8 +693,9 @@ const Save = () => {
   return (
     <PageContainer>
       <Card>
-        <Row>
-          <Col span={12}>
+        <Row gutter={24}>
+          <Col span={14}>
+            <TitleComponent data={'基本信息'} />
             <Form layout="vertical" form={form}>
               <SchemaField
                 schema={schema}
@@ -717,7 +718,7 @@ const Save = () => {
               </FormButtonGroup.Sticky>
             </Form>
           </Col>
-          <Col span={10} push={2}>
+          <Col span={10}>
             <Doc />
           </Col>
         </Row>

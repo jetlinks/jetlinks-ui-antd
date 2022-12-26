@@ -17,7 +17,7 @@ export default [
         //parentId: '1',
         //id: '1-1',
         url: '/iot/home',
-        icon: 'icon-keshihua',
+        icon: 'icon-zhihuishequ',
         sortIndex: 1,
         showPage: ['dashboard', 'device-instance', 'device-product'],
         permissions: [
@@ -50,7 +50,7 @@ export default [
         //parentId: '1',
         //id: '1-2',
         url: '/iot/notice/Type',
-        icon: 'icon-shebei',
+        icon: 'icon-tongzhiguanli',
         sortIndex: 2,
         showPage: ['template', 'notifier'],
         permissions: [],
@@ -630,7 +630,7 @@ export default [
             //id: '1-3-4',
             sortIndex: 4,
             url: '/iot/device/Category',
-            icon: 'icon-chanpinfenlei1',
+            icon: 'icon-chanpinfenlei',
             accessSupport: 'support',
             assetType: 'deviceCategory',
             showPage: ['device-category'],
@@ -1022,7 +1022,7 @@ export default [
             //id: '1-4-6',
             sortIndex: 6,
             url: '/iot/link/Certificate',
-            icon: 'icon-rizhifuwu',
+            icon: 'icon-zhengshuguanli',
             showPage: ['certificate'],
             permissions: [],
             buttons: [
@@ -1258,7 +1258,7 @@ export default [
             //id: '1-4-9',
             sortIndex: 9,
             url: '/iot/link/firmware',
-            icon: 'icon-wangluozujian',
+            icon: 'icon-yuanchengshengji',
             showPage: ['firmware-manager'],
             permissions: [],
             buttons: [
@@ -1370,7 +1370,7 @@ export default [
         owner: 'iot',
         sortIndex: 10,
         url: '/iot/link/DataCollect',
-        icon: 'icon-shuxingpeizhi',
+        icon: 'icon-analytics',
         showPage: [],
         permissions: [],
         children: [
@@ -1380,7 +1380,7 @@ export default [
             owner: 'iot',
             sortIndex: 1,
             url: '/iot/DataCollect/Dashboard',
-            icon: 'icon-shujumoni',
+            icon: 'icon-keshihua',
             showPage: [
               'dashboard',
               'data-collect-channel',
@@ -1534,7 +1534,7 @@ export default [
             owner: 'iot',
             sortIndex: 3,
             url: '/iot/DataCollect/IntegratedQuery',
-            icon: 'icon-zhilianshebei',
+            icon: 'icon-yingyongguanli',
             showPage: [
               'data-collect-channel',
               'data-collect-opc',
@@ -1669,7 +1669,7 @@ export default [
         //id: '1-5',
         sortIndex: 5,
         url: '/iot/Alarm',
-        icon: 'icon-zidingyiguize',
+        icon: 'icon-shebeigaojing',
         permissions: [],
         buttons: [],
         showPage: [],
@@ -1682,7 +1682,7 @@ export default [
             //id: '1-5-1',
             sortIndex: 1,
             url: '/iot/Alarm/dashboard',
-            icon: 'icon-shujumoni',
+            icon: 'icon-keshihua',
             showPage: ['dashboard', 'alarm-record', 'alarm-config'],
             permissions: [
               { permission: 'dashboard', actions: ['query'] },
@@ -1721,7 +1721,7 @@ export default [
             //id: '1-5-2',
             sortIndex: 3,
             url: '/iot/Alarm/Configuration',
-            icon: 'icon-chajianguanli',
+            icon: 'icon-warning_amber',
             showPage: ['alarm-config'],
             permissions: [],
             buttons: [
@@ -1888,7 +1888,7 @@ export default [
             //id: '1-6-1',
             sortIndex: 1,
             url: '/iot/northbound/DuerOS',
-            icon: 'icon-yunyunjieru',
+            icon: 'icon-zhineng',
             permissions: [],
             showPage: ['dueros-product'],
             buttons: [
@@ -1964,7 +1964,7 @@ export default [
             //id: '1-6-2',
             sortIndex: 2,
             url: '/iot/northbound/AliCloud',
-            icon: 'icon-yunyunjieru',
+            icon: 'icon-aliyun',
             permissions: [],
             showPage: ['aliyun-bridge'],
             buttons: [
@@ -2324,7 +2324,7 @@ export default [
         owner: 'iot',
         sortIndex: 8,
         url: '/iot/edge',
-        icon: 'icon-zidingyiguize',
+        icon: 'icon-bianyuanwangguan',
         permissions: [],
         buttons: [],
         children: [
@@ -2525,7 +2525,7 @@ export default [
         //id: '2-3',
         sortIndex: 3,
         url: '/media/device',
-        icon: 'icon-keshihua',
+        icon: 'icon-shipinwangguan',
         showPage: ['media-device'],
         permissions: [
           { permission: 'file', actions: ['upload-static'] },
@@ -3322,7 +3322,7 @@ export default [
         //id: '3-8',
         sortIndex: 8,
         url: '/system/Relationship',
-        icon: 'icon-renyuan',
+        icon: 'icon-shuxingpeizhi',
         showPage: ['relation'],
         permissions: [],
         buttons: [
@@ -3458,7 +3458,7 @@ export default [
         //id: '3-10',
         sortIndex: 10,
         url: '/system/Api',
-        icon: 'icon-rizhifuwu',
+        icon: 'icon-chakanAPI',
         showPage: ['open-api'],
         permissions: [{ permission: 'open-api', actions: ['query', 'save'] }],
         buttons: [],
@@ -3471,7 +3471,7 @@ export default [
         //id: '3-11',
         sortIndex: 11,
         url: '/system/Apply',
-        icon: 'icon-wangguanzishebei',
+        icon: 'icon-yingyongguanli',
         showPage: ['application'],
         permissions: [],
         buttons: [
@@ -3622,7 +3622,7 @@ export default [
     name: '物联卡',
     code: 'iot-card',
     url: '/iot-card',
-    icon: 'icon-yunyunjieru',
+    icon: 'icon-wulianka',
     permissions: [],
     children: [
       {
@@ -3633,7 +3633,7 @@ export default [
         name: '首页',
         code: 'iot-card/Home',
         url: '/iot-card/Home',
-        icon: 'icon-shujumoni',
+        icon: 'icon-zhihuishequ',
         status: 1,
         showPage: ['network-flow'],
         permissions: [{ permission: 'network-flow', actions: ['query'] }],
@@ -3662,7 +3662,7 @@ export default [
         name: '物联卡管理',
         code: 'iot-card/CardManagement',
         url: '/iot-card/CardManagement',
-        icon: 'icon-chanpinfenlei',
+        icon: 'icon-wuliankaguanli',
         status: 1,
         showPage: ['network-card'],
         permissions: [
@@ -3783,7 +3783,7 @@ export default [
         showPage: ['network-card'],
         code: 'iot-card/Recharge',
         url: '/iot-card/Recharge',
-        icon: 'icon-caidanguanli',
+        icon: 'icon-chongzhiguanli',
         status: 1,
         permissions: [
           {
@@ -3812,7 +3812,7 @@ export default [
         name: '平台接入',
         code: 'iot-card/Platform',
         url: '/iot-card/Platform',
-        icon: 'icon-wangguanzishebei',
+        icon: 'icon-pingtaiduijie',
         status: 1,
         showPage: ['platform'],
         permissions: [
@@ -3882,7 +3882,7 @@ export default [
         name: '操作记录',
         code: 'iot-card/Record',
         url: '/iot-card/Record',
-        icon: 'icon-rizhifuwu',
+        icon: 'icon-tongzhijilu',
         status: 1,
         showPage: ['network-card'],
         permissions: [
