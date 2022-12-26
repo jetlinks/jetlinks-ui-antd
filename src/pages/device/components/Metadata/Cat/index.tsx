@@ -28,6 +28,12 @@ const Cat = observer((props: Props) => {
   const id = _path[_path.length - 1];
 
   useEffect(() => {
+    if (props.visible) {
+      setValue(metadata);
+    }
+  }, [props.visible]);
+
+  useEffect(() => {
     service.codecs().subscribe({
       next: (data) => {
         setCodecs([{ id: 'jetlinks', name: 'jetlinks' }].concat(data));
@@ -65,6 +71,7 @@ const Cat = observer((props: Props) => {
       width={700}
       onClose={() => props.close()}
       visible={props.visible}
+      destroyOnClose
       extra={
         <Space>
           <Button

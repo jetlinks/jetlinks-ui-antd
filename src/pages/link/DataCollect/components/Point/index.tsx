@@ -400,7 +400,7 @@ export default observer((props: Props) => {
         },
         {
           title: '访问类型',
-          dataIndex: 'accessModes',
+          dataIndex: 'accessModes$in$any',
           valueType: 'select',
           valueEnum: {
             read: {
@@ -416,6 +416,7 @@ export default observer((props: Props) => {
               status: 'subscribe',
             },
           },
+          renderText: (_, record) => record.accessModes,
         },
         // {
         //   title: '状态',
@@ -467,8 +468,9 @@ export default observer((props: Props) => {
         },
         {
           title: '访问类型',
-          dataIndex: 'accessModes',
+          dataIndex: 'accessModes$in$any',
           valueType: 'select',
+          renderText: (_, record) => record.accessModes,
           valueEnum:
             props?.provider === 'MODBUS_TCP'
               ? {

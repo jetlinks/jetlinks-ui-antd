@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 interface Props {
   value?: string;
   onChange?: (type: any) => void;
+  placeholder?: string;
 }
 
 const CertificateFile = (props: Props) => {
@@ -46,7 +47,7 @@ const CertificateFile = (props: Props) => {
         }}
         value={keystoreBase64}
         rows={4}
-        placeholder='证书格式以"-----BEGIN CERTIFICATE-----"开头，以"-----END CERTIFICATE-----"结尾。'
+        placeholder={props.placeholder}
       />
       <Upload
         accept=".pem"

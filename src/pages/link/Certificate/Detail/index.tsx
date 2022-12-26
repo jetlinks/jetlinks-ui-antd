@@ -95,7 +95,7 @@ const Detail = observer(() => {
         'x-component-props': {
           rows: 3,
           placeholder:
-            '证书私钥格式以"-----BEGIN (RSA|EC) PRIVATE KEY-----"开头，以"-----END(RSA|EC) PRIVATE KEY-----"结尾。',
+            '证书格式以"-----BEGIN CERTIFICATE-----"开头，以"-----END CERTIFICATE-----"结尾。',
         },
         'x-validator': [
           {
@@ -117,7 +117,7 @@ const Detail = observer(() => {
         'x-validator': [
           {
             required: true,
-            message: '请输入证书私钥',
+            message: '请上传证书私钥',
           },
         ],
       },

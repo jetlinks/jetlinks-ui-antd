@@ -145,7 +145,7 @@ export default observer((props: UserProps) => {
     },
   ];
 
-  const getObj = (_source: string = 'fixed', _value?: string, isRelation?: boolean) => {
+  const getObj = (_source: string = 'fixed', _value?: string | string[], isRelation?: boolean) => {
     const obj: any = {
       source: _source,
     };
@@ -183,13 +183,17 @@ export default observer((props: UserProps) => {
     let _values: any = undefined;
     const _names: string[] = [_name || ''];
     if (Array.isArray(_value)) {
-      if (NotifyModel?.notify?.notifyType === 'email' && Array.isArray(_value)) {
-        const arr = _value.map((item) => {
-          const _item = labelMap.get(item);
-          _names.push(_item?.name || '');
-          return getObj('relation', item, _item?.relation);
-        });
-        _values = arr;
+      if (NotifyModel?.notify?.notifyType === 'email') {
+        if (isRelation) {
+          const arr = _value.map((item) => {
+            const _item = labelMap.get(item);
+            _names.push(_item?.name || '');
+            return getObj('relation', item, _item?.relation);
+          });
+          _values = arr;
+        } else {
+          _values = getObj(_source, _value, false);
+        }
       }
     } else {
       _values = getObj(_source, _value, isRelation);
@@ -288,11 +292,19 @@ export default observer((props: UserProps) => {
         {createTreeNode(treeData)}
       </TreeSelect>
     ) : (
-      <Input
+      // <Input
+      //   value={value}
+      //   placeholder={'请输入固定邮箱'}
+      //   onChange={(e) => {
+      //     onchange(source, e.target.value, false, e.target.value);
+      //   }}
+      // />
+      <Select
         value={value}
-        placeholder={'请输入固定邮箱'}
-        onChange={(e) => {
-          onchange(source, e.target.value, false, e.target.value);
+        mode={'tags'}
+        placeholder={'请输入收件人邮箱,多个收件人用换行分隔'}
+        onChange={(val) => {
+          onchange(source, val, false, Array.isArray(val) ? val.join(',') : val);
         }}
       />
     );

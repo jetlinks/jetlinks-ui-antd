@@ -38,7 +38,6 @@ export default forwardRef((props: Props, ref) => {
       const rules: any[] = [];
       rules.push({
         validator: async (_: any, value: any) => {
-          console.log(value, type);
           if ((type === 'file' || type === 'link') && !value) {
             return Promise.reject(new Error('请输入' + item.name));
           } else if (type === 'tag' && !value) {
@@ -80,13 +79,22 @@ export default forwardRef((props: Props, ref) => {
         if (NotifyModel.notify?.notifyType === 'email') {
           rules.push({
             validator: async (_: any, value: any) => {
-              if (value.value) {
-                const reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-                if (!reg.test(value.value)) {
-                  return Promise.reject(new Error('请输入正确的邮箱地址'));
+              if (Array.isArray(value.value)) {
+                if (!value.value.length) {
+                  return Promise.reject(new Error('请输入收件人'));
                 }
+                const reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                const flag = value.value.every((it: string) => {
+                  return reg.test(it);
+                });
+                if (!flag) {
+                  return Promise.reject(new Error('请输入正确的邮箱地址'));
+                } else {
+                  return Promise.resolve();
+                }
+              } else {
+                return Promise.resolve();
               }
-              return Promise.resolve();
             },
           });
         }

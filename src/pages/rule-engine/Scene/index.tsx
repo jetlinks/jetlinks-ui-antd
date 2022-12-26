@@ -32,15 +32,15 @@ const Scene = () => {
   const history = useHistory();
 
   const deleteById = async (id: string) => {
-    const alarmResp = await service.sceneByAlarm(id);
-    if (alarmResp.status === 200 && !alarmResp.result) {
-      const resp: any = await service.remove(id);
-      if (resp.status === 200) {
-        actionRef.current?.reload();
-      }
-    } else {
-      onlyMessage('该场景已绑定告警，不可删除', 'warning');
+    // const alarmResp = await service.sceneByAlarm(id);
+    // if (alarmResp.status === 200 && !alarmResp.result) {
+    const resp: any = await service.remove(id);
+    if (resp.status === 200) {
+      actionRef.current?.reload();
     }
+    // } else {
+    //   onlyMessage('该场景已绑定告警，不可删除', 'warning');
+    // }
   };
 
   const Tools = (record: SceneItem): React.ReactNode[] => {

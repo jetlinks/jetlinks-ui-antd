@@ -48,6 +48,7 @@ const JsonParam = observer((props: Props) => {
 
   registerValidateRules({
     checkLength(value) {
+      if (value === undefined) return '';
       if (String(value).length > 64) {
         return {
           type: 'error',
@@ -64,6 +65,18 @@ const JsonParam = observer((props: Props) => {
     },
   });
 
+  const checkArray: any = (arr: any) => {
+    if (Array.isArray(arr) && arr.length) {
+      return arr.every((item: any) => {
+        if (item.valueType?.type === 'object') {
+          return item.id && item.name && checkArray(item.json?.properties);
+        }
+        return item.id && item.name && item.valueType;
+      });
+    }
+    return false;
+  };
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -71,6 +84,24 @@ const JsonParam = observer((props: Props) => {
         type: 'array',
         'x-component': 'ArrayItems',
         'x-decorator': 'FormItem',
+        'x-validator': [
+          {
+            triggerType: 'onBlur',
+            validator: (value: any[]) => {
+              return new Promise((resolve) => {
+                if (props.keys === 'inputs' && value.length === 0) {
+                  resolve('');
+                }
+                const flag = checkArray(value);
+                if (!!flag) {
+                  resolve('');
+                } else {
+                  resolve('请配置参数');
+                }
+              });
+            },
+          },
+        ],
         items: {
           type: 'object',
           'x-decorator': 'ArrayItems.Item',
@@ -282,7 +313,6 @@ const JsonParam = observer((props: Props) => {
                     },
                   },
                 },
-
                 'valueType.scale': {
                   title: '精度',
                   'x-decorator': 'FormItem',
@@ -305,7 +335,6 @@ const JsonParam = observer((props: Props) => {
                     },
                   },
                 },
-
                 json: {
                   type: 'string',
                   title: 'JSON对象',

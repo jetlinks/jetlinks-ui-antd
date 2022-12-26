@@ -27,6 +27,9 @@ const ArrayParam = () => {
 
   registerValidateRules({
     checkLength(value) {
+      if (value === undefined) {
+        return '';
+      }
       if (String(value).length > 64) {
         return {
           type: 'error',
@@ -66,8 +69,13 @@ const ArrayParam = () => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             enum: DataTypeList.filter((item) => item.value !== 'array'),
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择元素类型',
+              },
+            ],
           },
-
           scale: {
             title: '精度',
             'x-decorator': 'FormItem',

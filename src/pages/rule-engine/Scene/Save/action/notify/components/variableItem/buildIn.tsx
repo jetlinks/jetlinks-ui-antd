@@ -41,11 +41,53 @@ export default (props: BuiltInProps) => {
     }
   };
 
+  // const treeDataChildrenFilter: any = (arr: any[], type: string) => {
+  //   if(Array.isArray(arr) && arr.length) {
+  //      const list = arr.map(item => {
+  //        if(item.children) {
+  //          return treeDataChildrenFilter(item.children, type)
+  //        }
+  //        return item.type === type ? item : false
+  //     })
+  //     return list
+  //   } else {
+  //     return []
+  //   }
+  // }
+
+  const treeDataFilter = (arr: any[], type: string) => {
+    if (Array.isArray(arr) && arr.length) {
+      const list: any[] = [];
+      arr.map((item: any) => {
+        if (item.children) {
+          const children = treeDataFilter(item.children, type);
+          if (children.length) {
+            list.push({
+              ...item,
+              children,
+            });
+          }
+        } else {
+          if (item.type === type) {
+            list.push(item);
+          }
+        }
+      });
+      return list;
+    } else {
+      return [];
+    }
+  };
+
   const sourceChangeEvent = async () => {
     const params = props.name - 1 >= 0 ? { action: props.name - 1 } : undefined;
     queryBuiltInParams(FormModel.current, params).then((res: any) => {
       if (res.status === 200) {
-        const _data = BuiltInParamsHandleTreeData(res.result);
+        const arr = treeDataFilter(
+          res.result,
+          props.data.expands?.businessType || props.data?.type,
+        );
+        const _data = BuiltInParamsHandleTreeData(arr);
         setBuiltInList(_data);
       }
     });

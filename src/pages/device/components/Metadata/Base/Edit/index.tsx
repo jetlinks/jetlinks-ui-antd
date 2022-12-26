@@ -398,6 +398,20 @@ const Edit = observer((props: Props) => {
             },
           },
         },
+        'x-validator': [
+          {
+            triggerType: 'onBlur',
+            validator: (value: any[]) => {
+              return new Promise((resolve) => {
+                if (!!value) {
+                  resolve('');
+                } else {
+                  resolve('请输入配置元素');
+                }
+              });
+            },
+          },
+        ],
       },
       jsonConfig: {
         title: intl.formatMessage({

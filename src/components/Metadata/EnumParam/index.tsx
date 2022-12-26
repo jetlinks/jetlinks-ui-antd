@@ -20,6 +20,25 @@ const EnumParam = () => {
       elements: {
         type: 'array',
         'x-component': 'ArrayItems',
+        'x-decorator': 'FormItem',
+        'x-validator': [
+          {
+            triggerType: 'onBlur',
+            validator: (value: any[]) => {
+              return new Promise((resolve) => {
+                if (value.length === 0) resolve('请配置枚举项');
+                const flag = value.every((item: any) => {
+                  return item.value && item.text;
+                });
+                if (!!flag) {
+                  resolve('');
+                } else {
+                  resolve('请配置枚举项');
+                }
+              });
+            },
+          },
+        ],
         items: {
           type: 'void',
           'x-component': 'ArrayItems.Item',
