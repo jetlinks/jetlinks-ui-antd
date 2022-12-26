@@ -282,17 +282,30 @@ const Import = (props: Props) => {
 
   const handleImport = async () => {
     const data = (await form.submit()) as any;
+    const checkProperties = (metadataJson: string) => {
+      const metadata = JSON.parse(metadataJson.metadata);
+      return (
+        !!metadata &&
+        !!metadata?.properties &&
+        !!metadata?.events &&
+        !!metadata?.functions &&
+        !!metadata?.tags
+      );
+    };
+
     if (data.metadata === 'alink') {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
-          onlyMessage('导入成功');
           const metadata = JSON.stringify(operateLimits(meta));
+          // eslint-disable-next-line @typescript-eslint/no-throw-literal
+          if (!checkProperties(metadata)) throw 'error';
           if (props?.type === 'device') {
             await deviceService.saveMetadata(param.id, metadata);
           } else {
             await service.modify(param.id, { metadata: metadata });
           }
           MetadataAction.insert(JSON.parse(metadata || '{}'));
+          onlyMessage('导入成功');
         },
         error: () => {
           onlyMessage('发生错误!', 'error');
@@ -318,10 +331,14 @@ const Import = (props: Props) => {
         if (resp.status === 200) {
           if (props?.type === 'device') {
             const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            if (!checkProperties(metadata)) throw 'error';
             MetadataAction.insert(metadata);
             onlyMessage('导入成功');
           } else {
             const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            if (!checkProperties(metadata)) throw 'error';
             MetadataAction.insert(metadata);
             onlyMessage('导入成功');
           }
@@ -330,7 +347,7 @@ const Import = (props: Props) => {
         Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
         props.close();
       } catch (e) {
-        onlyMessage('请上传正确的json格式文件', 'error');
+        onlyMessage(e === 'error' ? '物模型数据不正确' : '上传json格式的物模型文件', 'error');
       }
     }
   };
