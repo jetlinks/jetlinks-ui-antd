@@ -89,7 +89,7 @@ export default (props: Props) => {
         },
         properties: {
           name: {
-            title: '名称',
+            title: '采集器名称',
             'x-component': 'Input',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
@@ -163,6 +163,38 @@ export default (props: Props) => {
               {
                 required: true,
                 message: '请选择处理方式',
+              },
+            ],
+          },
+          'configuration.endian': {
+            title: '大小端',
+            'x-component': 'RadioCard',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+              tooltip: '统一配置所有点位的大小端',
+            },
+            'x-component-props': {
+              placeholder: '请选择大小端',
+              model: 'singular',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '大端', value: 'BIG' },
+                { label: '小端', value: 'LITTLE' },
+              ],
+            },
+            'x-visible': props.provider === 'MODBUS_TCP',
+            default: 'BIG',
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择大小端',
               },
             ],
           },

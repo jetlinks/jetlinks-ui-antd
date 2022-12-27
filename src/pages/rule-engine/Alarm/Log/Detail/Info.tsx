@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Store } from 'jetlinks-store';
 import styles from './index.less';
+import ReactJson from 'react-json-view';
 
 interface Props {
   data: Partial<AlarmLogHistoryItem>;
@@ -64,7 +65,15 @@ const Info = (props: Props) => {
           </Tooltip>
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
-          {data?.alarmInfo || ''}
+          <div style={{ maxHeight: 500, overflowY: 'auto' }}>
+            <ReactJson
+              enableClipboard={false}
+              displayObjectSize={false}
+              displayDataTypes={false}
+              name={false}
+              src={JSON.parse(data?.alarmInfo || '{}')}
+            />
+          </div>
         </Descriptions.Item>
       </Descriptions>
     </Modal>

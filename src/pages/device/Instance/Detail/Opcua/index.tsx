@@ -1,7 +1,7 @@
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
 import { createForm, Field, onFieldReact, FormPath } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
-import { Badge, Card, Empty, Input, Tooltip } from 'antd';
+import { Badge, Card, Input, Tooltip } from 'antd';
 import { action } from '@formily/reactive';
 import type { Response } from '@/utils/typings';
 import './index.less';
@@ -11,6 +11,7 @@ import { service } from '@/pages/link/Channel/Opcua';
 import { useEffect, useState } from 'react';
 import { DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
+import { Empty } from '@/components';
 
 interface Props {
   data: any;

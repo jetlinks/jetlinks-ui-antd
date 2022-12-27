@@ -4,6 +4,7 @@ type ConfigurationItem = {
   level: number;
   sceneName: string;
   sceneId: string;
+  scene?: any[];
   state: { text: string; value: string };
   description: string;
   id: string;

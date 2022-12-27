@@ -157,7 +157,7 @@ const BaseInfo = (props: BaseInfoProps) => {
         size="small"
         column={3}
         title={[
-          <span key={1}>产品信息</span>,
+          <span key={1}>配置信息</span>,
           <PermissionButton
             isPermission={permission.update}
             key={2}

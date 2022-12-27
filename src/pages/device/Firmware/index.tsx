@@ -4,14 +4,14 @@ import ProTable from '@jetlinks/pro-table';
 import { message, Popconfirm } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { DeleteOutlined, EditOutlined, NodeExpandOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useHistory } from 'umi';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import Service from '@/pages/device/Firmware/service';
 import Save from '@/pages/device/Firmware/Save';
-import { PermissionButton } from '@/components';
+import { AIcon, PermissionButton } from '@/components';
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import usePermissions from '@/hooks/permission';
 import SearchComponent from '@/components/SearchComponent';
@@ -139,7 +139,7 @@ const Firmware = observer(() => {
             title: '升级任务',
           }}
         >
-          <NodeExpandOutlined />
+          <AIcon type={'icon-tongzhijilu'} />
         </PermissionButton>,
         <PermissionButton
           style={{ padding: 0 }}

@@ -282,59 +282,74 @@ const Import = (props: Props) => {
 
   const handleImport = async () => {
     const data = (await form.submit()) as any;
+    const checkProperties = (metadataJson: string) => {
+      const metadata = JSON.parse(metadataJson.metadata);
+      return (
+        !!metadata &&
+        !!metadata?.properties &&
+        !!metadata?.events &&
+        !!metadata?.functions &&
+        !!metadata?.tags
+      );
+    };
+
     if (data.metadata === 'alink') {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
-          onlyMessage('导入成功');
           const metadata = JSON.stringify(operateLimits(meta));
+          // eslint-disable-next-line @typescript-eslint/no-throw-literal
+          if (!checkProperties(metadata)) throw 'error';
           if (props?.type === 'device') {
             await deviceService.saveMetadata(param.id, metadata);
           } else {
             await service.modify(param.id, { metadata: metadata });
           }
           MetadataAction.insert(JSON.parse(metadata || '{}'));
+          onlyMessage('导入成功');
         },
         error: () => {
           onlyMessage('发生错误!', 'error');
         },
       });
+      Store.set(SystemConst.GET_METADATA, true);
+      Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+      props.close();
     } else {
-      const params = {
-        id: param.id,
-        metadata: JSON.stringify(
-          operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-        ),
-      };
-      // const paramsDevice = {
-      //   id: param.id,
-      //   deriveMetadata: JSON.stringify(
-      //     operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-      //   ),
-      // };
-      const paramsDevice = JSON.stringify(
-        operateLimits(JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}')),
-      );
-      let resp: any = undefined;
-      if (props?.type === 'device') {
-        resp = await deviceService.saveMetadata(param.id, paramsDevice);
-      } else {
-        resp = await service.modify(param.id, params);
-      }
-      if (resp.status === 200) {
+      try {
+        const _object = JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}');
+        const params = {
+          id: param.id,
+          metadata: JSON.stringify(operateLimits(_object as DeviceMetadata)),
+        };
+        const paramsDevice = JSON.stringify(operateLimits(_object as DeviceMetadata));
+        let resp: any = undefined;
         if (props?.type === 'device') {
-          const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
-          MetadataAction.insert(metadata);
-          onlyMessage('导入成功');
+          resp = await deviceService.saveMetadata(param.id, paramsDevice);
         } else {
-          const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
-          MetadataAction.insert(metadata);
-          onlyMessage('导入成功');
+          resp = await service.modify(param.id, params);
         }
+        if (resp.status === 200) {
+          if (props?.type === 'device') {
+            const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            if (!checkProperties(metadata)) throw 'error';
+            MetadataAction.insert(metadata);
+            onlyMessage('导入成功');
+          } else {
+            const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            if (!checkProperties(metadata)) throw 'error';
+            MetadataAction.insert(metadata);
+            onlyMessage('导入成功');
+          }
+        }
+        Store.set(SystemConst.GET_METADATA, true);
+        Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
+        props.close();
+      } catch (e) {
+        onlyMessage(e === 'error' ? '物模型数据不正确' : '上传json格式的物模型文件', 'error');
       }
     }
-    Store.set(SystemConst.GET_METADATA, true);
-    Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
-    props.close();
   };
   return (
     <Modal

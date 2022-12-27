@@ -7,7 +7,13 @@ import service from '@/pages/link/DataCollect/service';
 import CollectorCard from '@/components/ProTableCard/CardItems/DataCollect/device';
 import { Empty, PermissionButton } from '@/components';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import { Card, Col, Pagination, Row } from 'antd';
 import { model } from '@formily/reactive';
@@ -24,9 +30,11 @@ interface Props {
 const CollectorModel = model<{
   visible: boolean;
   current: Partial<CollectorItem>;
+  currentPage: number;
 }>({
   visible: false,
   current: {},
+  currentPage: 0,
 });
 
 export default observer((props: Props) => {
@@ -45,7 +53,7 @@ export default observer((props: Props) => {
   const columns: ProColumns<CollectorItem>[] = props.type
     ? [
         {
-          title: '名称',
+          title: '采集器名称',
           dataIndex: 'name',
         },
         {
@@ -95,10 +103,10 @@ export default observer((props: Props) => {
               text: '错误',
               status: 'failed',
             },
-            stopped: {
-              text: '已停止',
-              status: 'stopped',
-            },
+            // stopped: {
+            //   text: '已停止',
+            //   status: 'stopped',
+            // },
           },
         },
         {
@@ -108,7 +116,7 @@ export default observer((props: Props) => {
       ]
     : [
         {
-          title: '名称',
+          title: '采集器名称',
           dataIndex: 'name',
         },
         {
@@ -143,10 +151,10 @@ export default observer((props: Props) => {
               text: '错误',
               status: 'failed',
             },
-            stopped: {
-              text: '已停止',
-              status: 'stopped',
-            },
+            // stopped: {
+            //   text: '已停止',
+            //   status: 'stopped',
+            // },
           },
         },
         {
@@ -195,6 +203,23 @@ export default observer((props: Props) => {
     }
   };
 
+  const onPageChange = (page: number, size: number) => {
+    if (CollectorModel.currentPage === size) {
+      handleSearch({
+        ...param,
+        pageIndex: page - 1,
+        pageSize: size,
+      });
+    } else {
+      CollectorModel.currentPage = size;
+      handleSearch({
+        ...param,
+        pageIndex: 0,
+        pageSize: size,
+      });
+    }
+  };
+
   return (
     <div>
       <SearchComponent<CollectorItem>
@@ -208,8 +233,14 @@ export default observer((props: Props) => {
           handleSearch(dt);
         }}
       />
-      <Card bordered={false} loading={loading}>
-        <div style={{ minHeight, position: 'relative' }}>
+      <Card
+        bordered={false}
+        loading={loading}
+        style={{ minHeight, position: 'relative' }}
+        className={'data-collect-collector'}
+        bodyStyle={{ paddingTop: !props.type ? 4 : 24 }}
+      >
+        <div>
           <div style={{ paddingBottom: 48, height: '100%' }}>
             {!props.type && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
@@ -221,8 +252,9 @@ export default observer((props: Props) => {
                   }}
                   key="button"
                   type="primary"
+                  icon={<PlusOutlined />}
                 >
-                  新增
+                  新增采集器
                 </PermissionButton>
               </div>
             )}
@@ -267,9 +299,11 @@ export default observer((props: Props) => {
                                   record?.state?.value !== 'disabled'
                                     ? await service.updateCollector(record.id, {
                                         state: 'disabled',
+                                        runningState: 'stopped',
                                       })
                                     : await service.updateCollector(record.id, {
                                         state: 'enabled',
+                                        runningState: 'running',
                                       });
                                 if (resp.status === 200) {
                                   onlyMessage('操作成功！');
@@ -303,7 +337,7 @@ export default observer((props: Props) => {
                             tooltip={
                               record?.state?.value !== 'disabled'
                                 ? {
-                                    title: '已启用的采集器不能删除',
+                                    title: '正常的采集器不能删除',
                                   }
                                 : undefined
                             }
@@ -311,6 +345,7 @@ export default observer((props: Props) => {
                             popConfirm={{
                               title: '该操作将会删除下属点位，确定删除？',
                               disabled: record?.state?.value !== 'disabled',
+                              placement: 'topRight',
                               onConfirm: async () => {
                                 if (record?.state?.value === 'disabled') {
                                   await service.removeCollector(record.id);
@@ -346,7 +381,8 @@ export default observer((props: Props) => {
                     justifyContent: 'flex-end',
                     position: 'absolute',
                     width: '100%',
-                    bottom: 0,
+                    bottom: 10,
+                    right: '2%',
                   }}
                 >
                   <Pagination
@@ -356,11 +392,7 @@ export default observer((props: Props) => {
                     total={dataSource?.total || 0}
                     current={dataSource?.pageIndex + 1}
                     onChange={(page, size) => {
-                      handleSearch({
-                        ...param,
-                        pageIndex: page - 1,
-                        pageSize: size,
-                      });
+                      onPageChange(page, size);
                     }}
                     pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
@@ -384,7 +416,7 @@ export default observer((props: Props) => {
         <Save
           data={CollectorModel.current}
           channelId={props.id}
-          provider={props.provider}
+          provider={props.provider || CollectorModel.current?.provider}
           close={() => {
             CollectorModel.visible = false;
           }}

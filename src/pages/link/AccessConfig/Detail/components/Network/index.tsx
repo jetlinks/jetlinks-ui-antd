@@ -1,6 +1,6 @@
 import styles from './index.less';
 import { CheckOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Badge, Button, Card, Col, Empty, Input, Row, Tooltip } from 'antd';
+import { Badge, Button, Card, Col, Input, Row, Tooltip } from 'antd';
 import encodeQuery from '@/utils/encodeQuery';
 import { Ellipsis, PermissionButton } from '@/components';
 import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
@@ -10,6 +10,7 @@ import { service } from '@/pages/link/AccessConfig';
 import { NetworkTypeMapping, descriptionList } from '@/pages/link/AccessConfig/Detail/data';
 import { onlyMessage } from '@/utils/util';
 import { Store } from 'jetlinks-store';
+import { Empty } from '@/components';
 
 interface Props {
   next: (data: string) => void;
@@ -33,7 +34,7 @@ const Network = (props: Props) => {
   };
 
   useEffect(() => {
-    queryNetworkList(props.provider?.id);
+    queryNetworkList(props.provider?.id, encodeQuery({ include: networkCurrent || '' }));
   }, [props.provider?.id]);
 
   useEffect(() => {
@@ -98,9 +99,15 @@ const Network = (props: Props) => {
                     styles.cardRender,
                     networkCurrent === item.id ? styles.checked : '',
                   )}
+                  style={{
+                    background: `url("/images/access-network.png") no-repeat`,
+                    backgroundSize: '100% 100%',
+                  }}
                   hoverable
                   onClick={() => {
-                    setNetworkCurrent(item.id);
+                    if (!props.view) {
+                      setNetworkCurrent(item.id);
+                    }
                   }}
                 >
                   <div className={styles.title}>

@@ -91,13 +91,19 @@ const User = observer(() => {
       },
       hideInSearch: false,
     },
-    // {
-    //   title: '用户类型',
-    //   dataIndex: 'type',
-    //   render: (_, record) => (
-    //     <Tag color={typeMap.get('name')}>{record.name}</Tag>
-    //   ),
-    // },
+    {
+      title: '用户类型',
+      dataIndex: 'type',
+      render: (_, row) => row.type?.name || '',
+      valueType: 'select',
+      request: () =>
+        service.queryUserType().then((resp: any) =>
+          resp.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          })),
+        ),
+    },
     {
       title: intl.formatMessage({
         id: 'pages.searchTable.titleStatus',

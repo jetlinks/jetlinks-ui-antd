@@ -1,12 +1,12 @@
 import { Button, Drawer, message, Space, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { productModel, service } from '@/pages/device/Product';
-import MonacoEditor from 'react-monaco-editor';
 import { observer } from '@formily/react';
 import { InstanceModel } from '@/pages/device/Instance';
 import { useLocation } from 'umi';
 import InstanceService from '@/pages/device/Instance/service';
 import { downloadObject } from '@/utils/util';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 
 interface Props {
   visible: boolean;
@@ -26,6 +26,12 @@ const Cat = observer((props: Props) => {
   const [value, setValue] = useState(metadata);
   const _path = location.pathname.split('/');
   const id = _path[_path.length - 1];
+
+  useEffect(() => {
+    if (props.visible) {
+      setValue(metadata);
+    }
+  }, [props.visible]);
 
   useEffect(() => {
     service.codecs().subscribe({
@@ -65,15 +71,24 @@ const Cat = observer((props: Props) => {
       width={700}
       onClose={() => props.close()}
       visible={props.visible}
+      destroyOnClose
       extra={
         <Space>
           <Button
             type="primary"
             onClick={async () => {
               try {
-                downloadObject(JSON.parse(value), `设备-物模型`);
+                downloadObject(
+                  JSON.parse(value),
+                  `${
+                    props.type === 'device'
+                      ? InstanceModel.current?.name
+                      : productModel.current?.name
+                  }-物模型`,
+                  'YYYY/MM/DD',
+                );
               } catch (e) {
-                message.error('物模型格式错误!');
+                message.error('请先配置物模型');
               }
             }}
           >
@@ -93,13 +108,13 @@ const Cat = observer((props: Props) => {
         {codecs?.map((item) => (
           <Tabs.TabPane tab={item.name} tabKey={item.id} key={item.id}>
             <div style={{ border: '1px solid #eee', height: 670, width: 650 }}>
-              <MonacoEditor
+              <JMonacoEditor
                 height={'100%'}
                 theme="vs"
                 language="json"
                 key={item.id}
                 value={value}
-                editorDidMount={(editor) => {
+                editorDidMount={(editor: any) => {
                   editor.getAction('editor.action.formatDocument').run();
                   editor.onDidScrollChange?.(() => {
                     editor.getAction('editor.action.formatDocument').run();

@@ -1,8 +1,9 @@
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
-import { Card, Empty } from 'antd';
+import { Card } from 'antd';
 import { useEffect, useState } from 'react';
 import MapTable from './mapTable';
 import Service from './service';
+import { Empty } from '@/components';
 
 interface Props {
   data: any;
@@ -24,6 +25,7 @@ const EdgeMap = (props: Props) => {
       metadataName: `${item.name}(${item.id})`,
       metadataType: 'property',
     }));
+    console.log(metadata, 2222);
     if (metadata && metadata.length !== 0) {
       service
         .getMap(data.parentId, {

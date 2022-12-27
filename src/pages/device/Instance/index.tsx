@@ -16,6 +16,7 @@ import {
   PlusOutlined,
   StopOutlined,
   SyncOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import { model } from '@formily/reactive';
 import Service from '@/pages/device/Instance/service';
@@ -256,17 +257,16 @@ const Instance = () => {
       filterMultiple: true,
     },
     {
-      title: intl.formatMessage({
-        id: 'pages.device.instance.registrationTime',
-        defaultMessage: '注册时间',
-      }),
-      dataIndex: 'registryTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
       width: '200px',
       valueType: 'dateTime',
       render: (_: any, row) => {
         return row.registryTime ? moment(row.registryTime).format('YYYY-MM-DD HH:mm:ss') : '';
       },
+      defaultSortOrder: 'descend',
       sorter: true,
+      sortDirections: ['ascend', 'descend'],
     },
     {
       title: intl.formatMessage({
@@ -429,7 +429,7 @@ const Instance = () => {
       dataIndex: 'describe',
       width: '15%',
       ellipsis: true,
-      hideInSearch: true,
+      // hideInSearch: true,
     },
     {
       title: intl.formatMessage({
@@ -468,6 +468,11 @@ const Instance = () => {
       url.append(key, _terms[key]);
     });
     return url.toString();
+  };
+
+  const unSelect = () => {
+    setBindKeys([]);
+    InstanceModel.selectedRows.clear();
   };
 
   const menu = (
@@ -547,25 +552,49 @@ const Instance = () => {
             popConfirm={{
               title: '已启用的设备无法删除，确认删除选中的禁用状态设备？',
               onConfirm: () => {
-                const array: any = [];
-                InstanceModel.selectedRows.forEach((value, key) => {
-                  if (value !== 'notActive') {
-                    InstanceModel.selectedRows.delete(key);
-                    array.push(key);
-                  }
-                });
+                // const array: any = [];
+                // InstanceModel.selectedRows.forEach((value, key) => {
+                //   if (value !== 'notActive') {
+                //     InstanceModel.selectedRows.delete(key);
+                //     array.push(key);
+                //   }
+                // });
                 if (!InstanceModel.selectedRows.size) return;
                 service.batchDeleteDevice([...InstanceModel.selectedRows.keys()]).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
                     actionRef.current?.reset?.();
-                    setBindKeys(array);
+                    // setBindKeys(array);
+                    unSelect();
                   }
                 });
               },
             }}
           >
             删除选中设备
+          </PermissionButton>
+        </Menu.Item>
+      )}
+      {bindKeys.length > 0 && (
+        <Menu.Item key="6">
+          <PermissionButton
+            isPermission={permission.action}
+            icon={<CheckOutlined />}
+            type="primary"
+            popConfirm={{
+              title: '确认激活选中设备?',
+              onConfirm() {
+                service.batchDeployDevice(bindKeys).then((resp) => {
+                  if (resp.status === 200) {
+                    onlyMessage('操作成功');
+                    unSelect();
+                    actionRef.current?.reset?.();
+                  }
+                });
+              },
+            }}
+          >
+            激活选中设备
           </PermissionButton>
         </Menu.Item>
       )}
@@ -582,6 +611,7 @@ const Instance = () => {
                 service.batchUndeployDevice(bindKeys).then((resp) => {
                   if (resp.status === 200) {
                     onlyMessage('操作成功');
+                    unSelect();
                     actionRef.current?.reset?.();
                   }
                 });
@@ -603,6 +633,7 @@ const Instance = () => {
         // initParam={jumpParams}
         onSearch={(data) => {
           actionRef.current?.reset?.();
+          unSelect();
           setSearchParams(data);
           const terms1 = data.terms[0]?.terms?.map((e) => {
             if (e.column === 'classifiedId') {
@@ -654,17 +685,45 @@ const Instance = () => {
         params={searchParams}
         options={{ fullScreen: true }}
         columnEmptyText={''}
-        request={(params) =>
-          service.query({
+        // request={(params,sort) =>
+        //   service.query({
+        //     ...params,
+        //     sorts: [
+        //       {
+        //         name: 'createTime',
+        //         order: 'desc',
+        //       },
+        //     ],
+        //   })
+        // }
+        request={async (params, sort) => {
+          let sorts;
+          if (sort.createTime) {
+            sorts = sort.createTime === 'descend' ? 'desc' : 'asc';
+          } else {
+            sorts = 'desc';
+          }
+          const res = await service.query({
             ...params,
             sorts: [
               {
                 name: 'createTime',
-                order: 'desc',
+                order: sorts,
               },
             ],
-          })
-        }
+          });
+          return {
+            code: res.message,
+            result: {
+              data: res.result.data,
+              pageIndex: res.result.pageIndex,
+              pageSize: res.result.pageSize,
+              total: res.result.total,
+            },
+            status: res.status,
+          };
+          // return service.queryLog(InstanceModel.detail.id!, params);
+        }}
         rowKey="id"
         search={false}
         tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
@@ -672,7 +731,7 @@ const Instance = () => {
           return (
             <a
               onClick={() => {
-                setBindKeys([]);
+                unSelect();
               }}
             >
               取消选择
@@ -682,9 +741,9 @@ const Instance = () => {
         pagination={{ pageSize: 10 }}
         rowSelection={{
           selectedRowKeys: bindKeys,
-          onChange: (selectedRowKeys) => {
-            setBindKeys(selectedRowKeys);
-          },
+          // onChange: (selectedRowKeys) => {
+          //   setBindKeys(selectedRowKeys); //多选事件触发时重置setBindKeys，会导致翻页再多选 原来的bindKeys被覆盖
+          // },
           onSelect: (record, selected) => {
             if (selected) {
               InstanceModel.selectedRows.set(record.id, record?.state?.value);
@@ -727,6 +786,9 @@ const Instance = () => {
             <Button>批量操作</Button>
           </Dropdown>,
         ]}
+        modelChange={() => {
+          unSelect();
+        }}
         cardRender={(record) => (
           <DeviceCard
             {...record}
@@ -870,7 +932,8 @@ const Instance = () => {
         visible={exportVisible}
       />
       <Import
-        data={current}
+        // data={current}
+        type={''}
         close={() => {
           setImportVisible(false);
           actionRef.current?.reload();

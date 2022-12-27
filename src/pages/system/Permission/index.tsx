@@ -120,7 +120,7 @@ const Permission: React.FC = observer(() => {
       fixed: 'left',
       width: '30%',
       // sorter: true,
-      defaultSortOrder: 'ascend',
+      // defaultSortOrder: 'ascend',
     },
     {
       title: intl.formatMessage({

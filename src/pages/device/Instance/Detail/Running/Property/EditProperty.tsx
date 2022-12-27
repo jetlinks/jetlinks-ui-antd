@@ -32,6 +32,11 @@ const EditProperty = (props: Props) => {
         title: data?.name || '自定义属性',
         required: true,
         'x-decorator': 'FormItem',
+        'x-decorator-props': {
+          gridSpan: 2,
+          labelAlign: 'left',
+          layout: 'vertical',
+        },
         'x-component': 'Input',
       },
     },

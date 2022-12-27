@@ -8,8 +8,8 @@ class Service extends BaseService<AlarmLogItem> {
       method: 'GET',
     });
 
-  handleLog = (id: string, data: any) =>
-    request(`/${SystemConst.API_BASE}/alarm/record/${id}/_handle`, {
+  handleLog = (data: any) =>
+    request(`/${SystemConst.API_BASE}/alarm/record/_handle`, {
       method: 'POST',
       data,
     });

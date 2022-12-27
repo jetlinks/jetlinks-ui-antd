@@ -235,6 +235,16 @@ export default () => {
     }
   };
 
+  const networkValueRender = (value: number) => {
+    if (value >= 1024 && value < 1024 * 1024) {
+      return `${Number((value / 1024).toFixed(2))}KB`;
+    } else if (value >= 1024 * 1024) {
+      return `${Number((value / 1024 / 1024).toFixed(2))}M`;
+    } else {
+      return `${value}B`;
+    }
+  };
+
   const handleNetworkOptions = (data: Record<string, any>, xAxis: string[]) => {
     setNetworkOptions({
       xAxis: {
@@ -244,19 +254,21 @@ export default () => {
       },
       tooltip: {
         trigger: 'axis',
-        valueFormatter: (value) => `${value}M`,
+        valueFormatter: (value) => networkValueRender(Number(value)),
       },
       yAxis: {
         type: 'value',
       },
       grid: {
-        left: '50px',
-        right: '50px',
+        left: 50,
+        right: 0,
+        top: 10,
+        bottom: 20,
       },
       color: ['#979AFF'],
       series: Object.keys(data).length
         ? Object.keys(data).map((key) => ({
-            data: data[key]._data.map((item: number) => Number((item / 1024 / 1024).toFixed(2))),
+            data: data[key]._data, //.map((item: number) => Number((item / 1024 / 1024).toFixed(2))),
             name: key,
             type: 'line',
             smooth: true,
@@ -297,8 +309,10 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '50px',
-        right: '30px',
+        left: 30,
+        right: 0,
+        top: 10,
+        bottom: 65,
       },
       dataZoom: [
         {
@@ -356,8 +370,10 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: '50px',
-        right: '30px',
+        left: 30,
+        right: 0,
+        top: 10,
+        bottom: 65,
       },
       dataZoom: [
         {
@@ -676,7 +692,7 @@ export default () => {
   return (
     <PageContainer>
       <div className={'link-dash-board'}>
-        {serverNode && serverNode.length ? (
+        {serverNode && serverNode.length > 1 ? (
           <div style={{ backgroundColor: '#fff', padding: '24px 24px 0 24px' }}>
             <Select
               value={serverId}
@@ -691,7 +707,7 @@ export default () => {
         <div className={'echarts-items'}>
           <TopEchartsItemNode title={'CPU使用率'} value={topValues.cpu} />
           <TopEchartsItemNode
-            title={'JVM内存'}
+            title={'JVM内存占用'}
             formatter={'G'}
             value={topValues.jvm}
             max={topValues.jvmTotal}
@@ -705,11 +721,11 @@ export default () => {
             bottom={`总磁盘大小  ${topValues.usageTotal}G`}
           />
           <TopEchartsItemNode
-            title={'系统内存'}
+            title={'系统内存占用'}
             formatter={'G'}
             value={topValues.systemUsage}
             max={topValues.systemUsageTotal}
-            bottom={`系统内存  ${topValues.systemUsageTotal}G`}
+            bottom={`总系统内存  ${topValues.systemUsageTotal}G`}
           />
         </div>
         <div style={{ marginBottom: 24 }}>

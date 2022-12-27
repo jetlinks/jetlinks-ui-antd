@@ -1,4 +1,4 @@
-import { Empty } from 'antd';
+import { Empty } from '@/components';
 import * as echarts from 'echarts';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';

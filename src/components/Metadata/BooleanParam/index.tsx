@@ -32,13 +32,22 @@ const BooleanParam = () => {
             'x-component-props': {
               placeholder: 'trueText',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入trueText',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
           trueValue: {
             title: '-',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
             default: true,
-
             'x-decorator-props': {
               gridSpan: 1,
               colon: false,
@@ -46,6 +55,16 @@ const BooleanParam = () => {
             'x-component-props': {
               placeholder: 'trueValue',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入trueValue',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
           falseText: {
             'x-decorator': 'FormItem',
@@ -57,6 +76,16 @@ const BooleanParam = () => {
             'x-component-props': {
               placeholder: 'falseText',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入falseText',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
           falseValue: {
             'x-decorator': 'FormItem',
@@ -70,6 +99,16 @@ const BooleanParam = () => {
             'x-component-props': {
               placeholder: 'falseValue',
             },
+            'x-validator': [
+              {
+                required: true,
+                message: '请输入falseValue',
+              },
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
         },
       },

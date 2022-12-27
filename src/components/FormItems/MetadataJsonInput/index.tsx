@@ -1,8 +1,8 @@
 import { Input, Modal } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
 import { isObject } from 'lodash';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 
 type MetaDataJsonInputProps = {
   json: Record<string, any>;
@@ -19,7 +19,7 @@ export const MetaDataJsonHandle = (data: any): Record<string, any> => {
 
     switch (type) {
       case 'object':
-        _JSON[id] = MetaDataJsonHandle((data as any)['json']['properties'][0]);
+        _JSON[id] = MetaDataJsonHandle((data as any)?.json?.properties?.[0]);
         break;
       case 'array':
         _JSON[id] = [];
@@ -101,13 +101,13 @@ export default (props: MetaDataJsonInputProps) => {
         }}
         width={700}
       >
-        <MonacoEditor
+        <JMonacoEditor
           width={'100%'}
           height={400}
           theme="vs-dark"
           language={'json'}
           value={monacoValue}
-          onChange={(newValue) => {
+          onChange={(newValue: any) => {
             setMonacoValue(newValue);
           }}
           editorDidMount={editorDidMountHandle}

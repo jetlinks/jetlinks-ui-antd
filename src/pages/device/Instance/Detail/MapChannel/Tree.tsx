@@ -48,7 +48,7 @@ const ChannelTree = (props: Props) => {
   };
 
   const save = async () => {
-    console.log(metaData);
+    // console.log(metaData);
     const params: any[] = [];
     // const metadataName = metaData.map((item: any) => item.name);
     list.forEach((item: any) => {
@@ -96,6 +96,10 @@ const ChannelTree = (props: Props) => {
   useEffect(() => {
     setList(filterRef.current);
   }, [filterRef.current]);
+
+  useEffect(() => {
+    console.log(checked);
+  }, [checked]);
 
   return (
     <Modal
@@ -149,6 +153,9 @@ const ChannelTree = (props: Props) => {
               disabled={checked && checked.length === 0}
               onClick={() => {
                 const item = filterTree(data, checked);
+                if (item) {
+                  setChecked([]);
+                }
                 setData(item);
               }}
             >

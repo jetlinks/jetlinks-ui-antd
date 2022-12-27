@@ -24,7 +24,7 @@ import {
   SaveOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Dropdown, Empty, Menu, Popconfirm, Popover, Typography } from 'antd';
+import { Button, Card, Dropdown, Menu, Popconfirm, Popover, Typography } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns } from '@jetlinks/pro-table';
 import type { EnumData } from '@/utils/typings';
@@ -35,6 +35,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import classnames from 'classnames';
 import { onlyMessage, randomString } from '@/utils/util';
 import { useHistory, useLocation } from 'umi';
+import { Empty } from '@/components';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -72,6 +73,8 @@ interface Props<T> {
   model?: 'simple' | 'advance';
   enableSave?: boolean;
   initParam?: SearchTermsServer;
+  style?: React.CSSProperties;
+  bodyStyle?: React.CSSProperties;
 }
 
 const termType = [
@@ -241,7 +244,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   }
 
                   f.setFieldState(typeFiled.query('.value'), async (state) => {
-                    console.log(state.value);
                     state.componentType = 'Select';
                     state.dataSource = __option;
                     state.componentProps = {
@@ -482,7 +484,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     // 合并初始化的值
 
     //expand false 6组条件 true 1组条件
-
     if (initParam && initParam[0].terms && initParam[0].terms.length > 1) {
       handleExpand();
     }
@@ -506,51 +507,6 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     }
     handleForm(_expand);
   };
-
-  const historyDom = (
-    <Menu className={styles.history}>
-      {history.length > 0 ? (
-        history.map((item: SearchHistory) => (
-          <Menu.Item key={item.id || randomString(9)}>
-            <div className={styles.list}>
-              <Typography.Text
-                ellipsis={{ tooltip: item.name }}
-                onClick={() => handleHistory(item)}
-              >
-                {item.name}
-              </Typography.Text>
-              <Popconfirm
-                title="确定删除嘛"
-                onConfirm={async () => {
-                  const response = await service.history.remove(`${target}-search`, item.key);
-                  if (response.status === 200) {
-                    onlyMessage('操作成功');
-                    const temp = history.filter((h: any) => h.key !== item.key);
-                    setHistory(temp);
-                  }
-                }}
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </div>
-          </Menu.Item>
-        ))
-      ) : (
-        <Menu.Item>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '148px',
-            }}
-          >
-            <Empty />
-          </div>
-        </Menu.Item>
-      )}
-    </Menu>
-  );
 
   const formatValue = (value: SearchTermsUI): SearchTermsServer => {
     let _value = ui2Server(value);
@@ -614,7 +570,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     uiParamRef.current = ui2Server(value);
     if (
       (_terms.terms1 && _terms.terms1.length > 1) ||
-      (_terms.terms2 && _terms.terms2.length > 1)
+      (_terms.terms2 && _terms.terms2.length >= 1)
     ) {
       // 展开高级搜索
       setExpand(false);
@@ -657,12 +613,13 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     if (q && props.model !== 'simple' && value && !value.terms1?.[0].value && !value.terms2) {
       // 表单有值的情况下，不改变表单
       if (_target && tar && _target === tar) {
-        form.setInitialValues(JSON.parse(q));
+        const _qJson: any = JSON.parse(q);
+        form.setInitialValues(_qJson);
         handleSearch(false);
         return;
       }
-      form.setInitialValues(JSON.parse(q));
-      handleSearch(false);
+      // form.setInitialValues(JSON.parse(q));
+      // handleSearch(false);
     }
   };
 
@@ -675,6 +632,55 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       handleSearch(!(props.model === 'simple'));
     }
   }, []);
+
+  const historyDom = (
+    <Menu className={styles.history}>
+      {history.length > 0 ? (
+        history.map((item: SearchHistory) => (
+          <Menu.Item
+            key={item.id || randomString(9)}
+            onClick={() => {
+              handleHistory(item);
+              handleSearch();
+            }}
+          >
+            <div className={styles.list}>
+              <Typography.Text className={styles['list-text']} ellipsis={{ tooltip: item.name }}>
+                {item.name}
+              </Typography.Text>
+              <Popconfirm
+                title="确定删除嘛"
+                onConfirm={async (e) => {
+                  e?.stopPropagation();
+                  const response = await service.history.remove(`${target}-search`, item.key);
+                  if (response.status === 200) {
+                    onlyMessage('操作成功');
+                    const temp = history.filter((h: any) => h.key !== item.key);
+                    setHistory(temp);
+                  }
+                }}
+              >
+                <DeleteOutlined />
+              </Popconfirm>
+            </div>
+          </Menu.Item>
+        ))
+      ) : (
+        <Menu.Item>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '148px',
+            }}
+          >
+            <Empty />
+          </div>
+        </Menu.Item>
+      )}
+    </Menu>
+  );
 
   const handleSaveLog = async () => {
     const value = await form.submit<SearchTermsUI>();
@@ -790,7 +796,12 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   );
 
   return (
-    <Card bordered={false} className={styles.container}>
+    <Card
+      bordered={false}
+      className={styles.container}
+      style={props.style}
+      bodyStyle={props.bodyStyle}
+    >
       <Form
         form={form}
         className={styles.form}

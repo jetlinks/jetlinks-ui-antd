@@ -6,7 +6,7 @@ import './index.less';
 import { useEffect, useRef, useState } from 'react';
 import { ChannelItem } from '@/pages/media/Device/Channel/typings';
 import { useHistory, useIntl, useLocation } from 'umi';
-import { BadgeStatus } from '@/components';
+import { AIcon, BadgeStatus } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { Button, message, Popconfirm, Tooltip } from 'antd';
 import {
@@ -14,7 +14,6 @@ import {
   EditOutlined,
   LeftOutlined,
   PlusOutlined,
-  VideoCameraAddOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import Save from './Save';
@@ -139,7 +138,7 @@ export default () => {
       }),
       valueType: 'option',
       align: 'left',
-      width: 200,
+      width: 160,
       render: (_, record) => [
         <Tooltip
           key="edit"
@@ -173,14 +172,16 @@ export default () => {
         <Tooltip key={'playback'} title={'回放'}>
           <a
             onClick={() => {
+              const param = new URLSearchParams(location.search);
+              const _type = param.get('type');
               history.push(
                 `${getMenuPathByCode(MENUS_CODE['media/Device/Playback'])}?id=${
                   record.deviceId
-                }&channelId=${record.channelId}`,
+                }&channelId=${record.channelId}&type=${_type}`,
               );
             }}
           >
-            <VideoCameraAddOutlined />
+            <AIcon type={'icon-huifang'} />
           </a>
         </Tooltip>,
         type === ProviderValue.FIXED ? (

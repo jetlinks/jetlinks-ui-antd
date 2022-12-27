@@ -1,11 +1,9 @@
 import React from 'react';
-import { Ellipsis, PermissionButton, TableCard } from '@/components';
+import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { Store } from 'jetlinks-store';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
-import { useHistory } from 'umi';
 
 export interface AlarmConfigProps extends ConfigurationItem {
   detail?: React.ReactNode;
@@ -16,7 +14,6 @@ export interface AlarmConfigProps extends ConfigurationItem {
 export const aliyunSms = require('/public/images/alarm/alarm-config.png');
 
 export default (props: AlarmConfigProps) => {
-  const history = useHistory();
   return (
     <TableCard
       actions={props.actions}
@@ -43,24 +40,9 @@ export default (props: AlarmConfigProps) => {
           <div className={'card-item-content'}>
             <div>
               <label>关联场景联动</label>
-              <div className={'ellipsis'}>
-                <PermissionButton
-                  type={'link'}
-                  isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
-                  style={{ padding: 0, height: 'auto' }}
-                  tooltip={{
-                    title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
-                      ? props?.sceneName
-                      : '没有权限，请联系管理员',
-                  }}
-                  onClick={() => {
-                    const url = getMenuPathByCode('rule-engine/Scene/Save');
-                    history.push(`${url}?id=${props.sceneId}`);
-                  }}
-                >
-                  {props?.sceneName || ''}
-                </PermissionButton>
-              </div>
+              <Ellipsis
+                title={(props?.scene || []).map((item: any) => item.name).join(',') || ''}
+              />
             </div>
             <div>
               <label>告警级别</label>
@@ -71,19 +53,6 @@ export default (props: AlarmConfigProps) => {
                   )?.title || props?.level
                 }
               />
-              {/*<div className={'ellipsis'}>*/}
-              {/*  <Tooltip*/}
-              {/*    title={*/}
-              {/*      (Store.get('default-level') || []).find(*/}
-              {/*        (item: any) => item?.level === props?.level,*/}
-              {/*      )?.title || props?.level*/}
-              {/*    }*/}
-              {/*  >*/}
-              {/*    {(Store.get('default-level') || []).find(*/}
-              {/*      (item: any) => item?.level === props?.level,*/}
-              {/*    )?.title || props?.level}*/}
-              {/*  </Tooltip>*/}
-              {/*</div>*/}
             </div>
           </div>
         </div>

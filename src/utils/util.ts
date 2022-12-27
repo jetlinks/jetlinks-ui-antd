@@ -4,6 +4,7 @@ import { action } from '@formily/reactive';
 import Token from '@/utils/token';
 import { message } from 'antd';
 import SystemConst from '@/utils/const';
+
 /**
  * 下载文件
  * @param url 下载链接
@@ -49,11 +50,11 @@ export const downloadFileByUrl = (url: string, name: string, type: string) => {
  * @param record
  * @param fileName
  */
-export const downloadObject = (record: Record<string, any>, fileName: string) => {
+export const downloadObject = (record: Record<string, any>, fileName: string, format?: string) => {
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
-  ghostLink.download = `${record?.name}${fileName}_${moment(new Date()).format(
-    'YYYY/MM/DD HH:mm:ss',
+  ghostLink.download = `${record?.name || ''}${fileName}_${moment(new Date()).format(
+    format || 'YYYY/MM/DD HH:mm:ss',
   )}.json`;
   ghostLink.style.display = 'none';
   //字符串内容转成Blob地址
@@ -159,8 +160,38 @@ export const isNoCommunity = !(localStorage.getItem(SystemConst.Version_Code) ==
  */
 export const phoneRegEx = (value: string) => {
   const phone = new RegExp(
-    '^(((\\+86)|(\\+86-))|((86)|(86\\-))|((0086)|(0086\\-)))?1[3|5|7|8]\\d{9}$',
+    '^(((\\+86)|(\\+86-))|((86)|(86\\-))|((0086)|(0086\\-)))?1[3|5|7|8|9]\\d{9}$',
   );
   const mobile = /(0[0-9]{2,3})([2-9][0-9]{6,7})+([0-9]{8,11})?$/;
   return phone.test(value) || mobile.test(value);
+};
+
+export const ArrayToTree = (list: any[]): any[] => {
+  const treeList: any[] = [];
+  // 所有项都使用对象存储起来
+  const map = {};
+
+  // 建立一个映射关系：通过id快速找到对应的元素
+  list.forEach((item) => {
+    if (!item.children) {
+      item.children = [];
+    }
+    map[item.id] = item;
+  });
+
+  list.forEach((item) => {
+    // 对于每一个元素来说，先找它的上级
+    //    如果能找到，说明它有上级，则要把它添加到上级的children中去
+    //    如果找不到，说明它没有上级，直接添加到 treeList
+    const parent = map[item.parentId];
+    // 如果存在则表示item不是最顶层的数据
+    if (parent) {
+      parent.children.push(item);
+    } else {
+      // 如果不存在 则是顶层数据
+      treeList.push(item);
+    }
+  });
+  // 返回出去
+  return treeList;
 };

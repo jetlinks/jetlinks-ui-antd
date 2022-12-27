@@ -2,7 +2,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import LivePlayer from '@/components/Player';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Calendar, Empty, List, Spin, Tooltip } from 'antd';
+import { Calendar, List, Spin, Tooltip } from 'antd';
 import { useLocation } from 'umi';
 import Service from './service';
 import './index.less';
@@ -10,6 +10,8 @@ import { recordsItemType } from '@/pages/media/Device/Playback/typings';
 import type { Moment } from 'moment';
 import * as moment from 'moment';
 import classNames from 'classnames';
+import { Empty } from '@/components';
+
 import {
   CloudDownloadOutlined,
   DownloadOutlined,
@@ -103,6 +105,8 @@ export default () => {
   const param = new URLSearchParams(location.search);
   const deviceId = param.get('id');
   const channelId = param.get('channelId');
+
+  const [deviceType, setDeviceType] = useState('');
 
   const queryLocalRecords = async (date: Moment) => {
     setPlayStatus(0);
@@ -198,9 +202,22 @@ export default () => {
   };
 
   useEffect(() => {
-    setTime(moment(new Date()));
-    queryLocalRecords(moment(new Date()));
-  }, []);
+    const _param = new URLSearchParams(location.search);
+    const _type = _param.get('type');
+
+    if (_type) {
+      setDeviceType(_type);
+      const _timeStr = moment(new Date());
+      setTime(_timeStr);
+      if (_type === 'fixed-media') {
+        setType('cloud');
+        queryServiceRecords(_timeStr);
+      } else {
+        queryLocalRecords(_timeStr);
+        setType('local');
+      }
+    }
+  }, [location]);
 
   return (
     <PageContainer>
@@ -299,6 +316,7 @@ export default () => {
                   label: '本地',
                   value: 'local',
                   imgUrl: require('/public/images/local.png'),
+                  disabled: deviceType === 'fixed-media',
                 },
               ]}
             />

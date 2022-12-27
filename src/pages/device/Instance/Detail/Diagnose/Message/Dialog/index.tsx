@@ -31,6 +31,7 @@ const Dialog = (props: Props) => {
   return (
     <div className={classNames('dialog-item', { 'dialog-active': !data?.upstream })} key={data.key}>
       <div className="dialog-card">
+        {/*<div>{data.key}</div>*/}
         {data.list.map((item: any) => (
           <div key={item.key} className="dialog-list">
             <div
@@ -50,7 +51,10 @@ const Dialog = (props: Props) => {
             <div className="dialog-box">
               <div className="dialog-header">
                 <div className="dialog-title">
-                  <Badge color={statusColor.get(item.error ? 'error' : 'success')} />
+                  <Badge
+                    color={statusColor.get(item.error ? 'error' : 'success')}
+                    style={{ marginRight: 5 }}
+                  />
                   {operationMap.get(item.operation) || item?.operation}
                 </div>
                 <div className="dialog-time">

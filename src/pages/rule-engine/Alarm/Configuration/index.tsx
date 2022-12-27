@@ -14,25 +14,22 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Space, Tooltip } from 'antd';
 import ProTableCard from '@/components/ProTableCard';
-import Save from './Save';
 import Service from '@/pages/rule-engine/Alarm/Configuration/service';
 import AlarmConfig from '@/components/ProTableCard/CardItems/AlarmConfig';
 import { Store } from 'jetlinks-store';
-import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode } from '@/utils/menu';
 import { useHistory } from 'umi';
 import { onlyMessage } from '@/utils/util';
 import encodeQuery from '@/utils/encodeQuery';
 
-const service = new Service('alarm/config');
+export const service = new Service('alarm/config');
 
 const Configuration = () => {
   const intl = useIntl();
   const history = useHistory();
-  const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
   const { permission } = PermissionButton.usePermission('rule-engine/Alarm/Configuration');
 
-  const [current, setCurrent] = useState<any>();
   const columns: ProColumns<ConfigurationItem>[] = [
     {
       dataIndex: 'name',
@@ -107,33 +104,35 @@ const Configuration = () => {
       title: '关联场景联动',
       dataIndex: 'sceneId',
       width: 250,
-      render: (text: any, record: any) => (
-        <PermissionButton
-          type={'link'}
-          isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
-          style={{ padding: 0, height: 'auto' }}
-          tooltip={{
-            title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
-              ? text
-              : '没有权限，请联系管理员',
-          }}
-          onClick={() => {
-            const url = getMenuPathByCode('rule-engine/Scene/Save');
-            history.push(`${url}?id=${record.sceneId}`);
-          }}
-        >
-          <span
-            style={{
-              width: '200px',
-              overflow: 'hidden',
-              textAlign: 'left',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {record?.sceneName}
-          </span>
-        </PermissionButton>
-      ),
+      render: (text: any, record: any) =>
+        (record?.scene || []).map((item: any) => item?.name).join(',') || '',
+      // (
+      // <PermissionButton
+      //   type={'link'}
+      //   isPermission={!!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])}
+      //   style={{ padding: 0, height: 'auto' }}
+      //   tooltip={{
+      //     title: !!getMenuPathByCode(MENUS_CODE['rule-engine/Scene'])
+      //       ? text
+      //       : '没有权限，请联系管理员',
+      //   }}
+      //   onClick={() => {
+      //     const url = getMenuPathByCode('rule-engine/Scene/Save');
+      //     history.push(`${url}?id=${record.sceneId}`);
+      //   }}
+      // >
+      //   <span
+      //     style={{
+      //       width: '200px',
+      //       overflow: 'hidden',
+      //       textAlign: 'left',
+      //       textOverflow: 'ellipsis',
+      //     }}
+      //   >
+      //     {(record?.scene || []).map((item: any) => item?.name).join(',')}
+      //   </span>
+      // </PermissionButton>
+      // ),
       valueType: 'select',
       request: async () => {
         const res: any = await service.getScene(
@@ -197,7 +196,12 @@ const Configuration = () => {
               disabled: record.state?.value === 'disabled',
               title: '确认手动触发?',
               onConfirm: async () => {
-                await service._execute(record.sceneId);
+                const scene = (record?.scene || [])
+                  .filter((item: any) => item?.triggerType === 'manual')
+                  .map((i) => {
+                    return { id: i?.id };
+                  });
+                await service._execute(scene);
                 onlyMessage(
                   intl.formatMessage({
                     id: 'pages.data.option.success',
@@ -223,8 +227,8 @@ const Configuration = () => {
           }}
           type="link"
           onClick={() => {
-            setVisible(true);
-            setCurrent(record);
+            const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+            history.push(`${url}?id=${record.id}`);
           }}
         >
           <EditOutlined />
@@ -315,7 +319,7 @@ const Configuration = () => {
         columns={columns}
         columnEmptyText={''}
         request={(params) =>
-          service.query({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
+          service.queryList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
         }
         gridColumn={3}
         cardRender={(record) => (
@@ -335,7 +339,12 @@ const Configuration = () => {
                     title: '确认手动触发?',
                     disabled: record.state?.value === 'disabled',
                     onConfirm: async () => {
-                      await service._execute(record.sceneId);
+                      const scene = (record?.scene || [])
+                        .filter((item: any) => item?.triggerType === 'manual')
+                        .map((i: any) => {
+                          return { id: i?.id };
+                        });
+                      await service._execute(scene);
                       onlyMessage(
                         intl.formatMessage({
                           id: 'pages.data.option.success',
@@ -355,8 +364,8 @@ const Configuration = () => {
                 key="edit"
                 type="link"
                 onClick={() => {
-                  setCurrent(record);
-                  setVisible(true);
+                  const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+                  history.push(`${url}?id=${record.id}`);
                 }}
               >
                 <EditOutlined />
@@ -431,8 +440,8 @@ const Configuration = () => {
             <PermissionButton
               isPermission={permission.add}
               onClick={() => {
-                setCurrent(undefined);
-                setVisible(true);
+                const url = getMenuPathByCode('rule-engine/Alarm/Configuration/Save');
+                history.push(`${url}`);
               }}
               key="button"
               icon={<PlusOutlined />}
@@ -445,14 +454,6 @@ const Configuration = () => {
             </PermissionButton>
           </Space>
         }
-      />
-      <Save
-        data={current}
-        visible={visible}
-        close={() => {
-          setVisible(false);
-          actionRef.current?.reset?.();
-        }}
       />
     </PageContainer>
   );

@@ -178,7 +178,24 @@ const BindChildDevice = (props: Props) => {
         pagination={{
           pageSize: 10,
         }}
-        request={(params) => service.query({ ...params })}
+        request={(params) =>
+          service.query({
+            ...params,
+            terms: [
+              ...(params?.terms || []),
+              {
+                terms: [
+                  {
+                    termType: 'eq',
+                    column: 'deviceType',
+                    value: 'childrenDevice',
+                  },
+                ],
+                type: 'and',
+              },
+            ],
+          })
+        }
       />
     </Modal>
   );

@@ -53,6 +53,7 @@ const Save = () => {
           form.setFieldsValue({
             ...res.result,
             photoUrl: res.result?.photoUrl || defaultImage,
+            channel: res.result?.provider,
           });
           const _accessType = res.result?.provider || DefaultAccessType;
           setAccessType(_accessType);
@@ -62,7 +63,7 @@ const Save = () => {
       });
     } else {
       form.setFieldsValue({
-        provider: DefaultAccessType,
+        channel: DefaultAccessType,
         photoUrl: defaultImage,
       });
       queryProduct(DefaultAccessType);
@@ -73,20 +74,16 @@ const Save = () => {
   const handleSave = useCallback(async () => {
     const formData = await form.validateFields();
     if (formData) {
-      const { provider, ...extraFormData } = formData;
-      if (formData.password === oldPassword && !id) {
-        delete extraFormData.password;
+      const { channel, ...extraFormData } = formData;
+      if (formData?.others?.access_pwd === oldPassword && !id) {
+        delete extraFormData.others?.access_pwd;
       }
       if (formData.id === '') {
         delete extraFormData.id;
       }
-      // if (formData.password === oldPassword) {
-      //   delete extraFormData.password;
-      // }
-      const resp =
-        provider === DefaultAccessType
-          ? await service.saveGB(extraFormData)
-          : await service.saveFixed(extraFormData);
+      const resp = id
+        ? await service.updateData(channel, id, { ...extraFormData, channel })
+        : await service.saveData(channel, { ...extraFormData, channel });
       if (resp.status === 200) {
         form.resetFields();
         onlyMessage('操作成功');
@@ -140,7 +137,7 @@ const Save = () => {
                 <Row>
                   <Col span={24}>
                     <Form.Item
-                      name={'provider'}
+                      name={'channel'}
                       label={'接入方式'}
                       required
                       rules={[{ required: true, message: '请选择接入方式' }]}
@@ -149,10 +146,9 @@ const Save = () => {
                         model={'singular'}
                         itemStyle={{ width: '50%' }}
                         onSelect={(key) => {
-                          console.log(key);
                           setAccessType(key);
                           queryProduct(key);
-                          form.resetFields(['id']);
+                          form.resetFields(['id', 'productId']);
                         }}
                         disabled={id}
                         options={[
@@ -170,12 +166,12 @@ const Save = () => {
                   </Col>
                 </Row>
                 <Row>
-                  <Col span={8}>
+                  <Col flex={'184px'}>
                     <Form.Item name={'photoUrl'}>
                       <UploadImage />
                     </Form.Item>
                   </Col>
-                  <Col span={16}>
+                  <Col flex={'auto'}>
                     {accessType === DefaultAccessType ? (
                       <Form.Item
                         label={'ID'}
@@ -301,7 +297,7 @@ const Save = () => {
                     <Col span={24}>
                       <Form.Item
                         label={'接入密码'}
-                        name={'password'}
+                        name={['others', 'access_pwd']}
                         required
                         rules={[
                           { required: true, message: '请输入接入密码' },

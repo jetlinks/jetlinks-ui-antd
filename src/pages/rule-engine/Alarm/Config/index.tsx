@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Badge, Card, Col, Descriptions, Divider, Image, Row, Table, Tooltip } from 'antd';
 import TitleComponent from '@/components/TitleComponent';
 import { createSchemaField } from '@formily/react';
-import { ArrayItems, Form, FormButtonGroup, FormGrid, FormItem, Input } from '@formily/antd';
+import { ArrayItems, Form, FormGrid, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useState } from 'react';
 import { createForm, onFormInit } from '@formily/core';
@@ -213,7 +213,7 @@ const Config = () => {
               'x-decorator': 'FormItem',
               'x-component': 'FLevelInput',
               'x-decorator-props': {
-                gridSpan: 23,
+                gridSpan: 24,
               },
               'x-validator': [
                 {
@@ -310,31 +310,24 @@ const Config = () => {
   const level = (
     <Row>
       <Col span={14}>
-        <Card>
+        <Card style={{ height: 780 }}>
           <TitleComponent data={'告警级别配置'} />
           <Form form={levelForm}>
             <SchemaField schema={levelSchema} />
-            <FormButtonGroup.Sticky>
-              <FormButtonGroup.FormItem>
-                <PermissionButton
-                  key={'update'}
-                  type={'primary'}
-                  style={{ padding: 0, width: 50 }}
-                  isPermission={permission.update}
-                  onClick={handleSaveLevel}
-                >
-                  保存
-                </PermissionButton>
-                {/* <Button type="primary" onClick={handleSaveLevel}>
-                  保存
-                </Button> */}
-              </FormButtonGroup.FormItem>
-            </FormButtonGroup.Sticky>
+            <PermissionButton
+              key={'update'}
+              type={'primary'}
+              style={{ padding: 0, width: 50 }}
+              isPermission={permission.update}
+              onClick={handleSaveLevel}
+            >
+              保存
+            </PermissionButton>
           </Form>
         </Card>
       </Col>
       <Col span={10}>
-        <div style={{ marginLeft: 20 }} className={styles.doc}>
+        <div style={{ marginLeft: 20, height: 780 }} className={styles.doc}>
           <h1>功能说明</h1>
           <div>1、告警级别用于描述告警的严重程度，请根据业务管理方式进行自定义。</div>
           <div>2、告警级别将会在告警配置中被引用。</div>
@@ -347,7 +340,7 @@ const Config = () => {
     <Row>
       <Col span={14}>
         <div>
-          <Card>
+          <Card style={{ height: 780 }}>
             <TitleComponent
               data={
                 <span>
@@ -377,21 +370,31 @@ const Config = () => {
                 </span>
               }
             />
-            <Descriptions bordered column={2}>
-              <Descriptions.Item label="kafka地址">
+            <Descriptions
+              key={'output'}
+              bordered
+              column={2}
+              labelStyle={{ width: 112 }}
+              contentStyle={{ minWidth: 100 }}
+            >
+              <Descriptions.Item label="kafka地址" contentStyle={{ minWidth: 200 }}>
                 {output?.data?.config?.config?.address && (
-                  <Badge status={output?.running ? 'success' : 'error'} />
+                  <Badge
+                    status={output?.running ? 'success' : 'error'}
+                    text={output?.data?.config?.config?.address || ''}
+                  />
                 )}
-                {output?.data?.config?.config?.address || ''}
               </Descriptions.Item>
               <Descriptions.Item label="topic">
                 {output?.data?.config?.config?.topic || ''}
               </Descriptions.Item>
               <Descriptions.Item label="状态" span={2}>
                 {output?.data?.state && (
-                  <Badge status={output?.data?.state?.value === 'enabled' ? 'success' : 'error'} />
+                  <Badge
+                    status={output?.data?.state?.value === 'enabled' ? 'success' : 'error'}
+                    text={output?.data?.state?.text || ''}
+                  />
                 )}
-                {output?.data?.state?.text || ''}
               </Descriptions.Item>
             </Descriptions>
             <Divider />
@@ -424,28 +427,38 @@ const Config = () => {
                 </span>
               }
             />
-            <Descriptions bordered column={2}>
+            <Descriptions
+              key={'input'}
+              bordered
+              column={2}
+              labelStyle={{ width: 112 }}
+              contentStyle={{ minWidth: 150 }}
+            >
               <Descriptions.Item label="kafka地址">
                 {input?.data?.config?.config?.address && (
-                  <Badge status={input?.running ? 'success' : 'error'} />
+                  <Badge
+                    status={input?.running ? 'success' : 'error'}
+                    text={input?.data?.config?.config?.address || ''}
+                  />
                 )}
-                {input?.data?.config?.config?.address || ''}
               </Descriptions.Item>
               <Descriptions.Item label="topic">
                 {input?.data?.config?.config?.topic || ''}
               </Descriptions.Item>
               <Descriptions.Item label="状态" span={2}>
                 {input?.data?.state && (
-                  <Badge status={input?.data?.state?.value === 'enabled' ? 'success' : 'error'} />
+                  <Badge
+                    status={input?.data?.state?.value === 'enabled' ? 'success' : 'error'}
+                    text={input?.data?.state?.text || ''}
+                  />
                 )}
-                {input?.data?.state?.text || ''}
               </Descriptions.Item>
             </Descriptions>
           </Card>
         </div>
       </Col>
       <Col span={10}>
-        <div style={{ height: 650, marginLeft: 20, paddingBottom: 24 }}>
+        <div style={{ height: 780, marginLeft: 20, paddingBottom: 24, backgroundColor: '#fff' }}>
           <div className={styles.doc}>
             <h1>功能图示</h1>
             <div className={styles.image}>

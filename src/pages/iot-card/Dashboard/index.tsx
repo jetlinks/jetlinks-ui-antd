@@ -1,6 +1,6 @@
 import DashBoard, { DashBoardTopCard } from '@/components/DashBoard';
 import Echarts from '@/components/DashBoard/echarts';
-import { DatePicker, Progress, Empty } from 'antd';
+import { DatePicker, Progress } from 'antd';
 import moment from 'moment';
 import styles from './index.less';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { service } from '@/pages/iot-card/CardManagement';
 import type { EChartsOption } from 'echarts';
 import classNames from 'classnames';
+import { Empty } from '@/components';
 
 const DefaultEchartsOptions: any = {
   yAxis: {

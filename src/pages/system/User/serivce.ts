@@ -54,6 +54,10 @@ class Service extends BaseService<UserItem> {
       method: 'POST',
       data: password,
     });
+  queryUserType = () =>
+    request(`/${SystemConst.API_BASE}/user/detail/types`, {
+      method: 'GET',
+    });
 }
 
 export default Service;

@@ -10,6 +10,7 @@ type AlarmLogItem = {
   level: number;
   description?: string;
   state: Record<string, any>;
+  alarmTime?: number | string;
 };
 
 type AlarmLogSolveHistoryItem = {

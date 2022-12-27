@@ -66,15 +66,17 @@ export default (props: FunctionProps) => {
         return <MetadataJsonInput json={record.json} />;
       case 'date':
         return (
-          <>
-            {
-              // @ts-ignore
-              <DatePicker
-                format={record.format || 'YYYY-MM-DD HH:mm:ss'}
-                style={{ width: '100%' }}
-              />
-            }
-          </>
+          // <>
+          //   {
+          //     // @ts-ignore
+          //     <DatePicker
+          //       format={record.format || 'YYYY-MM-DD HH:mm:ss'}
+          //       style={{ width: '100%' }}
+          //     />
+          //   }
+          // </>
+          // @ts-ignore
+          <DatePicker format={'YYYY-MM-DD HH:mm:ss'} style={{ width: '100%' }} showTime />
         );
       default:
         return <Input placeholder={'请输入' + name} />;
@@ -183,6 +185,7 @@ export default (props: FunctionProps) => {
   ];
 
   const handleDataSource = (data: any) => {
+    // console.log(data,1111)
     const array = [];
     const properties = data.valueType ? data.valueType.properties : data.inputs;
     for (const datum of properties) {

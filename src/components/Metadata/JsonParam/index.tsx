@@ -11,7 +11,6 @@ import EnumParam from '@/components/Metadata/EnumParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
 import { useIntl } from '@/.umi/plugin-locale/localeExports';
 import Editable from '../EditTable';
-import { registerValidateRules } from '@formily/core';
 
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
@@ -46,23 +45,17 @@ const JsonParam = observer((props: Props) => {
       return _data;
     });
 
-  registerValidateRules({
-    checkLength(value) {
-      if (String(value).length > 64) {
-        return {
-          type: 'error',
-          message: '最多可输入64个字符',
-        };
-      }
-      if (!(value % 1 === 0)) {
-        return {
-          type: 'error',
-          message: '请输入非0正整数',
-        };
-      }
-      return '';
-    },
-  });
+  const checkArray: any = (arr: any) => {
+    if (Array.isArray(arr) && arr.length) {
+      return arr.every((item: any) => {
+        if (item.valueType?.type === 'object') {
+          return item.id && item.name && checkArray(item.json?.properties);
+        }
+        return item.id && item.name && item.valueType;
+      });
+    }
+    return false;
+  };
 
   const schema: ISchema = {
     type: 'object',
@@ -71,6 +64,32 @@ const JsonParam = observer((props: Props) => {
         type: 'array',
         'x-component': 'ArrayItems',
         'x-decorator': 'FormItem',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              value: [{}],
+            },
+          },
+        },
+        'x-validator': [
+          {
+            triggerType: 'onBlur',
+            validator: (value: any[]) => {
+              return new Promise((resolve) => {
+                if (props.keys === 'inputs' && value.length === 0) {
+                  resolve('');
+                }
+                const flag = checkArray(value);
+                if (!!flag) {
+                  resolve('');
+                } else {
+                  resolve('请配置参数');
+                }
+              });
+            },
+          },
+        ],
         items: {
           type: 'object',
           'x-decorator': 'ArrayItems.Item',
@@ -141,7 +160,17 @@ const JsonParam = observer((props: Props) => {
                       enum:
                         MetadataModel.type === 'functions'
                           ? DataTypeList.filter((item) => item.value !== 'file')
-                          : DataTypeList,
+                          : DataTypeList.filter((item) =>
+                              [
+                                'int',
+                                'long',
+                                'float',
+                                'double',
+                                'string',
+                                'boolean',
+                                'date',
+                              ].includes(item.value),
+                            ),
                     },
                     booleanConfig: {
                       title: '布尔值',
@@ -239,6 +268,13 @@ const JsonParam = observer((props: Props) => {
                       'x-component': 'Select',
                       enum: DateTypeList,
                       'x-visible': false,
+                      default: 'string',
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请选择时间格式',
+                        },
+                      ],
                       'x-reactions': {
                         dependencies: ['..valueType.type'],
                         fulfill: {
@@ -266,7 +302,16 @@ const JsonParam = observer((props: Props) => {
                           },
                           'x-validator': [
                             {
-                              checkLength: true,
+                              format: 'integer',
+                              message: '请输入1-2147483647之间的正整数',
+                            },
+                            {
+                              max: 2147483647,
+                              message: '请输入1-2147483647之间的正整数',
+                            },
+                            {
+                              min: 1,
+                              message: '请输入1-2147483647之间的正整数',
                             },
                           ],
                           'x-reactions': {
@@ -282,15 +327,24 @@ const JsonParam = observer((props: Props) => {
                     },
                   },
                 },
-
                 'valueType.scale': {
                   title: '精度',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
                   'x-visible': false,
+                  default: 2,
                   'x-validator': [
                     {
-                      checkLength: true,
+                      format: 'integer',
+                      message: '请输入0-2147483647之间的正整数',
+                    },
+                    {
+                      max: 2147483647,
+                      message: '请输入0-2147483647之间的正整数',
+                    },
+                    {
+                      min: 0,
+                      message: '请输入0-2147483647之间的正整数',
                     },
                   ],
                   'x-component-props': {
@@ -305,7 +359,6 @@ const JsonParam = observer((props: Props) => {
                     },
                   },
                 },
-
                 json: {
                   type: 'string',
                   title: 'JSON对象',

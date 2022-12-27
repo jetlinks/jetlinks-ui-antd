@@ -57,7 +57,7 @@ const Home = () => {
           const isApiUser = res.result.dimensions.find(
             (item: any) => item.type === 'api-client' || item.type.id === 'api-client',
           );
-          console.log(isApiUser);
+          // console.log(isApiUser);
           setApiUser(isApiUser);
           service.queryViews().then((resp) => {
             setLoading(false);

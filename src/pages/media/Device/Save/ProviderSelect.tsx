@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Badge, Button, Empty } from 'antd';
+import { Badge, Button } from 'antd';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import styles from '@/pages/link/AccessConfig/index.less';
 import { TableCard } from '@/components';
@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import { useRequest } from '@@/plugin-request/request';
 import { CheckOutlined } from '@ant-design/icons';
+import { Empty } from '@/components';
 
 interface ProviderProps {
   value?: string;
@@ -118,19 +119,24 @@ export default (props: ProviderProps) => {
                     <div className={styles.desc}>{item.description || ''}</div>
                   </div>
                   <div className={styles.container}>
-                    <div className={styles.server}>
-                      <div className={styles.subTitle}>{item?.channelInfo?.name || ''}</div>
-                      <div style={{ width: '100%' }}>
-                        {item.channelInfo?.addresses.map((i: any, index: number) => (
-                          <p key={i.address + `_address${index}`}>
-                            <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
-                          </p>
-                        ))}
+                    {props.type === 'gb28181-2016' && (
+                      <div className={styles.server}>
+                        <div className={styles.subTitle}>{item?.channelInfo?.name || ''}</div>
+                        <div style={{ width: '100%' }}>
+                          {item.channelInfo?.addresses.map((i: any, index: number) => (
+                            <p key={i.address + `_address${index}`}>
+                              <Badge color={i.health === -1 ? 'red' : 'green'} text={i.address} />
+                            </p>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
+
                     <div className={styles.procotol}>
                       <div className={styles.subTitle}>{item?.protocolDetail?.name || ''}</div>
-                      <p>{item.protocolDetail?.description || ''}</p>
+                      <p style={props.type === 'gb28181-2016' ? { width: 250 } : {}}>
+                        {item.protocolDetail?.description || ''}
+                      </p>
                     </div>
                   </div>
                 </div>

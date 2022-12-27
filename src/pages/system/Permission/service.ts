@@ -32,6 +32,12 @@ class Service extends BaseService<PermissionItem> {
         }),
       ),
     ).pipe(map((item) => item));
+
+  public validateField = (data: any) =>
+    request(`/${SystemConst.API_BASE}/permission/id/_validate`, {
+      method: 'GET',
+      params: data,
+    });
 }
 
 export default Service;

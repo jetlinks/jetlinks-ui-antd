@@ -8,7 +8,7 @@ import moment from 'moment';
 import { Form, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 
 interface Props {
   data: Partial<EventMetadata>;
@@ -18,7 +18,7 @@ const EventLog = (props: Props) => {
   const params = useParams<{ id: string }>();
   const { data } = props;
   const actionRef = useRef<ActionType>();
-  const [searchParams, setSearchParams] = useState<any>({ pageSize: 10 });
+  const [searchParams, setSearchParams] = useState<any>({});
   // const device = InstanceModel.detail;
   // const [subscribeTopic] = useSendWebsocketMessage();
 
@@ -46,14 +46,16 @@ const EventLog = (props: Props) => {
               title: '详情',
               width: 850,
               content: (
-                <Form.Item wrapperCol={{ span: 22 }} labelCol={{ span: 2 }} label={data.name}>
-                  <MonacoEditor
-                    height={350}
-                    theme="vs"
-                    language="json"
-                    value={JSON.stringify(record, null, 2)}
-                  />
-                </Form.Item>
+                <Form layout={'vertical'}>
+                  <Form.Item label={data.name}>
+                    <JMonacoEditor
+                      height={350}
+                      theme="vs"
+                      language="json"
+                      value={JSON.stringify(record, null, 2)}
+                    />
+                  </Form.Item>
+                </Form>
               ),
               okText: '关闭',
               onOk() {},
@@ -141,9 +143,6 @@ const EventLog = (props: Props) => {
           return service.getEventCount(params.id, data.id!, {
             ...param,
           });
-        }}
-        pagination={{
-          pageSize: 10,
         }}
         columns={[...createColumn(), ...columns]}
       />

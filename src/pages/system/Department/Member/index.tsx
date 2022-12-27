@@ -14,6 +14,7 @@ import SearchComponent from '@/components/SearchComponent';
 import Models from '@/pages/system/Department/Assets/productCategory/model';
 import { onlyMessage } from '@/utils/util';
 import PermissionButton from '@/components/PermissionButton';
+import '../index.less';
 
 export const service = new Service('tenant');
 
@@ -170,6 +171,15 @@ const Member = observer((props: { parentId: string }) => {
     MemberModel.bind = false;
   };
 
+  const unSelect = () => {
+    // Models.bindKeys = [];
+    MemberModel.unBindUsers = [];
+  };
+
+  const getSelectedRowsKey = (selectedRows) => {
+    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
+  };
+
   useEffect(() => {
     setSearchParam({
       terms: [{ column: 'id$in-dimension$org', value: props.parentId }],
@@ -178,10 +188,11 @@ const Member = observer((props: { parentId: string }) => {
     //  初始化所有状态
     Models.bindKeys = [];
     Models.unBindKeys = [];
+    MemberModel.unBindUsers = [];
   }, [props.parentId]);
 
   return (
-    <>
+    <div className="content">
       {MemberModel.bind && (
         <Bind
           visible={MemberModel.bind}
@@ -196,6 +207,7 @@ const Member = observer((props: { parentId: string }) => {
         defaultParam={[{ column: 'id$in-dimension$org', value: props.parentId }]}
         onSearch={async (data) => {
           actionRef.current?.reset?.();
+          unSelect();
           setSearchParam(data);
         }}
         // onReset={() => {
@@ -227,14 +239,49 @@ const Member = observer((props: { parentId: string }) => {
           }
           return service.queryUser(params);
         }}
+        tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
+        tableAlertOptionRender={() => {
+          return (
+            <a
+              onClick={() => {
+                unSelect();
+              }}
+            >
+              取消选择
+            </a>
+          );
+        }}
         rowSelection={{
           selectedRowKeys: MemberModel.unBindUsers,
-          onChange: (selectedRowKeys, selectedRows) => {
-            MemberModel.unBindUsers = selectedRows.map((item) => item.id);
+          // onChange: (selectedRowKeys, selectedRows) => {
+          //   MemberModel.unBindUsers = selectedRows.map((item) => item.id);
+          // },
+          onSelect: (record, selected, selectedRows) => {
+            if (selected) {
+              MemberModel.unBindUsers = [
+                ...new Set([...MemberModel.unBindUsers, ...getSelectedRowsKey(selectedRows)]),
+              ];
+            } else {
+              MemberModel.unBindUsers = MemberModel.unBindUsers.filter(
+                (item) => item !== record.id,
+              );
+            }
+          },
+          onSelectAll: (selected, selectedRows, changeRows) => {
+            if (selected) {
+              MemberModel.unBindUsers = [
+                ...new Set([...MemberModel.unBindUsers, ...getSelectedRowsKey(selectedRows)]),
+              ];
+            } else {
+              const unChangeRowsKeys = getSelectedRowsKey(changeRows);
+              MemberModel.unBindUsers = MemberModel.unBindUsers
+                .concat(unChangeRowsKeys)
+                .filter((item) => !unChangeRowsKeys.includes(item));
+            }
           },
         }}
         params={searchParam}
-        toolBarRender={() => [
+        headerTitle={[
           <PermissionButton
             onClick={() => {
               MemberModel.bind = true;
@@ -242,6 +289,7 @@ const Member = observer((props: { parentId: string }) => {
             icon={<PlusOutlined />}
             type="primary"
             key="bind"
+            style={{ marginRight: 12 }}
             disabled={!props.parentId}
             isPermission={permission['bind-user']}
           >
@@ -290,7 +338,7 @@ const Member = observer((props: { parentId: string }) => {
           // </Popconfirm>,
         ]}
       />
-    </>
+    </div>
   );
 });
 

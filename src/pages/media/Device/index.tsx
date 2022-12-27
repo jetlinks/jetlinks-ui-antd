@@ -268,38 +268,42 @@ const Device = () => {
             <EyeOutlined />
           </Button>
         </Tooltip>,
-        <PermissionButton
-          tooltip={
-            record.state.value === 'offline' ||
-            record.state.value === 'notActive' ||
-            record.provider === 'fixed-media'
-              ? {
-                  title:
-                    record.provider === 'fixed-media'
-                      ? '固定地址无法更新通道'
-                      : record.state.value === 'offline'
-                      ? '设备已离线'
-                      : record.state.value === 'notActive'
-                      ? '设备已禁用'
-                      : '',
-                }
-              : undefined
-          }
-          key={'updateChannel'}
-          isPermission={permission.update}
-          disabled={
-            record.state.value === 'offline' ||
-            record.state.value === 'notActive' ||
-            record.provider === 'fixed-media'
-          }
-          style={{ padding: 0 }}
-          type={'link'}
-          onClick={() => {
-            updateChannel(record.id);
-          }}
-        >
-          <SyncOutlined />
-        </PermissionButton>,
+        <>
+          {record.provider !== 'fixed-media' && (
+            <PermissionButton
+              tooltip={
+                record.state.value === 'offline' ||
+                record.state.value === 'notActive' ||
+                record.provider === 'fixed-media'
+                  ? {
+                      title:
+                        record.provider === 'fixed-media'
+                          ? '固定地址无法更新通道'
+                          : record.state.value === 'offline'
+                          ? '设备已离线'
+                          : record.state.value === 'notActive'
+                          ? '设备已禁用'
+                          : '',
+                    }
+                  : undefined
+              }
+              key={'updateChannel'}
+              isPermission={permission.update}
+              disabled={
+                record.state.value === 'offline' ||
+                record.state.value === 'notActive' ||
+                record.provider === 'fixed-media'
+              }
+              style={{ padding: 0 }}
+              type={'link'}
+              onClick={() => {
+                updateChannel(record.id);
+              }}
+            >
+              <SyncOutlined />
+            </PermissionButton>
+          )}
+        </>,
         <PermissionButton
           key={'delete'}
           tooltip={{
@@ -422,31 +426,33 @@ const Device = () => {
                 <PartitionOutlined />
                 查看通道
               </Button>,
-              <PermissionButton
-                key={'updateChannel'}
-                isPermission={permission.update}
-                tooltip={
-                  record.state.value !== 'online' || record.provider === 'fixed-media'
-                    ? {
-                        title:
-                          record.provider === 'fixed-media'
-                            ? '固定地址无法更新通道'
-                            : record.state.value === 'offline'
-                            ? '设备已离线'
-                            : record.state.value === 'notActive'
-                            ? '设备已禁用'
-                            : '',
-                      }
-                    : undefined
-                }
-                disabled={record.state.value !== 'online' || record.provider === 'fixed-media'}
-                onClick={() => {
-                  updateChannel(record.id);
-                }}
-              >
-                <SyncOutlined />
-                更新通道
-              </PermissionButton>,
+              record.provider !== 'fixed-media' && (
+                <PermissionButton
+                  key={'updateChannel'}
+                  isPermission={permission.update}
+                  tooltip={
+                    record.state.value !== 'online' || record.provider === 'fixed-media'
+                      ? {
+                          title:
+                            record.provider === 'fixed-media'
+                              ? '固定地址无法更新通道'
+                              : record.state.value === 'offline'
+                              ? '设备已离线'
+                              : record.state.value === 'notActive'
+                              ? '设备已禁用'
+                              : '',
+                        }
+                      : undefined
+                  }
+                  disabled={record.state.value !== 'online' || record.provider === 'fixed-media'}
+                  onClick={() => {
+                    updateChannel(record.id);
+                  }}
+                >
+                  <SyncOutlined />
+                  更新通道
+                </PermissionButton>
+              ),
               <PermissionButton
                 key="delete"
                 popConfirm={{

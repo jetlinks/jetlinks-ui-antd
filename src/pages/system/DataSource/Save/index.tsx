@@ -96,6 +96,7 @@ const Save = (props: Props) => {
               },
             ],
             required: true,
+            'x-disabled': !!props.data.id,
             enum: Store.get('datasource-type'),
           },
           'shareConfig.url': {
@@ -360,11 +361,7 @@ const Save = (props: Props) => {
         props.close();
       }}
       onOk={() => {
-        if ((props.data.id && props.data.typeId === 'rdb') || !props.data.id) {
-          handleSave();
-        } else {
-          onlyMessage('该类型数据库不可以编辑', 'warning');
-        }
+        handleSave();
       }}
     >
       <Form form={form} layout="vertical">

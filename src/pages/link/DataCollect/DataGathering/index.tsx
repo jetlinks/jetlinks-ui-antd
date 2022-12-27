@@ -8,7 +8,7 @@ import Device from '../components/Device';
 import Point from '../components/Point';
 import { Empty } from '@/components';
 
-const DataCollectModel = model<{
+export const DataCollectModel = model<{
   id: Partial<string>;
   type: 'channel' | 'device' | undefined;
   provider: 'OPC_UA' | 'MODBUS_TCP';
@@ -46,7 +46,7 @@ export default observer(() => {
 
   return (
     <PageContainer>
-      <Card bordered={false}>
+      <Card bordered={false} bodyStyle={{ paddingTop: 0 }}>
         <div className={styles.container}>
           <div className={styles.left}>
             <ChannelTree

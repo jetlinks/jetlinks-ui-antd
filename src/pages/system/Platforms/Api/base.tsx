@@ -38,6 +38,7 @@ interface ApiPageProps {
   isOpenGranted?: boolean;
   type?: 'all' | 'empowerment' | 'authorize';
   showHome?: boolean;
+  code?: string;
 }
 
 export default observer((props: ApiPageProps) => {
@@ -70,7 +71,7 @@ export default observer((props: ApiPageProps) => {
    */
   const getApiGrant = useCallback(() => {
     const param = new URLSearchParams(location.search);
-    const code = param.get('code');
+    const code = props.code ? props.code : param.get('code');
 
     if (props.isOpenGranted === false) {
       service.apiOperations().then((resp: any) => {
@@ -79,18 +80,20 @@ export default observer((props: ApiPageProps) => {
         }
       });
     } else {
+      console.log(props.code, 1111111);
       service.getApiGranted(code!).then((resp: any) => {
         if (resp.status === 200) {
           setGrantKeys(resp.result);
         }
       });
     }
-  }, [location, props.isOpenGranted]);
+  }, [location, props.isOpenGranted, props.code]);
 
   useEffect(() => {
     initModel();
     getOperations();
     getApiGrant();
+    console.log(props.code);
   }, []);
 
   return (

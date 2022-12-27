@@ -16,7 +16,7 @@ import OpcSave from '@/pages/link/DataCollect/components/Point/Save/opc-ua';
 import WritePoint from '@/pages/link/DataCollect/components/Point/CollectorCard/WritePoint';
 import BatchUpdate from './Save/BatchUpdate';
 import { onlyMessage } from '@/utils/util';
-import { DeleteOutlined, EditOutlined, RedoOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集
   data?: Partial<CollectorItem>;
@@ -43,6 +43,7 @@ const PointModel = model<{
   selectKey: string[];
   arr: any[];
   checkAll: boolean;
+  currentPage: number;
 }>({
   m_visible: false,
   p_visible: false,
@@ -55,11 +56,12 @@ const PointModel = model<{
   selectKey: [],
   arr: [],
   checkAll: false,
+  currentPage: 0,
 });
 
 const PointCard = observer((props: PointCardProps) => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const { minHeight } = useDomFullHeight(`.data-collect-point`, 24);
+  const { minHeight } = useDomFullHeight(`.data-collect-point`);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
@@ -103,6 +105,9 @@ const PointCard = observer((props: PointCardProps) => {
       });
   };
   const handleSearch = (params: any) => {
+    if (subRef.current) {
+      subRef.current?.unsubscribe();
+    }
     PointModel.checkAll = false;
     PointModel.selectKey = [];
     PointModel.list = [];
@@ -138,6 +143,23 @@ const PointCard = observer((props: PointCardProps) => {
       subRef.current && subRef.current?.unsubscribe();
     };
   }, []);
+
+  const onPageChange = (page: number, size: number) => {
+    if (PointModel.currentPage === size) {
+      handleSearch({
+        ...param,
+        pageIndex: page - 1,
+        pageSize: size,
+      });
+    } else {
+      PointModel.currentPage = size;
+      handleSearch({
+        ...param,
+        pageIndex: 0,
+        pageSize: size,
+      });
+    }
+  };
 
   const menu = (
     <Menu>
@@ -204,8 +226,14 @@ const PointCard = observer((props: PointCardProps) => {
           handleSearch(dt);
         }}
       />
-      <Card loading={loading} bordered={false}>
-        <div style={{ position: 'relative', minHeight }}>
+      <Card
+        loading={loading}
+        bordered={false}
+        className={'data-collect-point'}
+        style={{ position: 'relative', minHeight }}
+        bodyStyle={{ paddingTop: !props.type ? 4 : 24 }}
+      >
+        <div>
           <div style={{ height: '100%', paddingBottom: 48 }}>
             {!props.type && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
@@ -226,8 +254,9 @@ const PointCard = observer((props: PointCardProps) => {
                   }}
                   key="button"
                   type="primary"
+                  icon={<PlusOutlined />}
                 >
-                  {props?.provider === 'OPC_UA' ? '扫描' : '新增'}
+                  {props?.provider === 'OPC_UA' ? '扫描' : '新增点位'}
                 </PermissionButton>
                 {props.provider === 'OPC_UA' && (
                   <Dropdown key={'more'} overlay={menu} placement="bottom">
@@ -312,7 +341,8 @@ const PointCard = observer((props: PointCardProps) => {
                     justifyContent: 'flex-end',
                     position: 'absolute',
                     width: '100%',
-                    bottom: 0,
+                    bottom: 10,
+                    right: '2%',
                   }}
                 >
                   <Pagination
@@ -322,11 +352,7 @@ const PointCard = observer((props: PointCardProps) => {
                     total={dataSource?.total || 0}
                     current={dataSource?.pageIndex + 1}
                     onChange={(page, size) => {
-                      handleSearch({
-                        ...param,
-                        pageIndex: page - 1,
-                        pageSize: size,
-                      });
+                      onPageChange(page, size);
                     }}
                     pageSizeOptions={[12, 24, 48, 96]}
                     pageSize={dataSource?.pageSize}
@@ -354,7 +380,7 @@ export default observer((props: Props) => {
   const columns: ProColumns<PointItem>[] = props.type
     ? [
         {
-          title: '名称',
+          title: '点位名称',
           dataIndex: 'name',
         },
         {
@@ -374,7 +400,7 @@ export default observer((props: Props) => {
         },
         {
           title: '访问类型',
-          dataIndex: 'accessModes',
+          dataIndex: 'accessModes$in$any',
           valueType: 'select',
           valueEnum: {
             read: {
@@ -390,22 +416,23 @@ export default observer((props: Props) => {
               status: 'subscribe',
             },
           },
+          renderText: (_, record) => record.accessModes,
         },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          valueType: 'select',
-          valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
-            },
-            disabled: {
-              text: '禁用',
-              status: 'disabled',
-            },
-          },
-        },
+        // {
+        //   title: '状态',
+        //   dataIndex: 'state',
+        //   valueType: 'select',
+        //   valueEnum: {
+        //     enabled: {
+        //       text: '正常',
+        //       status: 'enabled',
+        //     },
+        //     disabled: {
+        //       text: '禁用',
+        //       status: 'disabled',
+        //     },
+        //   },
+        // },
         {
           title: '运行状态',
           dataIndex: 'runningState',
@@ -436,13 +463,14 @@ export default observer((props: Props) => {
       ]
     : [
         {
-          title: '名称',
+          title: '点位名称',
           dataIndex: 'name',
         },
         {
           title: '访问类型',
-          dataIndex: 'accessModes',
+          dataIndex: 'accessModes$in$any',
           valueType: 'select',
+          renderText: (_, record) => record.accessModes,
           valueEnum:
             props?.provider === 'MODBUS_TCP'
               ? {
@@ -470,21 +498,21 @@ export default observer((props: Props) => {
                   },
                 },
         },
-        {
-          title: '状态',
-          dataIndex: 'state',
-          valueType: 'select',
-          valueEnum: {
-            enabled: {
-              text: '正常',
-              status: 'enabled',
-            },
-            disabled: {
-              text: '禁用',
-              status: 'disabled',
-            },
-          },
-        },
+        // {
+        //   title: '状态',
+        //   dataIndex: 'state',
+        //   valueType: 'select',
+        //   valueEnum: {
+        //     enabled: {
+        //       text: '正常',
+        //       status: 'enabled',
+        //     },
+        //     disabled: {
+        //       text: '禁用',
+        //       status: 'disabled',
+        //     },
+        //   },
+        // },
         {
           title: '运行状态',
           dataIndex: 'runningState',

@@ -1,0 +1,85 @@
+.rule-button-warp {
+  display: inline-block;
+  padding: 14px 16px;
+  background-color: #fafafa;
+  border: 1px solid #f0f0f0;
+  border-radius: 2px;
+  cursor: pointer;
+
+  .rule-button {
+    display: inline-block;
+    padding: 6px 20px;
+    font-size: 14px;
+    line-height: 22px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 22px;
+  }
+
+  .add-button {
+    color: #bdbdbd;
+
+    &:hover,
+    &:active {
+      border-color: #d0d0d0;
+    }
+  }
+}
+
+.dropdown-button {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.parameter {
+  color: #00a4fe;
+  background-color: rgba(154, 219, 255, 0.3);
+  border-color: rgba(0, 164, 254, 0.3);
+}
+
+.termType {
+  color: #2f54eb;
+  background-color: rgba(163, 202, 255, 0.3);
+  border-color: rgba(47, 84, 235, 0.3);
+}
+
+.value {
+  color: #692ca7;
+  background-color: rgba(188, 125, 238, 0.1);
+  border-color: rgba(188, 125, 238, 0.5);
+}
+
+.type {
+  padding: 5px 10px;
+}
+
+.params-dropdown {
+  .ant-dropdown-menu {
+    box-shadow: none;
+  }
+}
+
+.no-menu-style {
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .ant-menu {
+    .ant-menu-item {
+      height: 32px !important;
+      margin: 0 !important;
+      line-height: 32px !important;
+    }
+  }
+}
+
+.dropdown-content {
+  max-height: 400px;
+  padding-top: 4px;
+  overflow-y: auto;
+  box-shadow: 0 4px 18px #f3f3f3;
+}

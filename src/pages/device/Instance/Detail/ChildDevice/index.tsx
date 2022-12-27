@@ -25,7 +25,6 @@ interface Props {
 }
 
 const ChildDevice = (props: Props) => {
-  console.log(props.data);
   const intl = useIntl();
   const [visible, setVisible] = useState<boolean>(false);
   const actionRef = useRef<ActionType>();
@@ -41,6 +40,19 @@ const ChildDevice = (props: Props) => {
     if (resp.status === 200) {
       actionRef.current?.reset?.();
       onlyMessage('操作成功！');
+    }
+  };
+
+  const handleUnBind = async () => {
+    if (bindKeys.length) {
+      const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
+      if (resp.status === 200) {
+        onlyMessage('操作成功！');
+        setBindKeys([]);
+        actionRef.current?.reset?.();
+      }
+    } else {
+      onlyMessage('请勾选需要解绑的数据', 'warning');
     }
   };
 
@@ -102,6 +114,16 @@ const ChildDevice = (props: Props) => {
           status: 'online',
         },
       },
+    },
+    {
+      title: intl.formatMessage({
+        id: 'pages.table.description',
+        defaultMessage: '说明',
+      }),
+      dataIndex: 'describe',
+      width: '15%',
+      ellipsis: true,
+      // hideInSearch: true,
     },
     {
       title: intl.formatMessage({
@@ -190,7 +212,7 @@ const ChildDevice = (props: Props) => {
           <ProTable<LogItem>
             search={false}
             columns={columns}
-            size="small"
+            // size="small"
             scroll={{ x: 1366 }}
             actionRef={actionRef}
             params={searchParams}
@@ -228,18 +250,7 @@ const ChildDevice = (props: Props) => {
               >
                 绑定
               </Button>,
-              <Popconfirm
-                key="unbind"
-                onConfirm={async () => {
-                  const resp = await service.unbindBatchDevice(InstanceModel.detail.id!, bindKeys);
-                  if (resp.status === 200) {
-                    onlyMessage('操作成功！');
-                    setBindKeys([]);
-                    actionRef.current?.reset?.();
-                  }
-                }}
-                title={'确认解绑吗？'}
-              >
+              <Popconfirm key="unbind" onConfirm={handleUnBind} title={'确认解绑吗？'}>
                 <Button>批量解绑</Button>
               </Popconfirm>,
             ]}

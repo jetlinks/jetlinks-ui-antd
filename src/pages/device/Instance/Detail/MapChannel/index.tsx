@@ -1,7 +1,7 @@
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
-import { Badge, Button, Card, Empty, Tooltip } from 'antd';
+import { Badge, Button, Card, Spin, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { FormItem, ArrayTable, Editable, Select } from '@formily/antd';
 import PermissionButton from '@/components/PermissionButton';
@@ -12,6 +12,7 @@ import type { Response } from '@/utils/typings';
 import './index.less';
 import { onlyMessage } from '@/utils/util';
 import ChannelTree from './Tree';
+import { Empty } from '@/components';
 
 interface Props {
   type: 'MODBUS_TCP' | 'OPC_UA';
@@ -27,6 +28,7 @@ const MapChannel = (props: Props) => {
   const [properties, setProperties] = useState<any>([]);
   const [channelList, setChannelList] = useState<any>([]);
   const [visible, setVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const Render = (propsName: any) => {
     const text = properties.find((item: any) => item.metadataId === propsName.value);
@@ -43,7 +45,7 @@ const MapChannel = (props: Props) => {
     const res = await service.removeMap('device', data.id, [params]);
     if (res.status === 200) {
       onlyMessage('解绑成功');
-      setReload('remove');
+      setReload(params);
     }
   };
   const ActionButton = () => {
@@ -61,6 +63,7 @@ const MapChannel = (props: Props) => {
           title: '确认解绑',
           disabled: !record(index)?.id,
           onConfirm: async () => {
+            setLoading(true);
             remove(record(index)?.id);
           },
         }}
@@ -246,7 +249,7 @@ const MapChannel = (props: Props) => {
                 title: (
                   <>
                     采集器
-                    <Tooltip title="边缘网关代理的真实物理设备">
+                    <Tooltip title="数据采集中配置的真实物理设备">
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </>
@@ -368,6 +371,7 @@ const MapChannel = (props: Props) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     service
       .getChannel({
         paging: false,
@@ -417,14 +421,23 @@ const MapChannel = (props: Props) => {
           //删除物模型
           const items = array.filter((item: any) => item.metadataName);
           setProperties(items);
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
           const delList = array.filter((a: any) => !a.metadataName).map((b: any) => b.id);
           //删除后解绑
           if (delList && delList.length !== 0) {
             service.removeMap('device', data.id, delList);
+            setTimeout(() => {
+              setLoading(false);
+            }, 500);
           }
         }
       });
     } else {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
       setEmpty(true);
     }
   }, [reload]);
@@ -447,6 +460,7 @@ const MapChannel = (props: Props) => {
             <Button
               type="primary"
               onClick={async () => {
+                setLoading(true);
                 const value: any = await form.submit();
                 const arr = value.requestList.filter((i: any) => i.channelId);
                 if (arr && arr.length !== 0) {
@@ -458,9 +472,16 @@ const MapChannel = (props: Props) => {
               保存
             </Button>
           </div>
-          <FormProvider form={form}>
-            <SchemaField schema={schema} scope={{ useAsyncDataSource, getCollector, getPoint }} />
-          </FormProvider>
+          <Spin spinning={loading}>
+            <div className="array-table">
+              <FormProvider form={form}>
+                <SchemaField
+                  schema={schema}
+                  scope={{ useAsyncDataSource, getCollector, getPoint }}
+                />
+              </FormProvider>
+            </div>
+          </Spin>
         </>
       )}
       {visible && (

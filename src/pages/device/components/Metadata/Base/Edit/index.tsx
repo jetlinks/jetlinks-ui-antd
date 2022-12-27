@@ -208,21 +208,6 @@ const Edit = observer((props: Props) => {
       const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
       return reg.exec(value) ? '' : 'ID只能由数字、字母、下划线、中划线组成';
     },
-    checkLength(value) {
-      if (String(value).length > 64) {
-        return {
-          type: 'error',
-          message: '最多可输入64个字符',
-        };
-      }
-      if (!(value % 1 === 0)) {
-        return {
-          type: 'error',
-          message: '请输入非0正整数',
-        };
-      }
-      return '';
-    },
   });
   const valueTypeConfig = {
     type: 'object',
@@ -230,12 +215,15 @@ const Edit = observer((props: Props) => {
     properties: {
       type: {
         title: schemaTitleMapping[MetadataModel.type].title,
-        'x-validator': [
-          {
-            required: true,
-            message: `请选择${schemaTitleMapping[MetadataModel.type].title}`,
-          },
-        ],
+        'x-validator':
+          MetadataModel.type !== 'functions'
+            ? [
+                {
+                  required: true,
+                  message: `请选择${schemaTitleMapping[MetadataModel.type].title}`,
+                },
+              ]
+            : [],
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         default: MetadataModel.type === 'events' ? 'object' : null,
@@ -249,6 +237,8 @@ const Edit = observer((props: Props) => {
               ]
             : MetadataModel.type === 'functions'
             ? DataTypeList.filter((item) => item.value !== 'file')
+            : MetadataModel.type === 'tags'
+            ? DataTypeList.filter((item) => item.value !== 'file' && item.value !== 'password')
             : DataTypeList,
       },
       unit: {
@@ -285,6 +275,21 @@ const Edit = observer((props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
+        default: 2,
+        'x-validator': [
+          {
+            format: 'integer',
+            message: '请输入0-2147483647之间的正整数',
+          },
+          {
+            max: 2147483647,
+            message: '请输入0-2147483647之间的正整数',
+          },
+          {
+            min: 0,
+            message: '请输入0-2147483647之间的正整数',
+          },
+        ],
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -319,6 +324,13 @@ const Edit = observer((props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: DateTypeList,
+        default: 'string',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择时间格式',
+          },
+        ],
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -366,7 +378,16 @@ const Edit = observer((props: Props) => {
             },
             'x-validator': [
               {
-                checkLength: true,
+                format: 'integer',
+                message: '请输入1-2147483647之间的正整数',
+              },
+              {
+                max: 2147483647,
+                message: '请输入1-2147483647之间的正整数',
+              },
+              {
+                min: 1,
+                message: '请输入1-2147483647之间的正整数',
               },
             ],
             'x-reactions': {
@@ -395,6 +416,20 @@ const Edit = observer((props: Props) => {
             },
           },
         },
+        'x-validator': [
+          {
+            triggerType: 'onBlur',
+            validator: (value: any[]) => {
+              return new Promise((resolve) => {
+                if (!!value) {
+                  resolve('');
+                } else {
+                  resolve('请输入配置元素');
+                }
+              });
+            },
+          },
+        ],
       },
       jsonConfig: {
         title: intl.formatMessage({
@@ -422,6 +457,13 @@ const Edit = observer((props: Props) => {
         'x-component': 'Select',
         'x-visible': false,
         enum: FileTypeList,
+        default: 'url',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择文件类型',
+          },
+        ],
         'x-reactions': {
           dependencies: ['.type'],
           fulfill: {
@@ -707,7 +749,7 @@ const Edit = observer((props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              mode: 'tags',
+              mode: 'multiple',
             },
             enum: [
               {
@@ -757,6 +799,23 @@ const Edit = observer((props: Props) => {
             'x-decorator-props': {
               tooltip: '场景联动页面可引用指标配置作为触发条件',
             },
+            'x-validator': [
+              {
+                triggerType: 'onBlur',
+                validator: (value: any[]) => {
+                  return new Promise((resolve) => {
+                    const flag = value.every((item) => {
+                      return item.id && item.name && item.value;
+                    });
+                    if (flag) {
+                      resolve('');
+                    } else {
+                      resolve('请输入指标配置');
+                    }
+                  });
+                },
+              },
+            ],
             // 'x-visible': props.type === 'product',
             items: {
               type: 'object',
@@ -852,6 +911,8 @@ const Edit = observer((props: Props) => {
                               type: '{{$deps[0]}}',
                               enum: '{{$deps[1]}}',
                             },
+                            selfErrors:
+                              "{{$deps[0] === 'string' && $self?.value?.value?.[0]?.length > 64 ? '最多输入64个字符' : ''}}",
                           },
                         },
                       },
@@ -1038,9 +1099,14 @@ const Edit = observer((props: Props) => {
           id: 'pages.device.productDetail.metadata.whetherAsync',
           defaultMessage: '是否异步',
         }),
-        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Radio.Group',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择是否异步',
+          },
+        ],
         enum: [
           {
             label: intl.formatMessage({

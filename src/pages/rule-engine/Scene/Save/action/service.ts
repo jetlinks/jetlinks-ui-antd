@@ -11,9 +11,21 @@ export const queryMessageConfig = (data: any) =>
     data,
   });
 
+export const queryMessageConfigPaging = (data: any) =>
+  request(`${SystemConst.API_BASE}/notifier/config/_query`, {
+    method: 'POST',
+    data,
+  });
+
 // 通知模板
 export const queryMessageTemplate = (data: any) =>
   request(`${SystemConst.API_BASE}/notifier/template/_query/no-paging?paging=false`, {
+    method: 'POST',
+    data,
+  });
+
+export const queryMessageTemplatePaging = (id: string, data: any) =>
+  request(`${SystemConst.API_BASE}/notifier/template/${id}/_query`, {
     method: 'POST',
     data,
   });
@@ -85,3 +97,16 @@ export const getRelations = () =>
       terms: [{ termType: 'eq', column: 'objectTypeName', value: '设备' }],
     },
   });
+
+export const queryDefaultLevel = () =>
+  request(`/${SystemConst.API_BASE}/alarm/config/default/level`, {
+    method: 'GET',
+  });
+
+export const queryAlarmList = (data: any) => {
+  return request(`/${SystemConst.API_BASE}/alarm/config/_query/`, { data, method: 'POST' });
+};
+
+export const queryAlarmCount = (data: any) => {
+  return request(`/${SystemConst.API_BASE}/alarm/config/_count`, { params: data, method: 'GET' });
+};

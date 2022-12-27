@@ -21,7 +21,7 @@ import { TreeSelect as ATreeSelect } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { createSchemaField } from '@formily/react';
 import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
-import { onlyMessage, randomString, useAsyncDataSource } from '@/utils/util';
+import { onlyMessage, randomString, testIP, useAsyncDataSource } from '@/utils/util';
 import { service } from '../index';
 import { PlusOutlined } from '@ant-design/icons';
 import { action } from '@formily/reactive';
@@ -31,6 +31,7 @@ import { useHistory, useLocation } from '@/hooks';
 import { getMenuPathByCode } from '@/utils/menu';
 import MenuPage from '../Menu';
 import _ from 'lodash';
+import { UploadImage } from '@/components';
 
 const Save = () => {
   const location = useLocation();
@@ -133,6 +134,7 @@ const Save = () => {
       TreeSelect,
       ArrayTable,
       AutoComplete,
+      UploadImage,
     },
   });
 
@@ -237,11 +239,25 @@ const Save = () => {
           });
         });
       });
-      onFieldReact('apiClient.authConfig.oauth2.clientId', (filed) => {
+      onFieldReact('apiClient.authConfig.oauth2.clientId', (field) => {
         if (id && accessRef.current?.includes('apiClient')) {
-          filed.componentProps = {
+          field.componentProps = {
             disabled: true,
           };
+        }
+      });
+      onFieldReact('apiServer.ipWhiteList', (field: any) => {
+        const value = (field as Field).value;
+        if (value) {
+          const str = value?.split(/[\n,]/g).filter((i: any) => i && i.trim());
+          const NoIP = str.find((item: any) => !testIP(item.replace(/\s*/g, '')));
+          if (NoIP) {
+            field.selfErrors = `[${NoIP}]不是正确的IP地址`;
+          } else {
+            field.selfErrors = '';
+          }
+        } else {
+          field.selfErrors = '';
         }
       });
     },
@@ -461,6 +477,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入appId',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入appId',
+        },
+      ],
       'x-reactions': {
         dependencies: ['provider'],
         fulfill: {
@@ -484,6 +510,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入appSecret',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入appSecret',
+        },
+      ],
     },
     'sso.autoCreateUser': {
       type: 'string',
@@ -530,6 +566,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入scope',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入scope',
+        },
+      ],
     },
     'sso.configuration.oauth2.clientId': {
       type: 'string',
@@ -545,6 +591,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入client_id',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入client_id',
+        },
+      ],
     },
     'sso.configuration.oauth2.clientSecret': {
       type: 'string',
@@ -560,6 +616,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入client_secret',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入client_secret',
+        },
+      ],
     },
     'sso.configuration.oauth2.authorizationUrl': {
       type: 'string',
@@ -589,6 +655,20 @@ const Save = () => {
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入token地址',
+      },
+    },
+    'sso.configuration.oauth2.logoUrl': {
+      type: 'string',
+      title: 'logo',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+      },
+      'x-component': 'UploadImage',
+      'x-component-props': {
+        errorMessage: '请上传.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片',
       },
     },
     'sso.configuration.oauth2.userInfoUrl': {
@@ -749,6 +829,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入appId',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入appId',
+        },
+      ],
     },
     'apiClient.authConfig.oauth2.clientSecret': {
       type: 'string',
@@ -764,6 +854,16 @@ const Save = () => {
       'x-component-props': {
         placeholder: '请输入appKey',
       },
+      'x-validator': [
+        {
+          max: 64,
+          message: '最多可输入64个字符',
+        },
+        {
+          required: true,
+          message: '请输入appKey',
+        },
+      ],
     },
   } as any;
   //第三方平台-客户端
@@ -1093,6 +1193,16 @@ const Save = () => {
                 'x-component-props': {
                   placeholder: '请输入secureKey',
                 },
+                'x-validator': [
+                  {
+                    max: 64,
+                    message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入secureKey',
+                  },
+                ],
               },
               'apiServer.redirectUri': {
                 type: 'string',
@@ -1510,7 +1620,7 @@ const Save = () => {
                 default: [{}],
                 title: '参数',
                 'x-decorator': 'FormItem',
-                required: true,
+                // required: true,
                 'x-component': 'ArrayTable',
                 'x-reactions': {
                   dependencies: ['provider'],
@@ -1533,7 +1643,7 @@ const Save = () => {
                       type: 'void',
                       // required: true,
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 100, title: 'key' },
+                      'x-component-props': { width: 100, title: 'KEY' },
                       properties: {
                         key: {
                           // required: true,
@@ -1545,7 +1655,7 @@ const Save = () => {
                     column2: {
                       type: 'void',
                       'x-component': 'ArrayTable.Column',
-                      'x-component-props': { width: 100, title: 'value' },
+                      'x-component-props': { width: 100, title: 'VALUE' },
                       properties: {
                         value: {
                           // required: true,
@@ -1574,7 +1684,7 @@ const Save = () => {
                   add: {
                     type: 'void',
                     'x-component': 'ArrayTable.Addition',
-                    title: '添加参数',
+                    title: '新增',
                   },
                 },
               },
@@ -1670,6 +1780,16 @@ const Save = () => {
                     'x-component-props': {
                       placeholder: '请输入默认密码',
                     },
+                    'x-validator': [
+                      {
+                        max: 64,
+                        message: '最多可输入64个字符',
+                      },
+                      {
+                        required: true,
+                        message: '请输入默认密码',
+                      },
+                    ],
                   },
                   'sso.roleIdList': {
                     title: '角色',

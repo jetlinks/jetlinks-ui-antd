@@ -33,6 +33,8 @@ const Tags = () => {
         style={{ marginBottom: 20 }}
         bordered
         column={2}
+        labelStyle={{ width: 150 }}
+        contentStyle={{ minWidth: 100 }}
         size="small"
         title={
           <span>
@@ -50,15 +52,6 @@ const Tags = () => {
               <EditOutlined />
               编辑
             </PermissionButton>
-            {/* <Button
-              type="link"
-              onClick={() => {
-                setVisible(true);
-              }}
-            >
-              <EditOutlined />
-              编辑
-            </Button> */}
           </span>
         }
       >

@@ -107,7 +107,7 @@ export default (props: Props) => {
         },
         properties: {
           name: {
-            title: '名称',
+            title: '通道名称',
             'x-component': 'Input',
             'x-decorator': 'FormItem',
             'x-decorator-props': {

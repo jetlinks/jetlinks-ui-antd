@@ -41,7 +41,7 @@ const Save = (props: Props) => {
 
   const getRole = () => service.queryRoleList();
 
-  const getOrg = () => service.queryOrgList();
+  const getOrg = () => service.queryOrgList({ paging: false });
 
   const useAsyncDataSource = (api: any) => (field: Field) => {
     field.loading = true;
@@ -59,6 +59,7 @@ const Save = (props: Props) => {
 
   registerValidateRules({
     checkStrength(value: string) {
+      if (!value || value.length < 8 || value.length > 64) return true;
       if (/^[0-9]+$/.test(value) || /^[a-zA-Z]+$/.test(value) || /^[~!@#$%^&*]+$/.test(value)) {
         return {
           type: 'error',
@@ -177,6 +178,7 @@ const Save = (props: Props) => {
                 triggerType: 'onBlur',
                 validator: (value: string) => {
                   return new Promise((resolve) => {
+                    if (!value) resolve('');
                     service
                       .validateField('username', value)
                       .then((resp) => {
@@ -214,17 +216,17 @@ const Save = (props: Props) => {
           placeholder: '请输入密码',
         },
         'x-visible': model === 'add',
-        'x-reactions': [
-          {
-            dependencies: ['.confirmPassword'],
-            fulfill: {
-              state: {
-                selfErrors:
-                  '{{$deps[0] && $self.value && $self.value !==$deps[0] ? "两次密码输入不一致" : ""}}',
-              },
-            },
-          },
-        ],
+        // 'x-reactions': [
+        //   {
+        //     dependencies: ['.confirmPassword'],
+        //     fulfill: {
+        //       state: {
+        //         selfErrors:
+        //           '{{$deps[0].length > 8 && $deps[0].length > 8 && $self.value && $self.value !==$deps[0] ? "两次密码输入不一致" : ""}}',
+        //       },
+        //     },
+        //   },
+        // ],
         name: 'password',
         'x-validator': [
           {
@@ -240,40 +242,10 @@ const Save = (props: Props) => {
             message: '请输入密码',
           },
           {
-            checkStrength: true,
-          },
-        ],
-      },
-      confirmPassword: {
-        type: 'string',
-        title: intl.formatMessage({
-          id: 'pages.system.confirmPassword',
-          defaultMessage: '确认密码？',
-        }),
-        'x-decorator': 'FormItem',
-        'x-component': 'Password',
-        'x-component-props': {
-          checkStrength: true,
-          placeholder: '请再次输入密码',
-        },
-        'x-visible': model === 'add',
-        'x-validator': [
-          {
-            max: 64,
-            message: '密码最多可输入64位',
-          },
-          {
-            min: 8,
-            message: '密码不能少于8位',
-          },
-          {
-            required: model === 'add',
-            message: '请输入确认密码',
-          },
-          {
             triggerType: 'onBlur',
             validator: (value: string) => {
               return new Promise((resolve) => {
+                if (!value || value.length < 8 || value.length > 64) resolve('');
                 service
                   .validateField('password', value)
                   .then((resp) => {
@@ -292,11 +264,41 @@ const Save = (props: Props) => {
               });
             },
           },
-          {
-            checkStrength: true,
-          },
+          // {
+          //   checkStrength: true,
+          // },
         ],
-
+      },
+      confirmPassword: {
+        type: 'string',
+        title: intl.formatMessage({
+          id: 'pages.system.confirmPassword',
+          defaultMessage: '确认密码？',
+        }),
+        'x-decorator': 'FormItem',
+        'x-component': 'Password',
+        'x-component-props': {
+          checkStrength: true,
+          placeholder: '请再次输入密码',
+        },
+        'x-visible': model === 'add',
+        'x-validator': [
+          // {
+          //   max: 64,
+          //   message: '密码最多可输入64位',
+          // },
+          // {
+          //   min: 8,
+          //   message: '密码不能少于8位',
+          // },
+          {
+            required: model === 'add',
+            message: '请输入确认密码',
+          },
+          // {
+          //   checkStrength: true,
+          // },
+        ],
         'x-reactions': [
           {
             dependencies: ['.password'],
@@ -336,8 +338,10 @@ const Save = (props: Props) => {
               gridSpan: 1,
               addonAfter: (
                 <PermissionButton
-                  type="link"
-                  style={{ padding: 0 }}
+                  // type="link"
+                  type="primary"
+                  ghost
+                  style={{ padding: '0 8px' }}
                   isPermission={rolePermission.add}
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/role?save=true`);
@@ -381,8 +385,11 @@ const Save = (props: Props) => {
               gridSpan: 1,
               addonAfter: (
                 <PermissionButton
-                  type="link"
-                  style={{ padding: 0 }}
+                  // type="link"
+                  // style={{ padding: 0 }}
+                  type="primary"
+                  ghost
+                  style={{ padding: '0 8px' }}
                   isPermission={deptPermission.add}
                   onClick={() => {
                     const tab: any = window.open(`${origin}/#/system/department?save=true`);
@@ -410,7 +417,12 @@ const Save = (props: Props) => {
             title: '手机号',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-validator': 'phone',
+            'x-validator': [
+              {
+                format: 'phone',
+                message: '请输入正确的手机号',
+              },
+            ],
             'x-decorator-props': {
               gridSpan: 1,
             },
@@ -422,7 +434,12 @@ const Save = (props: Props) => {
             title: '邮箱',
             'x-decorator': 'FormItem',
             'x-component': 'Input',
-            'x-validator': 'email',
+            'x-validator': [
+              {
+                format: 'email',
+                message: '请输入正确的邮箱',
+              },
+            ],
             'x-decorator-props': {
               gridSpan: 1,
             },

@@ -93,7 +93,7 @@ const PropertyLog = (props: Props) => {
             <SearchOutlined
               onClick={() => {
                 setDetailVisible(true);
-                setCurrent(record.value);
+                setCurrent(record);
               }}
             />
           )}
@@ -450,8 +450,9 @@ const PropertyLog = (props: Props) => {
           activeKey={tab}
           onChange={(key: string) => {
             setTab(key);
-            if (key === 'charts' && !!data.valueType?.type) {
-              if (list.includes(data.valueType?.type)) {
+            if (key === 'charts') {
+              if (!!data.valueType?.type && list.includes(data.valueType?.type)) {
+                setCycle('*');
                 queryChartsList(start, end);
               } else {
                 setCycle('1m');

@@ -1,7 +1,7 @@
 import PermissionButton from '@/components/PermissionButton';
 import usePermissions from '@/hooks/permission';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Form, FormButtonGroup, FormItem } from '@formily/antd';
+import { Form, FormItem } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { Card, Col, Input, Row } from 'antd';
 import { createSchemaField, observer } from '@formily/react';
@@ -95,7 +95,7 @@ const Detail = observer(() => {
         'x-component-props': {
           rows: 3,
           placeholder:
-            '证书私钥格式以"-----BEGIN (RSA|EC) PRIVATE KEY-----"开头，以"-----END(RSA|EC) PRIVATE KEY-----"结尾。',
+            '证书格式以"-----BEGIN CERTIFICATE-----"开头，以"-----END CERTIFICATE-----"结尾。',
         },
         'x-validator': [
           {
@@ -106,7 +106,7 @@ const Detail = observer(() => {
       },
       'configs.key': {
         title: '证书私钥',
-        'x-component': 'Input.TextArea',
+        'x-component': 'CertificateFile',
         'x-decorator': 'FormItem',
         required: true,
         'x-component-props': {
@@ -117,7 +117,7 @@ const Detail = observer(() => {
         'x-validator': [
           {
             required: true,
-            message: '请输入证书私钥',
+            message: '请上传证书私钥',
           },
         ],
       },
@@ -144,28 +144,24 @@ const Detail = observer(() => {
           <Col span={12}>
             <Form form={form} layout="vertical">
               <SchemaField schema={schema} />
-              <FormButtonGroup.Sticky>
-                <FormButtonGroup.FormItem>
-                  {!view && (
-                    <PermissionButton
-                      type="primary"
-                      isPermission={getOtherPermission(['add', 'update'])}
-                      onClick={async () => {
-                        const data: any = await form.submit();
-                        const response: any = data.id
-                          ? await service.update(data)
-                          : await service.save(data);
-                        if (response.status === 200) {
-                          onlyMessage('操作成功');
-                          history.back();
-                        }
-                      }}
-                    >
-                      保存
-                    </PermissionButton>
-                  )}
-                </FormButtonGroup.FormItem>
-              </FormButtonGroup.Sticky>
+              {!view && (
+                <PermissionButton
+                  type="primary"
+                  isPermission={getOtherPermission(['add', 'update'])}
+                  onClick={async () => {
+                    const data: any = await form.submit();
+                    const response: any = data.id
+                      ? await service.update(data)
+                      : await service.save(data);
+                    if (response.status === 200) {
+                      onlyMessage('操作成功');
+                      history.back();
+                    }
+                  }}
+                >
+                  保存
+                </PermissionButton>
+              )}
             </Form>
           </Col>
           <Col span={12}>

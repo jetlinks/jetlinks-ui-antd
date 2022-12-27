@@ -38,6 +38,8 @@ const Reation = () => {
         bordered
         column={3}
         size="small"
+        labelStyle={{ width: 150 }}
+        contentStyle={{ minWidth: 100 }}
         title={
           <span>
             关系信息

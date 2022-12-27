@@ -10,7 +10,7 @@ export interface RuleInstanceCardProps extends InstanceItem {
   avatarSize?: number;
 }
 
-const defaultImage = require('/public/images/device-type-3-big.png');
+const defaultImage = require('/public/images/scene/trigger-type/scene.png');
 
 export default (props: RuleInstanceCardProps) => {
   return (

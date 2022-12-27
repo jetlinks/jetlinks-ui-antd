@@ -17,7 +17,9 @@ const Device = () => {
   const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
 
   const [productCount, setProductCount] = useState<number>(0);
+  const [productMessage, setProductMessage] = useState<string>();
   const [deviceCount, setDeviceCount] = useState<number>(0);
+  const [deviceMessage, setDeviceMessage] = useState<string>();
 
   const [productVisible, setProductVisible] = useState<boolean>(false);
   const [deviceVisible, setDeviceVisible] = useState<boolean>(false);
@@ -27,12 +29,18 @@ const Device = () => {
     if (resp.status === 200) {
       setProductCount(resp.result);
     }
+    if (resp.status === 403) {
+      setProductMessage('暂无权限');
+    }
   };
 
   const getDeviceCount = async () => {
     const resp = await service.deviceCount();
     if (resp.status === 200) {
       setDeviceCount(resp.result);
+    }
+    if (resp.status === 403) {
+      setDeviceMessage('暂无权限');
     }
   };
 
@@ -95,11 +103,13 @@ const Device = () => {
               name: '产品数量',
               value: productCount,
               children: require('/public/images/home/top-2.png'),
+              permission: productMessage,
             },
             {
               name: '设备数量',
               value: deviceCount,
               children: '',
+              permission: deviceMessage,
             },
           ]}
           title="设备统计"

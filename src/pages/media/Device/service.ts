@@ -4,6 +4,12 @@ import SystemConst from '@/utils/const';
 import type { DeviceItem } from './typings';
 
 class Service extends BaseService<DeviceItem> {
+  saveData = (channelId: string, data?: any) =>
+    request(`${this.uri}/${channelId}`, { method: 'POST', data });
+
+  updateData = (channel: string, deviceId: string, data?: any) =>
+    request(`${this.uri}/${channel}/${deviceId}`, { method: 'PUT', data });
+
   // 新增GB28181接入的设备
   saveGB = (data?: any) => request(`${this.uri}/gb28181`, { method: 'PATCH', data });
 

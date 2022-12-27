@@ -12,7 +12,7 @@ import {
   Switch,
   Upload,
 } from '@formily/antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import FUpload from '@/components/Upload';
@@ -33,7 +33,7 @@ interface Props {
 
 const Save = (props: Props) => {
   const intl = useIntl();
-
+  const [loading, setLoading] = useState(false);
   const form = createForm({
     validateFirst: true,
     initialValues: props.data,
@@ -66,6 +66,7 @@ const Save = (props: Props) => {
     if (!!state.parentId) {
       value.parentId = state.parentId;
     }
+    setLoading(true);
     const resp = props.data.id
       ? await service.update(value as CategoryItem)
       : ((await service.save(value as any)) as Response<CategoryItem>);
@@ -77,6 +78,7 @@ const Save = (props: Props) => {
     } else {
       onlyMessage('操作失败', 'error');
     }
+    setLoading(false);
     props.close();
   };
 
@@ -123,14 +125,11 @@ const Save = (props: Props) => {
         name: 'name',
       },
       sortIndex: {
-        title: intl.formatMessage({
-          id: 'pages.device.category.sortIndex',
-          defaultMessage: '排序',
-        }),
+        title: '排序',
         'x-decorator': 'FormItem',
         'x-component': 'NumberPicker',
         'x-component-props': {
-          placeholder: '请输入分类排序',
+          placeholder: '请输入排序',
           min: 1,
         },
         name: 'sortIndex',
@@ -145,7 +144,7 @@ const Save = (props: Props) => {
         type: 'string',
         title: intl.formatMessage({
           id: 'pages.table.describe',
-          defaultMessage: '描述信息',
+          defaultMessage: '说明',
         }),
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
@@ -163,13 +162,11 @@ const Save = (props: Props) => {
   return (
     <Modal
       maskClosable={false}
-      title={intl.formatMessage({
-        id: `pages.data.option.${props.data.id ? 'edit' : 'add'}`,
-        defaultMessage: '新增',
-      })}
+      title={`${!props.data.id ? '新增' : '编辑'}${state.parentId ? '子分类' : '分类'}`}
       visible={props.visible}
       onCancel={() => props.close()}
       onOk={save}
+      confirmLoading={loading}
     >
       <Form layout={'vertical'} form={form}>
         <SchemaField schema={schema} />

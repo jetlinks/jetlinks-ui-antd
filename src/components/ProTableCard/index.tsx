@@ -1,14 +1,15 @@
 import type { ProTableProps } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { ParamsType } from '@ant-design/pro-provider';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { Key, useCallback, useEffect, useRef, useState } from 'react';
 import { isFunction } from 'lodash';
-import { Empty, Pagination, Space } from 'antd';
+import { Pagination, Space } from 'antd';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import LoadingComponent from '@ant-design/pro-layout/es/PageLoading';
 import './index.less';
 import { useDomFullHeight } from '@/hooks';
+import { Empty } from '@/components';
 
 enum ModelEnum {
   TABLE = 'TABLE',
@@ -30,6 +31,12 @@ interface ProTableCardProps<T> {
    */
   gridColumns?: [number, number, number];
   height?: 'none';
+  onlyCard?: boolean; //只展示card
+  onPageChange?: (page: number, size: number) => void;
+  cardBodyClass?: string;
+  noPadding?: boolean;
+  cardScrollY?: number;
+  modelChange?: (type: ModelType) => void;
 }
 
 const ProTableCard = <
@@ -39,12 +46,18 @@ const ProTableCard = <
 >(
   props: ProTableCardProps<T> & ProTableProps<T, U, ValueType>,
 ) => {
-  const { cardRender, toolBarRender, request, ...extraProps } = props;
+  const { cardRender, toolBarRender, request, onlyCard, ...extraProps } = props;
   const [model, setModel] = useState<ModelType>(ModelEnum.CARD);
   const [total, setTotal] = useState<number | undefined>(0);
-  const [current, setCurrent] = useState(1); // 当前页
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(Default_Size * 2); // 每页条数
+  const [current, setCurrent] = useState(
+    props.params && props.params.pageIndex ? props.params.pageIndex + 1 : 1,
+  ); // 当前页
+  const [pageIndex, setPageIndex] = useState(
+    props.params && props.params.pageIndex ? props.params.pageIndex : 0,
+  );
+  const [pageSize, setPageSize] = useState(
+    props.params && props.params.pageSize ? props.params.pageSize : Default_Size * 2,
+  ); // 每页条数
   const [column, setColumn] = useState(props.gridColumn || 4);
   const [loading, setLoading] = useState(false);
   const [dataLength, setDataLength] = useState<number>(0);
@@ -64,7 +77,7 @@ const ProTableCard = <
         if (!rowSelection || (rowSelection && !rowSelection.selectedRowKeys)) {
           return dom;
         }
-        const { selectedRowKeys, onChange } = rowSelection;
+        const { selectedRowKeys, onChange, onSelect, type } = rowSelection;
 
         // @ts-ignore
         const id = dom.props.id;
@@ -78,37 +91,46 @@ const ProTableCard = <
           key: id,
           onClick: (e: any) => {
             e.stopPropagation();
-            if (onChange) {
+            if (onChange || onSelect) {
               const isSelect = selectedRowKeys.includes(id);
 
+              let nowRowKeys: Key[] = [];
+              let nowRowNodes = [];
               if (isSelect) {
-                const nowRowKeys = selectedRowKeys.filter((key: string) => key !== id);
-                onChange(
-                  nowRowKeys,
-                  dataSource!.filter((item) => nowRowKeys.includes(item.id)),
-                );
+                nowRowKeys =
+                  type === 'radio' ? [id] : selectedRowKeys.filter((key: string) => key !== id);
               } else {
-                const nowRowKeys = [...selectedRowKeys, id];
-                onChange(
-                  nowRowKeys,
-                  dataSource!.filter((item) => nowRowKeys.includes(item.id)),
-                );
+                // const nowRowKeys = [...selectedRowKeys, id];
+                nowRowKeys = rowSelection.type === 'radio' ? [id] : [...selectedRowKeys, id];
               }
+              nowRowNodes = dataSource!.filter((item) => nowRowKeys.includes(item.id));
+
+              onChange?.(nowRowKeys, nowRowNodes);
+              onSelect?.((dom as any).props, !isSelect, nowRowNodes);
             }
           },
         });
       };
 
+      const style: React.CSSProperties = {};
+
+      if (props.cardScrollY !== undefined) {
+        style.maxHeight = props.cardScrollY;
+        style.overflowY = 'auto';
+      }
+
       return (
         <>
           {dataSource && dataSource.length ? (
-            <div
-              className={'pro-table-card-items'}
-              style={{ gridTemplateColumns: `repeat(${column}, 1fr)` }}
-            >
-              {dataSource.map((item) =>
-                cardRender && isFunction(cardRender) ? Item(cardRender(item)) : null,
-              )}
+            <div style={{ paddingBottom: 38 }}>
+              <div
+                className={classNames('pro-table-card-items', props.cardBodyClass)}
+                style={{ gridTemplateColumns: `repeat(${column}, 1fr)`, ...style }}
+              >
+                {dataSource.map((item) =>
+                  cardRender && isFunction(cardRender) ? Item(cardRender(item)) : null,
+                )}
+              </div>
             </div>
           ) : (
             <div
@@ -141,6 +163,18 @@ const ProTableCard = <
     }
   };
 
+  const pageChange = (page: number, size: number) => {
+    let _current = page;
+    if (pageSize !== size) {
+      _current = 1;
+    }
+    console.log(_current);
+    setCurrent(_current);
+    setPageIndex(_current - 1);
+    setPageSize(size);
+    props.onPageChange?.(_current - 1, size);
+  };
+
   useEffect(() => {
     window.addEventListener('resize', windowChange);
     windowChange();
@@ -152,13 +186,23 @@ const ProTableCard = <
   const pageSizeOptions = [Default_Size * 2, Default_Size * 4, Default_Size * 8, Default_Size * 16];
 
   useEffect(() => {
-    setCurrent(1);
-    setPageIndex(0);
+    if (props.params?.pageIndex) {
+      setCurrent(props.params?.pageIndex + 1);
+      setPageIndex(props.params?.pageIndex);
+      if (props.params.pageSize) {
+        setPageSize(props.params?.pageSize);
+      }
+    } else {
+      setCurrent(1);
+      setPageIndex(0);
+    }
   }, [props.params]);
 
   return (
     <div
-      className={'pro-table-card'}
+      className={classNames('pro-table-card', {
+        noPadding: props.noPadding || 'noPadding' in props,
+      })}
       style={{ minHeight: props.height === 'none' ? 'auto' : minHeight }}
       ref={domRef}
     >
@@ -197,16 +241,13 @@ const ProTableCard = <
           setLoading(!!l);
         }}
         pagination={{
-          onChange: (page, size) => {
-            setCurrent(page);
-            setPageIndex(page - 1);
-            setPageSize(size);
-          },
+          onChange: pageChange,
           pageSize: pageSize,
           current: current,
           pageSizeOptions: pageSizeOptions,
         }}
         toolBarRender={(action, row) => {
+          if (onlyCard) return [];
           const oldBar = toolBarRender ? toolBarRender(action, row) : [];
           return [
             ...oldBar,
@@ -219,6 +260,7 @@ const ProTableCard = <
               })}
               onClick={() => {
                 setModel(ModelEnum.TABLE);
+                props.modelChange?.(ModelEnum.TABLE);
               }}
             >
               <BarsOutlined />
@@ -232,6 +274,7 @@ const ProTableCard = <
               })}
               onClick={() => {
                 setModel(ModelEnum.CARD);
+                props.modelChange?.(ModelEnum.CARD);
               }}
             >
               <AppstoreOutlined />
@@ -258,11 +301,7 @@ const ProTableCard = <
               className={'pro-table-card-pagination'}
               total={total}
               current={current}
-              onChange={(page, size) => {
-                setCurrent(page);
-                setPageIndex(page - 1);
-                setPageSize(size);
-              }}
+              onChange={pageChange}
               pageSizeOptions={pageSizeOptions}
               pageSize={pageSize}
               showTotal={(num) => {

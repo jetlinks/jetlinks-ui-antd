@@ -1,16 +1,4 @@
-import {
-  Badge,
-  Button,
-  Col,
-  Empty,
-  Input,
-  Modal,
-  Popconfirm,
-  Row,
-  Spin,
-  Tooltip,
-  Tree,
-} from 'antd';
+import { Badge, Button, Col, Input, Modal, Popconfirm, Row, Spin, Tooltip, Tree } from 'antd';
 import { observer } from '@formily/react';
 import { service, state } from '..';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
@@ -20,6 +8,7 @@ import { history, useLocation } from 'umi';
 import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
 import BindUser from '../BindUser';
 import { onlyMessage } from '@/utils/util';
+import { Empty } from '@/components';
 
 const SyncUser = observer(() => {
   const [dept, setDept] = useState<string>();

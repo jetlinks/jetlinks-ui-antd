@@ -1,13 +1,13 @@
 import TitleComponent from '@/components/TitleComponent';
 import './index.less';
 import Dialog from './Dialog';
-import { Badge, Button, Col, DatePicker, Empty, Input, InputNumber, Row, Select } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { Badge, Button, Col, Row } from 'antd';
+import { useEffect, useMemo, useRef } from 'react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import { map } from 'rxjs/operators';
-import type { Field } from '@formily/core';
-import { createForm, onFieldReact } from '@formily/core';
+import { Field } from '@formily/core';
+import { createForm, onFieldValueChange } from '@formily/core';
 import { createSchemaField, FormProvider } from '@formily/react';
 import {
   ArrayTable,
@@ -16,46 +16,43 @@ import {
   Input as FInput,
   NumberPicker,
   PreviewText,
+  FormGrid,
   Select as FSelect,
 } from '@formily/antd';
 import { randomString } from '@/utils/util';
 import Log from './Log';
 import { DiagnoseStatusModel, messageStatusMap, messageStyleMap } from '../Status/model';
 import { observer } from '@formily/reactive-react';
+import DiagnoseForm from './form';
+import { model } from '@formily/reactive';
+import { Empty } from '@/components';
+import _ from 'lodash';
 
-// const DataTypeComponent = (value: string) => {
-//   switch (value) {
-//     case 'array':
-//       return <div>{value}array</div>
-//     // case 'enum':
-//     //   return <div>{value}</div>
-//     case 'geo':
-//       return <div>{value}geo</div>
-//     case 'file':
-//       return <div>{value}file</div>
-//     default:
-//       return <div>{value}</div>
-//   }
-// }
-
-const DatePicker1: any = DatePicker;
+export const DiagnoseMessageModel = model<{
+  input: any;
+  inputs: any[];
+  data: any;
+  _inputs: any;
+}>({
+  input: {},
+  inputs: [],
+  data: {
+    type: 'function',
+  },
+  _inputs: {},
+});
 
 const Message = observer(() => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const [type, setType] = useState<'property' | 'function'>('function');
-  const [input, setInput] = useState<any>({});
-  const [inputs, setInputs] = useState<any[]>([]);
-
-  const [propertyType, setPropertyType] = useState<'read' | 'setting'>('read');
-  const [property, setProperty] = useState<any>({});
-  const [propertyValue, setPropertyValue] = useState<any>('');
+  const DiagnoseFormRef = useRef<{ save: any }>();
+  const diagnoseRef = useRef<any>();
 
   const metadata = JSON.parse(InstanceModel.detail?.metadata || '{}');
 
   const subscribeLog = () => {
     const id = `device-debug-${InstanceModel.detail?.id}`;
     const topic = `/debug/device/${InstanceModel.detail?.id}/trace`;
-    subscribeTopic!(id, topic, {})
+    diagnoseRef.current = subscribeTopic!(id, topic, {})
       ?.pipe(map((res) => res.payload))
       .subscribe((payload: any) => {
         if (payload.type === 'log') {
@@ -67,20 +64,18 @@ const Message = observer(() => {
             },
           ];
         } else {
-          DiagnoseStatusModel.allDialogList = [
-            ...DiagnoseStatusModel.logList,
-            { key: randomString(), ...payload },
-          ];
+          const data = { key: randomString(), ...payload };
+          DiagnoseStatusModel.allDialogList.push(data);
           const flag = [...DiagnoseStatusModel.allDialogList]
             .filter(
               (i) =>
-                i.traceId === payload.traceId &&
-                (payload.downstream === i.downstream || payload.upstream === i.upstream),
+                i.traceId === data.traceId &&
+                (data.downstream === i.downstream || data.upstream === i.upstream),
             )
             .every((item) => {
               return !item.error;
             });
-          if (!payload.upstream) {
+          if (!data.upstream) {
             DiagnoseStatusModel.message.down = {
               text: !flag ? '下行消息通信异常' : '下行消息通信正常',
               status: !flag ? 'error' : 'success',
@@ -91,37 +86,31 @@ const Message = observer(() => {
               status: !flag ? 'error' : 'success',
             };
           }
-          const list = [...DiagnoseStatusModel.dialogList];
+          const list: any[] = _.cloneDeep(DiagnoseStatusModel.dialogList);
           const t = list.find(
             (item) =>
-              item.traceId === payload.traceId &&
-              payload.downstream === item.downstream &&
-              payload.upstream === item.upstream,
+              item.traceId === data.traceId &&
+              data.downstream === item.downstream &&
+              data.upstream === item.upstream,
           );
           if (t) {
-            list.map((item) => {
-              if (item.key === payload.traceId) {
-                item.list.push({
-                  key: randomString(),
-                  ...payload,
-                });
+            const arr = list.map((item) => {
+              if (item.traceId === data.traceId) {
+                item.list.push(data);
               }
+              return item;
             });
+            DiagnoseStatusModel.dialogList = _.cloneDeep(arr);
           } else {
             list.push({
               key: randomString(),
-              traceId: payload.traceId,
-              downstream: payload.downstream,
-              upstream: payload.upstream,
-              list: [
-                {
-                  key: randomString(),
-                  ...payload,
-                },
-              ],
+              traceId: data.traceId,
+              downstream: data.downstream,
+              upstream: data.upstream,
+              list: [data],
             });
+            DiagnoseStatusModel.dialogList = _.cloneDeep(list);
           }
-          DiagnoseStatusModel.dialogList = [...list];
         }
         const chatBox = document.getElementById('dialog');
         if (chatBox) {
@@ -130,91 +119,74 @@ const Message = observer(() => {
       });
   };
 
-  const getItemNode = (t: string) => {
-    switch (t) {
-      case 'boolean':
-        return (
-          <Select
-            style={{ width: '100%', textAlign: 'left' }}
-            options={[
-              { label: 'true', value: true },
-              { label: 'false', value: false },
-            ]}
-            placeholder={'请选择'}
-            onChange={(value) => {
-              setPropertyValue(value);
-            }}
-          />
-        );
-      case 'int':
-      case 'long':
-      case 'float':
-      case 'double':
-        return (
-          <InputNumber
-            style={{ width: '100%' }}
-            placeholder={'请输入'}
-            onChange={(value) => {
-              setPropertyValue(value);
-            }}
-          />
-        );
-      case 'date':
-        return (
-          <DatePicker1
-            style={{ width: '100%' }}
-            onChange={(value: any) => {
-              setPropertyValue(value);
-            }}
-          />
-        );
-      default:
-        return (
-          <Input
-            onChange={(e) => {
-              setPropertyValue(e.target.value);
-            }}
-            placeholder="填写属性值"
-            style={{ width: '100%' }}
-          />
-        );
-    }
-  };
   useEffect(() => {
     if (DiagnoseStatusModel.state === 'success') {
       subscribeLog();
     }
+    return () => {
+      if (diagnoseRef.current) {
+        diagnoseRef.current.unsubscribe();
+      }
+    };
   }, [DiagnoseStatusModel.state]);
 
-  const form = useMemo(
+  const _form = useMemo(
     () =>
       createForm({
-        initialValues: {
-          data: [...inputs],
-        },
+        initialValues: DiagnoseMessageModel.data,
         effects() {
-          onFieldReact('data.*.valueType.type', (field) => {
+          onFieldValueChange('property', (field) => {
             const value = (field as Field).value;
-            const format = field.query('..value').take() as any;
-            if (format) {
-              switch (value) {
-                case 'date':
-                  format.setComponent(FDatePicker);
-                  break;
-                case 'boolean':
-                  format.setComponent(FSelect);
-                  format.setDataSource([
-                    { label: '是', value: true },
-                    { label: '否', value: false },
-                  ]);
-                  break;
-                case 'int':
-                  format.setComponent(NumberPicker);
-                  break;
-                default:
-                  format.setComponent(FInput);
-                  break;
-              }
+            const valueType = (metadata?.properties || []).find((it: any) => it.id === value)
+              ?.valueType?.type;
+            const format = field.query('.propertyValue').take() as any;
+            format.setValue('');
+            switch (valueType) {
+              case 'date':
+                format.setComponent(FDatePicker);
+                format.setComponentProps({
+                  placeholder: '请选择',
+                });
+                break;
+              case 'boolean':
+                format.setComponent(FSelect);
+                format.setDataSource([
+                  { label: '是', value: true },
+                  { label: '否', value: false },
+                ]);
+                format.setComponentProps({
+                  placeholder: '请选择',
+                });
+                break;
+              case 'int':
+              case 'long':
+              case 'float':
+              case 'double':
+                format.setComponent(NumberPicker);
+                format.setComponentProps({
+                  placeholder: '请输入',
+                });
+                break;
+              default:
+                format.setComponent(FInput);
+                format.setComponentProps({
+                  placeholder: '请输入',
+                });
+                break;
+            }
+          });
+          onFieldValueChange('function', (field) => {
+            const value = (field as Field).value;
+            // setInputs([]);
+            // setInput({});
+            DiagnoseMessageModel.inputs = [];
+            DiagnoseMessageModel.input = {};
+            if (value) {
+              const data = (metadata?.functions || []).find((item: any) => item.id === value);
+              // setInput(data);
+              // setInputs(data?.inputs || []);
+              DiagnoseMessageModel.inputs = data?.inputs || [];
+              DiagnoseMessageModel.input = data;
             }
           });
         },
@@ -222,81 +194,11 @@ const Message = observer(() => {
     [],
   );
 
-  const dataRender = () => {
-    switch (type) {
-      case 'function':
-        return (
-          <Col span={5}>
-            <Select
-              style={{ width: '100%' }}
-              onChange={(value: any) => {
-                const data = (metadata?.functions || []).find((item: any) => item.id === value);
-                setInput(data);
-                setInputs(data?.inputs || []);
-                form.setValues({
-                  data: data?.inputs || [],
-                });
-              }}
-            >
-              {(metadata?.functions || []).map((i: any) => (
-                <Select.Option key={i.id} value={i.id}>
-                  {i.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Col>
-        );
-      case 'property':
-        return (
-          <>
-            <Col span={5}>
-              <Select
-                style={{ width: '100%' }}
-                value={propertyType}
-                placeholder="请选择"
-                onChange={(value: any) => {
-                  setPropertyType(value);
-                }}
-              >
-                <Select.Option value={'read'}>读取属性</Select.Option>
-                <Select.Option value={'setting'}>设置属性</Select.Option>
-              </Select>
-            </Col>
-            <Col span={5}>
-              <Select
-                style={{ width: '100%' }}
-                value={property}
-                placeholder="选择属性"
-                onChange={(value: any) => {
-                  setProperty(value);
-                }}
-              >
-                {(metadata?.properties || []).map((i: any) => (
-                  <Select.Option key={i.id} value={i.id}>
-                    {i.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-            {!!property && propertyType === 'setting' && (
-              <Col span={5}>
-                {getItemNode(
-                  (metadata?.properties || []).find((it: any) => it.id === property)?.valueType
-                    ?.type || '',
-                )}
-              </Col>
-            )}
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
   const SchemaField = createSchemaField({
     components: {
       FormItem,
       FInput,
+      FormGrid,
       ArrayTable,
       PreviewText,
       FSelect,
@@ -305,61 +207,141 @@ const Message = observer(() => {
     },
   });
 
-  const schema = {
+  const _schema = {
     type: 'object',
     properties: {
-      data: {
-        type: 'array',
-        'x-decorator': 'FormItem',
-        'x-component': 'ArrayTable',
+      grid: {
+        type: 'void',
+        'x-component': 'FormGrid',
         'x-component-props': {
-          scroll: { x: '100%' },
+          minColumns: [4],
         },
-        items: {
-          type: 'object',
-          properties: {
-            column1: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: '参数名称',
+        properties: {
+          type: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择',
+            },
+            enum: [
+              { label: '调用功能', value: 'function' },
+              { label: '操作属性', value: 'property' },
+            ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
               },
-              properties: {
-                name: {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
+            ],
+          },
+          function: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择',
+            },
+            enum: (metadata?.functions || []).map((item: any) => {
+              return { label: item.name, value: item.id };
+            }),
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "function"}}',
+                  },
                 },
               },
+            ],
+          },
+          propertyType: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择',
             },
-            column2: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: '输入类型',
+            enum: [
+              { label: '读取属性', value: 'read' },
+              { label: '设置属性', value: 'setting' },
+            ],
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择',
               },
-              properties: {
-                'valueType.type': {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': 'PreviewText.Input',
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "property"}}',
+                  },
                 },
               },
+            ],
+          },
+          property: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FSelect',
+            'x-component-props': {
+              placeholder: '请选择属性',
             },
-            column3: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                title: '值',
+            enum: (metadata?.properties || []).map((item: any) => {
+              return { label: item.name, value: item.id };
+            }),
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择属性',
               },
-              properties: {
-                value: {
-                  type: 'string',
-                  'x-decorator': 'FormItem',
-                  'x-component': FInput,
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.type'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "property"}}',
+                  },
                 },
               },
-            },
+            ],
+          },
+          propertyValue: {
+            type: 'string',
+            title: '',
+            'x-decorator': 'FormItem',
+            'x-component': 'FInput',
+            'x-validator': [
+              {
+                required: true,
+                message: '改字段必填',
+              },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['.property', 'propertyType'],
+                fulfill: {
+                  state: {
+                    visible: '{{!!$deps[0] && $deps[1] === "setting"}}',
+                  },
+                },
+              },
+            ],
           },
         },
       },
@@ -377,7 +359,7 @@ const Message = observer(() => {
                 return (
                   <Col key={key} span={12}>
                     <div style={messageStyleMap.get(obj.status)} className="message-status">
-                      <Badge status={messageStatusMap.get(obj.status)} />
+                      <Badge status={messageStatusMap.get(obj.status)} style={{ marginRight: 5 }} />
                       {obj.text}
                     </div>
                   </Col>
@@ -395,57 +377,58 @@ const Message = observer(() => {
               </div>
             </div>
             <div className="function">
-              <Row gutter={24}>
-                <Col span={5}>
-                  <Select
-                    value={type}
-                    placeholder="请选择"
-                    style={{ width: '100%' }}
-                    onChange={(value) => {
-                      setType(value);
-                      setInputs([]);
-                      setInput({});
-                    }}
-                  >
-                    <Select.Option value="function">调用功能</Select.Option>
-                    <Select.Option value="property">操作属性</Select.Option>
-                  </Select>
-                </Col>
-                {dataRender()}
-                <Col span={3}>
-                  <Button
-                    type="primary"
-                    onClick={async () => {
-                      if (type === 'function') {
-                        const list = (form?.values?.data || []).filter((it) => !!it.value);
-                        const obj = {};
-                        list.map((it) => {
-                          obj[it.id] = it.value;
-                        });
-                        await service.executeFunctions(InstanceModel.detail?.id || '', input.id, {
-                          ...obj,
-                        });
-                      } else {
-                        if (propertyType === 'read') {
-                          await service.readProperties(InstanceModel.detail?.id || '', [property]);
-                        } else {
-                          await service.settingProperties(InstanceModel.detail?.id || '', {
-                            [property]: propertyValue,
-                          });
-                        }
-                      }
-                    }}
-                  >
-                    发送
-                  </Button>
-                </Col>
-              </Row>
-              {inputs.length > 0 && (
-                <div className="parameter">
-                  <h4>功能参数</h4>
-                  <FormProvider form={form}>
-                    <SchemaField schema={schema} />
+              <div className={'function-item'}>
+                <div className={'function-item-form'}>
+                  <FormProvider form={_form}>
+                    <SchemaField schema={_schema} />
                   </FormProvider>
+                </div>
+                <Button
+                  type="primary"
+                  className={'function-item-btn'}
+                  onClick={async () => {
+                    const values = await _form.submit<any>();
+                    DiagnoseMessageModel.data = values;
+                    let _inputs = undefined;
+                    if (DiagnoseMessageModel.inputs.length) {
+                      _inputs = await DiagnoseFormRef.current?.save();
+                      if (!_inputs) {
+                        return;
+                      }
+                    }
+                    if (values.type === 'function') {
+                      const list = (_inputs || []).filter((it: any) => !!it.value);
+                      const obj = {};
+                      list.map((it: any) => {
+                        obj[it.id] = it.value;
+                      });
+                      await service.executeFunctions(
+                        InstanceModel.detail?.id || '',
+                        DiagnoseMessageModel?.input?.id,
+                        {
+                          ...obj,
+                        },
+                      );
+                    } else {
+                      if (values.propertyType === 'read') {
+                        await service.readProperties(InstanceModel.detail?.id || '', [
+                          values.property,
+                        ]);
+                      } else {
+                        await service.settingProperties(InstanceModel.detail?.id || '', {
+                          [values.property]: values.propertyValue,
+                        });
+                      }
+                    }
+                  }}
+                >
+                  发送
+                </Button>
+              </div>
+              {DiagnoseMessageModel?.inputs?.length > 0 && (
+                <div className="inputs-parameter">
+                  <h4>功能参数</h4>
+                  <DiagnoseForm data={DiagnoseMessageModel.inputs} ref={DiagnoseFormRef} />
                 </div>
               )}
             </div>

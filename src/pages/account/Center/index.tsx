@@ -37,6 +37,7 @@ const Center = () => {
   const [infos, setInfos] = useState<boolean>(false);
   const [password, setPassword] = useState<boolean>(false);
   const [bindList, setBindList] = useState<any>([]);
+  const [apiUser, setApiUser] = useState<any>();
 
   const iconMap = new Map();
   iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));
@@ -58,6 +59,17 @@ const Center = () => {
       setImageUrl(res.result.avatar);
     });
   };
+
+  const getApiUser = async () => {
+    const res = await service.queryCurrent();
+    if (res.status === 200) {
+      const isApiUser = res.result.dimensions.find(
+        (item: any) => item.type === 'api-client' || item.type.id === 'api-client',
+      );
+      setApiUser(isApiUser);
+    }
+  };
+
   const uploadProps: UploadProps = {
     showUploadList: false,
     accept: 'image/jpeg,image/png',
@@ -136,6 +148,7 @@ const Center = () => {
 
   useEffect(() => {
     getDetail();
+    getApiUser();
     if (isNoCommunity) {
       getBindInfo();
     }
@@ -330,17 +343,19 @@ const Center = () => {
           </Row>
         </Card>
       )}
-      <Card
-        style={{ marginTop: 15 }}
-        title={
-          <div style={{ fontSize: '22px' }}>
-            <Divider type="vertical" style={{ backgroundColor: '#2F54EB', width: 3 }} />
-            首页视图
-          </div>
-        }
-      >
-        <AccountInit />,
-      </Card>
+      {!apiUser && (
+        <Card
+          style={{ marginTop: 15 }}
+          title={
+            <div style={{ fontSize: '22px' }}>
+              <Divider type="vertical" style={{ backgroundColor: '#2F54EB', width: 3 }} />
+              首页视图
+            </div>
+          }
+        >
+          <AccountInit />,
+        </Card>
+      )}
       {infos && (
         <InfoEdit
           data={data}

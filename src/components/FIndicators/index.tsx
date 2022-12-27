@@ -13,7 +13,6 @@ const FIndicators = (props: Props) => {
   const { value, onChange, type } = props;
   const DatePicker1: any = DatePicker;
   const [list, setList] = useState<any[]>([]);
-
   useEffect(() => {
     const arr = [];
     if (!!props.enum?.falseText && props.enum?.falseValue !== undefined) {
@@ -86,7 +85,11 @@ const FIndicators = (props: Props) => {
           <DatePicker1
             showTime
             allowClear={false}
-            value={value?.value ? moment(value.value[0], 'YYYY-MM-DD HH:mm:ss') : ''}
+            value={
+              value?.value && value.value?.[0]
+                ? moment(value.value[0], 'YYYY-MM-DD HH:mm:ss')
+                : undefined
+            }
             onChange={(_: any, date: string) => {
               onChange({
                 ...value,
@@ -114,6 +117,20 @@ const FIndicators = (props: Props) => {
             <Select.Option value={item.value}>{item.text}</Select.Option>
           ))}
         </Select>
+      );
+    } else if (type === 'string') {
+      return (
+        <Input
+          style={{ width: '100%' }}
+          value={value?.value}
+          placeholder={'请输入'}
+          onChange={(e) => {
+            onChange({
+              ...value,
+              value: [e.target.value],
+            });
+          }}
+        />
       );
     } else {
       return (
@@ -148,7 +165,7 @@ const FIndicators = (props: Props) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       {renderComponent()}
-      {type !== 'boolean' && (
+      {type !== 'boolean' && type !== 'string' && (
         <Checkbox
           style={{ minWidth: 60, marginLeft: 5 }}
           checked={value?.range}

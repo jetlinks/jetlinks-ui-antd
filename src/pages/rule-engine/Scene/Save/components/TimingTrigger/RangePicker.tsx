@@ -1,5 +1,6 @@
 import { TimePicker } from 'antd';
 import moment from 'moment';
+import type { FormInstance } from 'antd';
 
 type RangePickerValue = {
   from: string;
@@ -12,7 +13,8 @@ interface RangePickerProps {
   value?: RangePickerValue;
   onChange?: (value: RangePickerValue) => void;
   id?: string;
-  form?: any;
+  form?: FormInstance<any>;
+  name?: (string | number)[];
 }
 export default (props: RangePickerProps) => {
   return (
@@ -26,24 +28,14 @@ export default (props: RangePickerProps) => {
       ]}
       onChange={(_, dateString) => {
         if (props.onChange) {
-          if (props.form.getFieldsValue().trigger.type === 'timer') {
-            const { every, unit } = props.form.getFieldsValue().trigger?.timer?.period;
-            props.onChange({
-              from: dateString[0],
-              to: dateString[1],
-              every: every,
-              unit: unit,
-            });
-          } else {
-            const { every, unit } =
-              props.form.getFieldsValue().trigger?.device?.operation?.timer?.period;
-            props.onChange({
-              from: dateString[0],
-              to: dateString[1],
-              every: every,
-              unit: unit,
-            });
-          }
+          const { every, unit } = props.form?.getFieldValue([...props.name!]);
+          console.log(every, unit);
+          props.onChange({
+            from: dateString[0],
+            to: dateString[1],
+            every: every,
+            unit: unit,
+          });
         }
       }}
     />

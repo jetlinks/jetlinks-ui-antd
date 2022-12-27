@@ -1,0 +1,55 @@
+@import '~antd/es/style/themes/default.less';
+
+.notify-type-warp {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  width: 100%;
+
+  .notify-type-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 172px;
+    border: 1px solid #e0e4e8;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    .notify-type-item-title {
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .notify-type-item-image {
+      width: 106px;
+      margin: 16px 33px;
+    }
+
+    &:hover {
+      color: @primary-color-hover;
+      opacity: 0.8;
+    }
+
+    &.active {
+      border-color: @primary-color-active;
+      opacity: 1;
+    }
+  }
+
+  &.disabled {
+    .notify-type-item {
+      cursor: not-allowed;
+
+      &:hover {
+        color: initial;
+        opacity: 0.6;
+      }
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+}

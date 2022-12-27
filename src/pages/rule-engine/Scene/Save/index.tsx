@@ -1,446 +1,241 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, Input, InputNumber, Radio, Space, Switch, Tooltip } from 'antd';
-import { useIntl, useHistory } from 'umi';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { PermissionButton, TitleComponent } from '@/components';
-import ActionItems from './action/action';
-import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { TimingTrigger, TriggerWay } from './components';
-import { TriggerWayType } from './components/TriggerWay';
-import TriggerTerm from '@/pages/rule-engine/Scene/TriggerTerm';
-import TriggerDevice from './trigger';
-import { service } from '../index';
-import './index.less';
-import { model } from '@formily/reactive';
+import { Button, Card, Form, FormInstance, Input } from 'antd';
+import useLocation from '@/hooks/route/useLocation';
+import Device from '../Save/device/index';
+import Manual from '../Save/manual/index';
+import Timer from '../Save/timer/index';
+import { Ellipsis, TitleComponent } from '@/components';
+import { observable } from '@formily/reactive';
+import { observer } from '@formily/react';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
-import { onlyMessage } from '@/utils/util';
-import Explanation from './Explanation';
+import { useEffect, useCallback, useState } from 'react';
+import { service } from '@/pages/rule-engine/Scene';
+import './index.less';
+import { onlyMessage, randomString } from '@/utils/util';
+import { useHistory } from 'umi';
 import { getMenuPathByCode } from '@/utils/menu';
-import { useLocation } from '@/hooks';
+import { cloneDeep, isArray } from 'lodash';
+import { TriggerWayType, iconMap } from '@/components/ProTableCard/CardItems/Scene';
 
-type ShakeLimitType = {
-  enabled: boolean;
-  groupType?: string;
-  time?: number;
-  threshold?: number;
-  alarmFirst?: boolean;
+export const defaultBranches = [
+  {
+    when: [
+      {
+        terms: [
+          {
+            column: undefined,
+            value: undefined,
+            termType: undefined,
+            key: 'params_1',
+            type: 'and',
+          },
+        ],
+        type: 'and',
+        key: 'terms_1',
+      },
+    ],
+    key: 'branches_1',
+    shakeLimit: {
+      enabled: false,
+      time: 0,
+      threshold: 0,
+      alarmFirst: false,
+    },
+    then: [],
+  },
+];
+
+const defaultOptions = {
+  trigger: {},
+  when: [
+    {
+      terms: [
+        {
+          terms: [],
+        },
+      ],
+    },
+  ],
 };
 
-const DefaultShakeLimit = {
-  enabled: false,
-  alarmFirst: false,
-};
+export const FormModel = observable<{ current: FormModelType }>({
+  current: {
+    trigger: {
+      type: '',
+    },
+    options: defaultOptions,
+    branches: defaultBranches,
+  },
+});
 
-export let FormModel = model<FormModelType>({});
-
-export default () => {
+export default observer(() => {
   const location = useLocation();
-  const [form] = Form.useForm();
-  const intl = useIntl();
-  const triggerRef = useRef<any>();
+  const triggerType = location?.query?.triggerType || '';
+  const id = location?.query?.id || '';
   const history = useHistory();
+  const [form] = Form.useForm();
+  const [saveLoading, setSaveLoading] = useState(false);
 
-  const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
-  const [triggerType, setTriggerType] = useState('device');
+  const FormModelInit = () => {
+    FormModel.current = {
+      trigger: {
+        type: '',
+      },
+      options: defaultOptions,
+      branches: [...defaultBranches],
+    };
+  };
 
-  const [loading, setLoading] = useState(false);
-  const [parallel, setParallel] = useState(true); // 是否并行
-  const [shakeLimit, setShakeLimit] = useState<ShakeLimitType>(DefaultShakeLimit);
-  const [targetTypeDisabled, setTargetTypeDisabled] = useState(false);
+  const assignmentKey = (data: any[]): any[] => {
+    const onlyKey = ['when', 'then', 'terms', 'actions'];
+    if (!data) return [];
 
-  const [requestParams, setRequestParams] = useState<any>(undefined);
-  const [triggerValue, setTriggerValue] = useState<any>([]);
-  const [triggerDatas, setTriggerDatas] = useState<any>({});
-  const [actionParams, setActionParams] = useState<any>(undefined);
-  const [actionDataCount, setActionDataCount] = useState(0);
-
-  const [actionsData, setActionsData] = useState<any[]>([]);
-  const [isEdit, setIsEdit] = useState(false);
-  const [view, setView] = useState<boolean>(false);
+    return data.map((item: any) => {
+      if (item) {
+        item.key = randomString();
+        Object.keys(item).some((key) => {
+          if (onlyKey.includes(key) && isArray(item[key])) {
+            item[key] = assignmentKey(item[key]);
+          }
+        });
+      }
+      return item;
+    });
+  };
 
   useEffect(() => {
-    FormModel = {};
+    window.scrollTo(0, 0);
+    return () => {
+      // 销毁
+      console.log('销毁');
+      FormModelInit();
+    };
   }, []);
 
-  const getDetail = useCallback(
-    async (id: string) => {
-      const resp = await service.detail(id);
-      if (resp.status === 200 && resp.result) {
-        setIsEdit(true);
-        const _data: any = resp.result;
-        FormModel = _data;
-        console.log(_data);
-
-        form.setFieldsValue(_data);
-        // debugger;
-        setParallel(_data.parallel);
-
-        setTriggerValue({ trigger: _data.terms || [] });
-        setTriggerDatas(_data.trigger);
-        setActionParams({ trigger: _data.trigger });
-        if (_data.trigger?.shakeLimit) {
-          setShakeLimit(_data.trigger?.shakeLimit || DefaultShakeLimit);
-        }
-        if (_data.trigger?.device) {
-          setRequestParams({ trigger: _data.trigger });
-        }
-
-        if (_data.actions) {
-          setActionsData(_data.actions);
-        }
-      }
-    },
-    [triggerRef],
-  );
-
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const id = params.get('id');
-    const targetType = params.get('targetType');
+    FormModelInit();
     if (id) {
-      getDetail(id);
-    }
+      service.detail(id).then((resp) => {
+        if (resp.status === 200) {
+          const _triggerType = resp.result.triggerType;
+          let branches = resp.result.branches;
+          if (!branches) {
+            branches = cloneDeep(defaultBranches);
+            if (_triggerType === 'device') {
+              branches.push(null);
+            }
+          } else {
+            const branchesLength = branches.length;
+            if (
+              _triggerType === 'device' &&
+              ((branchesLength === 1 && !!branches[0]?.when?.length) || // 有一组数据并且when有值
+                (branchesLength > 1 && !branches[branchesLength - 1]?.when?.length)) // 有多组否则数据，并且最后一组when有值
+            ) {
+              branches.push(null);
+            }
+          }
+          FormModel.current = {
+            ...resp.result,
+          };
+          const newBranches = cloneDeep(assignmentKey(branches));
 
-    if (targetType) {
-      setTargetTypeDisabled(true);
-    }
+          form.setFieldValue('description', resp.result.description);
 
-    if (location && location.state) {
-      setView(location.state.view);
-    }
-  }, [location]);
+          if (['device', 'timer'].includes(_triggerType)) {
+            form.setFieldValue(_triggerType, resp.result.trigger[_triggerType]);
+          }
+          form.setFieldValue('branches', newBranches);
 
-  const saveData = useCallback(async () => {
-    const formData = await form.validateFields();
-    let triggerData = undefined;
-    // 获取触发条件数据
-    if (triggerRef.current && formData.trigger) {
-      triggerData = await triggerRef.current.getTriggerForm();
-      if (triggerData) {
-        formData.terms = triggerData.trigger;
-      }
-    }
-    console.log('save', formData);
-    if (formData) {
-      if (shakeLimit.enabled) {
-        formData.trigger = {
-          ...formData.trigger,
-          shakeLimit: shakeLimit,
-        };
-      }
-      setLoading(true);
-      const resp = formData.id ? await service.updateScene(formData) : await service.save(formData);
-
-      // 处理跳转新增
-      if ((window as any).onTabSaveSuccess) {
-        if (resp.result) {
-          (window as any).onTabSaveSuccess(resp);
-          setTimeout(() => window.close(), 300);
+          FormModel.current.options = { ...defaultOptions, ...resp.result.options };
+          FormModel.current.trigger = resp.result.trigger || {};
+          FormModel.current.branches = newBranches;
         }
-      }
+      });
+    }
+  }, [id, form]);
 
-      setLoading(false);
-      if (resp.status === 200) {
-        onlyMessage('操作成功');
+  const triggerRender = (type: string, _form: FormInstance) => {
+    FormModel.current.trigger!.type = type;
+    switch (type) {
+      case 'device':
+        return <Device form={_form} />;
+      case 'manual':
+        return <Manual />;
+      case 'timer':
+        return <Timer form={_form} />;
+      default:
+        return null;
+    }
+  };
+
+  const submit = useCallback(async () => {
+    const baseData = await form.validateFields();
+    console.log('submit', baseData);
+    if (!baseData) return;
+
+    const FormData = cloneDeep(FormModel.current);
+    const { options, branches } = FormData;
+    if (options?.terms) {
+      options.when = options.when.filter((item: any) => {
+        const terms = item.terms.filter((tItem: any) => !!tItem.length);
+        return !!terms.length;
+      });
+      if (!options.terms.length) {
+        delete options.terms;
+      }
+    }
+    if (branches) {
+      FormData.branches = branches.filter((item) => item);
+    }
+
+    if (baseData) {
+      FormData.description = baseData.description;
+    }
+    setSaveLoading(true);
+    service.updateScene(FormData).then((res: any) => {
+      setSaveLoading(false);
+      if (res.status === 200) {
+        onlyMessage('操作成功', 'success');
         const url = getMenuPathByCode('rule-engine/Scene');
         history.push(url);
-      } else {
-        onlyMessage(resp.message);
       }
-    }
-  }, [shakeLimit]);
-
-  const AntiShake = (
-    <Space>
-      <TitleComponent data={'触发条件'} style={{ margin: 0 }} />
-      <Switch
-        checked={shakeLimit.enabled}
-        checkedChildren="开启防抖"
-        unCheckedChildren="关闭防抖"
-        onChange={(e) => {
-          const newShake = {
-            ...shakeLimit,
-            enabled: e,
-          };
-          setShakeLimit(newShake);
-        }}
-        style={{ marginRight: 16 }}
-      />
-      {shakeLimit.enabled && (
-        <>
-          <InputNumber
-            value={shakeLimit.time}
-            min={1}
-            max={100}
-            onChange={(e: number) => {
-              const newShake = {
-                ...shakeLimit,
-                time: e,
-              };
-              setShakeLimit(newShake);
-            }}
-          />
-          <span style={{ padding: '0 16px' }}> 秒内发生 </span>
-          <InputNumber
-            value={shakeLimit.threshold}
-            min={1}
-            max={100}
-            onChange={(e: number) => {
-              const newShake = {
-                ...shakeLimit,
-                threshold: e,
-              };
-              setShakeLimit(newShake);
-            }}
-          />
-          <span style={{ padding: '0 16px' }}>次及以上时，处理</span>
-          <Radio.Group
-            value={shakeLimit.alarmFirst}
-            options={[
-              { label: '第一次', value: true },
-              { label: '最后一次', value: false },
-            ]}
-            optionType="button"
-            onChange={(e) => {
-              const newShake = {
-                ...shakeLimit,
-                alarmFirst: e.target.value,
-              };
-              setShakeLimit(newShake);
-            }}
-          ></Radio.Group>
-        </>
-      )}
-    </Space>
-  );
-
-  const hasKeyInObject = (keys: string[], obj: any) => {
-    return keys.some((key) => key in obj);
-  };
+    });
+  }, [id, FormModel]);
 
   return (
     <PageContainer>
       <Card>
-        <div className={'scene-content'}>
-          <div className={'scene-content-left'}>
-            <Form
-              scrollToFirstError={{
-                behavior: 'smooth',
-                block: 'end',
-              }}
-              form={form}
-              colon={false}
-              name="basicForm"
-              layout={'vertical'}
-              preserve={false}
-              className={'scene-save'}
-              onValuesChange={(changeValue, allValues) => {
-                if (changeValue.trigger) {
-                  if (changeValue.trigger.device) {
-                    if (
-                      changeValue.trigger.device.productId ||
-                      changeValue.trigger.device.selectorValues ||
-                      (changeValue.trigger.device.operation &&
-                        hasKeyInObject(
-                          ['operator', 'eventId', 'functionId'],
-                          changeValue.trigger.device.operation,
-                        ))
-                    ) {
-                      setTriggerValue([]);
-                      setRequestParams({ trigger: allValues.trigger });
-                      setTriggerDatas(allValues.trigger);
-                    }
-
-                    if (
-                      hasKeyInObject(['productId'], changeValue.trigger.device) ||
-                      (changeValue.trigger.device.operation &&
-                        hasKeyInObject(
-                          ['operator', 'eventId', 'functionId'],
-                          changeValue.trigger.device.operation,
-                        ))
-                    ) {
-                      setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
-                    }
-                  } else if (['timer', 'manual'].includes(changeValue.trigger.type)) {
-                    setActionParams({ trigger: allValues.trigger }); // 用于内置参数请求
-                  }
-                }
-                if (allValues.actions) {
-                  // debugger;
-                  console.log(allValues.actions, 'onValuesChange');
-                  setActionsData(allValues.actions);
-                }
-                FormModel = { ...allValues };
-              }}
-            >
-              <Form.Item
-                name={'name'}
-                label={<TitleComponent data={'名称'} style={{ margin: 0 }} />}
-                rules={[
-                  { required: true, message: '请输入名称' },
-                  {
-                    max: 64,
-                    message: intl.formatMessage({
-                      id: 'pages.form.tip.max64',
-                      defaultMessage: '最多输入64个字符',
-                    }),
-                  },
-                ]}
-              >
-                <Input placeholder={'请输入名称'} />
-              </Form.Item>
-              <Form.Item
-                label={<TitleComponent data={'触发方式'} style={{ margin: 0 }} />}
-                required
-              >
-                <Form.Item
-                  name={['trigger', 'type']}
-                  rules={[{ required: true, message: '请选择触发方式' }]}
-                  initialValue={'device'}
-                >
-                  <TriggerWay onSelect={setTriggerType} disabled={isEdit || targetTypeDisabled} />
-                </Form.Item>
-                {triggerType === TriggerWayType.timing && (
-                  <TimingTrigger
-                    name={['trigger']}
-                    form={form}
-                    className={'trigger-type-content'}
-                  />
-                )}
-                {triggerType === TriggerWayType.device && (
-                  <TriggerDevice
-                    value={triggerDatas}
-                    className={'trigger-type-content'}
-                    form={form}
-                  />
-                )}
-              </Form.Item>
-              {triggerType === TriggerWayType.device &&
-              requestParams &&
-              requestParams.trigger?.device?.productId ? (
-                <Form.Item label={AntiShake}>
-                  <TriggerTerm ref={triggerRef} params={requestParams} value={triggerValue} />
-                </Form.Item>
-              ) : null}
-              <Form.Item hidden name={'parallel'} initialValue={true}>
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label={
-                  <Space>
-                    <TitleComponent data={<span>执行动作</span>} style={{ margin: 0 }} />
-                    <Tooltip
-                      title={
-                        <div>
-                          <div>串行：按顺序依次执行动作</div>
-                          <div>并行：同时执行所有动作</div>
-                        </div>
-                      }
-                    >
-                      <QuestionCircleOutlined style={{ margin: '0 8px', fontSize: 14 }} />
-                    </Tooltip>
-                    <Radio.Group
-                      value={parallel}
-                      options={[
-                        { label: '串行', value: false },
-                        { label: '并行', value: true },
-                      ]}
-                      optionType="button"
-                      onChange={(e) => {
-                        setParallel(e.target.value);
-                        form.setFieldsValue({ parallel: e.target.value });
-                      }}
-                    ></Radio.Group>
-                  </Space>
-                }
-              >
-                <Form.List name="actions">
-                  {(fields, { add, remove, move }, { errors }) => (
-                    <>
-                      <div className={'scene-actions'} style={{ paddingBottom: 24 }}>
-                        {fields.map(({ key, name, ...restField }) => (
-                          <ActionItems
-                            key={key}
-                            form={form}
-                            restField={restField}
-                            name={name}
-                            trigger={actionParams}
-                            triggerType={triggerType}
-                            triggerRef={triggerRef.current}
-                            onRemove={() => {
-                              remove(name);
-                              setActionDataCount(actionDataCount - 1);
-                            }}
-                            onMove={(type) => {
-                              if (type === 'up') {
-                                move(name, name - 1);
-                              } else {
-                                move(name, name + 1);
-                              }
-                            }}
-                            actionItemData={actionsData[name]}
-                            isLast={!actionDataCount || actionDataCount - 1 === name}
-                            parallel={parallel}
-                            isEdit={isEdit}
-                          />
-                        ))}
-                        <Form.Item noStyle>
-                          <Button
-                            type="primary"
-                            ghost
-                            style={{
-                              width: '100%',
-                              marginTop: 16,
-                            }}
-                            onClick={() => {
-                              add();
-                              setActionDataCount(actionDataCount + 1);
-                            }}
-                            icon={<PlusOutlined />}
-                          >
-                            新增
-                          </Button>
-                        </Form.Item>
-                      </div>
-                      <Form.ErrorList errors={errors} />
-                    </>
-                  )}
-                </Form.List>
-              </Form.Item>
-              <Form.Item
-                label={<TitleComponent data={'说明'} style={{ margin: 0 }} />}
-                name={'description'}
-              >
-                <Input.TextArea showCount maxLength={200} placeholder={'请输入说明'} rows={4} />
-              </Form.Item>
-              {/*{triggerType === TriggerWayType.device &&*/}
-              {/*requestParams &&*/}
-              {/*requestParams.trigger?.device?.productId ? (*/}
-              {/*  <Form.Item hidden name={['trigger','shakeLimit']}>*/}
-              {/*    <Input />*/}
-              {/*  </Form.Item>*/}
-              {/*) : null}*/}
-              <Form.Item hidden name={'id'}>
-                <Input />
-              </Form.Item>
-              {!view && (
-                <PermissionButton
-                  isPermission={getOtherPermission(['add', 'update'])}
-                  onClick={saveData}
-                  type={'primary'}
-                  loading={loading}
-                  htmlType="submit"
-                >
-                  保存
-                </PermissionButton>
-              )}
-            </Form>
-          </div>
-          <div className={'scene-content-right'}>
-            <Explanation type={triggerType} />
+        <div className={'scene-header'}>
+          <Ellipsis
+            title={FormModel.current?.name}
+            style={{
+              fontSize: 20,
+              color: 'rgba(0, 0, 0, 0.8)',
+              fontWeight: 'bold',
+              maxWidth: '50%',
+              width: 'max-content',
+            }}
+          />
+          <div className={'scene-header-type'}>
+            <img height={16} src={iconMap.get(triggerType)} style={{ marginRight: 8 }} />
+            {TriggerWayType[triggerType]}
           </div>
         </div>
+        <Form layout={'vertical'} form={form}>
+          {triggerRender(triggerType, form)}
+          <Form.Item
+            label={<TitleComponent style={{ fontSize: 14 }} data={'说明'} />}
+            name="description"
+          >
+            <Input.TextArea showCount maxLength={200} placeholder={'请输入说明'} rows={4} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" onClick={submit} loading={saveLoading}>
+              保存
+            </Button>
+          </Form.Item>
+        </Form>
       </Card>
     </PageContainer>
   );
-};
+});

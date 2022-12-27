@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { EChartsOption } from 'echarts';
 import { useEffect, useRef, useState } from 'react';
-import { Badge, Card, Col, Tooltip, Select } from 'antd';
+import { Badge, Col, Tooltip, Select } from 'antd';
 import './index.less';
 import Service from './service';
 import { observer } from '@formily/react';
@@ -178,12 +178,16 @@ const Dashboard = observer(() => {
     if (currentAlarm.status === 200) {
       if (alarmLevel.status === 200) {
         const levels = alarmLevel.result.levels;
-        state.alarmList = currentAlarm.result?.data.map((item: { level: any }) => ({
-          ...item,
-          levelName: levels.find((l: any) => l.level === item.level)?.title,
-        }));
+        state.alarmList = currentAlarm.result?.data
+          .filter((i: any) => i?.state?.value === 'warning')
+          .map((item: { level: any }) => ({
+            ...item,
+            levelName: levels.find((l: any) => l.level === item.level)?.title,
+          }));
       } else {
-        state.alarmList = currentAlarm.result?.data;
+        state.alarmList = currentAlarm.result?.data.filter(
+          (item: any) => item?.state?.value === 'warning',
+        );
       }
     }
   };
@@ -355,8 +359,8 @@ const Dashboard = observer(() => {
         grid: {
           top: '2%',
           bottom: '5%',
-          left: '50px',
-          right: '50px',
+          left: '24px',
+          right: '48px',
         },
         series: [
           {
@@ -481,45 +485,46 @@ const Dashboard = observer(() => {
           </Col>
         </DashBoardTopCard>
       </div>
-      <Card style={{ marginTop: 10 }}>
-        <DashBoard
-          title="告警统计"
-          height={600}
-          showTimeTool={true}
-          showTime
-          options={options}
-          initialValues={{
-            targetType: 'device',
-          }}
-          extraParams={{
-            key: 'targetType',
-            Children: (
-              <Select
-                options={
-                  isNoCommunity
-                    ? [
-                        { label: '设备', value: 'device' },
-                        { label: '产品', value: 'product' },
-                        { label: '组织', value: 'org' },
-                        { label: '其它', value: 'other' },
-                      ]
-                    : [
-                        { label: '设备', value: 'device' },
-                        { label: '产品', value: 'product' },
-                        { label: '其它', value: 'other' },
-                      ]
-                }
-              />
-            ),
-          }}
-          onParamsChange={getEcharts}
-          ref={alarmCountRef}
-          defaultTime={'week'}
-          echartsAfter={
-            <div className={styles.alarmRank}>
-              <h4>告警排名</h4>
+      {/*<Card style={{ marginTop: 10 }}>*/}
+      <DashBoard
+        title="告警统计"
+        height={600}
+        showTimeTool={true}
+        showTime
+        options={options}
+        initialValues={{
+          targetType: 'device',
+        }}
+        extraParams={{
+          key: 'targetType',
+          Children: (
+            <Select
+              options={
+                isNoCommunity
+                  ? [
+                      { label: '设备', value: 'device' },
+                      { label: '产品', value: 'product' },
+                      { label: '组织', value: 'org' },
+                      { label: '其它', value: 'other' },
+                    ]
+                  : [
+                      { label: '设备', value: 'device' },
+                      { label: '产品', value: 'product' },
+                      { label: '其它', value: 'other' },
+                    ]
+              }
+            />
+          ),
+        }}
+        onParamsChange={getEcharts}
+        ref={alarmCountRef}
+        defaultTime={'week'}
+        echartsAfter={
+          <div className={styles.alarmRank}>
+            <h4>告警排名</h4>
+            {state.ranking.length ? (
               <ul className={styles.rankingList}>
-                {state.ranking?.map((item, i) => (
+                {state.ranking.map((item, i) => (
                   <li key={item.targetId}>
                     <img
                       src={require(`/public/images/rule-engine/dashboard/ranking/${i + 1}.png`)}
@@ -535,10 +540,13 @@ const Dashboard = observer(() => {
                   </li>
                 ))}
               </ul>
-            </div>
-          }
-        />
-      </Card>
+            ) : (
+              <Empty />
+            )}
+          </div>
+        }
+      />
+      {/*</Card>*/}
     </PageContainer>
   );
 });

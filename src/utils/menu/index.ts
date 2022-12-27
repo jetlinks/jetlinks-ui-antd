@@ -10,7 +10,7 @@ export const MENUS_BUTTONS_CACHE = 'MENUS_BUTTONS_CACHE';
 
 const DetailCode = 'detail';
 
-// 额外子级路由
+// 额外子级路由F
 const extraRouteObj = {
   notice: {
     children: [
@@ -36,6 +36,9 @@ const extraRouteObj = {
       { code: 'Save', name: '详情' },
       { code: 'Save2', name: '测试详情' },
     ],
+  },
+  'rule-engine/Alarm/Configuration': {
+    children: [{ code: 'Save', name: '详情' }],
   },
   'device/Firmware': {
     children: [{ code: 'Task', name: '升级任务' }],

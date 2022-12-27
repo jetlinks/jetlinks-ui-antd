@@ -33,12 +33,12 @@ class Service {
       data: params,
     });
   public readPoint = (collectorId: string, data: string[]) =>
-    request(`/${SystemConst.API_BASE}data-collect/collector/${collectorId}/points/_read`, {
+    request(`/${SystemConst.API_BASE}/data-collect/collector/${collectorId}/points/_read`, {
       method: 'POST',
       data,
     });
   public writePoint = (collectorId: string, data: any[]) =>
-    request(`/${SystemConst.API_BASE}data-collect/collector/${collectorId}/points/_write`, {
+    request(`/${SystemConst.API_BASE}/data-collect/collector/${collectorId}/points/_write`, {
       method: 'POST',
       data,
     });

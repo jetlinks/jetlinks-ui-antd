@@ -107,8 +107,19 @@
 }
 
 .alarmRank {
-  width: 250px;
-  padding-left: 12px;
+  position: relative;
+  width: 30%;
+  padding-left: 48px;
+}
+
+.alarmRank::before {
+  position: absolute;
+  top: 150px;
+  left: 0;
+  width: 1px;
+  height: 187px;
+  background-color: #e0e4e8;
+  content: '';
 }
 
 .rankingList {

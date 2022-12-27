@@ -38,6 +38,64 @@ export const handlePermissionsMap = (permissions?: string[]) => {
     : '';
 };
 
+export const ExtraSceneProductCard = (props: ProductCardProps) => {
+  const intl = useIntl();
+  const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
+
+  return (
+    <TableCard
+      showMask={false}
+      status={props.state}
+      showTool={props.showTool}
+      actions={props.actions}
+      statusText={intl.formatMessage({
+        id: `pages.device.product.status.${props.state ? 'enabled' : 'disabled'}`,
+        defaultMessage: '正常',
+      })}
+      statusNames={{
+        0: StatusColorEnum.error,
+        1: StatusColorEnum.success,
+      }}
+      className={props.className}
+      onClick={props.onClick}
+    >
+      <div className={'pro-table-card-item'}>
+        <div className={'card-item-avatar'}>
+          <img
+            width={88}
+            height={88}
+            src={imgUrl}
+            alt={''}
+            onError={() => {
+              setImgUrl(defaultImage);
+            }}
+          />
+        </div>
+        <div className={'card-item-body'}>
+          <div className={'card-item-header'}>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
+          </div>
+          <div className={'card-item-content'}>
+            <div>
+              <label>设备类型</label>
+              <Ellipsis title={props?.deviceType?.text} />
+            </div>
+            <div>
+              <label>接入方式</label>
+              <Ellipsis title={props.accessName || '未接入'} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={'checked-icon'}>
+        <div>
+          <CheckOutlined />
+        </div>
+      </div>
+    </TableCard>
+  );
+};
+
 export const ExtraProductCard = (props: ProductCardProps) => {
   const intl = useIntl();
   const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
@@ -106,10 +164,73 @@ export const ExtraProductCard = (props: ProductCardProps) => {
   );
 };
 
+export const SceneProductCard = (props: ProductCardProps) => {
+  const intl = useIntl();
+  const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
+
+  return (
+    <TableCard
+      showMask={false}
+      status={props.state}
+      showTool={props.showTool}
+      actions={props.actions}
+      statusText={intl.formatMessage({
+        id: `pages.device.product.status.${props.state ? 'enabled' : 'disabled'}`,
+        defaultMessage: '正常',
+      })}
+      statusNames={{
+        0: StatusColorEnum.error,
+        1: StatusColorEnum.success,
+      }}
+      className={props.className}
+      onClick={props.onClick}
+    >
+      <div className={'pro-table-card-item'}>
+        <div className={'card-item-avatar'}>
+          <img
+            width={88}
+            height={88}
+            src={imgUrl}
+            alt={''}
+            onError={() => {
+              setImgUrl(defaultImage);
+            }}
+          />
+        </div>
+        <div className={'card-item-body'}>
+          <div className={'card-item-header'}>
+            <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
+          </div>
+          <div className={'card-item-content-items'} style={{ display: 'flex', gap: 12 }}>
+            {props.content}
+          </div>
+          <div className={'card-item-content-flex'}>
+            <div className={'flex-auto'}>
+              <label>设备类型</label>
+              <Ellipsis title={props?.deviceType?.text} />
+            </div>
+            <div className={'flex-auto'}>
+              <label>接入方式</label>
+              <Ellipsis title={props.accessName || '未接入'} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={'checked-icon'}>
+        <div>
+          <CheckOutlined />
+        </div>
+      </div>
+    </TableCard>
+  );
+};
+
 export default (props: ProductCardProps) => {
   const intl = useIntl();
   return (
     <TableCard
+      // showMask={false}
+      showTool={props.showTool}
       detail={props.detail}
       actions={props.actions}
       status={props.state}

@@ -49,11 +49,10 @@ const MapTree = (props: Props) => {
   };
 
   const save = async () => {
-    // console.log(list,'list')
     const params: any[] = [];
     // const metadataId = metaData.map((item: any) => item.metadataId);
     list.forEach((item: any) => {
-      const array = item.points.map((element: any) => ({
+      const array = item.points?.map((element: any) => ({
         channelId: item.parentId,
         collectorId: element.collectorId,
         pointId: element.id,
@@ -64,11 +63,13 @@ const MapTree = (props: Props) => {
       params.push(...array);
     });
     const filterParms = params.filter((item) => !!item.metadataId);
+    console.log(metaData);
+    console.log('filterParms', filterParms);
     if (deviceId) {
       if (filterParms && filterParms.length !== 0) {
         const res = await service.saveMap(edgeId, {
           deviceId: deviceId,
-          provider: filterParms[0].provider,
+          provider: filterParms[0]?.provider,
           requestList: filterParms,
         });
         if (res.status === 200) {
@@ -79,17 +80,21 @@ const MapTree = (props: Props) => {
         onlyMessage('暂无属性映射', 'warning');
       }
     } else {
-      const res = await service.addDevice(props.addDevice);
-      if (res.status === 200) {
-        const resp = await service.saveMap(edgeId, {
-          deviceId: res.result.id,
-          provider: filterParms[0].provider,
-          requestList: filterParms,
-        });
-        if (resp.status === 200) {
-          onlyMessage('保存成功');
-          close();
+      if (filterParms && filterParms.length !== 0) {
+        const res = await service.addDevice(props.addDevice);
+        if (res.status === 200) {
+          const resp = await service.saveMap(edgeId, {
+            deviceId: res.result.id,
+            provider: filterParms[0]?.provider,
+            requestList: filterParms,
+          });
+          if (resp.status === 200) {
+            onlyMessage('保存成功');
+            close();
+          }
         }
+      } else {
+        onlyMessage('暂无属性映射', 'warning');
       }
     }
   };

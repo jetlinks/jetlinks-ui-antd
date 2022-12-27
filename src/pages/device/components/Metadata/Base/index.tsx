@@ -121,6 +121,7 @@ const BaseMetadata = observer((props: Props) => {
 
   const initData = useCallback(async () => {
     const result = await DB.getDB().table(`${type}`).toArray();
+    console.log(result);
     setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
   }, [param.id, type]);
 
@@ -141,12 +142,18 @@ const BaseMetadata = observer((props: Props) => {
 
   const handleSearch = async (name: string) => {
     if (name) {
-      const result = await DB.getDB()
-        .table(`${type}`)
-        .where('id')
-        .startsWithAnyOfIgnoreCase(name)
-        .toArray();
-      setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
+      // const result = await DB.getDB()
+      //   .table(`${type}`)
+      //   .where('name')
+      //   .startsWithAnyOfIgnoreCase(name)
+      //   .toArray();
+      // setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
+      const result = await DB.getDB().table(`${type}`).toArray();
+      const arr = result
+        .filter((item) => item.name.indexOf(name) > -1)
+        .sort((a, b) => b?.sortsIndex - a?.sortsIndex);
+      // console.log(result, arr)
+      setData(arr);
     } else {
       await initData();
     }
@@ -172,13 +179,13 @@ const BaseMetadata = observer((props: Props) => {
         }}
         toolbar={{
           search: {
-            placeholder: '请输入标识',
+            placeholder: '请输入名称',
             allowClear: true,
             onSearch: handleSearch,
           },
         }}
         toolBarRender={() => [
-          props.type === 'properties' && (
+          props.type === 'properties' && target === 'device' && (
             <PermissionButton
               isPermission={props.permission.update}
               onClick={() => {

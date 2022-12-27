@@ -1,8 +1,7 @@
 name: Deploy CI
 on:
   push:
-    branches:
-      - master
+    branches: ["master", "2.0", "next"]
 
 jobs:
   build-and-deploy:

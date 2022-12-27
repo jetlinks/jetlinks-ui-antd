@@ -15,7 +15,7 @@ import {
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Field, FieldDataSource } from '@formily/core';
+import { Field, FieldDataSource, registerValidateRules } from '@formily/core';
 import { onFormInit } from '@formily/core';
 import { createForm, onFieldReact, onFieldValueChange } from '@formily/core';
 import { Card, Col, Row } from 'antd';
@@ -130,12 +130,12 @@ const Save = observer(() => {
             if (param?.id && param.id !== ':id') {
               const resp = await service.detail(param.id);
               const data = resp?.result || {};
-              console.log(data);
               if (data?.shareCluster === false) {
-                data.cluster = data.cluster?.map((item: any) => ({
-                  ...item.configuration,
-                  configuration: item,
-                }));
+                data.cluster = (data?.cluster || []).map((item: any) => {
+                  return {
+                    ...item.configuration,
+                  };
+                });
               }
               form1.setValues({ ...data });
             }
@@ -221,7 +221,7 @@ const Save = observer(() => {
           });
         },
       }),
-    [],
+    [param.id],
   );
 
   const SchemaField = createSchemaField({
@@ -249,6 +249,16 @@ const Save = observer(() => {
         value: item.id,
       })),
     );
+
+  registerValidateRules({
+    IpOrDomain(value) {
+      if (!value) return '';
+      const regIp = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/;
+      const regDomain = /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/;
+      return regIp.test(value) || regDomain.test(value) ? '' : '请输入IP或者域名';
+    },
+  });
+
   const clusterConfig: ISchema = {
     type: 'void',
     'x-component': 'FormGrid',
@@ -362,7 +372,11 @@ const Save = observer(() => {
         required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
-        'x-validator': ['ipv4'],
+        'x-validator': [
+          {
+            IpOrDomain: true,
+          },
+        ],
         'x-component-props': {
           placeholder: '请输入公网地址',
         },
@@ -435,7 +449,11 @@ const Save = observer(() => {
               placeholder: '请输入远程地址',
             },
             required: true,
-            'x-validator': ['ipv4'],
+            'x-validator': [
+              {
+                IpOrDomain: true,
+              },
+            ],
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
@@ -495,21 +513,21 @@ const Save = observer(() => {
             'x-decorator': 'FormItem',
             'x-component': 'Input',
           },
-          maxMessageSize: {
-            title: '最大消息长度',
-            'x-decorator-props': {
-              gridSpan: 1,
-              tooltip: '单次收发消息的最大长度,单位:字节;设置过大可能会影响性能',
-              layout: 'vertical',
-              labelAlign: 'left',
-            },
-            'x-component-props': {
-              placeholder: '请输入最大消息长度',
-            },
-            required: true,
-            'x-decorator': 'FormItem',
-            'x-component': 'Input',
-          },
+          // maxMessageSize: {
+          //   title: '最大消息长度',
+          //   'x-decorator-props': {
+          //     gridSpan: 1,
+          //     tooltip: '单次收发消息的最大长度,单位:字节;设置过大可能会影响性能',
+          //     layout: 'vertical',
+          //     labelAlign: 'left',
+          //   },
+          //   'x-component-props': {
+          //     placeholder: '请输入最大消息长度',
+          //   },
+          //   required: true,
+          //   'x-decorator': 'FormItem',
+          //   'x-component': 'Input',
+          // },
           topicPrefix: {
             title: '订阅前缀',
             'x-component-props': {
@@ -544,7 +562,8 @@ const Save = observer(() => {
           fulfill: {
             state: {
               // visible: '{{$deps[0]==="UDP"}}',
-              visible: '{{["MQTT_SERVER"].includes($deps[0])}}',
+              visible: '{{["MQTT_SERVER","MQTT_CLIENT"].includes($deps[0])}}',
+              // hidden:'{{["MQTT_SERVER"].includes($deps[0])}}'
             },
           },
         },
@@ -568,7 +587,8 @@ const Save = observer(() => {
           dependencies: ['type'],
           fulfill: {
             state: {
-              title: '{{$deps[0] === "TCP_SERVER" ? "开启TLS" : "开启DTLS"}}',
+              title:
+                '{{!["TCP_SERVER", "UDP", "COAP_SERVER"].includes($deps[0]) ? "开启TLS" : "开启DTLS"}}',
             },
           },
         },
@@ -652,6 +672,7 @@ const Save = observer(() => {
           { value: 'delimited', label: '分隔符' },
           { value: 'script', label: '自定义脚本' },
           { value: 'fixed_length', label: '固定长度' },
+          { value: 'length', label: '长度' },
         ],
         'x-reactions': {
           dependencies: ['type'],
@@ -680,7 +701,7 @@ const Save = observer(() => {
             dependencies: ['.parserType'],
             fulfill: {
               state: {
-                visible: '{{["delimited", "script", "fixed_length"].includes($deps[0])}}',
+                visible: '{{["delimited", "script", "fixed_length", "length"].includes($deps[0])}}',
               },
             },
           },
@@ -807,6 +828,100 @@ const Save = observer(() => {
                 fulfill: {
                   state: {
                     visible: '{{$deps[0] === "fixed_length"}}',
+                  },
+                },
+              },
+            ],
+          },
+          length: {
+            title: '长度',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择长度',
+              },
+            ],
+            enum: [1, 2, 3, 4, 8],
+            default: 4,
+            'x-component-props': {
+              placeholder: '请选择长度',
+            },
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "length"}}',
+                  },
+                },
+              },
+            ],
+          },
+          offset: {
+            title: '偏移量',
+            'x-component': 'NumberPicker',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-validator': [
+              {
+                max: 65535,
+                message: '请输入0-65535之间的正整数',
+              },
+              {
+                min: 0,
+                message: '请输入0-65535之间的正整数',
+              },
+            ],
+            'x-component-props': {
+              placeholder: '请输入偏移量',
+            },
+            default: 0,
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "length"}}',
+                  },
+                },
+              },
+            ],
+          },
+          little: {
+            title: '大小端',
+            type: 'boolean',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              labelAlign: 'left',
+              layout: 'vertical',
+              gridSpan: 1,
+            },
+            'x-component-props': {
+              placeholder: '请选择大小端',
+            },
+            default: false,
+            enum: [
+              { label: '大端', value: false },
+              { label: '小端', value: true },
+            ],
+            'x-reactions': [
+              {
+                dependencies: ['..parserType'],
+                fulfill: {
+                  state: {
+                    visible: '{{$deps[0] === "length"}}',
                   },
                 },
               },
@@ -966,6 +1081,10 @@ const Save = observer(() => {
                     type: 'void',
                     title: '新增',
                     'x-component': 'ArrayCollapse.Addition',
+                    'x-component-props': {
+                      ghost: true,
+                      type: 'primary',
+                    },
                   },
                 },
               },
@@ -1024,7 +1143,7 @@ const Save = observer(() => {
       <Card>
         <Row gutter={24}>
           <Col span={16}>
-            <Form form={form} layout="vertical" style={{ padding: 30 }}>
+            <Form form={form} layout="vertical">
               <SchemaField
                 schema={schema}
                 scope={{

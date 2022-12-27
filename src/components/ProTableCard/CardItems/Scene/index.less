@@ -1,0 +1,151 @@
+.content-class {
+  padding-top: 40px !important;
+  &::before {
+    background-image: none !important;
+  }
+  .card-item-trigger-type {
+    position: absolute;
+    top: 0;
+    left: -14px;
+    height: 32px;
+    padding: 0 30px;
+    color: rgba(0, 0, 0, 0.65);
+    line-height: 32px;
+    background-color: rgba(0, 0, 0, 0.06);
+    transform: skewX(-45deg);
+    .card-item-trigger-type-text {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: skewX(45deg);
+    }
+  }
+  .card-item-content-box {
+    .card-item-content-trigger {
+      display: flex;
+      .card-item-content-trigger-item {
+        width: max-content;
+        color: rgba(0, 0, 0, 0.85);
+        font-weight: bold;
+        font-size: 15px;
+        &:not(:last-child) {
+          margin-right: 10px;
+        }
+      }
+      .trigger-device {
+        color: rgba(47, 84, 235);
+        font-weight: bold;
+        font-size: 15px;
+      }
+    }
+    .card-item-content-action-item {
+      display: flex;
+      margin-top: 5px;
+      .card-item-content-action-item-left {
+        width: 40px;
+        margin-right: 8px;
+        color: #6968be;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .card-item-content-action-item-right {
+        width: calc(100% - 48px);
+        padding: 5px 16px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        .card-item-content-action-item-right-item {
+          display: flex;
+          width: 100%;
+          .trigger-contents {
+            color: rgba(0, 0, 0, 0.85);
+            font-weight: bold;
+          }
+          .right-item-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 15%;
+            .trigger-conditions {
+              color: #fab247;
+            }
+            .trigger-shake {
+              color: rgba(0, 0, 0, 0.55);
+            }
+          }
+          .right-item-right {
+            width: 85%;
+            .right-item-right-item {
+              display: flex;
+              width: 100%;
+              overflow: hidden;
+              .trigger-ways {
+                width: 70px;
+                margin-right: 18px;
+                color: rgba(0, 0, 0, 0.85);
+                font-size: 16px;
+                white-space: nowrap;
+              }
+              .right-item-right-item-contents {
+                display: flex;
+                align-items: center;
+                min-width: calc(100% - 88px);
+                max-width: 100%;
+                .right-item-right-item-contents-text {
+                  display: flex;
+                  .right-item-right-item-contents-item {
+                    display: flex;
+                    align-items: center;
+                    width: max-content;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    .right-item-right-item-contents-item-action {
+                      color: rgba(0, 0, 0, 0.85);
+                      font-weight: bold;
+                    }
+                    .right-item-right-item-contents-item-filter {
+                      color: rgba(0, 0, 0, 0.65);
+                    }
+                    .item-ellipsis {
+                      width: max-content;
+                      margin-right: 8px;
+                      overflow: hidden;
+                      white-space: nowrap;
+                      text-overflow: ellipsis;
+                    }
+                  }
+                }
+                .right-item-right-item-contents-extra {
+                  min-width: 100px;
+                  color: #fab247;
+                }
+              }
+            }
+            &:not(:first-child) {
+              padding-left: 20px;
+            }
+          }
+        }
+      }
+    }
+
+    .trigger-actions-more {
+      margin-top: 10px;
+      color: rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+    }
+
+    .notify-text-highlight {
+      margin-left: 5px;
+      font-weight: bold;
+    }
+    .notify-img-highlight {
+      margin: 0 5px;
+      color: rgba(0, 0, 0, 0.8);
+      font-weight: bold;
+    }
+  }
+  .card-item-content-box-empty {
+    color: #e50012;
+    font-weight: bold;
+  }
+}

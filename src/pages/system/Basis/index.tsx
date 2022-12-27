@@ -23,10 +23,10 @@ const Basis = () => {
       const basis = res.result?.filter((item: any) => item.scope === 'front');
       const api = res.result?.filter((item: any) => item.scope === 'amap');
       const basePath = res.result?.filter((item: any) => item.scope === 'paths');
-      localStorage.setItem(SystemConst.AMAP_KEY, api[0].properties.api);
+      localStorage.setItem(SystemConst.AMAP_KEY, api[0].properties.apiKey);
       form.setFieldsValue({
         ...basis[0].properties,
-        apikey: api[0].properties.api,
+        apiKey: api[0].properties.apiKey,
         'base-path': basePath[0].properties['base-path'],
       });
       setInitialState({
@@ -45,14 +45,14 @@ const Basis = () => {
           scope: 'front',
           properties: {
             ...formData,
-            apikey: '',
+            apiKey: '',
             'base-path': '',
           },
         },
         {
           scope: 'amap',
           properties: {
-            api: formData.apikey,
+            apiKey: formData.apiKey,
           },
         },
         {
@@ -105,7 +105,7 @@ const Basis = () => {
               </Form.Item>
               <Form.Item
                 label="高德API Key"
-                name="apikey"
+                name="apiKey"
                 tooltip="配置后平台可调用高德地图GIS服务"
               >
                 <Input />
@@ -131,7 +131,7 @@ const Basis = () => {
                       </>
                     }
                   >
-                    <UploadImage />
+                    <UploadImage errorMessage={'请上传.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片'} />
                   </Form.Item>
                 </Col>
                 <Col>
@@ -146,7 +146,12 @@ const Basis = () => {
                       </>
                     }
                   >
-                    <UploadImage size={1} types={['image/x-icon']} backgroundSize={'inherit'} />
+                    <UploadImage
+                      size={1}
+                      types={['image/x-icon']}
+                      backgroundSize={'inherit'}
+                      errorMessage={'请上传ico格式的图片'}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -163,7 +168,11 @@ const Basis = () => {
                 }
                 rules={[{ required: true, message: '请上传背景图' }]}
               >
-                <UploadImage size={4} style={{ width: 570, height: 415 }} />
+                <UploadImage
+                  size={4}
+                  style={{ width: 570, height: 415 }}
+                  errorMessage={'请上传.jpg.png.jfif.pjp.pjpeg.jpeg格式的图片'}
+                />
               </Form.Item>
             </Col>
           </Row>

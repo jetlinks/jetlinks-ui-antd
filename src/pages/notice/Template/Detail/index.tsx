@@ -335,7 +335,7 @@ const Detail = observer(() => {
           });
           onFieldValueChange('template.body', (field, form1) => {
             const value = (field as Field).value;
-            console.log(value);
+            // console.log(value);
             const idList = value.match(pattern)?.filter((i: string) => i);
             form1.setFieldState('variableDefinitions', (state1) => {
               state1.visible = !!idList && idList.length > 0;
