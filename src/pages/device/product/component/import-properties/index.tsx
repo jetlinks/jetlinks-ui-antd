@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormComponentProps } from 'antd/lib/form';
 import Form from 'antd/es/form';
 import { Alert, Badge, Button, message, Modal, Radio, Spin, Upload } from 'antd';
-import { UploadProps } from 'antd/lib/upload';
+import { UploadProps, RcFile } from 'antd/lib/upload';
 import { getAccessToken } from '@/utils/authority';
 import apis from '@/services';
 
@@ -38,10 +38,10 @@ const Import: React.FC<Props> = props => {
         if (fileUrl) {
             setImportLoading(true);
             apis.deviceProdcut.uploadProperties(fileUrl, props.data.productId).then(res => {
-                if(res.status === 200){
+                if (res.status === 200) {
                     setFlag(false);
                     props.save(res.result)
-                }else{
+                } else {
                     setErrMessage(res.result);
                 }
 
@@ -49,6 +49,19 @@ const Import: React.FC<Props> = props => {
         } else {
             message.error("请先上传文件");
         }
+    };
+
+    const beforeUpload = (file: RcFile) => {
+        console.log(file.type)
+        const isXlsx = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        const isCsv = file.type === 'text/csv'
+        if (fileType === ".xlsx" && !isXlsx) {
+            message.error('请上传.xlsx文件')
+        }
+        if (fileType === ".csv" && !isCsv) {
+            message.error('请上传.csv文件')
+        }
+        return fileType === ".xlsx" ? isXlsx : isCsv
     };
 
     const uploadProps: UploadProps = {
@@ -68,6 +81,8 @@ const Import: React.FC<Props> = props => {
                 setUploading(false);
                 message.success('文件上传成功');
                 submitData(info.file.response.result?.id);
+            }else{
+                setUploading(false);
             }
         },
     };
@@ -117,7 +132,7 @@ const Import: React.FC<Props> = props => {
                         </Radio.Group>
                     </Form.Item>
                     <Form.Item label="文件上传">
-                        <Upload {...uploadProps}>
+                        <Upload {...uploadProps} beforeUpload={beforeUpload}>
                             <Button icon="upload">上传文件</Button>
                         </Upload>
                         <span style={{ marginLeft: 10 }}>
@@ -131,8 +146,8 @@ const Import: React.FC<Props> = props => {
                                 {flag ? (
                                     <Badge status="processing" text="进行中" />
                                 ) : (
-                                    <Badge status="success" text="已完成" />
-                                )}
+                                        <Badge status="success" text="已完成" />
+                                    )}
                                 {/* <span style={{ marginLeft: 15 }}>总数量:{count}</span> */}
                                 <p style={{ color: 'red' }}>{errMessage}</p>
                             </div>

@@ -122,7 +122,9 @@ const Save: React.FC<Props> = props => {
                             <Form.Item label="说明">
                                 {getFieldDecorator('description', {
                                     initialValue: props.data?.description,
-                                    rules: [{ required: false, message: '请输入' }],
+                                    rules: [{ required: false, message: '请输入' },
+                                    {max:200,message:'最多输入200字符'}
+                                ],
                                 })(<Input placeholder="请输入" />)}
                             </Form.Item>
                         </Col>

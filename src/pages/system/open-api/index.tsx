@@ -48,7 +48,7 @@ const OpenApiList: React.FC<Props> = props => {
 
   const columns: ColumnProps<OpenApiItem>[] = [
     {
-      title: '标识',
+      title: 'clientId',
       dataIndex: 'id',
     },
     {
@@ -135,6 +135,7 @@ const OpenApiList: React.FC<Props> = props => {
   ];
 
   const handleSearch = (params?: any) => {
+    setSearchParam(params)
     dispatch({
       type: 'openApi/query',
       payload: encodeQueryParam(params),
@@ -226,7 +227,7 @@ const OpenApiList: React.FC<Props> = props => {
                 type: 'string',
               },
               {
-                label: "标识",
+                label: "clientId",
                 key: "id$LIKE",
                 type: 'string'
               }]}

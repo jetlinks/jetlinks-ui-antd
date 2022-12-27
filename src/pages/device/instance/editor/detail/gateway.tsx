@@ -47,13 +47,13 @@ const Gateway: React.FC<Props> = (props) => {
     setSearchParam(params);
     apis.deviceInstance.list(encodeQueryParam(params))
       .then((response: any) => {
-          if (response.status === 200) {
-            setData(response.result);
-          }
-          setSpinning(false);
-        },
+        if (response.status === 200) {
+          setData(response.result);
+        }
+        setSpinning(false);
+      },
       ).catch(() => {
-    });
+      });
 
   };
 
@@ -110,7 +110,7 @@ const Gateway: React.FC<Props> = (props) => {
           setSpinning(false);
         }
       }).catch(() => {
-    });
+      });
   };
 
   const statusMap = new Map();
@@ -143,7 +143,7 @@ const Gateway: React.FC<Props> = (props) => {
       title: '状态',
       dataIndex: 'state',
       render: record =>
-        record ? <Badge status={statusMap.get(record.value)} text={record.text}/> : '',
+        record ? <Badge status={statusMap.get(record.value)} text={record.text} /> : '',
     },
     {
       title: '操作',
@@ -158,7 +158,7 @@ const Gateway: React.FC<Props> = (props) => {
           >
             查看
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <a
             onClick={() => {
               setCurrentItem(record);
@@ -167,7 +167,7 @@ const Gateway: React.FC<Props> = (props) => {
           >
             编辑
           </a>
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           {record.state?.value === 'notActive' ? (
             <Popconfirm
               title="确认激活？"
@@ -178,17 +178,17 @@ const Gateway: React.FC<Props> = (props) => {
               <a>激活</a>
             </Popconfirm>
           ) : (
-            <Popconfirm
-              title="确认注销设备？"
-              onConfirm={() => {
-                unDeploy(record);
-              }}
-            >
-              <a>注销</a>
-            </Popconfirm>
-          )}
+              <Popconfirm
+                title="确认注销设备？"
+                onConfirm={() => {
+                  unDeploy(record);
+                }}
+              >
+                <a>注销</a>
+              </Popconfirm>
+            )}
 
-          <Divider type="vertical"/>
+          <Divider type="vertical" />
           <Popconfirm
             title="确认解绑？"
             onConfirm={() => {
@@ -226,7 +226,7 @@ const Gateway: React.FC<Props> = (props) => {
           setSpinning(false);
         }
       }).catch(() => {
-    });
+      });
   };
 
   const insert = (deviceData: any) => {
@@ -296,14 +296,16 @@ const Gateway: React.FC<Props> = (props) => {
         )}
 
         {bindVisible && (
-          <Bind selectionType='checkbox'
-                close={() => {
-                  setBindVisible(false);
-                }}
-                save={(item: any) => {
-                  setBindVisible(false);
-                  insert(item);
-                }}
+          <Bind
+            selectionType='checkbox'
+            gatewayId={props.deviceId}
+            close={() => {
+              setBindVisible(false);
+            }}
+            save={(item: any) => {
+              setBindVisible(false);
+              insert(item);
+            }}
           />
         )}
       </Spin>

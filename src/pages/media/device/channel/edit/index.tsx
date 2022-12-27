@@ -92,7 +92,7 @@ const Update: React.FC<Props> = props => {
         <Form.Item key="description" label="说明">
           {getFieldDecorator('description', {
             initialValue: props.data.description,
-          })(<Input.TextArea rows={5} placeholder="请输入至少五个字符"/>)}
+          })(<Input.TextArea rows={5} placeholder="请输入说明"/>)}
         </Form.Item>
       </Form>
     </Modal>

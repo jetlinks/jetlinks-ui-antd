@@ -18,31 +18,35 @@ const Save: React.FC<Props> = props => {
     // data: { parentId }
   } = props;
   const saveData = () => {
-    const value = form.getFieldsValue();
-    let tempData = {};
-    //添加下级
-    if (parentId) {
-      tempData = {
-        parentId:parentId.id,
-        typeId: 'org',
-        ...value,
-      };
-    } else {
-      //编辑
-      tempData = {
-        ...data,
-        typeId: 'org',
-        ...value,
-      };
-    }
-    // console.log(tempData)
-    // const tempData = parentId ? {
-    //   parentId,
-    //   typeId: 'org', ...value,
-    // } : {
-    //     typeId: 'org', ...value, parentId: data.parentId
-    //   };
-    props.save(tempData);
+    // const value = form.getFieldsValue();
+    form.validateFields((err, fileValue) => {
+      if (err) return;
+      let tempData = {};
+      //添加下级
+      if (parentId) {
+        tempData = {
+          parentId: parentId.id,
+          typeId: 'org',
+          ...fileValue,
+        };
+      } else {
+        //编辑
+        tempData = {
+          ...data,
+          typeId: 'org',
+          ...fileValue,
+        };
+      }
+      // console.log(tempData)
+      // const tempData = parentId ? {
+      //   parentId,
+      //   typeId: 'org', ...value,
+      // } : {
+      //     typeId: 'org', ...value, parentId: data.parentId
+      //   };
+      props.save(tempData);
+    })
+
   };
   const formateTitle = () => {
     let title = '';
@@ -51,7 +55,7 @@ const Save: React.FC<Props> = props => {
     } else {
       title += '添加';
     }
-    
+
     if (parentId) {
       title += `${parentId.name}子`;
     }
@@ -83,7 +87,8 @@ const Save: React.FC<Props> = props => {
         <Form.Item label="描述">
           {getFieldDecorator('describe', {
             initialValue: data.describe,
-          })(<Input.TextArea placeholder="描述" maxLength={200}/>)}
+            rules: [{ max: 128, message: '请输入128个字符以内的字符' }],
+          })(<Input.TextArea placeholder="描述"  />)}
         </Form.Item>
       </Form>
     </Modal>

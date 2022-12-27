@@ -552,7 +552,7 @@ const PropertiesDefin: React.FC<Props> = props => {
       case 'array':
         return (
           <div>
-            <Form.Item label="元素类型11111">
+            <Form.Item label="元素类型">
               {getFieldDecorator('valueType.elementType.type', {
                 rules: [{ required: true, message: '请选择' }],
                 initialValue: initState.data.valueType?.elementType?.type,

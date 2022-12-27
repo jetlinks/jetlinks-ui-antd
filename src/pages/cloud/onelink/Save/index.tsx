@@ -100,7 +100,10 @@ const Save: React.FC<Props> = props => {
           <Form.Item key="explain" label="说明">
             {getFieldDecorator('explain', {
               initialValue: props.data.explain,
-            })(<Input.TextArea rows={4} placeholder="请输入至少五个字符"/>)}
+              rules: [
+                {max: 200, message: '最多输入200个字符'}
+              ],
+            })(<Input.TextArea rows={4} placeholder="请输入说明"/>)}
           </Form.Item>
         </Form>
       </Spin>

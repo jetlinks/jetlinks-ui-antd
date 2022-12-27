@@ -29,7 +29,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
   const initState: State = {
     searchParam: {
       pageSize: 10,
-      terms: { 'parentId$not@or': props.gatewayId },
+      // terms: { 'parentId$not@or': props.gatewayId },
       sorts: {
         field: 'registryTime',
         order: 'desc',
@@ -61,7 +61,7 @@ const DeviceGatewayBind: React.FC<Props> = props => {
 
   useEffect(() => {
     if (props.selectionType === 'checkbox') {
-      searchParam.terms = { parentId$isnull: 1, 'parentId$not@or': props.gatewayId };
+      searchParam.terms = { 'id$not': props.gatewayId };
     }
     handleSearch(searchParam);
   }, []);
@@ -153,33 +153,33 @@ const DeviceGatewayBind: React.FC<Props> = props => {
           <Search
             search={(params: any) => {
               setSearchParam(params);
-              console.log(params)
-              if (props.selectionType === 'checkbox') {
-                // params['parentId$isnull'] = 1;
-                handleSearch({
-                  sorts: searchParam.sorts,
-                  pageSize: 10,
-                  terms: {
-                    ...params,
-                    terms: {
-                      parentId$isnull: 1,
-                      'parentId$not@or': props.gatewayId
-                    }
-                  },
-                })
-              } else {
-                handleSearch({
-                  sorts: searchParam.sorts,
-                  pageSize: 10,
-                  terms: {
-                    ...params,
-                    // parentId$isnull:1,
-                    'parentId$not@or': props.gatewayId
-                  },
-                })
-              }
-              // params['parentId$not@or'] = props.gatewayId;
-              // handleSearch({ terms: params, sorter: searchParam.sorter, pageSize: 10 });
+              // console.log(params)
+              // if (props.selectionType === 'checkbox') {
+              //   // params['parentId$isnull'] = 1;
+              //   handleSearch({
+              //     sorts: searchParam.sorts,
+              //     pageSize: 10,
+              //     terms: {
+              //       ...params,
+              //       terms: {
+              //         parentId$isnull: 1,
+              //         'parentId$not@or': props.gatewayId
+              //       }
+              //     },
+              //   })
+              // } else {
+              //   handleSearch({
+              //     sorts: searchParam.sorts,
+              //     pageSize: 10,
+              //     terms: {
+              //       ...params,
+              //       // parentId$isnull:1,
+              //       'parentId$not@or': props.gatewayId
+              //     },
+              //   })
+              // }
+              params['id$not'] = props.gatewayId;
+              handleSearch({ terms: params, sorter: searchParam.sorter, pageSize: 10 });
             }}
           />
         </div>
