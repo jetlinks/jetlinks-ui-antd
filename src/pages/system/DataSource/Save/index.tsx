@@ -112,10 +112,10 @@ const Save = (props: Props) => {
               placeholder: '请输入r2bdc或者jdbc连接地址，示例：r2dbc:mysql://127.0.0.1:3306/test',
             },
             'x-validator': [
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
+              // {
+              //   max: 64,
+              //   message: '最多可输入64个字符',
+              // },
               {
                 required: true,
                 message: '请输入URL',
@@ -144,10 +144,10 @@ const Save = (props: Props) => {
               placeholder: '请输入管理地址，示例：http://localhost:15672',
             },
             'x-validator': [
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
+              // {
+              //   max: 64,
+              //   message: '最多可输入64个字符',
+              // },
               {
                 required: true,
                 message: '请输入管理地址',
@@ -176,10 +176,10 @@ const Save = (props: Props) => {
               placeholder: '请输入链接地址，示例：localhost:5672',
             },
             'x-validator': [
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
+              // {
+              //   max: 64,
+              //   message: '最多可输入64个字符',
+              // },
               {
                 required: true,
                 message: '请输入链接地址',

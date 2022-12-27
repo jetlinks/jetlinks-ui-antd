@@ -68,7 +68,10 @@ export default (props: BuiltInProps) => {
             });
           }
         } else {
-          if (item.type === type) {
+          if (
+            item.type === type ||
+            (type === 'double' && ['int', 'float', 'double', 'long'].includes(item.type))
+          ) {
             list.push(item);
           }
         }

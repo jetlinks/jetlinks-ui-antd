@@ -66,6 +66,10 @@ const ArrayParam = () => {
             default: 2,
             'x-validator': [
               {
+                format: 'integer',
+                message: '请输入0-2147483647之间的正整数',
+              },
+              {
                 max: 2147483647,
                 message: '请输入0-2147483647之间的正整数',
               },
@@ -140,6 +144,10 @@ const ArrayParam = () => {
                   tooltip: '字节',
                 },
                 'x-validator': [
+                  {
+                    format: 'integer',
+                    message: '请输入1-2147483647之间的正整数',
+                  },
                   {
                     max: 2147483647,
                     message: '请输入1-2147483647之间的正整数',

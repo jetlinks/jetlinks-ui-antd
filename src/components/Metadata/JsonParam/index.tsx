@@ -64,6 +64,14 @@ const JsonParam = observer((props: Props) => {
         type: 'array',
         'x-component': 'ArrayItems',
         'x-decorator': 'FormItem',
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              value: [{}],
+            },
+          },
+        },
         'x-validator': [
           {
             triggerType: 'onBlur',
@@ -294,6 +302,10 @@ const JsonParam = observer((props: Props) => {
                           },
                           'x-validator': [
                             {
+                              format: 'integer',
+                              message: '请输入1-2147483647之间的正整数',
+                            },
+                            {
                               max: 2147483647,
                               message: '请输入1-2147483647之间的正整数',
                             },
@@ -322,6 +334,10 @@ const JsonParam = observer((props: Props) => {
                   'x-visible': false,
                   default: 2,
                   'x-validator': [
+                    {
+                      format: 'integer',
+                      message: '请输入0-2147483647之间的正整数',
+                    },
                     {
                       max: 2147483647,
                       message: '请输入0-2147483647之间的正整数',
