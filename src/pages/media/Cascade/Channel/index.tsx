@@ -26,6 +26,7 @@ const Channel = () => {
   const [popVisible, setPopvisible] = useState<string>('');
   const { permission } = PermissionButton.usePermission('media/Cascade');
   const { minHeight } = useDomFullHeight(`.cascadeDevice`, 24);
+  const [pass, setPass] = useState<boolean>(true);
 
   const unbind = async (list: string[]) => {
     const resp = await service.unbindChannel(id, list);
@@ -47,23 +48,34 @@ const Channel = () => {
         <Input
           value={data}
           placeholder="请输入国标ID"
-          onChange={(e) => {
+          onChange={async (e) => {
             setData(e.target.value);
+            if (e.target.value) {
+              const res = await service.validateId(record.cascadeId, [e.target.value]);
+              if (res.status === 200) {
+                setPass(res.result.passed);
+              }
+            }
           }}
         />
+        {!pass && <div style={{ color: 'red' }}>该国标ID在同一设备下已存在</div>}
         <Button
           type="primary"
           style={{ marginTop: 10, width: '100%' }}
           onClick={async () => {
             if (!!data) {
               if (data.length <= 64) {
-                const resp: any = await service.editBindInfo(record.id, {
-                  gbChannelId: data,
-                });
-                if (resp.status === 200) {
-                  onlyMessage('操作成功');
-                  actionRef.current?.reload();
-                  setPopvisible('');
+                if (pass) {
+                  const resp: any = await service.editBindInfo(record.id, {
+                    gbChannelId: data,
+                  });
+                  if (resp.status === 200) {
+                    onlyMessage('操作成功');
+                    actionRef.current?.reload();
+                    setPopvisible('');
+                  }
+                } else {
+                  message.error('该国标ID在同一设备下已存在');
                 }
               } else {
                 message.error('最多可输入64个字符');
