@@ -39,6 +39,14 @@ const EnumParam = () => {
             },
           },
         ],
+        'x-reactions': {
+          dependencies: ['.type'],
+          fulfill: {
+            state: {
+              value: [{}],
+            },
+          },
+        },
         items: {
           type: 'void',
           'x-component': 'ArrayItems.Item',
