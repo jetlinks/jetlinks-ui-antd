@@ -215,7 +215,8 @@ export default () => {
             }
           />
         </Col>
-        <Col span={24} style={{ backgroundColor: 'white', minHeight: 580 }}>
+        <Col span={24} style={{ minHeight: 580 }}>
+          {/* <Col span={24} style={{ backgroundColor: 'white', minHeight: 580 }}> */}
           <Body
             className="bottomImg"
             title={'平台架构图'}
