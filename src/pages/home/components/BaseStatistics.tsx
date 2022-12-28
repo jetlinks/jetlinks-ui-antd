@@ -53,12 +53,24 @@ const BaseStatistics = () => {
         {
           name: 'CPU使用率',
           value: String(cpuValue) + '%',
-          children: <Pie value={cpuValue} />,
+          children: (
+            <Pie
+              value={cpuValue}
+              color={['#EBEBEB', '#D3ADF7']}
+              image={require('/public/images/home/top-3.svg')}
+            />
+          ),
         },
         {
           name: 'JVM内存',
           value: String(jvmValue) + '%',
-          children: <Pie value={jvmValue} />,
+          children: (
+            <Pie
+              value={jvmValue}
+              color={['#D6E4FF', '#85A5FF']}
+              image={require('/public/images/home/top-4.svg')}
+            />
+          ),
         },
       ]}
       title="基础统计"

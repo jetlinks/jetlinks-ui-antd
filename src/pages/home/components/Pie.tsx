@@ -4,23 +4,41 @@ import type { EChartsOption } from 'echarts';
 
 interface Props {
   value: number;
+  color: array;
+  image: string;
 }
 
 const Pie = (props: Props) => {
   const [options, setOptions] = useState<EChartsOption>({});
-
   useEffect(() => {
     setOptions({
-      color: ['#2F54EB', '#979AFF'],
+      color: props.color || ['#D3ADF7', '#979AFF'],
+      graphic: [
+        {
+          type: 'image',
+          style: {
+            image: props.image || '',
+            width: 16,
+            height: 16,
+          },
+          left: 'center',
+          top: '41%',
+        },
+      ],
       series: [
         {
           type: 'pie',
-          radius: ['100%', '50%'],
+          radius: ['100%', '60%'],
           center: ['50%', '50%'],
           label: {
             show: false,
           },
-          data: [props.value, 100 - props.value],
+          data: [100 - props.value, props.value],
+          itemStyle: {
+            // borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2,
+          },
         },
       ],
     });
