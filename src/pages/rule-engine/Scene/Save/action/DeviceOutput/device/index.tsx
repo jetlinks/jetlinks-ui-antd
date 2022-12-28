@@ -14,7 +14,7 @@ import { observer } from '@formily/reactive-react';
 import { Form, TreeSelect } from 'antd';
 import '../index.less';
 import TopCard from './TopCard';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+// import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { FormModel } from '../../..';
 import { BuiltInParamsHandleTreeData } from '@/pages/rule-engine/Scene/Save/components/BuiltInParams';
 import { queryBuiltInParams } from '@/pages/rule-engine/Scene/Save/action/service';
@@ -27,6 +27,7 @@ interface Props {
   parallel: boolean;
   thenName: number;
   branchGroup?: number;
+  formProductId: any;
 }
 
 export default observer((props: Props) => {
@@ -249,14 +250,19 @@ export default observer((props: Props) => {
     const _params = {
       branch: props.thenName,
       branchGroup: props.branchGroup,
-      action: props.name,
+      action: props.name - 1,
     };
     queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
         const _data = BuiltInParamsHandleTreeData(res.result);
         const array = filterTree(_data);
-        console.log('--------', array);
-        setBuiltInList(array);
+        // console.log('--------', array);
+        //判断相同产品才有按变量
+        if (props.formProductId === DeviceModel.productId) {
+          setBuiltInList(array);
+        } else {
+          setBuiltInList([]);
+        }
       }
     });
   };
@@ -272,7 +278,7 @@ export default observer((props: Props) => {
       }
       //标签
       const tag = JSON.parse(DeviceModel.productDetail?.metadata || '{}')?.tags;
-      if (!tag) {
+      if (tag && tag.length !== 0) {
         const array = TypeList.filter((item) => item.value === 'tag');
         _list.push(...array);
       }
@@ -426,7 +432,7 @@ export default observer((props: Props) => {
                 fieldNames={{ label: 'name', value: 'id' }}
                 placeholder={'请选择参数'}
                 onSelect={(value: any, node: any) => {
-                  console.log(value, node);
+                  // console.log(value, node);
                   DeviceModel.deviceId = value;
                   DeviceModel.deviceDetail = node;
                   DeviceModel.selectorValues = [{ value: value, name: node.description }];
@@ -471,13 +477,16 @@ export default observer((props: Props) => {
 
   return (
     <div>
-      <div className="device-title">
-        <ExclamationCircleOutlined className="device-title-icon" />
-        <span>自定义选择当前产品下的任意设备</span>
-      </div>
       <Form form={form} layout={'vertical'}>
         <Form.Item name="selector" label="选择方式" required hidden={list.length === 1}>
-          <TopCard typeList={list} />
+          <TopCard
+            typeList={list}
+            onChange={(value) => {
+              if (value) {
+                form.resetFields(['selectorValues']);
+              }
+            }}
+          />
         </Form.Item>
         {contentRender(selector)}
       </Form>

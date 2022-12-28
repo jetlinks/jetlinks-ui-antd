@@ -65,7 +65,7 @@ export default observer((props: Props) => {
     const _params = {
       branch: props.thenName,
       branchGroup: props.branchGroup,
-      action: props.name,
+      action: props.name - 1,
     };
     queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {

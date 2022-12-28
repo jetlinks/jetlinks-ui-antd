@@ -46,7 +46,6 @@ const Save = () => {
   const [detail, setDetail] = useState<any>({});
   const accessRef = useRef<any>([]);
   const [type, setType] = useState<any>('');
-  const typeRef = useRef<any>('');
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -265,10 +264,6 @@ const Save = () => {
     [id],
   );
 
-  useEffect(() => {
-    console.log('_________', typeRef.current);
-  }, [typeRef.current]);
-
   const handleSave = async () => {
     const data: any = await form.submit();
     const list = integrationModesList.map((item) => item.value);
@@ -346,6 +341,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: 'oauth2授权地址',
       },
       required: true,
       'x-component': 'Input',
@@ -369,6 +365,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '授权完成后跳转到具体页面的回调地址',
       },
       // required: true,
       'x-component': 'Input',
@@ -392,6 +389,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识',
       },
       required: true,
       'x-component': 'Input',
@@ -415,6 +413,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识的秘钥',
       },
       required: true,
       'x-component': 'Input',
@@ -440,6 +439,8 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip:
+          '开启后，第三方用户第一次授权登录系统时，无需进入授权绑定页面。系统默认创建一个新用户与之绑定。',
       },
       'x-component': 'Switch',
     },
@@ -454,6 +455,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识',
       },
       'x-reactions': {
         dependencies: ['provider'],
@@ -477,6 +479,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识',
       },
       required: true,
       'x-component': 'Input',
@@ -510,6 +513,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识的秘钥',
       },
       required: true,
       'x-component': 'Input',
@@ -537,6 +541,8 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip:
+          '开启后，第三方用户第一次授权登录系统时，无需进入授权绑定页面。系统默认创建一个新用户与之绑定。',
       },
       'x-component': 'Switch',
     },
@@ -567,6 +573,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '限制应用程序对用户账号的访问',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -592,6 +599,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用唯一标识',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -617,6 +625,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用唯一标识的秘钥',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -642,6 +651,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: 'oauth2授权地址',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -657,6 +667,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '设置token令牌的地址',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -799,6 +810,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '认证授权地址',
       },
       required: true,
       'x-component': 'Input',
@@ -814,6 +826,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '授权完成后跳转到具体页面的回调地址',
       },
       // required: true,
       'x-component': 'Input',
@@ -829,6 +842,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '第三方应用唯一标识',
       },
       required: true,
       'x-component': 'Input',
@@ -854,6 +868,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '第三方应用唯一标识的密钥',
       },
       required: true,
       'x-component': 'Input',
@@ -1004,6 +1019,7 @@ const Save = () => {
                     gridSpan: 2,
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '认证授权地址',
                   },
                   required: true,
                   'x-component': 'Input',
@@ -1050,6 +1066,7 @@ const Save = () => {
                     gridSpan: 2,
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '应用唯一标识',
                   },
                   required: true,
                   'x-component': 'Input',
@@ -1062,6 +1079,7 @@ const Save = () => {
                     gridSpan: 2,
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '应用唯一标识的秘钥',
                   },
                   required: true,
                   'x-component': 'Input',
@@ -1169,6 +1187,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '第三方应用唯一标识',
                 },
                 required: true,
                 'x-component': 'Input',
@@ -1193,6 +1212,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '第三方应用唯一标识匹配的秘钥',
                 },
                 required: true,
                 'x-component': 'Input',
@@ -1218,6 +1238,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '授权知道后跳转到具体页面的回调地址',
                 },
                 // required: true,
                 'x-component': 'Input',
@@ -1250,7 +1271,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '为API用户分配角色',
+                  tooltip: '为第三方应用用户分配角色，根据绑定的角色，进行系统菜单赋权',
                   addonAfter: (
                     <PermissionButton
                       type="link"
@@ -1298,7 +1319,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '为API用户分组所属组织',
+                  tooltip: '为第三方应用用户分配所属组织，根据绑定的组织，进行数据隔离',
                   addonAfter: (
                     <PermissionButton
                       type="link"
@@ -1452,6 +1473,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '根据不同应用的调用规范，自定义请求头内容',
                 },
                 items: {
                   type: 'object',

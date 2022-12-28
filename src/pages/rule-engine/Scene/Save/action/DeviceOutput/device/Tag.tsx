@@ -38,7 +38,6 @@ export default (props: TagModalProps) => {
           value: item.value,
         };
       });
-    console.log();
     if (props.onChange) {
       props.onChange([{ value: newValue, name: '标签' }]);
     }

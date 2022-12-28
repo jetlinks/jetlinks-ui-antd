@@ -10,6 +10,7 @@ import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
 import { service as api } from '@/pages/device/Instance/index';
+import { FormModel } from '../..';
 
 export const service = new Service<any>('');
 
@@ -25,6 +26,7 @@ interface Props {
 
 export default observer((props: Props) => {
   const formRef = useRef<any>();
+  const formProductIdRef = useRef<any>('');
 
   DeviceModel.steps = [
     {
@@ -41,6 +43,7 @@ export default observer((props: Props) => {
           parallel={props.parallel}
           branchGroup={props.branchGroup}
           thenName={props.thenName}
+          formProductId={formProductIdRef.current}
         />
       ),
     },
@@ -138,7 +141,7 @@ export default observer((props: Props) => {
       }));
       // console.log(_options.taglist, 'taglist')
     }
-    console.log(DeviceModel.propertiesValue, _options);
+    // console.log(DeviceModel.propertiesValue, _options);
     props.save(item, _options);
     init();
   };
@@ -160,6 +163,12 @@ export default observer((props: Props) => {
       init();
     };
   }, [props.value]);
+
+  useEffect(() => {
+    const item = FormModel.current?.branches?.[0].then?.[0]?.actions?.[0].device?.productId;
+    console.log(item);
+    formProductIdRef.current = item;
+  }, []);
 
   return (
     <Modal
