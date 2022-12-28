@@ -130,8 +130,9 @@ const DeviceBoard = () => {
             name: '在线数',
             data: y.reverse(),
             type: 'bar',
+            showBackground: true,
             itemStyle: {
-              color: '#2F54EB',
+              color: '#D3ADF7',
             },
           },
         ],
@@ -214,8 +215,9 @@ const DeviceBoard = () => {
             name: '消息量',
             data: y,
             type: 'line',
-            smooth: true,
-            color: '#685DEB',
+            smooth: true, // 是否平滑曲线
+            symbolSize: 0, // 拐点大小
+            color: '#F29B55',
             areaStyle: {
               color: {
                 type: 'linear',
@@ -226,7 +228,7 @@ const DeviceBoard = () => {
                 colorStops: [
                   {
                     offset: 0,
-                    color: '#685DEB', // 100% 处的颜色
+                    color: '#FBBB87', // 100% 处的颜色
                   },
                   {
                     offset: 1,
@@ -285,6 +287,9 @@ const DeviceBoard = () => {
         .map((item: any) => (_time === '1h' ? `${item.data.timeString}时` : item.data.timeString))
         .reverse();
       const y = res.result.map((item: any) => item.data.value).reverse();
+      const maxY = Math.max.apply(null, y.length ? y : [0]);
+      // const sum = y.reduce((acc, cur) => acc + cur, 0)
+      // const percentageY = y.map(item => parseFloat(((item / sum) * 100).toFixed(2)));
       setOptions({
         xAxis: {
           type: 'category',
@@ -296,43 +301,53 @@ const DeviceBoard = () => {
         },
         tooltip: {
           trigger: 'axis',
-          // axisPointer: {
-          //   type: 'shadow',
-          // },
+          formatter: '{b0}<br />{a0}: {c0}',
+          // formatter: '{b0}<br />{a0}: {c0}<br />{a1}: {c1}%'
         },
         grid: {
           top: '2%',
           bottom: '5%',
-          left: '50px',
+          left: maxY > 100000 ? '90px' : '50px',
           right: '50px',
         },
         series: [
           {
             name: '消息量',
             data: y,
+            type: 'bar',
+            // type: 'line',
+            // smooth: true,
+            color: '#597EF7',
+            barWidth: '30%',
+            // areaStyle: {
+            //   color: {
+            //     type: 'linear',
+            //     x: 0,
+            //     y: 0,
+            //     x2: 0,
+            //     y2: 1,
+            //     colorStops: [
+            //       {
+            //         offset: 0,
+            //         color: '#685DEB', // 100% 处的颜色
+            //       },
+            //       {
+            //         offset: 1,
+            //         color: '#FFFFFF', //   0% 处的颜色
+            //       },
+            //     ],
+            //     global: false, // 缺省为 false
+            //   },
+            // },
+          },
+          {
+            name: '占比',
+            data: y,
+            // data: percentageY,
             type: 'line',
             smooth: true,
-            color: '#685DEB',
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: '#685DEB', // 100% 处的颜色
-                  },
-                  {
-                    offset: 1,
-                    color: '#FFFFFF', //   0% 处的颜色
-                  },
-                ],
-                global: false, // 缺省为 false
-              },
-            },
+            symbolSize: 0, // 拐点大小
+            color: '#96ECE3',
           },
         ],
       });
