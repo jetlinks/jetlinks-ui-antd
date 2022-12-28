@@ -344,8 +344,8 @@ const Dashboard = () => {
           />
         </div>
         <div className={styles['total-echarts-right']}>
-          <div className={styles.topName} style={{ height: 50 }}>
-            <span>流量使用TOP10</span>
+          <div className={styles.topName} style={{ height: 32 }}>
+            <span style={{ marginTop: 3.5 }}>流量使用TOP10</span>
             <div>
               {
                 // @ts-ignore
