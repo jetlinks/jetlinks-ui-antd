@@ -168,7 +168,7 @@ const ProTableCard = <
     if (pageSize !== size) {
       _current = 1;
     }
-    console.log(_current);
+    // console.log(_current);
     setCurrent(_current);
     setPageIndex(_current - 1);
     setPageSize(size);

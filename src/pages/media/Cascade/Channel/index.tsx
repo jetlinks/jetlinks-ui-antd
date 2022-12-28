@@ -27,6 +27,7 @@ const Channel = () => {
   const { permission } = PermissionButton.usePermission('media/Cascade');
   const { minHeight } = useDomFullHeight(`.cascadeDevice`, 24);
   const [pass, setPass] = useState<boolean>(true);
+  const [isnull, setIsnull] = useState<boolean>(false);
 
   const unbind = async (list: string[]) => {
     const resp = await service.unbindChannel(id, list);
@@ -44,21 +45,28 @@ const Channel = () => {
 
   const content = (record: any) => {
     return (
-      <div>
+      <div style={{ width: 250 }}>
         <Input
           value={data}
           placeholder="请输入国标ID"
           onChange={async (e) => {
             setData(e.target.value);
             if (e.target.value) {
-              const res = await service.validateId(record.cascadeId, [e.target.value]);
-              if (res.status === 200) {
-                setPass(res.result.passed);
+              if (/\s/.test(e.target.value)) {
+                setIsnull(true);
+                setPass(true);
+              } else {
+                setIsnull(false);
+                const res = await service.validateId(record.cascadeId, [e.target.value]);
+                if (res.status === 200) {
+                  setPass(res.result.passed);
+                }
               }
             }
           }}
         />
         {!pass && <div style={{ color: 'red' }}>该国标ID在同一设备下已存在</div>}
+        {isnull && <div style={{ color: 'red' }}>国标ID不能含有空格</div>}
         <Button
           type="primary"
           style={{ marginTop: 10, width: '100%' }}
@@ -129,6 +137,8 @@ const Channel = () => {
                   onClick={() => {
                     setPopvisible('');
                     setData('');
+                    setPass(true);
+                    setIsnull(false);
                   }}
                 />
               </div>

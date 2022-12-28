@@ -1,6 +1,7 @@
 import { Modal, Select, InputNumber } from 'antd';
 import { useEffect, useState } from 'react';
 import { observer } from '@formily/react';
+import { onlyMessage } from '@/utils/util';
 
 export enum TimeUnit {
   'seconds' = 'seconds',
@@ -53,7 +54,7 @@ export default observer((props: Props) => {
 
   return (
     <Modal
-      title={'执行动作'}
+      title={'延迟执行'}
       open
       keyboard={false}
       maskClosable={false}
@@ -62,13 +63,18 @@ export default observer((props: Props) => {
         props.cancel();
       }}
       onOk={() => {
-        props.save(
-          {
-            time: value,
-            unit,
-          },
-          { name: `延迟 ${value} ${timeUnitEnum[unit]} 执行` },
-        );
+        console.log(value);
+        if (value || value === 0) {
+          props.save(
+            {
+              time: value,
+              unit,
+            },
+            { name: `${value} ${timeUnitEnum[unit]}后，执行后续动作` },
+          );
+        } else {
+          onlyMessage('请输入时间', 'error');
+        }
       }}
     >
       <InputNumber
