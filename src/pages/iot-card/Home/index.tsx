@@ -191,6 +191,10 @@ export default () => {
                 name: '物联卡',
                 value: 0,
                 node: pieChartData.current,
+                style: {
+                  width: 70,
+                  height: 70,
+                },
                 children: <Echarts options={cardOptions} />,
               },
             ]}
