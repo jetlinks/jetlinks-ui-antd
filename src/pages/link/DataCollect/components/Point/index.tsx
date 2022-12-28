@@ -122,7 +122,7 @@ const PointCard = observer((props: PointCardProps) => {
             terms: [{ column: 'collectorId', value: props.data?.id }],
           },
         ],
-        sorts: [{ name: 'createTime', order: 'desc' }],
+        sorts: [{ name: 'id', order: 'desc' }],
       })
       .then((resp) => {
         if (resp.status === 200) {

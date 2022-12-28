@@ -17,6 +17,7 @@ import { InstanceModel } from '@/pages/device/Instance';
 import _ from 'lodash';
 import type { DeviceMetadata } from '@/pages/device/Product/typings';
 import MetadataAction from '@/pages/device/components/Metadata/DataBaseAction';
+import { useMemo, useState } from 'react';
 interface Props {
   visible: boolean;
   close: () => void;
@@ -25,9 +26,14 @@ interface Props {
 
 const Import = (props: Props) => {
   const param = useParams<{ id: string }>();
-  const form = createForm({
-    initialValues: {},
-  });
+  const form = useMemo(
+    () =>
+      createForm({
+        initialValues: {},
+      }),
+    [props.visible],
+  );
+  const [loading, setLoading] = useState<boolean>(false);
 
   const SchemaField = createSchemaField({
     components: {
@@ -282,32 +288,22 @@ const Import = (props: Props) => {
 
   const handleImport = async () => {
     const data = (await form.submit()) as any;
-    const checkProperties = (metadataJson: string) => {
-      const metadata = JSON.parse(metadataJson.metadata);
-      return (
-        !!metadata &&
-        !!metadata?.properties &&
-        !!metadata?.events &&
-        !!metadata?.functions &&
-        !!metadata?.tags
-      );
-    };
-
+    setLoading(true);
     if (data.metadata === 'alink') {
       service.convertMetadata('from', 'alink', data.import).subscribe({
         next: async (meta) => {
           const metadata = JSON.stringify(operateLimits(meta));
-          // eslint-disable-next-line @typescript-eslint/no-throw-literal
-          if (!checkProperties(metadata)) throw 'error';
           if (props?.type === 'device') {
             await deviceService.saveMetadata(param.id, metadata);
           } else {
             await service.modify(param.id, { metadata: metadata });
           }
+          setLoading(false);
           MetadataAction.insert(JSON.parse(metadata || '{}'));
           onlyMessage('导入成功');
         },
         error: () => {
+          setLoading(false);
           onlyMessage('发生错误!', 'error');
         },
       });
@@ -317,6 +313,13 @@ const Import = (props: Props) => {
     } else {
       try {
         const _object = JSON.parse(data[props?.type === 'device' ? 'import' : data?.type] || '{}');
+        if (
+          !(!!_object?.properties || !!_object?.events || !!_object?.functions || !!_object?.tags)
+        ) {
+          onlyMessage('物模型数据不正确', 'error');
+          setLoading(false);
+          return;
+        }
         const params = {
           id: param.id,
           metadata: JSON.stringify(operateLimits(_object as DeviceMetadata)),
@@ -328,17 +331,14 @@ const Import = (props: Props) => {
         } else {
           resp = await service.modify(param.id, params);
         }
+        setLoading(false);
         if (resp.status === 200) {
           if (props?.type === 'device') {
             const metadata: DeviceMetadata = JSON.parse(paramsDevice || '{}');
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
-            if (!checkProperties(metadata)) throw 'error';
             MetadataAction.insert(metadata);
             onlyMessage('导入成功');
           } else {
             const metadata: DeviceMetadata = JSON.parse(params?.metadata || '{}');
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
-            if (!checkProperties(metadata)) throw 'error';
             MetadataAction.insert(metadata);
             onlyMessage('导入成功');
           }
@@ -347,6 +347,7 @@ const Import = (props: Props) => {
         Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
         props.close();
       } catch (e) {
+        setLoading(false);
         onlyMessage(e === 'error' ? '物模型数据不正确' : '上传json格式的物模型文件', 'error');
       }
     }
@@ -359,6 +360,7 @@ const Import = (props: Props) => {
       visible={props.visible}
       onCancel={() => props.close()}
       onOk={handleImport}
+      confirmLoading={loading}
     >
       <div style={{ background: 'rgb(236, 237, 238)' }}>
         <p style={{ padding: 10 }}>

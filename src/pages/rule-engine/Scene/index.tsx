@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import type { SceneItem } from '@/pages/rule-engine/Scene/typings';
 import {
@@ -19,6 +19,7 @@ import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
 import Save from './Save/save';
 import { getMenuPathByCode } from '@/utils/menu';
+import { Spin } from 'antd';
 
 export const service = new Service('scene');
 
@@ -30,6 +31,8 @@ const Scene = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<Partial<SceneItem>>({});
   const history = useHistory();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [title, setTitle] = useState<string>('确定删除？');
 
   const deleteById = async (id: string) => {
     // const alarmResp = await service.sceneByAlarm(id);
@@ -42,6 +45,13 @@ const Scene = () => {
     //   onlyMessage('该场景已绑定告警，不可删除', 'warning');
     // }
   };
+
+  useEffect(() => {
+    console.log('----------', title, loading);
+    if (title) {
+      setLoading(false);
+    }
+  }, [title]);
 
   const Tools = (record: SceneItem): React.ReactNode[] => {
     return [
@@ -147,8 +157,29 @@ const Scene = () => {
         style={{ padding: 0 }}
         isPermission={permission.delete}
         disabled={record.state.value === 'started'}
+        onClick={async () => {
+          const res = await service.sceneByAlarm(record.id);
+          if (res.status === 200) {
+            // setTimeout(()=>{})
+            setLoading(false);
+            if (res.result !== 0) {
+              setTitle('该场景已绑定告警，确定删除？');
+            } else {
+              setTitle('确定删除？');
+            }
+          } else {
+            setLoading(false);
+          }
+        }}
         popConfirm={{
-          title: '确认删除？',
+          title: <>{loading ? <Spin /> : title}</>,
+          okButtonProps: {
+            loading: loading,
+          },
+          onCancel: () => {
+            setTitle('');
+            setLoading(false);
+          },
           disabled: record.state.value === 'started',
           onConfirm: () => {
             deleteById(record.id);

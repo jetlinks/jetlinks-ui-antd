@@ -152,8 +152,8 @@ export default (props: ItemProps) => {
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               微信
             </span>
-            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
-            <span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             <span className={'notify-text-highlight'}>{options?.tagName || ''}</span>
             发送
             <span className={'notify-text-highlight'}>

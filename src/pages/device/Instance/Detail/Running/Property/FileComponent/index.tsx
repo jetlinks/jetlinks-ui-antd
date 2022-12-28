@@ -116,18 +116,14 @@ const FileComponent = (props: Props) => {
         data?.valueType?.fileType === 'base64' ||
         data?.valueType?.fileType === 'Binary(二进制)'
       ) {
-        // if(data?.valueType?.fileType === 'base64') {
-        //   console.log(value?.formatValue.split(',')[0])
-        // }
-        // if(data?.valueType?.fileType === 'Binary(二进制)') {
-        //
-        // }
         return (
           <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
-            <Tooltip placement="topLeft" title={String(value?.formatValue)}>
-              {String(value?.formatValue)}
-            </Tooltip>
-            {/*<img src={value?.formatValue} />*/}
+            <img
+              src={value?.formatValue}
+              onError={(e: any) => {
+                e.target.src = imgMap.get('other');
+              }}
+            />
           </div>
         );
       } else {

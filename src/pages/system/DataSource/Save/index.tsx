@@ -113,8 +113,8 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               {
-                max: 64,
-                message: '最多可输入64个字符',
+                format: 'url',
+                message: '请输入正确的URL',
               },
               {
                 required: true,
@@ -145,8 +145,8 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               {
-                max: 64,
-                message: '最多可输入64个字符',
+                format: 'url',
+                message: '请输入正确的管理地址',
               },
               {
                 required: true,
@@ -177,8 +177,8 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               {
-                max: 64,
-                message: '最多可输入64个字符',
+                format: 'url',
+                message: '请输入正确的链接地址',
               },
               {
                 required: true,

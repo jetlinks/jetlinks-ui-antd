@@ -208,21 +208,6 @@ const Edit = observer((props: Props) => {
       const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
       return reg.exec(value) ? '' : 'ID只能由数字、字母、下划线、中划线组成';
     },
-    checkLength(value) {
-      if (String(value).length > 64) {
-        return {
-          type: 'error',
-          message: '最多可输入64个字符',
-        };
-      }
-      if (!(value % 1 === 0)) {
-        return {
-          type: 'error',
-          message: '请输入非0正整数',
-        };
-      }
-      return '';
-    },
   });
   const valueTypeConfig = {
     type: 'object',
@@ -292,6 +277,10 @@ const Edit = observer((props: Props) => {
         'x-component': 'NumberPicker',
         default: 2,
         'x-validator': [
+          {
+            format: 'integer',
+            message: '请输入0-2147483647之间的正整数',
+          },
           {
             max: 2147483647,
             message: '请输入0-2147483647之间的正整数',
@@ -387,12 +376,11 @@ const Edit = observer((props: Props) => {
             'x-component-props': {
               min: 1,
             },
-            // 'x-validator': [
-            //   {
-            //     checkLength: true,
-            //   },
-            // ],
             'x-validator': [
+              {
+                format: 'integer',
+                message: '请输入1-2147483647之间的正整数',
+              },
               {
                 max: 2147483647,
                 message: '请输入1-2147483647之间的正整数',
@@ -923,6 +911,8 @@ const Edit = observer((props: Props) => {
                               type: '{{$deps[0]}}',
                               enum: '{{$deps[1]}}',
                             },
+                            selfErrors:
+                              "{{$deps[0] === 'string' && $self?.value?.value?.[0]?.length > 64 ? '最多输入64个字符' : ''}}",
                           },
                         },
                       },

@@ -18,7 +18,7 @@ import {
   ArrayTable,
 } from '@formily/antd';
 import { TreeSelect as ATreeSelect } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createSchemaField } from '@formily/react';
 import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
 import { onlyMessage, randomString, testIP, useAsyncDataSource } from '@/utils/util';
@@ -32,6 +32,7 @@ import { getMenuPathByCode } from '@/utils/menu';
 import MenuPage from '../Menu';
 import _ from 'lodash';
 import { UploadImage } from '@/components';
+import Doc from './doc';
 
 const Save = () => {
   const location = useLocation();
@@ -44,6 +45,7 @@ const Save = () => {
   const [visible, setVisiable] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
   const accessRef = useRef<any>([]);
+  const [type, setType] = useState<any>('');
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -138,16 +140,6 @@ const Save = () => {
     },
   });
 
-  // const getProvidersAll = () => {
-  //   return service.getProvidersAll().then((res) => {
-  //     if (res.status === 200) {
-  //       return res.result.map((item: any) => ({
-  //         label: createImageLabel(providerType.get(item.provider), item.name),
-  //         value: item.provider,
-  //       }));
-  //     }
-  //   });
-  // };
   const getRole = () => service.queryRoleList();
   const getOrg = () => service.queryOrgList();
 
@@ -165,103 +157,112 @@ const Save = () => {
     );
   };
 
-  const form = createForm({
-    validateFirst: true,
-    effects() {
-      onFormInit(async (formInit) => {
-        if (!id) return;
-        const resp = await service.detail(id);
-        const integrationModes = resp.result.integrationModes.map((item: any) => item.value);
-        // setAccess(integrationModes)
-        accessRef.current = integrationModes;
-        formInit.setInitialValues({
-          ...resp.result,
-          integrationModes,
-          'apiServer.appId': id,
-        });
-      });
-      onFieldValueChange('provider', (field, form1) => {
-        const value = field.value;
-        // console.log(value);
-        if (field.modified) {
-          switch (value) {
-            case 'internal-standalone':
-              form1.setFieldState('integrationModes', (f1) => {
-                f1.value = [];
-                f1.dataSource = integrationModesList;
-              });
-              break;
-            case 'internal-integrated':
-              form1.setFieldState('integrationModes', (f2) => {
-                f2.value = [];
-                f2.dataSource = integrationModesList?.filter(
-                  (item) => item.value === 'apiClient' || item.value === 'page',
-                );
-              });
-              break;
-            case 'dingtalk-ent-app':
-              form1.setFieldState('integrationModes', (f3) => {
-                f3.value = ['ssoClient'];
-                f3.dataSource = integrationModesList?.filter((item) => item.value === 'ssoClient');
-              });
-              break;
-            case 'wechat-webapp':
-              form1.setFieldState('integrationModes', (f4) => {
-                f4.value = ['ssoClient'];
-                f4.dataSource = integrationModesList?.filter((item) => item.value === 'ssoClient');
-              });
-              break;
-            case 'third-party':
-              form1.setFieldState('integrationModes', (f5) => {
-                f5.value = [];
-                f5.dataSource = integrationModesList;
-              });
-              break;
-            default:
-              break;
-          }
-        }
-      });
-      onFieldValueChange('integrationModes', (field, form2) => {
-        const value = field.value;
-        formCollapse.activeKeys = field.value;
-        const modes = ['page', 'apiClient', 'apiServer', 'ssoClient'];
-        const items = modes.concat(field.value).filter((item) => !value?.includes(item)); //未被选中
-        // console.log(value);
-        items.forEach((i) => {
-          form2.setFieldState(`config.${i}`, (state) => {
-            state.visible = false;
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        effects() {
+          onFormInit(async (formInit) => {
+            if (!id) return;
+            const resp = await service.detail(id);
+            const integrationModes = resp.result.integrationModes.map((item: any) => item.value);
+            // setAccess(integrationModes)
+            accessRef.current = integrationModes;
+            formInit.setInitialValues({
+              ...resp.result,
+              integrationModes,
+              'apiServer.appId': id,
+            });
           });
-        });
-        field.value?.forEach((parms: any) => {
-          form2.setFieldState(`config.${parms}`, (state) => {
-            state.visible = true;
+          onFieldValueChange('provider', (field, form1) => {
+            const value = field.value;
+            setType(value);
+            // console.log(value);
+            if (field.modified) {
+              switch (value) {
+                case 'internal-standalone':
+                  form1.setFieldState('integrationModes', (f1) => {
+                    f1.value = [];
+                    f1.dataSource = integrationModesList;
+                  });
+                  break;
+                case 'internal-integrated':
+                  form1.setFieldState('integrationModes', (f2) => {
+                    f2.value = [];
+                    f2.dataSource = integrationModesList?.filter(
+                      (item) => item.value === 'apiClient' || item.value === 'page',
+                    );
+                  });
+                  break;
+                case 'dingtalk-ent-app':
+                  form1.setFieldState('integrationModes', (f3) => {
+                    f3.value = ['ssoClient'];
+                    f3.dataSource = integrationModesList?.filter(
+                      (item) => item.value === 'ssoClient',
+                    );
+                  });
+                  break;
+                case 'wechat-webapp':
+                  form1.setFieldState('integrationModes', (f4) => {
+                    f4.value = ['ssoClient'];
+                    f4.dataSource = integrationModesList?.filter(
+                      (item) => item.value === 'ssoClient',
+                    );
+                  });
+                  break;
+                case 'third-party':
+                  form1.setFieldState('integrationModes', (f5) => {
+                    f5.value = [];
+                    f5.dataSource = integrationModesList;
+                  });
+                  break;
+                default:
+                  break;
+              }
+            }
           });
-        });
-      });
-      onFieldReact('apiClient.authConfig.oauth2.clientId', (field) => {
-        if (id && accessRef.current?.includes('apiClient')) {
-          field.componentProps = {
-            disabled: true,
-          };
-        }
-      });
-      onFieldReact('apiServer.ipWhiteList', (field: any) => {
-        const value = (field as Field).value;
-        if (value) {
-          const str = value?.split(/[\n,]/g).filter((i: any) => i && i.trim());
-          const NoIP = str.find((item: any) => !testIP(item.replace(/\s*/g, '')));
-          if (NoIP) {
-            field.selfErrors = `[${NoIP}]不是正确的IP地址`;
-          } else {
-            field.selfErrors = '';
-          }
-        } else {
-          field.selfErrors = '';
-        }
-      });
-    },
-  });
+          onFieldValueChange('integrationModes', (field, form2) => {
+            const value = field.value;
+            formCollapse.activeKeys = field.value;
+            const modes = ['page', 'apiClient', 'apiServer', 'ssoClient'];
+            const items = modes.concat(field.value).filter((item) => !value?.includes(item)); //未被选中
+            // console.log(value);
+            items.forEach((i) => {
+              form2.setFieldState(`config.${i}`, (state) => {
+                state.visible = false;
+              });
+            });
+            field.value?.forEach((parms: any) => {
+              form2.setFieldState(`config.${parms}`, (state) => {
+                state.visible = true;
+              });
+            });
+          });
+          onFieldReact('apiClient.authConfig.oauth2.clientId', (field) => {
+            if (id && accessRef.current?.includes('apiClient')) {
+              field.componentProps = {
+                disabled: true,
+              };
+            }
+          });
+          onFieldReact('apiServer.ipWhiteList', (field: any) => {
+            const value = (field as Field).value;
+            if (value) {
+              const str = value?.split(/[\n,]/g).filter((i: any) => i && i.trim());
+              const NoIP = str.find((item: any) => !testIP(item.replace(/\s*/g, '')));
+              if (NoIP) {
+                field.selfErrors = `[${NoIP}]不是正确的IP地址`;
+              } else {
+                field.selfErrors = '';
+              }
+            } else {
+              field.selfErrors = '';
+            }
+          });
+        },
+      }),
+    [id],
+  );
 
   const handleSave = async () => {
     const data: any = await form.submit();
@@ -340,6 +341,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: 'oauth2授权地址',
       },
       required: true,
       'x-component': 'Input',
@@ -363,6 +365,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '授权完成后跳转到具体页面的回调地址',
       },
       // required: true,
       'x-component': 'Input',
@@ -386,6 +389,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识',
       },
       required: true,
       'x-component': 'Input',
@@ -409,6 +413,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识的秘钥',
       },
       required: true,
       'x-component': 'Input',
@@ -434,6 +439,8 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip:
+          '开启后，第三方用户第一次授权登录系统时，无需进入授权绑定页面。系统默认创建一个新用户与之绑定。',
       },
       'x-component': 'Switch',
     },
@@ -448,6 +455,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识',
       },
       'x-reactions': {
         dependencies: ['provider'],
@@ -471,6 +479,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识',
       },
       required: true,
       'x-component': 'Input',
@@ -504,6 +513,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用的唯一标识的秘钥',
       },
       required: true,
       'x-component': 'Input',
@@ -531,6 +541,8 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip:
+          '开启后，第三方用户第一次授权登录系统时，无需进入授权绑定页面。系统默认创建一个新用户与之绑定。',
       },
       'x-component': 'Switch',
     },
@@ -561,6 +573,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '限制应用程序对用户账号的访问',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -586,6 +599,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用唯一标识',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -611,6 +625,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '应用唯一标识的秘钥',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -636,6 +651,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: 'oauth2授权地址',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -651,6 +667,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '设置token令牌的地址',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -793,6 +810,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '认证授权地址',
       },
       required: true,
       'x-component': 'Input',
@@ -808,6 +826,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '授权完成后跳转到具体页面的回调地址',
       },
       // required: true,
       'x-component': 'Input',
@@ -823,6 +842,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '第三方应用唯一标识',
       },
       required: true,
       'x-component': 'Input',
@@ -848,6 +868,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
+        tooltip: '第三方应用唯一标识的密钥',
       },
       required: true,
       'x-component': 'Input',
@@ -998,6 +1019,7 @@ const Save = () => {
                     gridSpan: 2,
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '认证授权地址',
                   },
                   required: true,
                   'x-component': 'Input',
@@ -1044,6 +1066,7 @@ const Save = () => {
                     gridSpan: 2,
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '应用唯一标识',
                   },
                   required: true,
                   'x-component': 'Input',
@@ -1056,6 +1079,7 @@ const Save = () => {
                     gridSpan: 2,
                     layout: 'vertical',
                     labelAlign: 'left',
+                    tooltip: '应用唯一标识的秘钥',
                   },
                   required: true,
                   'x-component': 'Input',
@@ -1163,6 +1187,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '第三方应用唯一标识',
                 },
                 required: true,
                 'x-component': 'Input',
@@ -1187,6 +1212,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '第三方应用唯一标识匹配的秘钥',
                 },
                 required: true,
                 'x-component': 'Input',
@@ -1212,6 +1238,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '授权知道后跳转到具体页面的回调地址',
                 },
                 // required: true,
                 'x-component': 'Input',
@@ -1244,7 +1271,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '为API用户分配角色',
+                  tooltip: '为第三方应用用户分配角色，根据绑定的角色，进行系统菜单赋权',
                   addonAfter: (
                     <PermissionButton
                       type="link"
@@ -1292,7 +1319,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '为API用户分组所属组织',
+                  tooltip: '为第三方应用用户分配所属组织，根据绑定的组织，进行数据隔离',
                   addonAfter: (
                     <PermissionButton
                       type="link"
@@ -1446,6 +1473,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
+                  tooltip: '根据不同应用的调用规范，自定义请求头内容',
                 },
                 items: {
                   type: 'object',
@@ -1947,7 +1975,7 @@ const Save = () => {
             </Form>
           </Col>
           <Col span={10} className={styles.apply}>
-            <div className={styles.doc}></div>
+            <Doc type={type} />
           </Col>
         </Row>
       </Card>
