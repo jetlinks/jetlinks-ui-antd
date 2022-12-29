@@ -336,7 +336,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           });
         },
       }),
-    [target, expand],
+    [target, expand, initParams],
   );
 
   const historyForm = createForm();
