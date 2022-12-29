@@ -222,11 +222,22 @@ export default forwardRef((props: Props, ref) => {
                   onChange={(v: any, propertyItems: any[]) => {
                     const names = propertyItems.map((item) => item.name);
                     let extraStr = '';
-                    if (names.length >= 2) {
-                      names.length = 2;
-                      extraStr = `等${propertyItems.length}个属性`;
+                    let isLimit = false;
+                    let indexOf = 0;
+                    extraStr = names.reduce((_prev, next, index) => {
+                      if (_prev.length <= 30) {
+                        indexOf = index;
+                        return index === 0 ? next : _prev + '、' + next;
+                      } else {
+                        isLimit = true;
+                      }
+                      return _prev;
+                    }, '');
+
+                    if (isLimit && names.length - 1 > indexOf) {
+                      extraStr += `等${propertyItems.length}个属性`;
                     }
-                    TriggerDeviceModel.options.action = `读取 ${names.join('、')}${extraStr}`;
+                    TriggerDeviceModel.options.action = `读取 ${extraStr}`;
                   }}
                 />
               </Form.Item>

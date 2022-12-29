@@ -353,6 +353,9 @@ export default (props: ItemProps) => {
 
   useEffect(() => {
     getParams();
+    return () => {
+      setParamsOptions([]);
+    };
   }, []);
 
   return (

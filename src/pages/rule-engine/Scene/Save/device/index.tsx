@@ -33,7 +33,7 @@ export default observer((props: Props) => {
       service.detail(FormModel.current.trigger!.device?.productId).then((res) => {
         if (res.status === 200) {
           TriggerDeviceModel.productDetail = res.result;
-          handleMetadata(res.result.metadata);
+          handleMetadata(res.result?.metadata);
         } else {
           Store.set('TriggerDeviceModel', {
             update: true,

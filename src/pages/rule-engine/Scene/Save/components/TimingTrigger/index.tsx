@@ -140,8 +140,8 @@ export default (props: TimmingTriggerProps) => {
             <Form.Item
               name={[...name, 'period']}
               initialValue={{
-                from: moment(new Date()).format('HH:mm:ss'),
-                to: moment(new Date()).format('HH:mm:ss'),
+                from: moment(new Date()).startOf('day').format('HH:mm:ss'),
+                to: moment(new Date()).endOf('day').format('HH:mm:ss'),
               }}
             >
               <RangePicker name={[...name, 'period']} form={form} />

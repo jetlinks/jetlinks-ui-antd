@@ -148,11 +148,19 @@ export default observer((props: Props) => {
                     FormModel.current.options?.when?.splice(index, 1);
                   }}
                   onDeleteAll={() => {
-                    FormModel.current.branches?.splice(
-                      index,
-                      FormModel.current.branches!.length - 1,
-                      null as any,
-                    );
+                    const newBranches: any[] =
+                      FormModel.current.branches?.filter((bItem, bIndex) => {
+                        return bIndex === 0 || (bItem && bItem.key === item.key);
+                      }) || [];
+                    newBranches.push(null);
+                    console.log(FormModel.current.options?.when);
+                    FormModel.current.branches = newBranches;
+                    if (FormModel.current.options?.when) {
+                      FormModel.current.options.when = [
+                        FormModel.current.options?.when[0],
+                        FormModel.current.options?.when[index],
+                      ];
+                    }
                   }}
                 />
               ) : (
