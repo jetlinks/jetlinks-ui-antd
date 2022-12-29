@@ -7,11 +7,11 @@ import type { TriggerDevice, TriggerDeviceOptions } from '@/pages/rule-engine/Sc
 import Product from './product';
 import Device from './device';
 import Type from './type';
-import { numberToString } from '../components/TimingTrigger/whenOption';
 import { timeUnitEnum } from '../components/TimingTrigger';
 import { Store } from 'jetlinks-store';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
-import { isArray, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
+import { continuousValue } from '@/pages/rule-engine/Scene/Save/timer/TimerTrigger';
 
 interface AddProps {
   options?: any;
@@ -19,42 +19,6 @@ interface AddProps {
   onCancel?: () => void;
   onSave?: (data: TriggerDevice, options: any) => void;
 }
-
-type continuousValueFn = (data: (string | number)[], type: string) => (number | string)[];
-
-const continuousValue: continuousValueFn = (data, type) => {
-  let start = 0;
-  const newArray: (number | string)[] = [];
-  const isWeek = type === 'week';
-  if (isArray(data)) {
-    data.forEach((item, index) => {
-      const _item = Number(item);
-      const nextValue = data[index + 1];
-      const previousValue = data[index - 1];
-      const nextItemValue = _item + 1;
-      const previousItemValue = _item - 1;
-      if (nextItemValue === nextValue && previousItemValue !== previousValue) {
-        start = _item;
-      } else if (previousItemValue === previousValue && nextItemValue !== nextValue) {
-        // 表示前start和item连续，并且item与nextValue不连续
-        if (_item - start >= 2) {
-          // 至少三位连续
-          newArray.push(
-            isWeek
-              ? `${numberToString[start]} - ${numberToString[_item]}`
-              : `${start} - ${_item}号`,
-          );
-        } else {
-          newArray.push(isWeek ? numberToString[start] : `${start}号`);
-          newArray.push(isWeek ? numberToString[_item] : `${_item}号`);
-        }
-      } else if (previousItemValue !== previousValue && nextItemValue !== nextValue) {
-        newArray.push(isWeek ? numberToString[_item] : `${_item}号`);
-      }
-    });
-  }
-  return newArray;
-};
 
 export interface DeviceModelProps extends Partial<TriggerDevice> {
   steps: { key: string; title: string }[];
@@ -220,8 +184,8 @@ export default observer((props: AddProps) => {
         if (_timer.when!.length) {
           whenStr = _timer!.trigger === 'week' ? '每周' : '每月';
           const whenStrArr = continuousValue(_timer.when! || [], _timer!.trigger);
-          whenStrArr.length = 3;
-          whenStr += whenStrArr.join('、');
+          const whenStrArr3 = whenStrArr.splice(0, 3);
+          whenStr += whenStrArr3.join('、');
           whenStr += `等${_timer.when!.length}天`;
         }
         _options.when = whenStr;
