@@ -1,7 +1,7 @@
 import { useIntl } from 'umi';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import React from 'react';
+import React, { useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormItem, Input } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
@@ -19,7 +19,7 @@ interface Props {
 const Save = (props: Props) => {
   const { model } = props;
   const intl = useIntl();
-
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   const form = createForm({
@@ -93,6 +93,7 @@ const Save = (props: Props) => {
 
   const save = async () => {
     const value = await form.submit<RoleItem>();
+    setLoading(true);
     const response: any = await service.save(value);
     if (response.status === 200) {
       onlyMessage(
@@ -113,6 +114,7 @@ const Save = (props: Props) => {
     } else {
       onlyMessage('操作失败！', 'error');
     }
+    setLoading(false);
   };
 
   return (
@@ -128,6 +130,7 @@ const Save = (props: Props) => {
       width="35vw"
       permissionCode={'system/Role'}
       permission={['add']}
+      confirmLoading={loading}
     >
       <Form form={form} layout="vertical">
         <SchemaField schema={schema} />
