@@ -229,6 +229,19 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   let __option: { label: any; value: any }[] | FieldDataSource | undefined = [];
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
                     state.value = 'eq';
+                    state.dataSource = termType;
+                    if (_field?.dataIndex === 'state') {
+                      state.dataSource = [
+                        { label: '=', value: 'eq' },
+                        { label: '!=', value: 'not' },
+                        { label: '>', value: 'gt' },
+                        { label: '>=', value: 'gte' },
+                        { label: '<', value: 'lt' },
+                        { label: '<=', value: 'lte' },
+                        { label: '属于', value: 'in' },
+                        { label: '不属于', value: 'nin' },
+                      ];
+                    }
                   });
                   if (_field?.valueEnum) {
                     __option = Object.values(_field?.valueEnum || {}).map((item) => ({
