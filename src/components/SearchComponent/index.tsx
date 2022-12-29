@@ -211,6 +211,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               if (isModified) {
                 f.setFieldState(typeFiled.query('.termType'), async (state) => {
                   state.value = 'eq';
+                  state.dataSource = termType;
                 });
               }
               f.setFieldState(typeFiled.query('.value'), async (state) => {
@@ -240,6 +241,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'eq';
+                      state.dataSource = termType;
                     });
                   }
 
@@ -267,6 +269,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), (_state) => {
                       _state.value = 'eq';
+                      _state.dataSource = termType;
                     });
                   }
 
@@ -291,6 +294,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'eq';
+                      state.dataSource = termType;
                     });
                   }
 
@@ -301,12 +305,20 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.componentProps = { showTime: true, allowClear: true };
                   });
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                    state.value = 'eq';
+                    state.value = 'gt';
+                    state.dataSource = [
+                      { label: '>', value: 'gt' },
+                      { label: '<', value: 'lt' },
+                    ];
                   });
                   // console.log(isModified);
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'eq';
+                      state.value = 'gt';
+                      state.dataSource = [
+                        { label: '>', value: 'gt' },
+                        { label: '<', value: 'lt' },
+                      ];
                     });
                   }
 
@@ -315,6 +327,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'like';
+                      state.dataSource = termType;
                     });
                   }
 
