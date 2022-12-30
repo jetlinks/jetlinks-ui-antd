@@ -246,7 +246,7 @@ export default (props: ItemProps) => {
           <div>
             <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
             {data?.options?.type}
-            {data.options?.taglist.map((item: any) => (
+            {data.options?.taglist?.map((item: any) => (
               <span>
                 {item.type}
                 {item.name}

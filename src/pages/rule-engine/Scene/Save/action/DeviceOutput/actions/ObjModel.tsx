@@ -34,7 +34,8 @@ export default (props: Props) => {
       zIndex={1050}
       onCancel={() => props.close()}
       onOk={() => {
-        props.ok(value);
+        props.ok(JSON.parse(value));
+        console.log(value, JSON.parse(value));
       }}
     >
       <div
