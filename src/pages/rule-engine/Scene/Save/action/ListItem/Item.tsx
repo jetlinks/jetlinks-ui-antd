@@ -261,7 +261,7 @@ export default (props: ItemProps) => {
         return (
           <div>
             <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
-            {data?.options?.type}与<span>{data?.options?.name}</span>具有相同
+            {data?.options?.type}与<span>{data?.options?.triggerName}</span>具有相同
             {data?.options?.relationName}的{data?.options?.productName}设备的
             {data?.options?.properties}
           </div>

@@ -19,9 +19,9 @@ class Service extends BaseService<SceneItem> {
     }).then((resp) => resp.result);
 
   sceneByAlarm = (id: string) =>
-    request(`${SystemConst.API_BASE}/alarm/config/_count`, {
+    request(`${SystemConst.API_BASE}/alarm/config/_query`, {
       method: 'POST',
-      data: { terms: [{ column: 'sceneId', value: id }] },
+      data: { terms: [{ column: 'id', value: id, termType: 'rule-bind-alarm' }] },
     });
   _execute = (id: string) =>
     request(`/${SystemConst.API_BASE}/scene/${id}/_execute`, {

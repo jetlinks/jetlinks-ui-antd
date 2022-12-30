@@ -73,7 +73,7 @@ const Channel = () => {
           onClick={async () => {
             if (!!data) {
               if (data.length <= 64) {
-                if (pass) {
+                if (pass && !isnull) {
                   const resp: any = await service.editBindInfo(record.id, {
                     gbChannelId: data,
                   });
@@ -83,7 +83,7 @@ const Channel = () => {
                     setPopvisible('');
                   }
                 } else {
-                  message.error('该国标ID在同一设备下已存在');
+                  message.error('请填写正确的国标ID');
                 }
               } else {
                 message.error('最多可输入64个字符');
