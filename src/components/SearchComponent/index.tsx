@@ -211,6 +211,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
               if (isModified) {
                 f.setFieldState(typeFiled.query('.termType'), async (state) => {
                   state.value = 'eq';
+                  state.dataSource = termType;
                 });
               }
               f.setFieldState(typeFiled.query('.value'), async (state) => {
@@ -228,6 +229,19 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   let __option: { label: any; value: any }[] | FieldDataSource | undefined = [];
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
                     state.value = 'eq';
+                    state.dataSource = termType;
+                    if (_field?.dataIndex === 'state') {
+                      state.dataSource = [
+                        { label: '=', value: 'eq' },
+                        { label: '!=', value: 'not' },
+                        { label: '>', value: 'gt' },
+                        { label: '>=', value: 'gte' },
+                        { label: '<', value: 'lt' },
+                        { label: '<=', value: 'lte' },
+                        { label: '属于', value: 'in' },
+                        { label: '不属于', value: 'nin' },
+                      ];
+                    }
                   });
                   if (_field?.valueEnum) {
                     __option = Object.values(_field?.valueEnum || {}).map((item) => ({
@@ -240,6 +254,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'eq';
+                      state.dataSource = termType;
                     });
                   }
 
@@ -267,6 +282,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), (_state) => {
                       _state.value = 'eq';
+                      _state.dataSource = termType;
                     });
                   }
 
@@ -291,6 +307,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'eq';
+                      state.dataSource = termType;
                     });
                   }
 
@@ -301,12 +318,20 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                     state.componentProps = { showTime: true, allowClear: true };
                   });
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                    state.value = 'eq';
+                    state.value = 'gt';
+                    state.dataSource = [
+                      { label: '>', value: 'gt' },
+                      { label: '<', value: 'lt' },
+                    ];
                   });
                   // console.log(isModified);
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                      state.value = 'eq';
+                      state.value = 'gt';
+                      state.dataSource = [
+                        { label: '>', value: 'gt' },
+                        { label: '<', value: 'lt' },
+                      ];
                     });
                   }
 
@@ -315,6 +340,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   if (isModified) {
                     f.setFieldState(typeFiled.query('.termType'), async (state) => {
                       state.value = 'like';
+                      state.dataSource = termType;
                     });
                   }
 
@@ -336,7 +362,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
           });
         },
       }),
-    [target, expand],
+    [target, expand, initParams],
   );
 
   const historyForm = createForm();

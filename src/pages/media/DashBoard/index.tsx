@@ -131,6 +131,9 @@ export default () => {
           sData.push(item.data.value);
         });
 
+      const maxY = Math.max.apply(null, sData.length ? sData : [0]);
+      // const sum = sData.reduce((acc, cur) => acc + cur, 0)
+      // const percentageY = sData.map(item => parseFloat(((item / sum) * 100).toFixed(2)));
       setOptions({
         xAxis: {
           type: 'category',
@@ -138,13 +141,15 @@ export default () => {
         },
         tooltip: {
           trigger: 'axis',
+          formatter: '{b0}<br />{a0}: {c0}',
         },
         yAxis: {
           type: 'value',
           // minInterval: 1,
         },
         grid: {
-          left: 50,
+          // left: 50,
+          left: maxY > 100000 ? 90 : 50,
           right: 0,
           top: '2%',
           bottom: 20,
@@ -152,9 +157,19 @@ export default () => {
         color: ['#2F54EB'],
         series: [
           {
+            name: '播放数量(人次)',
             data: sData,
             type: 'bar',
             barWidth: 16,
+          },
+          {
+            name: '占比',
+            data: sData,
+            // data: percentageY,
+            type: 'line',
+            smooth: true,
+            symbolSize: 0, // 拐点大小
+            color: '#96ECE3',
           },
         ],
       });

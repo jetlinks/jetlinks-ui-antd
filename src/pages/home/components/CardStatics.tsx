@@ -29,9 +29,9 @@ const CardStatistics = (props: StatisticsProps) => {
           <div className={'home-guide-item'} key={item.name}>
             <div className={'item-english'}>{item.name}</div>
             {item.node ? (
-              <div style={{ display: 'flex', marginTop: 15, width: '60%' }}>
+              <div style={{ display: 'flex', marginTop: 15, width: '80%' }}>
                 {item.node.map((i: any) => (
-                  <div style={{ marginRight: 7 }}>
+                  <div key={i.name + i.value} style={{ minWidth: 58, marginRight: 8, zIndex: 1 }}>
                     <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{i.value}</div>
                     <div className={`state ${i.className}`}>{i.name}</div>
                   </div>
@@ -46,7 +46,10 @@ const CardStatistics = (props: StatisticsProps) => {
                 <img src={item.children || defaultImage} />
               </div>
             ) : (
-              <div className={'item-index-echarts'} style={{ height: 75, width: 110 }}>
+              <div
+                className={'item-index-echarts'}
+                style={item.style || { height: 75, width: 110 }}
+              >
                 {item.children}
               </div>
             )}

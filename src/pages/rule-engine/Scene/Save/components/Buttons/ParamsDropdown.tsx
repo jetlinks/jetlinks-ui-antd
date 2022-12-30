@@ -283,12 +283,15 @@ export default (props: ParamsDropdownProps) => {
     <ParamsSelect
       value={myValue}
       onChange={(value, source) => {
-        console.log(value, source);
         setActiveKey(source);
-        // props.onChange?.({
-        //   value,
-        //   source
-        // }, label )
+        // onValueChange(undefined, '')
+        setMyValue(undefined);
+        setLabel('');
+        const changeValue = {
+          value: value,
+          source: source,
+        };
+        props.onChange?.(changeValue, '', {});
       }}
       tabKey={activeKey}
       itemList={_itemList}

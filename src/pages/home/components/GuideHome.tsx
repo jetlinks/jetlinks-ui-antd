@@ -40,7 +40,12 @@ const GuideItem = (props: GuideItemProps) => {
     <div
       className={'home-guide-item step-bar pointer'}
       onClick={jumpPage}
-      style={{ marginTop: 12, padding: 10, border: '1px solid #eee' }}
+      style={{
+        marginTop: 12,
+        padding: 10,
+        border: '1px solid #eee',
+        borderLeft: '2px solid #85a5ff',
+      }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div>

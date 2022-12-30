@@ -63,6 +63,7 @@ const ProTableCard = <
   const [dataLength, setDataLength] = useState<number>(0);
 
   const domRef = useRef<HTMLDivElement>(null);
+  const cardItemsRef = useRef<HTMLDivElement>(null);
   const { minHeight } = useDomFullHeight(domRef);
 
   /**
@@ -125,6 +126,7 @@ const ProTableCard = <
             <div style={{ paddingBottom: 38 }}>
               <div
                 className={classNames('pro-table-card-items', props.cardBodyClass)}
+                ref={cardItemsRef}
                 style={{ gridTemplateColumns: `repeat(${column}, 1fr)`, ...style }}
               >
                 {dataSource.map((item) =>
@@ -173,6 +175,9 @@ const ProTableCard = <
     setPageIndex(_current - 1);
     setPageSize(size);
     props.onPageChange?.(_current - 1, size);
+    if (cardItemsRef.current) {
+      cardItemsRef.current.scrollTop = 0;
+    }
   };
 
   useEffect(() => {

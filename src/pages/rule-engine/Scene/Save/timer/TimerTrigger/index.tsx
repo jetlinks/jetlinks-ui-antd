@@ -5,12 +5,49 @@ import TimingTrigger, {
 } from '@/pages/rule-engine/Scene/Save/components/TimingTrigger';
 import { numberToString } from '@/pages/rule-engine/Scene/Save/components/TimingTrigger/whenOption';
 import { useEffect } from 'react';
+import { isArray } from 'lodash';
 
 interface Props {
   close: () => void;
   data?: Partial<OperationTimer>;
   save: (data: OperationTimer, options: any) => void;
 }
+
+type continuousValueFn = (data: (string | number)[], type: string) => (number | string)[];
+
+export const continuousValue: continuousValueFn = (data, type) => {
+  let start = 0;
+  const newArray: (number | string)[] = [];
+  const isWeek = type === 'week';
+  if (isArray(data)) {
+    data.forEach((item, index) => {
+      const _item = Number(item);
+      const nextValue = data[index + 1];
+      const previousValue = data[index - 1];
+      const nextItemValue = _item + 1;
+      const previousItemValue = _item - 1;
+      if (nextItemValue === nextValue && previousItemValue !== previousValue) {
+        start = _item;
+      } else if (previousItemValue === previousValue && nextItemValue !== nextValue) {
+        // 表示前start和item连续，并且item与nextValue不连续
+        if (_item - start >= 2) {
+          // 至少三位连续
+          newArray.push(
+            isWeek
+              ? `${numberToString[start]} - ${numberToString[_item]}`
+              : `${start} - ${_item}号`,
+          );
+        } else {
+          newArray.push(isWeek ? numberToString[start] : `${start}号`);
+          newArray.push(isWeek ? numberToString[_item] : `${_item}号`);
+        }
+      } else if (previousItemValue !== previousValue && nextItemValue !== nextValue) {
+        newArray.push(isWeek ? numberToString[_item] : `${_item}号`);
+      }
+    });
+  }
+  return newArray;
+};
 
 export default (props: Props) => {
   const [form] = Form.useForm();
@@ -32,19 +69,15 @@ export default (props: Props) => {
     if (_timer.trigger === 'cron') {
       _options.time = _timer.cron;
     } else {
-      _options.when =
-        _timer.when!.length === 0
-          ? '每天'
-          : `每${_timer
-              .when!.map((item) => {
-                if (_timer!.trigger === 'week') {
-                  return numberToString[item];
-                } else {
-                  return item + '号';
-                }
-              })
-              .join(',')}`;
-
+      let whenStr = '每天';
+      if (_timer.when!.length) {
+        whenStr = _timer!.trigger === 'week' ? '每周' : '每月';
+        const whenStrArr = continuousValue(_timer.when! || [], _timer!.trigger);
+        const whenStrArr3 = whenStrArr.splice(0, 3);
+        whenStr += whenStrArr3.join('、');
+        whenStr += `等${_timer.when!.length}天`;
+      }
+      _options.when = whenStr;
       if (_timer.once) {
         _options.time = _timer.once.time + ' 执行1次';
       } else if (_timer.period) {
