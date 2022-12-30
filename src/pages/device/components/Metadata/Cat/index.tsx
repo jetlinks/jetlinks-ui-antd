@@ -106,7 +106,8 @@ const Cat = observer((props: Props) => {
               }
             }}
           >
-            导出模型文件
+            {/*导出模型文件*/}
+            导出
           </Button>
         </Space>
       }

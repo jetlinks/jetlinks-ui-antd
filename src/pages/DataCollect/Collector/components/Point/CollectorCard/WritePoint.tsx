@@ -1,9 +1,12 @@
 import { Modal } from 'antd';
-import { FormItem, Input, Form } from '@formily/antd';
-import { createForm } from '@formily/core';
+import { FormItem, Input, Form, Select, ArrayTable, DatePicker, NumberPicker } from '@formily/antd';
+import { createForm, onFormInit } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import service from '../../../../service';
 import { onlyMessage } from '@/utils/util';
+import GeoComponent from '@/pages/device/Instance/Detail/Tags/location/GeoComponent';
+import { MetadataJsonInput } from '@/components';
+import { useMemo } from 'react';
 
 interface Props {
   data: Partial<PointItem>;
@@ -17,11 +20,82 @@ const WritePoint = (props: Props) => {
     components: {
       Input,
       FormItem,
-      Form,
+      Select,
+      ArrayTable,
+      DatePicker,
+      NumberPicker,
+      GeoComponent,
+      MetadataJsonInput,
     },
   });
 
-  const form = createForm();
+  const form = useMemo(
+    () =>
+      createForm({
+        effects() {
+          onFormInit((f) => {
+            let valueType: string =
+              props.data?.provider === 'OPC_UA'
+                ? props?.data?.configuration?.type || 'Number'
+                : props.data?.configuration?.codec?.provider || 'int8';
+            valueType = valueType.toLocaleLowerCase();
+            switch (valueType) {
+              case 'boolean':
+                f.setFieldState('propertyValue', async (state) => {
+                  state.dataSource = [
+                    {
+                      label: '是',
+                      value: true,
+                    },
+                    {
+                      label: '否',
+                      value: false,
+                    },
+                  ];
+                  state.componentProps = {
+                    placeholder: '请选择',
+                  };
+                  state.componentType = 'Select';
+                });
+                break;
+              case 'int8':
+              case 'int16':
+              case 'int32':
+              case 'int64':
+              case 'ieee754_float':
+              case 'ieee754_double':
+              case 'hex':
+              case 'number':
+                f.setFieldState('propertyValue', (state) => {
+                  state.componentType = 'NumberPicker';
+                  state.componentProps = {
+                    placeholder: '请输入',
+                  };
+                });
+                break;
+              case 'date':
+                f.setFieldState('propertyValue', (state) => {
+                  state.componentType = 'DatePicker';
+                  state.componentProps = {
+                    placeholder: '请选择',
+                    format: 'YYYY-MM-DD HH:mm:ss',
+                  };
+                });
+                break;
+              default:
+                f.setFieldState('propertyValue', (state) => {
+                  state.componentType = 'Input';
+                  state.componentProps = {
+                    placeholder: '请输入',
+                  };
+                });
+                break;
+            }
+          });
+        },
+      }),
+    [props.data?.id],
+  );
   const schema = {
     type: 'object',
     properties: {
@@ -55,7 +129,7 @@ const WritePoint = (props: Props) => {
   return (
     <Modal
       maskClosable={false}
-      title="编辑"
+      title="写入"
       visible
       onOk={async () => {
         const values: any = await form.submit();
@@ -67,11 +141,9 @@ const WritePoint = (props: Props) => {
         props.onCancel();
       }}
     >
-      <div style={{ marginTop: '30px' }}>
-        <Form form={form} layout="vertical">
-          <SchemaField schema={schema} />
-        </Form>
-      </div>
+      <Form form={form} layout="vertical">
+        <SchemaField schema={schema} />
+      </Form>
     </Modal>
   );
 };

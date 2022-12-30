@@ -2,7 +2,7 @@ import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
-import { useDomFullHeight } from '@/hooks';
+// import { useDomFullHeight } from '@/hooks';
 import service from '@/pages/DataCollect/service';
 import CollectorCard from './CollectorCard';
 import { Empty, PermissionButton } from '@/components';
@@ -59,7 +59,7 @@ const PointModel = model<{
 
 const PointCard = observer((props: PointCardProps) => {
   const [subscribeTopic] = useSendWebsocketMessage();
-  const { minHeight } = useDomFullHeight(`.data-collect-point`);
+  // const { minHeight } = useDomFullHeight(`.data-collect-point`);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const { permission } = PermissionButton.usePermission('DataCollect/Collector');
@@ -230,7 +230,7 @@ const PointCard = observer((props: PointCardProps) => {
         loading={loading}
         bordered={false}
         className={'data-collect-point'}
-        style={{ position: 'relative', minHeight }}
+        style={{ position: 'relative', minHeight: 600 }}
         bodyStyle={{ paddingTop: 4 }}
       >
         <div>
@@ -365,7 +365,7 @@ const PointCard = observer((props: PointCardProps) => {
                 </div>
               </>
             ) : (
-              <div style={{ height: minHeight - 150 }}>
+              <div style={{ height: 600 }}>
                 <Empty />
               </div>
             )}
@@ -467,6 +467,21 @@ export default observer((props: Props) => {
       {
         title: '点位名称',
         dataIndex: 'name',
+      },
+      {
+        title: '通讯协议',
+        dataIndex: 'provider',
+        valueType: 'select',
+        valueEnum: {
+          OPC_UA: {
+            text: 'OPC_UA',
+            status: 'OPC_UA',
+          },
+          MODBUS_TCP: {
+            text: 'MODBUS_TCP',
+            status: 'MODBUS_TCP',
+          },
+        },
       },
       {
         title: '访问类型',
