@@ -80,6 +80,10 @@ const Bind = observer((props: Props) => {
       onCancel={props.onCancel}
       width={'75vw'}
       title="绑定"
+      centered
+      bodyStyle={{
+        paddingBottom: 0,
+      }}
     >
       <SearchComponent<UserItem>
         model={'simple'}
@@ -103,6 +107,10 @@ const Bind = observer((props: Props) => {
         columns={columns}
         rowKey="id"
         columnEmptyText={''}
+        tableStyle={{
+          height: 575,
+          overflowY: 'auto',
+        }}
         search={false}
         params={searchParam}
         tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
