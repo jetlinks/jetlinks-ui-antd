@@ -3,7 +3,7 @@ import { FormItem, Checkbox, NumberPicker, FormGrid, Form } from '@formily/antd'
 import { createForm, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import RadioCard from '@/components/RadioCard';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 
 interface Props {

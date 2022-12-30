@@ -34,7 +34,7 @@ export default (props: RadioCardProps) => {
 
   useEffect(() => {
     // 初始化
-    setKeys(value ? (isArray(value) ? value : [value]) : []);
+    setKeys(value !== undefined ? (isArray(value) ? value : [value]) : []);
   }, [props.value]);
 
   const getNode = (_keys: string[]) =>

@@ -449,7 +449,6 @@ export default observer((props: Props) => {
       form.setFieldsValue({ selector: DeviceModel.selector });
     }
     sourceChangeEvent();
-    // console.log('-----deviceid-----', DeviceModel.deviceId);
     if (DeviceModel.deviceId) {
       service.detail(DeviceModel.deviceId).then((res) => {
         if (res.status === 200) {
@@ -459,15 +458,22 @@ export default observer((props: Props) => {
     }
   }, []);
 
-  // useEffect(()=>{
-  //   console.log('----------------',props.branchGroup,props.thenName,props.name)
-  // },[props.branchGroup,props.thenName])
-
   useEffect(() => {
     if (DeviceModel.productDetail) {
       const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
       setTagList(metadata.tags);
       filterType();
+    }
+    //处理变量
+    if (builtInList && builtInList.length !== 0) {
+      const param = DeviceModel.selectorValues?.[0]?.value;
+      const isVariable = builtInList.find((item: any) => {
+        return item.children.find((i: any) => i.id === param);
+      });
+      if (isVariable) {
+        form.setFieldsValue({ selector: 'variable' });
+      }
+      // console.log(isVariable);
     }
   }, [DeviceModel.productDetail, builtInList]);
 

@@ -9,6 +9,7 @@ import Service from './service';
 import { Skeleton } from 'antd';
 import { useModel } from '@@/plugin-model/useModel';
 import { isNoCommunity } from '@/utils/util';
+import SystemConst from '@/utils/const';
 
 export const service = new Service();
 const Home = () => {
@@ -49,6 +50,7 @@ const Home = () => {
         });
       }
     });
+    console.log('版本：' + localStorage.getItem(SystemConst.Version_Code));
   }, []);
   useEffect(() => {
     if (isNoCommunity) {

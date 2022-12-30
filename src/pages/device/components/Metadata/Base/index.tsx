@@ -5,14 +5,14 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
 import MetadataModel from './model';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
+// import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
 import { productModel } from '@/pages/device/Product';
 import { InstanceModel } from '@/pages/device/Instance';
 import { asyncUpdateMedata, removeMetadata } from '../metadata';
@@ -185,19 +185,19 @@ const BaseMetadata = observer((props: Props) => {
           },
         }}
         toolBarRender={() => [
-          props.type === 'properties' && target === 'device' && (
-            <PermissionButton
-              isPermission={props.permission.update}
-              onClick={() => {
-                MetadataModel.importMetadata = true;
-              }}
-              key="button"
-              icon={<ImportOutlined />}
-              type="ghost"
-            >
-              导入属性
-            </PermissionButton>
-          ),
+          // props.type === 'properties' && target === 'device' && (
+          //   <PermissionButton
+          //     isPermission={props.permission.update}
+          //     onClick={() => {
+          //       MetadataModel.importMetadata = true;
+          //     }}
+          //     key="button"
+          //     icon={<ImportOutlined />}
+          //     type="ghost"
+          //   >
+          //     导入属性
+          //   </PermissionButton>
+          // ),
           <PermissionButton
             isPermission={props.permission.update}
             key={'add'}
@@ -221,7 +221,7 @@ const BaseMetadata = observer((props: Props) => {
           </PermissionButton>,
         ]}
       />
-      {MetadataModel.importMetadata && <PropertyImport type={target} />}
+      {/*{MetadataModel.importMetadata && <PropertyImport type={target} />}*/}
       {MetadataModel.edit && <Edit type={target} tabs={type} />}
     </>
   );

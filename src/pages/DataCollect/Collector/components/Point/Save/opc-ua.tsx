@@ -14,7 +14,7 @@ import {
   Checkbox,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import { action } from '@formily/reactive';
 import { RadioCard } from '@/components';
@@ -127,6 +127,25 @@ export default (props: Props) => {
                 max: 64,
                 message: '最多可输入64个字符',
               },
+            ],
+          },
+          'configuration.type': {
+            title: '数据类型',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择数据类型',
+            },
+            enum: [
+              { value: 'Number', label: '数值类型' },
+              { value: 'DateTime', label: '时间类型' },
+              { value: 'Array', label: '数组类型' },
+              { value: 'String', label: '文本类型' },
+              { value: 'Boolean', label: '布尔' },
+              // {value: 'date', label: '时间类型'}
             ],
           },
           accessModes: {

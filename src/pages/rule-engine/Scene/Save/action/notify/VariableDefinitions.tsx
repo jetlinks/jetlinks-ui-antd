@@ -183,7 +183,7 @@ export default forwardRef((props: Props, ref) => {
               name={item.id}
               label={item.name}
               initialValue={initialValue}
-              required={true}
+              required={type !== 'file' ? true : false}
               rules={rules}
             >
               {typeComponents(item)}

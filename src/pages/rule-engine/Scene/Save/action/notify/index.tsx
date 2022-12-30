@@ -203,12 +203,17 @@ export default observer((props: Props) => {
           onChange={async (value: number) => {
             if (value === 0) {
               NotifyModel.current = value;
-            }
-            if (value === 1) {
-              if (NotifyModel.notify.notifyType) {
+            } else if (value === 1) {
+              const val = await WayRef.current?.save();
+              if (val) {
+                NotifyModel.notify.notifyType = val;
                 NotifyModel.current = value;
               } else {
-                onlyMessage('请选择通知方式', 'error');
+                if (NotifyModel.notify.notifyType) {
+                  NotifyModel.current = value;
+                } else {
+                  onlyMessage('请选择通知方式', 'error');
+                }
               }
             } else if (value === 2) {
               if (NotifyModel.notify.notifierId) {

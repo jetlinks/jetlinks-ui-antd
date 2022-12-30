@@ -19,7 +19,7 @@ import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
 import Save from './Save/save';
 import { getMenuPathByCode } from '@/utils/menu';
-import { Spin } from 'antd';
+// import { Spin } from 'antd';
 
 export const service = new Service('scene');
 
@@ -32,7 +32,7 @@ const Scene = () => {
   const [current, setCurrent] = useState<Partial<SceneItem>>({});
   const history = useHistory();
   const [loading, setLoading] = useState<boolean>(true);
-  const [title, setTitle] = useState<string>('确定删除？');
+  const [title, setTitle] = useState<string>('');
 
   const deleteById = async (id: string) => {
     // const alarmResp = await service.sceneByAlarm(id);
@@ -159,27 +159,18 @@ const Scene = () => {
         disabled={record.state.value === 'started'}
         onClick={async () => {
           const res = await service.sceneByAlarm(record.id);
-          if (res.status === 200) {
-            // setTimeout(()=>{})
-            setLoading(false);
-            if (res.result !== 0) {
-              setTitle('该场景已绑定告警，确定删除？');
-            } else {
-              setTitle('确定删除？');
-            }
+          if (res.status === 200 && res.result.data.length !== 0) {
+            setTitle('该场景已绑定告警，确定删除？');
           } else {
-            setLoading(false);
+            setTitle('确定删除？');
           }
         }}
         popConfirm={{
-          title: <>{loading ? <Spin /> : title}</>,
-          okButtonProps: {
-            loading: loading,
-          },
-          onCancel: () => {
-            setTitle('');
-            setLoading(false);
-          },
+          // title: loading ? <Spin /> : title,
+          // okButtonProps: {
+          //   loading: loading,
+          // },
+          title: '确定删除？',
           disabled: record.state.value === 'started',
           onConfirm: () => {
             deleteById(record.id);

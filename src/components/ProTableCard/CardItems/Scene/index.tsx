@@ -92,7 +92,7 @@ const deviceRender = (data: ActionsType | undefined) => {
         data?.options?.type + tags + data?.options?.productName + data?.options?.properties
       }`;
     case 'relation':
-      return `${data?.options?.type}与${data?.options?.name}具有相同${data?.options?.relationName}的${data?.options?.productName}设备的${data?.options?.properties}`;
+      return `${data?.options?.type}与${data?.options?.triggerName}具有相同${data?.options?.relationName}的${data?.options?.productName}设备的${data?.options?.properties}`;
     default:
       return null;
   }

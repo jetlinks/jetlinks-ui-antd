@@ -147,6 +147,9 @@ const Edit = (props: Props) => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-component-props': {
+                    readOnly: true,
+                  },
                 },
               },
             },
@@ -165,6 +168,9 @@ const Edit = (props: Props) => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-component-props': {
+                    readOnly: true,
+                  },
                 },
               },
             },
@@ -201,39 +207,39 @@ const Edit = (props: Props) => {
                 },
               },
             },
-            column4: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                width: 100,
-                title: '操作',
-                dataIndex: 'operations',
-              },
-              properties: {
-                item: {
-                  type: 'void',
-                  'x-component': 'FormItem',
-                  properties: {
-                    remove: {
-                      type: 'void',
-                      'x-component': 'RemoveData',
-                      // 'x-component-props': {
-                      //   tags: tags,
-                      // },
-                    },
-                  },
-                },
-              },
-            },
+            // column4: {
+            //   type: 'void',
+            //   'x-component': 'ArrayTable.Column',
+            //   'x-component-props': {
+            //     width: 100,
+            //     title: '操作',
+            //     dataIndex: 'operations',
+            //   },
+            //   properties: {
+            //     item: {
+            //       type: 'void',
+            //       'x-component': 'FormItem',
+            //       properties: {
+            //         remove: {
+            //           type: 'void',
+            //           'x-component': 'RemoveData',
+            //           // 'x-component-props': {
+            //           //   tags: tags,
+            //           // },
+            //         },
+            //       },
+            //     },
+            //   },
+            // },
           },
         },
-        properties: {
-          add: {
-            type: 'void',
-            'x-component': 'ArrayTable.Addition',
-            title: '添加',
-          },
-        },
+        // properties: {
+        //   add: {
+        //     type: 'void',
+        //     'x-component': 'ArrayTable.Addition',
+        //     title: '添加',
+        //   },
+        // },
       },
     },
   };

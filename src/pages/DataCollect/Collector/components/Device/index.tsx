@@ -3,7 +3,7 @@ import SearchComponent from '@/components/SearchComponent';
 import type { ProColumns } from '@jetlinks/pro-table';
 import { useEffect, useState } from 'react';
 import { useDomFullHeight } from '@/hooks';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import CollectorCard from '@/components/ProTableCard/CardItems/DataCollect/device';
 import { Empty, PermissionButton } from '@/components';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -17,7 +17,7 @@ import {
 import { onlyMessage } from '@/utils/util';
 import { Card, Col, Pagination, Row } from 'antd';
 import { model } from '@formily/reactive';
-import Save from '@/pages/link/DataCollect/components/Device/Save/index';
+import Save from '@/pages/DataCollect/Collector/components/Device/Save';
 
 interface Props {
   type: boolean; // true: 综合查询  false: 数据采集

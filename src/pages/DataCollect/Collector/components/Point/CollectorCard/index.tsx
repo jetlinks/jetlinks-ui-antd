@@ -9,7 +9,7 @@ import {
   FormOutlined,
   RedoOutlined,
 } from '@ant-design/icons';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import moment from 'moment';
 import classNames from 'classnames';
@@ -29,7 +29,7 @@ const modbusImage = require('/public/images/DataCollect/device-modbus.png');
 const CollectorCard = (props: PointCardProps) => {
   const { item, wsValue } = props;
   const [spinning, setSpinning] = useState<boolean>(false);
-  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
+  const { permission } = PermissionButton.usePermission('DataCollect/Collector');
 
   const read = async () => {
     if (item?.collectorId && item?.id) {

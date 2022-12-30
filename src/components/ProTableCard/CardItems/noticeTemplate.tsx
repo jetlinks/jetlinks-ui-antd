@@ -39,6 +39,63 @@ export const imgMap = {
   },
 };
 
+export const typeObj = {
+  dingTalk: {
+    text: '钉钉',
+    status: 'dingTalk',
+  },
+  weixin: {
+    text: '微信',
+    status: 'weixin',
+  },
+  email: {
+    text: '邮件',
+    status: 'email',
+  },
+  voice: {
+    text: '语音',
+    status: 'voice',
+  },
+  sms: {
+    text: '短信',
+    status: 'sms',
+  },
+  webhook: {
+    text: 'webhook',
+    status: 'webhook',
+  },
+};
+export const providerObj = {
+  corpMessage: {
+    text: '企业消息',
+    status: 'corpMessage',
+  },
+  dingTalkMessage: {
+    text: '钉钉消息',
+    status: 'dingTalkMessage',
+  },
+  dingTalkRobotWebHook: {
+    text: '群机器人消息',
+    status: 'dingTalkRobotWebHook',
+  },
+  aliyun: {
+    text: '阿里云语音',
+    status: 'aliyun',
+  },
+  aliyunSms: {
+    text: '阿里云短信',
+    status: 'aliyunSms',
+  },
+  embedded: {
+    text: '邮件',
+    status: 'embedded',
+  },
+  http: {
+    text: 'Webhook',
+    status: 'http',
+  },
+};
+
 export const typeList = {
   weixin: {
     corpMessage: '企业消息',
@@ -61,6 +118,33 @@ export const typeList = {
     http: 'webhook',
   },
 };
+
+export const typeArray = [
+  {
+    text: '钉钉',
+    status: 'dingTalk',
+  },
+  {
+    text: '微信',
+    status: 'weixin',
+  },
+  {
+    text: '邮件',
+    status: 'email',
+  },
+  {
+    text: '语音',
+    status: 'voice',
+  },
+  {
+    text: '短信',
+    status: 'sms',
+  },
+  {
+    text: 'webhook',
+    status: 'webhook',
+  },
+];
 
 export const ExtraNoticeTemplateCard = (props: NoticeCardProps) => {
   return (

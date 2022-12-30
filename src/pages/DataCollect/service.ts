@@ -53,7 +53,7 @@ class Service {
       data: params,
     });
   public queryCollector = (params: any) =>
-    request(`/${SystemConst.API_BASE}/data-collect/collector/_query`, {
+    request(`/${SystemConst.API_BASE}/data-collect/collector/_query/no-paging?paging=false`, {
       method: 'POST',
       data: params,
     });
@@ -104,8 +104,8 @@ class Service {
     request(`/${SystemConst.API_BASE}/data-collect/channel/${id}`, {
       method: 'DELETE',
     });
-  public queryChannelTree = (params: ChannelItem) =>
-    request(`/${SystemConst.API_BASE}/data-collect/channel/_all/tree`, {
+  public queryChannelNoPaging = (params: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/channel/_query/no-paging?paging=false`, {
       method: 'POST',
       data: params,
     });

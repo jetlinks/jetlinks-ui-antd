@@ -326,9 +326,9 @@ export default observer((props: Props) => {
           }}
           ok={(param) => {
             if (props.onChange) {
-              props.onChange(param);
+              props.onChange(JSON.stringify(param));
             }
-            setValue(param);
+            setValue(JSON.stringify(param));
             setObjVisable(false);
           }}
         />
