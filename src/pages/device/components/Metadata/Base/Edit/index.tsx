@@ -581,6 +581,9 @@ const Edit = observer((props: Props) => {
           'virtualRule.script': {
             type: 'string',
             'x-component': 'FRuleEditor',
+            'x-component-props': {
+              id: (MetadataModel.item as any)?.id,
+            },
             'x-visible': false,
             'x-reactions': [
               {
@@ -588,6 +591,9 @@ const Edit = observer((props: Props) => {
                 fulfill: {
                   state: {
                     visible: '{{$deps[0]==="rule"}}',
+                    componentProps: {
+                      id: '{{$deps[1]}}',
+                    },
                   },
                   schema: {
                     'x-component-props.property': '{{$deps[1]}}',

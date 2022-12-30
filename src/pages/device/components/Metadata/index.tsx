@@ -66,7 +66,7 @@ const Metadata = observer((props: Props) => {
         className={styles.metadataNav}
         tabBarExtraContent={
           <Space>
-            {props.type === 'device' && (
+            {InstanceModel.detail?.independentMetadata && props.type === 'device' && (
               <PermissionButton
                 isPermission={permission.update}
                 popConfirm={{

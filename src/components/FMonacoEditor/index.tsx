@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 export const JMonacoEditor = (props: any) => {
   const [loading, setLoading] = useState(false);
   const monacoRef = useRef<any>();
+  console.log(props);
 
   return (
     <div
@@ -15,7 +16,7 @@ export const JMonacoEditor = (props: any) => {
       }}
       style={{ height: '100%', width: '100%' }}
     >
-      {loading && <MonacoEditor ref={monacoRef} {...props} />}
+      {loading && <MonacoEditor ref={monacoRef} {...props} options={{ wordWrap: 'on' }} />}
     </div>
   );
 };

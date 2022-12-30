@@ -1,6 +1,6 @@
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Input } from 'antd';
+import { Button, Input, message } from 'antd';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import { isObject } from 'lodash';
@@ -39,6 +39,10 @@ export default (props: FunctionProps) => {
         }
       } catch (err) {
         console.error(err);
+      }
+    } else {
+      if (!value) {
+        message.warning('请输入内容');
       }
     }
   }, [value]);

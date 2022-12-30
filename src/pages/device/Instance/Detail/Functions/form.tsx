@@ -64,6 +64,8 @@ export default (props: FunctionProps) => {
         return <GeoPoint />;
       case 'object':
         return <MetadataJsonInput json={record.json} />;
+      case 'password':
+        return <Input type={'password'} />;
       case 'date':
         return (
           // <>
@@ -76,7 +78,11 @@ export default (props: FunctionProps) => {
           //   }
           // </>
           // @ts-ignore
-          <DatePicker format={'YYYY-MM-DD HH:mm:ss'} style={{ width: '100%' }} showTime />
+          <DatePicker
+            format={record.format || 'YYYY-MM-DD HH:mm:ss'}
+            style={{ width: '100%' }}
+            showTime
+          />
         );
       default:
         return <Input placeholder={'请输入' + name} />;
@@ -219,7 +225,7 @@ export default (props: FunctionProps) => {
       formData.table.forEach((d: any) => {
         if (d.value) {
           if (d.type === 'date') {
-            data[d.id] = moment(d.value).format('YYYY-MM-DD HH:mm:ss');
+            data[d.id] = moment(d.value).format(d.format || 'YYYY-MM-DD HH:mm:ss');
           } else if (d.type === 'object') {
             data[d.id] = JSON.parse(d.value);
           } else {

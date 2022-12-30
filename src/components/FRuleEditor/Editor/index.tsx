@@ -1,8 +1,8 @@
 import styles from '@/components/FRuleEditor/index.less';
-import { Dropdown, Menu } from 'antd';
+import { Dropdown, Menu, Tooltip } from 'antd';
 import { FullscreenOutlined, MoreOutlined } from '@ant-design/icons';
 import MonacoEditor, { monaco } from 'react-monaco-editor';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type * as monacoEditor from 'monaco-editor';
 import { Store } from 'jetlinks-store';
 import { State } from '@/components/FRuleEditor';
@@ -85,9 +85,12 @@ const symbolList = [
 interface Props {
   mode?: 'advance' | 'simple';
   onChange?: (value: 'advance' | 'simple') => void;
+  id?: string;
+  onValueChange?: (v: any) => void;
 }
 
 const Editor = (props: Props) => {
+  const [loading, setLoading] = useState(false);
   const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
   const editorDidMountHandle = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
     editor.getAction('editor.action.formatDocument').run();
@@ -116,9 +119,15 @@ const Editor = (props: Props) => {
     const subscription = Store.subscribe('add-operator-value', handleInsertCode);
     return () => subscription.unsubscribe();
   }, [props.mode]);
-
   return (
-    <div className={styles.box}>
+    <div
+      className={styles.box}
+      ref={() => {
+        setTimeout(() => {
+          setLoading(true);
+        }, 100);
+      }}
+    >
       <div className={styles.top}>
         <div className={styles.left}>
           {symbolList
@@ -161,21 +170,33 @@ const Editor = (props: Props) => {
         <div className={styles.right}>
           {props.mode !== 'advance' && (
             <span>
-              <FullscreenOutlined onClick={() => props.onChange?.('advance')} />
+              <Tooltip title={!props.id ? '请先输入标识' : '设置属性规则'}>
+                <FullscreenOutlined
+                  className={!props.id ? styles.disabled : ''}
+                  onClick={() => {
+                    if (props.id) {
+                      props.onChange?.('advance');
+                    }
+                  }}
+                />
+              </Tooltip>
             </span>
           )}
         </div>
       </div>
-      <MonacoEditor
-        editorDidMount={(editor) => editorDidMountHandle(editor)}
-        language={'javascript'}
-        height={300}
-        onChange={(c) => {
-          State.code = c;
-          Store.set('rule-editor-value', State.code);
-        }}
-        value={State.code}
-      />
+      {loading && (
+        <MonacoEditor
+          editorDidMount={(editor) => editorDidMountHandle(editor)}
+          language={'javascript'}
+          height={300}
+          onChange={(c) => {
+            State.code = c;
+            // Store.set('rule-editor-value', State.code);
+            props.onValueChange?.(c);
+          }}
+          value={State.code}
+        />
+      )}
     </div>
   );
 };

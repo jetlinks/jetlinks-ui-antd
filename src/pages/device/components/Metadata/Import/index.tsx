@@ -234,7 +234,7 @@ const Import = (props: Props) => {
           theme: 'vs',
           language: 'json',
           editorDidMount: (editor1: any) => {
-            editor1.onDidScrollChange?.(() => {
+            editor1.onDidContentSizeChange?.(() => {
               editor1.getAction('editor.action.formatDocument').run();
             });
           },

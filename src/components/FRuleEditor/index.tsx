@@ -24,6 +24,7 @@ interface Props {
   onChange: (value: string) => void;
   property?: string;
   virtualRule?: any;
+  id?: string;
 }
 
 const FRuleEditor = observer((props: Props) => {
@@ -44,10 +45,12 @@ const FRuleEditor = observer((props: Props) => {
         onChange={(v) => {
           State.model = v;
         }}
+        id={props.id}
       />
       <Advance
         model={State.model}
         virtualRule={virtualRule}
+        id={props.id}
         onChange={(v) => {
           State.model = v;
         }}
