@@ -20,14 +20,14 @@ import Service from '@/pages/notice/Config/service';
 import { observer } from '@formily/react';
 import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
-import { history, useLocation } from 'umi';
+import { history } from 'umi';
 import { model } from '@formily/reactive';
 import moment from 'moment';
 import { PermissionButton, ProTableCard } from '@/components';
 import NoticeConfig from '@/components/ProTableCard/CardItems/noticeConfig';
 import Debug from '@/pages/notice/Config/Debug';
 import Log from '@/pages/notice/Config/Log';
-import { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import { providerObj, typeList, typeObj } from '@/components/ProTableCard/CardItems/noticeTemplate';
 import usePermissions from '@/hooks/permission';
 import SyncUser from '@/pages/notice/Config/SyncUser';
 
@@ -43,60 +43,14 @@ export const state = model<{
   log: false,
   syncUser: false,
 });
-const list = {
-  weixin: {
-    corpMessage: {
-      text: '企业消息',
-      status: 'corpMessage',
-    },
-    // officialMessage: {
-    //   text: '服务号消息',
-    //   status: 'officialMessage',
-    // },
-  },
-  dingTalk: {
-    dingTalkMessage: {
-      text: '钉钉消息',
-      status: 'dingTalkMessage',
-    },
-    dingTalkRobotWebHook: {
-      text: '群机器人消息',
-      status: 'dingTalkRobotWebHook',
-    },
-  },
-  voice: {
-    aliyun: {
-      text: '阿里云语音',
-      status: 'aliyun',
-    },
-  },
-  sms: {
-    aliyunSms: {
-      text: '阿里云短信',
-      status: 'aliyunSms',
-    },
-  },
-  email: {
-    embedded: {
-      text: '邮件',
-      status: 'embedded',
-    },
-  },
-  webhook: {
-    http: {
-      text: 'Webhook',
-      status: 'http',
-    },
-  },
-};
 
 const Config = observer(() => {
   const intl = useIntl();
   const actionRef = useRef<ActionType>();
-  const location = useLocation<{ id: string }>();
+  // const location = useLocation<{ id: string }>();
 
   const { permission: configPermission } = usePermissions('notice');
-  const id = (location as any).query?.id;
+  // const id = (location as any).query?.id;
 
   const columns: ProColumns<ConfigItem>[] = [
     {
@@ -107,11 +61,20 @@ const Config = observer(() => {
       width: '25%',
     },
     {
-      dataIndex: 'provider',
+      dataIndex: 'type',
       title: '通知方式',
-      renderText: (text, record) => typeList[record.type][record.provider],
+      renderText: (text, record) => typeObj?.[record.type]?.text || record.type,
       valueType: 'select',
-      valueEnum: list[id],
+      valueEnum: typeObj,
+    },
+    {
+      dataIndex: 'provider',
+      title: '类型',
+      renderText: (text, record) => {
+        return typeList[record?.type][record?.provider];
+      },
+      valueType: 'select',
+      valueEnum: providerObj,
     },
     {
       dataIndex: 'description',
@@ -151,7 +114,7 @@ const Config = observer(() => {
           onClick={async () => {
             // setLoading(true);
             state.current = record;
-            history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+            history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], record.id));
           }}
           tooltip={{
             title: intl.formatMessage({
@@ -251,7 +214,7 @@ const Config = observer(() => {
   return (
     <PageContainer>
       <SearchComponent
-        defaultParam={[{ column: 'type$IN', value: id }]}
+        // defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
@@ -272,7 +235,7 @@ const Config = observer(() => {
               isPermission={configPermission.add}
               onClick={() => {
                 state.current = undefined;
-                history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+                history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail']));
               }}
               key="button"
               icon={<PlusOutlined />}
@@ -341,13 +304,12 @@ const Config = observer(() => {
         cardRender={(record) => (
           <NoticeConfig
             {...record}
-            type={id}
             detail={
               <div
                 style={{ fontSize: 18, padding: 8 }}
                 onClick={() => {
                   state.current = record;
-                  history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+                  history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], record.id));
                 }}
               >
                 <EyeOutlined />
@@ -374,7 +336,7 @@ const Config = observer(() => {
                 key="edit"
                 onClick={async () => {
                   state.current = record;
-                  history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], id));
+                  history.push(getMenuPathByParams(MENUS_CODE['notice/Config/Detail'], record.id));
                 }}
               >
                 <EditOutlined />

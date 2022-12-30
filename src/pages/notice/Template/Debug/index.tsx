@@ -13,15 +13,15 @@ import {
 } from '@formily/antd';
 import { ISchema } from '@formily/json-schema';
 import { configService, service, state } from '@/pages/notice/Template';
-import { useLocation } from 'umi';
+// import { useLocation } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import { FDatePicker } from '@/components';
 import FUpload from '@/components/Upload';
 
 const Debug = observer(() => {
-  const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id;
+  // const location = useLocation<{ id: string }>();
+  // const id = (location as any).query?.id;
 
   const variableRef = useRef<any>([]);
 
@@ -78,27 +78,26 @@ const Debug = observer(() => {
             }
             if (variableRef.current) {
               const a = variableRef.current?.find((i: any) => i.id === _id.value);
-              console.log(a, 'a');
               const _configId = configId.value();
               const businessType = a?.expands?.businessType;
-              if (id === 'dingTalk' || id === 'weixin') {
+              if (state.current?.type === 'dingTalk' || state.current?.type === 'weixin') {
                 if (_configId) {
                   switch (businessType) {
                     case 'org':
                       // 获取org
-                      const orgList = await service[id].getDepartments(_configId);
+                      const orgList = await service[state.current?.type].getDepartments(_configId);
                       format.setComponent(Select);
                       format.setDataSource(orgList);
                       break;
                     case 'user':
                       // 获取user
-                      const userList = await service[id].getUser(_configId);
+                      const userList = await service[state.current?.type].getUser(_configId);
                       format.setComponent(Select);
                       format.setDataSource(userList);
                       break;
                     case 'tag':
                       // 获取user
-                      const tagList = await service[id].getTags(_configId);
+                      const tagList = await service[state.current?.type].getTags(_configId);
                       format.setComponent(Select);
                       format.setDataSource(tagList);
                       break;
@@ -164,7 +163,7 @@ const Debug = observer(() => {
     configService
       .queryNoPagingPost({
         terms: [
-          { column: 'type$IN', value: id },
+          { column: 'type$IN', value: state.current?.type },
           { column: 'provider', value: state.current?.provider },
         ],
       })

@@ -12,12 +12,12 @@ const DetailCode = 'detail';
 
 // 额外子级路由F
 const extraRouteObj = {
-  notice: {
-    children: [
-      { code: 'Config', name: '通知配置' },
-      { code: 'Template', name: '通知模版' },
-    ],
-  },
+  // notice: {
+  //   children: [
+  //     { code: 'Config', name: '通知配置' },
+  //     { code: 'Template', name: '通知模版' },
+  //   ],
+  // },
   'media/Cascade': {
     children: [
       { code: 'Save', name: '新增' },

@@ -15,15 +15,15 @@ import {
 import { ISchema } from '@formily/json-schema';
 import { service, state } from '@/pages/notice/Config';
 import { service as TemplateService } from '@/pages/notice/Template';
-import { useLocation } from 'umi';
+// import { useLocation } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import FUpload from '@/components/Upload';
 import { FDatePicker } from '@/components';
 
 const Debug = observer(() => {
-  const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id;
+  // const location = useLocation<{ id: string }>();
+  const id = state.current?.type; // (location as any).query?.id;
   const variableRef = useRef<any>([]);
 
   const form = useMemo(
@@ -95,19 +95,21 @@ const Debug = observer(() => {
                 switch (businessType) {
                   case 'org':
                     // 获取org
-                    const orgList = await TemplateService[id].getDepartments(state.current?.id);
+                    const orgList = await TemplateService[id].getDepartments(
+                      state.current?.id || '',
+                    );
                     format.setComponent(Select);
                     format.setDataSource(orgList);
                     break;
                   case 'user':
                     // 获取user
-                    const userList = await TemplateService[id].getUser(state.current?.id);
+                    const userList = await TemplateService[id].getUser(state.current?.id || '');
                     format.setComponent(Select);
                     format.setDataSource(userList);
                     break;
                   case 'tag':
                     // 获取user
-                    const tagList = await TemplateService[id].getTags(state.current?.id);
+                    const tagList = await TemplateService[id]?.getTags(state.current?.id || '');
                     format.setComponent(Select);
                     format.setDataSource(tagList);
                     break;

@@ -1,6 +1,7 @@
 import { Button, Col, Form, Input, Row, Image } from 'antd';
 import { useEffect } from 'react';
 import styles from './index.less';
+import { randomString } from '@/utils/util';
 
 interface Props {
   next: (data: any) => void;
@@ -9,10 +10,10 @@ interface Props {
 
 const CTWing = (props: Props) => {
   const [form] = Form.useForm();
-  // const img = require('/public/images/network/CTWing.jpg');
-  const img1 = require('/public/images/network/01.jpg');
+  const img1 = require('/public/images/network/01.png');
   const img2 = require('/public/images/network/02.jpg');
-  const img3 = require('/public/images/network/03.jpg');
+  const img3 = require('/public/images/network/03.png');
+  const img4 = require('/public/images/network/04.jpg');
 
   useEffect(() => {
     form.setFieldsValue({
@@ -81,23 +82,35 @@ const CTWing = (props: Props) => {
       <Col span={8}>
         <div className={styles.doc}>
           <h1>操作指引：</h1>
-          <div>1、创建类型为CTWing的设备接入网关。</div>
+          <div>1、CTWing端创建产品、设备，以及一个第三方应用</div>
           <div>
-            2、创建产品，并选中接入方式为CTWing,选中后需填写CTWing平台中的产品ID、Master-APIkey。
+            2、CTWing端配置产品/设备/分组级订阅，订阅方URL地址请填写:
+            <div style={{ wordWrap: 'break-word' }}>
+              {origin}/api/ctwing/{randomString()}/notify
+            </div>
           </div>
           <div className={styles.image}>
             <Image width="100%" src={img1} />
           </div>
+          <div>3、IOT端创建类型为CTWing的设备接入网关</div>
           <div>
-            3、添加设备，为每一台设备设置唯一的IMEI、SN、IMSI、PSK码（需与CTWing平台中填写的值一致，若CTWing平台没有对应的设备，将会通过CTWing平台提供的LWM2M协议自动创建）
+            4、IOT端创建产品，选中接入方式为CTWing,填写CTWing平台中的产品ID、Master-APIkey。
           </div>
           <div className={styles.image}>
             <Image width="100%" src={img2} />
           </div>
-          <h1>配置说明</h1>
-          <div>1.请将CTWing的AEP平台-应用管理中的App Key和App Secret复制到当前页面</div>
+          <div>5、IOT端添加设备，为每一台设备设置唯一的IMEI（需与CTWing平台中填写的值一致）</div>
           <div className={styles.image}>
             <Image width="100%" src={img3} />
+          </div>
+          <h1>设备接入网关配置说明</h1>
+          <div>1.请将CTWing的AEP平台-应用管理中的App Key和App Secret复制到当前页面</div>
+          <div className={styles.image}>
+            <Image width="100%" src={img4} />
+          </div>
+          <h1>其他说明</h1>
+          <div>
+            1.在IOT端启用设备时，若CTWing平台没有与之对应的设备，则将在CTWing端自动创建新设备
           </div>
         </div>
       </Col>

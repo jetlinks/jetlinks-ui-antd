@@ -68,9 +68,9 @@ const PropertyLog = (props: Props) => {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
-      render: (text: any, record: any) => (
-        <a>
-          {data.valueType?.type === 'file' && data?.valueType?.fileType == 'url' ? (
+      render: (text: any, record: any) => [
+        data.valueType?.type === 'file' ? (
+          <a style={{ marginRight: 20 }}>
             <ATooltip title="下载">
               <DownloadOutlined
                 onClick={() => {
@@ -89,16 +89,17 @@ const PropertyLog = (props: Props) => {
                 }}
               />
             </ATooltip>
-          ) : (
-            <SearchOutlined
-              onClick={() => {
-                setDetailVisible(true);
-                setCurrent(record);
-              }}
-            />
-          )}
-        </a>
-      ),
+          </a>
+        ) : null,
+        <a>
+          <SearchOutlined
+            onClick={() => {
+              setDetailVisible(true);
+              setCurrent(record);
+            }}
+          />
+        </a>,
+      ],
     },
   ];
 

@@ -1,21 +1,18 @@
+import { PageContainer } from '@ant-design/pro-layout';
 import { observer } from '@formily/react';
-import SearchComponent from '@/components/SearchComponent';
-import { ProColumns } from '@jetlinks/pro-table';
-import { useEffect, useState } from 'react';
+import { model } from '@formily/reactive';
+import { useIntl } from '@@/plugin-locale/localeExports';
 import { useDomFullHeight } from '@/hooks';
-import service from '@/pages/link/DataCollect/service';
-import ChannelCard from '@/components/ProTableCard/CardItems/DataCollect/channel';
+import { useEffect, useState } from 'react';
 import { Empty, PermissionButton } from '@/components';
+import { ProColumns } from '@jetlinks/pro-table';
+import service from '@/pages/DataCollect/service';
+import SearchComponent from '@/components/SearchComponent';
+import { Card, Col, Pagination, Row } from 'antd';
+import ChannelCard from '@/components/ProTableCard/CardItems/DataCollect/channel';
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
-import { useIntl } from '@@/plugin-locale/localeExports';
-import { Card, Col, Pagination, Row } from 'antd';
-import { model } from '@formily/reactive';
-import Save from '@/pages/link/DataCollect/components/Channel/Save';
-
-interface Props {
-  type: boolean; // true: 综合查询  false: 数据采集
-}
+import Save from '@/pages/DataCollect/Channel/Save';
 
 const ChannelModel = model<{
   visible: boolean;
@@ -27,11 +24,11 @@ const ChannelModel = model<{
   currentPage: 0,
 });
 
-export default observer((props: Props) => {
+export default observer(() => {
   const intl = useIntl();
   const { minHeight } = useDomFullHeight(`.data-collect-channel-card`, 24);
   const [param, setParam] = useState({ pageSize: 12, terms: [] });
-  const { permission } = PermissionButton.usePermission('link/DataCollect/DataGathering');
+  const { permission } = PermissionButton.usePermission('DataCollect/Channel');
   const [loading, setLoading] = useState<boolean>(true);
   const [dataSource, setDataSource] = useState<any>({
     data: [],
@@ -39,7 +36,6 @@ export default observer((props: Props) => {
     pageIndex: 0,
     total: 0,
   });
-
   const columns: ProColumns<ChannelItem>[] = [
     {
       title: '通道名称',
@@ -154,7 +150,7 @@ export default observer((props: Props) => {
   };
 
   return (
-    <div>
+    <PageContainer>
       <SearchComponent<ChannelItem>
         field={columns}
         target="data-collect-channel"
@@ -172,11 +168,24 @@ export default observer((props: Props) => {
         style={{ position: 'relative', minHeight }}
         className={'data-collect-channel-card'}
       >
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
+          <PermissionButton
+            isPermission={permission.add}
+            onClick={() => {
+              ChannelModel.visible = true;
+              ChannelModel.current = {};
+            }}
+            key="button"
+            type="primary"
+          >
+            新增通道
+          </PermissionButton>
+        </div>
         <div style={{ height: '100%', paddingBottom: 48 }}>
           {dataSource?.data.length > 0 ? (
             <Row gutter={[24, 24]} style={{ marginTop: 10 }}>
               {(dataSource?.data || []).map((record: any) => (
-                <Col key={record.id} span={props.type ? 8 : 12}>
+                <Col key={record.id} span={8}>
                   <ChannelCard
                     {...record}
                     state={getState(record)}
@@ -331,6 +340,6 @@ export default observer((props: Props) => {
           }}
         />
       )}
-    </div>
+    </PageContainer>
   );
 });

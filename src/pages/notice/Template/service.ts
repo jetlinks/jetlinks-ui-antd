@@ -73,6 +73,14 @@ class Service extends BaseService<TemplateItem> {
           value: item.id,
         }));
       }),
+
+    getTags: (id: string) =>
+      request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${id}/tags`).then((resp: any) => {
+        return resp.result?.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      }),
   };
 
   weixin = {

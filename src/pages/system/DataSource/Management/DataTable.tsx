@@ -1,5 +1,5 @@
 import { Form, FormGrid, FormItem, Input, Password, Select } from '@formily/antd';
-import { createForm } from '@formily/core';
+import { createForm, registerValidateRules } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
 import { Modal } from 'antd';
@@ -26,6 +26,14 @@ const DataTable = (props: Props) => {
     },
   });
 
+  registerValidateRules({
+    validateId(value) {
+      if (!value) return '';
+      const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
+      return reg.exec(value) ? '' : 'ID只能由数字、字母、下划线、中划线组成';
+    },
+  });
+
   const schema: ISchema = {
     type: 'object',
     properties: {
@@ -49,6 +57,9 @@ const DataTable = (props: Props) => {
           {
             required: true,
             message: '请输入名称',
+          },
+          {
+            validateId: true,
           },
         ],
         required: true,

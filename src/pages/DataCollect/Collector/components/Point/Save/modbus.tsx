@@ -12,9 +12,10 @@ import {
   NumberPicker,
   Password,
   Checkbox,
+  Switch,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import { action } from '@formily/reactive';
 import { RadioCard } from '@/components';
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const [data, setData] = useState<Partial<PointItem>>(props.data);
+  const [data, setData] = useState<any>(props.data);
   useEffect(() => {
     setData({
       ...props.data,
@@ -37,6 +38,16 @@ export default (props: Props) => {
       features: props.data?.features
         ? (props.data?.features || []).map((item: any) => item?.value)
         : [],
+      configuration: {
+        ...props.data?.configuration,
+        parameter: {
+          ...props.data?.configuration?.parameter,
+          writeByteCount: [props.data?.configuration?.parameter?.writeByteCount],
+        },
+      },
+      nspwc:
+        props?.data?.configuration?.parameter?.writeByteCount ||
+        props?.data?.configuration?.parameter?.byteCount,
     });
   }, [props.data]);
 
@@ -55,6 +66,7 @@ export default (props: Props) => {
       FormGrid,
       Checkbox,
       RadioCard,
+      Switch,
     },
     scope: {
       icon(name: any) {
@@ -197,39 +209,6 @@ export default (props: Props) => {
               },
             ],
           },
-          // 'configuration.codec.configuration.readIndex': {
-          //   title: '起始位置',
-          //   'x-component': 'NumberPicker',
-          //   'x-decorator': 'FormItem',
-          //   'x-decorator-props': {
-          //     gridSpan: 2,
-          //   },
-          //   'x-component-props': {
-          //     placeholder: '请输入起始位置',
-          //     stringMode: true,
-          //   },
-          //   'x-reactions': {
-          //     dependencies: ['...function'],
-          //     fulfill: {
-          //       state: {
-          //         visible: '{{$deps[0] === "HoldingRegisters"}}',
-          //       },
-          //     },
-          //   },
-          //   'x-validator': [
-          //     {
-          //       required: true,
-          //       message: '请输入起始位置',
-          //     },
-          //     {
-          //       min: 1,
-          //       message: '请输入非0正整数',
-          //     },
-          //     {
-          //       checkLength: true,
-          //     },
-          //   ],
-          // },
           'configuration.parameter.quantity': {
             title: '寄存器数量',
             'x-component': 'NumberPicker',
@@ -349,6 +328,111 @@ export default (props: Props) => {
               },
             ],
           },
+          nspwc: {
+            title: '非标准协议写入配置',
+            'x-component': 'Switch',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+              layout: 'level',
+            },
+            'x-component-props': {
+              placeholder: '请选择非标准协议写入配置',
+            },
+            'x-reactions': {
+              dependencies: ['.accessModes', 'configuration.function'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0].includes("write") && $deps[1] === "HoldingRegisters"}}',
+                },
+              },
+            },
+          },
+          byte: {
+            type: 'void',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+              style: {
+                backgroundColor: '#fafafa',
+                padding: 20,
+              },
+            },
+            'x-component': 'FormGrid',
+            'x-component-props': {
+              maxColumns: 2,
+              minColumns: 2,
+              columnGap: 24,
+            },
+            'x-reactions': {
+              dependencies: ['.nspwc'],
+              fulfill: {
+                state: {
+                  visible: '{{!!$deps[0]}}',
+                },
+              },
+            },
+            properties: {
+              'configuration.parameter.writeByteCount': {
+                title: '是否写入数据区长度',
+                'x-component': 'RadioCard',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  gridSpan: 2,
+                  layout: 'vertical',
+                  labelAlign: 'left',
+                },
+                'x-component-props': {
+                  placeholder: '请选择是否写入数据区长度',
+                  model: 'singular',
+                  itemStyle: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-around',
+                    minWidth: '130px',
+                    height: '50px',
+                  },
+                  options: [
+                    { label: '是', value: true },
+                    { label: '否', value: false },
+                  ],
+                },
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请选择是否写入数据区长度',
+                  },
+                ],
+              },
+              'configuration.parameter.byteCount': {
+                title: '自定义数据区长度（byte）',
+                'x-component': 'NumberPicker',
+                'x-decorator': 'FormItem',
+                'x-decorator-props': {
+                  gridSpan: 2,
+                  layout: 'vertical',
+                  labelAlign: 'left',
+                },
+                'x-component-props': {
+                  placeholder: '请输入自定义数据区长度（byte）',
+                },
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请输入自定义数据区长度（byte）',
+                  },
+                ],
+                'x-reactions': {
+                  dependencies: ['configuration.parameter.quantity'],
+                  fulfill: {
+                    state: {
+                      value: '{{$deps[0]*2}}',
+                    },
+                  },
+                },
+              },
+            },
+          },
           'configuration.interval': {
             title: '采集频率',
             'x-component': 'NumberPicker',
@@ -425,11 +509,13 @@ export default (props: Props) => {
   };
 
   const save = async () => {
-    const value = await form.submit<PointItem>();
+    const value = await form.submit<any>();
+    console.log(value);
     const obj = {
       provider: props?.collector?.provider || 'MODBUS_TCP',
       collectorId: props?.collector?.id,
     };
+    delete value.nspwc;
     const response: any = props.data?.id
       ? await service.updatePoint(props.data?.id, {
           ...props.data,

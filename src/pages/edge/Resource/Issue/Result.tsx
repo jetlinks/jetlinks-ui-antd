@@ -24,11 +24,13 @@ const Publish = (props: Props) => {
     const errMessages: any[] = [];
     const _terms = {
       deviceId: (props.list || []).map((item) => item.id),
+      // params: {
       name: props.data.name,
       targetId: props.data.targetId,
       targetType: props.data.targetType,
       category: props.data.category,
       metadata: encodeURIComponent(props.data?.metadata || ''),
+      // }
     };
     const url = new URLSearchParams();
     Object.keys(_terms).forEach((key) => {

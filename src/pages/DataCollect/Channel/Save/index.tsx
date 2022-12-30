@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage, testDomain, testIP, testIPv6 } from '@/utils/util';
 import { action } from '@formily/reactive';
 import { RadioCard } from '@/components';
