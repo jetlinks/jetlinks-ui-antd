@@ -98,6 +98,10 @@ export default observer((props: Props) => {
       productId: DeviceModel.productId,
       message: value.message,
     };
+    //处理按变量
+    if (DeviceModel.selector === 'variable') {
+      item.selector = 'fixed';
+    }
     // console.log(item, value);
 
     const _options: any = {
@@ -108,6 +112,7 @@ export default observer((props: Props) => {
       selector: DeviceModel.selector, //选择器标识
       productName: DeviceModel.productDetail.name,
       relationName: DeviceModel.relationName,
+      triggerName: FormModel.current.options?.trigger?.name || '触发设备',
       taglist: [],
       columns: [],
       otherColumns: [],
@@ -139,9 +144,11 @@ export default observer((props: Props) => {
         type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
         value: it.value,
       }));
-      // console.log(_options.taglist, 'taglist')
     }
-    // console.log(DeviceModel.propertiesValue, _options);
+    if (_options.selector === 'variable') {
+      _options.name = DeviceModel.selectorValues?.[0]?.name;
+    }
+    // console.log("----------",item,_options)
     props.save(item, _options);
     init();
   };
@@ -166,8 +173,8 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     const item = FormModel.current?.branches?.[0].then?.[0]?.actions?.[0].device?.productId;
-    console.log(item);
     formProductIdRef.current = item;
+    // console.log('---------', FormModel.current.options?.trigger?.name)
   }, []);
 
   return (

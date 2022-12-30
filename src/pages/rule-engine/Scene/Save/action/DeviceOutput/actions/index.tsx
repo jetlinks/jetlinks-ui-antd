@@ -164,7 +164,7 @@ export default observer((props: Props) => {
             <ReadProperty
               properties={properties}
               onChange={(_, text) => {
-                console.log(text);
+                // console.log(text);
                 DeviceModel.propertiesName = text;
               }}
             />

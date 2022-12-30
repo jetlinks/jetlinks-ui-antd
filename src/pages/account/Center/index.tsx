@@ -11,7 +11,7 @@ import {
   Row,
   Upload,
 } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './index.less';
 import { UploadProps } from 'antd/lib/upload';
 import Token from '@/utils/token';
@@ -38,6 +38,8 @@ const Center = () => {
   const [password, setPassword] = useState<boolean>(false);
   const [bindList, setBindList] = useState<any>([]);
   const [apiUser, setApiUser] = useState<any>();
+  const orgRef = useRef<any>('');
+  const roleRef = useRef<any>('');
 
   const iconMap = new Map();
   iconMap.set('dingtalk-ent-app', require('/public/images/notice/dingtalk.png'));
@@ -56,6 +58,9 @@ const Center = () => {
   const getDetail = () => {
     service.getUserDetail().subscribe((res) => {
       setData(res.result);
+      console.log('-------', res.result);
+      orgRef.current = res.result.orgList.map((item: any) => item.name).join(',');
+      roleRef.current = res.result.roleList.map((item: any) => item.name).join(',');
       setImageUrl(res.result.avatar);
     });
   };
@@ -201,8 +206,12 @@ const Center = () => {
               </Descriptions.Item>
               <Descriptions.Item label="电话">{data?.telephone || '-'}</Descriptions.Item>
               <Descriptions.Item label="姓名">{data?.name}</Descriptions.Item>
-              <Descriptions.Item label="角色">{data?.roleList[0]?.name || '-'}</Descriptions.Item>
-              <Descriptions.Item label="组织">{data?.orgList[0]?.name || '-'}</Descriptions.Item>
+              <Descriptions.Item label="角色">
+                <Ellipsis title={roleRef.current || '-'} tooltip={{ placement: 'topLeft' }} />
+              </Descriptions.Item>
+              <Descriptions.Item label="组织">
+                <Ellipsis title={orgRef.current || '-'} tooltip={{ placement: 'topLeft' }} />
+              </Descriptions.Item>
               <Descriptions.Item label="邮箱">{data?.email || '-'}</Descriptions.Item>
             </Descriptions>
           </div>
