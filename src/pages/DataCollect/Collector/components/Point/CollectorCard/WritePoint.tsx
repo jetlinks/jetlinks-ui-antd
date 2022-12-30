@@ -2,7 +2,7 @@ import { Modal } from 'antd';
 import { FormItem, Input, Form } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import service from '../../../service';
+import service from '../../../../service';
 import { onlyMessage } from '@/utils/util';
 
 interface Props {

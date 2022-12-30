@@ -3,13 +3,13 @@ import { observer } from '@formily/react';
 import { service, state } from '..';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
 import SearchComponent from '@/components/SearchComponent';
-import { useLocation } from 'umi';
+// import { useLocation } from 'umi';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useRef, useState } from 'react';
 
 const Log = observer(() => {
-  const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id;
+  // const location = useLocation<{ id: string }>();
+  // const id = (location as any).query?.id;
 
   const columns: ProColumns<LogItem>[] = [
     {
@@ -99,7 +99,7 @@ const Log = observer(() => {
     >
       <SearchComponent
         model="simple"
-        defaultParam={[{ column: 'notifyType$IN', value: id }]}
+        defaultParam={[{ column: 'notifyType$IN', value: state.current?.type || '' }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();

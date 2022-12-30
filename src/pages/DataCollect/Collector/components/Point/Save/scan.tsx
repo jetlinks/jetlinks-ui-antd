@@ -1,12 +1,12 @@
 import { Button, Col, Modal, Row, Spin, Tree, Checkbox } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import './scan.less';
 import { onlyMessage } from '@/utils/util';
 import { createSchemaField, FormProvider } from '@formily/react';
 import { ArrayTable, FormItem, Input, Select } from '@formily/antd';
-import MyInput from '@/pages/link/DataCollect/components/Point/Save/components/MyInput';
-import MySelect from '@/pages/link/DataCollect/components/Point/Save/components/MySelect';
+import MyInput from '@/pages/DataCollect/Collector/components/Point/Save/components/MyInput';
+import MySelect from '@/pages/DataCollect/Collector/components/Point/Save/components/MySelect';
 import {
   createForm,
   Field,

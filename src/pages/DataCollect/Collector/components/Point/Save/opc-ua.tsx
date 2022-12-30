@@ -14,7 +14,7 @@ import {
   Checkbox,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import { action } from '@formily/reactive';
 import { RadioCard } from '@/components';

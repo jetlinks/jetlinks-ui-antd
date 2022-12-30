@@ -1,63 +1,92 @@
 import { Button, Modal } from 'antd';
-import { createForm, Field, onFieldReact } from '@formily/core';
+import { createForm, Field, onFieldReact, onFieldValueChange, onFormInit } from '@formily/core';
 import { createSchemaField } from '@formily/react';
-import React, { useEffect } from 'react';
+import React, { useMemo, useRef } from 'react';
 import * as ICONS from '@ant-design/icons';
 import { Form, FormGrid, FormItem, Input, Select, NumberPicker, Password } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
-import service from '@/pages/link/DataCollect/service';
+import service from '@/pages/DataCollect/service';
 import { onlyMessage } from '@/utils/util';
 import { RadioCard } from '@/components';
 
 interface Props {
-  channelId?: string;
   data: Partial<CollectorItem>;
   close: () => void;
   reload: () => void;
-  provider?: 'OPC_UA' | 'MODBUS_TCP';
 }
 
 export default (props: Props) => {
-  const form = createForm({
-    validateFirst: true,
-    initialValues: Object.keys(props.data).length
-      ? props.data
-      : {
-          circuitBreaker: {
-            type: 'LowerFrequency',
-          },
-        },
-    effects: () => {
-      onFieldReact('circuitBreaker.type', async (field, f) => {
-        const func = (field as Field).value;
-        f.setFieldState('circuitBreaker.type', (state) => {
-          let tooltip = '';
-          if (func === 'LowerFrequency') {
-            tooltip =
-              '连续20次异常，降低连接频率至原有频率的1/10（重试间隔不超过1分钟），故障处理后自动恢复至设定连接频率';
-          } else if (func === 'Break') {
-            tooltip = '连续10分钟异常，停止采集数据进入熔断状态，设备重新启用后恢复采集状态';
-          } else if (func === 'Ignore') {
-            tooltip = '忽略异常，保持原采集频率超时时间为5s';
-          }
-          state.decoratorProps = {
-            tooltip: tooltip,
-            gridSpan: 2,
-          };
-        });
-      });
-    },
-  });
+  const channelRef = useRef<any>(null);
+  const channelListRef = useRef<any[]>([]);
 
-  useEffect(() => {
-    if (props.data?.id) {
-      service.queryCollectorByID(props.data?.id).then((resp) => {
-        if (resp.status === 200) {
-          form.setValues(resp.result);
-        }
-      });
-    }
-  }, [props.data]);
+  const form = useMemo(
+    () =>
+      createForm({
+        validateFirst: true,
+        effects: () => {
+          onFormInit(async (f) => {
+            const response = await service.queryChannelNoPaging({});
+            if (response.status === 200) {
+              channelListRef.current = response.result;
+              f.setFieldState('channelId', (state) => {
+                state.dataSource = (response?.result || []).map((item: ChannelItem) => {
+                  return {
+                    value: item.id,
+                    label: item.name,
+                  };
+                });
+              });
+            }
+            if (props.data?.id) {
+              const resp = await service.queryCollectorByID(props.data?.id);
+              if (resp.status === 200) {
+                form.setInitialValues(resp.result);
+              }
+            } else {
+              f.setInitialValues({
+                circuitBreaker: {
+                  type: 'LowerFrequency',
+                },
+              });
+            }
+          });
+          onFieldValueChange('channelId', (field, f) => {
+            const value = (field as Field).value;
+            if (value) {
+              const dt = channelListRef.current.find((item) => item.id === value);
+              channelRef.current = dt;
+              if (dt?.provider && dt?.provider === 'MODBUS_TCP') {
+                f.setFieldState('configuration.unitId', (state) => {
+                  state.visible = true;
+                });
+                f.setFieldState('configuration.endian', (state) => {
+                  state.visible = true;
+                });
+              }
+            }
+          });
+          onFieldReact('circuitBreaker.type', async (field, f) => {
+            const func = (field as Field).value;
+            f.setFieldState('circuitBreaker.type', (state) => {
+              let tooltip = '';
+              if (func === 'LowerFrequency') {
+                tooltip =
+                  '连续20次异常，降低连接频率至原有频率的1/10（重试间隔不超过1分钟），故障处理后自动恢复至设定连接频率';
+              } else if (func === 'Break') {
+                tooltip = '连续10分钟异常，停止采集数据进入熔断状态，设备重新启用后恢复采集状态';
+              } else if (func === 'Ignore') {
+                tooltip = '忽略异常，保持原采集频率超时时间为5s';
+              }
+              state.decoratorProps = {
+                tooltip: tooltip,
+                gridSpan: 2,
+              };
+            });
+          });
+        },
+      }),
+    [props.data?.id],
+  );
 
   const SchemaField = createSchemaField({
     components: {
@@ -88,6 +117,23 @@ export default (props: Props) => {
           columnGap: 24,
         },
         properties: {
+          channelId: {
+            title: '所属通道',
+            'x-component': 'Select',
+            'x-decorator': 'FormItem',
+            'x-decorator-props': {
+              gridSpan: 2,
+            },
+            'x-component-props': {
+              placeholder: '请选择所属通道',
+            },
+            'x-validator': [
+              {
+                required: true,
+                message: '请选择所属通道',
+              },
+            ],
+          },
           name: {
             title: '采集器名称',
             'x-component': 'Input',
@@ -119,7 +165,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请输入从机地址',
             },
-            'x-visible': props.provider === 'MODBUS_TCP',
+            'x-visible': false,
             'x-validator': [
               {
                 required: true,
@@ -167,15 +213,15 @@ export default (props: Props) => {
             ],
           },
           'configuration.endian': {
-            title: '大小端',
+            title: '高低位切换',
             'x-component': 'RadioCard',
             'x-decorator': 'FormItem',
             'x-decorator-props': {
               gridSpan: 2,
-              tooltip: '统一配置所有点位的大小端',
+              tooltip: '统一配置所有点位的高低位切换',
             },
             'x-component-props': {
-              placeholder: '请选择大小端',
+              placeholder: '请选择高低位切换',
               model: 'singular',
               itemStyle: {
                 display: 'flex',
@@ -185,11 +231,11 @@ export default (props: Props) => {
                 height: '50px',
               },
               options: [
-                { label: '大端', value: 'BIG' },
-                { label: '小端', value: 'LITTLE' },
+                { label: 'AB', value: 'BIG' },
+                { label: 'BA', value: 'LITTLE' },
               ],
             },
-            'x-visible': props.provider === 'MODBUS_TCP',
+            'x-visible': false,
             default: 'BIG',
             'x-validator': [
               {
@@ -223,21 +269,15 @@ export default (props: Props) => {
     if (props.data?.id) {
       response = await service.updateCollector(props.data?.id, { ...props.data, ...value });
     } else {
-      if (props.channelId) {
-        const resp = await service.queryChannelByID(props.channelId);
-        if (resp.status === 200) {
-          const obj = {
-            ...value,
-            provider: resp.result.provider,
-            channelId: props.channelId,
-            channelName: resp.result.name,
-            configuration: {
-              ...value.configuration,
-            },
-          };
-          response = await service.saveCollector({ ...obj });
-        }
-      }
+      const obj = {
+        ...value,
+        provider: channelRef.current?.provider,
+        channelName: channelRef.current?.name,
+        configuration: {
+          ...value.configuration,
+        },
+      };
+      response = await service.saveCollector({ ...obj });
     }
     if (response && response?.status === 200) {
       onlyMessage('操作成功');
@@ -249,7 +289,7 @@ export default (props: Props) => {
     <Modal
       title={props?.data?.id ? '编辑' : '新增'}
       maskClosable={false}
-      visible
+      open
       onCancel={props.close}
       width={700}
       footer={[
