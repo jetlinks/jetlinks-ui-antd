@@ -473,7 +473,7 @@ export default observer((props: Props) => {
       if (isVariable) {
         form.setFieldsValue({ selector: 'variable' });
       }
-      console.log(isVariable);
+      // console.log(isVariable);
     }
   }, [DeviceModel.productDetail, builtInList]);
 

@@ -34,6 +34,8 @@ const Parsing = (props: Props) => {
   // const [data, setData] = useState<any>({});
   const [readOnly, setReadOnly] = useState<boolean>(true);
   const [topTitle, setTopTitle] = useState<string>();
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [isTest, setIsTest] = useState<boolean>(false);
 
   const editorDidMountHandle = (editor: any) => {
     editor.getAction('editor.action.formatDocument').run();
@@ -115,12 +117,12 @@ const Parsing = (props: Props) => {
     service.testCode(dataTest).then((res) => {
       if (res.status === 200) {
         setLoading(false);
-        onlyMessage('调试成功');
+        // onlyMessage('调试成功');
         setResultValue(res?.result);
-        console.log(res.result);
+        // console.log(res.result);
       } else {
         setLoading(false);
-        onlyMessage('调试失败', 'error');
+        // onlyMessage('调试失败', 'error');
       }
     });
   };
@@ -162,6 +164,14 @@ const Parsing = (props: Props) => {
       setReadOnly(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (value === '' && simulation === '') {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [value, simulation]);
 
   return (
     <Card className="parsing" style={{ minHeight }}>
@@ -340,7 +350,12 @@ const Parsing = (props: Props) => {
               <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>运行结果</div>
               <Input.TextArea
                 autoSize={{ minRows: 5 }}
-                style={{ marginTop: 10 }}
+                style={
+                  resultValue
+                    ? { marginTop: 10, borderColor: `${resultValue.success ? 'green' : 'red'}` }
+                    : { marginTop: 10 }
+                }
+                status={''}
                 value={
                   resultValue.success
                     ? JSON.stringify(resultValue.outputs?.[0])
@@ -356,7 +371,7 @@ const Parsing = (props: Props) => {
           <Button
             type="primary"
             loading={loading}
-            disabled={value !== '' && !simulation}
+            disabled={disabled}
             onClick={() => {
               if (type === 'MQTT') {
                 if (topic !== '') {
@@ -371,6 +386,7 @@ const Parsing = (props: Props) => {
                     provider: 'jsr223',
                     payload: simulation,
                   });
+                  setIsTest(true);
                 } else {
                   message.error('请输入topic');
                 }
@@ -387,6 +403,7 @@ const Parsing = (props: Props) => {
                     },
                     payload: simulation,
                   });
+                  setIsTest(true);
                 } else {
                   message.error('请输入url');
                 }
@@ -401,6 +418,10 @@ const Parsing = (props: Props) => {
           key={'update'}
           style={{ marginLeft: 10 }}
           isPermission={permission.update}
+          disabled={!isTest}
+          tooltip={{
+            title: isTest ? '' : '请先调试',
+          }}
           onClick={() => {
             if (props.tag === 'device') {
               saveDeviceCode(props.data.productId, props.data.id, {

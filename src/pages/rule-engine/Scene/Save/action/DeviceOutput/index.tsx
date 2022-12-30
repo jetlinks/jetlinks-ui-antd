@@ -65,7 +65,7 @@ export default observer((props: Props) => {
   const next = () => {
     if (
       (DeviceModel.current === 0 && DeviceModel.productId) ||
-      (DeviceModel.current === 1 && DeviceModel.deviceId)
+      (DeviceModel.current === 1 && (DeviceModel.deviceId || DeviceModel.selector === 'tag'))
     ) {
       return (DeviceModel.current += 1);
     } else {
@@ -240,7 +240,7 @@ export default observer((props: Props) => {
                   }
                 });
               }
-              return DeviceModel.deviceId
+              return DeviceModel.deviceId || DeviceModel.selector === 'tag'
                 ? (DeviceModel.current = 2)
                 : onlyMessage('请选择设备', 'error');
             } else {
