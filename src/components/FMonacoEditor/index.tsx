@@ -1,11 +1,33 @@
 import MonacoEditor from 'react-monaco-editor';
 import { connect, mapProps } from '@formily/react';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { MonacoEditorProps } from 'react-monaco-editor/lib/types';
 
-export const JMonacoEditor = (props: any) => {
+interface Props extends MonacoEditorProps {}
+
+export const JMonacoEditor = (props: Props) => {
   const [loading, setLoading] = useState(false);
+  const formatLock = useRef<boolean>(false);
   const monacoRef = useRef<any>();
-  console.log(props);
+  const monacoEditorRef = useRef<any>();
+
+  const editorFormat = (editor: any) => {
+    editor.getAction('editor.action.formatDocument').run();
+  };
+
+  useEffect(() => {
+    if (formatLock.current === false && monacoEditorRef.current) {
+      setTimeout(() => {
+        editorFormat(monacoEditorRef.current);
+      }, 300);
+      formatLock.current = true;
+    }
+  }, [props.value, loading, monacoEditorRef.current]);
+
+  const editorDidMountHandle = useCallback((editor: any, monaco: any) => {
+    monacoEditorRef.current = editor;
+    props.editorDidMount?.(editor, monaco);
+  }, []);
 
   return (
     <div
@@ -16,7 +38,19 @@ export const JMonacoEditor = (props: any) => {
       }}
       style={{ height: '100%', width: '100%' }}
     >
-      {loading && <MonacoEditor ref={monacoRef} {...props} options={{ wordWrap: 'on' }} />}
+      {loading && (
+        <MonacoEditor
+          ref={(r: any) => {
+            monacoRef.current = r;
+            if (r && formatLock.current === false) {
+              editorFormat(r.editor);
+            }
+          }}
+          {...props}
+          options={{ wordWrap: 'on' }}
+          editorDidMount={editorDidMountHandle}
+        />
+      )}
     </div>
   );
 };

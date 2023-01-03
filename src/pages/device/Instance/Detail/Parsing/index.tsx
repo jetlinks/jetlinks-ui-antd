@@ -2,7 +2,7 @@ import { useDomFullHeight } from '@/hooks';
 import { ExclamationCircleOutlined, ExpandOutlined } from '@ant-design/icons';
 import { Card, Tooltip, Select, Input, Button, AutoComplete, message } from 'antd';
 import { useState, useRef, useEffect } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 import { useFullscreen, useSize } from 'ahooks';
 import Service from '@/pages/device/Instance/service';
 import { onlyMessage } from '@/utils/util';
@@ -244,7 +244,7 @@ const Parsing = (props: Props) => {
               }}
             ></div>
           )}
-          <MonacoEditor
+          <JMonacoEditor
             width={'100%'}
             height={'100%'}
             theme="vs"

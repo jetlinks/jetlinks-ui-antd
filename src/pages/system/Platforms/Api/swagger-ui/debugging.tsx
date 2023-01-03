@@ -1,7 +1,7 @@
 import { TitleComponent } from '@/components';
 import ReactJson from 'react-json-view';
 import { request } from 'umi';
-import MonacoEditor from 'react-monaco-editor';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 import { Button, Input, Popconfirm } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createSchemaField, FormProvider, observer } from '@formily/react';
@@ -50,13 +50,12 @@ export default observer(() => {
   useEffect(() => {
     console.log('ApiModel.debugger.body', ApiModel.debugger.body);
     if (ApiModel.debugger.body && editor.current) {
-      const { editor: MEditor } = editor.current;
-      MEditor.setValue(JSON.stringify(ApiModel.debugger.body));
+      editor.current.setValue(JSON.stringify(ApiModel.debugger.body));
       setTimeout(() => {
-        MEditor.getAction('editor.action.formatDocument').run();
+        editor.current.getAction('editor.action.formatDocument').run();
       }, 300);
       // MEditor.trigger('anyString', 'editor.action.formatDocument');//自动格式化代码
-      MEditor.setValue(MEditor.getValue());
+      editor.current.setValue(editor.current.getValue());
     }
   }, [ApiModel.debugger, editor.current]);
 
@@ -248,11 +247,10 @@ export default observer(() => {
             </FormProvider>
           )}
           {isBody() && (
-            <MonacoEditor
+            <JMonacoEditor
               height={200}
               language={'json'}
               theme={'dark'}
-              ref={editor}
               onChange={(value) => {
                 try {
                   setBody(JSON.parse(value));
@@ -261,6 +259,7 @@ export default observer(() => {
                 }
               }}
               editorDidMount={(_editor) => {
+                editor.current = _editor;
                 _editor.getAction('editor.action.formatDocument').run();
               }}
             />

@@ -154,14 +154,18 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           if (labelOptions.metrics) {
             // 指标值
             const _metrics = labelOptions.metrics.map((mItem: any) => ({
-              title: mItem.name,
-              key: mItem.id,
+              ...mItem,
+              label: mItem.name,
+              value: mItem.value,
             }));
             setMetricsOptions(_metrics);
+          } else {
+            setMetricsOptions([]);
           }
         } else {
           props.onChange?.({});
           setTtOptions([]);
+          setMetricsOptions([]);
           setValueType('');
         }
       }
@@ -293,7 +297,14 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           <>
             <ParamsDropdown
               options={valueOptions}
-              metricsOptions={metricsOptions}
+              metricsOptions={metricsOptions.filter((mItem) => {
+                if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+                  return mItem.range;
+                } else {
+                  return !mItem.range;
+                }
+              })}
+              isMetric={!!metricsOptions.length}
               type="value"
               placeholder="参数值"
               valueType={valueType}
@@ -315,7 +326,14 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             />
             <ParamsDropdown
               options={valueOptions}
-              metricsOptions={metricsOptions}
+              metricsOptions={metricsOptions.filter((mItem) => {
+                if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+                  return mItem.range;
+                } else {
+                  return !mItem.range;
+                }
+              })}
+              isMetric={!!metricsOptions.length}
               type="value"
               placeholder="参数值"
               valueType={valueType}
@@ -339,7 +357,15 @@ const ParamsItem = observer((props: ParamsItemProps) => {
         ) : (
           <ParamsDropdown
             options={valueOptions}
-            metricsOptions={metricsOptions}
+            metricsOptions={metricsOptions.filter((mItem) => {
+              console.log(mItem);
+              if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+                return mItem.range;
+              } else {
+                return !mItem.range;
+              }
+            })}
+            isMetric={!!metricsOptions.length}
             type="value"
             placeholder="参数值"
             valueType={valueType}

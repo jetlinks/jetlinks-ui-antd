@@ -22,6 +22,8 @@ export interface ParamsDropdownProps {
   valueType: string;
   showLabelKey?: string;
   icon?: ReactNode;
+  open?: boolean;
+  openChange?: (open: boolean) => void;
 }
 
 interface MenusProps {
@@ -64,6 +66,10 @@ export default (props: ParamsDropdownProps) => {
   const [activeKey, setActiveKey] = useState(props.BuiltInOptions ? 'fixed' : 'manual');
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    setOpen(!!props.open);
+  }, [props.open]);
+
   const onValueChange = useCallback(
     (value: any, _label: any, item?: any) => {
       setMyValue(value);
@@ -97,6 +103,18 @@ export default (props: ParamsDropdownProps) => {
               }}
               style={{ width: '100%' }}
               placeholder={'请输入'}
+            />
+          );
+        case 'metric':
+          return (
+            <Menus
+              value={_value}
+              options={props.metricsOptions}
+              onChange={(v, l) => {
+                console.log(l);
+                onValueChange(v, l);
+                setOpen(false);
+              }}
             />
           );
         case 'enum':
@@ -173,11 +191,14 @@ export default (props: ParamsDropdownProps) => {
     [props, activeKey],
   );
 
-  const findLabel = (value: string, data: any[]): boolean => {
+  const findLabel = (value: string, data: any[], titleName?: string): boolean => {
     let isLabel = false;
     return data.some((item) => {
       if (item.key === value) {
         let titleKey = 'title';
+        if (titleName) {
+          titleKey = titleName;
+        }
         if (props.showLabelKey) {
           titleKey = props.showLabelKey;
         }
@@ -195,6 +216,9 @@ export default (props: ParamsDropdownProps) => {
       switch (type) {
         case 'boolean':
           setLabel(v ? '是' : '否');
+          break;
+        case 'metric':
+          findLabel(v, props.metricsOptions || []);
           break;
         case 'enum':
         case 'object':
@@ -274,7 +298,7 @@ export default (props: ParamsDropdownProps) => {
       _itemList.push({
         key: 'metric',
         label: '指标值',
-        content: renderNode('enum', myValue, props),
+        content: renderNode('metric', myValue, props),
       });
     }
   }
@@ -299,7 +323,10 @@ export default (props: ParamsDropdownProps) => {
       bodyStyle={{ width: 'auto' }}
       type={props.valueType}
       open={open}
-      openChange={setOpen}
+      openChange={(_open) => {
+        setOpen(_open);
+        props.openChange?.(_open);
+      }}
     >
       <div
         className={classNames(styles['dropdown-button'], styles.value)}

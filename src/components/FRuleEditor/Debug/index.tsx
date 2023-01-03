@@ -160,6 +160,7 @@ const Debug = observer((props: Props) => {
     if (ws.current) {
       ws.current.unsubscribe();
     }
+    console.log(props.virtualRule);
     if (!props.virtualRule.script) {
       setIsBeginning(true);
       message.warning('请编辑规则');

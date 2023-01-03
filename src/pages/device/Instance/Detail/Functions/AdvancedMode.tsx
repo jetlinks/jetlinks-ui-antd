@@ -82,14 +82,6 @@ export default (props: FunctionProps) => {
     }
   };
 
-  const editorDidMountHandle = (editor: any) => {
-    monacoRef.current = editor;
-    editor.getAction('editor.action.formatDocument').run();
-    editor.onDidContentSizeChange?.(() => {
-      editor.getAction('editor.action.formatDocument').run();
-    });
-  };
-
   useEffect(() => {
     handleData(props.data);
   }, [props.data]);
@@ -107,7 +99,6 @@ export default (props: FunctionProps) => {
             onChange={(newValue: any) => {
               setValue(newValue);
             }}
-            editorDidMount={editorDidMountHandle}
           />
         </div>
         <div className="button-tool">

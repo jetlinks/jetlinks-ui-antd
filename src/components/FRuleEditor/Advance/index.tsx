@@ -14,13 +14,14 @@ interface Props {
 }
 
 const Advance = (props: Props) => {
-  const { model, onChange, virtualRule } = props;
+  const { onChange, virtualRule } = props;
   const [success, setSuccess] = useState(false);
-  const cacheRef = useRef();
+  const [editorValue, setEditorValue] = useState(virtualRule.script);
+  const cacheRef = useRef(virtualRule.script);
   return (
     <Modal
       maskClosable={false}
-      visible={model === 'advance'}
+      visible
       width="70vw"
       title="设置属性规则"
       onCancel={() => onChange('simple')}
@@ -36,13 +37,19 @@ const Advance = (props: Props) => {
         <div className={styles.left}>
           <Editor
             mode="advance"
+            key={'advance'}
+            value={virtualRule.script}
             onValueChange={(v) => {
               cacheRef.current = v;
+              setEditorValue(v);
               setSuccess(false);
             }}
           />
           <Debug
-            virtualRule={virtualRule}
+            virtualRule={{
+              ...virtualRule,
+              script: editorValue,
+            }}
             onSuccess={() => {
               setSuccess(true);
             }}

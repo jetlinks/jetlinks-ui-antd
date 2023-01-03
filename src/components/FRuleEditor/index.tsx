@@ -42,19 +42,23 @@ const FRuleEditor = observer((props: Props) => {
   return (
     <>
       <Editor
+        key={'simple'}
         onChange={(v) => {
           State.model = v;
         }}
+        value={value}
         id={props.id}
       />
-      <Advance
-        model={State.model}
-        virtualRule={virtualRule}
-        id={props.id}
-        onChange={(v) => {
-          State.model = v;
-        }}
-      />
+      {State.model === 'advance' && (
+        <Advance
+          model={State.model}
+          virtualRule={virtualRule}
+          id={props.id}
+          onChange={(v) => {
+            State.model = v;
+          }}
+        />
+      )}
     </>
   );
 });

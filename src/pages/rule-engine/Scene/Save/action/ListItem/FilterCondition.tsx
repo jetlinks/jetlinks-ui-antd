@@ -4,7 +4,7 @@ import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import classNames from 'classnames';
 import { observer } from '@formily/react';
-import { Popconfirm, Space } from 'antd';
+import { message, Popconfirm, Space } from 'antd';
 import './index.less';
 import { AIcon } from '@/components';
 
@@ -49,6 +49,7 @@ export default observer((props: FilterProps) => {
   const [valueOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
   const labelCache = useRef<any[]>([undefined, undefined, {}, 'and']);
+  const [paramsOpen, setParamsOpen] = useState(false);
 
   const [deleteVisible, setDeleteVisible] = useState(false);
   const columnsRef = useRef<string[]>([]);
@@ -259,6 +260,15 @@ export default observer((props: FilterProps) => {
               type="value"
               placeholder="参数值"
               valueType={valueType}
+              open={paramsOpen}
+              openChange={(_open) => {
+                if (ValueRef.current.column) {
+                  setParamsOpen(_open);
+                } else {
+                  setParamsOpen(false);
+                  message.warning('请先选择参数');
+                }
+              }}
               value={value}
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
@@ -293,6 +303,15 @@ export default observer((props: FilterProps) => {
               type="value"
               placeholder="参数值"
               valueType={valueType}
+              open={paramsOpen}
+              openChange={(_open) => {
+                if (ValueRef.current.column) {
+                  setParamsOpen(_open);
+                } else {
+                  setParamsOpen(false);
+                  message.warning('请先选择参数');
+                }
+              }}
               value={value}
               BuiltInOptions={BuiltInOptions}
               showLabelKey="fullName"
@@ -329,6 +348,15 @@ export default observer((props: FilterProps) => {
             type="value"
             placeholder="参数值"
             valueType={valueType}
+            open={paramsOpen}
+            openChange={(_open) => {
+              if (ValueRef.current.column) {
+                setParamsOpen(_open);
+              } else {
+                setParamsOpen(false);
+                message.warning('请先选择参数');
+              }
+            }}
             value={value}
             BuiltInOptions={BuiltInOptions}
             showLabelKey="fullName"

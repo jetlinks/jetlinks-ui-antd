@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { service } from '../index';
 import { useRequest } from 'umi';
-import { Form, Input, message, Modal } from 'antd';
+import { Form, Input, message, Modal, Select } from 'antd';
 import ProviderItem from './ProviderSelect';
 
 interface SaveProps {
@@ -14,6 +14,7 @@ interface SaveProps {
 export default (props: SaveProps) => {
   const { visible, close, reload } = props;
   const [loading, setLoading] = useState(false);
+  const [extendFormItem, setExtendFormItem] = useState([]);
   const [form] = Form.useForm();
 
   const { data: providerList, run: getProviderList } = useRequest(service.queryProvider, {
@@ -69,6 +70,17 @@ export default (props: SaveProps) => {
     }
   };
 
+  const handlerItem = (type: string, label: string, options: any[]) => {
+    switch (type) {
+      case 'enum':
+        return <Select placeholder={`请选择${label}`} options={options} />;
+      case 'password':
+        return <Input.Password placeholder={`请输入${label}`} />;
+      default:
+        return <Input placeholder={`请输入${label}`} />;
+    }
+  };
+
   return (
     <Modal
       maskClosable={false}
@@ -98,6 +110,23 @@ export default (props: SaveProps) => {
         >
           <Input placeholder={'请输入产品名称'} />
         </Form.Item>
+        {extendFormItem.map((item: any) => {
+          let messageType = '请输入';
+          if (item.type === 'enum') {
+            messageType = '请选择';
+          }
+          return (
+            <Form.Item
+              name={item.name}
+              label={item.label}
+              required={item.required}
+              rules={[{ required: true, message: `${messageType}${item.label}` }]}
+              initialValue={item.value}
+            >
+              {handlerItem(item.type, item.label, item.options)}
+            </Form.Item>
+          );
+        })}
         <Form.Item
           name={'accessId'}
           label={'接入网关'}
@@ -107,13 +136,30 @@ export default (props: SaveProps) => {
           <ProviderItem
             options={providerList}
             type={props.type}
-            onSelect={(_, rowData) => {
+            onSelect={async (_, rowData) => {
               form.setFieldsValue({
                 accessName: rowData.name,
                 protocolName: rowData.protocolDetail.name,
                 messageProtocol: rowData.protocolDetail.id,
                 transportProtocol: rowData.transportDetail.id,
                 accessProvider: rowData.provider,
+              });
+              service.getConfiguration(rowData.protocol, rowData.transport).then((res: any) => {
+                console.log(res);
+                const arr = res.result.properties.map((item: any) => {
+                  return {
+                    name: ['configuration', item.property],
+                    label: item.name,
+                    type: item.type?.type,
+                    value: item.type.expands?.defaultValue,
+                    options: item.type.elements?.map((e: any) => ({
+                      label: e.text,
+                      value: e.value,
+                    })),
+                    required: !!item.type.expands?.required,
+                  };
+                });
+                setExtendFormItem(arr);
               });
             }}
           />

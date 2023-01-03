@@ -42,6 +42,11 @@ class Service extends BaseService<DeviceItem> {
       method: 'GET',
       params,
     });
+
+  getConfiguration = (id: string, transport: string) =>
+    request(`/${SystemConst.API_BASE}/protocol/${id}/${transport}/configuration`, {
+      method: 'GET',
+    });
 }
 
 export default Service;
