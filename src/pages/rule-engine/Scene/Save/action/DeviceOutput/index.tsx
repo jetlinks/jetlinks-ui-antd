@@ -26,6 +26,7 @@ interface Props {
 
 export default observer((props: Props) => {
   const formRef = useRef<any>();
+  const tagFormRef = useRef<any>();
   const formProductIdRef = useRef<any>('');
 
   DeviceModel.steps = [
@@ -44,6 +45,9 @@ export default observer((props: Props) => {
           branchGroup={props.branchGroup}
           thenName={props.thenName}
           formProductId={formProductIdRef.current}
+          get={(item: any) => {
+            tagFormRef.current = item;
+          }}
         />
       ),
     },
@@ -62,12 +66,20 @@ export default observer((props: Props) => {
       ),
     },
   ];
-  const next = () => {
+  const next = async () => {
     if (
       (DeviceModel.current === 0 && DeviceModel.productId) ||
       (DeviceModel.current === 1 && (DeviceModel.deviceId || DeviceModel.selector === 'tag'))
     ) {
-      return (DeviceModel.current += 1);
+      if (DeviceModel.selector === 'tag') {
+        const value = await tagFormRef.current?.validateFields();
+        if (value) {
+          return (DeviceModel.current += 1);
+        }
+        console.log('----------', value);
+      } else {
+        return (DeviceModel.current += 1);
+      }
     } else {
       return DeviceModel.current === 0
         ? onlyMessage('请选择产品', 'error')

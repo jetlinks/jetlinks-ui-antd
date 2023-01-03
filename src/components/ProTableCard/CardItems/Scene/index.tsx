@@ -85,7 +85,7 @@ const deviceRender = (data: ActionsType | undefined) => {
       return `${data?.options?.type}${data?.options?.name}${data?.options?.properties}`;
     case 'tag':
       let tags: string = '';
-      data.options?.taglist.map((item: any) => {
+      data.options?.taglist?.map((item: any) => {
         tags += item.type || '' + item.name || '' + item.value || '';
       });
       return `${

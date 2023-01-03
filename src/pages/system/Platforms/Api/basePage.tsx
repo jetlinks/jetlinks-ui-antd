@@ -4,6 +4,7 @@ import { useLocation } from 'umi';
 import { service } from '../index';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
 import { onlyMessage } from '@/utils/util';
+import PermissionButton from '@/components/PermissionButton';
 
 interface TableProps {
   data: any;
@@ -21,6 +22,7 @@ export default (props: TableProps) => {
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [GrantKeys, setGrantKeys] = useState<string[] | undefined>(undefined);
+  const { permission } = PermissionButton.usePermission('system/Platforms/Setting');
 
   const grantCache = useRef<string[]>([]);
 
@@ -207,9 +209,19 @@ export default (props: TableProps) => {
       />
       {props.isShowGranted !== true && (
         <div className={'platforms-api-save'}>
-          <Button type={'primary'} onClick={save} loading={loading}>
+          <PermissionButton
+            isPermission={permission.update}
+            onClick={save}
+            key={'update'}
+            type={'primary'}
+            style={{ padding: 0, width: 50 }}
+            loading={loading}
+          >
             保存
-          </Button>
+          </PermissionButton>
+          {/* <Button type={'primary'} onClick={save} >
+            保存
+          </Button> */}
         </div>
       )}
     </div>

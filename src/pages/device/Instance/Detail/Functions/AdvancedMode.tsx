@@ -86,6 +86,10 @@ export default (props: FunctionProps) => {
     handleData(props.data);
   }, [props.data]);
 
+  useEffect(() => {
+    monacoRef.current?.layout();
+  });
+
   return (
     <div className="device-function-content">
       <div className="left">

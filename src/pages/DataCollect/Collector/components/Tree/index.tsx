@@ -48,13 +48,17 @@ export default observer((props: Props) => {
       .queryCollector({ ...params, paging: false, sorts: [{ name: 'createTime', order: 'desc' }] })
       .then((resp) => {
         if (resp.status === 200) {
-          TreeModel.dataSource = [
-            {
-              id: '*',
-              name: '全部',
-              children: resp.result,
-            },
-          ];
+          if (params.terms) {
+            TreeModel.dataSource = resp.result;
+          } else {
+            TreeModel.dataSource = [
+              {
+                id: '*',
+                name: '全部',
+                children: resp.result,
+              },
+            ];
+          }
           props.change(TreeModel.dataSource[0]);
         }
         TreeModel.loading = false;
@@ -95,9 +99,13 @@ export default observer((props: Props) => {
           placeholder="请输入名称"
           allowClear
           onSearch={(val) => {
-            TreeModel.param = {
-              terms: [{ column: 'name', value: `%${val}%`, termType: 'like' }],
-            };
+            if (val) {
+              TreeModel.param = {
+                terms: [{ column: 'name', value: `%${val}%`, termType: 'like' }],
+              };
+            } else {
+              TreeModel.param = {};
+            }
           }}
           style={{ width: '100%' }}
         />

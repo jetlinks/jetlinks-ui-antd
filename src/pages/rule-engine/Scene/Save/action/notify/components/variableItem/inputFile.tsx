@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Input, Upload } from 'antd';
+import { Button, Input, message, Upload } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
@@ -42,9 +42,21 @@ export default (props: InputUploadProps) => {
       headers={{
         'X-Access-Token': Token.get(),
       }}
+      accept={'image/jpeg,image/png'}
       showUploadList={false}
       onChange={handleChange}
       disabled={loading}
+      beforeUpload={(file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+          message.error('请上传正确格式图片');
+        }
+        const isSize = file.size / 1024 / 1024 < 4;
+        if (!isSize) {
+          message.error(`图片大小必须小于4M`);
+        }
+        return isJpgOrPng && isSize;
+      }}
     >
       <Button type={'link'} style={{ height: 30 }}>
         {loading ? <LoadingOutlined /> : <PlusOutlined />}

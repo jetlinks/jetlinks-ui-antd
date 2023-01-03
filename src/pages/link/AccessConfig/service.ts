@@ -27,7 +27,7 @@ class Service extends BaseService<AccessItem> {
       method: 'GET',
     });
   public getNetworkList = (networkType: string, params?: any) =>
-    request(`/${SystemConst.API_BASE}/network/config/${networkType}/_detail`, {
+    request(`/${SystemConst.API_BASE}/network/config/${networkType}/_alive`, {
       method: 'GET',
       params,
     });

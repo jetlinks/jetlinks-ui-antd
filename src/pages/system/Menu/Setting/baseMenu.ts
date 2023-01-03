@@ -3023,54 +3023,54 @@ export default [
               },
             ],
           },
-          {
-            id: 'edit',
-            name: '资产编辑',
-            permissions: [
-              {
-                permission: 'assets-bind',
-                actions: ['query', 'permission'],
-              },
-              {
-                permission: 'user',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-product',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-instance',
-                actions: ['query'],
-              },
-            ],
-          },
-          {
-            id: 'bind',
-            name: '资产解绑',
-            permissions: [
-              {
-                permission: 'assets-bind',
-                actions: ['unbind', 'query'],
-              },
-              {
-                permission: 'user',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-product',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-instance',
-                actions: ['query'],
-              },
-              {
-                permission: 'organization',
-                actions: ['unbind-user'],
-              },
-            ],
-          },
+          // {
+          //   id: 'edit',
+          //   name: '资产编辑',
+          //   permissions: [
+          //     {
+          //       permission: 'assets-bind',
+          //       actions: ['query', 'permission'],
+          //     },
+          //     {
+          //       permission: 'user',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-product',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-instance',
+          //       actions: ['query'],
+          //     },
+          //   ],
+          // },
+          // {
+          //   id: 'bind',
+          //   name: '资产解绑',
+          //   permissions: [
+          //     {
+          //       permission: 'assets-bind',
+          //       actions: ['unbind', 'query'],
+          //     },
+          //     {
+          //       permission: 'user',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-product',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-instance',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'organization',
+          //       actions: ['unbind-user'],
+          //     },
+          //   ],
+          // },
           {
             id: 'bind-user',
             name: '绑定用户',
@@ -3099,7 +3099,7 @@ export default [
           },
           {
             id: 'assert',
-            name: '分配资产',
+            name: '资产分配',
             permissions: [
               {
                 permission: 'assets-bind',
@@ -3637,7 +3637,28 @@ export default [
         icon: 'icon-chakanAPI',
         showPage: ['open-api'],
         permissions: [{ permission: 'open-api', actions: ['query', 'save'] }],
-        buttons: [],
+        buttons: [
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query'],
+              },
+            ],
+          },
+          {
+            id: 'update',
+            name: '编辑',
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query', 'save'],
+              },
+            ],
+          },
+        ],
       },
       {
         code: 'system/Apply',
@@ -3677,6 +3698,10 @@ export default [
                 permission: 'role',
                 actions: ['query'],
               },
+              {
+                permission: 'open-api',
+                actions: ['query', 'save', 'delete'],
+              },
             ],
           },
           {
@@ -3694,6 +3719,10 @@ export default [
               {
                 permission: 'role',
                 actions: ['query'],
+              },
+              {
+                permission: 'open-api',
+                actions: ['query', 'save', 'delete'],
               },
             ],
           },
@@ -3975,6 +4004,16 @@ export default [
               {
                 permission: 'network-card',
                 actions: ['query', 'save'],
+              },
+            ],
+          },
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'network-card',
+                actions: ['query'],
               },
             ],
           },

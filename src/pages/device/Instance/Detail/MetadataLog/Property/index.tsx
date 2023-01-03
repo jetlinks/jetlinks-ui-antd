@@ -15,7 +15,7 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 import encodeQuery from '@/utils/encodeQuery';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import FileComponent from '../../Running/Property/FileComponent';
+import FileComponent, { getType } from '../../Running/Property/FileComponent';
 import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import Detail from './Detail';
 import AMap from './AMap';
@@ -69,22 +69,24 @@ const PropertyLog = (props: Props) => {
       dataIndex: 'action',
       key: 'action',
       render: (text: any, record: any) => [
-        data.valueType?.type === 'file' ? (
+        (data.valueType?.type === 'file' && data?.valueType?.fileType === 'Binary(二进制)') ||
+        (!getType(record?.value) && data?.valueType?.fileType === 'base64') ? (
           <a style={{ marginRight: 20 }}>
             <ATooltip title="下载">
               <DownloadOutlined
                 onClick={() => {
-                  const type = (record?.value || '').split('.').pop();
-                  const downloadUrl = record.value;
                   const downNode = document.createElement('a');
-                  downNode.href = downloadUrl;
-                  downNode.target = '_blank';
                   downNode.download = `${InstanceModel.detail.name}-${data.name}${moment(
                     new Date().getTime(),
-                  ).format('YYYY-MM-DD-HH-mm-ss')}.${type}`;
+                  ).format('YYYY-MM-DD-HH-mm-ss')}.txt`;
                   downNode.style.display = 'none';
+                  //字符串内容转成Blob地址
+                  const blob = new Blob([record.value]);
+                  downNode.href = URL.createObjectURL(blob);
+                  //触发点击
                   document.body.appendChild(downNode);
                   downNode.click();
+                  //移除
                   document.body.removeChild(downNode);
                 }}
               />

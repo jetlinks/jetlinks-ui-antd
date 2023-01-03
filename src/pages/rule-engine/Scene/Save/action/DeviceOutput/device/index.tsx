@@ -28,6 +28,7 @@ interface Props {
   thenName: number;
   branchGroup?: number;
   formProductId: any;
+  get: (ref: any) => void;
 }
 
 export default observer((props: Props) => {
@@ -404,11 +405,7 @@ export default observer((props: Props) => {
         );
       case 'tag':
         return (
-          <Form.Item
-            name="selectorValues"
-            // label='标签'
-            rules={[{ required: true, message: '请选择标签' }]}
-          >
+          <Form.Item name="selectorValues" rules={[{ required: true, message: '请选择标签' }]}>
             <Tag
               tagData={tagList}
               onChange={(value) => {
@@ -445,8 +442,12 @@ export default observer((props: Props) => {
   };
 
   useEffect(() => {
+    console.log(DeviceModel.selectorValues, '--------');
     if (form) {
       form.setFieldsValue({ selector: DeviceModel.selector });
+      if (DeviceModel.selectorValues) {
+        form.setFieldsValue({ selectorValues: DeviceModel.selectorValues });
+      }
     }
     sourceChangeEvent();
     if (DeviceModel.deviceId) {
@@ -480,6 +481,10 @@ export default observer((props: Props) => {
   useEffect(() => {
     DeviceModel.selector = selector;
   }, [selector]);
+
+  useEffect(() => {
+    props.get(form);
+  }, [form]);
 
   return (
     <div>

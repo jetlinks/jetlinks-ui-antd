@@ -147,7 +147,7 @@ const Apply = () => {
         </PermissionButton>,
         isPage(record.integrationModes) ? (
           <PermissionButton
-            isPermission={permission.update}
+            isPermission={permission.update || permission.add}
             key="page"
             onClick={() => {
               setData(record);
@@ -167,7 +167,7 @@ const Apply = () => {
             key={'empowerment'}
             type={'link'}
             style={{ padding: 0 }}
-            isPermission={permission.empowerment}
+            isPermission={permission.update || permission.add}
             tooltip={{
               title: '赋权',
             }}
@@ -184,7 +184,7 @@ const Apply = () => {
             key={'api'}
             type={'link'}
             style={{ padding: 0 }}
-            isPermission={permission.api}
+            isPermission={permission.update || permission.add}
             tooltip={{
               title: '查看API',
             }}
@@ -197,7 +197,7 @@ const Apply = () => {
           </PermissionButton>
         ) : null,
         <PermissionButton
-          isPermission={permission.action}
+          isPermission={permission.update}
           key="action"
           type={'link'}
           style={{ padding: 0 }}
@@ -387,7 +387,7 @@ const Apply = () => {
                       {isPage(record.integrationModes) && (
                         <Menu.Item key="menu">
                           <PermissionButton
-                            isPermission={permission.update}
+                            isPermission={permission.update || permission.add}
                             key="edit"
                             onClick={() => {
                               setData(record);
@@ -410,7 +410,7 @@ const Apply = () => {
                             key={'empowerment'}
                             type={'link'}
                             style={{ padding: 0 }}
-                            isPermission={permission.empowerment}
+                            isPermission={permission.update || permission.add}
                             tooltip={{
                               title: '赋权',
                             }}
@@ -430,7 +430,7 @@ const Apply = () => {
                             key={'api'}
                             type={'link'}
                             style={{ padding: 0 }}
-                            isPermission={permission.api}
+                            isPermission={permission.update || permission.add}
                             tooltip={{
                               title: '查看API',
                             }}
