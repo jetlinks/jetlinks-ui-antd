@@ -15,6 +15,7 @@ import { onlyMessage } from '@/utils/util';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import useLocations from '@/hooks/route/useLocation';
 import { observer } from '@formily/reactive-react';
+import { NoticeIconViewModel } from '@/components/NoticeIcon';
 
 export const service = new Service('notifications');
 
@@ -40,7 +41,6 @@ const NotificationRecord = observer(() => {
   }, []);
 
   useEffect(() => {
-    console.log(location.state);
     if (location.state?.id) {
       setVisible(true);
       setCurrent(location.state);
@@ -145,6 +145,15 @@ const NotificationRecord = observer(() => {
               const state = record?.state?.value !== 'read' ? 'read' : 'unread';
               const resp = await service.saveData(state, [record.id]);
               if (resp.status === 200) {
+                if (state === 'read') {
+                  if (NoticeIconViewModel.unreadCount) {
+                    NoticeIconViewModel.unreadCount -= 1;
+                  } else {
+                    NoticeIconViewModel.unreadCount = 0;
+                  }
+                } else {
+                  NoticeIconViewModel.unreadCount += 1;
+                }
                 onlyMessage('操作成功');
                 actionRef.current?.reload();
               }

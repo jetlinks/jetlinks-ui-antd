@@ -235,7 +235,7 @@ const ContentRender = (data: SceneCardProps) => {
             <MyTooltip placement="topLeft" title={trigger?.when || ''}>
               <div
                 className={classNames(styles['card-item-content-trigger-item'], 'ellipsis')}
-                style={{ maxWidth: '15%' }}
+                style={{ maxWidth: '16%' }}
               >
                 {trigger?.when || ''}
               </div>

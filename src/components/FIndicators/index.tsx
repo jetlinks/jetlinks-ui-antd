@@ -73,10 +73,12 @@ const FIndicators = (props: Props) => {
               ]
             }
             onChange={(_: any, date: string[]) => {
-              onChange({
-                ...value,
-                value: [...date],
-              });
+              if (date[0] !== date[1]) {
+                onChange({
+                  ...value,
+                  value: [...date],
+                });
+              }
             }}
           />
         );

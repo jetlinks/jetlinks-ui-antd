@@ -77,9 +77,10 @@ const Operator = (props: Props) => {
             <div className={node.children?.length > 0 ? styles.parent : styles.add}>
               {node.type === 'property' ? (
                 <Popover
-                  visible={visible}
+                  open={visible}
                   placement="right"
                   title="请选择使用值"
+                  onOpenChange={setVisible}
                   content={
                     <Space direction="vertical">
                       <Tooltip

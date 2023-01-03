@@ -65,7 +65,7 @@ export default (props: FunctionProps) => {
       case 'object':
         return <MetadataJsonInput json={record.json} />;
       case 'password':
-        return <Input type={'password'} />;
+        return <Input.Password />;
       case 'date':
         return (
           // <>

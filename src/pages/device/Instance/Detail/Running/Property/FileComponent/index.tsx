@@ -25,6 +25,27 @@ imgMap.set('video', require('/public/images/running/video.png'));
 imgMap.set('other', require('/public/images/running/other.png'));
 imgMap.set('obj', require('/public/images/running/obj.png'));
 
+const imgList = ['.jpg', '.png', '.swf', '.tiff'];
+const videoList = ['.m3u8', '.flv', '.mp4', '.rmvb', '.mvb'];
+const fileList = ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'];
+
+export const getType = (url: string) => {
+  let t: string = '';
+  [...imgList, ...videoList, ...fileList].map((item) => {
+    const str = item.slice(1, item.length);
+    if (url.indexOf(str) !== -1) {
+      if (imgList.includes(item)) {
+        t = 'img';
+      } else if (videoList.includes(item)) {
+        t = 'video';
+      } else {
+        t = str;
+      }
+    }
+  });
+  return t;
+};
+
 const FileComponent = (props: Props) => {
   const { data, value } = props;
   const [type, setType] = useState<string>('other');
@@ -33,7 +54,7 @@ const FileComponent = (props: Props) => {
   const [temp, setTemp] = useState<boolean>(false);
 
   const renderFile = () => {
-    if (['.jpg', '.png', '.swf', '.tiff'].some((item) => value?.formatValue.includes(item))) {
+    if (imgList.some((item) => value?.formatValue.includes(item))) {
       // 图片
       return (
         <div
@@ -61,9 +82,7 @@ const FileComponent = (props: Props) => {
         </div>
       );
     }
-    if (
-      ['.m3u8', '.flv', '.mp4', '.rmvb', '.mvb'].some((item) => value?.formatValue.includes(item))
-    ) {
+    if (videoList.some((item) => value?.formatValue.includes(item))) {
       return (
         <div
           className={props.type === 'card' ? styles.cardValue : styles.otherValue}
@@ -83,18 +102,33 @@ const FileComponent = (props: Props) => {
           <img src={imgMap.get('video')} />
         </div>
       );
-    } else if (
-      ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].some((item) =>
-        value?.formatValue.includes(item),
-      )
-    ) {
-      const flag =
-        ['.txt', '.doc', '.xls', '.pdf', '.ppt', '.docx', '.xlsx', '.pptx'].find((item) =>
-          value?.formatValue.includes(item),
-        ) || '--';
+    } else if (fileList.some((item) => value?.formatValue.includes(item))) {
+      const flag = fileList.find((item) => value?.formatValue.includes(item)) || '--';
       return (
         <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
           <img src={imgMap.get(flag.slice(1))} />
+        </div>
+      );
+    } else {
+      return (
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
+          <img src={imgMap.get('other')} />
+        </div>
+      );
+    }
+  };
+
+  const base64Render = () => {
+    const _type = getType(value?.formatValue);
+    if (!!_type) {
+      return (
+        <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
+          <img
+            src={imgMap.get(_type)}
+            onError={(e: any) => {
+              e.target.src = imgMap.get('other');
+            }}
+          />
         </div>
       );
     } else {
@@ -116,16 +150,15 @@ const FileComponent = (props: Props) => {
         data?.valueType?.fileType === 'base64' ||
         data?.valueType?.fileType === 'Binary(二进制)'
       ) {
-        return (
-          <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
-            <img
-              src={value?.formatValue}
-              onError={(e: any) => {
-                e.target.src = imgMap.get('other');
-              }}
-            />
-          </div>
-        );
+        if (data?.valueType?.fileType === 'base64') {
+          return base64Render();
+        } else {
+          return (
+            <div className={props.type === 'card' ? styles.cardValue : styles.otherValue}>
+              <img src={imgMap.get('other')} />
+            </div>
+          );
+        }
       } else {
         return renderFile();
       }

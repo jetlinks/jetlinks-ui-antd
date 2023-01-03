@@ -669,10 +669,10 @@ const Save = observer(() => {
         },
         enum: [
           { value: 'DIRECT', label: '不处理' },
-          { value: 'delimited', label: '分隔符' },
-          { value: 'script', label: '自定义脚本' },
-          { value: 'fixed_length', label: '固定长度' },
-          { value: 'length', label: '长度' },
+          { value: 'DELIMITED', label: '分隔符' },
+          { value: 'SCRIPT', label: '自定义脚本' },
+          { value: 'FIXED_LENGTH', label: '固定长度' },
+          { value: 'LENGTH_FIELD', label: '长度字段' },
         ],
         'x-reactions': {
           dependencies: ['type'],
@@ -701,7 +701,8 @@ const Save = observer(() => {
             dependencies: ['.parserType'],
             fulfill: {
               state: {
-                visible: '{{["delimited", "script", "fixed_length", "length"].includes($deps[0])}}',
+                visible:
+                  '{{["DELIMITED", "SCRIPT", "FIXED_LENGTH", "LENGTH_FIELD"].includes($deps[0])}}',
               },
             },
           },
@@ -731,7 +732,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "delimited"}}',
+                    visible: '{{$deps[0] === "DELIMITED"}}',
                   },
                 },
               },
@@ -761,7 +762,7 @@ const Save = observer(() => {
                 fulfill: {
                   state: {
                     // visible: '{{$deps[0] === "script"}}',
-                    value: '{{$deps[0] === "script" ? "javascript" : ""}}',
+                    value: '{{$deps[0] === "SCRIPT" ? "javascript" : ""}}',
                   },
                 },
               },
@@ -797,7 +798,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "script"}}',
+                    visible: '{{$deps[0] === "SCRIPT"}}',
                   },
                 },
               },
@@ -827,7 +828,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "fixed_length"}}',
+                    visible: '{{$deps[0] === "FIXED_LENGTH"}}',
                   },
                 },
               },
@@ -858,7 +859,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "length"}}',
+                    visible: '{{$deps[0] === "LENGTH_FIELD"}}',
                   },
                 },
               },
@@ -892,7 +893,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "length"}}',
+                    visible: '{{$deps[0] === "LENGTH_FIELD"}}',
                   },
                 },
               },
@@ -921,7 +922,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "length"}}',
+                    visible: '{{$deps[0] === "LENGTH_FIELD"}}',
                   },
                 },
               },

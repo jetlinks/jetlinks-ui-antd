@@ -76,7 +76,7 @@ export default (props: NoticeCardProps) => {
             {/*</span>*/}
             <Ellipsis title={props.name} titleClassName={'card-item-header-name'} />
           </div>
-          <div className={'card-item-content'}>
+          <div className={'card-item-content'} style={{ minHeight: 66 }}>
             <div>
               <label>类型</label>
               <Ellipsis title={props?.type} />

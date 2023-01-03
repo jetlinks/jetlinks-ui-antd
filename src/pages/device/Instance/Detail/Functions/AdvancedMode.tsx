@@ -82,17 +82,13 @@ export default (props: FunctionProps) => {
     }
   };
 
-  const editorDidMountHandle = (editor: any) => {
-    monacoRef.current = editor;
-    editor.getAction('editor.action.formatDocument').run();
-    editor.onDidContentSizeChange?.(() => {
-      editor.getAction('editor.action.formatDocument').run();
-    });
-  };
-
   useEffect(() => {
     handleData(props.data);
   }, [props.data]);
+
+  useEffect(() => {
+    monacoRef.current?.layout();
+  });
 
   return (
     <div className="device-function-content">
@@ -107,7 +103,6 @@ export default (props: FunctionProps) => {
             onChange={(newValue: any) => {
               setValue(newValue);
             }}
-            editorDidMount={editorDidMountHandle}
           />
         </div>
         <div className="button-tool">

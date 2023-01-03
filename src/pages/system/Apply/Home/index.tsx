@@ -1,5 +1,5 @@
 import { Table } from 'antd';
-import MonacoEditor from 'react-monaco-editor';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 import './index.less';
 const Home = () => {
   const data = [
@@ -126,7 +126,7 @@ const Home = () => {
           <div>
             <p>使用和签名相同的算法(不需要对响应结果排序)</p>
             <div>
-              <MonacoEditor
+              <JMonacoEditor
                 width={'100%'}
                 height={620}
                 theme="vs-dark"
@@ -147,7 +147,7 @@ const Home = () => {
         <h3>添加 SDK 依赖</h3>
         <div className="h3-text">将以下Maven依赖加入到pom.xml文件中</div>
         <div>
-          <MonacoEditor
+          <JMonacoEditor
             width={'100%'}
             height={100}
             theme="vs-dark"
@@ -159,7 +159,7 @@ const Home = () => {
         </div>
         <h3>SDK 客户端的初始化和请求方式</h3>
         <div>
-          <MonacoEditor
+          <JMonacoEditor
             width={'100%'}
             height={370}
             theme="vs-dark"
