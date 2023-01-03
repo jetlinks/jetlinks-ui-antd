@@ -1,7 +1,7 @@
 import { Descriptions, Modal } from 'antd';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import { service } from '@/pages/account/NotificationRecord';
+// import { service } from '@/pages/account/NotificationRecord';
 import { service as service1 } from '@/pages/rule-engine/Alarm/Log';
 import { Store } from 'jetlinks-store';
 import ReactJson from 'react-json-view';
@@ -15,7 +15,7 @@ const Detail = (props: Props) => {
   const [data, setDada] = useState<any>({});
 
   useEffect(() => {
-    if (props.data.dataId) {
+    if (props.data?.dataId) {
       service1.queryDefaultLevel().then((resp) => {
         if (resp.status === 200) {
           Store.set('default-level', resp.result?.levels || []);
@@ -23,11 +23,7 @@ const Detail = (props: Props) => {
             const detailJson = props.data.detailJson || '{}';
             setDada(JSON.parse(detailJson));
           } else {
-            service.getAlarmList(props.data.dataId).then((res) => {
-              if (res.status === 200) {
-                setDada(res.result);
-              }
-            });
+            setDada(props.data?.detail || props.data);
           }
         }
       });
@@ -63,13 +59,16 @@ const Detail = (props: Props) => {
         </Descriptions.Item>
         <Descriptions.Item label="告警流水" span={2}>
           <div style={{ maxHeight: 400, overflowY: 'auto' }}>
-            <ReactJson
-              enableClipboard={false}
-              displayObjectSize={false}
-              displayDataTypes={false}
-              name={false}
-              src={JSON.parse(data?.alarmInfo || '{}')}
-            />
+            {
+              // @ts-ignore
+              <ReactJson
+                enableClipboard={false}
+                displayObjectSize={false}
+                displayDataTypes={false}
+                name={false}
+                src={JSON.parse(data?.alarmInfo || '{}')}
+              />
+            }
           </div>
         </Descriptions.Item>
       </Descriptions>

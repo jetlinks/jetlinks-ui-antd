@@ -672,7 +672,7 @@ const Save = observer(() => {
           { value: 'delimited', label: '分隔符' },
           { value: 'script', label: '自定义脚本' },
           { value: 'fixed_length', label: '固定长度' },
-          { value: 'length', label: '长度' },
+          { value: 'length', label: '长度字段' },
         ],
         'x-reactions': {
           dependencies: ['type'],
