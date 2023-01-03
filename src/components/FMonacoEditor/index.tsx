@@ -47,7 +47,7 @@ export const JMonacoEditor = (props: Props) => {
             }
           }}
           {...props}
-          options={{ wordWrap: 'on' }}
+          options={{ wordWrap: 'on', automaticLayout: true }}
           editorDidMount={editorDidMountHandle}
         />
       )}

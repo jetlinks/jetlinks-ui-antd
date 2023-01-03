@@ -34,62 +34,74 @@ const WritePoint = (props: Props) => {
       createForm({
         effects() {
           onFormInit((f) => {
-            let valueType: string =
-              props.data?.provider === 'OPC_UA'
-                ? props?.data?.configuration?.type || 'Number'
-                : props.data?.configuration?.codec?.provider || 'int8';
-            valueType = valueType.toLocaleLowerCase();
-            switch (valueType) {
-              case 'boolean':
-                f.setFieldState('propertyValue', async (state) => {
-                  state.dataSource = [
-                    {
-                      label: '是',
-                      value: true,
-                    },
-                    {
-                      label: '否',
-                      value: false,
-                    },
-                  ];
-                  state.componentProps = {
-                    placeholder: '请选择',
-                  };
-                  state.componentType = 'Select';
-                });
-                break;
-              case 'int8':
-              case 'int16':
-              case 'int32':
-              case 'int64':
-              case 'ieee754_float':
-              case 'ieee754_double':
-              case 'hex':
-              case 'number':
-                f.setFieldState('propertyValue', (state) => {
-                  state.componentType = 'NumberPicker';
-                  state.componentProps = {
-                    placeholder: '请输入',
-                  };
-                });
-                break;
-              case 'date':
-                f.setFieldState('propertyValue', (state) => {
-                  state.componentType = 'DatePicker';
-                  state.componentProps = {
-                    placeholder: '请选择',
-                    format: 'YYYY-MM-DD HH:mm:ss',
-                  };
-                });
-                break;
-              default:
-                f.setFieldState('propertyValue', (state) => {
-                  state.componentType = 'Input';
-                  state.componentProps = {
-                    placeholder: '请输入',
-                  };
-                });
-                break;
+            if (
+              props.data?.provider === 'MODBUS_TCP' &&
+              props.data?.configuration.function === 'Coils'
+            ) {
+              f.setFieldState('propertyValue', (state) => {
+                state.componentType = 'Input.TextArea';
+                state.componentProps = {
+                  placeholder: '请输入',
+                };
+              });
+            } else {
+              let valueType: string =
+                props.data?.provider === 'OPC_UA'
+                  ? props?.data?.configuration?.type || 'Number'
+                  : props.data?.configuration?.codec?.provider || 'int8';
+              valueType = valueType.toLocaleLowerCase();
+              switch (valueType) {
+                case 'boolean':
+                  f.setFieldState('propertyValue', async (state) => {
+                    state.dataSource = [
+                      {
+                        label: '是',
+                        value: true,
+                      },
+                      {
+                        label: '否',
+                        value: false,
+                      },
+                    ];
+                    state.componentProps = {
+                      placeholder: '请选择',
+                    };
+                    state.componentType = 'Select';
+                  });
+                  break;
+                case 'int8':
+                case 'int16':
+                case 'int32':
+                case 'int64':
+                case 'ieee754_float':
+                case 'ieee754_double':
+                case 'hex':
+                case 'number':
+                  f.setFieldState('propertyValue', (state) => {
+                    state.componentType = 'NumberPicker';
+                    state.componentProps = {
+                      placeholder: '请输入',
+                    };
+                  });
+                  break;
+                case 'date':
+                  f.setFieldState('propertyValue', (state) => {
+                    state.componentType = 'DatePicker';
+                    state.componentProps = {
+                      placeholder: '请选择',
+                      format: 'YYYY-MM-DD HH:mm:ss',
+                    };
+                  });
+                  break;
+                default:
+                  f.setFieldState('propertyValue', (state) => {
+                    state.componentType = 'Input';
+                    state.componentProps = {
+                      placeholder: '请输入',
+                    };
+                  });
+                  break;
+              }
             }
           });
         },

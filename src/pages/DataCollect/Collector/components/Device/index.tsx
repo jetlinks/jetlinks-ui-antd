@@ -415,8 +415,8 @@ export default observer((props: Props) => {
       {CollectorModel.visible && (
         <Save
           data={CollectorModel.current}
-          channelId={props.id}
-          provider={props.provider || CollectorModel.current?.provider}
+          // channelId={props.id}
+          // provider={props.provider || CollectorModel.current?.provider}
           close={() => {
             CollectorModel.visible = false;
           }}

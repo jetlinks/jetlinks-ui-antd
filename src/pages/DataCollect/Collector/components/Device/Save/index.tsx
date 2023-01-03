@@ -127,6 +127,7 @@ export default (props: Props) => {
             'x-component-props': {
               placeholder: '请选择所属通道',
             },
+            'x-disabled': !!props.data?.id,
             'x-validator': [
               {
                 required: true,
