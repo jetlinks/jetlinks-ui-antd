@@ -223,7 +223,8 @@ const Member = observer((props: { parentId: string }) => {
         search={false}
         rowKey="id"
         columnEmptyText={''}
-        request={(params) => {
+        request={async (params) => {
+          delete params.total;
           params.sorts = [{ name: 'createTime', order: 'desc' }];
           if (!props.parentId) {
             return {
@@ -237,7 +238,26 @@ const Member = observer((props: { parentId: string }) => {
               status: 200,
             };
           }
-          return service.queryUser(params);
+          const resp: any = await service.queryUser(params);
+
+          // if(resp?.result?.data?.length === 0 && resp?.result?.pageIndex > 0){
+          //   const newParams ={
+          //     ...params,
+          //     pageIndex: resp?.result?.pageIndex - 1,
+          //     current: resp?.result?.current - 1
+          //   }
+          //   resp = await service.queryUser(newParams);
+          //   actionRef.current?.setPageInfo({
+          //     current: newParams.current,
+          //     pageIndex: newParams.pageIndex
+          //   })
+          // }
+
+          return {
+            code: resp.status,
+            result: resp.result,
+            status: resp.status,
+          };
         }}
         tableAlertRender={({ selectedRowKeys }) => <div>已选择 {selectedRowKeys.length} 项</div>}
         tableAlertOptionRender={() => {

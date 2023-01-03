@@ -170,7 +170,6 @@ const ProTableCard = <
     if (pageSize !== size) {
       _current = 1;
     }
-    // console.log(_current);
     setCurrent(_current);
     setPageIndex(_current - 1);
     setPageSize(size);
@@ -226,7 +225,17 @@ const ProTableCard = <
         options={model === ModelEnum.CARD ? false : { ...props.options, fullScreen: false }}
         request={async (param, sort, filter) => {
           if (request) {
-            const resp = await request(param, sort, filter);
+            delete param.total; //不传总数，不传则需要后端重新更新
+            let resp = await request(param, sort, filter);
+            if (resp.result.data.length === 0 && resp.result.pageIndex > 0) {
+              const newParam = {
+                ...param,
+                current: param.current - 1,
+                pageIndex: param.pageIndex - 1,
+              };
+              pageChange(newParam.current, newParam.pageSize);
+              resp = await request(newParam, sort, filter);
+            }
             setLoading(false);
             setTotal(resp.result ? resp.result.total : 0);
             return {
