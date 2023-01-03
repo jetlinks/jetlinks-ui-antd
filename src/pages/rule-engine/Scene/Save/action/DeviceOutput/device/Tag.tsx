@@ -2,6 +2,7 @@ import { Button, Col, DatePicker, Input, InputNumber, Row, Select, Space } from 
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import './index.less';
 
 interface TagModalProps {
   tagData: any[];
@@ -98,6 +99,9 @@ export default (props: TagModalProps) => {
             placeholder={'请选择' + name}
             onChange={(key) => {
               record.value = key;
+              if (key) {
+                onChange();
+              }
             }}
           />
         );
@@ -113,6 +117,9 @@ export default (props: TagModalProps) => {
             placeholder={'请选择' + name}
             onChange={(key) => {
               record.value = key;
+              if (key) {
+                onChange();
+              }
             }}
           />
         );
@@ -127,6 +134,9 @@ export default (props: TagModalProps) => {
             placeholder={'请输入' + name}
             onChange={(key) => {
               record.value = key;
+              if (key) {
+                onChange();
+              }
             }}
           />
         );
@@ -141,6 +151,9 @@ export default (props: TagModalProps) => {
                 style={{ width: '100%' }}
                 onChange={(_, date) => {
                   record.value = date;
+                  if (date) {
+                    onChange();
+                  }
                 }}
               />
             }
@@ -152,7 +165,10 @@ export default (props: TagModalProps) => {
             value={record.value}
             placeholder={'请输入标签值'}
             onChange={(e) => {
-              record.value = e.target.value;
+              if (type && e.target.value) {
+                record.value = e.target.value;
+                onChange();
+              }
             }}
           />
         );
@@ -161,16 +177,12 @@ export default (props: TagModalProps) => {
 
   return (
     <>
-      <div
-        onChange={() => {
-          onChange();
-        }}
-      >
+      <div>
         {tagList.map((tag, index) => (
           <Row gutter={12} key={tag.id || index} style={{ marginBottom: 12 }}>
             <Col span={4}>
               {index === 0 ? (
-                <span>标签选择</span>
+                <span className="tagName">标签选择</span>
               ) : (
                 <Select
                   value={tag.type}

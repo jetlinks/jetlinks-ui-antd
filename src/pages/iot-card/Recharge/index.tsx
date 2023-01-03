@@ -4,7 +4,6 @@ import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import { ExclamationCircleOutlined, EyeOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable, { ActionType, ProColumns } from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
 import moment from 'moment';
 import { useRef, useState } from 'react';
 import Service from '../CardManagement/service';
@@ -81,17 +80,31 @@ const Recharge = () => {
       width: 200,
       hideInSearch: true,
       render: (_, record) => [
-        <a
-          key="editable"
+        <PermissionButton
           onClick={() => {
             setDetail(true);
             setCurrent(record);
           }}
+          isPermission={permission.view}
+          key="view"
+          type="link"
+          tooltip={{
+            title: '查看',
+          }}
         >
-          <Tooltip title="查看">
-            <EyeOutlined />
-          </Tooltip>
-        </a>,
+          <EyeOutlined />
+        </PermissionButton>,
+        // <a
+        //   key="editable"
+        //   onClick={() => {
+        //     setDetail(true);
+        //     setCurrent(record);
+        //   }}
+        // >
+        //   <Tooltip title="查看">
+        //     <EyeOutlined />
+        //   </Tooltip>
+        // </a>,
       ],
     },
   ];
