@@ -2872,6 +2872,16 @@ export default [
         permissions: [],
         buttons: [
           {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'system_config',
+                actions: ['query'],
+              },
+            ],
+          },
+          {
             id: 'update',
             name: '保存',
             permissions: [

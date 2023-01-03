@@ -82,6 +82,14 @@ export default observer((props: Props) => {
                   validator(_, v) {
                     if (!v || (v && !v.length)) {
                       return Promise.reject('至少配置一个执行动作');
+                    } else {
+                      let isActions = false;
+                      v.forEach((item: any) => {
+                        if (item.actions && item.actions.length) {
+                          isActions = true;
+                        }
+                      });
+                      return isActions ? Promise.resolve() : Promise.reject('至少配置一个执行动作');
                     }
                     return Promise.resolve();
                   },
