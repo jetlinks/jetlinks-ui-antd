@@ -366,6 +366,7 @@ export default (props: TreeProps) => {
                           sortIndex: nodeData.children ? nodeData.children.length + 1 : 1,
                         });
                         setVisible(true);
+                        setTreeDataList(treeData);
                       }}
                     >
                       <PlusCircleOutlined />
