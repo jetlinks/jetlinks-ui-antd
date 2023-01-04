@@ -174,7 +174,7 @@ const Detail = observer(() => {
               state1.dataSource = typeList[value];
             });
           });
-          onFieldValueChange('provider', (field, form1) => {
+          onFieldValueChange('provider', async (field, form1) => {
             const value = field.value;
             if (field.modified) {
               form1.setValuesIn('configId', null);
@@ -182,10 +182,10 @@ const Detail = observer(() => {
             }
             const _type = field.query('type').value();
             // 设置绑定配置的数据
+            const _list = await getConfig(_type, value);
             form1.setFieldState('configId', async (state1) => {
-              state1.dataSource = await getConfig(_type, value);
+              state1.dataSource = _list;
             });
-            console.log(_type, value);
             if (_type === 'email') {
               setProviderItem('embedded');
             } else {
@@ -1637,7 +1637,10 @@ const Detail = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
-          rows: 4,
+          rows: 5,
+          placeholder: '请输入说明',
+          showCount: true,
+          maxLength: 200,
         },
         'x-validator': [
           {

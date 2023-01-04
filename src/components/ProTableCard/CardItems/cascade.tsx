@@ -37,7 +37,10 @@ export default (props: CascadeCardProps) => {
           </div>
           <div>通道数量： {props?.count || 0}</div>
           <div style={{ display: 'flex', width: '100%' }}>
-            <Badge status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'} />
+            <Badge
+              style={{ marginRight: 5 }}
+              status={props.onlineStatus?.value === 'offline' ? 'error' : 'success'}
+            />
             {/*<div*/}
             {/*  style={{*/}
             {/*    width: '90%',*/}

@@ -55,14 +55,12 @@ export default (props: Props) => {
             if (value) {
               const dt = channelListRef.current.find((item) => item.id === value);
               channelRef.current = dt;
-              if (dt?.provider && dt?.provider === 'MODBUS_TCP') {
-                f.setFieldState('configuration.unitId', (state) => {
-                  state.visible = true;
-                });
-                f.setFieldState('configuration.endian', (state) => {
-                  state.visible = true;
-                });
-              }
+              f.setFieldState('configuration.unitId', (state) => {
+                state.visible = dt?.provider && dt?.provider === 'MODBUS_TCP';
+              });
+              f.setFieldState('configuration.endian', (state) => {
+                state.visible = dt?.provider && dt?.provider === 'MODBUS_TCP';
+              });
             }
           });
           onFieldReact('circuitBreaker.type', async (field, f) => {

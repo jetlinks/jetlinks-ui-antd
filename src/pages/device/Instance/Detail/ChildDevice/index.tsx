@@ -1,7 +1,7 @@
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import type { LogItem } from '@/pages/device/Instance/Detail/Log/typings';
-import { Badge, Button, Card, Popconfirm, Tooltip } from 'antd';
+import { Badge, Card, Tooltip } from 'antd';
 import { DisconnectOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { InstanceModel, service } from '@/pages/device/Instance';
@@ -14,6 +14,7 @@ import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useDomFullHeight } from '@/hooks';
 import { onlyMessage } from '@/utils/util';
 import SaveChild from './SaveChild';
+import PermissionButton from '../../../../../components/PermissionButton';
 
 const statusMap = new Map();
 statusMap.set('online', 'success');
@@ -32,6 +33,7 @@ const ChildDevice = (props: Props) => {
   const [bindKeys, setBindKeys] = useState<any[]>([]);
   const [childVisible, setChildVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
+  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
 
   const { minHeight } = useDomFullHeight(`.device-detail-childDevice`);
 
@@ -149,30 +151,63 @@ const ChildDevice = (props: Props) => {
             <SearchOutlined />
           </Tooltip>
         </Link>,
-        <a key="unbind">
-          <Popconfirm
-            onConfirm={() => {
+        // <a key="unbind">
+        //   <Popconfirm
+        //     onConfirm={() => {
+        //       unBindSingleDevice(record.id);
+        //     }}
+        //     title={'确认解绑吗？'}
+        //   >
+        //     <Tooltip title={'解绑'}>
+        //       <DisconnectOutlined />
+        //     </Tooltip>
+        //   </Popconfirm>
+        // </a>,
+        <PermissionButton
+          key="unbind"
+          type={'link'}
+          popConfirm={{
+            title: '确认解绑吗?',
+            onConfirm: async () => {
               unBindSingleDevice(record.id);
-            }}
-            title={'确认解绑吗？'}
-          >
-            <Tooltip title={'解绑'}>
-              <DisconnectOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            },
+          }}
+          tooltip={{
+            title: devicePermission.update ? '解绑' : '暂无权限，请联系管理员',
+          }}
+          style={{ padding: 0 }}
+          isPermission={devicePermission.update}
+        >
+          <DisconnectOutlined />
+        </PermissionButton>,
         <>
           {props.data.accessProvider === 'official-edge-gateway' && (
-            <a
+            // <a
+            //   onClick={() => {
+            //     setCurrent(record);
+            //     setChildVisible(true);
+            //   }}
+            // >
+            //   <Tooltip title={'编辑'} key={'edit'}>
+            //     <EditOutlined />
+            //   </Tooltip>
+            // </a>
+            <PermissionButton
+              key={'edit'}
+              type={'link'}
               onClick={() => {
                 setCurrent(record);
                 setChildVisible(true);
               }}
+              tooltip={{
+                placement: 'top',
+                title: devicePermission.update ? '编辑' : '暂无权限，请联系管理员',
+              }}
+              style={{ padding: 0 }}
+              isPermission={devicePermission.update}
             >
-              <Tooltip title={'编辑'} key={'edit'}>
-                <EditOutlined />
-              </Tooltip>
-            </a>
+              <EditOutlined />
+            </PermissionButton>
           )}
         </>,
       ],
@@ -227,32 +262,79 @@ const ChildDevice = (props: Props) => {
             toolBarRender={() => [
               <>
                 {props.data.accessProvider === 'official-edge-gateway' && (
-                  <Button
+                  // <Button
+                  //   onClick={() => {
+                  //     // actionRef.current?.reset?.();
+                  //     setCurrent({});
+                  //     setChildVisible(true);
+                  //   }}
+                  //   key="save"
+                  //   type="primary"
+                  // >
+                  //   新增并绑定
+                  // </Button>
+                  <PermissionButton
+                    key={'edit'}
+                    type={'primary'}
                     onClick={() => {
-                      // actionRef.current?.reset?.();
                       setCurrent({});
                       setChildVisible(true);
                     }}
-                    key="save"
-                    type="primary"
+                    tooltip={{
+                      placement: 'top',
+                      title: devicePermission.update ? '' : '暂无权限，请联系管理员',
+                    }}
+                    isPermission={devicePermission.update}
                   >
                     新增并绑定
-                  </Button>
+                  </PermissionButton>
                 )}
               </>,
-              <Button
+              // <Button
+              //   onClick={() => {
+              //     setVisible(true);
+              //     actionRef.current?.reset?.();
+              //   }}
+              //   key="bind"
+              //   type="primary"
+              // >
+              //   绑定
+              // </Button>,
+              <PermissionButton
+                key={'bind'}
+                type={'primary'}
                 onClick={() => {
                   setVisible(true);
                   actionRef.current?.reset?.();
                 }}
-                key="bind"
-                type="primary"
+                tooltip={{
+                  placement: 'top',
+                  title: devicePermission.update ? '' : '暂无权限，请联系管理员',
+                }}
+                isPermission={devicePermission.update}
               >
                 绑定
-              </Button>,
-              <Popconfirm key="unbind" onConfirm={handleUnBind} title={'确认解绑吗？'}>
-                <Button>批量解绑</Button>
-              </Popconfirm>,
+              </PermissionButton>,
+              // <Popconfirm key="unbind" onConfirm={handleUnBind} title={'确认解绑吗？'}>
+              //   <Button>批量解绑</Button>
+              // </Popconfirm>,
+              <PermissionButton
+                key={'unbind'}
+                type={'primary'}
+                popConfirm={{
+                  title: '确认解绑吗?',
+                  onConfirm: async () => {
+                    handleUnBind();
+                  },
+                }}
+                tooltip={{
+                  placement: 'top',
+                  title: devicePermission.update ? '' : '暂无权限，请联系管理员',
+                }}
+                isPermission={devicePermission.update}
+              >
+                批量解绑
+              </PermissionButton>,
             ]}
             pagination={{
               pageSize: 10,
