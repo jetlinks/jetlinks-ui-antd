@@ -23,6 +23,7 @@ import { service } from '@/pages/system/User';
 import { Modal, PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import { onlyMessage } from '@/utils/util';
+import { getMenuPathByCode } from '@/utils/menu';
 
 interface Props {
   model: 'add' | 'edit' | 'query';
@@ -42,6 +43,9 @@ const Save = (props: Props) => {
   const getRole = () => service.queryRoleList();
 
   const getOrg = () => service.queryOrgList({ paging: false });
+
+  const departmentPath = getMenuPathByCode('system/Department');
+  const rolePath = getMenuPathByCode('system/Role');
 
   const useAsyncDataSource = (api: any) => (field: Field) => {
     field.loading = true;
@@ -342,9 +346,9 @@ const Save = (props: Props) => {
                   type="primary"
                   ghost
                   style={{ padding: '0 8px' }}
-                  isPermission={rolePermission.add}
+                  isPermission={rolePermission.add && !!rolePath}
                   onClick={() => {
-                    const tab: any = window.open(`${origin}/#/system/role?save=true`);
+                    const tab: any = window.open(`${origin}/#${rolePath}?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
                       form.setFieldState('roleIdList', async (state) => {
                         state.dataSource = await getRole().then((resp) =>
@@ -390,9 +394,9 @@ const Save = (props: Props) => {
                   type="primary"
                   ghost
                   style={{ padding: '0 8px' }}
-                  isPermission={deptPermission.add}
+                  isPermission={deptPermission.add && !!departmentPath}
                   onClick={() => {
-                    const tab: any = window.open(`${origin}/#/system/department?save=true`);
+                    const tab: any = window.open(`${origin}/#${departmentPath}?save=true`);
                     tab!.onTabSaveSuccess = (value: any) => {
                       form.setFieldState('orgIdList', async (state) => {
                         state.dataSource = await getOrg().then((resp) =>

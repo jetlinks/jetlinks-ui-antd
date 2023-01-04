@@ -56,7 +56,7 @@ export default [
         permissions: [],
         children: [
           {
-            code: 'notice',
+            code: 'notice/Config',
             name: '通知配置',
             owner: 'iot',
             //parentId: '1',
@@ -208,7 +208,7 @@ export default [
             ],
           },
           {
-            code: 'notice',
+            code: 'notice/Template',
             name: '通知模板',
             owner: 'iot',
             //parentId: '1',
@@ -1024,16 +1024,16 @@ export default [
                   },
                 ],
               },
-              {
-                id: 'action',
-                name: '启/禁用',
-                permissions: [
-                  {
-                    permission: 'protocol-supports',
-                    actions: ['enable', 'disable', 'query', 'save'],
-                  },
-                ],
-              },
+              // {
+              //   id: 'action',
+              //   name: '启/禁用',
+              //   permissions: [
+              //     {
+              //       permission: 'protocol-supports',
+              //       actions: ['enable', 'disable', 'query', 'save'],
+              //     },
+              //   ],
+              // },
               {
                 id: 'delete',
                 name: '删除',
@@ -3299,16 +3299,17 @@ export default [
               },
             ],
           },
-          {
-            id: 'setting',
-            name: '配置',
-            permissions: [
-              {
-                permission: 'menu',
-                actions: ['query', 'save', 'grant'],
-              },
-            ],
-          },
+          // 超管才具备该权限
+          // {
+          //   id: 'setting',
+          //   name: '配置',
+          //   permissions: [
+          //     {
+          //       permission: 'menu',
+          //       actions: ['query', 'save', 'grant'],
+          //     },
+          //   ],
+          // },
           {
             id: 'update',
             name: '编辑',

@@ -562,6 +562,7 @@ const Edit = observer((props: Props) => {
             'x-component': 'Select',
             enum: PropertySource,
             'x-visible': props.type === 'product',
+            default: 'device',
           },
           'virtualRule.type': {
             type: 'string',

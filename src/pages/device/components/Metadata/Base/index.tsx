@@ -93,7 +93,7 @@ const BaseMetadata = observer((props: Props) => {
             }
           }}
           tooltip={{
-            title: operateLimits('add', type) ? '暂不支持' : '编辑',
+            title: operateLimits('updata', type) ? '当前的存储方式不支持编辑' : '编辑',
           }}
         >
           <EditOutlined />
@@ -211,7 +211,7 @@ const BaseMetadata = observer((props: Props) => {
             icon={<PlusOutlined />}
             type="primary"
             tooltip={{
-              title: operateLimits('add', type) ? '暂不支持' : '新增',
+              title: operateLimits('add', type) ? '当前的存储方式不支持新增' : '新增',
             }}
           >
             {intl.formatMessage({

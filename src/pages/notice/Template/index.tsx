@@ -113,10 +113,7 @@ const Template = observer(() => {
           tooltip={{ title: '导出' }}
           isPermission={templatePermission.export}
           onClick={() => {
-            downloadObject(
-              record,
-              `${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
-            );
+            downloadObject(record, `${record.name}-${moment(new Date()).format('YYYY_MM_DD')}`);
           }}
         >
           <ArrowDownOutlined />

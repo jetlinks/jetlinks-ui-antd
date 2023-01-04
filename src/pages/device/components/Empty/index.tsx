@@ -14,11 +14,11 @@ export default () => {
 
   if (!isIndependent) {
     if (!permission.update) {
-      description = <span>请联系管理员配置物模型属性</span>;
+      description = <span>请联系管理员配置对应产品的物模型功能</span>;
     } else {
       description = (
         <span>
-          暂无数据, 请前往产品配置
+          请配置对应产品的
           <Button
             style={{ margin: 0, padding: '0 4px' }}
             type={'link'}
@@ -26,7 +26,7 @@ export default () => {
               history.push(`${path}?key=metadata`);
             }}
           >
-            物模型
+            物模型属性功能
           </Button>
         </span>
       );

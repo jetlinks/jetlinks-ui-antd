@@ -6,6 +6,7 @@ import moment from 'moment';
 
 type ExportModalType = {
   onCancel: () => void;
+  onOk: () => void;
   keys: string[];
 };
 
@@ -26,6 +27,7 @@ const ExportModal = (props: ExportModalType) => {
           `物联卡管理-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
           type.current,
         );
+        props.onOk?.();
       }
     });
   };
