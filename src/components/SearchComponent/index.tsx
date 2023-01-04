@@ -601,6 +601,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       // 展开高级搜索
       setExpand(false);
       handleForm(true);
+    } else {
+      setExpand(true);
+      handleForm(false);
     }
     const params = new URLSearchParams(_location.search);
     params.delete('q');
@@ -663,15 +666,17 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     <Menu className={styles.history}>
       {history.length > 0 ? (
         history.map((item: SearchHistory) => (
-          <Menu.Item
-            key={item.id || randomString(9)}
-            onClick={() => {
-              handleHistory(item);
-              handleSearch();
-            }}
-          >
+          <Menu.Item key={item.id || randomString(9)}>
             <div className={styles.list}>
-              <Typography.Text className={styles['list-text']} ellipsis={{ tooltip: item.name }}>
+              <Typography.Text
+                className={styles['list-text']}
+                ellipsis={{ tooltip: item.name }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleHistory(item);
+                  handleSearch();
+                }}
+              >
                 {item.name}
               </Typography.Text>
               <Popconfirm

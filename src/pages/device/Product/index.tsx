@@ -254,7 +254,7 @@ const Product = observer(() => {
     {
       title: '名称',
       dataIndex: 'name',
-      width: 200,
+      width: 220,
       ellipsis: true,
     },
     {
@@ -291,7 +291,7 @@ const Product = observer(() => {
     {
       title: '接入方式',
       dataIndex: 'accessName',
-      width: 150,
+      width: 220,
       ellipsis: true,
       valueType: 'select',
       // render: (_, row) => {
@@ -363,7 +363,6 @@ const Product = observer(() => {
         defaultMessage: '说明',
       }),
       ellipsis: true,
-      width: 300,
       // hideInSearch: true,
     },
     {

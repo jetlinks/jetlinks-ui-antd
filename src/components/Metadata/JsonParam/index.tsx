@@ -15,6 +15,7 @@ import Editable from '../EditTable';
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
   keys?: string;
+  isFunction?: boolean;
 }
 
 const JsonParam = observer((props: Props) => {
@@ -255,7 +256,9 @@ const JsonParam = observer((props: Props) => {
                           dependencies: ['..valueType.type'],
                           fulfill: {
                             state: {
-                              visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                              visible:
+                                !props.isFunction &&
+                                "{{['int','float','long','double'].includes($deps[0])}}",
                             },
                           },
                         },
@@ -318,7 +321,9 @@ const JsonParam = observer((props: Props) => {
                             dependencies: ['..type'],
                             fulfill: {
                               state: {
-                                visible: "{{['string','password'].includes($deps[0])}}",
+                                visible:
+                                  !props.isFunction &&
+                                  "{{['string','password'].includes($deps[0])}}",
                               },
                             },
                           },
@@ -354,7 +359,7 @@ const JsonParam = observer((props: Props) => {
                     dependencies: ['..valueType.type'],
                     fulfill: {
                       state: {
-                        visible: "{{['float','double'].includes($deps[0])}}",
+                        visible: !props.isFunction && "{{['float','double'].includes($deps[0])}}",
                       },
                     },
                   },
@@ -365,6 +370,9 @@ const JsonParam = observer((props: Props) => {
                   'x-visible': false,
                   'x-decorator': 'FormItem',
                   'x-component': 'JsonParam',
+                  'x-component-props': {
+                    isFunction: props.isFunction,
+                  },
                   'x-reactions': {
                     dependencies: ['.valueType.type'],
                     fulfill: {
