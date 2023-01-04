@@ -290,6 +290,7 @@ export default (props: ButtonsProps) => {
             resetForm();
             setVisible(false);
           }}
+          bodyStyle={{ paddingBottom: 0 }}
           confirmLoading={loading}
         >
           <Form form={form} layout={'vertical'}>
@@ -340,6 +341,9 @@ export default (props: ButtonsProps) => {
                 defaultMessage: '权限',
               })}
               required={true}
+              style={{
+                marginBottom: 0,
+              }}
             >
               <Input
                 allowClear

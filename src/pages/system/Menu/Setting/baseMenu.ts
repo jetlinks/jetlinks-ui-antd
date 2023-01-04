@@ -2768,11 +2768,11 @@ export default [
           { permission: 'media-channel', actions: ['query', 'save', 'delete'] },
         ],
         buttons: [
-          {
-            id: 'view',
-            name: '查看',
-            permissions: [{ permission: 'media-device', actions: ['query'] }],
-          },
+          // {
+          //   id: 'view',
+          //   name: '查看',
+          //   permissions: [{ permission: 'media-device', actions: ['query'] }],
+          // },
         ],
       },
       {

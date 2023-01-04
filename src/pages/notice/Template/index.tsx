@@ -49,7 +49,7 @@ const Template = observer(() => {
   // const id = (location as any).query?.id;
   const actionRef = useRef<ActionType>();
 
-  const { permission: templatePermission } = usePermissions('notice');
+  const { permission: templatePermission } = usePermissions('notice/Config');
 
   const columns: ProColumns<TemplateItem>[] = [
     {
