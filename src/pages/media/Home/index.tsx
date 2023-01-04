@@ -109,12 +109,12 @@ export default () => {
               {
                 name: '设备数量',
                 value: deviceTotal || 0,
-                children: require('/public/images/home/top-1.png'),
+                children: require('/public/images/home/top-1.svg'),
               },
               {
                 name: '通道数量',
                 value: channelTotal || 0,
-                children: require('/public/images/home/top-2.png'),
+                children: require('/public/images/home/top-2.svg'),
               },
             ]}
             extra={

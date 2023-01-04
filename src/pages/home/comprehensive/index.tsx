@@ -150,13 +150,13 @@ const Comprehensive = () => {
                 {
                   name: '产品数量',
                   value: productCount,
-                  children: require('/public/images/home/top-2.png'),
+                  children: require('/public/images/home/top-2.svg'),
                   permission: productMessage,
                 },
                 {
                   name: '设备数量',
                   value: deviceCount,
-                  children: require('/public/images/home/top-1.png'),
+                  children: require('/public/images/home/top-1.svg'),
                   permission: deviceMessage,
                 },
               ]}
