@@ -203,9 +203,18 @@ const Platform = () => {
             </PermissionButton>
           </>
         }
-        request={async (params) =>
-          service.getList({ ...params, sorts: [{ name: 'createTime', order: 'desc' }] })
-        }
+        request={async (params: any) => {
+          delete params?.total;
+          const res = await service.getList({
+            ...params,
+            sorts: [{ name: 'createTime', order: 'desc' }],
+          });
+          return {
+            code: res.status,
+            result: res.result,
+            status: res.status,
+          };
+        }}
       />
     </PageContainer>
   );

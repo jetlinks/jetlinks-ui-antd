@@ -142,7 +142,10 @@ export default observer((props: Props) => {
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
       _options.properties = DeviceModel.propertiesName;
-      _options.propertiesValue = DeviceModel.propertiesValue;
+      _options.propertiesValue =
+        typeof DeviceModel.propertiesValue === 'object'
+          ? JSON.stringify(DeviceModel.propertiesValue)
+          : DeviceModel.propertiesValue;
       _options.columns = DeviceModel.columns;
       _options.otherColumns = DeviceModel.columns;
       const cur: any = Object.values(value.message.properties)?.[0];
