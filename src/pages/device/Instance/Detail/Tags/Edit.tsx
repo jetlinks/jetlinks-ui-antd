@@ -258,18 +258,28 @@ const Edit = (props: Props) => {
           props.close();
         } else {
           const list = (values?.tags || [])
-            .filter((item: any) => item?.key)
+            .filter((item: any) => item?.key && item?.value)
             .map((i: any) => {
               const { dataType, ...extra } = i;
               return { ...extra };
             });
-          const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
-          if (resp.status === 200) {
-            props.refresh();
-            // InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
-            onlyMessage('操作成功！');
-            props.close();
+          if (list.length) {
+            // 填值
+            const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
+            if (resp.status === 200) {
+              onlyMessage('操作成功！');
+            }
           }
+          const _list = (values?.tags || []).filter((item: any) => item?.key && !item?.value);
+          if (_list.length) {
+            // 删除值
+            _list.map(async (item: any) => {
+              if (item.id) {
+                await service.delTags(InstanceModel.detail?.id || '', item.id);
+              }
+            });
+          }
+          props.refresh();
         }
       }}
     >

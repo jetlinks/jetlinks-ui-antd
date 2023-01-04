@@ -397,7 +397,7 @@ const DeviceBoard = () => {
             ]}
             span={6}
           >
-            <img src={require('/public/images/device/device-product.png')} />
+            <img src={require('/public/images/device/device-product.svg')} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title={'设备数量'}
@@ -416,7 +416,7 @@ const DeviceBoard = () => {
             ]}
             span={6}
           >
-            <img src={require('/public/images/device/device-number.png')} />
+            <img src={require('/public/images/device/device-number.svg')} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title={'当前在线'}

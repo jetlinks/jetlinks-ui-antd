@@ -274,6 +274,8 @@ const Cascade = () => {
               if (resp?.status === 200) {
                 onlyMessage('操作成功！');
                 actionRef.current?.reset?.();
+              } else {
+                onlyMessage('操作失败！', 'error');
               }
             },
           }}

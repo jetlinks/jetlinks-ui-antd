@@ -13,6 +13,8 @@ import ChannelCard from '@/components/ProTableCard/CardItems/DataCollect/channel
 import { DeleteOutlined, EditOutlined, PlayCircleOutlined, StopOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import Save from '@/pages/DataCollect/Channel/Save';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import useHistory from '@/hooks/route/useHistory';
 
 const ChannelModel = model<{
   visible: boolean;
@@ -36,6 +38,8 @@ export default observer(() => {
     pageIndex: 0,
     total: 0,
   });
+  const history = useHistory();
+
   const columns: ProColumns<ChannelItem>[] = [
     {
       title: '通道名称',
@@ -280,6 +284,10 @@ export default observer(() => {
                         <DeleteOutlined />
                       </PermissionButton>,
                     ]}
+                    onClick={() => {
+                      const url = getMenuPathByCode(MENUS_CODE['DataCollect/Collector']);
+                      history.push(url, { channelId: record.id });
+                    }}
                   />
                 </Col>
               ))}

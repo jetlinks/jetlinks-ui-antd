@@ -325,10 +325,11 @@ export default observer((props: Props) => {
             setObjVisable(false);
           }}
           ok={(param) => {
+            console.log('------', param);
             if (props.onChange) {
-              props.onChange(JSON.stringify(param));
+              props.onChange(JSON.parse(param));
             }
-            setValue(JSON.stringify(param));
+            setValue(param);
             setObjVisable(false);
           }}
         />

@@ -24,13 +24,13 @@ const Publish = (props: Props) => {
     const errMessages: any[] = [];
     const _terms = {
       deviceId: (props.list || []).map((item) => item.id),
-      // params: {
-      name: props.data.name,
-      targetId: props.data.targetId,
-      targetType: props.data.targetType,
-      category: props.data.category,
-      metadata: encodeURIComponent(props.data?.metadata || ''),
-      // }
+      params: JSON.stringify({
+        name: props.data.name,
+        targetId: props.data.targetId,
+        targetType: props.data.targetType,
+        category: props.data.category,
+        metadata: encodeURIComponent(props.data?.metadata || ''),
+      }),
     };
     const url = new URLSearchParams();
     Object.keys(_terms).forEach((key) => {
@@ -45,7 +45,7 @@ const Publish = (props: Props) => {
     const source = new EventSourcePolyfill(
       `/${
         SystemConst.API_BASE
-      }/edge/operations/entity-template-save/invoke/_batch?:X_Access_Token=${Token.get()}&${url.toString()}`,
+      }/edge/operations/entity-template-save/invoke/_batch?:X_Access_Token=${Token.get()}&${url}`,
     );
     source.onmessage = (e: any) => {
       const res = JSON.parse(e.data);

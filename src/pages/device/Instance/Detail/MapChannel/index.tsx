@@ -1,7 +1,7 @@
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
 import { FormProvider, createSchemaField } from '@formily/react';
-import { Badge, Button, Card, Spin, Tooltip } from 'antd';
+import { Badge, Card, Spin, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { FormItem, ArrayTable, Editable, Select } from '@formily/antd';
 import PermissionButton from '@/components/PermissionButton';
@@ -21,6 +21,7 @@ interface Props {
 export const service = new Service();
 
 const MapChannel = (props: Props) => {
+  const { permission } = PermissionButton.usePermission('device/Instance');
   const { data, type } = props;
   const { minHeight } = useDomFullHeight('.metadataMap');
   const [empty, setEmpty] = useState<boolean>(false);
@@ -53,7 +54,7 @@ const MapChannel = (props: Props) => {
     const index = ArrayTable.useIndex?.();
     return (
       <PermissionButton
-        isPermission={true}
+        isPermission={permission.update}
         style={{ padding: 0 }}
         disabled={!record(index)?.id}
         tooltip={{
@@ -449,15 +450,32 @@ const MapChannel = (props: Props) => {
       ) : (
         <>
           <div className="top-button">
-            <Button
+            <PermissionButton
               style={{ marginRight: 10 }}
+              isPermission={permission.update}
               onClick={async () => {
                 setVisible(true);
               }}
             >
               批量映射
-            </Button>
-            <Button
+            </PermissionButton>
+            <PermissionButton
+              type="primary"
+              onClick={async () => {
+                setLoading(true);
+                const value: any = await form.submit();
+                const arr = value.requestList.filter((i: any) => i.channelId);
+                if (arr && arr.length !== 0) {
+                  const array = value.requestList.filter((item: any) => item.channelId);
+                  save(array);
+                }
+              }}
+              key={'edit'}
+              isPermission={permission.update}
+            >
+              保存
+            </PermissionButton>
+            {/* <Button
               type="primary"
               onClick={async () => {
                 setLoading(true);
@@ -470,7 +488,7 @@ const MapChannel = (props: Props) => {
               }}
             >
               保存
-            </Button>
+            </Button> */}
           </div>
           <Spin spinning={loading}>
             <div className="array-table">

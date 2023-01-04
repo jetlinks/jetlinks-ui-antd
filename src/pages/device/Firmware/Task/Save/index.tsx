@@ -23,7 +23,7 @@ const Save = (props: Props) => {
   const devices = useRef<DeviceInstance[]>([]);
 
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
     if (data && data.id) {
       setMode(data.mode.value);
     }

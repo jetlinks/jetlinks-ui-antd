@@ -99,7 +99,7 @@ const BaseMetadata = observer((props: Props) => {
           <EditOutlined />
         </PermissionButton>,
         <PermissionButton
-          isPermission={props.permission.update}
+          isPermission={props.permission.delete}
           type="link"
           key={'delete'}
           style={{ padding: 0 }}

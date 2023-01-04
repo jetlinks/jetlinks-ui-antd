@@ -33,7 +33,7 @@ export const getType = (url: string) => {
   let t: string = '';
   [...imgList, ...videoList, ...fileList].map((item) => {
     const str = item.slice(1, item.length);
-    if (url.indexOf(str) !== -1) {
+    if (url && String(url).indexOf(str) !== -1) {
       if (imgList.includes(item)) {
         t = 'img';
       } else if (videoList.includes(item)) {

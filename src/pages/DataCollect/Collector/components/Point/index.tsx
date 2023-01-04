@@ -102,7 +102,7 @@ const PointCard = observer((props: PointCardProps) => {
         setPropertyValue({ ...propertyValue });
       });
   };
-  const handleSearch = (params: any) => {
+  const handleSearch = async (params: any) => {
     if (subRef.current) {
       subRef.current?.unsubscribe();
     }
@@ -111,8 +111,8 @@ const PointCard = observer((props: PointCardProps) => {
     PointModel.list = [];
     setLoading(true);
     setParam(params);
-    service
-      .queryPoint({
+    if (props.data?.id) {
+      const resp = await service.queryPoint({
         ...params,
         terms: [
           ...params?.terms,
@@ -123,14 +123,20 @@ const PointCard = observer((props: PointCardProps) => {
           },
         ],
         sorts: [{ name: 'id', order: 'desc' }],
-      })
-      .then((resp) => {
-        if (resp.status === 200) {
-          setDataSource(resp.result);
-          subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
-        }
-        setLoading(false);
       });
+      if (resp.status === 200) {
+        setDataSource(resp.result);
+        subscribeProperty((resp.result?.data || []).map((item: any) => item.id));
+      }
+    } else {
+      setDataSource({
+        data: [],
+        pageSize: 12,
+        pageIndex: 0,
+        total: 0,
+      });
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -235,7 +241,7 @@ const PointCard = observer((props: PointCardProps) => {
       >
         <div>
           <div style={{ height: '100%', paddingBottom: 48 }}>
-            {props.data?.id !== '*' && (
+            {props.data?.id !== '*' && props.data?.id && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
                 <PermissionButton
                   isPermission={permission.add}
