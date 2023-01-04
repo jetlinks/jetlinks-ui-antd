@@ -20,6 +20,11 @@ export default (props: ReadPropertyProps) => {
         return false;
       })}
       fieldNames={{ label: 'name', value: 'id' }}
+      filterOption={(input: string, option: any) =>
+        option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      }
+      showSearch
+      allowClear
       style={{ width: '100%' }}
       onSelect={(key: any, option: any) => {
         // console.log(key,option)

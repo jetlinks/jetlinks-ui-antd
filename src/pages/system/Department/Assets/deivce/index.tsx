@@ -201,7 +201,7 @@ export default observer((props: { parentId: string }) => {
             setPermissions(record.grantedPermissions!);
             setUpdateVisible(true);
           }}
-          isPermission={permission.edit}
+          isPermission={permission.assert}
         >
           <EditOutlined />
         </PermissionButton>,
@@ -434,8 +434,7 @@ export default observer((props: { parentId: string }) => {
                 onClick={(e) => {
                   e?.stopPropagation();
                 }}
-                // isPermission={permission.bind}
-                isPermission={permission.assert}
+                isPermission={permission.bind}
               >
                 <DisconnectOutlined />
               </PermissionButton>,
@@ -475,7 +474,7 @@ export default observer((props: { parentId: string }) => {
                 defaultMessage: '批量解绑',
               }),
             }}
-            isPermission={permission.assert}
+            isPermission={permission.bind}
           >
             {intl.formatMessage({
               id: 'pages.system.role.option.unBindUser',

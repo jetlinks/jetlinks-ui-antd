@@ -18,7 +18,7 @@ interface Props {
 
 export default (props: Props) => {
   const [propertiesId, setPropertiesId] = useState<string | undefined>(undefined);
-  const [propertiesValue, setPropertiesValue] = useState(undefined);
+  const [propertiesValue, setPropertiesValue] = useState<any>(undefined);
   const [propertiesType, setPropertiesType] = useState('');
   const [source, setSource] = useState<string>('fixed');
   const textRef = useRef<any>('');
@@ -92,6 +92,11 @@ export default (props: Props) => {
             return false;
           })}
           fieldNames={{ label: 'name', value: 'id' }}
+          filterOption={(input: string, option: any) =>
+            option.name.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+          showSearch
+          allowClear
           style={{ width: '100%' }}
           placeholder={'请选择属性'}
           onChange={(e, option) => {
@@ -111,7 +116,11 @@ export default (props: Props) => {
       {propertiesId && (
         <Col span={12}>
           <TypeModel
-            value={propertiesValue}
+            value={
+              typeof propertiesValue === 'object'
+                ? JSON.stringify(propertiesValue)
+                : propertiesValue
+            }
             label={label}
             type={propertiesType}
             name={props.name}

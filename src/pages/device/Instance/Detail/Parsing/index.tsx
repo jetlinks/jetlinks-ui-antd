@@ -185,26 +185,30 @@ const Parsing = (props: Props) => {
                   {topTitle === 'rest' ? (
                     <>
                       当前数据解析内容已脱离产品影响，
-                      <a
+                      <PermissionButton
+                        type="link"
+                        isPermission={permission.update}
                         onClick={() => {
                           rest(props.data.productId, props.data.id);
                         }}
                       >
                         重置
-                      </a>
+                      </PermissionButton>
                       后将继承产品数据解析内容
                     </>
                   ) : (
                     <>
                       当前数据解析内容继承自产品，
-                      <a
+                      <PermissionButton
+                        type="link"
+                        isPermission={permission.update}
                         style={readOnly ? {} : { color: '#a6a6a6' }}
                         onClick={() => {
                           setReadOnly(false);
                         }}
                       >
                         修改
-                      </a>
+                      </PermissionButton>
                       后将脱离产品影响。
                     </>
                   )}
