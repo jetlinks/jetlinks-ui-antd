@@ -1,9 +1,8 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import { observer } from '@formily/react';
-import { Badge, Card, message, Popconfirm } from 'antd';
+import { Badge, Card, message } from 'antd';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { Tooltip } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { RedoOutlined, SearchOutlined } from '@ant-design/icons';
@@ -15,6 +14,8 @@ import styles from './index.less';
 import { model } from '@formily/reactive';
 import { useParams } from 'umi';
 import Details from './Details/index';
+import { PermissionButton } from '@/components';
+import usePermissions from '@/hooks/permission';
 
 const colorMap = new Map();
 colorMap.set('waiting', '#FF9000');
@@ -47,6 +48,7 @@ const Detail = observer(() => {
   const params = useParams<any>();
   const [visible, setVisible] = useState<boolean>(false);
   const [reason, setReason] = useState<string>('');
+  const { permission } = usePermissions('device/Firmware');
 
   const buttonImg = require('/public/images/firmware/button.png');
 
@@ -273,44 +275,81 @@ const Detail = observer(() => {
       render: (text: any, record: any) =>
         record?.state?.value === 'failed'
           ? [
-              <a
+              // <a
+              //   onClick={() => {
+              //     setVisible(true);
+              //     setReason(record?.errorReason || '');
+              //   }}
+              //   key="link"
+              // >
+              //   <Tooltip
+              //     title={intl.formatMessage({
+              //       id: 'pages.data.option.detail',
+              //       defaultMessage: '查看',
+              //     })}
+              //     key={'detail'}
+              //   >
+              //     <SearchOutlined />
+              //   </Tooltip>
+              // </a>,
+              <PermissionButton
+                key="link"
+                type={'link'}
+                style={{ padding: 0 }}
+                isPermission={permission.update}
+                tooltip={{
+                  title: '重试',
+                }}
                 onClick={() => {
                   setVisible(true);
                   setReason(record?.errorReason || '');
                 }}
-                key="link"
               >
-                <Tooltip
-                  title={intl.formatMessage({
-                    id: 'pages.data.option.detail',
-                    defaultMessage: '查看',
-                  })}
-                  key={'detail'}
-                >
-                  <SearchOutlined />
-                </Tooltip>
-              </a>,
+                <SearchOutlined />
+              </PermissionButton>,
               <>
                 {state.info?.mode?.value === 'push' ? (
-                  <Popconfirm
-                    key="refresh"
-                    onConfirm={async () => {
-                      const resp = await service.startOneTask([record.id]);
-                      if (resp.status === 200) {
-                        message.success('操作成功！');
-                        handleSearch();
-                        actionRef.current?.reload?.();
-                      }
+                  <PermissionButton
+                    key="patch"
+                    type={'link'}
+                    style={{ padding: 0 }}
+                    isPermission={permission.update}
+                    tooltip={{
+                      title: '重试',
                     }}
-                    title={'确认重试'}
+                    popConfirm={{
+                      title: '确认重试',
+                      onConfirm: async () => {
+                        const resp = await service.startOneTask([record.id]);
+                        if (resp.status === 200) {
+                          message.success('操作成功！');
+                          handleSearch();
+                          actionRef.current?.reload?.();
+                        }
+                      },
+                    }}
                   >
-                    <a>
-                      <Tooltip title={'重试'} key={'refresh'}>
-                        <RedoOutlined />
-                      </Tooltip>
-                    </a>
-                  </Popconfirm>
-                ) : null}
+                    <RedoOutlined />
+                  </PermissionButton>
+                ) : // <Popconfirm
+                //   key="refresh"
+                //   onConfirm={async () => {
+                //     const resp = await service.startOneTask([record.id]);
+                //     if (resp.status === 200) {
+                //       message.success('操作成功！');
+                //       handleSearch();
+                //       actionRef.current?.reload?.();
+                //     }
+                //   }}
+                //   title={'确认重试'}
+                // >
+                //   <a>
+                //     <Tooltip title={'重试'} key={'refresh'}>
+                //       <RedoOutlined />
+                //     </Tooltip>
+                //   </a>
+                // </Popconfirm>
+                null}
               </>,
             ]
           : [],
@@ -326,44 +365,69 @@ const Detail = observer(() => {
               <div className={styles.firmwareDetailCard}>
                 <div className={styles.firmwareDetailCardHeader}>
                   <div className={styles.firmwareDetailCardTitle}>
-                    <Badge color={colorMap.get(item.key)} />
+                    <Badge color={colorMap.get(item.key)} style={{ marginRight: 5 }} />
                     {item.name}
                   </div>
                   <div className={styles.firmwareDetailCardRight}>
                     {item.key === 'error' && state.info?.mode?.value === 'push' && (
-                      <Popconfirm
-                        title="确认批量重试"
-                        onConfirm={async () => {
-                          const resp = await service.startTask(params.id, ['failed']);
-                          if (resp.status === 200) {
-                            message.success('操作成功！');
-                            queryFailed();
-                            actionRef.current?.reload?.();
-                          }
+                      // <Popconfirm
+                      //   title="确认批量重试"
+                      //   onConfirm={async () => {
+                      //     const resp = await service.startTask(params.id, ['failed']);
+                      //     if (resp.status === 200) {
+                      //       message.success('操作成功！');
+                      //       queryFailed();
+                      //       actionRef.current?.reload?.();
+                      //     }
+                      //   }}
+                      // >
+                      //   <a>批量重试</a>
+                      // </Popconfirm>
+                      <PermissionButton
+                        key="patch"
+                        type={'link'}
+                        style={{ padding: 0 }}
+                        isPermission={permission.update}
+                        tooltip={{
+                          title: '批量重试',
+                        }}
+                        popConfirm={{
+                          title: '确认批量重试',
+                          onConfirm: async () => {
+                            const resp = await service.startTask(params.id, ['failed']);
+                            if (resp.status === 200) {
+                              message.success('操作成功！');
+                              queryFailed();
+                              actionRef.current?.reload?.();
+                            }
+                          },
                         }}
                       >
-                        <a>批量重试</a>
-                      </Popconfirm>
+                        批量重试
+                      </PermissionButton>
                     )}
-                    <div className={styles.firmwareDetailCardRefresh}>
-                      <img
-                        style={{ width: '100%' }}
-                        src={buttonImg}
-                        onClick={() => {
-                          if (item.key === 'waiting') {
-                            queryWaiting();
-                          } else if (item.key === 'finish') {
-                            querySuccess();
-                          } else if (item.key === 'loading') {
-                            queryProcessing();
-                          } else if (item.key === 'canceled') {
-                            queryCancel();
-                          } else {
-                            queryFailed();
-                          }
-                        }}
-                      />
-                    </div>
+                    <PermissionButton
+                      key="patch1"
+                      style={{ padding: 0, backgroundColor: 'inherit', border: 0 }}
+                      isPermission={permission.update}
+                      onClick={() => {
+                        if (item.key === 'waiting') {
+                          queryWaiting();
+                        } else if (item.key === 'finish') {
+                          querySuccess();
+                        } else if (item.key === 'loading') {
+                          queryProcessing();
+                        } else if (item.key === 'canceled') {
+                          queryCancel();
+                        } else {
+                          queryFailed();
+                        }
+                      }}
+                    >
+                      <div className={styles.firmwareDetailCardRefresh}>
+                        <img style={{ width: '100%' }} src={buttonImg} />
+                      </div>
+                    </PermissionButton>
                   </div>
                 </div>
                 <div

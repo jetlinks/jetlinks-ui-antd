@@ -1469,24 +1469,6 @@ export default [
                 ],
               },
               {
-                id: 'action',
-                name: '启/禁用',
-                permissions: [
-                  {
-                    permission: 'firmware-manager',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'device-instance',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'firmware-upgrade-task-manager',
-                    actions: ['query', 'deploy'],
-                  },
-                ],
-              },
-              {
                 id: 'delete',
                 name: '删除',
                 permissions: [

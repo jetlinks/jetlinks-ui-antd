@@ -194,6 +194,14 @@ const Stream = () => {
                           </PermissionButton>,
                           <PermissionButton
                             isPermission={permission.delete}
+                            tooltip={
+                              item?.state?.value === 'enabled'
+                                ? {
+                                    title: '正常的流媒体服务不能删除',
+                                  }
+                                : undefined
+                            }
+                            disabled={item?.state?.value === 'enabled'}
                             popConfirm={{
                               title: '确认删除',
                               onConfirm: () => {

@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { message, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import {
@@ -131,7 +131,7 @@ const Task = observer(() => {
           key={'api'}
           type={'link'}
           style={{ padding: 0 }}
-          isPermission={true}
+          isPermission={permission.view}
           tooltip={{
             title: '详情',
           }}
@@ -142,29 +142,39 @@ const Task = observer(() => {
         >
           <AIcon type={'icon-details'} />
         </PermissionButton>,
-        <a
+        <PermissionButton
+          key="link"
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.view}
+          tooltip={{
+            title: '查看',
+          }}
           onClick={() => {
             state.visible = true;
             state.current = record;
           }}
-          key="link"
         >
-          <Tooltip title="查看" key={'detail'}>
-            <EyeOutlined />
-          </Tooltip>
-        </a>,
+          <EyeOutlined />
+        </PermissionButton>,
         <UpgradeBtn data={record} actions={actionRef.current} key="btn" />,
-        <a key="delete">
-          <Popconfirm
-            title={
+        <PermissionButton
+          key="delete"
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.delete}
+          tooltip={{
+            title: '删除',
+          }}
+          popConfirm={{
+            title:
               record.waiting > 0 || record.processing > 0
                 ? '删除将导致正在进行的任务终止，确定要删除吗？'
                 : intl.formatMessage({
                     id: 'pages.data.option.remove.tips',
                     defaultMessage: '确认删除？',
-                  })
-            }
-            onConfirm={async () => {
+                  }),
+            onConfirm: async () => {
               const resp = await service.deleteTask(record.id);
               if (resp.status === 200) {
                 onlyMessage(
@@ -177,18 +187,11 @@ const Task = observer(() => {
               } else {
                 message.error(resp?.message || '删除失败！');
               }
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            },
+          }}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];
