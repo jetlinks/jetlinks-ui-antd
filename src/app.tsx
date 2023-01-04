@@ -187,7 +187,8 @@ export const request: RequestConfig = {
       response.status === 400 ||
       response.status === 500 ||
       response.status === 404 ||
-      response.status === 403
+      response.status === 403 ||
+      response.status === 504
     ) {
       // 添加clone() 避免后续其它地方用response.text()时报错
       response

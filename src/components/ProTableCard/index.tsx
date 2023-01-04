@@ -237,15 +237,16 @@ const ProTableCard = <
               resp = await request(newParam, sort, filter);
             }
             setLoading(false);
-            setTotal(resp.result ? resp.result.total : 0);
+            const result = {
+              data: resp.result ? resp.result.data : [],
+              pageIndex: resp.result ? resp.result.pageIndex : 0,
+              pageSize: resp.result ? resp.result.pageSize : 0,
+              total: resp.result ? resp.result.total : 0,
+            };
+            setTotal(result.total);
             return {
               code: resp.message,
-              result: {
-                data: resp.result ? resp.result.data : [],
-                pageIndex: resp.result ? resp.result.pageIndex : 0,
-                pageSize: resp.result ? resp.result.pageSize : 0,
-                total: resp.result ? resp.result.total : 0,
-              },
+              result,
               status: resp.status,
             };
           }
@@ -319,9 +320,17 @@ const ProTableCard = <
               pageSizeOptions={pageSizeOptions}
               pageSize={pageSize}
               showTotal={(num) => {
-                const minSize = pageIndex * pageSize + 1;
                 const MaxSize = (pageIndex + 1) * pageSize;
-                return `第 ${minSize} - ${MaxSize > num ? num : MaxSize} 条/总共 ${num} 条`;
+                const max = MaxSize > num ? num : MaxSize;
+
+                const minSize = pageIndex * pageSize + 1;
+                const pageIndexInt =
+                  parseInt(num / pageSize) === num / pageSize
+                    ? num / pageSize - 1
+                    : parseInt(num / pageSize);
+                const min = minSize > num ? pageIndexInt * pageSize + 1 : minSize;
+
+                return `第 ${min} - ${max} 条/总共 ${num} 条`;
               }}
             />
           )}

@@ -68,6 +68,7 @@ const Tags = () => {
       {visible && (
         <Edit
           refresh={() => {
+            setVisible(false);
             getDetail();
           }}
           close={() => {

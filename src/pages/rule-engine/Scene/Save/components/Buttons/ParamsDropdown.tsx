@@ -111,7 +111,6 @@ export default (props: ParamsDropdownProps) => {
               value={_value}
               options={props.metricsOptions}
               onChange={(v, l) => {
-                console.log(l);
                 onValueChange(v, l);
                 setOpen(false);
               }}
@@ -218,7 +217,11 @@ export default (props: ParamsDropdownProps) => {
           setLabel(v ? '是' : '否');
           break;
         case 'metric':
-          findLabel(v, props.metricsOptions || []);
+          props.metricsOptions?.forEach((item) => {
+            if (item.value === v) {
+              setLabel(item.label);
+            }
+          });
           break;
         case 'enum':
         case 'object':
@@ -246,7 +249,7 @@ export default (props: ParamsDropdownProps) => {
       if (props.BuiltInOptions && props.value.source === 'upper') {
         valueLabel(_value, 'built');
       } else {
-        valueLabel(_value, props.valueType);
+        valueLabel(_value, props.isMetric ? 'metric' : props.valueType);
       }
     }
   }, [props.value, props.options, props.valueType, props.BuiltInOptions]);

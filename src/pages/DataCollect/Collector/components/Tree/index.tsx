@@ -24,15 +24,20 @@ const TreeModel = model<{
   param: any;
   visible: boolean;
   current: any;
+  search: string;
 }>({
   selectedKeys: ['*'],
   dataSource: [],
   loading: true,
-  param: {},
+  param: {
+    terms: [],
+  },
   visible: false,
   current: {},
+  search: '',
 });
 interface Props {
+  channelId?: string;
   change: (data?: any) => void;
 }
 
@@ -41,33 +46,50 @@ export default observer((props: Props) => {
   const { permission } = PermissionButton.usePermission('DataCollect/Collector');
   const intl = useIntl();
 
-  const handleSearch = (params: any) => {
+  const handleSearch = async (params: any) => {
     TreeModel.loading = true;
     TreeModel.param = params;
-    service
-      .queryCollector({ ...params, paging: false, sorts: [{ name: 'createTime', order: 'desc' }] })
-      .then((resp) => {
-        if (resp.status === 200) {
-          if (params.terms) {
-            TreeModel.dataSource = resp.result;
-          } else {
-            TreeModel.dataSource = [
-              {
-                id: '*',
-                name: '全部',
-                children: resp.result,
-              },
-            ];
-          }
-          props.change(TreeModel.dataSource[0]);
-        }
-        TreeModel.loading = false;
-      });
+    const resp = await service.queryCollector({
+      ...params,
+      paging: false,
+      sorts: [{ name: 'createTime', order: 'desc' }],
+    });
+    if (resp.status === 200) {
+      if (TreeModel?.search || props?.channelId) {
+        TreeModel.dataSource = resp.result;
+      } else {
+        TreeModel.dataSource = [
+          {
+            id: '*',
+            name: '全部',
+            children: resp.result,
+          },
+        ];
+      }
+      TreeModel.selectedKeys = [TreeModel.dataSource?.[0]?.id] || [];
+      props.change(TreeModel.dataSource?.[0]);
+    }
+    TreeModel.loading = false;
   };
 
   useEffect(() => {
-    handleSearch(TreeModel.param);
-  }, [TreeModel.param]);
+    if (props.channelId) {
+      TreeModel.param = {
+        terms: [
+          {
+            column: 'channelId',
+            value: props?.channelId,
+          },
+        ],
+      };
+      handleSearch(TreeModel.param);
+    } else {
+      TreeModel.param = {
+        terms: [],
+      };
+      handleSearch(TreeModel.param);
+    }
+  }, [props.channelId]);
 
   const getState = (record: any) => {
     if (record) {
@@ -99,13 +121,15 @@ export default observer((props: Props) => {
           placeholder="请输入名称"
           allowClear
           onSearch={(val) => {
+            TreeModel.search = val;
             if (val) {
               TreeModel.param = {
                 terms: [{ column: 'name', value: `%${val}%`, termType: 'like' }],
               };
             } else {
-              TreeModel.param = {};
+              TreeModel.param = { terms: [] };
             }
+            handleSearch(TreeModel.param);
           }}
           style={{ width: '100%' }}
         />
@@ -133,6 +157,7 @@ export default observer((props: Props) => {
             height={500}
             selectedKeys={TreeModel.selectedKeys}
             defaultExpandAll
+            autoExpandParent
             switcherIcon={<DownOutlined />}
             fieldNames={{
               title: 'name',
@@ -196,7 +221,7 @@ export default observer((props: Props) => {
                                   runningState: 'running',
                                 });
                           if (resp.status === 200) {
-                            TreeModel.param = {};
+                            TreeModel.param = { terms: [] };
                             handleSearch(TreeModel.param);
                             onlyMessage('操作成功');
                           } else {
@@ -218,7 +243,7 @@ export default observer((props: Props) => {
                         onConfirm={async () => {
                           const resp = await service.removeCollector(i.id);
                           if (resp.status === 200) {
-                            TreeModel.param = {};
+                            TreeModel.param = { terms: [] };
                             handleSearch(TreeModel.param);
                             onlyMessage('操作成功');
                           }
@@ -242,7 +267,7 @@ export default observer((props: Props) => {
               </div>
             )}
             treeData={TreeModel.dataSource}
-          ></Tree>
+          />
         ) : (
           <Empty />
         )}
@@ -255,7 +280,7 @@ export default observer((props: Props) => {
           }}
           reload={() => {
             TreeModel.visible = false;
-            TreeModel.param = {};
+            TreeModel.param = { terms: [] };
             handleSearch(TreeModel.param);
           }}
         />

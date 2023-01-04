@@ -54,7 +54,7 @@ export const downloadObject = (record: Record<string, any>, fileName: string, fo
   // 创建隐藏的可下载链接
   const ghostLink = document.createElement('a');
   ghostLink.download = `${record?.name || ''}${fileName}_${moment(new Date()).format(
-    format || 'YYYY/MM/DD HH:mm:ss',
+    format || 'YYYY_MM_DD',
   )}.json`;
   ghostLink.style.display = 'none';
   //字符串内容转成Blob地址

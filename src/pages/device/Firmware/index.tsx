@@ -126,7 +126,7 @@ const Firmware = observer(() => {
         <PermissionButton
           style={{ padding: 0 }}
           type="link"
-          isPermission={permission.action}
+          isPermission={permission.view}
           key="upgrade"
           onClick={() => {
             //缓存路由参数

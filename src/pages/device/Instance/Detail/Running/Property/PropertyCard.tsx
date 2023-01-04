@@ -16,6 +16,7 @@ import Indicators from './Indicators';
 import './PropertyCard.less';
 import FileComponent from './FileComponent';
 import { onlyMessage } from '@/utils/util';
+import PermissionButton from '../../../../../../components/PermissionButton';
 
 interface Props {
   data: Partial<PropertyMetadata>;
@@ -26,6 +27,7 @@ const Property = (props: Props) => {
   const { data, value } = props;
 
   const params = useParams<{ id: string }>();
+  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
 
   const [loading, setLoading] = useState<boolean>(false);
   const refreshProperty = async () => {
@@ -53,13 +55,20 @@ const Property = (props: Props) => {
         </div>
         <Space style={{ fontSize: 12 }}>
           {data.expands?.type?.includes('write') && (
-            <Tooltip placement="top" title="设置属性至设备">
-              <EditOutlined
-                onClick={() => {
-                  setEditVisible(true);
-                }}
-              />
-            </Tooltip>
+            <PermissionButton
+              key={'edit'}
+              onClick={() => {
+                setEditVisible(true);
+              }}
+              tooltip={{
+                placement: 'top',
+                title: devicePermission.update ? '设置属性至设备' : '暂无权限，请联系管理员',
+              }}
+              style={{ padding: 0, border: 'none', backgroundColor: 'inherit' }}
+              isPermission={devicePermission.update}
+            >
+              <EditOutlined />
+            </PermissionButton>
           )}
           {(data.expands?.metrics || []).length > 0 &&
             ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
@@ -72,6 +81,20 @@ const Property = (props: Props) => {
                   }}
                 />
               </Tooltip>
+              // <PermissionButton
+              //   key={'metrics'}
+              //   onClick={() => {
+              //     setIndicatorVisible(true);
+              //   }}
+              //   tooltip={{
+              //     placement: "top",
+              //     title: devicePermission.update ? "指标" : '暂无权限，请联系管理员'
+              //   }}
+              //   style={{ padding: 0, border: "none", backgroundColor: 'inherit' }}
+              //   isPermission={devicePermission.update}
+              // >
+              //   <ClockCircleOutlined  />
+              // </PermissionButton>
             )}
           {data.expands?.type?.includes('read') && (
             <Tooltip placement="top" title="获取最新属性值">

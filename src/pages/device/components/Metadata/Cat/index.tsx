@@ -40,7 +40,7 @@ const Cat = observer((props: Props) => {
       } else {
         service.detail(id).then((resp) => {
           setLoading(false);
-          productModel.current = resp.result;
+          // productModel.current = resp.result;
           setValue(resp.result.metadata);
         });
       }

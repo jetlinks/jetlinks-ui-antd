@@ -695,7 +695,10 @@ const Detail = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
-          rows: 4,
+          rows: 5,
+          placeholder: '请输入说明',
+          showCount: true,
+          maxLength: 200,
         },
         'x-validator': [
           {

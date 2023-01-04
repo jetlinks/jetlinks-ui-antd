@@ -30,13 +30,13 @@ export default (props: ChannelCardProps) => {
       showMask={false}
       statusNames={{
         running: StatusColorEnum.success,
-        disabled: StatusColorEnum.processing,
+        disabled: StatusColorEnum.error,
         partialError: StatusColorEnum.warning,
-        failed: StatusColorEnum.error,
+        failed: StatusColorEnum.processing,
         stopped: StatusColorEnum.default,
       }}
     >
-      <div className={'pro-table-card-item'}>
+      <div className={'pro-table-card-item'} onClick={props?.onClick}>
         <div className={'card-item-avatar'}>
           <img
             width={88}

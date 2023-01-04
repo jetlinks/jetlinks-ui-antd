@@ -56,7 +56,7 @@ export default [
         permissions: [],
         children: [
           {
-            code: 'notice',
+            code: 'notice/Config',
             name: '通知配置',
             owner: 'iot',
             //parentId: '1',
@@ -208,7 +208,7 @@ export default [
             ],
           },
           {
-            code: 'notice',
+            code: 'notice/Template',
             name: '通知模板',
             owner: 'iot',
             //parentId: '1',
@@ -1024,16 +1024,16 @@ export default [
                   },
                 ],
               },
-              {
-                id: 'action',
-                name: '启/禁用',
-                permissions: [
-                  {
-                    permission: 'protocol-supports',
-                    actions: ['enable', 'disable', 'query', 'save'],
-                  },
-                ],
-              },
+              // {
+              //   id: 'action',
+              //   name: '启/禁用',
+              //   permissions: [
+              //     {
+              //       permission: 'protocol-supports',
+              //       actions: ['enable', 'disable', 'query', 'save'],
+              //     },
+              //   ],
+              // },
               {
                 id: 'delete',
                 name: '删除',
@@ -1465,24 +1465,6 @@ export default [
                   {
                     permission: 'device-product',
                     actions: ['query'],
-                  },
-                ],
-              },
-              {
-                id: 'action',
-                name: '启/禁用',
-                permissions: [
-                  {
-                    permission: 'firmware-manager',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'device-instance',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'firmware-upgrade-task-manager',
-                    actions: ['query', 'deploy'],
                   },
                 ],
               },
@@ -2872,6 +2854,16 @@ export default [
         permissions: [],
         buttons: [
           {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'system_config',
+                actions: ['query'],
+              },
+            ],
+          },
+          {
             id: 'update',
             name: '保存',
             permissions: [
@@ -3289,16 +3281,17 @@ export default [
               },
             ],
           },
-          {
-            id: 'setting',
-            name: '配置',
-            permissions: [
-              {
-                permission: 'menu',
-                actions: ['query', 'save', 'grant'],
-              },
-            ],
-          },
+          // 超管才具备该权限
+          // {
+          //   id: 'setting',
+          //   name: '配置',
+          //   permissions: [
+          //     {
+          //       permission: 'menu',
+          //       actions: ['query', 'save', 'grant'],
+          //     },
+          //   ],
+          // },
           {
             id: 'update',
             name: '编辑',

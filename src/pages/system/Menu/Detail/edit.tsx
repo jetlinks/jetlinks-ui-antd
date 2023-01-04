@@ -337,7 +337,7 @@ export default (props: EditProps) => {
                 saveData();
               }}
               loading={loading}
-              isPermission={getOtherPermission(['add', 'update'])}
+              isPermission={getOtherPermission(['update'])}
             >
               {intl.formatMessage({
                 // id: `pages.data.option.${disabled ? 'edit' : 'save'}`,

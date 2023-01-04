@@ -507,6 +507,9 @@ const CardManagementNode = () => {
           onCancel={() => {
             setExportVisible(false);
           }}
+          onOk={() => {
+            setExportVisible(false);
+          }}
         />
       )}
       {importVisible && (

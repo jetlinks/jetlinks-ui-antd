@@ -187,7 +187,7 @@ export default observer((props: Props) => {
   }, [props.value]);
 
   useEffect(() => {
-    const item = FormModel.current?.branches?.[0].then?.[0]?.actions?.[0].device?.productId;
+    const item = FormModel.current?.branches?.[0].then?.[0]?.actions?.[0]?.device?.productId;
     formProductIdRef.current = item;
     // console.log('---------', FormModel.current.options?.trigger?.name)
   }, []);
