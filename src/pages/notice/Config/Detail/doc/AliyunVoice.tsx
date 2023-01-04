@@ -19,14 +19,13 @@ const AliyunVoice = () => {
       <h1>2.通知配置说明</h1>
       <div>
         <h2>1、RegionID</h2>
-        <div>
-          阿里云内部给每台机器设置的唯一编号。请根据购买的阿里云服务器阿里云地域和可用区对照表地址：https://help.aliyun.com/document_detail/40654.html?spm=a2c6h.13066369.0.0.54a174710O7rWH
-        </div>
+        <div>阿里云服务地域与对应的RegionID。请根据购买的阿里云服务器地域进行选择。</div>
       </div>
       <h2>2、AccesskeyID/Secret</h2>
       <div>
-        <div>用于程序通知方式调用云服务费API的用户标识和秘钥公众号开发者身份的密码</div>
-        <div>获取路径：“阿里云管理控制台”--“用户头像”--“”--“AccessKey管理”--“查看”</div>
+        <div>
+          用于程序通知方式调用云服务费API的用户标识和秘钥获取路径：“阿里云管理控制台”--“用户头像”--“”--“AccessKey管理”--“查看”
+        </div>
       </div>
       <div className={'image'}>
         <Image width="100%" src={accessKey} />

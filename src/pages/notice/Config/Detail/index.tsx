@@ -37,6 +37,7 @@ import FAutoComplete from '@/components/FAutoComplete';
 import Webhook from './doc/Webhook';
 // import { useModel } from '@@/plugin-model/useModel';
 import { typeArray } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import RegionIdList from './regionId';
 
 export const docMap = {
   weixin: {
@@ -402,16 +403,11 @@ const Detail = observer(() => {
                 title: 'RegionId',
                 required: true,
                 'x-component-props': {
-                  placeholder: '请输入regionId',
+                  placeholder: '请选择regionId',
                 },
-                'x-component': 'Input',
+                'x-component': 'Select',
                 'x-decorator': 'FormItem',
-                'x-validator': [
-                  {
-                    max: 64,
-                    message: '最多可输入64个字符',
-                  },
-                ],
+                enum: RegionIdList,
               },
               accessKeyId: {
                 title: 'AccessKeyId',

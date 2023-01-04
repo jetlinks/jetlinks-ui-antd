@@ -226,7 +226,7 @@ export default () => {
             ]}
             span={6}
           >
-            <img src={require('/public/images/media/dashboard-1.png')} />
+            <img src={require('/public/images/media/dashboard-1.svg')} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title={'通道数量'}
@@ -245,7 +245,7 @@ export default () => {
             ]}
             span={6}
           >
-            <img src={require('/public/images/media/dashboard-2.png')} />
+            <img src={require('/public/images/media/dashboard-2.svg')} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title={'录像数量'}
@@ -258,7 +258,7 @@ export default () => {
             ]}
             span={6}
           >
-            <img src={require('/public/images/media/dashboard-3.png')} />
+            <img src={require('/public/images/media/dashboard-3.svg')} />
           </DashBoardTopCard.Item>
           <DashBoardTopCard.Item
             title={
@@ -278,7 +278,7 @@ export default () => {
             ]}
             span={6}
           >
-            <img src={require('/public/images/media/dashboard-4.png')} />
+            <img src={require('/public/images/media/dashboard-4.svg')} />
           </DashBoardTopCard.Item>
         </DashBoardTopCard>
         <DashBoard

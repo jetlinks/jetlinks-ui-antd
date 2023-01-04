@@ -18,7 +18,7 @@ interface StatisticsProps {
   title: string;
 }
 
-const defaultImage = require('/public/images/home/top-1.png');
+const defaultImage = require('/public/images/home/top-1.svg');
 
 const CardStatistics = (props: StatisticsProps) => {
   return (
