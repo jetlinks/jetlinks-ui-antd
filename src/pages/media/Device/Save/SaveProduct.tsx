@@ -29,6 +29,8 @@ export default (props: SaveProps) => {
         terms: [{ column: 'provider', value: props.type }],
         pageSize: 100,
       });
+    } else {
+      setExtendFormItem([]);
     }
   }, [visible]);
 
@@ -57,7 +59,7 @@ export default (props: SaveProps) => {
         setLoading(false);
         if (deployResp.status === 200) {
           if (reload) {
-            reload(resp.result.id, resp.result.name);
+            reload(resp.result.id, resp.result);
           }
           onClose();
         } else {

@@ -1,14 +1,14 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Button, Card, Form, FormInstance, Input } from 'antd';
+import { Card, Form, FormInstance, Input } from 'antd';
 import useLocation from '@/hooks/route/useLocation';
 import Device from '../Save/device/index';
 import Manual from '../Save/manual/index';
 import Timer from '../Save/timer/index';
-import { Ellipsis, TitleComponent } from '@/components';
+import { Ellipsis, PermissionButton, TitleComponent } from '@/components';
 import { observable } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FormModelType } from '@/pages/rule-engine/Scene/typings';
-import { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { service } from '@/pages/rule-engine/Scene';
 import './index.less';
 import { onlyMessage, randomString } from '@/utils/util';
@@ -75,6 +75,7 @@ export default observer(() => {
   const history = useHistory();
   const [form] = Form.useForm();
   const [saveLoading, setSaveLoading] = useState(false);
+  const { permission, getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
 
   const FormModelInit = () => {
     FormModel.current = {
@@ -230,9 +231,15 @@ export default observer(() => {
             <Input.TextArea showCount maxLength={200} placeholder={'请输入说明'} rows={4} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" onClick={submit} loading={saveLoading}>
+            <PermissionButton
+              key={'update'}
+              type={'primary'}
+              isPermission={getOtherPermission([permission.update, permission.add])}
+              onClick={submit}
+              loading={saveLoading}
+            >
               保存
-            </Button>
+            </PermissionButton>
           </Form.Item>
         </Form>
       </Card>

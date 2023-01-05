@@ -85,13 +85,40 @@ const AccessConfig = () => {
       });
   };
 
+  const getUrlParams = (url) => {
+    if (!url.includes('?')) return;
+    const urlStr = url.split('?')[1];
+    const obj = {};
+    const paramsArr = urlStr.split('&');
+    for (let i = 0; i < paramsArr.length; i++) {
+      const arr = paramsArr[i].split('=');
+      obj[arr[0]] = arr[1];
+    }
+    return obj;
+  };
+
   useEffect(() => {
     service.getProviders().then((resp: any) => {
       if (resp.status === 200) {
         Store.set('access-providers', resp.result);
       }
     });
-    handleSearch(param);
+    const paramSearch = param;
+    const paramsQ = getUrlParams(decodeURIComponent(window.location.href));
+    if (paramsQ?.q) {
+      const params = JSON.parse(paramsQ?.q);
+      const terms = [
+        {
+          terms: params.terms1.filter((item) => !!item.value),
+        },
+        {
+          terms: params.terms2.filter((item) => !!item.value),
+          type: params.type,
+        },
+      ];
+      paramSearch.terms = terms;
+    }
+    handleSearch(paramSearch);
   }, []);
 
   return (

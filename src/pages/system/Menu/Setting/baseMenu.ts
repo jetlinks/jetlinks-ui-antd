@@ -76,10 +76,6 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'template',
-                    actions: ['query'],
-                  },
-                  {
                     permission: 'user-third-party-manager',
                     actions: ['query', 'save'],
                   },
@@ -95,10 +91,6 @@ export default [
                 permissions: [
                   {
                     permission: 'notifier',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'template',
                     actions: ['query'],
                   },
                 ],
@@ -143,10 +135,6 @@ export default [
                     permission: 'notifier',
                     actions: ['query'],
                   },
-                  {
-                    permission: 'template',
-                    actions: ['query'],
-                  },
                 ],
               },
               {
@@ -155,10 +143,6 @@ export default [
                 permissions: [
                   {
                     permission: 'notifier',
-                    actions: ['query', 'save'],
-                  },
-                  {
-                    permission: 'template',
                     actions: ['query', 'save'],
                   },
                 ],
@@ -171,10 +155,6 @@ export default [
                     permission: 'notifier',
                     actions: ['query', 'delete'],
                   },
-                  {
-                    permission: 'template',
-                    actions: ['query', 'delete'],
-                  },
                 ],
               },
               {
@@ -185,10 +165,6 @@ export default [
                     permission: 'notifier',
                     actions: ['query', 'save'],
                   },
-                  {
-                    permission: 'template',
-                    actions: ['query', 'save'],
-                  },
                 ],
               },
               {
@@ -197,10 +173,6 @@ export default [
                 permissions: [
                   {
                     permission: 'notifier',
-                    actions: ['query', 'save'],
-                  },
-                  {
-                    permission: 'template',
                     actions: ['query', 'save'],
                   },
                 ],
@@ -219,36 +191,10 @@ export default [
             showPage: ['template'],
             permissions: [],
             buttons: [
-              // {
-              //   id: 'bind',
-              //   name: '同步用户',
-              //   permissions: [
-              //     {
-              //       permission: 'notifier',
-              //       actions: ['query'],
-              //     },
-              //     {
-              //       permission: 'template',
-              //       actions: ['query'],
-              //     },
-              //     {
-              //       permission: 'user-third-party-manager',
-              //       actions: ['query', 'save'],
-              //     },
-              //     {
-              //       permission: 'user',
-              //       actions: ['query'],
-              //     },
-              //   ],
-              // },
               {
                 id: 'view',
                 name: '查看',
                 permissions: [
-                  {
-                    permission: 'notifier',
-                    actions: ['query'],
-                  },
                   {
                     permission: 'template',
                     actions: ['query'],
@@ -259,10 +205,6 @@ export default [
                 id: 'log',
                 name: '通知记录',
                 permissions: [
-                  {
-                    permission: 'notifier',
-                    actions: ['query'],
-                  },
                   {
                     permission: 'template',
                     actions: ['query'],
@@ -292,10 +234,6 @@ export default [
                 name: '导出',
                 permissions: [
                   {
-                    permission: 'notifier',
-                    actions: ['query'],
-                  },
-                  {
                     permission: 'template',
                     actions: ['query'],
                   },
@@ -306,10 +244,6 @@ export default [
                 name: '导入',
                 permissions: [
                   {
-                    permission: 'notifier',
-                    actions: ['query', 'save'],
-                  },
-                  {
                     permission: 'template',
                     actions: ['query', 'save'],
                   },
@@ -319,10 +253,6 @@ export default [
                 id: 'delete',
                 name: '删除',
                 permissions: [
-                  {
-                    permission: 'notifier',
-                    actions: ['query', 'delete'],
-                  },
                   {
                     permission: 'template',
                     actions: ['query', 'delete'],
@@ -335,7 +265,7 @@ export default [
                 permissions: [
                   {
                     permission: 'notifier',
-                    actions: ['query', 'save'],
+                    actions: ['query'],
                   },
                   {
                     permission: 'template',
@@ -349,7 +279,7 @@ export default [
                 permissions: [
                   {
                     permission: 'notifier',
-                    actions: ['query', 'save'],
+                    actions: ['query'],
                   },
                   {
                     permission: 'template',
@@ -2750,11 +2680,11 @@ export default [
           { permission: 'media-channel', actions: ['query', 'save', 'delete'] },
         ],
         buttons: [
-          {
-            id: 'view',
-            name: '查看',
-            permissions: [{ permission: 'media-device', actions: ['query'] }],
-          },
+          // {
+          //   id: 'view',
+          //   name: '查看',
+          //   permissions: [{ permission: 'media-device', actions: ['query'] }],
+          // },
         ],
       },
       {

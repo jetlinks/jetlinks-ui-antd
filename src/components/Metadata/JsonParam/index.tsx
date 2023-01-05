@@ -5,7 +5,6 @@ import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/device/components/Metadata';
-import MetadataModel from '@/pages/device/components/Metadata/Base/model';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
@@ -15,6 +14,7 @@ import Editable from '../EditTable';
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
   keys?: string;
+  isFunction?: boolean;
 }
 
 const JsonParam = observer((props: Props) => {
@@ -157,20 +157,11 @@ const JsonParam = observer((props: Props) => {
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
-                      enum:
-                        MetadataModel.type === 'functions'
-                          ? DataTypeList.filter((item) => item.value !== 'file')
-                          : DataTypeList.filter((item) =>
-                              [
-                                'int',
-                                'long',
-                                'float',
-                                'double',
-                                'string',
-                                'boolean',
-                                'date',
-                              ].includes(item.value),
-                            ),
+                      enum: DataTypeList.filter((item) =>
+                        ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+                          item.value,
+                        ),
+                      ),
                     },
                     booleanConfig: {
                       title: '布尔值',
@@ -210,6 +201,9 @@ const JsonParam = observer((props: Props) => {
                       }),
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayParam',
+                      'x-component-props': {
+                        isFunction: props.isFunction,
+                      },
                       'x-reactions': {
                         dependencies: ['..valueType.type'],
                         fulfill: {
@@ -255,7 +249,9 @@ const JsonParam = observer((props: Props) => {
                           dependencies: ['..valueType.type'],
                           fulfill: {
                             state: {
-                              visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                              visible:
+                                !props.isFunction &&
+                                "{{['int','float','long','double'].includes($deps[0])}}",
                             },
                           },
                         },
@@ -318,7 +314,9 @@ const JsonParam = observer((props: Props) => {
                             dependencies: ['..type'],
                             fulfill: {
                               state: {
-                                visible: "{{['string','password'].includes($deps[0])}}",
+                                visible:
+                                  !props.isFunction &&
+                                  "{{['string','password'].includes($deps[0])}}",
                               },
                             },
                           },
@@ -354,7 +352,7 @@ const JsonParam = observer((props: Props) => {
                     dependencies: ['..valueType.type'],
                     fulfill: {
                       state: {
-                        visible: "{{['float','double'].includes($deps[0])}}",
+                        visible: !props.isFunction && "{{['float','double'].includes($deps[0])}}",
                       },
                     },
                   },
@@ -365,6 +363,9 @@ const JsonParam = observer((props: Props) => {
                   'x-visible': false,
                   'x-decorator': 'FormItem',
                   'x-component': 'JsonParam',
+                  'x-component-props': {
+                    isFunction: props.isFunction,
+                  },
                   'x-reactions': {
                     dependencies: ['.valueType.type'],
                     fulfill: {

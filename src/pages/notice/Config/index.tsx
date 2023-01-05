@@ -22,7 +22,6 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { history } from 'umi';
 import { model } from '@formily/reactive';
-import moment from 'moment';
 import { PermissionButton, ProTableCard } from '@/components';
 import NoticeConfig from '@/components/ProTableCard/CardItems/noticeConfig';
 import Debug from '@/pages/notice/Config/Debug';
@@ -49,7 +48,7 @@ const Config = observer(() => {
   const actionRef = useRef<ActionType>();
   // const location = useLocation<{ id: string }>();
 
-  const { permission: configPermission } = usePermissions('notice');
+  const { permission: configPermission } = usePermissions('notice/Config');
   // const id = (location as any).query?.id;
 
   const columns: ProColumns<ConfigItem>[] = [
@@ -129,17 +128,12 @@ const Config = observer(() => {
           type="link"
           style={{ padding: 0 }}
           isPermission={configPermission.export}
-          onClick={() =>
-            downloadObject(
-              record,
-              `通知配置${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
-            )
-          }
+          onClick={() => downloadObject(record, `通知配置_${record.name}`)}
           key="download"
           tooltip={{
             title: intl.formatMessage({
-              id: 'pages.data.option.download',
-              defaultMessage: '下载配置',
+              id: 'pages.data.option.export',
+              defaultMessage: '导出',
             }),
           }}
         >
@@ -376,14 +370,7 @@ const Config = observer(() => {
                         type={'link'}
                         key="export"
                         isPermission={configPermission.export}
-                        onClick={() =>
-                          downloadObject(
-                            record,
-                            `通知配置${record.name}-${moment(new Date()).format(
-                              'YYYY/MM/DD HH:mm:ss',
-                            )}`,
-                          )
-                        }
+                        onClick={() => downloadObject(record, `通知配置_${record.name}`)}
                       >
                         <ArrowDownOutlined />
                         导出

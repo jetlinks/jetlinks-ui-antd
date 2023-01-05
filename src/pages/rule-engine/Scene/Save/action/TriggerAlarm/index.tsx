@@ -5,10 +5,10 @@ import { Store } from 'jetlinks-store';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import { queryDefaultLevel, queryAlarmList, queryAlarmCount } from '../service';
 import encodeQuery from '@/utils/encodeQuery';
-import { FormModel } from '@/pages/rule-engine/Scene/Save';
 
 interface Props {
   close: () => void;
+  id: string;
 }
 
 export default (props: Props) => {
@@ -20,7 +20,7 @@ export default (props: Props) => {
     queryAlarmCount(
       encodeQuery({
         terms: {
-          'id$rule-bind-alarm': FormModel.current.id,
+          'id$rule-bind-alarm': props.id, // FormModel.current.id,
         },
       }),
     ).then((resp) => {
@@ -162,7 +162,7 @@ export default (props: Props) => {
                 terms: [
                   {
                     column: 'id',
-                    value: FormModel.current.id,
+                    value: props.id,
                     termType: 'rule-bind-alarm',
                   },
                 ],

@@ -236,10 +236,10 @@ const PointCard = observer((props: PointCardProps) => {
         loading={loading}
         bordered={false}
         className={'data-collect-point'}
-        style={{ position: 'relative', minHeight: 600 }}
+        style={{ position: 'relative', overflowY: 'auto' }}
         bodyStyle={{ paddingTop: 4 }}
       >
-        <div>
+        <div style={{ height: 620 }}>
           <div style={{ height: '100%', paddingBottom: 48 }}>
             {props.data?.id !== '*' && props.data?.id && (
               <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start' }}>
@@ -345,10 +345,11 @@ const PointCard = observer((props: PointCardProps) => {
                   style={{
                     display: 'flex',
                     justifyContent: 'flex-end',
-                    position: 'absolute',
+                    // position: 'absolute',
                     width: '100%',
-                    bottom: 10,
-                    right: '2%',
+                    // bottom: 10,
+                    // right: '2%',
+                    marginTop: 20,
                   }}
                 >
                   <Pagination

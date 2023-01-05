@@ -21,7 +21,6 @@ import { model } from '@formily/reactive';
 import Debug from './Debug';
 import Log from '@/pages/notice/Template/Log';
 import { downloadObject, onlyMessage } from '@/utils/util';
-import moment from 'moment';
 import { PermissionButton, ProTableCard } from '@/components';
 import NoticeCard, {
   typeList,
@@ -49,7 +48,7 @@ const Template = observer(() => {
   // const id = (location as any).query?.id;
   const actionRef = useRef<ActionType>();
 
-  const { permission: templatePermission } = usePermissions('notice');
+  const { permission: templatePermission } = usePermissions('notice/Template');
 
   const columns: ProColumns<TemplateItem>[] = [
     {
@@ -113,7 +112,7 @@ const Template = observer(() => {
           tooltip={{ title: '导出' }}
           isPermission={templatePermission.export}
           onClick={() => {
-            downloadObject(record, `${record.name}-${moment(new Date()).format('YYYY_MM_DD')}`);
+            downloadObject(record, `通知模板_${record.name}`);
           }}
         >
           <ArrowDownOutlined />
@@ -308,10 +307,7 @@ const Template = observer(() => {
                 key="export"
                 isPermission={templatePermission.export}
                 onClick={() => {
-                  downloadObject(
-                    record,
-                    `${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
-                  );
+                  downloadObject(record, `通知模板_${record.name}`);
                 }}
               >
                 <ArrowDownOutlined />

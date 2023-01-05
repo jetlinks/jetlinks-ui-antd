@@ -27,12 +27,11 @@ import {
 import { createSchemaField, observer } from '@formily/react';
 import type { ISchema } from '@formily/json-schema';
 import styles from './index.less';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Col, Row, Tooltip } from 'antd';
-import { typeList } from '@/pages/notice';
 import { configService, service } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
 import { onlyMessage, phoneRegEx, useAsyncDataSource } from '@/utils/util';
@@ -49,9 +48,10 @@ import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import FMonacoEditor from '@/components/FMonacoEditor';
 import Webhook from './doc/Webhook';
-// import { useModel } from '@@/plugin-model/useModel';
+import { useModel } from '@@/plugin-model/useModel';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { typeArray } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import { typeList } from '../..';
 
 export const docMap = {
   weixin: {
@@ -81,7 +81,7 @@ const Detail = observer(() => {
   const [typeItem, setTypeItem] = useState<string>('email');
   const [providerItem, setProviderItem] = useState<string>('embedded');
   const [loading, setLoading] = useState<boolean>(false);
-  // const { initialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState');
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
 
@@ -474,18 +474,18 @@ const Detail = observer(() => {
     [id],
   );
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (initialState?.settings?.title) {
-  //       document.title = `通知模板 - ${initialState?.settings?.title}`;
-  //     } else {
-  //       document.title = '通知模板';
-  //     }
-  //   }, 0);
-  //   // if (state.current) {
-  //   //   form.setValues(state.current);
-  //   // }
-  // }, []);
+  useEffect(() => {
+    setTimeout(() => {
+      if (initialState?.settings?.title) {
+        document.title = `通知模板 - ${initialState?.settings?.title}`;
+      } else {
+        document.title = '通知模板';
+      }
+    }, 0);
+    // if (state.current) {
+    //   form.setValues(state.current);
+    // }
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {
@@ -635,7 +635,7 @@ const Detail = observer(() => {
           dependencies: ['type'],
           fulfill: {
             state: {
-              visible: '{{!!$deps[0] && $deps[0] !== "email" && $deps[0] !== "webhook"}}',
+              hidden: '{{!(!!$deps[0] && $deps[0] !== "email" && $deps[0] !== "webhook")}}',
             },
           },
         },

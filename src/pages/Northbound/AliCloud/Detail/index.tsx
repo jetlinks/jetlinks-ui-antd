@@ -431,7 +431,12 @@ const Detail = observer(() => {
         document.title = '阿里云';
       }
     }, 0);
+    return () => {
+      Store.set('datalist', []);
+      Store.set('productList', []);
+    };
   }, []);
+
   useEffect(() => {
     if (location && location.state) {
       setView(location.state.view);

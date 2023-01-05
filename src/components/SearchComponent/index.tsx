@@ -36,6 +36,7 @@ import classnames from 'classnames';
 import { onlyMessage, randomString } from '@/utils/util';
 import { useHistory, useLocation } from 'umi';
 import { Empty } from '@/components';
+import { useSize } from 'ahooks';
 
 const ui2Server = (source: SearchTermsUI): SearchTermsServer => [
   { terms: source.terms1 },
@@ -195,6 +196,8 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
   const [history, setHistory] = useState([]);
   const [logVisible, setLogVisible] = useState<boolean>(false);
   const uiParamRef = useRef(initParam);
+  const formDivRef = useRef(null);
+  const formDivSize = useSize(formDivRef);
 
   const form = useMemo(
     () =>
@@ -601,6 +604,9 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
       // 展开高级搜索
       setExpand(false);
       handleForm(true);
+    } else {
+      setExpand(true);
+      handleForm(false);
     }
     const params = new URLSearchParams(_location.search);
     params.delete('q');
@@ -663,15 +669,17 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
     <Menu className={styles.history}>
       {history.length > 0 ? (
         history.map((item: SearchHistory) => (
-          <Menu.Item
-            key={item.id || randomString(9)}
-            onClick={() => {
-              handleHistory(item);
-              handleSearch();
-            }}
-          >
+          <Menu.Item key={item.id || randomString(9)}>
             <div className={styles.list}>
-              <Typography.Text className={styles['list-text']} ellipsis={{ tooltip: item.name }}>
+              <Typography.Text
+                className={styles['list-text']}
+                ellipsis={{ tooltip: item.name }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleHistory(item);
+                  handleSearch();
+                }}
+              >
                 {item.name}
               </Typography.Text>
               <Popconfirm
@@ -835,9 +843,22 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         wrapperCol={18}
         onAutoSubmit={() => (SearchBtn.advance ? handleSearch : handleSearch(false))}
       >
-        <div className={expand && styles.simple}>
+        <div
+          className={classnames({
+            [styles.simple]: expand,
+            [styles['small-size']]:
+              formDivSize?.width && expand && model !== 'simple' && formDivSize.width < 1000,
+          })}
+          ref={formDivRef}
+        >
           <SchemaField schema={expand ? simpleSchema : schema} />
-          <div className={styles.action} style={{ marginTop: expand ? 0 : -12 }}>
+          <div
+            className={classnames(styles.action, {
+              [styles['small-action']]:
+                formDivSize?.width && expand && model !== 'simple' && formDivSize.width < 1000,
+            })}
+            style={{ marginTop: expand ? 0 : -12 }}
+          >
             <Space>
               {enableSave ? SearchBtn.advance : SearchBtn.simple}
               {enableSave && SaveBtn}
