@@ -112,10 +112,10 @@ export const EventLevel: { label: string; value: string }[] = [
 ];
 
 export const DateTypeList = [
-  {
-    label: 'String类型的UTC时间戳 (毫秒)',
-    value: 'string',
-  },
+  // {
+  //   label: 'String类型的UTC时间戳 (毫秒)',
+  //   value: 'string',
+  // },
   {
     label: 'yyyy-MM-dd',
     value: 'yyyy-MM-dd',
