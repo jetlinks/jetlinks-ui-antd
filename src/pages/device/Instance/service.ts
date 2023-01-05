@@ -375,6 +375,11 @@ class Service extends BaseService<DeviceInstance> {
       method: 'POST',
       data,
     });
+  public queryDetailListNoPaging = (data: any) =>
+    request(`/${SystemConst.API_BASE}/device-instance/detail/_query/no-paging`, {
+      method: 'POST',
+      data,
+    });
   public saveMetadata = (id: string, data: any) =>
     request(`/${SystemConst.API_BASE}/device/instance/${id}/metadata`, {
       method: 'PUT',

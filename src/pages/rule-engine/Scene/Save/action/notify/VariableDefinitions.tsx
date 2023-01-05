@@ -38,7 +38,9 @@ export default forwardRef((props: Props, ref) => {
       const rules: any[] = [];
       rules.push({
         validator: async (_: any, value: any) => {
-          if ((type === 'file' || type === 'link') && !value) {
+          if (type === 'file') {
+            return Promise.resolve();
+          } else if (type === 'link' && !value) {
             return Promise.reject(new Error('请输入' + item.name));
           } else if (type === 'tag' && !value) {
             return Promise.reject(new Error('请选择' + item.name));

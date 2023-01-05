@@ -2,7 +2,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { createForm, onFieldValueChange, onFormInit } from '@formily/core';
 import { Card, Col, Input, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createSchemaField, observer } from '@formily/react';
 import {
   ArrayTable,
@@ -35,7 +35,7 @@ import { PermissionButton } from '@/components';
 import usePermissions from '@/hooks/permission';
 import FAutoComplete from '@/components/FAutoComplete';
 import Webhook from './doc/Webhook';
-// import { useModel } from '@@/plugin-model/useModel';
+import { useModel } from '@@/plugin-model/useModel';
 import { typeArray } from '@/components/ProTableCard/CardItems/noticeTemplate';
 import RegionIdList from './regionId';
 
@@ -64,7 +64,7 @@ export const docMap = {
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
-  // const { initialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState');
   const [typeItem, setTypeItem] = useState<string>('email');
   const [providerItem, setProviderItem] = useState<string>('embedded');
   const [loading, setLoading] = useState<boolean>(false);
@@ -113,15 +113,15 @@ const Detail = observer(() => {
     [],
   );
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (initialState?.settings?.title) {
-  //       document.title = `通知配置 - ${initialState?.settings?.title}`;
-  //     } else {
-  //       document.title = '通知配置';
-  //     }
-  //   }, 0);
-  // }, []);
+  useEffect(() => {
+    setTimeout(() => {
+      if (initialState?.settings?.title) {
+        document.title = `通知配置 - ${initialState?.settings?.title}`;
+      } else {
+        document.title = '通知配置';
+      }
+    }, 0);
+  }, []);
 
   const SchemaField = createSchemaField({
     components: {

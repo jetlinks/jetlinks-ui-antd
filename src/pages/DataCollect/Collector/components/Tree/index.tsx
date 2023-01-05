@@ -154,7 +154,7 @@ export default observer((props: Props) => {
             style={{ overflow: 'hidden' }}
             className={styles['data-collect-tree']}
             showIcon
-            height={500}
+            height={document.body.clientHeight < 1000 ? document.body.clientHeight * 0.7 : 650}
             selectedKeys={TreeModel.selectedKeys}
             defaultExpandAll
             autoExpandParent

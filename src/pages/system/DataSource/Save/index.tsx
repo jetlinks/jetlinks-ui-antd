@@ -128,7 +128,7 @@ const Save = (props: Props) => {
                       resolve('');
                     } else {
                       const arr = value.split(':');
-                      if ((arr?.[0] === 'jdbc' || arr?.[0] === 'r2dbc') && arr?.[1] === 'mysql') {
+                      if (arr?.[0] === 'jdbc' || arr?.[0] === 'r2dbc') {
                         resolve('');
                       } else {
                         resolve('请输入正确的URL');

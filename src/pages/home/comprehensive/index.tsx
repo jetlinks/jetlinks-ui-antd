@@ -188,7 +188,8 @@ const Comprehensive = () => {
             <Body
               title={'平台架构图'}
               english={'PLATFORM ARCHITECTURE DIAGRAM'}
-              url={require('/public/images/home/content1.png')}
+              // url={require('/public/images/home/content1.png')}
+              url={require('/public/images/home/content1.svg')}
             />
           </Col>
         </Row>

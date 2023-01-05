@@ -74,27 +74,27 @@ const Property = (props: Props) => {
             ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
               data.valueType?.type || '',
             ) && (
-              <Tooltip placement="top" title="指标">
-                <ClockCircleOutlined
-                  onClick={() => {
-                    setIndicatorVisible(true);
-                  }}
-                />
-              </Tooltip>
-              // <PermissionButton
-              //   key={'metrics'}
-              //   onClick={() => {
-              //     setIndicatorVisible(true);
-              //   }}
-              //   tooltip={{
-              //     placement: "top",
-              //     title: devicePermission.update ? "指标" : '暂无权限，请联系管理员'
-              //   }}
-              //   style={{ padding: 0, border: "none", backgroundColor: 'inherit' }}
-              //   isPermission={devicePermission.update}
-              // >
-              //   <ClockCircleOutlined  />
-              // </PermissionButton>
+              // <Tooltip placement="top" title="指标">
+              //   <ClockCircleOutlined
+              //     onClick={() => {
+              //       setIndicatorVisible(true);
+              //     }}
+              //   />
+              // </Tooltip>
+              <PermissionButton
+                key={'metrics'}
+                onClick={() => {
+                  setIndicatorVisible(true);
+                }}
+                tooltip={{
+                  placement: 'top',
+                  title: devicePermission.update ? '指标' : '暂无权限，请联系管理员',
+                }}
+                style={{ padding: 0, border: 'none', backgroundColor: 'inherit' }}
+                isPermission={devicePermission.update}
+              >
+                <ClockCircleOutlined />
+              </PermissionButton>
             )}
           {data.expands?.type?.includes('read') && (
             <Tooltip placement="top" title="获取最新属性值">

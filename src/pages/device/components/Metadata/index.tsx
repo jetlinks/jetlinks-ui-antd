@@ -90,7 +90,7 @@ const Metadata = observer((props: Props) => {
             <PermissionButton isPermission={true} onClick={() => setCat(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata',
-                defaultMessage: '物模型',
+                defaultMessage: '物模型TSL',
               })}
               TSL
             </PermissionButton>
