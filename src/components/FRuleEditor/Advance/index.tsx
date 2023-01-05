@@ -15,7 +15,7 @@ interface Props {
 
 const Advance = (props: Props) => {
   const { onChange, virtualRule } = props;
-  const [success, setSuccess] = useState(false);
+  const [, setSuccess] = useState(false);
   const [editorValue, setEditorValue] = useState(virtualRule.script);
   const cacheRef = useRef(virtualRule.script);
   return (
@@ -29,9 +29,9 @@ const Advance = (props: Props) => {
         Store.set('rule-editor-value', cacheRef.current);
         onChange('simple');
       }}
-      okButtonProps={{
-        disabled: !success,
-      }}
+      // okButtonProps={{
+      //   disabled: !success,
+      // }}
     >
       <div className={styles.box}>
         <div className={styles.left}>

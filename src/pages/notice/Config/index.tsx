@@ -49,7 +49,7 @@ const Config = observer(() => {
   const actionRef = useRef<ActionType>();
   // const location = useLocation<{ id: string }>();
 
-  const { permission: configPermission } = usePermissions('notice/Template');
+  const { permission: configPermission } = usePermissions('notice/Config');
   // const id = (location as any).query?.id;
 
   const columns: ProColumns<ConfigItem>[] = [

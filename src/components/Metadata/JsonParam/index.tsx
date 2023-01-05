@@ -5,7 +5,6 @@ import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/device/components/Metadata';
-import MetadataModel from '@/pages/device/components/Metadata/Base/model';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
@@ -158,20 +157,11 @@ const JsonParam = observer((props: Props) => {
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
-                      enum:
-                        MetadataModel.type === 'functions'
-                          ? DataTypeList.filter((item) => item.value !== 'file')
-                          : DataTypeList.filter((item) =>
-                              [
-                                'int',
-                                'long',
-                                'float',
-                                'double',
-                                'string',
-                                'boolean',
-                                'date',
-                              ].includes(item.value),
-                            ),
+                      enum: DataTypeList.filter((item) =>
+                        ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+                          item.value,
+                        ),
+                      ),
                     },
                     booleanConfig: {
                       title: '布尔值',

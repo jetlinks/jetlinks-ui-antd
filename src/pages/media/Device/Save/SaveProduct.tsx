@@ -29,6 +29,8 @@ export default (props: SaveProps) => {
         terms: [{ column: 'provider', value: props.type }],
         pageSize: 100,
       });
+    } else {
+      setExtendFormItem([]);
     }
   }, [visible]);
 
