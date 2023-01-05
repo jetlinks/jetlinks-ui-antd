@@ -4,7 +4,9 @@ import { Input, InputNumber, Select } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm from '@ant-design/pro-form';
-import { DatePickerFormat } from '@/pages/rule-engine/Scene/Save/components';
+import ObjModel from '../DeviceOutput/actions/ObjModel';
+import ObjInput from './ObjInput';
+import TypeTime from './TypeTime';
 
 type FunctionTableDataType = {
   id: string;
@@ -23,6 +25,8 @@ interface FunctionCallProps {
 export default (props: FunctionCallProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const formRef = useRef<ProFormInstance<any>>();
+  const [objVisiable, setObjVisable] = useState<boolean>(false);
+  const [value, setValue] = useState<any>();
 
   useEffect(() => {
     if (props.functionData && props.functionData.length) {
@@ -59,7 +63,7 @@ export default (props: FunctionCallProps) => {
     }
   }, [props.productId]);
 
-  const getItemNode = (record: any, config: any) => {
+  const getItemNode = (record: any) => {
     const type = record.type;
     const name = record.name;
 
@@ -99,13 +103,16 @@ export default (props: FunctionCallProps) => {
         );
       case 'date':
         return (
-          <DatePickerFormat
-            {...config}
-            value={record.value}
-            format={record.format || 'YYYY-MM-DD HH:mm:ss'}
-            style={{ width: '100%' }}
-          />
+          // <DatePickerFormat
+          //   {...config}
+          //   value={record.value}
+          //   format={record.format || 'YYYY-MM-DD HH:mm:ss'}
+          //   style={{ width: '100%' }}
+          // />
+          <TypeTime type={record.type === 'yyyy-MM-dd' ? 'time' : 'date'} value={record.value} />
         );
+      case 'object':
+        return <ObjInput value={record.value} />;
       default:
         return <Input value={record.value} placeholder={'请输入' + name} />;
     }
@@ -130,10 +137,14 @@ export default (props: FunctionCallProps) => {
       align: 'center',
       width: 260,
       renderFormItem: (_, row) => {
-        return getItemNode(row.record, row);
+        return getItemNode(row.record);
       },
     },
   ];
+
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
 
   return (
     <ProForm<{ table: FunctionTableDataType[] }>
@@ -142,6 +153,7 @@ export default (props: FunctionCallProps) => {
       submitter={false}
       onValuesChange={() => {
         const values = formRef.current?.getFieldsValue();
+        console.log('---values---', values);
         if (props.onChange) {
           props.onChange(
             values.table.map((item: any) => ({
@@ -164,6 +176,19 @@ export default (props: FunctionCallProps) => {
           onChange: setEditableRowKeys,
         }}
       />
+      {objVisiable && (
+        <ObjModel
+          value={value}
+          close={() => {
+            setObjVisable(false);
+          }}
+          ok={(param) => {
+            console.log('------', param);
+            setValue(param);
+            setObjVisable(false);
+          }}
+        />
+      )}
     </ProForm>
   );
 };
