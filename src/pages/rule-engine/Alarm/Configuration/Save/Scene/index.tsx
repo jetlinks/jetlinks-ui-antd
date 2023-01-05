@@ -137,7 +137,7 @@ export default () => {
             key="button"
             icon={<PlusOutlined />}
             type="primary"
-            isPermission={permission.update}
+            isPermission={permission.add}
             onClick={() => {
               setVisible(true);
             }}

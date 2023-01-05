@@ -548,6 +548,7 @@ export default (props: ItemProps) => {
       )}
       {triggerVisible && (
         <TriggerAlarm
+          id={FormModel.current?.id || ''}
           close={() => {
             setTriggerVisible(false);
           }}

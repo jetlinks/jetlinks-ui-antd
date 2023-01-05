@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message, Tooltip } from 'antd';
+import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import {
@@ -24,44 +24,6 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { service } from '@/pages/device/Firmware';
 
-const UpgradeBtn = (props: { data: any; actions: any }) => {
-  const { data, actions } = props;
-  if (data.waiting > 0 && data?.state?.value === 'processing') {
-    return (
-      <a>
-        <Tooltip title={'停止'}>
-          <StopOutlined
-            onClick={async () => {
-              const resp = await service.stopTask(data.id);
-              if (resp.status === 200) {
-                message.success('操作成功！');
-                actions?.reload();
-              }
-            }}
-          />
-        </Tooltip>
-      </a>
-    );
-  } else if (data?.state?.value === 'canceled') {
-    return (
-      <a>
-        <Tooltip title={'继续升级'}>
-          <ControlOutlined
-            onClick={async () => {
-              const resp = await service.startTask(data.id, ['canceled']);
-              if (resp.status === 200) {
-                message.success('操作成功！');
-                actions?.reload();
-              }
-            }}
-          />
-        </Tooltip>
-      </a>
-    );
-  }
-  return null;
-};
-
 export const state = model<{
   current?: FirmwareItem;
   visible: boolean;
@@ -78,6 +40,67 @@ const Task = observer(() => {
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id || localStorage.getItem('TaskId');
   const productId = (location as any).query?.productId || localStorage.getItem('TaskProductId');
+
+  const UpgradeBtn = (props: { data: any; actions: any }) => {
+    const { data, actions } = props;
+    if (data.waiting > 0 && data?.state?.value === 'processing') {
+      return (
+        <PermissionButton
+          key={'stop'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.update}
+          tooltip={{
+            title: '停止',
+          }}
+          onClick={async () => {
+            const resp = await service.stopTask(data.id);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actions?.reload();
+            }
+          }}
+        >
+          <StopOutlined />
+        </PermissionButton>
+      );
+    } else if (data?.state?.value === 'canceled') {
+      return (
+        // <a>
+        //   <Tooltip title={'继续升级'}>
+        //     <ControlOutlined
+        //       onClick={async () => {
+        //         const resp = await service.startTask(data.id, ['canceled']);
+        //         if (resp.status === 200) {
+        //           message.success('操作成功！');
+        //           actions?.reload();
+        //         }
+        //       }}
+        //     />
+        //   </Tooltip>
+        // </a>
+        <PermissionButton
+          key={'stop'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.update}
+          tooltip={{
+            title: '继续升级',
+          }}
+          onClick={async () => {
+            const resp = await service.startTask(data.id, ['canceled']);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actions?.reload();
+            }
+          }}
+        >
+          <ControlOutlined />
+        </PermissionButton>
+      );
+    }
+    return null;
+  };
 
   const columns: ProColumns<any>[] = [
     {

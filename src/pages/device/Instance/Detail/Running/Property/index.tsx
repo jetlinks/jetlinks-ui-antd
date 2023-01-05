@@ -117,32 +117,32 @@ const Property = (props: Props) => {
             ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
               record.valueType?.type || '',
             ) && (
-              <Tooltip placement="top" title="指标">
-                <a
-                  onClick={() => {
-                    setIndicatorVisible(true);
-                    setCurrentInfo(record);
-                  }}
-                >
-                  <ClockCircleOutlined />
-                </a>
-              </Tooltip>
-              // <PermissionButton
-              //   type={'link'}
-              //   onClick={() => {
-              //     setVisible(true);
-              //     setCurrentInfo(record);
-              //   }}
-              //   tooltip={{
-              //     placement: "top",
-              //     title: devicePermission.update ? "指标" : '暂无权限，请联系管理员'
-              //   }}
-              //   style={{ padding: 0 }}
-              //   key={'edit'}
-              //   isPermission={devicePermission.update}
-              // >
-              //   <ClockCircleOutlined />
-              // </PermissionButton>
+              // <Tooltip placement="top" title="指标">
+              //   <a
+              //     onClick={() => {
+              //       setIndicatorVisible(true);
+              //       setCurrentInfo(record);
+              //     }}
+              //   >
+              //     <ClockCircleOutlined />
+              //   </a>
+              // </Tooltip>
+              <PermissionButton
+                type={'link'}
+                onClick={() => {
+                  setVisible(true);
+                  setCurrentInfo(record);
+                }}
+                tooltip={{
+                  placement: 'top',
+                  title: devicePermission.update ? '指标' : '暂无权限，请联系管理员',
+                }}
+                style={{ padding: 0 }}
+                key={'edit'}
+                isPermission={devicePermission.update}
+              >
+                <ClockCircleOutlined />
+              </PermissionButton>
             )}
           {record.expands?.type?.includes('read') && (
             <Tooltip placement="top" title="获取最新属性值">

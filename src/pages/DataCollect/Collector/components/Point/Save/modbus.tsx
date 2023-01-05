@@ -81,10 +81,12 @@ export default (props: Props) => {
     field.loading = true;
     services(field).then(
       action.bound!((resp: any) => {
-        field.dataSource = (resp?.result || []).map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
+        field.dataSource = (resp?.result || [])
+          .filter((i: any) => i?.id !== 'property')
+          .map((item: any) => ({
+            label: item.name,
+            value: item.id,
+          }));
         field.loading = false;
       }),
     );
