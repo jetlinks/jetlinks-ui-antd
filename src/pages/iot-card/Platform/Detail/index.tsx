@@ -15,6 +15,7 @@ const Detail = observer(() => {
   const params = useParams<{ id: string }>();
   const { initialState } = useModel('@@initialState');
   const [docType, setDocType] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const form = useMemo(
     () =>
@@ -364,12 +365,13 @@ const Detail = observer(() => {
 
   const handleSave = async () => {
     const data: any = await form.submit();
+    setLoading(true);
     const res: any = params.id === ':id' ? await service.save(data) : await service.update(data);
     if (res.status === 200) {
       onlyMessage('保存成功');
       history.back();
     }
-    // console.log(data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -397,7 +399,7 @@ const Detail = observer(() => {
               />
               <FormButtonGroup.Sticky>
                 <FormButtonGroup.FormItem>
-                  <Button type="primary" onClick={() => handleSave()}>
+                  <Button type="primary" onClick={() => handleSave()} loading={loading}>
                     保存
                   </Button>
                 </FormButtonGroup.FormItem>
