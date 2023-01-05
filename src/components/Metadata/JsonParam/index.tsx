@@ -201,6 +201,9 @@ const JsonParam = observer((props: Props) => {
                       }),
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayParam',
+                      'x-component-props': {
+                        isFunction: props.isFunction,
+                      },
                       'x-reactions': {
                         dependencies: ['..valueType.type'],
                         fulfill: {
