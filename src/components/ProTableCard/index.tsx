@@ -329,7 +329,7 @@ const ProTableCard = <
                     ? num / pageSize - 1
                     : parseInt(num / pageSize);
                 const min = minSize > num ? pageIndexInt * pageSize + 1 : minSize;
-
+                if (min === 1) pageChange(min, pageSize);
                 return `第 ${min} - ${max} 条/总共 ${num} 条`;
               }}
             />
