@@ -685,7 +685,7 @@ const Edit = observer((props: Props) => {
                           return new Promise((resolve) => {
                             const number = Number(value);
                             if (number <= 0 || value.length > 64 || /[.]/.test(value)) {
-                              resolve('请输入非0正整数，最多可输入64个字符');
+                              resolve('请输入正整数，最多可输入64个字符');
                             } else {
                               resolve('');
                             }
@@ -735,7 +735,7 @@ const Edit = observer((props: Props) => {
                           return new Promise((resolve) => {
                             const number = Number(value);
                             if (number <= 0 || value.length > 64 || /[.]/.test(value)) {
-                              resolve('请输入非0正整数，最多可输入64个字符');
+                              resolve('请输入正整数，最多可输入64个字符');
                             } else {
                               resolve('');
                             }
