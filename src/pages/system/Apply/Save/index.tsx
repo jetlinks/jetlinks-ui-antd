@@ -573,7 +573,7 @@ const Save = () => {
         gridSpan: 2,
         layout: 'vertical',
         labelAlign: 'left',
-        tooltip: '限制应用程序对用户账号的访问',
+        tooltip: '限制用户访问应用程序的权限',
       },
       'x-component': 'Input',
       'x-component-props': {
@@ -816,6 +816,22 @@ const Save = () => {
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入授权地址',
+      },
+    },
+    'apiClient.authConfig.oauth2.tokenUrl': {
+      type: 'string',
+      title: 'token地址',
+      'x-decorator': 'FormItem',
+      'x-decorator-props': {
+        gridSpan: 2,
+        layout: 'vertical',
+        labelAlign: 'left',
+        tooltip: '设置token令牌的地址',
+      },
+      required: true,
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: '请输入token地址',
       },
     },
     'apiClient.authConfig.oauth2.redirectUri': {
@@ -1238,7 +1254,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '授权知道后跳转到具体页面的回调地址',
+                  tooltip: '授权完成后跳转到具体页面的回调地址',
                 },
                 // required: true,
                 'x-component': 'Input',
@@ -1271,7 +1287,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '为第三方应用用户分配角色，根据绑定的角色，进行系统菜单赋权',
+                  tooltip: '为应用用户分配角色，根据绑定的角色，进行系统菜单赋权',
                   addonAfter: (
                     <PermissionButton
                       type="link"
@@ -1319,7 +1335,7 @@ const Save = () => {
                   gridSpan: 2,
                   layout: 'vertical',
                   labelAlign: 'left',
-                  tooltip: '为第三方应用用户分配所属组织，根据绑定的组织，进行数据隔离',
+                  tooltip: '为应用用户分配所属组织，根据绑定的组织，进行数据隔离',
                   addonAfter: (
                     <PermissionButton
                       type="link"

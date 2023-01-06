@@ -89,7 +89,7 @@ export default (props: Props) => {
       if (!(Number(value) % 1 === 0) || Number(value) < 0) {
         return {
           type: 'error',
-          message: '请输入0或正整数',
+          message: '请输入正整数',
         };
       }
       return '';

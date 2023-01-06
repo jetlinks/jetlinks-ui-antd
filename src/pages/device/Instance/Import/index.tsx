@@ -93,7 +93,8 @@ const NormalUpload = (props: any) => {
           setErrMessage(res.message || '失败');
         }
       };
-      source.onerror = () => {
+      source.onerror = (e) => {
+        if (e.status === 403) setErrMessage('暂无权限，请联系管理员');
         setFlag(false);
         source.close();
       };

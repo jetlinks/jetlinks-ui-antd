@@ -446,8 +446,8 @@ const MapTable = (props: Props) => {
           批量映射
         </PermissionButton>
         <PermissionButton
-          isPermission={permission.update}
           type="primary"
+          isPermission={permission.update}
           onClick={async () => {
             if (props.formRef) {
               add();

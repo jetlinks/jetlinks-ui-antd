@@ -136,7 +136,7 @@ const Save = (props: Props) => {
         'x-validator': [
           {
             format: 'integer',
-            message: '请输入非0正整数',
+            message: '请输入正整数',
           },
         ],
       },

@@ -82,6 +82,7 @@ const Status = observer((props: Props) => {
   const modifyArrayList = (oldList: ListProps[], item: ListProps, index?: number) => {
     let newList: ListProps[] = [];
     if (index !== 0 && !index) {
+      // 添加
       for (let i = 0; i < oldList.length; i++) {
         const dt = oldList[i];
         if (item.key === dt.key) {
@@ -91,6 +92,7 @@ const Status = observer((props: Props) => {
         }
       }
     } else {
+      // 修改
       oldList.splice(index, 0, item);
       newList = [...oldList];
     }
@@ -875,9 +877,9 @@ const Status = observer((props: Props) => {
         const response = await queryProductConfigRun(device.productId);
         if (response.status === 200 && response.result.length > 0) {
           DiagnoseStatusModel.configuration.product = response.result;
-          const list = [...DiagnoseStatusModel.list];
           const configuration = DiagnoseStatusModel.product?.configuration || {};
           response.result.map((item: any, i: number) => {
+            const list = [...DiagnoseStatusModel.list];
             if (!_.map(list, 'key').includes(`product-auth${i}`)) {
               DiagnoseStatusModel.list = modifyArrayList(
                 DiagnoseStatusModel.list,
@@ -1039,9 +1041,9 @@ const Status = observer((props: Props) => {
         const response = await queryDeviceConfigRun(device.id);
         if (response.status === 200 && response.result.length > 0) {
           DiagnoseStatusModel.configuration.device = response.result;
-          const list = [...DiagnoseStatusModel.list];
           const configuration = device?.configuration || {};
           response.result.map((item: any, i: number) => {
+            const list = [...DiagnoseStatusModel.list];
             if (!_.map(list, 'key').includes(`device-auth${i}`)) {
               DiagnoseStatusModel.list = modifyArrayList(
                 DiagnoseStatusModel.list,
@@ -1899,6 +1901,7 @@ const Status = observer((props: Props) => {
             <Button
               type="primary"
               onClick={async () => {
+                let flag: boolean = true;
                 if (
                   Object.keys(DiagnoseStatusModel.gateway).length > 0 &&
                   DiagnoseStatusModel.gateway?.state?.value !== 'enabled'
@@ -1913,6 +1916,8 @@ const Status = observer((props: Props) => {
                       text: '正常',
                       info: null,
                     });
+                  } else {
+                    flag = false;
                   }
                 }
                 if (DiagnoseStatusModel.product?.state !== 1) {
@@ -1926,6 +1931,8 @@ const Status = observer((props: Props) => {
                       text: '正常',
                       info: null,
                     });
+                  } else {
+                    flag = false;
                   }
                 }
                 if (device?.state?.value === 'notActive') {
@@ -1940,6 +1947,8 @@ const Status = observer((props: Props) => {
                       text: '正常',
                       info: null,
                     });
+                  } else {
+                    flag = false;
                   }
                 }
                 if (providerType === 'network' || providerType === 'child-device') {
@@ -1958,6 +1967,8 @@ const Status = observer((props: Props) => {
                         text: '正常',
                         info: null,
                       });
+                    } else {
+                      flag = false;
                     }
                   }
                 }
@@ -1973,10 +1984,14 @@ const Status = observer((props: Props) => {
                         text: '正常',
                         info: null,
                       });
+                    } else {
+                      flag = false;
                     }
                   }
                 }
-                onlyMessage('操作成功！');
+                if (flag) {
+                  onlyMessage('操作成功！');
+                }
               }}
             >
               一键修复

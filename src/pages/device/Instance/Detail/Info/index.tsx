@@ -114,6 +114,9 @@ const Info = observer(() => {
           >
             {InstanceModel.detail?.deviceType?.text}
           </Descriptions.Item>
+          <Descriptions.Item label={'固件版本'}>
+            {InstanceModel.detail?.firmwareInfo?.version || ''}
+          </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
               id: 'pages.device.instanceDetail.transportProtocol',

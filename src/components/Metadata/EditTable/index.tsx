@@ -168,8 +168,8 @@ Editable.Popover = observer((props) => {
         </div>
         <CloseOutlined
           onClick={() => {
-            // setVisible(false);
-            closePopover();
+            setVisible(false);
+            // closePopover();
           }}
         />
       </div>

@@ -121,8 +121,8 @@ export const DateTypeList = [
     value: 'yyyy-MM-dd',
   },
   {
-    label: 'yyyy-MM-dd HH:mm:ss',
-    value: 'yyyy-MM-dd HH:mm:ss',
+    label: 'yyyy-MM-DD HH:mm:ss',
+    value: 'yyyy-MM-DD HH:mm:ss',
   },
   // {
   //   label: 'yyyy-MM-dd HH:mm:ss EE',

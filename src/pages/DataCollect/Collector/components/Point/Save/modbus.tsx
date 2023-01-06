@@ -103,7 +103,7 @@ export default (props: Props) => {
       if (!(Number(value) % 1 === 0) || Number(value) < 0) {
         return {
           type: 'error',
-          message: '请输入0或正整数',
+          message: '请输入正整数',
         };
       }
       return '';
@@ -209,6 +209,33 @@ export default (props: Props) => {
               {
                 checkAddressLength: true,
               },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    if (props.data?.id && props.data?.configuration?.parameter?.address === value) {
+                      resolve('');
+                    }
+                    service
+                      ._validateField(props.collector?.id || '', {
+                        pointKey: value,
+                      })
+                      .then((resp) => {
+                        if (resp.status === 200) {
+                          if (resp.result.passed) {
+                            resolve('');
+                          } else {
+                            resolve('改地址已存在');
+                          }
+                        }
+                        resolve('');
+                      })
+                      .catch(() => {
+                        return '验证失败!';
+                      });
+                  });
+                },
+              },
             ],
           },
           'configuration.parameter.quantity': {
@@ -240,7 +267,7 @@ export default (props: Props) => {
               },
               {
                 min: 1,
-                message: '请输入非0正整数',
+                message: '请输入正整数',
               },
               {
                 checkLength: true,
@@ -461,7 +488,7 @@ export default (props: Props) => {
               },
               {
                 min: 1,
-                message: '请输入非0正整数',
+                message: '请输入正整数',
               },
               {
                 checkLength: true,

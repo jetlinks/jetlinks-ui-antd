@@ -60,7 +60,7 @@ const SelectDevices = observer((props: Props) => {
       title: '固件版本',
       dataIndex: 'firmwareInfo',
       ellipsis: true,
-      render: (text: any, record: any) => record?.version || '',
+      render: (text: any, record: any) => record?.firmwareInfo?.version || '',
     },
     {
       title: intl.formatMessage({

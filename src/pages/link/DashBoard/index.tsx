@@ -260,7 +260,7 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: 50,
+        left: 60,
         right: 0,
         top: 10,
         bottom: 20,

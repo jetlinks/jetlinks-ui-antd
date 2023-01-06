@@ -83,18 +83,7 @@ const Save = (props: SaveType) => {
           name={'id'}
           required
           rules={[
-            { required: true, message: '请输入卡号' },
-            { max: 64, message: '最多可输入64个字符' },
-          ]}
-        >
-          <Input placeholder={'请输入卡号'} disabled={props.type === 'edit'} />
-        </Form.Item>
-        <Form.Item
-          label={'ICCID'}
-          name={'iccId'}
-          required
-          rules={[
-            { required: true, message: '请输入ICCID' },
+            // { required: true, message: '请输入卡号' },
             { max: 64, message: '最多可输入64个字符' },
             () => ({
               async validator(_, value) {
@@ -106,10 +95,21 @@ const Save = (props: SaveType) => {
                     return Promise.reject(new Error(`${validateId}`));
                   }
                 } else {
-                  return Promise.reject(new Error('请输入输入正确的ICCID'));
+                  return Promise.reject(new Error('请输入卡号'));
                 }
               },
             }),
+          ]}
+        >
+          <Input placeholder={'请输入卡号'} disabled={props.type === 'edit'} />
+        </Form.Item>
+        <Form.Item
+          label={'ICCID'}
+          name={'iccId'}
+          required
+          rules={[
+            { required: true, message: '请输入ICCID' },
+            { max: 64, message: '最多可输入64个字符' },
           ]}
         >
           <Input placeholder={'请输入ICCID'} disabled={props.type === 'edit'} />

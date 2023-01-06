@@ -36,6 +36,10 @@ const Metadata = observer((props: Props) => {
   const resetMetadata = async () => {
     const resp = await instanceService.deleteMetadata(params.id);
     if (resp.status === 200) {
+      const res = await instanceService.detail(params.id);
+      if (res.status === 200) {
+        InstanceModel.detail = res?.result || [];
+      }
       onlyMessage('操作成功');
       Store.set(SystemConst.REFRESH_DEVICE, true);
       setTimeout(() => {

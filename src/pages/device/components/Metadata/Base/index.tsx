@@ -14,12 +14,13 @@ import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
 // import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
 import { productModel } from '@/pages/device/Product';
-import { InstanceModel } from '@/pages/device/Instance';
+// import { InstanceModel } from '@/pages/device/Instance';
 import { asyncUpdateMedata, removeMetadata } from '../metadata';
 import type { permissionType } from '@/hooks/permission';
 import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { message } from 'antd';
+import { InstanceModel, service as instanceService } from '@/pages/device/Instance';
 
 interface Props {
   type: MetadataType;
@@ -39,6 +40,13 @@ const BaseMetadata = observer((props: Props) => {
   typeMap.set('product', productModel.current);
   typeMap.set('device', InstanceModel.detail);
 
+  const resetMetadata = async () => {
+    const resp = await instanceService.detail(param.id);
+    if (resp.status === 200) {
+      InstanceModel.detail = resp?.result || [];
+    }
+  };
+
   const removeItem = async (record: MetadataItem) => {
     const removeDB = () => {
       return DB.getDB().table(`${type}`).delete(record.id!);
@@ -50,6 +58,7 @@ const BaseMetadata = observer((props: Props) => {
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
       MetadataModel.edit = false;
       MetadataModel.item = {};
+      resetMetadata();
     } else {
       onlyMessage('操作失败！', 'error');
     }

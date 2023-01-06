@@ -135,18 +135,21 @@ export default observer((props: Props) => {
         />
       </div>
       <div style={{ margin: '16px 0' }}>
-        <Button
-          type="primary"
-          ghost
-          style={{ width: '100%' }}
-          icon={<PlusOutlined />}
-          onClick={() => {
-            TreeModel.visible = true;
-            TreeModel.current = {};
-          }}
-        >
-          新增采集器
-        </Button>
+        <Tooltip title={!permission.add ? '暂无权限，请联系管理员' : ''}>
+          <Button
+            type="primary"
+            ghost
+            disabled={!permission.add}
+            style={{ width: '100%' }}
+            icon={<PlusOutlined />}
+            onClick={() => {
+              TreeModel.visible = true;
+              TreeModel.current = {};
+            }}
+          >
+            新增采集器
+          </Button>
+        </Tooltip>
       </div>
       <div>
         {TreeModel.dataSource.length ? (
@@ -210,22 +213,24 @@ export default observer((props: Props) => {
                           defaultMessage: '确认禁用？',
                         })}
                         onConfirm={async () => {
-                          const resp =
-                            i?.state?.value !== 'disabled'
-                              ? await service.updateCollector(i.id, {
-                                  state: 'disabled',
-                                  runningState: 'stopped',
-                                })
-                              : await service.updateCollector(i.id, {
-                                  state: 'enabled',
-                                  runningState: 'running',
-                                });
-                          if (resp.status === 200) {
-                            TreeModel.param = { terms: [] };
-                            handleSearch(TreeModel.param);
-                            onlyMessage('操作成功');
-                          } else {
-                            onlyMessage('操作失败！', 'error');
+                          if (permission.action) {
+                            const resp =
+                              i?.state?.value !== 'disabled'
+                                ? await service.updateCollector(i.id, {
+                                    state: 'disabled',
+                                    runningState: 'stopped',
+                                  })
+                                : await service.updateCollector(i.id, {
+                                    state: 'enabled',
+                                    runningState: 'running',
+                                  });
+                            if (resp.status === 200) {
+                              TreeModel.param = { terms: [] };
+                              handleSearch(TreeModel.param);
+                              onlyMessage('操作成功');
+                            } else {
+                              onlyMessage('操作失败！', 'error');
+                            }
                           }
                         }}
                       >
@@ -241,11 +246,13 @@ export default observer((props: Props) => {
                         title={'该操作将会删除下属点位，确定删除？'}
                         disabled={i?.state?.value !== 'disabled'}
                         onConfirm={async () => {
-                          const resp = await service.removeCollector(i.id);
-                          if (resp.status === 200) {
-                            TreeModel.param = { terms: [] };
-                            handleSearch(TreeModel.param);
-                            onlyMessage('操作成功');
+                          if (permission.delete) {
+                            const resp = await service.removeCollector(i.id);
+                            if (resp.status === 200) {
+                              TreeModel.param = { terms: [] };
+                              handleSearch(TreeModel.param);
+                              onlyMessage('操作成功');
+                            }
                           }
                         }}
                       >
