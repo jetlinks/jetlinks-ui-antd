@@ -531,6 +531,16 @@ const Save = observer(() => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入用户名',
+              },
+            ],
           },
           password: {
             title: '密码',
@@ -545,6 +555,16 @@ const Save = observer(() => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 128,
+                message: '最多可输入128个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入密码',
+              },
+            ],
           },
           // maxMessageSize: {
           //   title: '最大消息长度',
