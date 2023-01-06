@@ -447,6 +447,7 @@ const MapTable = (props: Props) => {
         </PermissionButton>
         <PermissionButton
           type="primary"
+          isPermission={permission.update}
           onClick={async () => {
             if (props.formRef) {
               add();

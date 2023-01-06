@@ -44,12 +44,21 @@ export default observer((props: Props) => {
   ];
 
   useEffect(() => {
+    // console.log('-----------',DeviceModel.deviceDetail)
     if (DeviceModel.productDetail) {
-      const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
-      setProperties(metadata.properties);
-      setFunctions(metadata.functions);
+      if (DeviceModel.selector === 'fixed') {
+        const metadata = JSON.parse(
+          DeviceModel.deviceDetail?.metadata || DeviceModel.deviceDetail?.deriveMetadata || '{}',
+        );
+        setProperties(metadata.properties);
+        setFunctions(metadata.functions);
+      } else {
+        const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
+        setProperties(metadata.properties);
+        setFunctions(metadata.functions);
+      }
     }
-  }, [DeviceModel.productDetail]);
+  }, [DeviceModel.productDetail, DeviceModel.deviceDetail]);
 
   useEffect(() => {
     if (functionId && functions.length !== 0) {

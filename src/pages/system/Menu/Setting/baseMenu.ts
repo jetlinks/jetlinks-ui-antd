@@ -2533,7 +2533,7 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
-                    permission: 'rule-instance',
+                    permission: 'device-instance',
                     actions: ['query', 'save'],
                   },
                 ],
@@ -2543,8 +2543,26 @@ export default [
                 name: '下发',
                 permissions: [
                   {
-                    permission: 'rule-instance',
-                    actions: ['query', 'save'],
+                    permission: 'edge-operations',
+                    actions: ['invoke'],
+                  },
+                  {
+                    permission: 'device-instance',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'edge-operations',
+                    actions: ['invoke'],
+                  },
+                  {
+                    permission: 'device-instance',
+                    actions: ['query'],
                   },
                 ],
               },

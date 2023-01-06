@@ -201,7 +201,7 @@ const Detail = observer(() => {
           dependencies: ['type'],
           fulfill: {
             state: {
-              visible: '{{!!$deps[0] && $deps[0] !== "email"}}',
+              hidden: '{{!(!!$deps[0] && $deps[0] !== "email")}}',
             },
           },
         },

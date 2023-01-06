@@ -75,7 +75,7 @@ export default observer(() => {
   const history = useHistory();
   const [form] = Form.useForm();
   const [saveLoading, setSaveLoading] = useState(false);
-  const { permission, getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
+  const { getOtherPermission } = PermissionButton.usePermission('rule-engine/Scene');
 
   const FormModelInit = () => {
     FormModel.current = {
@@ -234,7 +234,7 @@ export default observer(() => {
             <PermissionButton
               key={'update'}
               type={'primary'}
-              isPermission={getOtherPermission([permission.update, permission.add])}
+              isPermission={getOtherPermission(['update', 'add'])}
               onClick={submit}
               loading={saveLoading}
             >
