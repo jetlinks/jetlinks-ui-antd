@@ -35,7 +35,7 @@ const FIndicators = (props: Props) => {
                 onChange({
                   ...value,
                   value: [
-                    val > value?.value?.[1] ? value?.value?.[0] : val,
+                    value?.value?.[1] && val > value?.value?.[1] ? value?.value?.[0] : val,
                     value?.value?.[1] || '',
                   ],
                 });
@@ -55,7 +55,10 @@ const FIndicators = (props: Props) => {
                 onChange={(val) => {
                   onChange({
                     ...value,
-                    value: [value?.value?.[0], val > value?.value?.[0] ? val : value?.value?.[1]],
+                    value: [
+                      value?.value?.[0],
+                      value?.value?.[0] && val > value?.value?.[0] ? val : value?.value?.[1],
+                    ],
                   });
                 }}
               />
