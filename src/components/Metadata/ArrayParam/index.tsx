@@ -126,14 +126,15 @@ const ArrayParam = (props: Props) => {
                 message: '请选择时间格式',
               },
             ],
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['date'].includes($deps[0])}}",
-                },
-              },
-            },
+            'x-visible': false,
+            // 'x-reactions': {
+            //   dependencies: ['.type'],
+            //   fulfill: {
+            //     state: {
+            //       visible: "{{['date'].includes($deps[0])}}",
+            //     },
+            //   },
+            // },
           },
           expands: {
             type: 'object',
