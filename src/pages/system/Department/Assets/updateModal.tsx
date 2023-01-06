@@ -24,22 +24,18 @@ export default (props: UpdateModalProps) => {
     if (data) {
       setLoading(true);
       if (Array.isArray(props.id)) {
-        const _data = (props.id as string[]).map((item) => ({
-          targetType: 'org',
-          targetId: props.targetId,
-          assetType: props.type,
-          assetIdList: [item],
-          permission: data.permissions,
-        }));
-        service.bind('product', _data).subscribe({
-          next: () => onlyMessage('操作成功'),
-          error: () => onlyMessage('操作失败', 'error'),
-          complete: () => {
-            setLoading(false);
-            props.onCancel();
-            props.onReload();
+        const resp = await service.updateAll(props.type, 'org', props.targetId, [
+          {
+            assetIdList: props.id,
+            permission: data.permissions,
           },
-        });
+        ]);
+        setLoading(false);
+        if (resp.status === 200) {
+          props.onCancel();
+          props.onReload();
+          onlyMessage('操作成功', 'success');
+        }
       } else {
         const res = await server.updatePermission(
           props.type,
@@ -51,6 +47,7 @@ export default (props: UpdateModalProps) => {
         if (res.status === 200 && props.onReload) {
           props.onCancel();
           props.onReload();
+          onlyMessage('操作成功', 'success');
         }
       }
     }

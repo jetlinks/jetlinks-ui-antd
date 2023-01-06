@@ -157,6 +157,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               ...mItem,
               label: mItem.name,
               value: mItem.value,
+              key: mItem.value,
             }));
             setMetricsOptions(_metrics);
           } else {

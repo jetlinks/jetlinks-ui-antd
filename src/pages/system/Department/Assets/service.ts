@@ -118,6 +118,12 @@ class Service<T> extends BaseService<T> {
 
   getBindingAssets = (type: string, data: any[]) =>
     request(`${this.uri}/bindings/${type}`, { method: 'POST', data });
+
+  updateAll = (assetType: string, targetType: string, targetId: string, data: any) =>
+    request(`${this.uri}/permission/${assetType}/${targetType}/${targetId}/_batch`, {
+      method: 'PUT',
+      data,
+    });
 }
 
 export default Service;

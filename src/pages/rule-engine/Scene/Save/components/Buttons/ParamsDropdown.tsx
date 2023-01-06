@@ -6,6 +6,7 @@ import MTimePicker from '../ParamsSelect/components/MTimePicker';
 import moment from 'moment';
 import ParamsSelect from '../ParamsSelect';
 import './index.less';
+import { isEqual } from 'lodash';
 
 export interface ParamsDropdownProps {
   value?: any;
@@ -193,7 +194,7 @@ export default (props: ParamsDropdownProps) => {
   const findLabel = (value: string, data: any[], titleName?: string): boolean => {
     let isLabel = false;
     return data.some((item) => {
-      if (item.key === value) {
+      if (isEqual(item.key, value)) {
         let titleKey = 'title';
         if (titleName) {
           titleKey = titleName;
@@ -269,9 +270,19 @@ export default (props: ParamsDropdownProps) => {
       if ('name' in props) {
         _value = props.value?.value[props.name!];
       }
-      findLabel(_value, props.BuiltInOptions || []);
+      findLabel(_value, props.BuiltInOptions || [], '');
     }
   }, [props.BuiltInOptions]);
+
+  useEffect(() => {
+    if (props.metricsOptions) {
+      let _value = props.value?.value;
+      if ('name' in props) {
+        _value = props.value?.value[props.name!];
+      }
+      findLabel(_value, props.metricsOptions || [], 'name');
+    }
+  }, [props.metricsOptions]);
 
   let _itemList = [];
 
