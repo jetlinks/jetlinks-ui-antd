@@ -7,7 +7,7 @@ import './index.less';
 interface TagModalProps {
   tagData: any[];
   value?: any[];
-  onChange?: (value: any[]) => void;
+  onChange?: (value: any[], OptionTag?: any[]) => void;
   id?: string;
 }
 
@@ -39,8 +39,18 @@ export default (props: TagModalProps) => {
           value: item.value,
         };
       });
+    const arr = tagList
+      .filter((item) => !!item.value)
+      .map((item: any) => {
+        return {
+          column: item.name,
+          type: item.type,
+          value: item.value,
+        };
+      });
+    console.log('----taglist---', tagList);
     if (props.onChange) {
-      props.onChange([{ value: newValue, name: '标签' }]);
+      props.onChange([{ value: newValue, name: '标签' }], arr);
     }
   };
 
