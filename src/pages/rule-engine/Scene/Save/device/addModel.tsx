@@ -248,6 +248,8 @@ export default observer((props: AddProps) => {
           // console.log(res.result.metadata)
           handleMetadata(res.result.metadata);
         }
+      } else {
+        handleMetadata(TriggerDeviceModel.productDetail?.metadata);
       }
 
       TriggerDeviceModel.stepNumber = 2;

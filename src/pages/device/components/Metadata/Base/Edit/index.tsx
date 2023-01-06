@@ -256,14 +256,14 @@ const Edit = observer((props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'InputSelect',
         'x-visible': false,
-        'x-component-props': {
-          showSearch: true,
-          showArrow: true,
-          allowClear: true,
-          mode: 'tags',
-          filterOption: (input: string, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
-        },
+        // 'x-component-props': {
+        //   showSearch: true,
+        //   showArrow: true,
+        //   allowClear: true,
+        //   mode: 'tags',
+        //   filterOption: (input: string, option: any) =>
+        //     option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+        // },
         'x-reactions': [
           {
             dependencies: ['.type'],
@@ -273,7 +273,7 @@ const Edit = observer((props: Props) => {
               },
             },
           },
-          '{{useAsyncDataSource(getUnit)}}',
+          // '{{useAsyncDataSource(getUnit)}}',
         ],
       },
       scale: {
