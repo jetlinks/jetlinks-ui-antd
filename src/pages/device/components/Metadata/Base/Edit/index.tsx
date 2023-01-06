@@ -22,6 +22,7 @@ import {
   Radio,
   Select,
   Space,
+  Switch,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import {
@@ -174,6 +175,7 @@ const Edit = observer((props: Props) => {
       Checkbox,
       FormGrid,
       DatePicker,
+      Switch,
       FIndicators,
       InputSelect,
     },
@@ -615,11 +617,12 @@ const Edit = observer((props: Props) => {
             type: 'object',
             title: '规则配置',
             'x-visible': false,
-            'x-component': 'Editable.Popover',
+            // 'x-component': 'Editable.Popover',
             'x-reactions': {
               dependencies: ['.source'],
               fulfill: {
                 state: {
+                  // visible: '{{$deps[0]}}',
                   visible: '{{$deps[0]==="rule"}}',
                 },
               },
@@ -643,16 +646,37 @@ const Edit = observer((props: Props) => {
               //     },
               //   ],
               // },
-
+              isVirtualRule: {
+                type: 'boolean',
+                title: '规则配置',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
+              },
               windowType: {
                 type: 'string',
                 title: '窗口',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
+                required: true,
+                'x-validator': [
+                  {
+                    required: true,
+                    message: `请选择窗口`,
+                  },
+                ],
                 enum: [
                   { label: '时间窗口', value: 'time' },
                   { label: '次数窗口', value: 'num' },
                 ],
+                'x-visible': false,
+                'x-reactions': {
+                  dependencies: ['.isVirtualRule'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]}}',
+                    },
+                  },
+                },
                 'x-component-props': {
                   allowClear: true,
                 },
@@ -675,29 +699,60 @@ const Edit = observer((props: Props) => {
                 title: '聚合函数',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
-                'x-reactions': '{{useAsyncDataSource(getStreamingAggType)}}',
+                required: true,
+                'x-visible': false,
+                'x-validator': [
+                  {
+                    required: true,
+                    message: `请选择聚合函数`,
+                  },
+                ],
+                'x-reactions': [
+                  {
+                    dependencies: ['.isVirtualRule'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0]}}',
+                      },
+                    },
+                  },
+                  '{{useAsyncDataSource(getStreamingAggType)}}',
+                ],
               },
               window: {
                 type: 'object',
+                'x-visible': false,
+                'x-reactions': {
+                  dependencies: ['.isVirtualRule'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]}}',
+                    },
+                  },
+                },
                 properties: {
                   span: {
                     title: '窗口长度',
-                    'x-component': 'Input',
+                    'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
-                    format: 'number',
+                    required: true,
+                    'x-component-props': {
+                      style: {
+                        width: '100%',
+                      },
+                    },
                     'x-validator': [
                       {
-                        // triggerType: 'onBlur',
-                        validator: (value: any) => {
-                          return new Promise((resolve) => {
-                            const number = Number(value);
-                            if (number <= 0 || value.length > 64 || /[.]/.test(value)) {
-                              resolve('请输入非0正整数，最多可输入64个字符');
-                            } else {
-                              resolve('');
-                            }
-                          });
-                        },
+                        required: true,
+                        message: `请输入窗口长度`,
+                      },
+                      {
+                        format: 'integer',
+                        message: '请输入正整数',
+                      },
+                      {
+                        min: 1,
+                        message: '请输入正整数',
                       },
                     ],
                     'x-reactions': [
@@ -732,22 +787,26 @@ const Edit = observer((props: Props) => {
                   },
                   every: {
                     title: '步长',
-                    'x-component': 'Input',
+                    'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
-                    format: 'number',
+                    required: true,
+                    'x-component-props': {
+                      style: {
+                        width: '100%',
+                      },
+                    },
                     'x-validator': [
                       {
-                        // triggerType: 'onBlur',
-                        validator: (value: any) => {
-                          return new Promise((resolve) => {
-                            const number = Number(value);
-                            if (number <= 0 || value.length > 64 || /[.]/.test(value)) {
-                              resolve('请输入非0正整数，最多可输入64个字符');
-                            } else {
-                              resolve('');
-                            }
-                          });
-                        },
+                        required: true,
+                        message: `请输入步长`,
+                      },
+                      {
+                        format: 'integer',
+                        message: '请输入正整数',
+                      },
+                      {
+                        min: 1,
+                        message: '请输入正整数',
                       },
                     ],
                     'x-reactions': [

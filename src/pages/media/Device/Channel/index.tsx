@@ -8,7 +8,7 @@ import { ChannelItem } from '@/pages/media/Device/Channel/typings';
 import { useHistory, useIntl, useLocation } from 'umi';
 import { AIcon, BadgeStatus } from '@/components';
 import { StatusColorEnum } from '@/components/BadgeStatus';
-import { Button, message, Popconfirm, Tooltip } from 'antd';
+import { Button, message, Tooltip } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -20,11 +20,11 @@ import Save from './Save';
 import Service from './service';
 import { ProviderValue } from '../index';
 import Live from './Live';
-import { getButtonPermission, getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
+import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import Tree from './Tree';
 import { useDomFullHeight } from '@/hooks';
 import classnames from 'classnames';
-
+import { PermissionButton } from '@/components';
 export const service = new Service('media');
 
 export default () => {
@@ -39,7 +39,8 @@ export default () => {
   const [type, setType] = useState('');
   const { minHeight } = useDomFullHeight(`.channelDevice`, 24);
   const [show, setShow] = useState(false);
-
+  const permissionCode = 'media/Device';
+  const { permission } = PermissionButton.usePermission(permissionCode);
   const location = useLocation();
   const history = useHistory();
 
@@ -140,25 +141,24 @@ export default () => {
       align: 'left',
       width: 160,
       render: (_, record) => [
-        <Tooltip
-          key="edit"
-          title={intl.formatMessage({
-            id: 'pages.data.option.edit',
-            defaultMessage: '编辑',
-          })}
+        <PermissionButton
+          key="editable"
+          tooltip={{
+            title: intl.formatMessage({
+              id: 'pages.data.option.edit',
+              defaultMessage: '编辑',
+            }),
+          }}
+          isPermission={permission.update}
+          style={{ padding: 0 }}
+          type="link"
+          onClick={() => {
+            setCurrent(record);
+            setVisible(true);
+          }}
         >
-          <Button
-            style={{ padding: 0 }}
-            type="link"
-            onClick={() => {
-              setCurrent(record);
-              setVisible(true);
-            }}
-            disabled={getButtonPermission('media/Device', 'update')}
-          >
-            <EditOutlined />
-          </Button>
-        </Tooltip>,
+          <EditOutlined />
+        </PermissionButton>,
         <Tooltip key={'live'} title={'播放'}>
           <a
             onClick={() => {
@@ -185,27 +185,29 @@ export default () => {
           </a>
         </Tooltip>,
         type === ProviderValue.FIXED ? (
-          <Popconfirm
+          <PermissionButton
+            type="link"
             key="delete"
-            title={intl.formatMessage({
-              id: 'page.table.isDelete',
-              defaultMessage: '是否删除?',
-            })}
-            onConfirm={async () => {
-              deleteItem(record.id);
+            style={{ padding: 0 }}
+            popConfirm={{
+              title: intl.formatMessage({
+                id: 'pages.system.role.option.delete',
+                defaultMessage: '确定要删除吗',
+              }),
+              onConfirm: () => {
+                deleteItem(record.id);
+              },
             }}
-            disabled={getButtonPermission('media/Device', 'delete')}
+            tooltip={{
+              title: intl.formatMessage({
+                id: 'pages.data.option.delete',
+                defaultMessage: '删除',
+              }),
+            }}
+            isPermission={permission.delete || permission.update}
           >
-            <Tooltip title="删除">
-              <Button
-                type={'link'}
-                style={{ padding: 0 }}
-                disabled={getButtonPermission('media/Device', 'delete')}
-              >
-                <DeleteOutlined />
-              </Button>
-            </Tooltip>
-          </Popconfirm>
+            <DeleteOutlined />
+          </PermissionButton>
         ) : null,
       ],
     },
@@ -289,13 +291,13 @@ export default () => {
                   </Button>
                 </Tooltip>
               ) : (
-                <Button
+                <PermissionButton
                   onClick={() => {
                     setCurrent(undefined);
                     setVisible(true);
                   }}
+                  isPermission={permission.add || permission.update}
                   key="button"
-                  disabled={getButtonPermission('media/Device', 'add')}
                   icon={<PlusOutlined />}
                   type="primary"
                 >
@@ -303,7 +305,7 @@ export default () => {
                     id: 'pages.data.option.add',
                     defaultMessage: '新增',
                   })}
-                </Button>
+                </PermissionButton>
               ),
             ]}
           />

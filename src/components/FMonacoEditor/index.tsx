@@ -12,7 +12,7 @@ export const JMonacoEditor = (props: Props) => {
   const monacoEditorRef = useRef<any>();
 
   const editorFormat = (editor: any) => {
-    editor.getAction('editor.action.formatDocument').run();
+    editor.getAction('editor.action.formatDocument')?.run();
   };
 
   useEffect(() => {
