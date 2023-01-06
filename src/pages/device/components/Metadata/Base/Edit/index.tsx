@@ -1034,7 +1034,7 @@ const Edit = observer((props: Props) => {
                                 return Promise.reject(new Error('请输入指标值'));
                               }
                             } else {
-                              if (value?.value !== undefined && value?.value[0] === undefined) {
+                              if (value?.value === '' || value?.value === undefined) {
                                 return Promise.reject(new Error('请输入指标值'));
                               }
                             }
