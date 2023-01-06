@@ -146,6 +146,7 @@ export default (props: ButtonsProps) => {
       }),
       width: 220,
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -154,12 +155,14 @@ export default (props: ButtonsProps) => {
       }),
       width: 300,
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
         id: 'page.system.menu.describe',
         defaultMessage: '说明',
       }),
+      ellipsis: true,
       dataIndex: 'description',
       // render: (_, row) => () => {
       //   console.log(row)
