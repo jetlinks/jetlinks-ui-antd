@@ -331,10 +331,9 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'Select',
             'x-component-props': {
-              disabled: !rolePermission.view,
               mode: 'multiple',
               showArrow: true,
-              placeholder: !rolePermission.view ? '暂无权限，请联系管理员' : '请选择角色',
+              placeholder: '请选择角色',
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
             },
@@ -374,10 +373,9 @@ const Save = (props: Props) => {
             'x-decorator': 'FormItem',
             'x-component': 'TreeSelect',
             'x-component-props': {
-              disabled: !deptPermission.view,
               multiple: true,
               showArrow: true,
-              placeholder: !deptPermission.view ? '暂无权限，请联系管理员' : '请选择组织',
+              placeholder: '请选择组织',
               showCheckedStrategy: ATreeSelect.SHOW_ALL,
               filterOption: (input: string, option: any) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
