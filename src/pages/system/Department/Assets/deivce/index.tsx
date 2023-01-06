@@ -40,7 +40,7 @@ export default observer((props: { parentId: string }) => {
   const [searchParam, setSearchParam] = useState({});
 
   const [updateVisible, setUpdateVisible] = useState(false);
-  const [updateId, setUpdateId] = useState('');
+  const [updateId, setUpdateId] = useState<string | string[]>('');
   const [permissions, setPermissions] = useState<string[]>([]);
   const [assetsType, setAssetsType] = useState([]);
 
@@ -148,7 +148,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'grantedPermissions',
       hideInSearch: true,
       render: (_, row) => {
-        return handlePermissionsMap(row.grantedPermissions);
+        return handlePermissionsMap(row.grantedPermissions, assetsType);
       },
       width: 80,
     },
@@ -315,8 +315,12 @@ export default observer((props: { parentId: string }) => {
           key="update"
           isPermission={permission.assert}
           onClick={() => {
-            setUpdateId('');
-            setUpdateVisible(true);
+            if (Models.unBindKeys.length) {
+              setUpdateId([...Models.unBindKeys]);
+              setUpdateVisible(true);
+            } else {
+              onlyMessage('请勾选需要解绑的数据', 'warning');
+            }
           }}
         >
           批量编辑
@@ -340,6 +344,7 @@ export default observer((props: { parentId: string }) => {
         <UpdateModal
           permissions={permissions}
           visible={updateVisible}
+          assetsType={assetsType}
           id={updateId}
           type="device"
           targetId={props.parentId}
@@ -453,6 +458,7 @@ export default observer((props: { parentId: string }) => {
         cardRender={(record) => (
           <ExtraDeviceCard
             {...record}
+            assetsOptions={assetsType}
             actions={[
               <PermissionButton
                 key="update"

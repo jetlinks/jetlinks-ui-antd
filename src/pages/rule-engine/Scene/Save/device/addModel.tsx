@@ -242,7 +242,6 @@ export default observer((props: AddProps) => {
         TriggerDeviceModel.selector === 'fixed' &&
         TriggerDeviceModel.selectorValues?.length === 1
       ) {
-        console.log('---TriggerDeviceModel.selectorValues----', TriggerDeviceModel.selectorValues);
         const res = await api.detail(TriggerDeviceModel.selectorValues?.[0]?.value);
         if (res.status === 200) {
           // console.log(res.result.metadata)

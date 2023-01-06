@@ -34,8 +34,8 @@ export default observer((props: { parentId: string }) => {
   const [searchParam, setSearchParam] = useState({});
   const [deviceVisible, setDeviceVisible] = useState(false);
   const [updateVisible, setUpdateVisible] = useState(false);
-  const [updateId, setUpdateId] = useState('');
-  const [permissions, setPermissions] = useState<string[]>([]);
+  const [updateId, setUpdateId] = useState<string | string[]>('');
+  const [permissions, setPermissions] = useState<string[]>(['read']);
   const [assetsType, setAssetsType] = useState([]);
 
   // 资产类型的权限定义
@@ -119,7 +119,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'grantedPermissions',
       hideInSearch: true,
       render: (_, row) => {
-        return handlePermissionsMap(row.grantedPermissions);
+        return handlePermissionsMap(row.grantedPermissions, assetsType);
       },
       width: 80,
     },
@@ -303,18 +303,13 @@ export default observer((props: { parentId: string }) => {
           icon={<EditOutlined />}
           key="update"
           isPermission={permission.assert}
-          popConfirm={{
-            title: intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '是否批量解除绑定',
-            }),
-            onConfirm: () => {
-              if (Models.unBindKeys.length) {
-                setUpdateVisible(true);
-              } else {
-                onlyMessage('请勾选需要解绑的数据', 'warning');
-              }
-            },
+          onClick={() => {
+            if (Models.unBindKeys.length) {
+              setUpdateId([...Models.unBindKeys]);
+              setUpdateVisible(true);
+            } else {
+              onlyMessage('请勾选需要解绑的数据', 'warning');
+            }
           }}
         >
           批量编辑
@@ -358,6 +353,7 @@ export default observer((props: { parentId: string }) => {
         <UpdateModal
           permissions={permissions}
           visible={updateVisible}
+          assetsType={assetsType}
           id={updateId}
           type="product"
           targetId={props.parentId}
@@ -471,6 +467,7 @@ export default observer((props: { parentId: string }) => {
         cardRender={(record) => (
           <ExtraProductCard
             {...record}
+            assetsOptions={assetsType}
             actions={[
               <PermissionButton
                 key="update"

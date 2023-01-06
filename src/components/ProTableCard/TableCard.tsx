@@ -76,10 +76,7 @@ export default (props: TableCardProps) => {
   return (
     <div
       className={classNames('iot-card', { hover: maskShow }, props.className)}
-      onClick={(e) => {
-        e.stopPropagation();
-        props.onClick?.(e);
-      }}
+      onClick={props.onClick}
     >
       <div className={'card-warp'}>
         <div
