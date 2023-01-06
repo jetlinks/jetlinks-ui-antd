@@ -112,6 +112,12 @@ class Service<T> extends BaseService<T> {
       method: 'PUT',
       data: permission,
     });
+
+  getAssetsType = (type: string) =>
+    request(`${this.uri}/bindings/${type}/permissions`, { method: 'GET' });
+
+  getBindingAssets = (type: string, data: any[]) =>
+    request(`${this.uri}/bindings/${type}`, { method: 'POST', data });
 }
 
 export default Service;

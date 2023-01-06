@@ -50,7 +50,7 @@ const Metadata = observer((props: Props) => {
 
   return (
     <div className={'device-detail-metadata'} style={{ position: 'relative' }}>
-      <div className={styles.tips} style={{ width: '40%' }}>
+      <div className={styles.tips} style={{ width: 'calc(100% - 670px)' }}>
         <Tooltip
           title={
             InstanceModel.detail?.independentMetadata && props.type === 'device'
@@ -68,6 +68,7 @@ const Metadata = observer((props: Props) => {
       </div>
       <Tabs
         className={styles.metadataNav}
+        type="card"
         tabBarExtraContent={
           <Space>
             {InstanceModel.detail?.independentMetadata && props.type === 'device' && (

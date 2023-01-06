@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { ProductItem } from '@/pages/device/Product/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { useIntl } from 'umi';
@@ -6,6 +6,8 @@ import { Ellipsis, TableCard } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { CheckOutlined } from '@ant-design/icons';
+import { Checkbox } from 'antd';
+import { Store } from 'jetlinks-store';
 
 export interface ProductCardProps extends Partial<ProductItem> {
   detail?: React.ReactNode;
@@ -19,6 +21,11 @@ export interface ProductCardProps extends Partial<ProductItem> {
   showBindBtn?: boolean;
   cardType?: 'bind' | 'unbind';
   showTool?: boolean;
+  assetsOptions?: any[];
+  permissionInfoList?: any[];
+  allAssets?: string[];
+  onAssetsChange?: (value?: any) => void;
+  isChecked?: boolean;
 }
 
 const defaultImage = require('/public/images/device-product.png');
@@ -99,6 +106,32 @@ export const ExtraSceneProductCard = (props: ProductCardProps) => {
 export const ExtraProductCard = (props: ProductCardProps) => {
   const intl = useIntl();
   const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
+  const [assetKeys, setAssetKeys] = useState<string[]>(['read']);
+  const [disabled, setDisabled] = useState(true);
+  const disabledRef = useRef<boolean>(true);
+  console.log(props.assetsOptions, props.permissionInfoList);
+  const assetsOptions =
+    props.assetsOptions && props.permissionInfoList
+      ? props.assetsOptions.filter((item: any) =>
+          props.permissionInfoList.some((pItem) => pItem.id === item.value),
+        )
+      : [];
+
+  useEffect(() => {
+    Store.subscribe('assets-product', (data: any) => {
+      if (data.isAll && data.bindKeys.includes(props.id)) {
+        setAssetKeys(data.assets);
+        setDisabled(true);
+        disabledRef.current = true;
+      } else if (!data.isAll && data.bindKeys.includes(props.id)) {
+        setDisabled(false);
+        disabledRef.current = false;
+      } else {
+        setDisabled(true);
+        disabledRef.current = true;
+      }
+    });
+  }, []);
 
   return (
     <TableCard
@@ -115,7 +148,10 @@ export const ExtraProductCard = (props: ProductCardProps) => {
         1: StatusColorEnum.success,
       }}
       className={props.className}
-      onClick={props.onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        props.onClick?.(e);
+      }}
     >
       <div className={'pro-table-card-item'}>
         <div className={'card-item-avatar'}>
@@ -143,8 +179,22 @@ export const ExtraProductCard = (props: ProductCardProps) => {
             </div>
             {props.cardType === 'bind' ? (
               <div className={'flex-auto'}>
-                <label>说明</label>
-                <Ellipsis title={props.describe} />
+                <Checkbox.Group
+                  options={assetsOptions?.map((item) => {
+                    return {
+                      ...item,
+                      disabled: item.disabled !== true ? disabled : item.disabled,
+                    };
+                  })}
+                  value={assetKeys}
+                  onChange={(e) => {
+                    console.log('assetKeys', disabledRef.current, assetKeys, e);
+                    if (!disabledRef.current) {
+                      setAssetKeys(e as string[]);
+                      props.onAssetsChange?.(e);
+                    }
+                  }}
+                />
               </div>
             ) : (
               <div className={'flex-auto'}>

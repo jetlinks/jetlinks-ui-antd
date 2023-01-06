@@ -1,7 +1,7 @@
 // 资产分配-设备管理
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge } from 'antd';
+import { Badge, Button, Dropdown, Menu } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { DeviceItem } from '@/pages/system/Department/typings';
@@ -42,9 +42,28 @@ export default observer((props: { parentId: string }) => {
   const [updateVisible, setUpdateVisible] = useState(false);
   const [updateId, setUpdateId] = useState('');
   const [permissions, setPermissions] = useState<string[]>([]);
+  const [assetsType, setAssetsType] = useState([]);
+
+  // 资产类型的权限定义
+  const getAssetsType = () => {
+    service.getAssetsType('device').then((res) => {
+      if (res.status === 200) {
+        setAssetsType(
+          res.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            disabled: item.id === 'read',
+          })),
+        );
+      } else {
+        setAssetsType([]);
+      }
+    });
+  };
 
   useEffect(() => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Device && actionRef.current) {
+      getAssetsType();
       actionRef.current.reload();
     }
 
@@ -275,12 +294,44 @@ export default observer((props: { parentId: string }) => {
     Models.unBindKeys = [];
   }, [props.parentId]);
 
+  const menu = (
+    <Menu>
+      <Menu.Item key={'1'}>
+        <PermissionButton
+          icon={<DisconnectOutlined />}
+          key="unBind"
+          onClick={handleUnBind}
+          isPermission={permission.bind}
+        >
+          {intl.formatMessage({
+            id: 'pages.system.role.option.unBindUser',
+            defaultMessage: '批量解绑',
+          })}
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key={'2'}>
+        <PermissionButton
+          icon={<EditOutlined />}
+          key="update"
+          isPermission={permission.assert}
+          onClick={() => {
+            setUpdateId('');
+            setUpdateVisible(true);
+          }}
+        >
+          批量编辑
+        </PermissionButton>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="content">
       {Models.bind && (
         <Bind
           visible={Models.bind}
           onCancel={closeModal}
+          assetsType={assetsType}
           reload={() => actionRef.current?.reload()}
           parentId={props.parentId}
         />
@@ -458,29 +509,9 @@ export default observer((props: { parentId: string }) => {
               defaultMessage: '资产分配',
             })}
           </PermissionButton>,
-          <PermissionButton
-            icon={<DisconnectOutlined />}
-            key="unBind"
-            popConfirm={{
-              title: intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '是否批量解除绑定',
-              }),
-              onConfirm: handleUnBind,
-            }}
-            tooltip={{
-              title: intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '批量解绑',
-              }),
-            }}
-            isPermission={permission.bind}
-          >
-            {intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '批量解绑',
-            })}
-          </PermissionButton>,
+          <Dropdown overlay={menu} placement="bottom">
+            <Button>批量操作</Button>
+          </Dropdown>,
         ]}
       />
     </div>
