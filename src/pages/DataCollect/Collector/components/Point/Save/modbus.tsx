@@ -213,6 +213,9 @@ export default (props: Props) => {
                 triggerType: 'onBlur',
                 validator: (value: string) => {
                   return new Promise((resolve) => {
+                    if (props.data?.id && props.data?.configuration?.parameter?.address === value) {
+                      resolve('');
+                    }
                     service
                       ._validateField(props.collector?.id || '', {
                         pointKey: value,
