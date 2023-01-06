@@ -4,7 +4,7 @@ import { observable } from '@formily/reactive';
 import { useEffect, useRef, useState } from 'react';
 import { onlyMessage } from '@/utils/util';
 import type { TriggerDevice, TriggerDeviceOptions } from '@/pages/rule-engine/Scene/typings';
-import Product, { handleMetadata } from './product';
+import Product from './product';
 import Device from './device';
 import Type from './type';
 import { timeUnitEnum } from '../components/TimingTrigger';
@@ -12,7 +12,6 @@ import { Store } from 'jetlinks-store';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
 import { isEqual } from 'lodash';
 import { continuousValue } from '@/pages/rule-engine/Scene/Save/timer/TimerTrigger';
-import { service as api } from '@/pages/device/Instance/index';
 
 interface AddProps {
   options?: any;
@@ -228,7 +227,6 @@ export default observer((props: AddProps) => {
       }
     } else if (TriggerDeviceModel.stepNumber === 1) {
       if (TriggerDeviceModel.selector === 'fixed' && !TriggerDeviceModel.selectorValues?.length) {
-        // handleMetadata(TriggerDeviceModel.productDetail?.metadata);
         onlyMessage('请选择设备', 'error');
         return;
       } else if (
@@ -238,18 +236,6 @@ export default observer((props: AddProps) => {
         onlyMessage('请选择部门', 'error');
         return;
       }
-      if (
-        TriggerDeviceModel.selector === 'fixed' &&
-        TriggerDeviceModel.selectorValues?.length === 1
-      ) {
-        console.log('---TriggerDeviceModel.selectorValues----', TriggerDeviceModel.selectorValues);
-        const res = await api.detail(TriggerDeviceModel.selectorValues?.[0]?.value);
-        if (res.status === 200) {
-          // console.log(res.result.metadata)
-          handleMetadata(res.result.metadata);
-        }
-      }
-
       TriggerDeviceModel.stepNumber = 2;
     } else if (TriggerDeviceModel.stepNumber === 2) {
       // TODO 验证类型数据
@@ -270,7 +256,6 @@ export default observer((props: AddProps) => {
         Store.set('TriggerDeviceModel', {
           update: !isUpdate,
         });
-        console.log('-----------', operationData);
         props.onSave?.(saveData, _options);
       }
     }

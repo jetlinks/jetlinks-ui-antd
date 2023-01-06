@@ -85,20 +85,6 @@ const Save = (props: SaveType) => {
           rules={[
             { required: true, message: '请输入卡号' },
             { max: 64, message: '最多可输入64个字符' },
-            () => ({
-              async validator(_, value) {
-                if (value) {
-                  const validateId = await isValidateId(value);
-                  if (validateId === '') {
-                    return Promise.resolve();
-                  } else {
-                    return Promise.reject(new Error(`${validateId}`));
-                  }
-                } else {
-                  return Promise.reject(new Error('请输入输入正确的卡号'));
-                }
-              },
-            }),
           ]}
         >
           <Input placeholder={'请输入卡号'} disabled={props.type === 'edit'} />
@@ -110,6 +96,20 @@ const Save = (props: SaveType) => {
           rules={[
             { required: true, message: '请输入ICCID' },
             { max: 64, message: '最多可输入64个字符' },
+            () => ({
+              async validator(_, value) {
+                if (value) {
+                  const validateId = await isValidateId(value);
+                  if (validateId === '') {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(new Error(`${validateId}`));
+                  }
+                } else {
+                  return Promise.reject(new Error('请输入输入正确的ICCID'));
+                }
+              },
+            }),
           ]}
         >
           <Input placeholder={'请输入ICCID'} disabled={props.type === 'edit'} />

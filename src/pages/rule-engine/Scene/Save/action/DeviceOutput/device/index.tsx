@@ -408,15 +408,12 @@ export default observer((props: Props) => {
           <Form.Item name="selectorValues" rules={[{ required: true, message: '请选择标签' }]}>
             <Tag
               tagData={tagList}
-              onChange={(value, arr) => {
-                console.log(value, arr);
+              onChange={(value) => {
+                console.log(value);
                 if (value) {
                   DeviceModel.deviceId = 'deviceId';
                   DeviceModel.source = 'fixed';
                   DeviceModel.selectorValues = value;
-                }
-                if (arr) {
-                  DeviceModel.tagList = arr;
                 }
               }}
             />
@@ -445,6 +442,7 @@ export default observer((props: Props) => {
   };
 
   useEffect(() => {
+    console.log(DeviceModel.selectorValues, '--------');
     if (form) {
       form.setFieldsValue({ selector: DeviceModel.selector });
       if (DeviceModel.selectorValues) {

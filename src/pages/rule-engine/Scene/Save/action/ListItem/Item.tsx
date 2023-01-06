@@ -249,10 +249,11 @@ export default (props: ItemProps) => {
             {data.options?.taglist?.map((item: any) => (
               <span>
                 {item.type}
-                {item.name}为{item.value}
+                {item.name}
+                {item.value}
               </span>
             ))}
-            的{data?.options?.productName}
+            {data?.options?.productName}
             {data?.options?.properties}
           </div>
         );

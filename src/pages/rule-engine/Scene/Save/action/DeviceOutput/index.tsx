@@ -71,7 +71,7 @@ export default observer((props: Props) => {
       (DeviceModel.current === 0 && DeviceModel.productId) ||
       (DeviceModel.current === 1 && (DeviceModel.deviceId || DeviceModel.selector === 'tag'))
     ) {
-      if (DeviceModel.selector === 'tag' && DeviceModel.current === 1) {
+      if (DeviceModel.selector === 'tag') {
         const value = await tagFormRef.current?.validateFields();
         if (value) {
           return (DeviceModel.current += 1);
@@ -154,12 +154,7 @@ export default observer((props: Props) => {
       }
     }
     if (_options.selector === 'tag') {
-      // _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
-      //   name: it.column || it.name,
-      //   type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
-      //   value: it.value,
-      // }));
-      _options.taglist = DeviceModel.tagList.map((it) => ({
+      _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
         name: it.column || it.name,
         type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
         value: it.value,
@@ -168,7 +163,7 @@ export default observer((props: Props) => {
     if (_options.selector === 'variable') {
       _options.name = DeviceModel.selectorValues?.[0]?.name;
     }
-    console.log('----------', item, _options);
+    // console.log("----------",item,_options)
     props.save(item, _options);
     init();
   };

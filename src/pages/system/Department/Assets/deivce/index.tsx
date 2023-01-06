@@ -239,8 +239,8 @@ export default observer((props: { parentId: string }) => {
     Models.unBindKeys = [];
     AssetsModel.params = {};
   };
-  const getSelectedRowsKey = (selectedRows: any) => {
-    return selectedRows.map((item: any) => item?.id).filter((item2: any) => !!item2 !== false);
+  const getSelectedRowsKey = (selectedRows) => {
+    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
   };
 
   const getData = (params: any, parentId: string) => {
