@@ -17,7 +17,7 @@ export default (props: RelationProps) => {
       setOptions(
         resp.result.map((item: any) => ({
           label: item.name,
-          value: item.id,
+          value: item.relation,
         })),
       );
     }
