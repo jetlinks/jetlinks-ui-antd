@@ -15,12 +15,6 @@ const Allocate = (props: Props) => {
     name: '菜单权限',
     children: [],
   });
-  const [oldDataSource, setOldDataSource] = useState<any>({
-    id: 'menu-permission',
-    buttons: [],
-    name: '菜单权限',
-    children: [],
-  });
   const [assetsList, setAssetsList] = useState<any[]>([]);
 
   const getDataList: any = (data1: any[]) => {
@@ -134,26 +128,18 @@ const Allocate = (props: Props) => {
           level={1}
           assetsList={assetsList}
           checkChange={(data: any) => {
-            if (data) {
-              const dt = {
-                ...dataSource,
-                children: getAccessData(dataSource.children || [], data),
-              };
-              setDataSource(dt);
-              if (props.onChange) {
-                props.onChange(dt);
-              }
-            } else {
-              setDataSource(oldDataSource);
-              if (props.onChange) {
-                props.onChange(oldDataSource);
-              }
+            const dt = {
+              ...dataSource,
+              children: getAccessData(dataSource.children || [], data),
+            };
+            setDataSource(dt);
+            if (props.onChange) {
+              props.onChange(dt);
             }
           }}
           change={(data: any) => {
             setDataSource(data);
             if (props.onChange) {
-              setOldDataSource(data);
               props.onChange(data);
             }
           }}

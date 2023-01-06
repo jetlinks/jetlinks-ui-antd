@@ -722,7 +722,7 @@ const Detail = observer(() => {
     }
   };
 
-  const { getOtherPermission } = usePermissions('notice/Config');
+  const { getOtherPermission } = usePermissions('notice');
 
   return (
     <PageContainer>
