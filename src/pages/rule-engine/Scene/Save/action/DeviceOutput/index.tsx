@@ -103,7 +103,7 @@ export default observer((props: Props) => {
   const save = async () => {
     const value = await formRef.current?.validateFields();
 
-    const item = {
+    const item: any = {
       selector: DeviceModel.selector,
       source: DeviceModel.source,
       selectorValues: DeviceModel.selectorValues,
@@ -113,6 +113,9 @@ export default observer((props: Props) => {
     //处理按变量
     if (DeviceModel.selector === 'variable') {
       item.selector = 'fixed';
+    }
+    if (DeviceModel.selector === 'relation') {
+      item.upperKey = 'deviceId';
     }
     // console.log(item, value);
 
@@ -154,11 +157,6 @@ export default observer((props: Props) => {
       }
     }
     if (_options.selector === 'tag') {
-      // _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
-      //   name: it.column || it.name,
-      //   type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
-      //   value: it.value,
-      // }));
       _options.taglist = DeviceModel.tagList.map((it) => ({
         name: it.column || it.name,
         type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
@@ -168,7 +166,7 @@ export default observer((props: Props) => {
     if (_options.selector === 'variable') {
       _options.name = DeviceModel.selectorValues?.[0]?.name;
     }
-    console.log('----------', item, _options);
+    console.log('----------', item, _options, DeviceModel.propertiesValue);
     props.save(item, _options);
     init();
   };

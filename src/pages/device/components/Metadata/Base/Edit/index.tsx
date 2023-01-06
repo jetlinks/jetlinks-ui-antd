@@ -47,13 +47,16 @@ import { lastValueFrom } from 'rxjs';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
-import { InstanceModel } from '@/pages/device/Instance';
+// import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
 import FIndicators from '@/components/FIndicators';
 import { action } from '@formily/reactive';
 import { asyncUpdateMedata, updateMetadata } from '../../metadata';
 import { onlyMessage } from '@/utils/util';
 import Editable from '@/components/Metadata/EditTable';
+import InputSelect from '../../../InputSelect';
+import { InstanceModel, service as instanceService } from '@/pages/device/Instance';
+import { useParams } from 'umi';
 
 interface Props {
   type: 'product' | 'device';
@@ -63,6 +66,7 @@ interface Props {
 const Edit = observer((props: Props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState<boolean>(false);
+  const param = useParams<{ id: string }>();
   const form = useMemo(
     () =>
       createForm({
@@ -173,6 +177,7 @@ const Edit = observer((props: Props) => {
       DatePicker,
       Switch,
       FIndicators,
+      InputSelect,
     },
     scope: {
       async asyncOtherConfig(field: Field) {
@@ -249,12 +254,13 @@ const Edit = observer((props: Props) => {
           defaultMessage: '单位',
         }),
         'x-decorator': 'FormItem',
-        'x-component': 'Select',
+        'x-component': 'InputSelect',
         'x-visible': false,
         'x-component-props': {
           showSearch: true,
           showArrow: true,
           allowClear: true,
+          mode: 'tags',
           filterOption: (input: string, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
         },
@@ -326,21 +332,22 @@ const Edit = observer((props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: DateTypeList,
-        default: 'string',
+        // default: 'yyyy-MM-DD HH:mm:ss',
+        'x-visible': false,
         'x-validator': [
           {
             required: true,
             message: '请选择时间格式',
           },
         ],
-        'x-reactions': {
-          dependencies: ['.type'],
-          fulfill: {
-            state: {
-              visible: "{{['date'].includes($deps[0])}}",
-            },
-          },
-        },
+        // 'x-reactions': {
+        //   dependencies: ['.type'],
+        //   fulfill: {
+        //     state: {
+        //       visible: "{{['date'].includes($deps[0])}}",
+        //     },
+        //   },
+        // },
       },
       enumConfig: {
         title: intl.formatMessage({
@@ -1330,6 +1337,12 @@ const Edit = observer((props: Props) => {
   typeMap.set('device', InstanceModel.detail);
   const { type } = MetadataModel;
 
+  const resetMetadata = async () => {
+    const resp = await instanceService.detail(param.id);
+    if (resp.status === 200) {
+      InstanceModel.detail = resp?.result || [];
+    }
+  };
   const saveMetadata = async (deploy?: boolean) => {
     setLoading(true);
     let params;
@@ -1381,6 +1394,7 @@ const Edit = observer((props: Props) => {
         if (deploy) {
           Store.set('product-deploy', deploy);
         } else {
+          resetMetadata();
           message.success({
             key: 'metadata',
             content: '操作成功！',

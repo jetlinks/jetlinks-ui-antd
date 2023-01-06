@@ -109,7 +109,7 @@ export default (props: FunctionCallProps) => {
           //   format={record.format || 'YYYY-MM-DD HH:mm:ss'}
           //   style={{ width: '100%' }}
           // />
-          <TypeTime type={record.type === 'yyyy-MM-dd' ? 'time' : 'date'} value={record.value} />
+          <TypeTime type={'date'} value={record.value} />
         );
       case 'object':
         return <ObjInput value={record.value} />;

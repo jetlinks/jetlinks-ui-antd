@@ -83,7 +83,7 @@ const Save = (props: SaveType) => {
           name={'id'}
           required
           rules={[
-            { required: true, message: '请输入卡号' },
+            // { required: true, message: '请输入卡号' },
             { max: 64, message: '最多可输入64个字符' },
             () => ({
               async validator(_, value) {
@@ -95,7 +95,7 @@ const Save = (props: SaveType) => {
                     return Promise.reject(new Error(`${validateId}`));
                   }
                 } else {
-                  return Promise.reject(new Error('请输入输入正确的卡号'));
+                  return Promise.reject(new Error('请输入卡号'));
                 }
               },
             }),

@@ -264,21 +264,22 @@ const JsonParam = observer((props: Props) => {
                       'x-component': 'Select',
                       enum: DateTypeList,
                       'x-visible': false,
-                      default: 'string',
+                      default: 'yyyy-MM-DD HH:mm:ss',
                       'x-validator': [
                         {
                           required: true,
                           message: '请选择时间格式',
                         },
                       ],
-                      'x-reactions': {
-                        dependencies: ['..valueType.type'],
-                        fulfill: {
-                          state: {
-                            visible: "{{['date'].includes($deps[0])}}",
-                          },
-                        },
-                      },
+                      // "x-hidden":true,
+                      // 'x-reactions': {
+                      //   dependencies: ['..valueType.type'],
+                      //   fulfill: {
+                      //     state: {
+                      //       visible: "{{['date'].includes($deps[0])}}",
+                      //     },
+                      //   },
+                      // },
                     },
                     expands: {
                       type: 'object',
