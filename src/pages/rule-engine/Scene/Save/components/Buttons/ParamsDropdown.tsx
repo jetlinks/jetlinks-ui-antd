@@ -30,7 +30,7 @@ export interface ParamsDropdownProps {
 interface MenusProps {
   value: any;
   options?: any[];
-  onChange: (value: any, lb: any) => void;
+  onChange: (value: any, lb: any, node) => void;
 }
 
 const Menus = (props: MenusProps) => {
@@ -50,10 +50,11 @@ const Menus = (props: MenusProps) => {
         selectedKeys={value ? [value] : undefined}
         items={props.options}
         onClick={({ key, item }: { key: any; item: any }) => {
+          console.log(item.props);
           const _item = props.options?.find((a) => a.value === item.props.value);
           setValue(key);
           if (_item) {
-            props.onChange(_item.value, _item.label);
+            props.onChange(_item.value, _item.label, item.props);
           }
         }}
       />
@@ -111,8 +112,8 @@ export default (props: ParamsDropdownProps) => {
             <Menus
               value={_value}
               options={props.metricsOptions}
-              onChange={(v, l) => {
-                onValueChange(v, l);
+              onChange={(v, l, node) => {
+                onValueChange(v, l, node);
                 setOpen(false);
               }}
             />

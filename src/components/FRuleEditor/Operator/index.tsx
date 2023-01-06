@@ -77,7 +77,6 @@ const Operator = (props: Props) => {
             <div className={node.children?.length > 0 ? styles.parent : styles.add}>
               {node.type === 'property' ? (
                 <Popover
-                  open={visible}
                   placement="right"
                   title="请选择使用值"
                   onOpenChange={setVisible}
@@ -110,7 +109,6 @@ const Operator = (props: Props) => {
                       </Tooltip>
                     </Space>
                   }
-                  trigger="click"
                 >
                   <a onClick={() => setVisible(true)}>添加</a>
                 </Popover>
