@@ -31,9 +31,9 @@ const InputSelect = (props: Props) => {
       mode={'tags'}
       onChange={(value) => {
         if (value.length > 1) {
-          props.onChange(value.slice(value.length - 1));
+          props.onChange(value.slice(value.length - 1)?.[0]);
         } else {
-          props.onChange(value);
+          props.onChange(value?.[0]);
         }
       }}
       value={props.value}
