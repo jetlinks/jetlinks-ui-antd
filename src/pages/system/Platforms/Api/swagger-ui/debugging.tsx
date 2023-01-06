@@ -79,20 +79,27 @@ export default observer(() => {
 
   const onSearch = useCallback(async () => {
     const formData: any = await form.submit();
+    // 判断请求类型
+    const method = ApiModel.swagger.method && ApiModel.swagger.method.toUpperCase();
     console.log(formData);
     let newUrl = ApiModel.swagger.url;
+    const urlParams = {};
     if (formData && formData.params && formData.params.length) {
       const params = formData.params;
       params.forEach((item: any) => {
+        if (method === 'GET') {
+          console.log(ApiModel.swagger.method);
+          // const arr = ApiModel.swagger.url.split('/').filter((it:any)=>it.includes('{'))
+          urlParams[item.name] = item.values;
+        }
         if (newUrl.includes(`{${item.name}}`)) {
           newUrl = newUrl.replace(`{${item.name}}`, item.values);
         }
       });
       console.log(newUrl);
+      console.log(urlParams);
     }
 
-    // 判断请求类型
-    const method = ApiModel.swagger.method && ApiModel.swagger.method.toUpperCase();
     let options = {};
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       options = {
@@ -102,7 +109,11 @@ export default observer(() => {
     } else if (['GET', 'DELETE'].includes(method)) {
       options = {
         method,
-        params: body || {},
+        params:
+          {
+            ...body,
+            ...urlParams,
+          } || {},
       };
     }
 
