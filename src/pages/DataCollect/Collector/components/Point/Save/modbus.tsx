@@ -225,7 +225,7 @@ export default (props: Props) => {
                           if (resp.result.passed) {
                             resolve('');
                           } else {
-                            resolve('改地址已存在');
+                            resolve('该地址已存在');
                           }
                         }
                         resolve('');
