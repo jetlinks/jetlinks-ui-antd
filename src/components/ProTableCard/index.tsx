@@ -37,7 +37,6 @@ interface ProTableCardProps<T> {
   noPadding?: boolean;
   cardScrollY?: number;
   modelChange?: (type: ModelType) => void;
-  cardProps?: any;
 }
 
 const ProTableCard = <
@@ -72,12 +71,10 @@ const ProTableCard = <
    * @param dataSource
    */
   const handleCard = useCallback(
-    (dataSource: readonly T[] | undefined, rowSelection?: any, _cardProps?: any): JSX.Element => {
+    (dataSource: readonly T[] | undefined, rowSelection?: any): JSX.Element => {
       setDataLength(dataSource ? dataSource.length : 0);
 
       const Item = (dom: React.ReactNode) => {
-        // @ts-ignore
-        const card_props = isFunction(_cardProps) ? _cardProps(dom.props) : _cardProps;
         if (!rowSelection || (rowSelection && !rowSelection.selectedRowKeys)) {
           return dom;
         }
@@ -88,14 +85,13 @@ const ProTableCard = <
 
         // @ts-ignore
         return React.cloneElement(dom, {
-          ...card_props,
           // @ts-ignore
           className: classNames(dom.props.className, {
             'item-active': selectedRowKeys && selectedRowKeys.includes(id),
           }),
           key: id,
           onClick: (e: any) => {
-            if (e.target.nodeName !== 'DIV') return;
+            console.log(e);
             e.stopPropagation();
             if (onChange || onSelect) {
               const isSelect = selectedRowKeys.includes(id);
@@ -304,7 +300,7 @@ const ProTableCard = <
         tableViewRender={
           model === ModelEnum.CARD
             ? (tableProps) => {
-                return handleCard(tableProps.dataSource, extraProps?.rowSelection, props.cardProps);
+                return handleCard(tableProps.dataSource, extraProps?.rowSelection);
               }
             : undefined
         }

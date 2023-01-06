@@ -312,7 +312,6 @@ const Bind = observer((props: Props) => {
                     const assetsItem = assetsResp.result.find(
                       (aItem: any) => (aItem.assetId = item.id),
                     );
-                    console.log(assetsItem);
                     return {
                       ...item,
                       ...assetsItem,
