@@ -1656,7 +1656,7 @@ const Detail = observer(() => {
       },
     },
   };
-  const { permission } = usePermissions('notice');
+  const { permission } = usePermissions('notice/Template');
   return (
     <PageContainer>
       <Card>

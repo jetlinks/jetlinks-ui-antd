@@ -15,6 +15,7 @@ const Allocate = (props: Props) => {
     name: '菜单权限',
     children: [],
   });
+  const [dataOldSource, setDataOldSource] = useState<any>({});
   const [assetsList, setAssetsList] = useState<any[]>([]);
 
   const getDataList: any = (data1: any[]) => {
@@ -128,18 +129,26 @@ const Allocate = (props: Props) => {
           level={1}
           assetsList={assetsList}
           checkChange={(data: any) => {
-            const dt = {
-              ...dataSource,
-              children: getAccessData(dataSource.children || [], data),
-            };
-            setDataSource(dt);
-            if (props.onChange) {
-              props.onChange(dt);
+            if (data) {
+              const dt = {
+                ...dataSource,
+                children: getAccessData(dataSource.children || [], data),
+              };
+              setDataSource(dt);
+              if (props.onChange) {
+                props.onChange(dt);
+              }
+            } else {
+              setDataSource(dataOldSource);
+              if (props.onChange) {
+                props.onChange(dataOldSource);
+              }
             }
           }}
           change={(data: any) => {
             setDataSource(data);
             if (props.onChange) {
+              setDataOldSource(data);
               props.onChange(data);
             }
           }}
