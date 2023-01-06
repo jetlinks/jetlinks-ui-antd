@@ -467,9 +467,33 @@ const Save = observer(() => {
             'x-component-props': {
               placeholder: '请输入远程端口',
             },
-            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
+            'x-validator': [
+              {
+                max: 65535,
+                message: '请输入0-65535之间的正整数',
+              },
+              {
+                min: 0,
+                message: '请输入0-65535之间的正整数',
+              },
+              {
+                required: true,
+                placeholder: '请输入远程端口',
+              },
+              {
+                validator: (value: any[]) => {
+                  return new Promise((resolve) => {
+                    if (/[.]/.test(value)) {
+                      resolve('请输入1-65535之间的正整数');
+                    } else {
+                      resolve('');
+                    }
+                  });
+                },
+              },
+            ],
           },
           clientId: {
             title: 'clientId',
@@ -481,9 +505,18 @@ const Save = observer(() => {
             'x-component-props': {
               placeholder: '请输入ClientId',
             },
-            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入ClientId',
+              },
+            ],
           },
           username: {
             title: '用户名',
@@ -498,6 +531,16 @@ const Save = observer(() => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入用户名',
+              },
+            ],
           },
           password: {
             title: '密码',
@@ -512,6 +555,16 @@ const Save = observer(() => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 128,
+                message: '最多可输入128个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入密码',
+              },
+            ],
           },
           // maxMessageSize: {
           //   title: '最大消息长度',
@@ -541,13 +594,20 @@ const Save = observer(() => {
             },
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
         },
       },
       maxMessageSize: {
         title: '最大消息长度',
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'NumberPicker',
+        default: 8192,
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
@@ -567,6 +627,20 @@ const Save = observer(() => {
             },
           },
         },
+        'x-validator': [
+          {
+            max: 1073741824,
+            message: '请输入1024~1073741824之间的数字',
+          },
+          {
+            min: 1024,
+            message: '请输入1024~1073741824之间的数字',
+          },
+          {
+            required: true,
+            placeholder: '请输入最大消息长度',
+          },
+        ],
       },
       secure: {
         // title: '开启DTLS',

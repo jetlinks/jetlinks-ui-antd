@@ -69,7 +69,9 @@ export default () => {
       style={{ padding: 0 }}
       popConfirm={{
         title: intl.formatMessage({
-          id: `pages.data.option.${record.state?.value}.tips`,
+          id: `pages.data.option.${
+            record.state.value !== 'disabled' ? 'disabled' : 'enabled'
+          }.tips`,
           defaultMessage: '确认禁用？',
         }),
         onConfirm: () => {
@@ -119,15 +121,15 @@ export default () => {
       key={'delete'}
       style={{ padding: 0 }}
       isPermission={permission.delete}
-      tooltip={record.state.value !== 'notActive' ? { title: '请先禁用，再删除。' } : undefined}
-      disabled={record.state.value !== 'notActive'}
+      tooltip={record.state.value !== 'disabled' ? { title: '请先禁用，再删除。' } : undefined}
+      disabled={record.state.value !== 'disabled'}
       popConfirm={{
         title: intl.formatMessage({
           id: 'pages.data.option.remove.tips',
         }),
-        disabled: record.state.value !== 'notActive',
+        disabled: record.state.value !== 'disabled',
         onConfirm: async () => {
-          if (record.state.value === 'notActive') {
+          if (record.state.value === 'disabled') {
             await service.remove(record.id);
             onlyMessage(
               intl.formatMessage({

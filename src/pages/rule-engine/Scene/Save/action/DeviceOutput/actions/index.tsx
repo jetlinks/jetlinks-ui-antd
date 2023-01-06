@@ -6,6 +6,7 @@ import DeviceModel from '../model';
 import FunctionCall from './functionCall';
 import ReadProperty from './ReadProperty';
 import WriteProperty from './WriteProperty';
+import { service } from '@/pages/device/Instance/index';
 
 interface Props {
   get: (data: any) => void;
@@ -47,18 +48,21 @@ export default observer((props: Props) => {
     // console.log('-----------',DeviceModel.deviceDetail)
     if (DeviceModel.productDetail) {
       if (DeviceModel.selector === 'fixed') {
-        const metadata = JSON.parse(
-          DeviceModel.deviceDetail?.metadata || DeviceModel.deviceDetail?.deriveMetadata || '{}',
-        );
-        setProperties(metadata.properties);
-        setFunctions(metadata.functions);
+        service.detail(DeviceModel.deviceId).then((res) => {
+          if (res.status === 200) {
+            DeviceModel.deviceDetail = res.result || {};
+            const metadata = JSON.parse(res.result?.metadata);
+            setProperties(metadata.properties);
+            setFunctions(metadata.functions);
+          }
+        });
       } else {
         const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
         setProperties(metadata.properties);
         setFunctions(metadata.functions);
       }
     }
-  }, [DeviceModel.productDetail, DeviceModel.deviceDetail]);
+  }, [DeviceModel.productDetail]);
 
   useEffect(() => {
     if (functionId && functions.length !== 0) {

@@ -349,6 +349,7 @@ export default observer((props: Props) => {
                         DeviceModel.selectorValues = [
                           { value: DeviceModel.deviceId, name: item.name },
                         ];
+                        DeviceModel.message = {};
                       } else {
                         DeviceModel.deviceId = '';
                         DeviceModel.selectorValues = [];
@@ -497,6 +498,7 @@ export default observer((props: Props) => {
             onChange={(value) => {
               if (value) {
                 form.resetFields(['selectorValues']);
+                DeviceModel.message = {};
               }
             }}
           />

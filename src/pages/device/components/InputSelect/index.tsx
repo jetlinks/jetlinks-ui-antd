@@ -1,32 +1,47 @@
 import { Select } from 'antd';
-import { connect, mapProps } from '@formily/react';
-import { useState } from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { service } from '@/pages/device/components/Metadata';
+import { Store } from 'jetlinks-store';
 
-const InputSelect = connect(
-  Select,
-  mapProps(
-    {
-      dataSource: 'options',
-      loading: true,
-    },
-    (props, field) => {
-      const [value, setValue] = useState(props.value);
-      return {
-        ...props,
-        value: value,
-        onChange: (item: any) => {
-          if (item.length > 1) {
-            setValue(item.slice(item.length - 1));
-          } else {
-            setValue(item);
-          }
-        },
-        suffixIcon:
-          field?.['loading'] || field?.['validating'] ? <LoadingOutlined /> : props.suffixIcon,
-      };
-    },
-  ),
-  // mapReadPretty(PreviewText.Input),
-);
+interface Props {
+  value: any;
+  onChange: (value: string) => void;
+}
+
+const InputSelect = (props: Props) => {
+  const [options, setOptions] = useState<any>([]);
+
+  useEffect(() => {
+    service.getUnit().then((resp) => {
+      const _data = resp.result.map((item: any) => ({
+        label: item.description,
+        value: item.id,
+      }));
+      // 缓存单位数据
+      Store.set('units', _data);
+      setOptions(_data);
+    });
+  }, []);
+
+  return (
+    <Select
+      showSearch
+      showArrow
+      allowClear
+      mode={'tags'}
+      onChange={(value) => {
+        if (value.length > 1) {
+          props.onChange(value.slice(value.length - 1));
+        } else {
+          props.onChange(value);
+        }
+      }}
+      value={props.value}
+      options={options}
+      filterOption={(input: string, option: any) =>
+        option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      }
+    />
+  );
+};
 export default InputSelect;
