@@ -285,8 +285,12 @@ export default observer(() => {
                       </PermissionButton>,
                     ]}
                     onClick={() => {
-                      const url = getMenuPathByCode(MENUS_CODE['DataCollect/Collector']);
-                      history.push(url, { channelId: record.id });
+                      if (permission.view) {
+                        const url = getMenuPathByCode(MENUS_CODE['DataCollect/Collector']);
+                        history.push(url, { channelId: record.id });
+                      } else {
+                        onlyMessage('暂无权限，请联系管理员', 'error');
+                      }
                     }}
                   />
                 </Col>

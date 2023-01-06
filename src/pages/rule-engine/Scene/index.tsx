@@ -298,8 +298,12 @@ const Scene = () => {
           <SceneCard
             {...record}
             onClick={() => {
-              const url = getMenuPathByCode('rule-engine/Scene/Save');
-              history.push(`${url}?triggerType=${record.trigger?.type}&id=${record?.id}`);
+              if (permission.view) {
+                const url = getMenuPathByCode('rule-engine/Scene/Save');
+                history.push(`${url}?triggerType=${record.trigger?.type}&id=${record?.id}`);
+              } else {
+                onlyMessage('暂无权限，请联系管理员', 'error');
+              }
             }}
             tools={Tools(record)}
           />
