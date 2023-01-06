@@ -169,6 +169,11 @@ class Service {
       method: 'POST',
       data: params,
     });
+  public _validateField = (id: string, data?: any) =>
+    request(`/${SystemConst.API_BASE}/data-collect/point/${id}/_validate`, {
+      method: 'GET',
+      params: data,
+    });
 }
 
 const service = new Service();

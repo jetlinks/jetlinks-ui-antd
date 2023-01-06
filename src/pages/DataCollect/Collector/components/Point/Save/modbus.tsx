@@ -209,6 +209,30 @@ export default (props: Props) => {
               {
                 checkAddressLength: true,
               },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    service
+                      ._validateField(props.collector?.id || '', {
+                        pointKey: value,
+                      })
+                      .then((resp) => {
+                        if (resp.status === 200) {
+                          if (resp.result.passed) {
+                            resolve('');
+                          } else {
+                            resolve('改地址已存在');
+                          }
+                        }
+                        resolve('');
+                      })
+                      .catch(() => {
+                        return '验证失败!';
+                      });
+                  });
+                },
+              },
             ],
           },
           'configuration.parameter.quantity': {
