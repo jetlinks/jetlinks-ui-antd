@@ -29,17 +29,20 @@ const FIndicators = (props: Props) => {
       return (
         <>
           <InputNumber
-            value={value?.value ? value?.value[0] : ''}
+            value={value?.range ? value?.value?.[0] : value?.value}
             onChange={(val) => {
               if (value?.range) {
                 onChange({
                   ...value,
-                  value: [val > value?.value[1] ? value?.value[0] : val, value?.value[1] || ''],
+                  value: [
+                    value?.value?.[1] && val > value?.value?.[1] ? value?.value?.[0] : val,
+                    value?.value?.[1] || '',
+                  ],
                 });
               } else {
                 onChange({
                   ...value,
-                  value: [val],
+                  value: val,
                 });
               }
             }}
@@ -48,11 +51,14 @@ const FIndicators = (props: Props) => {
             <>
               ~
               <InputNumber
-                value={value?.value ? value?.value[1] : ''}
+                value={value?.value?.[1]}
                 onChange={(val) => {
                   onChange({
                     ...value,
-                    value: [value?.value[0], val > value?.value[0] ? val : value?.value[1]],
+                    value: [
+                      value?.value?.[0],
+                      value?.value?.[0] && val > value?.value?.[0] ? val : value?.value?.[1],
+                    ],
                   });
                 }}
               />
@@ -88,14 +94,18 @@ const FIndicators = (props: Props) => {
             showTime
             allowClear={false}
             value={
-              value?.value && value.value?.[0]
-                ? moment(value.value[0], 'YYYY-MM-DD HH:mm:ss')
+              value?.range
+                ? value?.value && value.value?.[0]
+                  ? moment(value.value[0], 'YYYY-MM-DD HH:mm:ss')
+                  : undefined
+                : value?.value
+                ? moment(value.value, 'YYYY-MM-DD HH:mm:ss')
                 : undefined
             }
             onChange={(_: any, date: string) => {
               onChange({
                 ...value,
-                value: [date],
+                value: date,
               });
             }}
           />
@@ -129,7 +139,7 @@ const FIndicators = (props: Props) => {
           onChange={(e) => {
             onChange({
               ...value,
-              value: [e.target.value],
+              value: e.target.value,
             });
           }}
         />
@@ -138,11 +148,13 @@ const FIndicators = (props: Props) => {
       return (
         <>
           <Input
-            value={value?.value ? value?.value[0] : ''}
+            value={value?.range ? value?.value?.[0] : undefined}
             onChange={(e) => {
               onChange({
                 ...value,
-                value: [e.target.value, value?.value && value?.value[1]],
+                value: value?.range
+                  ? [e.target.value, value?.value && value?.value[1]]
+                  : e.target.value,
               });
             }}
           />
@@ -174,7 +186,7 @@ const FIndicators = (props: Props) => {
           onChange={(e) => {
             onChange({
               ...value,
-              value: e.target.checked ? [undefined, undefined] : [undefined],
+              value: e.target.checked ? [undefined, undefined] : undefined,
               range: e.target.checked,
             });
           }}
