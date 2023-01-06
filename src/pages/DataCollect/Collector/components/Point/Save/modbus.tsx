@@ -103,7 +103,7 @@ export default (props: Props) => {
       if (!(Number(value) % 1 === 0) || Number(value) < 0) {
         return {
           type: 'error',
-          message: '请输入0或正整数',
+          message: '请输入正整数',
         };
       }
       return '';
@@ -264,7 +264,7 @@ export default (props: Props) => {
               },
               {
                 min: 1,
-                message: '请输入非0正整数',
+                message: '请输入正整数',
               },
               {
                 checkLength: true,
@@ -485,7 +485,7 @@ export default (props: Props) => {
               },
               {
                 min: 1,
-                message: '请输入非0正整数',
+                message: '请输入正整数',
               },
               {
                 checkLength: true,

@@ -102,7 +102,7 @@ const SavePoint = (props: Props) => {
                     if (value !== 0 || /(^[1-9]\d*$)/.test(value)) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error('请输入非0正整数'));
+                    return Promise.reject(new Error('请输入正整数'));
                   },
                 }),
               ]}

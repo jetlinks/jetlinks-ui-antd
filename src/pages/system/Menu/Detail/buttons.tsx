@@ -369,7 +369,12 @@ export default (props: ButtonsProps) => {
                 defaultMessage: '说明',
               })}
             >
-              <Input.TextArea disabled={disabled} placeholder={'请输入说明'} />
+              <Input.TextArea
+                disabled={disabled}
+                placeholder={'请输入说明'}
+                maxLength={200}
+                showCount={true}
+              />
             </Form.Item>
           </Form>
         </Modal>
