@@ -45,6 +45,9 @@ export type DeviceInstance = {
   features?: any[];
   parentId?: string;
   classifiedName?: string;
+  firmwareInfo?: {
+    version?: string;
+  };
 };
 
 type Unit = {

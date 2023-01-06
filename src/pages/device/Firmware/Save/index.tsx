@@ -24,6 +24,7 @@ interface Props {
 const Save = (props: Props) => {
   const { data, close, visible } = props;
   const fileInfo = useRef<any>({});
+  // const disabled = useRef<boolean>(false);
   const signMethod = useRef<'md5' | 'sha256'>('md5');
 
   const form = createForm({
@@ -32,6 +33,12 @@ const Save = (props: Props) => {
     effects: () => {
       onFormInit(async (form1) => {
         if (!data?.id) return;
+        // const resp = await service.task({terms: [{ column: 'firmwareId', value: data?.id }]})
+        // if(resp.status === 200 && resp.result?.total){
+        //   disabled.current = true
+        // } else {
+        //   disabled.current = false
+        // }
         form1.setInitialValues({ ...data, upload: { url: data?.url } });
       });
       onFieldValueChange('signMethod', (field, f) => {
@@ -424,7 +431,7 @@ const Save = (props: Props) => {
             terms: [{ terms: [{ column: 'firmwareId', value: data.id }] }],
           });
           if (res.status === 200 && res.result.data && res.result.data.length !== 0) {
-            onlyMessage('该固件有升级任务，不可编辑', 'warning');
+            onlyMessage('该固件有升级任务，不可编辑', 'error');
           } else {
             save();
           }
