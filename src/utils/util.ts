@@ -89,7 +89,7 @@ export const getDateFormat = (
  * 扁平化树数组
  */
 export const flattenArray: any = (arr: any[]) => {
-  return arr.reduce((result, item) => {
+  return (arr || []).reduce((result, item) => {
     return result.concat(item, Array.isArray(item.children) ? flattenArray(item.children) : []);
   }, []);
 };

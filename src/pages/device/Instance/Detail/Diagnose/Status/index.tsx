@@ -1899,6 +1899,7 @@ const Status = observer((props: Props) => {
             <Button
               type="primary"
               onClick={async () => {
+                let flag: boolean = true;
                 if (
                   Object.keys(DiagnoseStatusModel.gateway).length > 0 &&
                   DiagnoseStatusModel.gateway?.state?.value !== 'enabled'
@@ -1913,6 +1914,8 @@ const Status = observer((props: Props) => {
                       text: '正常',
                       info: null,
                     });
+                  } else {
+                    flag = false;
                   }
                 }
                 if (DiagnoseStatusModel.product?.state !== 1) {
@@ -1926,6 +1929,8 @@ const Status = observer((props: Props) => {
                       text: '正常',
                       info: null,
                     });
+                  } else {
+                    flag = false;
                   }
                 }
                 if (device?.state?.value === 'notActive') {
@@ -1940,6 +1945,8 @@ const Status = observer((props: Props) => {
                       text: '正常',
                       info: null,
                     });
+                  } else {
+                    flag = false;
                   }
                 }
                 if (providerType === 'network' || providerType === 'child-device') {
@@ -1958,6 +1965,8 @@ const Status = observer((props: Props) => {
                         text: '正常',
                         info: null,
                       });
+                    } else {
+                      flag = false;
                     }
                   }
                 }
@@ -1973,10 +1982,14 @@ const Status = observer((props: Props) => {
                         text: '正常',
                         info: null,
                       });
+                    } else {
+                      flag = false;
                     }
                   }
                 }
-                onlyMessage('操作成功！');
+                if (flag) {
+                  onlyMessage('操作成功！');
+                }
               }}
             >
               一键修复

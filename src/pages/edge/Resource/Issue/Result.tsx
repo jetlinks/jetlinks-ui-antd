@@ -29,7 +29,7 @@ const Publish = (props: Props) => {
         targetId: props.data.targetId,
         targetType: props.data.targetType,
         category: props.data.category,
-        metadata: encodeURIComponent(props.data?.metadata || ''),
+        metadata: JSON.parse(props.data?.metadata || '{}'),
       }),
     };
     const url = new URLSearchParams();

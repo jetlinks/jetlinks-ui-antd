@@ -37,7 +37,6 @@ const Allocate = (props: Props) => {
         } else {
           check = 2;
         }
-
         return {
           ...item,
           check,
@@ -80,14 +79,16 @@ const Allocate = (props: Props) => {
         } else {
           check = 2;
         }
-        setDataSource({
+        const dt = {
           // 重新初始化
           id: 'menu-permission',
           buttons: [],
           check,
           name: '菜单权限',
           children,
-        });
+        };
+        setDataSource(dt);
+        setDataOldSource(dt);
       } else {
         setDataSource(props.value);
       }
@@ -98,7 +99,7 @@ const Allocate = (props: Props) => {
     if (Array.isArray(arr) && arr.length > 0) {
       return arr.map((item) => {
         let li: any[] = [];
-        if (item?.assetAccesses.length > 0) {
+        if (item?.assetAccesses.length) {
           if (_.map(item.assetAccesses, 'supportId').includes(str)) {
             li = item.assetAccesses.map((i: any) => {
               return {
@@ -148,8 +149,8 @@ const Allocate = (props: Props) => {
           change={(data: any) => {
             setDataSource(data);
             if (props.onChange) {
-              setDataOldSource(data);
               props.onChange(data);
+              setDataOldSource(data);
             }
           }}
         />

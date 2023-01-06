@@ -1,4 +1,4 @@
-import { randomString } from '@/utils/util';
+import { onlyMessage, randomString } from '@/utils/util';
 import { ArrayTable, Editable, Form, FormItem, Input, NumberPicker, Radio } from '@formily/antd';
 import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
@@ -267,7 +267,11 @@ const EditTable = (props: Props) => {
               const { old_id, ...extra } = i;
               return { ...extra };
             });
-            props.onChange({ array: list });
+            if (list.length) {
+              props.onChange({ array: list });
+            } else {
+              onlyMessage('请配置数据源字段', 'error');
+            }
           }}
         >
           保存
