@@ -34,14 +34,12 @@ export const PermissionsMap = {
   read: '查看',
   save: '编辑',
   delete: '删除',
+  share: '共享',
 };
 
 export const handlePermissionsMap = (permissions?: string[]) => {
   return permissions && permissions.length
-    ? permissions
-        .filter((item) => item in PermissionsMap)
-        .map((item) => PermissionsMap[item])
-        .toString()
+    ? permissions.map((item) => PermissionsMap[item]).toString()
     : '';
 };
 
@@ -113,7 +111,7 @@ export const ExtraProductCard = (props: ProductCardProps) => {
   const assetsOptions =
     props.assetsOptions && props.permissionInfoList
       ? props.assetsOptions.filter((item: any) =>
-          props.permissionInfoList.some((pItem) => pItem.id === item.value),
+          props.permissionInfoList!.some((pItem) => pItem.id === item.value),
         )
       : [];
 
@@ -178,23 +176,25 @@ export const ExtraProductCard = (props: ProductCardProps) => {
               <Ellipsis title={props.id || ''} />
             </div>
             {props.cardType === 'bind' ? (
-              <div className={'flex-auto'}>
-                <Checkbox.Group
-                  options={assetsOptions?.map((item) => {
-                    return {
-                      ...item,
-                      disabled: item.disabled !== true ? disabled : item.disabled,
-                    };
-                  })}
-                  value={assetKeys}
-                  onChange={(e) => {
-                    console.log('assetKeys', disabledRef.current, assetKeys, e);
-                    if (!disabledRef.current) {
-                      setAssetKeys(e as string[]);
-                      props.onAssetsChange?.(e);
-                    }
-                  }}
-                />
+              <div className={'flex-auto stopPropagation'}>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Checkbox.Group
+                    options={assetsOptions?.map((item) => {
+                      return {
+                        ...item,
+                        disabled: item.disabled !== true ? disabled : item.disabled,
+                      };
+                    })}
+                    value={assetKeys}
+                    onChange={(e) => {
+                      console.log('assetKeys', disabledRef.current, assetKeys, e);
+                      if (!disabledRef.current) {
+                        setAssetKeys(e as string[]);
+                        props.onAssetsChange?.(e);
+                      }
+                    }}
+                  />
+                </div>
               </div>
             ) : (
               <div className={'flex-auto'}>

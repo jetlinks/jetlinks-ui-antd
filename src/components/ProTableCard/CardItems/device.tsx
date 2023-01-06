@@ -33,6 +33,7 @@ export const PermissionsMap = {
   read: '查看',
   save: '编辑',
   delete: '删除',
+  share: '共享',
 };
 
 export const handlePermissionsMap = (permissions?: string[]) => {
@@ -50,7 +51,7 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
   const assetsOptions =
     props.assetsOptions && props.permissionInfoList
       ? props.assetsOptions.filter((item: any) =>
-          props.permissionInfoList.some((pItem) => pItem.id === item.value),
+          props.permissionInfoList!.some((pItem) => pItem.id === item.value),
         )
       : [];
 
@@ -110,23 +111,24 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
               {/*</div>*/}
             </div>
             {props.cardType === 'bind' ? (
-              <div className={'flex-auto'}>
-                <Checkbox.Group
-                  options={assetsOptions?.map((item) => {
-                    return {
-                      ...item,
-                      disabled: disabled,
-                    };
-                  })}
-                  value={assetKeys}
-                  onChange={(e) => {
-                    console.log('assetKeys', disabledRef.current, assetKeys, e);
-                    if (!disabledRef.current) {
-                      setAssetKeys(e as string[]);
-                      props.onAssetsChange?.(e);
-                    }
-                  }}
-                />
+              <div className={'flex-auto stopPropagation'}>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Checkbox.Group
+                    options={assetsOptions?.map((item) => {
+                      return {
+                        ...item,
+                        disabled: disabled,
+                      };
+                    })}
+                    value={assetKeys}
+                    onChange={(e) => {
+                      if (!disabledRef.current) {
+                        setAssetKeys(e as string[]);
+                        props.onAssetsChange?.(e);
+                      }
+                    }}
+                  />
+                </div>
               </div>
             ) : (
               <div className={'flex-auto'}>

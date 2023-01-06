@@ -358,7 +358,6 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           <ParamsDropdown
             options={valueOptions}
             metricsOptions={metricsOptions.filter((mItem) => {
-              console.log(mItem);
               if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
                 return mItem.range;
               } else {
