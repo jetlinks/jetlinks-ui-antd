@@ -17,7 +17,7 @@ export interface TableCardProps {
   children?: React.ReactNode;
   actions?: React.ReactNode[];
   contentClassName?: string;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 function getAction(actions: React.ReactNode[]) {
@@ -76,7 +76,10 @@ export default (props: TableCardProps) => {
   return (
     <div
       className={classNames('iot-card', { hover: maskShow }, props.className)}
-      onClick={props.onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        props.onClick?.(e);
+      }}
     >
       <div className={'card-warp'}>
         <div

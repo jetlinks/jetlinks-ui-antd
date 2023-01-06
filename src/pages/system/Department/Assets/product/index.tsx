@@ -1,7 +1,7 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, Modal, Space } from 'antd';
+import { Badge, Button, Dropdown, Menu, Modal, Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
@@ -36,9 +36,28 @@ export default observer((props: { parentId: string }) => {
   const [updateVisible, setUpdateVisible] = useState(false);
   const [updateId, setUpdateId] = useState('');
   const [permissions, setPermissions] = useState<string[]>([]);
+  const [assetsType, setAssetsType] = useState([]);
+
+  // 资产类型的权限定义
+  const getAssetsType = () => {
+    service.getAssetsType('product').then((res) => {
+      if (res.status === 200) {
+        setAssetsType(
+          res.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            disabled: item.id === 'read',
+          })),
+        );
+      } else {
+        setAssetsType([]);
+      }
+    });
+  };
 
   useEffect(() => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Product && actionRef.current) {
+      getAssetsType();
       actionRef.current.reload();
     }
   }, [AssetsModel.tabsIndex]);
@@ -258,12 +277,59 @@ export default observer((props: { parentId: string }) => {
     });
   };
 
+  const menu = (
+    <Menu>
+      <Menu.Item key={'1'}>
+        <PermissionButton
+          icon={<DisconnectOutlined />}
+          key="unBind"
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否批量解除绑定',
+            }),
+            onConfirm: handleUnBind,
+          }}
+          isPermission={permission.bind}
+        >
+          {intl.formatMessage({
+            id: 'pages.system.role.option.unBindUser',
+            defaultMessage: '批量解绑',
+          })}
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key={'2'}>
+        <PermissionButton
+          icon={<EditOutlined />}
+          key="update"
+          isPermission={permission.assert}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否批量解除绑定',
+            }),
+            onConfirm: () => {
+              if (Models.unBindKeys.length) {
+                setUpdateVisible(true);
+              } else {
+                onlyMessage('请勾选需要解绑的数据', 'warning');
+              }
+            },
+          }}
+        >
+          批量编辑
+        </PermissionButton>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="content">
       {Models.bind && (
         <Bind
           visible={Models.bind}
           onCancel={closeModal}
+          assetsType={assetsType}
           reload={() => {
             setDeviceVisible(true);
             actionRef.current?.reload();
@@ -461,29 +527,9 @@ export default observer((props: { parentId: string }) => {
               defaultMessage: '资产分配',
             })}
           </PermissionButton>,
-          <PermissionButton
-            icon={<DisconnectOutlined />}
-            key="unBind"
-            popConfirm={{
-              title: intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '是否批量解除绑定',
-              }),
-              onConfirm: handleUnBind,
-            }}
-            tooltip={{
-              title: intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '批量解绑',
-              }),
-            }}
-            isPermission={permission.bind}
-          >
-            {intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '批量解绑',
-            })}
-          </PermissionButton>,
+          <Dropdown overlay={menu} placement="bottom">
+            <Button>批量操作</Button>
+          </Dropdown>,
           // <Popconfirm
           //   title={intl.formatMessage({
           //     id: 'pages.system.role.option.unBindUser',
