@@ -115,7 +115,7 @@ export default observer((props: Props) => {
       item.selector = 'fixed';
     }
     if (DeviceModel.selector === 'relation') {
-      item.upperKey = 'deviceId';
+      item.upperKey = 'scene.deviceId';
     }
     // console.log(item, value);
 

@@ -397,7 +397,7 @@ export default observer((props: Props) => {
                   DeviceModel.deviceId = 'deviceId';
                   DeviceModel.source = 'upper';
                   DeviceModel.selectorValues = value;
-                  DeviceModel.upperKey = 'deviceId';
+                  DeviceModel.upperKey = 'scene.deviceId';
                   DeviceModel.relationName = options.label;
                 }
               }}
