@@ -45,7 +45,7 @@ const Save = () => {
   const [visible, setVisiable] = useState<boolean>(false);
   const [detail, setDetail] = useState<any>({});
   const accessRef = useRef<any>([]);
-  const [type, setType] = useState<any>('');
+  const [type, setType] = useState<any>('internal-standalone');
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -168,17 +168,19 @@ const Save = () => {
             const integrationModes = resp.result.integrationModes.map((item: any) => item.value);
             // setAccess(integrationModes)
             accessRef.current = integrationModes;
-            formInit.setInitialValues({
+
+            formInit.setValues({
               ...resp.result,
               integrationModes,
-              'apiServer.appId': id,
             });
+            formInit.setValuesIn('apiServer.appId', id);
           });
           onFieldValueChange('provider', (field, form1) => {
             const value = field.value;
-            setType(value);
-            // console.log(value);
+            setType(field.value);
             if (field.modified) {
+              form1.setValuesIn('apiServer.secureKey', randomString());
+              form1.setValuesIn('apiServer.roleIdList', []);
               switch (value) {
                 case 'internal-standalone':
                   form1.setFieldState('integrationModes', (f1) => {
@@ -258,6 +260,10 @@ const Save = () => {
             } else {
               field.selfErrors = '';
             }
+          });
+          onFieldReact('apiServer.appId', (field: any) => {
+            const value = (field as Field).value;
+            console.log(value);
           });
         },
       }),
@@ -1957,6 +1963,15 @@ const Save = () => {
       setView(location.state.view);
     }
   }, [location]);
+
+  useEffect(() => {
+    const item = form.getValuesIn('provider');
+    // console.log(item, form.getState())
+    // setType(localStorage.getItem('type'))
+
+    console.log(item, form.getState());
+  }, []);
+
   return (
     <PageContainer>
       <Card>
