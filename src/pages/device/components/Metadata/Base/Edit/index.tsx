@@ -798,7 +798,7 @@ const Edit = observer((props: Props) => {
                     'x-validator': [
                       {
                         // triggerType: 'onBlur',
-                        validator: (value: any[]) => {
+                        validator: (value: any) => {
                           return new Promise((resolve) => {
                             const number = Number(value);
                             if (number <= 0 || value.length > 64 || /[.]/.test(value)) {

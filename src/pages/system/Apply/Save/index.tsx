@@ -1144,8 +1144,10 @@ const Save = () => {
         'x-component-props': {
           optionType: 'button',
           placeholder: '请选择应用',
+          disabled: !!id,
         },
         required: true,
+
         // 'x-reactions': '{{useAsyncDataSource(getProvidersAll)}}',
         'x-decorator-props': {
           gridSpan: 1,

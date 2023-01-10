@@ -65,15 +65,19 @@ export default [
             icon: 'icon-tongzhiguanli',
             sortIndex: 1,
             showPage: ['notifier'],
-            permissions: [],
+            permissions: [{ permission: 'notifier', actions: ['query', 'save', 'delete', 'send'] }],
             buttons: [
               {
                 id: 'bind',
                 name: '同步用户',
                 permissions: [
                   {
-                    permission: 'notifier',
+                    permission: 'add',
                     actions: ['query'],
+                  },
+                  {
+                    permission: 'notifier',
+                    actions: ['save'],
                   },
                   {
                     permission: 'user-third-party-manager',
@@ -103,10 +107,10 @@ export default [
                     permission: 'notifier',
                     actions: ['query'],
                   },
-                  {
-                    permission: 'template',
-                    actions: ['query'],
-                  },
+                  // {
+                  //   permission: 'template',
+                  //   actions: ['query'],
+                  // },
                 ],
               },
               {
@@ -114,15 +118,15 @@ export default [
                 name: '调试',
                 permissions: [
                   {
+                    permission: 'add',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'notifier',
                     actions: ['query', 'send'],
                   },
                   {
                     permission: 'template',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'user',
                     actions: ['query'],
                   },
                 ],
@@ -189,7 +193,16 @@ export default [
             icon: 'icon-tongzhiguanli',
             sortIndex: 2,
             showPage: ['template'],
-            permissions: [],
+            permissions: [
+              {
+                permission: 'template',
+                actions: ['query'],
+              },
+              {
+                permission: 'notifier',
+                actions: ['query', 'send'],
+              },
+            ],
             buttons: [
               {
                 id: 'view',
@@ -224,7 +237,7 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'user',
+                    permission: 'add',
                     actions: ['query'],
                   },
                 ],
@@ -269,7 +282,7 @@ export default [
                   },
                   {
                     permission: 'template',
-                    actions: ['query', 'save'],
+                    actions: ['save'],
                   },
                 ],
               },
@@ -283,7 +296,7 @@ export default [
                   },
                   {
                     permission: 'template',
-                    actions: ['query', 'save'],
+                    actions: ['save'],
                   },
                 ],
               },
@@ -541,12 +554,24 @@ export default [
                 actions: ['query'],
               },
               {
+                permission: 'protocol-supports',
+                actions: ['query'],
+              },
+              {
                 permission: 'device-api',
                 actions: ['query-device-events'],
               },
               {
                 permission: 'things-collector',
                 actions: ['save', 'delete'],
+              },
+              {
+                permission: 'edge-operations',
+                actions: ['invoke'],
+              },
+              {
+                permission: 'device-gateway',
+                actions: ['query'],
               },
             ],
             buttons: [
@@ -555,11 +580,11 @@ export default [
                 name: '查看',
                 permissions: [
                   {
-                    permission: 'device-instance',
+                    permission: 'device-product',
                     actions: ['query'],
                   },
                   {
-                    permission: 'device-product',
+                    permission: 'device-instance',
                     actions: ['query'],
                   },
                 ],
@@ -573,12 +598,12 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'device-instance',
+                    permission: 'device-product',
                     actions: ['query'],
                   },
                   {
-                    permission: 'device-product',
-                    actions: ['query'],
+                    permission: 'device-instance',
+                    actions: ['query', 'export'],
                   },
                 ],
               },
@@ -587,8 +612,8 @@ export default [
                 name: '导入',
                 permissions: [
                   {
-                    permission: 'file',
-                    actions: ['upload-static'],
+                    permission: 'device-gateway',
+                    actions: ['query'],
                   },
                   {
                     permission: 'device-product',
@@ -596,11 +621,11 @@ export default [
                   },
                   {
                     permission: 'device-instance',
-                    actions: ['query', 'save'],
+                    actions: ['import', 'query'],
                   },
                   {
-                    permission: 'device-gateway',
-                    actions: ['query'],
+                    permission: 'file',
+                    actions: ['upload-static'],
                   },
                 ],
               },
@@ -667,12 +692,12 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'device-instance',
-                    actions: ['query', 'save'],
-                  },
-                  {
                     permission: 'device-product',
                     actions: ['query'],
+                  },
+                  {
+                    permission: 'device-instance',
+                    actions: ['enable', 'disable', 'query'],
                   },
                 ],
               },
@@ -954,16 +979,6 @@ export default [
                   },
                 ],
               },
-              // {
-              //   id: 'action',
-              //   name: '启/禁用',
-              //   permissions: [
-              //     {
-              //       permission: 'protocol-supports',
-              //       actions: ['enable', 'disable', 'query', 'save'],
-              //     },
-              //   ],
-              // },
               {
                 id: 'delete',
                 name: '删除',
@@ -1363,11 +1378,15 @@ export default [
                 name: '查看',
                 permissions: [
                   {
+                    permission: 'firmware-upgrade-task-manager',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'firmware-manager',
                     actions: ['query'],
                   },
                   {
-                    permission: 'firmware-upgrade-task-manager',
+                    permission: 'device-instance',
                     actions: ['query'],
                   },
                 ],
@@ -1377,11 +1396,7 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
-                    permission: 'firmware-manager',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'system_config',
+                    permission: 'device-product',
                     actions: ['query'],
                   },
                   {
@@ -1390,10 +1405,14 @@ export default [
                   },
                   {
                     permission: 'firmware-upgrade-task-manager',
-                    actions: ['query', 'save'],
+                    actions: ['query', 'save', 'deploy'],
                   },
                   {
-                    permission: 'device-product',
+                    permission: 'firmware-manager',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'system_config',
                     actions: ['query'],
                   },
                 ],
@@ -1785,8 +1804,8 @@ export default [
                 id: 'update',
                 name: '保存',
                 permissions: [
-                  { permission: 'alarm-record', actions: ['query', 'save'] },
-                  { permission: 'alarm-config', actions: ['query'] },
+                  // { permission: 'alarm-record', actions: ['query', 'save'] },
+                  { permission: 'alarm-config', actions: ['query', 'save'] },
                 ],
               },
             ],
@@ -1801,7 +1820,12 @@ export default [
             url: '/iot/Alarm/Configuration',
             icon: 'icon-warning_amber',
             showPage: ['alarm-config'],
-            permissions: [],
+            permissions: [
+              {
+                permission: 'organization',
+                actions: ['query'],
+              },
+            ],
             buttons: [
               {
                 id: 'view',
@@ -1822,11 +1846,15 @@ export default [
                 name: '新增',
                 permissions: [
                   {
+                    permission: 'rule-scene',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'alarm-config',
                     actions: ['query', 'save'],
                   },
                   {
-                    permission: 'rule-scene',
+                    permission: 'alarm-record',
                     actions: ['query'],
                   },
                 ],
@@ -1864,16 +1892,16 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
+                    permission: 'rule-scene',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'alarm-record',
                     actions: ['query'],
                   },
                   {
                     permission: 'alarm-config',
-                    actions: ['query', 'save'],
-                  },
-                  {
-                    permission: 'rule-scene',
-                    actions: ['query'],
+                    actions: ['query', 'save', 'delete'],
                   },
                 ],
               },
@@ -1972,7 +2000,7 @@ export default [
             buttons: [
               {
                 id: 'action',
-                name: '状态切换',
+                name: '启/禁用',
                 permissions: [
                   {
                     permission: 'dueros-product',
@@ -2309,7 +2337,7 @@ export default [
                 name: '查看',
                 permissions: [
                   {
-                    permission: 'template',
+                    permission: 'user',
                     actions: ['query'],
                   },
                   {
@@ -2317,7 +2345,15 @@ export default [
                     actions: ['query'],
                   },
                   {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'rule-scene',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'relation',
                     actions: ['query'],
                   },
                   {
@@ -2325,7 +2361,7 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'user',
+                    permission: 'device-instance',
                     actions: ['query'],
                   },
                 ],
@@ -2345,11 +2381,19 @@ export default [
                 name: '新增',
                 permissions: [
                   {
+                    permission: 'user',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'device-product',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'template',
                     actions: ['query'],
                   },
                   {
-                    permission: 'user',
+                    permission: 'device-instance',
                     actions: ['query'],
                   },
                   {
@@ -2361,7 +2405,7 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'device-product',
+                    permission: 'relation',
                     actions: ['query'],
                   },
                 ],
@@ -2371,11 +2415,19 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
+                    permission: 'user',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'device-product',
+                    actions: ['query'],
+                  },
+                  {
                     permission: 'template',
                     actions: ['query'],
                   },
                   {
-                    permission: 'user',
+                    permission: 'device-instance',
                     actions: ['query'],
                   },
                   {
@@ -2387,7 +2439,7 @@ export default [
                     actions: ['query'],
                   },
                   {
-                    permission: 'device-product',
+                    permission: 'relation',
                     actions: ['query'],
                   },
                 ],
@@ -2414,7 +2466,16 @@ export default [
             url: '/iot/edge/Devic',
             icon: 'icon-bumenguanli',
             showPage: ['edge-operations'],
-            permissions: [],
+            permissions: [
+              {
+                permission: 'device-product',
+                actions: ['query'],
+              },
+              {
+                permission: 'device-instance',
+                actions: ['query'],
+              },
+            ],
             buttons: [
               {
                 id: 'view',
@@ -2422,6 +2483,10 @@ export default [
                 permissions: [
                   {
                     permission: 'device-instance',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'device-product',
                     actions: ['query'],
                   },
                 ],
@@ -2432,7 +2497,7 @@ export default [
                 permissions: [
                   {
                     permission: 'device-instance',
-                    actions: ['query', 'save'],
+                    actions: ['enable', 'disable'],
                   },
                 ],
               },
@@ -2451,8 +2516,8 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
-                    permission: 'rule-instance',
-                    actions: ['query', 'save'],
+                    permission: 'device-instance',
+                    actions: ['save'],
                   },
                 ],
               },
@@ -2461,8 +2526,8 @@ export default [
                 name: '新增',
                 permissions: [
                   {
-                    permission: 'rule-instance',
-                    actions: ['query', 'save'],
+                    permission: 'device-instance',
+                    actions: ['save'],
                   },
                 ],
               },
@@ -2481,8 +2546,12 @@ export default [
                 name: '远程控制',
                 permissions: [
                   {
-                    permission: 'rule-instance',
+                    permission: 'device-instance',
                     actions: ['save'],
+                  },
+                  {
+                    permission: 'edge-operations',
+                    actions: ['remote'],
                   },
                 ],
               },
@@ -2491,8 +2560,8 @@ export default [
                 name: '重置密码',
                 permissions: [
                   {
-                    permission: 'rule-instance',
-                    actions: ['save'],
+                    permission: 'edge-operations',
+                    actions: ['invoke'],
                   },
                 ],
               },
@@ -2506,15 +2575,30 @@ export default [
             url: '/iot/edge/Resource',
             icon: 'icon-Vector',
             showPage: ['edge-operations'],
-            permissions: [],
+            permissions: [
+              {
+                permission: 'entity-template',
+                actions: ['query'],
+              },
+            ],
             buttons: [
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'entity-template',
+                    actions: ['query'],
+                  },
+                ],
+              },
               {
                 id: 'action',
                 name: '启/禁用',
                 permissions: [
                   {
-                    permission: 'device-instance',
-                    actions: ['query', 'save'],
+                    permission: 'entity-template',
+                    actions: ['enable', 'disable'],
                   },
                 ],
               },
@@ -2523,8 +2607,8 @@ export default [
                 name: '删除',
                 permissions: [
                   {
-                    permission: 'device-instance',
-                    actions: ['query', 'delete'],
+                    permission: 'entity-template',
+                    actions: ['delete'],
                   },
                 ],
               },
@@ -2533,8 +2617,8 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
-                    permission: 'device-instance',
-                    actions: ['query', 'save'],
+                    permission: 'entity-template',
+                    actions: ['save'],
                   },
                 ],
               },
@@ -2543,25 +2627,15 @@ export default [
                 name: '下发',
                 permissions: [
                   {
-                    permission: 'edge-operations',
-                    actions: ['invoke'],
-                  },
-                  {
                     permission: 'device-instance',
                     actions: ['query'],
                   },
-                ],
-              },
-              {
-                id: 'view',
-                name: '查看',
-                permissions: [
                   {
                     permission: 'edge-operations',
                     actions: ['invoke'],
                   },
                   {
-                    permission: 'device-instance',
+                    permission: 'entity-template',
                     actions: ['query'],
                   },
                 ],
@@ -2609,7 +2683,12 @@ export default [
         sortIndex: 2,
         url: '/media/dashboard',
         icon: 'icon-keshihua',
-        permissions: [],
+        permissions: [
+          {
+            permission: 'media-device',
+            actions: ['query'],
+          },
+        ],
         buttons: [],
         showPage: ['dashboard', 'media-device'],
       },
@@ -2624,58 +2703,111 @@ export default [
         icon: 'icon-shipinwangguan',
         showPage: ['media-device'],
         permissions: [
-          { permission: 'file', actions: ['upload-static'] },
-          { permission: 'media-record', actions: ['record', 'query', 'sync'] },
-          { permission: 'device-gateway', actions: ['query', 'save', 'delete'] },
+          {
+            permission: 'media-gateway',
+            actions: ['enable', 'disable', 'query', 'save', 'delete'],
+          },
+          {
+            permission: 'file',
+            actions: ['upload-static'],
+          },
+          {
+            permission: 'media-record',
+            actions: ['record', 'query', 'sync'],
+          },
+          {
+            permission: 'media-channel',
+            actions: ['query'],
+          },
+          {
+            permission: 'device-gateway',
+            actions: ['query', 'save', 'delete'],
+          },
           {
             permission: 'gb28181-cascade',
             actions: ['bind', 'unbind', 'enable', 'disable', 'query', 'save', 'delete'],
           },
-          { permission: 'media-channel', actions: ['query', 'save', 'delete'] },
-          { permission: 'device-product', actions: ['query', 'save', 'delete'] },
+          {
+            permission: 'device-product',
+            actions: ['query', 'save', 'delete'],
+          },
           {
             permission: 'media-device',
             actions: ['stop', 'ptz', 'record', 'query', 'start', 'save', 'delete'],
-          },
-          {
-            permission: 'media-gateway',
-            actions: ['enable', 'disable', 'query', 'save', 'delete'],
           },
         ],
         buttons: [
           {
             id: 'view',
             name: '查看',
-            permissions: [{ permission: 'media-device', actions: ['query'] }],
+            permissions: [
+              {
+                permission: 'media-device',
+                actions: ['query'],
+              },
+            ],
           },
           {
             id: 'delete',
             name: '删除',
-            permissions: [{ permission: 'media-device', actions: ['delete'] }],
+            permissions: [
+              {
+                permission: 'media-device',
+                actions: ['delete'],
+              },
+            ],
           },
           {
             id: 'update',
             name: '编辑',
             permissions: [
-              { permission: 'file', actions: ['upload-static'] },
-              { permission: 'device-gateway', actions: ['query'] },
+              {
+                permission: 'file',
+                actions: ['upload-static'],
+              },
+              {
+                permission: 'device-gateway',
+                actions: ['query'],
+              },
               {
                 permission: 'media-device',
                 actions: ['stop', 'ptz', 'record', 'query', 'start', 'save'],
               },
-              { permission: 'media-channel', actions: ['query', 'save'] },
-              { permission: 'gb28181-cascade', actions: ['bind', 'unbind', 'query', 'save'] },
-              { permission: 'device-product', actions: ['query'] },
+              {
+                permission: 'media-channel',
+                actions: ['query', 'save'],
+              },
+              {
+                permission: 'gb28181-cascade',
+                actions: ['bind', 'unbind', 'query', 'save'],
+              },
+              {
+                permission: 'device-product',
+                actions: ['query'],
+              },
             ],
           },
           {
             id: 'add',
             name: '新增',
+            description: '',
             permissions: [
-              { permission: 'file', actions: ['upload-static'] },
-              { permission: 'device-gateway', actions: ['query'] },
-              { permission: 'media-device', actions: ['query', 'save'] },
-              { permission: 'device-product', actions: ['query'] },
+              {
+                permission: 'media-device',
+                actions: ['query', 'save'],
+              },
+              {
+                permission: 'device-gateway',
+                actions: ['query'],
+              },
+              {
+                permission: 'device-product',
+                actions: ['query'],
+              },
+              {
+                permission: 'file',
+                actions: ['upload-static'],
+              },
             ],
           },
         ],
@@ -2692,17 +2824,26 @@ export default [
         showPage: ['media-device'],
         permissions: [
           {
+            permission: 'media-channel',
+            actions: ['query'],
+          },
+          {
             permission: 'media-device',
             actions: ['stop', 'ptz', 'record', 'query', 'start', 'save', 'delete'],
           },
-          { permission: 'media-channel', actions: ['query', 'save', 'delete'] },
         ],
         buttons: [
-          // {
-          //   id: 'view',
-          //   name: '查看',
-          //   permissions: [{ permission: 'media-device', actions: ['query'] }],
-          // },
+          {
+            id: 'view',
+            name: '查看',
+            description: '',
+            permissions: [
+              {
+                permission: 'media-device',
+                actions: ['query'],
+              },
+            ],
+          },
         ],
       },
       {
@@ -2725,52 +2866,92 @@ export default [
           {
             id: 'view',
             name: '查看',
-            permissions: [{ permission: 'gb28181-cascade', actions: ['query'] }],
+            permissions: [
+              {
+                permission: 'gb28181-cascade',
+                actions: ['query'],
+              },
+            ],
           },
           {
             id: 'action',
             name: '启/禁用',
             permissions: [
-              { permission: 'gb28181-cascade', actions: ['enable', 'disable', 'query', 'save'] },
+              {
+                permission: 'gb28181-cascade',
+                actions: ['enable', 'disable', 'query', 'save'],
+              },
             ],
           },
           {
             id: 'push',
             name: '推送',
             permissions: [
-              { permission: 'media-channel', actions: ['query'] },
-              { permission: 'gb28181-cascade', actions: ['query'] },
+              {
+                permission: 'media-channel',
+                actions: ['query'],
+              },
+              {
+                permission: 'gb28181-cascade',
+                actions: ['query'],
+              },
             ],
           },
           {
             id: 'channel',
             name: '选择通道',
             permissions: [
-              { permission: 'media-device', actions: ['query'] },
-              { permission: 'media-channel', actions: ['query'] },
-              { permission: 'gb28181-cascade', actions: ['bind', 'unbind', 'query', 'save'] },
+              {
+                permission: 'media-device',
+                actions: ['query'],
+              },
+              {
+                permission: 'media-channel',
+                actions: ['query'],
+              },
+              {
+                permission: 'gb28181-cascade',
+                actions: ['bind', 'unbind', 'query', 'save'],
+              },
             ],
           },
           {
             id: 'delete',
             name: '删除',
             permissions: [
-              { permission: 'gb28181-cascade', actions: ['delete'] },
-              { permission: 'media-server', actions: ['delete'] },
+              {
+                permission: 'gb28181-cascade',
+                actions: ['delete'],
+              },
+              {
+                permission: 'media-server',
+                actions: ['delete'],
+              },
             ],
           },
           {
             id: 'update',
             name: '编辑',
             permissions: [
-              { permission: 'gb28181-cascade', actions: ['query', 'save'] },
-              { permission: 'media-server', actions: ['save'] },
+              {
+                permission: 'gb28181-cascade',
+                actions: ['query', 'save'],
+              },
+              {
+                permission: 'media-server',
+                actions: ['save'],
+              },
             ],
           },
           {
             id: 'add',
             name: '新增',
-            permissions: [{ permission: 'gb28181-cascade', actions: ['query', 'save'] }],
+            permissions: [
+              {
+                permission: 'gb28181-cascade',
+                actions: ['query', 'save'],
+              },
+            ],
           },
         ],
       },
@@ -2953,54 +3134,32 @@ export default [
               },
             ],
           },
-          // {
-          //   id: 'edit',
-          //   name: '资产编辑',
-          //   permissions: [
-          //     {
-          //       permission: 'assets-bind',
-          //       actions: ['query', 'permission'],
-          //     },
-          //     {
-          //       permission: 'user',
-          //       actions: ['query'],
-          //     },
-          //     {
-          //       permission: 'device-product',
-          //       actions: ['query'],
-          //     },
-          //     {
-          //       permission: 'device-instance',
-          //       actions: ['query'],
-          //     },
-          //   ],
-          // },
-          // {
-          //   id: 'bind',
-          //   name: '资产解绑',
-          //   permissions: [
-          //     {
-          //       permission: 'assets-bind',
-          //       actions: ['unbind', 'query'],
-          //     },
-          //     {
-          //       permission: 'user',
-          //       actions: ['query'],
-          //     },
-          //     {
-          //       permission: 'device-product',
-          //       actions: ['query'],
-          //     },
-          //     {
-          //       permission: 'device-instance',
-          //       actions: ['query'],
-          //     },
-          //     {
-          //       permission: 'organization',
-          //       actions: ['unbind-user'],
-          //     },
-          //   ],
-          // },
+          {
+            id: 'bind',
+            name: '资产解绑',
+            permissions: [
+              {
+                permission: 'assets-bind',
+                actions: ['unbind', 'query'],
+              },
+              {
+                permission: 'user',
+                actions: ['query'],
+              },
+              {
+                permission: 'device-product',
+                actions: ['query'],
+              },
+              {
+                permission: 'device-instance',
+                actions: ['query'],
+              },
+              {
+                permission: 'organization',
+                actions: ['unbind-user'],
+              },
+            ],
+          },
           {
             id: 'bind-user',
             name: '绑定用户',
@@ -3032,15 +3191,11 @@ export default [
             name: '资产分配',
             permissions: [
               {
-                permission: 'assets-bind',
-                actions: ['bind', 'unbind', 'query', 'permission'],
-              },
-              {
-                permission: 'device-product',
+                permission: 'user',
                 actions: ['query'],
               },
               {
-                permission: 'device-category',
+                permission: 'device-product',
                 actions: ['query'],
               },
               {
@@ -3048,8 +3203,12 @@ export default [
                 actions: ['query'],
               },
               {
-                permission: 'user',
+                permission: 'device-category',
                 actions: ['query'],
+              },
+              {
+                permission: 'assets-bind',
+                actions: ['bind', 'unbind', 'query', 'permission'],
               },
             ],
           },
@@ -3143,25 +3302,20 @@ export default [
         url: '/system/Role',
         icon: 'icon-jiaoseguanli',
         showPage: ['role'],
-        permissions: [],
-        buttons: [
+        permissions: [
           {
-            id: 'view',
-            name: '查看',
-            permissions: [
-              {
-                permission: 'role',
-                actions: ['query'],
-              },
-            ],
+            permission: 'role',
+            actions: ['query'],
           },
+        ],
+        buttons: [
           {
             id: 'delete',
             name: '删除',
             permissions: [
               {
                 permission: 'role',
-                actions: ['query', 'delete'],
+                actions: ['delete'],
               },
             ],
           },
@@ -3170,16 +3324,16 @@ export default [
             name: '编辑',
             permissions: [
               {
+                permission: 'user',
+                actions: ['query'],
+              },
+              {
                 permission: 'role',
                 actions: ['query', 'save'],
               },
               {
                 permission: 'menu',
-                actions: ['query', 'grant'],
-              },
-              {
-                permission: 'user',
-                actions: ['query'],
+                actions: ['grant'],
               },
             ],
           },
@@ -3188,15 +3342,25 @@ export default [
             name: '新增',
             permissions: [
               {
+                permission: 'user',
+                actions: ['query'],
+              },
+              {
                 permission: 'role',
                 actions: ['query', 'save'],
               },
               {
                 permission: 'menu',
-                actions: ['query', 'grant'],
+                actions: ['grant'],
               },
+            ],
+          },
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
               {
-                permission: 'user',
+                permission: 'role',
                 actions: ['query'],
               },
             ],
@@ -3567,18 +3731,17 @@ export default [
         url: '/system/Api',
         icon: 'icon-chakanAPI',
         showPage: ['open-api'],
-        permissions: [{ permission: 'open-api', actions: ['query', 'save'] }],
-        buttons: [
+        permissions: [
           {
-            id: 'view',
-            name: '查看',
-            permissions: [
-              {
-                permission: 'open-api',
-                actions: ['query'],
-              },
-            ],
+            permission: 'open-api',
+            actions: ['query', 'save'],
           },
+          {
+            permission: 'application',
+            actions: ['query'],
+          },
+        ],
+        buttons: [
           {
             id: 'update',
             name: '编辑',
@@ -3586,6 +3749,20 @@ export default [
               {
                 permission: 'open-api',
                 actions: ['query', 'save'],
+              },
+              {
+                permission: 'application',
+                actions: ['save'],
+              },
+            ],
+          },
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query'],
               },
             ],
           },
@@ -3618,16 +3795,16 @@ export default [
             name: '新增',
             permissions: [
               {
+                permission: 'role',
+                actions: ['query'],
+              },
+              {
                 permission: 'menu',
                 actions: ['query'],
               },
               {
                 permission: 'application',
                 actions: ['query', 'save'],
-              },
-              {
-                permission: 'role',
-                actions: ['query'],
               },
               {
                 permission: 'open-api',
@@ -3640,6 +3817,10 @@ export default [
             name: '编辑',
             permissions: [
               {
+                permission: 'role',
+                actions: ['query'],
+              },
+              {
                 permission: 'menu',
                 actions: ['query'],
               },
@@ -3648,32 +3829,8 @@ export default [
                 actions: ['query', 'save'],
               },
               {
-                permission: 'role',
-                actions: ['query'],
-              },
-              {
                 permission: 'open-api',
                 actions: ['query', 'save', 'delete'],
-              },
-            ],
-          },
-          {
-            id: 'empowerment',
-            name: '赋权',
-            permissions: [
-              {
-                permission: 'open-api',
-                actions: ['query', 'save', 'delete'],
-              },
-            ],
-          },
-          {
-            id: 'api',
-            name: '查看api',
-            permissions: [
-              {
-                permission: 'open-api',
-                actions: ['query', 'save'],
               },
             ],
           },
@@ -3771,8 +3928,17 @@ export default [
         url: '/iot-card/Home',
         icon: 'icon-zhihuishequ',
         status: 1,
-        showPage: ['network-flow'],
-        permissions: [{ permission: 'network-flow', actions: ['query'] }],
+        showPage: ['network-flow', 'network-card'],
+        permissions: [
+          {
+            permission: 'network-flow',
+            actions: ['query'],
+          },
+          {
+            permission: 'network-card',
+            actions: ['query'],
+          },
+        ],
         accessSupport: {
           text: '不支持',
           value: 'unsupported',
@@ -3803,8 +3969,16 @@ export default [
         showPage: ['network-card'],
         permissions: [
           {
+            permission: 'platform',
+            actions: ['query'],
+          },
+          {
             permission: 'network-card',
-            actions: ['query', 'save', 'delete'],
+            actions: ['query'],
+          },
+          {
+            permission: 'network-flow',
+            actions: ['query'],
           },
         ],
         buttons: [
@@ -3816,6 +3990,10 @@ export default [
                 permission: 'IotCard-management',
                 actions: ['sync'],
               },
+              {
+                permission: 'network-card',
+                actions: ['save'],
+              },
             ],
           },
           {
@@ -3825,6 +4003,10 @@ export default [
               {
                 permission: 'IotCard-management',
                 actions: ['import'],
+              },
+              {
+                permission: 'network-card',
+                actions: ['save'],
               },
             ],
           },
@@ -3846,6 +4028,10 @@ export default [
                 permission: 'IotCard-management',
                 actions: ['delete'],
               },
+              {
+                permission: 'network-card',
+                actions: ['delete'],
+              },
             ],
           },
           {
@@ -3855,6 +4041,10 @@ export default [
               {
                 permission: 'IotCard-management',
                 actions: ['active'],
+              },
+              {
+                permission: 'network-card',
+                actions: ['save'],
               },
             ],
           },
@@ -3866,6 +4056,10 @@ export default [
                 permission: 'IotCard-management',
                 actions: ['action'],
               },
+              {
+                permission: 'network-card',
+                actions: ['save'],
+              },
             ],
           },
           {
@@ -3874,6 +4068,10 @@ export default [
             permissions: [
               {
                 permission: 'IotCard-management',
+                actions: ['save'],
+              },
+              {
+                permission: 'network-card',
                 actions: ['save'],
               },
             ],
@@ -3886,6 +4084,10 @@ export default [
                 permission: 'IotCard-management',
                 actions: ['save'],
               },
+              {
+                permission: 'network-card',
+                actions: ['save'],
+              },
             ],
           },
           {
@@ -3894,6 +4096,10 @@ export default [
             permissions: [
               {
                 permission: 'IotCard-management',
+                actions: ['save'],
+              },
+              {
+                permission: 'network-card',
                 actions: ['save'],
               },
             ],
@@ -3929,6 +4135,16 @@ export default [
         ],
         buttons: [
           {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'network-card',
+                actions: ['query'],
+              },
+            ],
+          },
+          {
             id: 'pay',
             name: '充值',
             permissions: [
@@ -3936,14 +4152,8 @@ export default [
                 permission: 'network-card',
                 actions: ['query', 'save'],
               },
-            ],
-          },
-          {
-            id: 'view',
-            name: '查看',
-            permissions: [
               {
-                permission: 'network-card',
+                permission: 'platform',
                 actions: ['query'],
               },
             ],
@@ -3964,7 +4174,7 @@ export default [
         permissions: [
           {
             permission: 'platform',
-            actions: ['save', 'delete', 'query'],
+            actions: ['query'],
           },
         ],
         buttons: [

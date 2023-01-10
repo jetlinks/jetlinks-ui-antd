@@ -49,7 +49,7 @@ const BaseMetadata = observer((props: Props) => {
 
   const removeItem = async (record: MetadataItem) => {
     const removeDB = () => {
-      return DB.getDB().table(`${type}`).delete(record.id!);
+      return DB.getDB(param.id).table(`${type}`).delete(record.id!);
     };
     const _currentData = removeMetadata(type, [record], typeMap.get(target), removeDB);
     const result = await asyncUpdateMedata(target, _currentData);
@@ -129,8 +129,10 @@ const BaseMetadata = observer((props: Props) => {
   ];
 
   const initData = useCallback(async () => {
-    const result = await DB.getDB().table(`${type}`).toArray();
-    console.log(result);
+    // resetMetadata()
+    const result = await DB.getDB(param.id).table(`${type}`).toArray();
+    console.log('------sssss--', result);
+
     setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
   }, [param.id, type]);
 
@@ -157,7 +159,7 @@ const BaseMetadata = observer((props: Props) => {
       //   .startsWithAnyOfIgnoreCase(name)
       //   .toArray();
       // setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
-      const result = await DB.getDB().table(`${type}`).toArray();
+      const result = await DB.getDB(param.id).table(`${type}`).toArray();
       const arr = result
         .filter((item) => item.name.indexOf(name) > -1)
         .sort((a, b) => b?.sortsIndex - a?.sortsIndex);
