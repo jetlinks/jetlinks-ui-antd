@@ -2,7 +2,7 @@ import { useDomFullHeight } from '@/hooks';
 import { ExclamationCircleOutlined, ExpandOutlined } from '@ant-design/icons';
 import { Card, Tooltip, Select, Input, Button, AutoComplete, message } from 'antd';
 import { useState, useRef, useEffect } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 import { useFullscreen, useSize } from 'ahooks';
 import Service from '@/pages/device/Instance/service';
 import { onlyMessage } from '@/utils/util';
@@ -34,6 +34,8 @@ const Parsing = (props: Props) => {
   // const [data, setData] = useState<any>({});
   const [readOnly, setReadOnly] = useState<boolean>(true);
   const [topTitle, setTopTitle] = useState<string>();
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [isTest, setIsTest] = useState<boolean>(false);
 
   const editorDidMountHandle = (editor: any) => {
     editor.getAction('editor.action.formatDocument').run();
@@ -115,12 +117,12 @@ const Parsing = (props: Props) => {
     service.testCode(dataTest).then((res) => {
       if (res.status === 200) {
         setLoading(false);
-        onlyMessage('调试成功');
+        // onlyMessage('调试成功');
         setResultValue(res?.result);
-        console.log(res.result);
+        // console.log(res.result);
       } else {
         setLoading(false);
-        onlyMessage('调试失败', 'error');
+        // onlyMessage('调试失败', 'error');
       }
     });
   };
@@ -163,6 +165,14 @@ const Parsing = (props: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (value === '' && simulation === '') {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  }, [value, simulation]);
+
   return (
     <Card className="parsing" style={{ minHeight }}>
       <div>
@@ -175,26 +185,30 @@ const Parsing = (props: Props) => {
                   {topTitle === 'rest' ? (
                     <>
                       当前数据解析内容已脱离产品影响，
-                      <a
+                      <PermissionButton
+                        type="link"
+                        isPermission={permission.update}
                         onClick={() => {
                           rest(props.data.productId, props.data.id);
                         }}
                       >
                         重置
-                      </a>
+                      </PermissionButton>
                       后将继承产品数据解析内容
                     </>
                   ) : (
                     <>
                       当前数据解析内容继承自产品，
-                      <a
+                      <PermissionButton
+                        type="link"
+                        isPermission={permission.update}
                         style={readOnly ? {} : { color: '#a6a6a6' }}
                         onClick={() => {
                           setReadOnly(false);
                         }}
                       >
                         修改
-                      </a>
+                      </PermissionButton>
                       后将脱离产品影响。
                     </>
                   )}
@@ -234,7 +248,7 @@ const Parsing = (props: Props) => {
               }}
             ></div>
           )}
-          <MonacoEditor
+          <JMonacoEditor
             width={'100%'}
             height={'100%'}
             theme="vs"
@@ -340,7 +354,12 @@ const Parsing = (props: Props) => {
               <div style={{ fontWeight: 600, fontSize: 14, marginTop: 10 }}>运行结果</div>
               <Input.TextArea
                 autoSize={{ minRows: 5 }}
-                style={{ marginTop: 10 }}
+                style={
+                  resultValue
+                    ? { marginTop: 10, borderColor: `${resultValue.success ? 'green' : 'red'}` }
+                    : { marginTop: 10 }
+                }
+                status={''}
                 value={
                   resultValue.success
                     ? JSON.stringify(resultValue.outputs?.[0])
@@ -356,7 +375,7 @@ const Parsing = (props: Props) => {
           <Button
             type="primary"
             loading={loading}
-            disabled={value !== '' && !simulation}
+            disabled={disabled}
             onClick={() => {
               if (type === 'MQTT') {
                 if (topic !== '') {
@@ -371,6 +390,7 @@ const Parsing = (props: Props) => {
                     provider: 'jsr223',
                     payload: simulation,
                   });
+                  setIsTest(true);
                 } else {
                   message.error('请输入topic');
                 }
@@ -387,6 +407,7 @@ const Parsing = (props: Props) => {
                     },
                     payload: simulation,
                   });
+                  setIsTest(true);
                 } else {
                   message.error('请输入url');
                 }
@@ -401,6 +422,10 @@ const Parsing = (props: Props) => {
           key={'update'}
           style={{ marginLeft: 10 }}
           isPermission={permission.update}
+          disabled={!isTest}
+          tooltip={{
+            title: isTest ? '' : '请先调试',
+          }}
           onClick={() => {
             if (props.tag === 'device') {
               saveDeviceCode(props.data.productId, props.data.id, {

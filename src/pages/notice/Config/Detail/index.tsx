@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { createForm, onFieldValueChange } from '@formily/core';
+import { createForm, onFieldValueChange, onFormInit } from '@formily/core';
 import { Card, Col, Input, Row } from 'antd';
 import { ISchema } from '@formily/json-schema';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,7 +19,7 @@ import {
   Switch,
 } from '@formily/antd';
 import styles from './index.less';
-import { service, state } from '@/pages/notice/Config';
+import { service } from '@/pages/notice/Config';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { useParams } from 'umi';
 import { typeList } from '@/pages/notice';
@@ -36,6 +36,8 @@ import usePermissions from '@/hooks/permission';
 import FAutoComplete from '@/components/FAutoComplete';
 import Webhook from './doc/Webhook';
 import { useModel } from '@@/plugin-model/useModel';
+import { typeArray } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import RegionIdList from './regionId';
 
 export const docMap = {
   weixin: {
@@ -63,32 +65,52 @@ export const docMap = {
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
   const { initialState } = useModel('@@initialState');
-  const [provider, setProvider] = useState<string>('embedded');
+  const [typeItem, setTypeItem] = useState<string>('email');
+  const [providerItem, setProviderItem] = useState<string>('embedded');
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useMemo(
     () =>
       createForm({
         validateFirst: true,
         effects() {
-          onFieldValueChange('type', async (field) => {
-            const type = field.value;
-            if (!type) return;
-            // f.setFieldState('provider', (state1) => {
-            // state1.value = undefined;
-            // state.dataSource = providerRef.current
-            //   .find((item) => type === item.id)
-            //   ?.providerInfos.map((i) => ({ label: i.name, value: i.id }));
-            // });
+          onFormInit(async (form1) => {
+            if (id === ':id' || !id) {
+              form1.setValues({
+                type: 'email',
+                provider: 'embedded',
+              });
+            } else {
+              const resp = await service.detail(id);
+              if (resp.status === 200) {
+                setTypeItem(resp.result.type);
+                setProviderItem(resp.result.provider);
+                form1.setValues(resp.result);
+              }
+            }
+          });
+          onFieldValueChange('type', async (field, f) => {
+            const value = field.value;
+            setTypeItem(value);
+            if (!value) return;
+            f.setFieldState('provider', (state1) => {
+              if (id === ':id' || !id) {
+                state1.value = typeList[value][0].value;
+              }
+              state1.dataSource = typeList[value];
+            });
           });
           onFieldValueChange('provider', async (field) => {
-            if (id === 'email') {
-              setProvider('embedded');
+            const _type = field.query('.type').get('value');
+            if (_type === 'email') {
+              setProviderItem('embedded');
             } else {
-              setProvider(field.value);
+              setProviderItem(field.value);
             }
           });
         },
       }),
-    [id],
+    [],
   );
 
   useEffect(() => {
@@ -99,12 +121,6 @@ const Detail = observer(() => {
         document.title = '通知配置';
       }
     }, 0);
-    if (id === 'webhook') {
-      setProvider('http');
-    }
-    if (state.current) {
-      form.setValues(state.current);
-    }
   }, []);
 
   const SchemaField = createSchemaField({
@@ -136,6 +152,24 @@ const Detail = observer(() => {
   const schema: ISchema = {
     type: 'object',
     properties: {
+      type: {
+        title: '通知方式',
+        'x-component': 'Select',
+        'x-decorator': 'FormItem',
+        'x-component-props': {
+          placeholder: '请选择通知方式',
+        },
+        'x-disabled': !!id && id !== ':id',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择通知方式',
+          },
+        ],
+        enum: typeArray.map((item) => {
+          return { label: item.text, value: item.status };
+        }),
+      },
       name: {
         title: '名称',
         required: true,
@@ -146,16 +180,14 @@ const Detail = observer(() => {
         },
         'x-validator': [
           {
+            required: true,
+            message: '请输入名称',
+          },
+          {
             max: 64,
             message: '最多可输入64个字符',
           },
         ],
-      },
-      type: {
-        title: '分类',
-        'x-component': 'Input',
-        'x-value': id,
-        'x-hidden': true,
       },
       provider: {
         title: '类型',
@@ -165,17 +197,34 @@ const Detail = observer(() => {
         'x-component-props': {
           optionType: 'button',
         },
-        required: true,
-        'x-visible': typeList[id]?.length > 0,
-        'x-hidden': id === 'email' || id === 'webhook',
-        'x-value': typeList[id]?.[0]?.value,
-        enum: typeList[id] || [],
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              hidden: '{{!(!!$deps[0] && $deps[0] !== "email")}}',
+            },
+          },
+        },
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择类型',
+          },
+        ],
       },
       configuration: {
         type: 'object',
         properties: {
           weixin: {
             type: 'void',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="weixin"}}',
+                },
+              },
+            },
             properties: {
               corpId: {
                 title: 'corpId',
@@ -259,11 +308,18 @@ const Detail = observer(() => {
                 },
               },
             },
-            'x-visible': id === 'weixin',
           },
           dingTalk: {
             type: 'void',
-            'x-visible': id === 'dingTalk',
+            // 'x-visible': id === 'dingTalk',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="dingTalk"}}',
+                },
+              },
+            },
             properties: {
               appKey: {
                 title: 'AppKey',
@@ -333,22 +389,25 @@ const Detail = observer(() => {
           // 阿里云语音/短信
           voiceOrSms: {
             type: 'void',
-            'x-visible': id === 'voice' || id === 'sms',
+            // 'x-visible': id === 'voice' || id === 'sms',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="voice" || $deps[0]==="sms"}}',
+                },
+              },
+            },
             properties: {
               regionId: {
                 title: 'RegionId',
                 required: true,
                 'x-component-props': {
-                  placeholder: '请输入regionId',
+                  placeholder: '请选择regionId',
                 },
-                'x-component': 'Input',
+                'x-component': 'Select',
                 'x-decorator': 'FormItem',
-                'x-validator': [
-                  {
-                    max: 64,
-                    message: '最多可输入64个字符',
-                  },
-                ],
+                enum: RegionIdList,
               },
               accessKeyId: {
                 title: 'AccessKeyId',
@@ -384,7 +443,15 @@ const Detail = observer(() => {
           },
           email: {
             type: 'void',
-            'x-visible': id === 'email',
+            // 'x-visible': id === 'email',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="email"}}',
+                },
+              },
+            },
             properties: {
               space: {
                 title: '服务器地址',
@@ -513,7 +580,15 @@ const Detail = observer(() => {
             },
           },
           webhook: {
-            'x-visible': id === 'webhook',
+            // 'x-visible': id === 'webhook',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="webhook"}}',
+                },
+              },
+            },
             type: 'void',
             properties: {
               url: {
@@ -616,7 +691,10 @@ const Detail = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
-          rows: 4,
+          rows: 5,
+          placeholder: '请输入说明',
+          showCount: true,
+          maxLength: 200,
         },
         'x-validator': [
           {
@@ -630,20 +708,21 @@ const Detail = observer(() => {
 
   const handleSave = async () => {
     const data: ConfigItem = await form.submit();
+    setLoading(true);
     let response;
     if (data.id) {
       response = await service.update(data);
     } else {
       response = await service.save(data);
     }
-
+    setLoading(false);
     if (response?.status === 200) {
       onlyMessage('保存成功');
       history.back();
     }
   };
 
-  const { getOtherPermission } = usePermissions('notice');
+  const { getOtherPermission } = usePermissions('notice/Config');
 
   return (
     <PageContainer>
@@ -657,6 +736,7 @@ const Detail = observer(() => {
                   <PermissionButton
                     type="primary"
                     onClick={handleSave}
+                    loading={loading}
                     isPermission={getOtherPermission(['add', 'update'])}
                   >
                     保存
@@ -666,7 +746,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            {docMap?.[id]?.[provider]}
+            {docMap?.[typeItem]?.[providerItem]}
           </Col>
         </Row>
       </Card>

@@ -28,7 +28,7 @@ class Service extends BaseService<ChannelItem> {
 
   // 云台控制-停止
   ptzStop = (deviceId: string, channelId: string) =>
-    request(`${this.uri}/device/${deviceId}/${channelId}/_stop`, { method: 'POST' });
+    request(`${this.uri}/device/${deviceId}/${channelId}/_ptz/STOP`, { method: 'POST' });
 
   // 云台控制-缩放、转向等
   ptzTool = (deviceId: string, channelId: string, direct: string, speed: number = 90) =>

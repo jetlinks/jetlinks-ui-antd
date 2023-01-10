@@ -19,6 +19,7 @@ import { onlyMessage } from '@/utils/util';
 import useHistory from '@/hooks/route/useHistory';
 import Save from './Save/save';
 import { getMenuPathByCode } from '@/utils/menu';
+// import { Spin } from 'antd';
 
 export const service = new Service('scene');
 
@@ -148,7 +149,11 @@ const Scene = () => {
         isPermission={permission.delete}
         disabled={record.state.value === 'started'}
         popConfirm={{
-          title: '确认删除？',
+          // title: loading ? <Spin /> : title,
+          // okButtonProps: {
+          //   loading: loading,
+          // },
+          title: '确定删除？',
           disabled: record.state.value === 'started',
           onConfirm: () => {
             deleteById(record.id);
@@ -276,8 +281,12 @@ const Scene = () => {
           <SceneCard
             {...record}
             onClick={() => {
-              const url = getMenuPathByCode('rule-engine/Scene/Save');
-              history.push(`${url}?triggerType=${record.trigger?.type}&id=${record?.id}`);
+              if (permission.view) {
+                const url = getMenuPathByCode('rule-engine/Scene/Save');
+                history.push(`${url}?triggerType=${record.trigger?.type}&id=${record?.id}`);
+              } else {
+                onlyMessage('暂无权限，请联系管理员', 'error');
+              }
             }}
             tools={Tools(record)}
           />

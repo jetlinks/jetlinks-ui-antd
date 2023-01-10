@@ -72,6 +72,11 @@ class Service extends BaseService<CascadeItem> {
     request(`/${SystemConst.API_BASE}/network/resources/alive/_all`, {
       method: 'GET',
     });
+  validateId = (cascadeId: string, data: any) =>
+    request(`/${SystemConst.API_BASE}/media/gb28181-cascade/${cascadeId}/gbChannelId/_validate`, {
+      method: 'POST',
+      data,
+    });
 }
 
 export default Service;

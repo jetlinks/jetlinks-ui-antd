@@ -1,10 +1,10 @@
 import { Col, Form, Input, InputNumber, message, Modal, Radio, Row, Select } from 'antd';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
-import FSelectDevices from '@/components/FSelectDevices';
 import { useEffect, useRef, useState } from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { service } from '@/pages/device/Firmware';
 import { onlyMessage } from '@/utils/util';
+import SelectDevices from '@/pages/device/Firmware/Task/Save/SelectDevices';
 
 interface Props {
   ids: { id: string; productId: string };
@@ -23,7 +23,7 @@ const Save = (props: Props) => {
   const devices = useRef<DeviceInstance[]>([]);
 
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
     if (data && data.id) {
       setMode(data.mode.value);
     }
@@ -249,7 +249,7 @@ const Save = (props: Props) => {
                       },
                     ]}
                   >
-                    <FSelectDevices productId={ids?.productId || ''} disabled={!!data?.id} />
+                    <SelectDevices productId={ids?.productId || ''} disabled={!!data?.id} />
                   </Form.Item>
                 </Col>
               )}

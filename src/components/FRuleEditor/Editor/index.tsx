@@ -1,8 +1,9 @@
 import styles from '@/components/FRuleEditor/index.less';
-import { Dropdown, Menu } from 'antd';
+import { Dropdown, Menu, Tooltip } from 'antd';
 import { FullscreenOutlined, MoreOutlined } from '@ant-design/icons';
-import MonacoEditor, { monaco } from 'react-monaco-editor';
-import { useEffect, useRef } from 'react';
+import { monaco } from 'react-monaco-editor';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type * as monacoEditor from 'monaco-editor';
 import { Store } from 'jetlinks-store';
 import { State } from '@/components/FRuleEditor';
@@ -85,40 +86,63 @@ const symbolList = [
 interface Props {
   mode?: 'advance' | 'simple';
   onChange?: (value: 'advance' | 'simple') => void;
+  id?: string;
+  onValueChange?: (v: any) => void;
+  value?: string;
 }
 
 const Editor = (props: Props) => {
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState<string | undefined>(State.code);
+
   const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor>();
   const editorDidMountHandle = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
     editor.getAction('editor.action.formatDocument').run();
     editorRef.current = editor;
   };
 
-  const handleInsertCode = (value: string) => {
-    const editor = editorRef.current;
-    if (!editor || !value) return;
-    const position = editor.getPosition()!;
-    editor?.executeEdits(State.code, [
-      {
-        range: new monaco.Range(
-          position?.lineNumber,
-          position?.column,
-          position?.lineNumber,
-          position?.column,
-        ),
-        text: value,
-      },
-    ]);
-    Store.set('add-operator-value', undefined);
-  };
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
+
+  const handleInsertCode = useCallback(
+    (_value: string) => {
+      const editor = editorRef.current;
+      if (!editor || !_value) return;
+      const position = editor.getPosition()!;
+      editor?.executeEdits(value, [
+        {
+          range: new monaco.Range(
+            position?.lineNumber,
+            position?.column,
+            position?.lineNumber,
+            position?.column,
+          ),
+          text: _value,
+        },
+      ]);
+      // Store.set('add-operator-value', undefined);
+    },
+    [value],
+  );
 
   useEffect(() => {
-    const subscription = Store.subscribe('add-operator-value', handleInsertCode);
-    return () => subscription.unsubscribe();
+    let subscription: any = null;
+    if (props.mode === 'advance') {
+      subscription = Store.subscribe('add-operator-value', handleInsertCode);
+    }
+    return () => subscription?.unsubscribe();
   }, [props.mode]);
 
   return (
-    <div className={styles.box}>
+    <div
+      className={styles.box}
+      ref={() => {
+        setTimeout(() => {
+          setLoading(true);
+        }, 100);
+      }}
+    >
       <div className={styles.top}>
         <div className={styles.left}>
           {symbolList
@@ -161,21 +185,36 @@ const Editor = (props: Props) => {
         <div className={styles.right}>
           {props.mode !== 'advance' && (
             <span>
-              <FullscreenOutlined onClick={() => props.onChange?.('advance')} />
+              <Tooltip title={!props.id ? '请先输入标识' : '设置属性规则'}>
+                <FullscreenOutlined
+                  className={!props.id ? styles.disabled : ''}
+                  onClick={() => {
+                    if (props.id) {
+                      props.onChange?.('advance');
+                    }
+                  }}
+                />
+              </Tooltip>
             </span>
           )}
         </div>
       </div>
-      <MonacoEditor
-        editorDidMount={(editor) => editorDidMountHandle(editor)}
-        language={'javascript'}
-        height={300}
-        onChange={(c) => {
-          State.code = c;
-          Store.set('rule-editor-value', State.code);
-        }}
-        value={State.code}
-      />
+      {loading && (
+        <JMonacoEditor
+          editorDidMount={editorDidMountHandle}
+          language={'javascript'}
+          height={300}
+          onChange={(c) => {
+            setValue(c);
+            if (props.mode !== 'advance') {
+              State.code = c;
+              Store.set('rule-editor-value', State.code);
+            }
+            props.onValueChange?.(c);
+          }}
+          value={value}
+        />
+      )}
     </div>
   );
 };

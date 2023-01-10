@@ -127,7 +127,7 @@ const Basis = () => {
                     extra={
                       <>
                         <div>推荐尺寸200*200</div>
-                        <div>支持jpg,png</div>
+                        <div>支持jpg,png,jfif,pjp,pjpeg,jpeg</div>
                       </>
                     }
                   >
@@ -162,7 +162,7 @@ const Basis = () => {
                 label="登录背景图"
                 extra={
                   <>
-                    <div>支持4M以内的图片:支持jpg、png</div>
+                    <div>支持4M以内的图片: 支持jpg,png,jfif,pjp,pjpeg,jpeg</div>
                     <div>建议尺寸1400x1080</div>
                   </>
                 }

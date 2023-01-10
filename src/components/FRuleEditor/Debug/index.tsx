@@ -6,7 +6,7 @@ import type { Field } from '@formily/core';
 import { createForm } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
 import FAutoComplete from '@/components/FAutoComplete';
-import { Descriptions, Tooltip } from 'antd';
+import { Descriptions, message, Tooltip } from 'antd';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
 import type { WebsocketPayload } from '@/hooks/websocket/typings';
 import { State } from '@/components/FRuleEditor';
@@ -17,6 +17,8 @@ import { action } from '@formily/reactive';
 
 interface Props {
   virtualRule?: any;
+  onSuccess?: () => void;
+  id?: string;
 }
 
 const Debug = observer((props: Props) => {
@@ -43,7 +45,10 @@ const Debug = observer((props: Props) => {
     );
   };
 
-  const getProperty = async () => DB.getDB().table('properties').toArray();
+  const getProperty = async () => {
+    const _p: PropertyMetadata[] = await DB.getDB().table('properties').toArray();
+    return _p.filter((p) => p.id !== props.id);
+  };
   const virtualIdRef = useRef(new Date().getTime());
   const ws = useRef<any>();
   const wsAgain = useRef<any>();
@@ -155,6 +160,12 @@ const Debug = observer((props: Props) => {
     if (ws.current) {
       ws.current.unsubscribe();
     }
+    console.log(props.virtualRule);
+    if (!props.virtualRule.script) {
+      setIsBeginning(true);
+      message.warning('请编辑规则');
+      return;
+    }
     ws.current = subscribeTopic?.(
       `virtual-property-debug-${State.property}-${new Date().getTime()}`,
       '/virtual-property-debug',
@@ -169,6 +180,7 @@ const Debug = observer((props: Props) => {
     )?.subscribe(
       (data: WebsocketPayload) => {
         State.log.push({ time: new Date().getTime(), content: JSON.stringify(data.payload) });
+        props.onSuccess?.();
       },
       // () => { },
       // () => {
@@ -202,6 +214,7 @@ const Debug = observer((props: Props) => {
   };
   useEffect(() => {
     return () => {
+      setIsBeginning(true);
       if (ws.current) {
         ws.current.unsubscribe();
       }

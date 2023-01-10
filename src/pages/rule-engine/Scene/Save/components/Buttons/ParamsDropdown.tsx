@@ -6,6 +6,7 @@ import MTimePicker from '../ParamsSelect/components/MTimePicker';
 import moment from 'moment';
 import ParamsSelect from '../ParamsSelect';
 import './index.less';
+import { isEqual } from 'lodash';
 
 export interface ParamsDropdownProps {
   value?: any;
@@ -22,12 +23,14 @@ export interface ParamsDropdownProps {
   valueType: string;
   showLabelKey?: string;
   icon?: ReactNode;
+  open?: boolean;
+  openChange?: (open: boolean) => void;
 }
 
 interface MenusProps {
   value: any;
   options?: any[];
-  onChange: (value: any, lb: any) => void;
+  onChange: (value: any, lb: any, node) => void;
 }
 
 const Menus = (props: MenusProps) => {
@@ -47,10 +50,11 @@ const Menus = (props: MenusProps) => {
         selectedKeys={value ? [value] : undefined}
         items={props.options}
         onClick={({ key, item }: { key: any; item: any }) => {
+          console.log(item.props);
           const _item = props.options?.find((a) => a.value === item.props.value);
           setValue(key);
           if (_item) {
-            props.onChange(_item.value, _item.label);
+            props.onChange(_item.value, _item.label, item.props);
           }
         }}
       />
@@ -63,6 +67,10 @@ export default (props: ParamsDropdownProps) => {
   const [myValue, setMyValue] = useState<any>(undefined);
   const [activeKey, setActiveKey] = useState(props.BuiltInOptions ? 'fixed' : 'manual');
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(!!props.open);
+  }, [props.open]);
 
   const onValueChange = useCallback(
     (value: any, _label: any, item?: any) => {
@@ -97,6 +105,17 @@ export default (props: ParamsDropdownProps) => {
               }}
               style={{ width: '100%' }}
               placeholder={'请输入'}
+            />
+          );
+        case 'metric':
+          return (
+            <Menus
+              value={_value}
+              options={props.metricsOptions}
+              onChange={(v, l, node) => {
+                onValueChange(v, l, node);
+                setOpen(false);
+              }}
             />
           );
         case 'enum':
@@ -173,11 +192,14 @@ export default (props: ParamsDropdownProps) => {
     [props, activeKey],
   );
 
-  const findLabel = (value: string, data: any[]): boolean => {
+  const findLabel = (value: string, data: any[], titleName?: string): boolean => {
     let isLabel = false;
     return data.some((item) => {
-      if (item.key === value) {
+      if (isEqual(item.key, value)) {
         let titleKey = 'title';
+        if (titleName) {
+          titleKey = titleName;
+        }
         if (props.showLabelKey) {
           titleKey = props.showLabelKey;
         }
@@ -195,6 +217,13 @@ export default (props: ParamsDropdownProps) => {
       switch (type) {
         case 'boolean':
           setLabel(v ? '是' : '否');
+          break;
+        case 'metric':
+          props.metricsOptions?.forEach((item) => {
+            if (item.value === v) {
+              setLabel(item.label);
+            }
+          });
           break;
         case 'enum':
         case 'object':
@@ -222,7 +251,7 @@ export default (props: ParamsDropdownProps) => {
       if (props.BuiltInOptions && props.value.source === 'upper') {
         valueLabel(_value, 'built');
       } else {
-        valueLabel(_value, props.valueType);
+        valueLabel(_value, props.isMetric ? 'metric' : props.valueType);
       }
     }
   }, [props.value, props.options, props.valueType, props.BuiltInOptions]);
@@ -242,9 +271,19 @@ export default (props: ParamsDropdownProps) => {
       if ('name' in props) {
         _value = props.value?.value[props.name!];
       }
-      findLabel(_value, props.BuiltInOptions || []);
+      findLabel(_value, props.BuiltInOptions || [], '');
     }
   }, [props.BuiltInOptions]);
+
+  useEffect(() => {
+    if (props.metricsOptions) {
+      let _value = props.value?.value;
+      if ('name' in props) {
+        _value = props.value?.value[props.name!];
+      }
+      findLabel(_value, props.metricsOptions || [], 'name');
+    }
+  }, [props.metricsOptions]);
 
   let _itemList = [];
 
@@ -274,7 +313,7 @@ export default (props: ParamsDropdownProps) => {
       _itemList.push({
         key: 'metric',
         label: '指标值',
-        content: renderNode('enum', myValue, props),
+        content: renderNode('metric', myValue, props),
       });
     }
   }
@@ -283,12 +322,15 @@ export default (props: ParamsDropdownProps) => {
     <ParamsSelect
       value={myValue}
       onChange={(value, source) => {
-        console.log(value, source);
         setActiveKey(source);
-        // props.onChange?.({
-        //   value,
-        //   source
-        // }, label )
+        // onValueChange(undefined, '')
+        setMyValue(undefined);
+        setLabel('');
+        const changeValue = {
+          value: value,
+          source: source,
+        };
+        props.onChange?.(changeValue, '', {});
       }}
       tabKey={activeKey}
       itemList={_itemList}
@@ -296,7 +338,10 @@ export default (props: ParamsDropdownProps) => {
       bodyStyle={{ width: 'auto' }}
       type={props.valueType}
       open={open}
-      openChange={setOpen}
+      openChange={(_open) => {
+        setOpen(_open);
+        props.openChange?.(_open);
+      }}
     >
       <div
         className={classNames(styles['dropdown-button'], styles.value)}

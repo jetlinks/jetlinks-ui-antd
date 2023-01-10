@@ -11,26 +11,33 @@ import type { PropertyMetadata } from '@/pages/device/Product/typings';
 
 const service = new Service();
 
-const Operator = () => {
+interface Props {
+  id?: string;
+}
+
+const Operator = (props: Props) => {
   const [data, setData] = useState<OperatorItem[]>([]);
   const [item, setItem] = useState<Partial<OperatorItem>>({});
   const dataRef = useRef<OperatorItem[]>([]);
-  const getData = async () => {
+
+  const getData = async (id?: string) => {
     const _properties = (await DB.getDB().table('properties').toArray()) as PropertyMetadata[];
     const properties = {
       id: 'property',
       name: '属性',
       description: '',
       code: '',
-      children: _properties.map((p) => ({
-        id: p.id,
-        name: p.name,
-        description: `### ${p.name}
+      children: _properties
+        .filter((p) => p.id !== id)
+        .map((p) => ({
+          id: p.id,
+          name: p.name,
+          description: `### ${p.name}
         \n 数据类型: ${p.valueType?.type}
         \n 是否只读: ${p.expands?.readOnly || 'false'}
         \n 可写数值范围: `,
-        type: 'property',
-      })),
+          type: 'property',
+        })),
     };
     const response = await service.getOperator();
     if (response.status === 200) {
@@ -38,9 +45,10 @@ const Operator = () => {
       dataRef.current = [properties, ...response.result];
     }
   };
+
   useEffect(() => {
-    getData();
-  }, []);
+    getData(props.id);
+  }, [props.id]);
 
   const search = (value: string) => {
     if (value) {
@@ -69,9 +77,9 @@ const Operator = () => {
             <div className={node.children?.length > 0 ? styles.parent : styles.add}>
               {node.type === 'property' ? (
                 <Popover
-                  visible={visible}
                   placement="right"
                   title="请选择使用值"
+                  onOpenChange={setVisible}
                   content={
                     <Space direction="vertical">
                       <Tooltip
@@ -101,7 +109,6 @@ const Operator = () => {
                       </Tooltip>
                     </Space>
                   }
-                  trigger="click"
                 >
                   <a onClick={() => setVisible(true)}>添加</a>
                 </Popover>

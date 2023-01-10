@@ -15,7 +15,6 @@ import SystemConst from '@/utils/const';
 import { service as MenuService } from '@/pages/system/Menu';
 import getRoutes, {
   extraRouteArr,
-  getMenuPathByCode,
   getMenus,
   handleRoutes,
   saveMenusCache,
@@ -187,7 +186,8 @@ export const request: RequestConfig = {
       response.status === 400 ||
       response.status === 500 ||
       response.status === 404 ||
-      response.status === 403
+      response.status === 403 ||
+      response.status === 504
     ) {
       // 添加clone() 避免后续其它地方用response.text()时报错
       response
@@ -314,20 +314,20 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       // content: initialState?.currentUser?.name,
     },
     itemRender: (route, _, routes) => {
-      const isToParentUrl = getMenuPathByCode('notice');
+      // const isToParentUrl = getMenuPathByCode('notice');
       const chilck = routes.indexOf(route) !== 0;
-      const goto = routes.some((item) => {
+      const goto = routes.some(() => {
         if (!route.path.includes('iot')) {
           return routes.indexOf(route) <= 1;
         } else {
-          if (route.path.includes('notice')) {
-            return item.path.indexOf(isToParentUrl) > -1;
-          } else {
-            return routes.indexOf(route) > 1;
-          }
+          // if (route.path.includes('notice')) {
+          //   return item.path.indexOf(isToParentUrl) > -1;
+          // } else {
+          return routes.indexOf(route) > 1;
+          // }
         }
       });
-      return chilck && goto && route.path !== '/iot/link/Channel' ? (
+      return chilck && goto ? (
         <Link to={route.path}>{route.breadcrumbName}</Link>
       ) : (
         <span>{route.breadcrumbName}</span>

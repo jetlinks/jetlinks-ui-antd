@@ -467,9 +467,33 @@ const Save = observer(() => {
             'x-component-props': {
               placeholder: '请输入远程端口',
             },
-            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'NumberPicker',
+            'x-validator': [
+              {
+                max: 65535,
+                message: '请输入1-65535之间的正整数',
+              },
+              {
+                min: 1,
+                message: '请输入1-65535之间的正整数',
+              },
+              {
+                required: true,
+                placeholder: '请输入远程端口',
+              },
+              {
+                validator: (value: any[]) => {
+                  return new Promise((resolve) => {
+                    if (/[.]/.test(value)) {
+                      resolve('请输入1-65535之间的正整数');
+                    } else {
+                      resolve('');
+                    }
+                  });
+                },
+              },
+            ],
           },
           clientId: {
             title: 'clientId',
@@ -481,9 +505,18 @@ const Save = observer(() => {
             'x-component-props': {
               placeholder: '请输入ClientId',
             },
-            required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入ClientId',
+              },
+            ],
           },
           username: {
             title: '用户名',
@@ -498,6 +531,16 @@ const Save = observer(() => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入用户名',
+              },
+            ],
           },
           password: {
             title: '密码',
@@ -512,6 +555,16 @@ const Save = observer(() => {
             required: true,
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+              {
+                required: true,
+                placeholder: '请输入密码',
+              },
+            ],
           },
           // maxMessageSize: {
           //   title: '最大消息长度',
@@ -541,13 +594,20 @@ const Save = observer(() => {
             },
             'x-decorator': 'FormItem',
             'x-component': 'Input',
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
         },
       },
       maxMessageSize: {
         title: '最大消息长度',
         'x-decorator': 'FormItem',
-        'x-component': 'Input',
+        'x-component': 'NumberPicker',
+        default: 8192,
         'x-decorator-props': {
           gridSpan: 1,
           labelAlign: 'left',
@@ -567,6 +627,20 @@ const Save = observer(() => {
             },
           },
         },
+        'x-validator': [
+          {
+            max: 1073741824,
+            message: '请输入1024~1073741824之间的数字',
+          },
+          {
+            min: 1024,
+            message: '请输入1024~1073741824之间的数字',
+          },
+          {
+            required: true,
+            placeholder: '请输入最大消息长度',
+          },
+        ],
       },
       secure: {
         // title: '开启DTLS',
@@ -669,10 +743,10 @@ const Save = observer(() => {
         },
         enum: [
           { value: 'DIRECT', label: '不处理' },
-          { value: 'delimited', label: '分隔符' },
-          { value: 'script', label: '自定义脚本' },
-          { value: 'fixed_length', label: '固定长度' },
-          { value: 'length', label: '长度' },
+          { value: 'DELIMITED', label: '分隔符' },
+          { value: 'SCRIPT', label: '自定义脚本' },
+          { value: 'FIXED_LENGTH', label: '固定长度' },
+          { value: 'LENGTH_FIELD', label: '长度字段' },
         ],
         'x-reactions': {
           dependencies: ['type'],
@@ -701,7 +775,8 @@ const Save = observer(() => {
             dependencies: ['.parserType'],
             fulfill: {
               state: {
-                visible: '{{["delimited", "script", "fixed_length", "length"].includes($deps[0])}}',
+                visible:
+                  '{{["DELIMITED", "SCRIPT", "FIXED_LENGTH", "LENGTH_FIELD"].includes($deps[0])}}',
               },
             },
           },
@@ -731,7 +806,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "delimited"}}',
+                    visible: '{{$deps[0] === "DELIMITED"}}',
                   },
                 },
               },
@@ -761,7 +836,7 @@ const Save = observer(() => {
                 fulfill: {
                   state: {
                     // visible: '{{$deps[0] === "script"}}',
-                    value: '{{$deps[0] === "script" ? "javascript" : ""}}',
+                    value: '{{$deps[0] === "SCRIPT" ? "javascript" : ""}}',
                   },
                 },
               },
@@ -797,7 +872,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "script"}}',
+                    visible: '{{$deps[0] === "SCRIPT"}}',
                   },
                 },
               },
@@ -827,7 +902,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "fixed_length"}}',
+                    visible: '{{$deps[0] === "FIXED_LENGTH"}}',
                   },
                 },
               },
@@ -858,7 +933,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "length"}}',
+                    visible: '{{$deps[0] === "LENGTH_FIELD"}}',
                   },
                 },
               },
@@ -892,7 +967,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "length"}}',
+                    visible: '{{$deps[0] === "LENGTH_FIELD"}}',
                   },
                 },
               },
@@ -921,7 +996,7 @@ const Save = observer(() => {
                 dependencies: ['..parserType'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "length"}}',
+                    visible: '{{$deps[0] === "LENGTH_FIELD"}}',
                   },
                 },
               },

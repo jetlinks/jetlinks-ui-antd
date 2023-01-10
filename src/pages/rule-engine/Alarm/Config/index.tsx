@@ -28,60 +28,98 @@ const Config = () => {
 
   const outputData = [
     {
-      key: 'alarmName',
-      name: '告警名称',
+      key: 'alarmConfigName',
+      name: '告警配置名称',
       type: 'string',
-      desc: '推送的告警名称',
+      desc: '推送的告警配置名称',
+      example: '烟感告警',
     },
     {
-      key: 'id',
-      name: '告警ID',
+      key: 'alarmConfigId',
+      name: '告警配置ID',
+      type: 'string',
+      desc: '推送的告警配置ID',
+      example: '1605111722418597888',
+    },
+    {
+      key: 'Id',
+      name: '告警数据ID',
       type: 'string',
       desc: '告警唯一性标识',
+      example: '1515992841393119232',
+    },
+    {
+      key: 'alarmRecordId',
+      name: '告警记录ID',
+      type: 'string',
+      desc: '告警记录的唯一标识，可根据此ID处理告警',
+      example: 'ba33a59ca5ebe3dccfcd75fd0575be4e',
     },
     {
       key: 'targetType',
-      name: '告警类型',
+      name: '告警目标类型',
       type: 'string',
-      desc: '告警所属的业务类型，具体有产品、设备、组织、其他',
+      desc: '告警所属的业务类型，具体有产品、设备、部门、其他',
+      example: '产品',
     },
     {
       key: 'targetId',
       name: '告警目标ID',
       type: 'string',
       desc: '告警目标唯一性标识',
+      example: '1583300346713661440',
     },
     {
       key: 'targetName',
       name: '告警目标名称',
       type: 'string',
       desc: '告警目标实例名称',
+      example: '海康烟感',
     },
     {
-      key: 'alarmDate',
-      name: '最近告警时间',
-      type: 'date',
-      desc: '最近一次的告警触发时间',
+      key: 'alarmTime',
+      name: '告警时间',
+      type: 'long',
+      desc: '告警触发时间',
+      example: '1651233650840',
+    },
+    {
+      key: 'sourceType',
+      name: '告警源类型',
+      type: 'string',
+      desc: '触发告警的源类型。当前只有device',
+      example: 'device',
+    },
+    {
+      key: 'sourceId',
+      name: '告警源ID',
+      type: 'string',
+      desc: '触发告警的源Id。如设备Id',
+      example: '1605138218826821632',
+    },
+    {
+      key: 'sourceName',
+      name: '告警源名称',
+      type: 'string',
+      desc: '触发告警的源名称。如设备名称',
+      example: '1楼烟感S01',
     },
     {
       key: 'level',
       name: '告警级别',
       type: 'int',
       desc: '告警严重程度指标',
-    },
-    {
-      key: 'state',
-      name: '告警状态',
-      type: 'object',
-      desc: 'value：告警状态 text：告警值',
+      example: 1,
     },
     {
       key: 'description',
       name: '告警说明',
       type: 'string',
       desc: '告警规则说明',
+      example: '1楼烟感统一告警规则设置',
     },
   ];
+
   const outputColumns = [
     {
       title: '名称',
@@ -105,38 +143,15 @@ const Config = () => {
       title: '说明',
       dataIndex: 'desc',
       key: 'desc',
+      width: 100,
       ellipsis: true,
     },
-  ];
-
-  const subData = [
     {
-      key: 'id',
-      name: '告警ID',
-      type: 'string',
-      require: '是',
-      desc: '订阅的告警唯一性标识',
-    },
-    {
-      key: 'describe',
-      name: '处理内容',
-      type: 'string',
-      require: '是',
-      desc: '告警处理内容详细描述说明',
-    },
-    {
-      key: 'state',
-      name: '告警状态',
-      type: 'string',
-      require: '是',
-      desc: '告警中, 无告警',
-    },
-    {
-      key: 'handleTime',
-      name: '处理时间',
-      type: 'long',
-      require: '否',
-      desc: '告警处理时间，不填是默认为消息处理时间',
+      title: '示例值',
+      dataIndex: 'example',
+      key: 'example',
+      width: 100,
+      ellipsis: true,
     },
   ];
 
@@ -147,6 +162,65 @@ const Config = () => {
     key: 'require',
     ellipsis: true,
   });
+
+  const subData = [
+    {
+      key: 'alarmRecordId',
+      name: '告警记录ID',
+      type: 'string',
+      require: '是',
+      desc: '告警记录的唯一标识，可根据此ID处理告警',
+      example: 'ba33a59ca5ebe3dccfcd75fd0575be4e',
+    },
+    {
+      key: 'alarmConfigId',
+      name: '告警配置ID',
+      type: 'string',
+      require: '是',
+      desc: '推送的告警配置ID',
+      example: '1605111722418597888',
+    },
+    {
+      key: 'alarmTime',
+      name: '告警时间',
+      type: 'long',
+      require: '是',
+      desc: '告警触发时间',
+      example: '1651233650840',
+    },
+    {
+      key: 'handleTime',
+      name: '处理时间',
+      type: 'long',
+      require: '是',
+      desc: '告警处理时间，不填是默认为消息处理时间',
+      example: '1651233650840',
+    },
+    {
+      key: 'describe',
+      name: '处理说明',
+      type: 'string',
+      require: '是',
+      desc: '告警处理内容详细描述说明',
+      example: '已联系第三方人员进行告警处理，现告警已恢复',
+    },
+    {
+      key: 'type',
+      name: '处理类型',
+      type: 'enum',
+      require: '是',
+      desc: '支持system、user',
+      example: 'user',
+    },
+    {
+      key: 'state',
+      name: '处理后的状态',
+      type: 'enum',
+      require: '是',
+      desc: 'warning、normal',
+      example: 'normal',
+    },
+  ];
 
   const SchemaField = createSchemaField({
     components: {
@@ -280,19 +354,20 @@ const Config = () => {
   const outputText = `
   ~~~json
   {
-    "id": "1518055745863864320",
-    "alarmConfigId": "1511601633016569856",
-    "alarmName": "一楼烟感告警",
-    "targetType": "product",
-    "targetId": "product-01",
-    "targetName": "产品-001",
-    "alarmTime": "1651233650840",
-    "level": 3,
-    "state": {
-      "text": "告警中",
-      "value": "warning"
-    },
-    "description": "一楼烟感告警设置"
+    "alarmConfigId": "1605111722418597888",
+    "id": "1515992841393119232",
+    "alarmConfigId": "1586989804257853441",
+    "alarmConfigName": "烟感告警",
+    "alarmRecordId": "ba33a59ca5ebe3dccfcd75fd0575be4e",
+    "level": "3",
+    "description": "设备温度过高",
+    "alarmTime": "1667202964007",
+    "sourceType": "device",
+    "sourceId": "1605138218826821632",
+    "sourceName": "1楼烟感S01",
+    "targetType": "device",
+    "targetName": "温度探测设备",
+    "targetId": "1583300346713661440"
   }
   ~~~
   `;
@@ -300,9 +375,13 @@ const Config = () => {
   const subText = `
   ~~~json
   {
-    "id": "1518055745863864320",
-    "state": "normal",
-     "describe": "已处理"
+    "alarmRecordId": "ba33a59ca5ebe3dccfcd75fd0575be4e",
+    "alarmConfigId": "1605111722418597888",
+    "alarmTime": "1651233650840",
+    "handleTime": "1651233650841",
+    "describe": "已联系第三方人员进行告警处理，现告警已恢复",
+    "type": "user",
+    "state": "normal"
   }
   ~~~
   `;

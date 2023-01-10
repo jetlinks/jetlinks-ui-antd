@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
-import { message, Popconfirm, Tooltip } from 'antd';
+import { message } from 'antd';
 import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import {
@@ -24,44 +24,6 @@ import SearchComponent from '@/components/SearchComponent';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { service } from '@/pages/device/Firmware';
 
-const UpgradeBtn = (props: { data: any; actions: any }) => {
-  const { data, actions } = props;
-  if (data.waiting > 0 && data?.state?.value === 'processing') {
-    return (
-      <a>
-        <Tooltip title={'停止'}>
-          <StopOutlined
-            onClick={async () => {
-              const resp = await service.stopTask(data.id);
-              if (resp.status === 200) {
-                message.success('操作成功！');
-                actions?.reload();
-              }
-            }}
-          />
-        </Tooltip>
-      </a>
-    );
-  } else if (data?.state?.value === 'canceled') {
-    return (
-      <a>
-        <Tooltip title={'继续升级'}>
-          <ControlOutlined
-            onClick={async () => {
-              const resp = await service.startTask(data.id, ['canceled']);
-              if (resp.status === 200) {
-                message.success('操作成功！');
-                actions?.reload();
-              }
-            }}
-          />
-        </Tooltip>
-      </a>
-    );
-  }
-  return null;
-};
-
 export const state = model<{
   current?: FirmwareItem;
   visible: boolean;
@@ -78,6 +40,67 @@ const Task = observer(() => {
   const location = useLocation<{ id: string }>();
   const id = (location as any).query?.id || localStorage.getItem('TaskId');
   const productId = (location as any).query?.productId || localStorage.getItem('TaskProductId');
+
+  const UpgradeBtn = (props: { data: any; actions: any }) => {
+    const { data, actions } = props;
+    if (data.waiting > 0 && data?.state?.value === 'processing') {
+      return (
+        <PermissionButton
+          key={'stop'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.update}
+          tooltip={{
+            title: '停止',
+          }}
+          onClick={async () => {
+            const resp = await service.stopTask(data.id);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actions?.reload();
+            }
+          }}
+        >
+          <StopOutlined />
+        </PermissionButton>
+      );
+    } else if (data?.state?.value === 'canceled') {
+      return (
+        // <a>
+        //   <Tooltip title={'继续升级'}>
+        //     <ControlOutlined
+        //       onClick={async () => {
+        //         const resp = await service.startTask(data.id, ['canceled']);
+        //         if (resp.status === 200) {
+        //           message.success('操作成功！');
+        //           actions?.reload();
+        //         }
+        //       }}
+        //     />
+        //   </Tooltip>
+        // </a>
+        <PermissionButton
+          key={'stop'}
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.update}
+          tooltip={{
+            title: '继续升级',
+          }}
+          onClick={async () => {
+            const resp = await service.startTask(data.id, ['canceled']);
+            if (resp.status === 200) {
+              message.success('操作成功！');
+              actions?.reload();
+            }
+          }}
+        >
+          <ControlOutlined />
+        </PermissionButton>
+      );
+    }
+    return null;
+  };
 
   const columns: ProColumns<any>[] = [
     {
@@ -131,7 +154,7 @@ const Task = observer(() => {
           key={'api'}
           type={'link'}
           style={{ padding: 0 }}
-          isPermission={true}
+          isPermission={permission.view}
           tooltip={{
             title: '详情',
           }}
@@ -142,29 +165,39 @@ const Task = observer(() => {
         >
           <AIcon type={'icon-details'} />
         </PermissionButton>,
-        <a
+        <PermissionButton
+          key="link"
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.view}
+          tooltip={{
+            title: '查看',
+          }}
           onClick={() => {
             state.visible = true;
             state.current = record;
           }}
-          key="link"
         >
-          <Tooltip title="查看" key={'detail'}>
-            <EyeOutlined />
-          </Tooltip>
-        </a>,
+          <EyeOutlined />
+        </PermissionButton>,
         <UpgradeBtn data={record} actions={actionRef.current} key="btn" />,
-        <a key="delete">
-          <Popconfirm
-            title={
+        <PermissionButton
+          key="delete"
+          type={'link'}
+          style={{ padding: 0 }}
+          isPermission={permission.delete}
+          tooltip={{
+            title: '删除',
+          }}
+          popConfirm={{
+            title:
               record.waiting > 0 || record.processing > 0
                 ? '删除将导致正在进行的任务终止，确定要删除吗？'
                 : intl.formatMessage({
                     id: 'pages.data.option.remove.tips',
                     defaultMessage: '确认删除？',
-                  })
-            }
-            onConfirm={async () => {
+                  }),
+            onConfirm: async () => {
               const resp = await service.deleteTask(record.id);
               if (resp.status === 200) {
                 onlyMessage(
@@ -177,18 +210,11 @@ const Task = observer(() => {
               } else {
                 message.error(resp?.message || '删除失败！');
               }
-            }}
-          >
-            <Tooltip
-              title={intl.formatMessage({
-                id: 'pages.data.option.remove',
-                defaultMessage: '删除',
-              })}
-            >
-              <DeleteOutlined />
-            </Tooltip>
-          </Popconfirm>
-        </a>,
+            },
+          }}
+        >
+          <DeleteOutlined />
+        </PermissionButton>,
       ],
     },
   ];

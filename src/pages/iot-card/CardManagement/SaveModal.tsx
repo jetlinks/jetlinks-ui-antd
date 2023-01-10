@@ -35,8 +35,10 @@ const Save = (props: SaveType) => {
 
   const submit = async () => {
     const formData = await form.validateFields();
+
     if (formData) {
       setLoading(true);
+
       const resp =
         props.type === 'add' ? await service.add(formData) : await service.edit(formData);
       setLoading(false);
@@ -46,6 +48,20 @@ const Save = (props: SaveType) => {
       }
     }
   };
+
+  const isValidateId = async (id: string) => {
+    const res = await service.validateId(id);
+    if (res.status === 200) {
+      if (res.result?.passed) {
+        return '';
+      } else {
+        return res.result.reason;
+      }
+    } else {
+      return '请输入输入正确的ICCID';
+    }
+  };
+
   return (
     <Modal
       title={props.type === 'add' ? '新增' : '编辑'}
@@ -67,8 +83,22 @@ const Save = (props: SaveType) => {
           name={'id'}
           required
           rules={[
-            { required: true, message: '请输入卡号' },
+            // { required: true, message: '请输入卡号' },
             { max: 64, message: '最多可输入64个字符' },
+            () => ({
+              async validator(_, value) {
+                if (value) {
+                  const validateId = await isValidateId(value);
+                  if (validateId === '') {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject(new Error(`${validateId}`));
+                  }
+                } else {
+                  return Promise.reject(new Error('请输入卡号'));
+                }
+              },
+            }),
           ]}
         >
           <Input placeholder={'请输入卡号'} disabled={props.type === 'edit'} />

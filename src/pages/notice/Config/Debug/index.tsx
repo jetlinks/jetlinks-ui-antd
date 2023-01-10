@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { createForm, Field, onFieldReact, onFieldValueChange } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
 import {
@@ -15,16 +15,17 @@ import {
 import { ISchema } from '@formily/json-schema';
 import { service, state } from '@/pages/notice/Config';
 import { service as TemplateService } from '@/pages/notice/Template';
-import { useLocation } from 'umi';
+// import { useLocation } from 'umi';
 import { onlyMessage, useAsyncDataSource } from '@/utils/util';
 import { Store } from 'jetlinks-store';
 import FUpload from '@/components/Upload';
 import { FDatePicker } from '@/components';
 
 const Debug = observer(() => {
-  const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id;
+  // const location = useLocation<{ id: string }>();
+  const id = state.current?.type; // (location as any).query?.id;
   const variableRef = useRef<any>([]);
+  const [loading, setLoading] = useState(false);
 
   const form = useMemo(
     () =>
@@ -43,6 +44,12 @@ const Debug = observer(() => {
                 form1.setFieldState('variableDefinitions', (state1) => {
                   state1.visible = true;
                   state1.value = _template?.variableDefinitions;
+                });
+              } else {
+                variableRef.current = [];
+                form1.setFieldState('variableDefinitions', (state1) => {
+                  state1.visible = true;
+                  state1.value = undefined;
                 });
               }
             });
@@ -95,19 +102,21 @@ const Debug = observer(() => {
                 switch (businessType) {
                   case 'org':
                     // 获取org
-                    const orgList = await TemplateService[id].getDepartments(state.current?.id);
+                    const orgList = await TemplateService[id].getDepartments(
+                      state.current?.id || '',
+                    );
                     format.setComponent(Select);
                     format.setDataSource(orgList);
                     break;
                   case 'user':
                     // 获取user
-                    const userList = await TemplateService[id].getUser(state.current?.id);
+                    const userList = await TemplateService[id].getUser(state.current?.id || '');
                     format.setComponent(Select);
                     format.setDataSource(userList);
                     break;
                   case 'tag':
                     // 获取user
-                    const tagList = await TemplateService[id].getTags(state.current?.id);
+                    const tagList = await TemplateService[id]?.getTags(state.current?.id || '');
                     format.setComponent(Select);
                     format.setDataSource(tagList);
                     break;
@@ -160,6 +169,7 @@ const Debug = observer(() => {
       variableDefinitions: {
         title: '变量',
         type: 'string',
+        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'ArrayTable',
         'x-component-props': {
@@ -228,7 +238,7 @@ const Debug = observer(() => {
     const templateId = data.templateId;
     // const list = Store.get('notice-template-list');
     // const _template = list.find((item: any) => item.id === templateId);
-
+    setLoading(true);
     const resp = await service.debug(
       state?.current.id,
       templateId,
@@ -246,8 +256,9 @@ const Debug = observer(() => {
     );
     if (resp.status === 200) {
       onlyMessage('操作成功!');
-      state.debug = false;
     }
+    state.debug = false;
+    setLoading(false);
   };
   return (
     <Modal
@@ -256,6 +267,7 @@ const Debug = observer(() => {
       visible={state.debug}
       onCancel={() => (state.debug = false)}
       onOk={start}
+      confirmLoading={loading}
     >
       <Form form={form} layout={'vertical'}>
         <SchemaField schema={schema} scope={{ getTemplate, useAsyncDataSource }} />

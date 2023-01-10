@@ -57,7 +57,6 @@ const handleOptions = (options: any[]): any[] => {
 };
 
 const DoubleFilter = ['nbtw', 'btw', 'in', 'nin'];
-
 export const handleOptionsLabel = (data: any, type?: string) => {
   if (data && isArray(data)) {
     try {
@@ -154,14 +153,19 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           if (labelOptions.metrics) {
             // 指标值
             const _metrics = labelOptions.metrics.map((mItem: any) => ({
-              title: mItem.name,
-              key: mItem.id,
+              ...mItem,
+              label: mItem.name,
+              value: mItem.value,
+              key: mItem.value,
             }));
             setMetricsOptions(_metrics);
+          } else {
+            setMetricsOptions([]);
           }
         } else {
           props.onChange?.({});
           setTtOptions([]);
+          setMetricsOptions([]);
           setValueType('');
         }
       }
@@ -272,7 +276,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             const _value = {
               ...value,
             };
-            if (value && DoubleFilter.includes(v!)) {
+            if (value && DoubleFilter.includes(v!) && !metricsOptions.length) {
               _value.value = [undefined, undefined];
             } else {
               _value.value = undefined;
@@ -289,11 +293,18 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             });
           }}
         />
-        {DoubleFilter.includes(termType) ? (
+        {DoubleFilter.includes(termType) && !metricsOptions.length ? (
           <>
             <ParamsDropdown
               options={valueOptions}
-              metricsOptions={metricsOptions}
+              metricsOptions={metricsOptions.filter((mItem) => {
+                if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+                  return mItem.range;
+                } else {
+                  return !mItem.range;
+                }
+              })}
+              isMetric={!!metricsOptions.length}
               type="value"
               placeholder="参数值"
               valueType={valueType}
@@ -315,7 +326,14 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             />
             <ParamsDropdown
               options={valueOptions}
-              metricsOptions={metricsOptions}
+              metricsOptions={metricsOptions.filter((mItem) => {
+                if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+                  return mItem.range;
+                } else {
+                  return !mItem.range;
+                }
+              })}
+              isMetric={!!metricsOptions.length}
               type="value"
               placeholder="参数值"
               valueType={valueType}
@@ -339,20 +357,37 @@ const ParamsItem = observer((props: ParamsItemProps) => {
         ) : (
           <ParamsDropdown
             options={valueOptions}
-            metricsOptions={metricsOptions}
+            metricsOptions={metricsOptions.filter((mItem) => {
+              if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+                return mItem.range;
+              } else {
+                return !mItem.range;
+              }
+            })}
+            isMetric={!!metricsOptions.length}
             type="value"
             placeholder="参数值"
             valueType={valueType}
             value={value}
-            onChange={(v, lb) => {
-              setValue({
-                ...v,
-              });
+            onChange={(v, lb, item) => {
+              const _value = { ...v };
+              if (item) {
+                _value.metric = item.id;
+              }
+              setValue(_value);
               ValueRef.current.value = v;
-              labelCache.current[2] = { 0: lb };
+              if (!!metricsOptions.length) {
+                if (DoubleFilter.includes(termType)) {
+                  labelCache.current[2] = { 0: v?.value[0], 1: v?.value[1] };
+                } else {
+                  labelCache.current[2] = { 0: lb };
+                }
+              } else {
+                labelCache.current[2] = { 0: lb };
+              }
               labelCache.current[3] = props.data.type;
               props.onLabelChange?.([...labelCache.current]);
-              valueEventChange(v);
+              valueEventChange(_value);
             }}
             icon={<AIcon type={'icon-canshu'} />}
           />

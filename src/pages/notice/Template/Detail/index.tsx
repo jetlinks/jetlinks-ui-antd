@@ -21,6 +21,7 @@ import {
   onFieldInit,
   onFieldReact,
   onFieldValueChange,
+  onFormInit,
   registerValidateRules,
 } from '@formily/core';
 import { createSchemaField, observer } from '@formily/react';
@@ -31,8 +32,7 @@ import FUpload from '@/components/Upload';
 import { useParams } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Col, Row, Tooltip } from 'antd';
-import { typeList } from '@/pages/notice';
-import { configService, service, state } from '@/pages/notice/Template';
+import { configService, service } from '@/pages/notice/Template';
 import FBraftEditor from '@/components/FBraftEditor';
 import { onlyMessage, phoneRegEx, useAsyncDataSource } from '@/utils/util';
 import WeixinCorp from '@/pages/notice/Template/Detail/doc/WeixinCorp';
@@ -50,6 +50,8 @@ import FMonacoEditor from '@/components/FMonacoEditor';
 import Webhook from './doc/Webhook';
 import { useModel } from '@@/plugin-model/useModel';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { typeArray } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import { typeList } from '../..';
 
 export const docMap = {
   weixin: {
@@ -76,7 +78,9 @@ export const docMap = {
 
 const Detail = observer(() => {
   const { id } = useParams<{ id: string }>();
-  const [provider, setProvider] = useState<string>('embedded');
+  const [typeItem, setTypeItem] = useState<string>('email');
+  const [providerItem, setProviderItem] = useState<string>('embedded');
+  const [loading, setLoading] = useState<boolean>(false);
   const { initialState } = useModel('@@initialState');
   // 正则提取${}里面的值
   const pattern = /(?<=\$\{).*?(?=\})/g;
@@ -84,11 +88,11 @@ const Detail = observer(() => {
   // 提取微信服务号里面的值 {{}}
   const weixinPattern = /(?<=\{\{).*?(?=\.DATA}})/g;
 
-  const getConfig = (provider1: string) =>
+  const getConfig = (type1: string, provider1: string) =>
     configService
       .queryNoPagingPost({
         terms: [
-          { column: 'type$IN', value: id },
+          { column: 'type$IN', value: type1 },
           { column: 'provider', value: provider1 },
         ],
       })
@@ -122,7 +126,20 @@ const Detail = observer(() => {
       createForm({
         validateFirst: true,
         effects() {
-          onFieldInit('template.message', (field) => {
+          onFormInit(async (form1) => {
+            if (id === ':id' || !id) {
+              form1.setValues({
+                type: 'email',
+                provider: 'embedded',
+              });
+            } else {
+              const resp = await service.detail(id);
+              if (resp.status === 200) {
+                form1.setValues(resp.result);
+              }
+            }
+          });
+          onFieldInit('template.message', async (field) => {
             if (id === 'email') {
               field.setComponent(FBraftEditor, {
                 placeholder:
@@ -146,17 +163,34 @@ const Detail = observer(() => {
             //   field.disabled = false
             // }
           });
-          onFieldValueChange('provider', (field, form1) => {
+          onFieldValueChange('type', async (field, f) => {
             const value = field.value;
-            setProvider(value);
+            setTypeItem(value);
+            if (!value) return;
+            f.setFieldState('provider', (state1) => {
+              if (id === ':id' || !id) {
+                state1.value = typeList[value][0].value;
+              }
+              state1.dataSource = typeList[value];
+            });
+          });
+          onFieldValueChange('provider', async (field, form1) => {
+            const value = field.value;
             if (field.modified) {
               form1.setValuesIn('configId', null);
               form1.setValuesIn('template', null);
             }
+            const _type = field.query('type').value();
             // 设置绑定配置的数据
+            const _list = await getConfig(_type, value);
             form1.setFieldState('configId', async (state1) => {
-              state1.dataSource = await getConfig(value);
+              state1.dataSource = _list;
             });
+            if (_type === 'email') {
+              setProviderItem('embedded');
+            } else {
+              setProviderItem(value);
+            }
 
             if (value === 'officialMessage') {
               form1.setFieldState('template.message', (state5) => {
@@ -336,7 +370,7 @@ const Detail = observer(() => {
           onFieldValueChange('template.body', (field, form1) => {
             const value = (field as Field).value;
             // console.log(value);
-            const idList = value.match(pattern)?.filter((i: string) => i);
+            const idList = (value || '').match(pattern)?.filter((i: string) => i);
             form1.setFieldState('variableDefinitions', (state1) => {
               state1.visible = !!idList && idList.length > 0;
             });
@@ -448,9 +482,9 @@ const Detail = observer(() => {
         document.title = '通知模板';
       }
     }, 0);
-    if (state.current) {
-      form.setValues(state.current);
-    }
+    // if (state.current) {
+    //   form.setValues(state.current);
+    // }
   }, []);
 
   const SchemaField = createSchemaField({
@@ -476,7 +510,7 @@ const Detail = observer(() => {
 
   const handleSave = async () => {
     const data: TemplateItem = await form.submit();
-
+    setLoading(true);
     // dingTalkRobotWebHook
 
     // 提交的时候处理内容
@@ -503,7 +537,7 @@ const Detail = observer(() => {
           data.template.link.text = data.template.message;
       }
     }
-    if (id === 'email') {
+    if (data.type === 'email') {
       data.provider = 'embedded';
       data.template.text = data.template.message;
     }
@@ -514,7 +548,7 @@ const Detail = observer(() => {
     } else {
       response = await service.save(data);
     }
-
+    setLoading(false);
     if (response?.status === 200) {
       onlyMessage('保存成功');
       history.back();
@@ -540,6 +574,24 @@ const Detail = observer(() => {
   const schema: ISchema = {
     type: 'object',
     properties: {
+      type: {
+        title: '通知方式',
+        'x-component': 'Select',
+        'x-decorator': 'FormItem',
+        'x-component-props': {
+          placeholder: '请选择通知方式',
+        },
+        'x-disabled': !!id && id !== ':id',
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择通知方式',
+          },
+        ],
+        enum: typeArray.map((item) => {
+          return { label: item.text, value: item.status };
+        }),
+      },
       name: {
         title: '名称',
         type: 'string',
@@ -560,11 +612,6 @@ const Detail = observer(() => {
           },
         ],
       },
-      type: {
-        title: '类型',
-        'x-value': id,
-        'x-hidden': true,
-      },
       provider: {
         title: '类型',
         type: 'string',
@@ -574,11 +621,24 @@ const Detail = observer(() => {
           optionType: 'button',
           placeholder: '请选择类型',
         },
-        required: true,
-        'x-visible': typeList[id]?.length > 0,
-        'x-hidden': id === 'email' || id === 'webhook',
-        'x-value': typeList[id]?.[0]?.value,
-        enum: typeList[id] || [],
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择类型',
+          },
+        ],
+        // 'x-visible': typeList[typeItem]?.length > 0,
+        // 'x-hidden': typeItem === 'email' || typeItem === 'webhook',
+        // 'x-value': typeList[typeItem]?.[0]?.value,
+        // enum: typeList[typeItem] || [],
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              hidden: '{{!(!!$deps[0] && $deps[0] !== "email" && $deps[0] !== "webhook")}}',
+            },
+          },
+        },
       },
       configId: {
         title: '绑定配置',
@@ -592,14 +652,30 @@ const Detail = observer(() => {
         'x-decorator-props': {
           tooltip: '使用固定的通知配置来发送此通知模版',
         },
-        'x-visible': id !== 'email',
+        // 'x-visible': id !== 'email',
+        'x-reactions': {
+          dependencies: ['type'],
+          fulfill: {
+            state: {
+              visible: '{{$deps[0] !=="email"}}',
+            },
+          },
+        },
       },
       template: {
         type: 'object',
         properties: {
           weixin: {
             type: 'void',
-            'x-visible': id === 'weixin',
+            // 'x-visible': id === 'weixin',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="weixin"}}',
+                },
+              },
+            },
             properties: {
               corpMessage: {
                 type: 'void',
@@ -829,7 +905,15 @@ const Detail = observer(() => {
           },
           dingTalk: {
             type: 'void',
-            'x-visible': id === 'dingTalk',
+            // 'x-visible': id === 'dingTalk',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="dingTalk"}}',
+                },
+              },
+            },
             properties: {
               dingTalkMessage: {
                 type: 'void',
@@ -1019,7 +1103,15 @@ const Detail = observer(() => {
             type: 'void',
             properties: {
               voice: {
-                'x-visible': id === 'voice',
+                // 'x-visible': id === 'voice',
+                'x-reactions': {
+                  dependencies: ['type'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="voice"}}',
+                    },
+                  },
+                },
                 type: 'void',
                 properties: {
                   templateType: {
@@ -1156,7 +1248,15 @@ const Detail = observer(() => {
                 },
               },
               sms: {
-                'x-visible': id === 'sms',
+                // 'x-visible': id === 'sms',
+                'x-reactions': {
+                  dependencies: ['type'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]==="sms"}}',
+                    },
+                  },
+                },
                 type: 'void',
                 properties: {
                   layout: {
@@ -1225,7 +1325,15 @@ const Detail = observer(() => {
           },
           email: {
             type: 'void',
-            'x-visible': id === 'email',
+            // 'x-visible': id === 'email',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="email"}}',
+                },
+              },
+            },
             properties: {
               subject: {
                 'x-component': 'Input',
@@ -1318,6 +1426,14 @@ const Detail = observer(() => {
           webhook: {
             type: 'void',
             'x-visible': id === 'webhook',
+            'x-reactions': {
+              dependencies: ['type'],
+              fulfill: {
+                state: {
+                  visible: '{{$deps[0]==="webhook"}}',
+                },
+              },
+            },
             properties: {
               contextAsBody: {
                 title: '请求体',
@@ -1521,7 +1637,10 @@ const Detail = observer(() => {
         'x-decorator': 'FormItem',
         'x-component': 'Input.TextArea',
         'x-component-props': {
-          rows: 4,
+          rows: 5,
+          placeholder: '请输入说明',
+          showCount: true,
+          maxLength: 200,
         },
         'x-validator': [
           {
@@ -1537,7 +1656,7 @@ const Detail = observer(() => {
       },
     },
   };
-  const { permission } = usePermissions('notice');
+  const { permission } = usePermissions('notice/Template');
   return (
     <PageContainer>
       <Card>
@@ -1565,6 +1684,7 @@ const Detail = observer(() => {
                 <FormButtonGroup.FormItem>
                   <PermissionButton
                     type="primary"
+                    loading={loading}
                     isPermission={permission.add || permission.update}
                     onClick={handleSave}
                   >
@@ -1575,7 +1695,7 @@ const Detail = observer(() => {
             </Form>
           </Col>
           <Col span={12} push={2}>
-            {docMap?.[id]?.[provider]}
+            {docMap?.[typeItem]?.[providerItem]}
           </Col>
         </Row>
       </Card>

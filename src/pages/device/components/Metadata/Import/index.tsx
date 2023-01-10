@@ -233,11 +233,6 @@ const Import = (props: Props) => {
           height: 350,
           theme: 'vs',
           language: 'json',
-          editorDidMount: (editor1: any) => {
-            editor1.onDidScrollChange?.(() => {
-              editor1.getAction('editor.action.formatDocument').run();
-            });
-          },
         },
         'x-visible': false,
         'x-validator': [

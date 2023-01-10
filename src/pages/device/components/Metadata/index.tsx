@@ -36,6 +36,10 @@ const Metadata = observer((props: Props) => {
   const resetMetadata = async () => {
     const resp = await instanceService.deleteMetadata(params.id);
     if (resp.status === 200) {
+      const res = await instanceService.detail(params.id);
+      if (res.status === 200) {
+        InstanceModel.detail = res?.result || [];
+      }
       onlyMessage('操作成功');
       Store.set(SystemConst.REFRESH_DEVICE, true);
       setTimeout(() => {
@@ -46,7 +50,7 @@ const Metadata = observer((props: Props) => {
 
   return (
     <div className={'device-detail-metadata'} style={{ position: 'relative' }}>
-      <div className={styles.tips} style={{ width: '40%' }}>
+      <div className={styles.tips} style={{ width: 'calc(100% - 670px)' }}>
         <Tooltip
           title={
             InstanceModel.detail?.independentMetadata && props.type === 'device'
@@ -64,9 +68,10 @@ const Metadata = observer((props: Props) => {
       </div>
       <Tabs
         className={styles.metadataNav}
+        type="card"
         tabBarExtraContent={
           <Space>
-            {props.type === 'device' && (
+            {InstanceModel.detail?.independentMetadata && props.type === 'device' && (
               <PermissionButton
                 isPermission={permission.update}
                 popConfirm={{
@@ -87,10 +92,10 @@ const Metadata = observer((props: Props) => {
                 defaultMessage: '快速导入',
               })}
             </PermissionButton>
-            <PermissionButton isPermission={permission.update} onClick={() => setCat(true)}>
+            <PermissionButton isPermission={true} onClick={() => setCat(true)}>
               {intl.formatMessage({
                 id: 'pages.device.productDetail.metadata',
-                defaultMessage: '物模型',
+                defaultMessage: '物模型TSL',
               })}
               TSL
             </PermissionButton>

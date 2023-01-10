@@ -1,32 +1,54 @@
 import { Modal, Form, Checkbox } from 'antd';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Server from './service';
+import { service } from '@/pages/system/Department/Assets/product';
+import { onlyMessage } from '@/utils/util';
 
 interface UpdateModalProps {
-  id: string;
+  id: string | string[];
   type: string;
   targetId: string;
   visible: boolean;
   permissions: string[];
   onCancel: () => void;
   onReload: () => void;
+  assetsType: string[];
 }
 const server = new Server();
 export default (props: UpdateModalProps) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   const saveData = useCallback(async () => {
     const data = form.getFieldsValue();
     if (data) {
-      const res = await server.updatePermission(
-        props.type,
-        props.id,
-        props.targetId,
-        data.permissions,
-      );
-      if (res.status === 200 && props.onReload) {
-        props.onCancel();
-        props.onReload();
+      setLoading(true);
+      if (Array.isArray(props.id)) {
+        const resp = await service.updateAll(props.type, 'org', props.targetId, [
+          {
+            assetIdList: props.id,
+            permission: data.permissions,
+          },
+        ]);
+        setLoading(false);
+        if (resp.status === 200) {
+          props.onCancel();
+          props.onReload();
+          onlyMessage('操作成功', 'success');
+        }
+      } else {
+        const res = await server.updatePermission(
+          props.type,
+          props.id as string,
+          props.targetId,
+          data.permissions,
+        );
+        setLoading(false);
+        if (res.status === 200 && props.onReload) {
+          props.onCancel();
+          props.onReload();
+          onlyMessage('操作成功', 'success');
+        }
       }
     }
   }, [props.id]);
@@ -46,16 +68,11 @@ export default (props: UpdateModalProps) => {
       width={500}
       onCancel={props.onCancel}
       onOk={saveData}
+      confirmLoading={loading}
     >
       <Form form={form}>
         <Form.Item name="permissions" label="资产权限" required>
-          <Checkbox.Group
-            options={[
-              { label: '查看', value: 'read', disabled: true },
-              { label: '编辑', value: 'save' },
-              { label: '删除', value: 'delete' },
-            ]}
-          />
+          <Checkbox.Group options={props.assetsType} />
         </Form.Item>
       </Form>
     </Modal>

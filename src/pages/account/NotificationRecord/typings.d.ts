@@ -10,4 +10,5 @@ type NotifitionRecord = {
   topicName: string;
   dataId: string;
   detailJson: string;
+  detail?: any;
 };

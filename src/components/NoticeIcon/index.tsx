@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Button, message, notification } from 'antd';
 import { groupBy } from 'lodash';
 import moment from 'moment';
@@ -8,8 +8,10 @@ import styles from './index.less';
 import encodeQuery from '@/utils/encodeQuery';
 import { getMenuPathByCode, MENUS_CODE } from '@/utils/menu';
 import useHistory from '@/hooks/route/useHistory';
-import { throttleTime } from 'rxjs/operators';
+// import { throttleTime } from 'rxjs/operators';
 import useSendWebsocketMessage from '@/hooks/websocket/useSendWebsocketMessage';
+import { observer } from '@formily/react';
+import { model } from '@formily/reactive';
 
 export type GlobalHeaderRightProps = {
   fetchingNotices?: boolean;
@@ -62,13 +64,25 @@ const getNoticeData = (notices: API.NoticeIconItem[]): Record<string, API.Notice
 
 export const service = new Service('notifications');
 
-const NoticeIconView = () => {
+export const NoticeIconViewModel = model<{
+  unreadCount: number;
+  notices: API.NoticeIconItem[];
+  visible: boolean;
+  loading: boolean;
+}>({
+  unreadCount: 0,
+  notices: [],
+  visible: false,
+  loading: true,
+});
+
+const NoticeIconView = observer(() => {
   // const { initialState } = useModel('@@initialState');
   // const { currentUser } = initialState || {};
-  const [notices, setNotices] = useState<API.NoticeIconItem[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [visible, setVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [notices, setNotices] = useState<API.NoticeIconItem[]>([]);
+  // const [unreadCount, setUnreadCount] = useState<number>(0);
+  // const [visible, setVisible] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(true);
   // const { data } = useRequest(getNotices);
 
   const history = useHistory();
@@ -78,7 +92,8 @@ const NoticeIconView = () => {
   const [subscribeTopic] = useSendWebsocketMessage();
 
   const getUnread = () => {
-    setLoading(true);
+    // setLoading(true);
+    NoticeIconViewModel.loading = true;
     service
       .fetchNotices(
         encodeQuery({
@@ -88,20 +103,26 @@ const NoticeIconView = () => {
       )
       .then((resp) => {
         if (resp.status === 200) {
-          setNotices(resp.result?.data || []);
-          setUnreadCount(resp.result?.total || 0);
+          NoticeIconViewModel.notices = resp.result?.data || [];
+          NoticeIconViewModel.unreadCount = resp.result?.total || 0;
+          // setNotices(resp.result?.data || []);
+          // setUnreadCount(resp.result?.total || 0);
         }
-        setLoading(false);
+        NoticeIconViewModel.loading = false;
+        // setLoading(false);
       });
   };
 
   const changeReadState = async (item: any, type?: 'notice' | 'icon') => {
+    console.log(item, type);
     const resp = await service.changeNoticeReadState(item.id);
     if (resp.status === 200) {
+      getUnread();
       const url = getMenuPathByCode(MENUS_CODE['account/NotificationRecord']);
       historyRef.current?.push(url, { ...item });
       if (type === 'icon') {
-        setVisible(false);
+        // setVisible(false);
+        NoticeIconViewModel.visible = false;
       } else {
         notification.close(item.id);
       }
@@ -147,9 +168,13 @@ const NoticeIconView = () => {
     const id = `notification`;
     const topic = `/notifications`;
     subscribeTopic!(id, topic, {})
-      ?.pipe(throttleTime(2000))
+      ?.pipe() // throttleTime(2000)
       .subscribe((resp: any) => {
-        getUnread();
+        // setUnreadCount(unreadCount + 1);
+        NoticeIconViewModel.unreadCount += 1;
+        // setTimeout(() => {
+        //   getUnread();
+        // }, 500)
         openNotification(resp);
       });
   };
@@ -159,11 +184,12 @@ const NoticeIconView = () => {
     subscribeNotice();
   }, []);
 
-  const noticeData = getNoticeData(notices);
+  const noticeData = getNoticeData(NoticeIconViewModel.notices);
   // const unreadMsg = getUnreadData(noticeData || {})
 
   const clearReadState = async (title: string) => {
-    const clearIds = (getNoticeData(notices).unread || []).map((item) => item.id) || [];
+    const clearIds =
+      (getNoticeData(NoticeIconViewModel.notices).unread || []).map((item) => item.id) || [];
     const resp = await service.clearNotices(clearIds);
     if (resp.status === 200) {
       message.success(`${'清空了'} ${title}`);
@@ -174,22 +200,27 @@ const NoticeIconView = () => {
   return (
     <NoticeIcon
       className={styles.action}
-      count={unreadCount}
+      count={NoticeIconViewModel.unreadCount}
       onItemClick={(item) => {
         changeReadState(item!, 'icon');
       }}
       onClear={(title: string) => clearReadState(title)}
-      loading={loading}
+      loading={NoticeIconViewModel.loading}
       clearText="当前标记为已读"
       viewMoreText="查看更多"
       onViewMore={() => {
         const url = getMenuPathByCode(MENUS_CODE['account/NotificationRecord']);
         history.push(url);
-        setVisible(false);
+        // setVisible(false);
+        NoticeIconViewModel.visible = false;
       }}
-      popupVisible={visible}
+      popupVisible={NoticeIconViewModel.visible}
       onPopupVisibleChange={(see: boolean) => {
-        setVisible(see);
+        // setVisible(see);
+        NoticeIconViewModel.visible = see;
+        if (see) {
+          getUnread();
+        }
       }}
       clearClose
     >
@@ -211,6 +242,6 @@ const NoticeIconView = () => {
       /> */}
     </NoticeIcon>
   );
-};
+});
 
 export default NoticeIconView;

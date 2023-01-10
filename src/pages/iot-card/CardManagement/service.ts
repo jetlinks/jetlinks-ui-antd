@@ -74,6 +74,8 @@ class Service extends BaseService<CardManagement> {
     this.POST(`${basePath}/network/flow/_query/${beginTime}/${endTime}`, data);
   // 查询对应状态物联卡数量
   queryState = (status: string) => this.GET(`${this.uri}/${status}/state/_count`);
+  //验证iccid
+  validateId = (id: string) => this.GET(`${this.uri}/id/_validate?id=${id}`);
 }
 
 export default Service;

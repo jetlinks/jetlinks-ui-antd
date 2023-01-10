@@ -148,11 +148,19 @@ export default observer((props: Props) => {
                     FormModel.current.options?.when?.splice(index, 1);
                   }}
                   onDeleteAll={() => {
-                    FormModel.current.branches?.splice(
-                      index,
-                      FormModel.current.branches!.length - 1,
-                      null as any,
-                    );
+                    const newBranches: any[] =
+                      FormModel.current.branches?.filter((bItem, bIndex) => {
+                        return bIndex === 0 || (bItem && bItem.key === item.key);
+                      }) || [];
+                    newBranches.push(null);
+                    console.log(FormModel.current.options?.when);
+                    FormModel.current.branches = newBranches;
+                    if (FormModel.current.options?.when) {
+                      FormModel.current.options.when = [
+                        FormModel.current.options?.when[0],
+                        FormModel.current.options?.when[index],
+                      ];
+                    }
                   }}
                 />
               ) : (
@@ -182,6 +190,14 @@ export default observer((props: Props) => {
               validator(_, v) {
                 if (!v || (v && !v.length)) {
                   return Promise.reject('至少配置一个执行动作');
+                } else {
+                  let isActions = false;
+                  v.forEach((item: any) => {
+                    if (item.actions && item.actions.length) {
+                      isActions = true;
+                    }
+                  });
+                  return isActions ? Promise.resolve() : Promise.reject('至少配置一个执行动作');
                 }
                 return Promise.resolve();
               },

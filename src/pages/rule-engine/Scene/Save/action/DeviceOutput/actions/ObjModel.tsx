@@ -1,6 +1,6 @@
 import { Modal } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { useEffect, useState } from 'react';
+import { JMonacoEditor } from '@/components/FMonacoEditor';
 
 interface Props {
   value: any;
@@ -9,18 +9,8 @@ interface Props {
 }
 
 export default (props: Props) => {
-  const monacoRef = useRef<any>();
-
   const [value, setValue] = useState<any>(props.value);
   const [loading, setLoading] = useState(false);
-
-  const editorDidMountHandle = (editor: any) => {
-    monacoRef.current = editor;
-    editor.getAction('editor.action.formatDocument').run();
-    editor.onDidContentSizeChange?.(() => {
-      editor.getAction('editor.action.formatDocument').run();
-    });
-  };
 
   useEffect(() => {
     setValue(props?.value || '');
@@ -45,7 +35,7 @@ export default (props: Props) => {
         }}
       >
         {loading && (
-          <MonacoEditor
+          <JMonacoEditor
             width={'100%'}
             height={400}
             theme="vs-dark"
@@ -54,7 +44,6 @@ export default (props: Props) => {
             onChange={(newValue) => {
               setValue(newValue);
             }}
-            editorDidMount={editorDidMountHandle}
           />
         )}
       </div>

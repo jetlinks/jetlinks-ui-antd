@@ -10,6 +10,7 @@ import DeviceModel from './model';
 import { onlyMessage } from '@/utils/util';
 import { ActionsDeviceProps } from '../../../typings';
 import { service as api } from '@/pages/device/Instance/index';
+import { FormModel } from '../..';
 
 export const service = new Service<any>('');
 
@@ -25,6 +26,8 @@ interface Props {
 
 export default observer((props: Props) => {
   const formRef = useRef<any>();
+  const tagFormRef = useRef<any>();
+  const formProductIdRef = useRef<any>('');
 
   DeviceModel.steps = [
     {
@@ -41,6 +44,10 @@ export default observer((props: Props) => {
           parallel={props.parallel}
           branchGroup={props.branchGroup}
           thenName={props.thenName}
+          formProductId={formProductIdRef.current}
+          get={(item: any) => {
+            tagFormRef.current = item;
+          }}
         />
       ),
     },
@@ -59,12 +66,20 @@ export default observer((props: Props) => {
       ),
     },
   ];
-  const next = () => {
+  const next = async () => {
     if (
       (DeviceModel.current === 0 && DeviceModel.productId) ||
-      (DeviceModel.current === 1 && DeviceModel.deviceId)
+      (DeviceModel.current === 1 && (DeviceModel.deviceId || DeviceModel.selector === 'tag'))
     ) {
-      return (DeviceModel.current += 1);
+      if (DeviceModel.selector === 'tag' && DeviceModel.current === 1) {
+        const value = await tagFormRef.current?.validateFields();
+        if (value) {
+          return (DeviceModel.current += 1);
+        }
+        console.log('----------', value);
+      } else {
+        return (DeviceModel.current += 1);
+      }
     } else {
       return DeviceModel.current === 0
         ? onlyMessage('请选择产品', 'error')
@@ -88,13 +103,20 @@ export default observer((props: Props) => {
   const save = async () => {
     const value = await formRef.current?.validateFields();
 
-    const item = {
+    const item: any = {
       selector: DeviceModel.selector,
       source: DeviceModel.source,
       selectorValues: DeviceModel.selectorValues,
       productId: DeviceModel.productId,
       message: value.message,
     };
+    //处理按变量
+    if (DeviceModel.selector === 'variable') {
+      item.selector = 'fixed';
+    }
+    if (DeviceModel.selector === 'relation') {
+      item.upperKey = 'scene.deviceId';
+    }
     // console.log(item, value);
 
     const _options: any = {
@@ -105,6 +127,7 @@ export default observer((props: Props) => {
       selector: DeviceModel.selector, //选择器标识
       productName: DeviceModel.productDetail.name,
       relationName: DeviceModel.relationName,
+      triggerName: FormModel.current.options?.trigger?.name || '触发设备',
       taglist: [],
       columns: [],
       otherColumns: [],
@@ -122,7 +145,10 @@ export default observer((props: Props) => {
     if (_type === 'WRITE_PROPERTY') {
       _options.type = '设置';
       _options.properties = DeviceModel.propertiesName;
-      _options.propertiesValue = DeviceModel.propertiesValue;
+      _options.propertiesValue =
+        typeof DeviceModel.propertiesValue === 'object'
+          ? JSON.stringify(DeviceModel.propertiesValue)
+          : DeviceModel.propertiesValue;
       _options.columns = DeviceModel.columns;
       _options.otherColumns = DeviceModel.columns;
       const cur: any = Object.values(value.message.properties)?.[0];
@@ -131,14 +157,16 @@ export default observer((props: Props) => {
       }
     }
     if (_options.selector === 'tag') {
-      _options.taglist = DeviceModel.selectorValues?.[0]?.value.map((it: any) => ({
+      _options.taglist = DeviceModel.tagList.map((it) => ({
         name: it.column || it.name,
         type: it.type ? (it.type === 'and' ? '并且' : '或者') : '',
         value: it.value,
       }));
-      // console.log(_options.taglist, 'taglist')
     }
-    console.log(DeviceModel.propertiesValue, _options);
+    if (_options.selector === 'variable') {
+      _options.name = DeviceModel.selectorValues?.[0]?.name;
+    }
+    console.log('----------', item, _options, DeviceModel.propertiesValue);
     props.save(item, _options);
     init();
   };
@@ -160,6 +188,12 @@ export default observer((props: Props) => {
       init();
     };
   }, [props.value]);
+
+  useEffect(() => {
+    const item = FormModel.current?.branches?.[0].then?.[0]?.actions?.[0]?.device?.productId;
+    formProductIdRef.current = item;
+    // console.log('---------', FormModel.current.options?.trigger?.name)
+  }, []);
 
   return (
     <Modal
@@ -224,7 +258,7 @@ export default observer((props: Props) => {
                   }
                 });
               }
-              return DeviceModel.deviceId
+              return DeviceModel.deviceId || DeviceModel.selector === 'tag'
                 ? (DeviceModel.current = 2)
                 : onlyMessage('请选择设备', 'error');
             } else {

@@ -5,7 +5,6 @@ import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
 import { Store } from 'jetlinks-store';
 import { useAsyncDataSource } from '@/utils/util';
 import { service } from '@/pages/device/components/Metadata';
-import MetadataModel from '@/pages/device/components/Metadata/Base/model';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import ArrayParam from '@/components/Metadata/ArrayParam';
@@ -15,6 +14,7 @@ import Editable from '../EditTable';
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
   keys?: string;
+  isFunction?: boolean;
 }
 
 const JsonParam = observer((props: Props) => {
@@ -45,16 +45,66 @@ const JsonParam = observer((props: Props) => {
       return _data;
     });
 
-  const checkArray: any = (arr: any) => {
+  // const checkArray: any = (arr: any) => {
+  //   if (Array.isArray(arr) && arr.length) {
+  //     return arr.every((item: any) => {
+  //       if (item.valueType?.type === 'object') {
+  //         return item.id && item.name && checkArray(item.json?.properties);
+  //       }
+  //       return item.id && item.name && item.valueType;
+  //     });
+  //   }
+  //   return false;
+  // };
+
+  const checkArrayFormat: any = (arr: any) => {
+    const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
+    let str: string = '';
     if (Array.isArray(arr) && arr.length) {
-      return arr.every((item: any) => {
-        if (item.valueType?.type === 'object') {
-          return item.id && item.name && checkArray(item.json?.properties);
+      arr.every((item: any) => {
+        if (!item.id) {
+          str = '请输入标识';
+          return false;
         }
-        return item.id && item.name && item.valueType;
+        if (!item.name) {
+          str = '请输入名称';
+          return false;
+        }
+        if (!item.valueType?.type) {
+          str = '请选择数据类型';
+          return false;
+        }
+        if (!reg.exec(item.id)) {
+          str = '标识只能由数字、字母、下划线、中划线组成';
+          return false;
+        }
+        if (item.id.length > 64 && item.name.length > 64) {
+          str = '标识最多可输入64个字符';
+          return false;
+        }
+        if (item.name.length > 64) {
+          str = '名称最多可输入64个字符';
+          return false;
+        }
+        if (item.valueType?.type === 'boolean') {
+          if (!(item.valueType.falseText && item.valueType.trueText)) {
+            str = '请输入布尔值';
+            return false;
+          }
+          if (
+            item.valueType.falseValue === '' ||
+            item.valueType.trueValue === '' ||
+            item.valueType.falseValue === undefined ||
+            item.valueType.trueValue === undefined
+          ) {
+            str = '请输入布尔值';
+            return false;
+          }
+        }
+        return item.id && item.name && item.valueType?.type;
       });
     }
-    return false;
+    return str;
   };
 
   const schema: ISchema = {
@@ -80,12 +130,8 @@ const JsonParam = observer((props: Props) => {
                 if (props.keys === 'inputs' && value.length === 0) {
                   resolve('');
                 }
-                const flag = checkArray(value);
-                if (!!flag) {
-                  resolve('');
-                } else {
-                  resolve('请配置参数');
-                }
+                const str = checkArrayFormat(value);
+                resolve(str);
               });
             },
           },
@@ -157,20 +203,17 @@ const JsonParam = observer((props: Props) => {
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
-                      enum:
-                        MetadataModel.type === 'functions'
-                          ? DataTypeList.filter((item) => item.value !== 'file')
-                          : DataTypeList.filter((item) =>
-                              [
-                                'int',
-                                'long',
-                                'float',
-                                'double',
-                                'string',
-                                'boolean',
-                                'date',
-                              ].includes(item.value),
-                            ),
+                      enum: DataTypeList.filter((item) =>
+                        ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+                          item.value,
+                        ),
+                      ),
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请选择数据类型',
+                        },
+                      ],
                     },
                     booleanConfig: {
                       title: '布尔值',
@@ -210,6 +253,9 @@ const JsonParam = observer((props: Props) => {
                       }),
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayParam',
+                      'x-component-props': {
+                        isFunction: props.isFunction,
+                      },
                       'x-reactions': {
                         dependencies: ['..valueType.type'],
                         fulfill: {
@@ -255,7 +301,9 @@ const JsonParam = observer((props: Props) => {
                           dependencies: ['..valueType.type'],
                           fulfill: {
                             state: {
-                              visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                              visible:
+                                !props.isFunction &&
+                                "{{['int','float','long','double'].includes($deps[0])}}",
                             },
                           },
                         },
@@ -268,21 +316,22 @@ const JsonParam = observer((props: Props) => {
                       'x-component': 'Select',
                       enum: DateTypeList,
                       'x-visible': false,
-                      default: 'string',
+                      default: 'yyyy-MM-DD HH:mm:ss',
                       'x-validator': [
                         {
                           required: true,
                           message: '请选择时间格式',
                         },
                       ],
-                      'x-reactions': {
-                        dependencies: ['..valueType.type'],
-                        fulfill: {
-                          state: {
-                            visible: "{{['date'].includes($deps[0])}}",
-                          },
-                        },
-                      },
+                      // "x-hidden":true,
+                      // 'x-reactions': {
+                      //   dependencies: ['..valueType.type'],
+                      //   fulfill: {
+                      //     state: {
+                      //       visible: "{{['date'].includes($deps[0])}}",
+                      //     },
+                      //   },
+                      // },
                     },
                     expands: {
                       type: 'object',
@@ -318,7 +367,9 @@ const JsonParam = observer((props: Props) => {
                             dependencies: ['..type'],
                             fulfill: {
                               state: {
-                                visible: "{{['string','password'].includes($deps[0])}}",
+                                visible:
+                                  !props.isFunction &&
+                                  "{{['string','password'].includes($deps[0])}}",
                               },
                             },
                           },
@@ -354,7 +405,7 @@ const JsonParam = observer((props: Props) => {
                     dependencies: ['..valueType.type'],
                     fulfill: {
                       state: {
-                        visible: "{{['float','double'].includes($deps[0])}}",
+                        visible: !props.isFunction && "{{['float','double'].includes($deps[0])}}",
                       },
                     },
                   },
@@ -365,6 +416,9 @@ const JsonParam = observer((props: Props) => {
                   'x-visible': false,
                   'x-decorator': 'FormItem',
                   'x-component': 'JsonParam',
+                  'x-component-props': {
+                    isFunction: props.isFunction,
+                  },
                   'x-reactions': {
                     dependencies: ['.valueType.type'],
                     fulfill: {

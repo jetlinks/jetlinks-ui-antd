@@ -113,12 +113,29 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               // {
-              //   max: 64,
-              //   message: '最多可输入64个字符',
+              //   format: 'url',
+              //   message: '请输入正确的URL',
               // },
               {
                 required: true,
                 message: '请输入URL',
+              },
+              {
+                triggerType: 'onBlur',
+                validator: (value: string) => {
+                  return new Promise((resolve) => {
+                    if (!value) {
+                      resolve('');
+                    } else {
+                      const arr = value.split(':');
+                      if (arr?.[0] === 'jdbc' || arr?.[0] === 'r2dbc') {
+                        resolve('');
+                      } else {
+                        resolve('请输入正确的URL');
+                      }
+                    }
+                  });
+                },
               },
             ],
             required: true,
@@ -145,13 +162,30 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               // {
-              //   max: 64,
-              //   message: '最多可输入64个字符',
+              //   format: 'url',
+              //   message: '请输入正确的管理地址',
               // },
               {
                 required: true,
                 message: '请输入管理地址',
               },
+              // {
+              //   triggerType: 'onBlur',
+              //   validator: (value: string) => {
+              //     return new Promise((resolve) => {
+              //       if (!value) {
+              //         resolve('');
+              //       } else {
+              //         const arr = value.split('://')
+              //         if (arr[0] === 'http' || arr[0] === 'https') {
+              //           resolve('');
+              //         } else {
+              //           resolve('请输入正确的管理地址')
+              //         }
+              //       }
+              //     });
+              //   },
+              // },
             ],
             required: true,
             'x-reactions': {
@@ -177,13 +211,30 @@ const Save = (props: Props) => {
             },
             'x-validator': [
               // {
-              //   max: 64,
-              //   message: '最多可输入64个字符',
+              //   format: 'url',
+              //   message: '请输入正确的链接地址',
               // },
               {
                 required: true,
                 message: '请输入链接地址',
               },
+              // {
+              //   triggerType: 'onBlur',
+              //   validator: (value: string) => {
+              //     return new Promise((resolve) => {
+              //       if (!value) {
+              //         resolve('');
+              //       } else {
+              //         const reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+              //         if (reg.test(value)) {
+              //           resolve('');
+              //         } else {
+              //           resolve('请输入正确的链接地址')
+              //         }
+              //       }
+              //     });
+              //   },
+              // },
             ],
             required: true,
             'x-reactions': {

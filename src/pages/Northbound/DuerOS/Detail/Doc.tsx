@@ -1,5 +1,6 @@
-import { InfoCircleFilled } from '@ant-design/icons';
-import { Alert, Image } from 'antd';
+// import { InfoCircleFilled } from '@ant-design/icons';
+// import { Alert, Image } from 'antd';
+import { Image } from 'antd';
 
 const image = require('/public/images/cloud/dueros-doc.jpg');
 const image1 = require('/public/images/cloud/dueros-doc1.png');
@@ -33,26 +34,26 @@ const Doc = () => {
         <div>物联网平台的登录地址。注意需要为https。</div>
         <div>请复制并填写: https://{location.host}/#/user/login</div>
         <h1>Client_Id</h1>
-        <div>请填写物联网平台-第三方平台的clientId。</div>
+        <div>请填写系统管理-应用管理中的clientId。</div>
         <div className={'image'}>
           <Image width="100%" src={image1} />
         </div>
         <h1>回调地址</h1>
-        <div>请复制DuerOS平台中的值，填写到第三方平台-redirectUrl中</div>
-        <div>
+        <div>请复制DuerOS平台中的值，填写到系统管理-应用管理中-redirectUrl中。</div>
+        {/* <div>
           <Alert
             icon={<InfoCircleFilled style={{ fontSize: 16, marginTop: 5 }} />}
             description="注：需要将OAth2设置为开启状态。"
             showIcon
           />
-        </div>
+        </div> */}
         <div className={'image'}>
           <Image width="100%" src={image2} />
         </div>
         <h1>Token地址</h1>
         <div>请复制并填写：HTTPS://{location.host}/api/v1/token</div>
         <h1>ClientSecret</h1>
-        <div>请复制物联网平台-第三方平台中的secureKey，填写到DuerOS平台。</div>
+        <div>请复制系统管理-应用管理中的secureKey，填写到DuerOS平台。</div>
         <div className={'image'}>
           <Image width="100%" src={image3} />
         </div>

@@ -4,7 +4,7 @@ import { service, state } from '..';
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import ProTable from '@jetlinks/pro-table';
 import { useEffect, useRef, useState } from 'react';
-import { history, useLocation } from 'umi';
+import { history } from 'umi';
 import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
 import BindUser from '../BindUser';
 import { onlyMessage } from '@/utils/util';
@@ -12,8 +12,8 @@ import { Empty } from '@/components';
 
 const SyncUser = observer(() => {
   const [dept, setDept] = useState<string>();
-  const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id;
+  // const location = useLocation<{ id: string }>();
+  const id = state.current?.type || 'dingtalk'; // (location as any).query?.id;
   const [visible, setVisible] = useState<boolean>(false);
   const [current, setCurrent] = useState<any>({});
   const [list, setList] = useState<any[]>([]);
@@ -190,10 +190,7 @@ const SyncUser = observer(() => {
                 request={(params) =>
                   service
                     .queryZipSyncUser(
-                      {
-                        dingTalk: 'dingtalk',
-                        weixin: 'wechat',
-                      }[id],
+                      id === 'dingTalk' ? 'dingTalk' : 'wechat',
                       id,
                       state.current?.provider || '',
                       state.current?.id || '',

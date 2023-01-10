@@ -150,13 +150,13 @@ const Comprehensive = () => {
                 {
                   name: '产品数量',
                   value: productCount,
-                  children: require('/public/images/home/top-2.png'),
+                  children: require('/public/images/home/top-2.svg'),
                   permission: productMessage,
                 },
                 {
                   name: '设备数量',
                   value: deviceCount,
-                  children: '',
+                  children: require('/public/images/home/top-1.svg'),
                   permission: deviceMessage,
                 },
               ]}
@@ -188,7 +188,8 @@ const Comprehensive = () => {
             <Body
               title={'平台架构图'}
               english={'PLATFORM ARCHITECTURE DIAGRAM'}
-              url={require('/public/images/home/content1.png')}
+              // url={require('/public/images/home/content1.png')}
+              url={require('/public/images/home/content1.svg')}
             />
           </Col>
         </Row>
@@ -206,6 +207,7 @@ const Comprehensive = () => {
           data={[
             {
               title: '创建产品',
+              url: require('/public/images/home/bottom-4.png'),
               content:
                 '产品是设备的集合，通常指一组具有相同功能的设备。物联设备必须通过产品进行接入方式配置。',
               onClick: () => {
@@ -221,6 +223,7 @@ const Comprehensive = () => {
             },
             {
               title: '配置产品接入方式',
+              url: require('/public/images/home/bottom-1.png'),
               content:
                 '通过产品对同一类型的设备进行统一的接入方式配置。请参照设备铭牌说明选择匹配的接入方式。',
               onClick: () => {
@@ -233,6 +236,7 @@ const Comprehensive = () => {
             },
             {
               title: '添加测试设备',
+              url: require('/public/images/home/bottom-5.png'),
               content: '添加单个设备，用于验证产品模型是否配置正确。',
               onClick: () => {
                 const path = getMenuPathByCode('device/Instance');
@@ -247,6 +251,7 @@ const Comprehensive = () => {
             },
             {
               title: '功能调试',
+              url: require('/public/images/home/bottom-2.png'),
               content: '对添加的测试设备进行功能调试，验证能否连接到平台，设备功能是否配置正确。',
               onClick: () => {
                 if (!!devicePermission.update) {
@@ -258,6 +263,7 @@ const Comprehensive = () => {
             },
             {
               title: '批量添加设备',
+              url: require('/public/images/home/bottom-3.png'),
               content: '批量添加同一产品下的设备',
               onClick: () => {
                 const path = getMenuPathByCode('device/Instance');
@@ -286,8 +292,8 @@ const Comprehensive = () => {
           data={[
             {
               title: '协议管理',
+              url: require('/public/images/home/bottom-9.png'),
               content: '根据业务需求自定义开发对应的产品（设备模型）接入协议，并上传到平台。',
-              url: require('/public/images/home/bottom-1.png'),
               onClick: () => {
                 const url = getMenuPathByCode(MENUS_CODE['link/Protocol']);
                 if (!!url) {
@@ -299,8 +305,8 @@ const Comprehensive = () => {
             },
             {
               title: '证书管理',
+              url: require('/public/images/home/bottom-9.png'),
               content: '统一维护平台内的证书，用于数据通信加密。',
-              url: require('/public/images/home/bottom-6.png'),
               onClick: () => {
                 const url = getMenuPathByCode(MENUS_CODE['link/Certificate']);
                 if (!!url) {
@@ -313,7 +319,7 @@ const Comprehensive = () => {
             {
               title: '网络组件',
               content: '根据不同的传输类型配置平台底层网络组件相关参数。',
-              url: require('/public/images/home/bottom-3.png'),
+              url: require('/public/images/home/bottom-10.png'),
               onClick: () => {
                 const url = getMenuPathByCode(MENUS_CODE['link/Type']);
                 if (!!url) {
@@ -326,7 +332,7 @@ const Comprehensive = () => {
             {
               title: '设备接入网关',
               content: '根据不同的传输类型，关联消息协议，配置设备接入网关相关参数。',
-              url: require('/public/images/home/bottom-4.png'),
+              url: require('/public/images/home/bottom-11.png'),
               onClick: () => {
                 const url = getMenuPathByCode(MENUS_CODE['link/AccessConfig']);
                 if (!!url) {
@@ -339,7 +345,7 @@ const Comprehensive = () => {
             {
               title: '日志管理',
               content: '监控系统日志，及时处理系统异常。',
-              url: require('/public/images/home/bottom-5.png'),
+              url: require('/public/images/home/bottom-9.png'),
               onClick: () => {
                 const url = getMenuPathByCode(MENUS_CODE['Log']);
                 if (!!url) {

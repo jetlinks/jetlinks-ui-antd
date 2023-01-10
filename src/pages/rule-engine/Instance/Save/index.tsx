@@ -74,6 +74,8 @@ const Save = (props: Props) => {
         'x-component-props': {
           rows: 5,
           placeholder: '请输入说明',
+          showCount: true,
+          maxLength: 200,
         },
         'x-validator': [
           {

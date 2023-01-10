@@ -8,7 +8,11 @@ import JsonParam from '@/components/Metadata/JsonParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
 
-const ArrayParam = () => {
+interface Props {
+  isFunction?: boolean;
+}
+
+const ArrayParam = (props: Props) => {
   const SchemaField = createSchemaField({
     components: {
       FormItem,
@@ -82,7 +86,7 @@ const ArrayParam = () => {
               dependencies: ['.type'],
               fulfill: {
                 state: {
-                  visible: "{{['float','double'].includes($deps[0])}}",
+                  visible: !props.isFunction && "{{['float','double'].includes($deps[0])}}",
                 },
               },
             },
@@ -104,7 +108,8 @@ const ArrayParam = () => {
               dependencies: ['.type'],
               fulfill: {
                 state: {
-                  visible: "{{['int','float','long','double'].includes($deps[0])}}",
+                  visible:
+                    !props.isFunction && "{{['int','float','long','double'].includes($deps[0])}}",
                 },
               },
             },
@@ -121,14 +126,15 @@ const ArrayParam = () => {
                 message: '请选择时间格式',
               },
             ],
-            'x-reactions': {
-              dependencies: ['.type'],
-              fulfill: {
-                state: {
-                  visible: "{{['date'].includes($deps[0])}}",
-                },
-              },
-            },
+            'x-visible': false,
+            // 'x-reactions': {
+            //   dependencies: ['.type'],
+            //   fulfill: {
+            //     state: {
+            //       visible: "{{['date'].includes($deps[0])}}",
+            //     },
+            //   },
+            // },
           },
           expands: {
             type: 'object',
@@ -161,7 +167,7 @@ const ArrayParam = () => {
                   dependencies: ['..type'],
                   fulfill: {
                     state: {
-                      visible: "{{['string','password'].includes($deps[0])}}",
+                      visible: !props.isFunction && "{{['string','password'].includes($deps[0])}}",
                     },
                   },
                 },
@@ -217,6 +223,9 @@ const ArrayParam = () => {
             type: 'void',
             'x-decorator': 'FormItem',
             'x-component': 'JsonParam',
+            'x-component-props': {
+              isFunction: props.isFunction,
+            },
             'x-reactions': {
               dependencies: ['.type'],
               fulfill: {

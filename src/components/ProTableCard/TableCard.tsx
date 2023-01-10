@@ -17,7 +17,7 @@ export interface TableCardProps {
   children?: React.ReactNode;
   actions?: React.ReactNode[];
   contentClassName?: string;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 function getAction(actions: React.ReactNode[]) {

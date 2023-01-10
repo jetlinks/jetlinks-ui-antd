@@ -6,7 +6,7 @@ import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
 import type { Response } from '@/utils/typings';
 import { FormProvider, createSchemaField } from '@formily/react';
 import { action } from '@formily/reactive';
-import { Badge, Button, Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import MapTree from '../mapTree';
 import './index.less';
@@ -29,6 +29,7 @@ const MapTable = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [channelList, setChannelList] = useState<any>([]);
   const [deviceData, setDeviceData] = useState<any>({});
+  const { permission } = PermissionButton.usePermission('device/Instance');
 
   const remove = async (params: any) => {
     const res = await service.removeMap(edgeId, {
@@ -61,7 +62,7 @@ const MapTable = (props: Props) => {
     const index = ArrayTable.useIndex?.();
     return (
       <PermissionButton
-        isPermission={true}
+        isPermission={permission.update}
         style={{ padding: 0 }}
         disabled={!record(index)?.id}
         tooltip={{
@@ -411,7 +412,7 @@ const MapTable = (props: Props) => {
     // console.log(metaData, 1111111);
     service.edgeChannel(edgeId).then((res) => {
       if (res.status === 200) {
-        const list = res.result?.[0].map((item: any) => ({
+        const list = res.result?.[0]?.map((item: any) => ({
           label: item.name,
           value: item.id,
           provider: item.provider,
@@ -425,8 +426,9 @@ const MapTable = (props: Props) => {
     <div>
       <div className="top-button">
         {props.title && <TitleComponent data={props.title} />}
-        <Button
+        <PermissionButton
           style={{ marginRight: 10 }}
+          isPermission={permission.update}
           onClick={async () => {
             setVisible(true);
             const value = await props.formRef?.validateFields();
@@ -442,9 +444,10 @@ const MapTable = (props: Props) => {
           }}
         >
           批量映射
-        </Button>
-        <Button
+        </PermissionButton>
+        <PermissionButton
           type="primary"
+          isPermission={permission.update}
           onClick={async () => {
             if (props.formRef) {
               add();
@@ -461,7 +464,7 @@ const MapTable = (props: Props) => {
           }}
         >
           保存
-        </Button>
+        </PermissionButton>
       </div>
       <div>
         <FormProvider form={form}>

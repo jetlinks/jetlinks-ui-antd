@@ -24,6 +24,8 @@ const Save = () => {
   const [accessType, setAccessType] = useState(DefaultAccessType);
   const [productList, setProductList] = useState<any[]>([]);
   const [oldPassword, setOldPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const img1 = require('/public/images/media/doc1.png');
   const img2 = require('/public/images/media/doc2.png');
   const img3 = require('/public/images/media/doc3.png');
@@ -81,9 +83,11 @@ const Save = () => {
       if (formData.id === '') {
         delete extraFormData.id;
       }
+      setLoading(true);
       const resp = id
         ? await service.updateData(channel, id, { ...extraFormData, channel })
         : await service.saveData(channel, { ...extraFormData, channel });
+      setLoading(false);
       if (resp.status === 200) {
         form.resetFields();
         onlyMessage('操作成功');
@@ -265,7 +269,9 @@ const Save = () => {
                           onSelect={(_: any, node: any) => {
                             const pwd = node.configuration ? node.configuration.access_pwd : '';
                             form.setFieldsValue({
-                              password: pwd,
+                              others: {
+                                access_pwd: pwd,
+                              },
                             });
                           }}
                         />
@@ -379,7 +385,7 @@ const Save = () => {
                 </Form.Item>
                 <Col span={24}>
                   <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={loading}>
                       保存
                     </Button>
                   </Form.Item>
@@ -462,11 +468,17 @@ const Save = () => {
           close={() => {
             setProductVisible(false);
           }}
-          reload={(productId: string, name: string) => {
+          reload={(productId: string, data: any) => {
             form.setFieldsValue({ productId });
             productList.push({
               id: productId,
-              name,
+              name: data.name,
+            });
+            const pwd = data.configuration ? data.configuration.access_pwd : '';
+            form.setFieldsValue({
+              others: {
+                access_pwd: pwd,
+              },
             });
             setProductList([...productList]);
           }}

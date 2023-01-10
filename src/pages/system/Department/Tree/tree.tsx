@@ -154,10 +154,10 @@ export default (props: TreeProps) => {
 
       dig(searchTree);
 
-      const arr = ArrayToTree([...treeArray.values()]);
+      const arr = ArrayToTree(cloneDeep([...treeArray.values()]));
       setTreeData(arr);
     } else {
-      setTreeData([...TreeMap.values()]);
+      setTreeData(ArrayToTree(cloneDeep([...TreeMap.values()])));
     }
   };
 
@@ -271,7 +271,9 @@ export default (props: TreeProps) => {
         type="primary"
         isPermission={permission.add}
         onClick={() => {
-          setData({ sortIndex: treeData && treeData.length + 1 });
+          const sortIndex =
+            treeData && treeData.length ? treeData[treeData.length - 1].sortIndex + 1 : 1;
+          setData({ sortIndex });
           setVisible(true);
           setTreeDataList(treeData);
         }}
@@ -366,6 +368,7 @@ export default (props: TreeProps) => {
                           sortIndex: nodeData.children ? nodeData.children.length + 1 : 1,
                         });
                         setVisible(true);
+                        setTreeDataList(treeData);
                       }}
                     >
                       <PlusCircleOutlined />

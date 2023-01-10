@@ -22,13 +22,9 @@ export default (props: DatePickerFormat) => {
     v: DatePickerProps['value'],
     f: DatePickerProps['format'],
   ): moment.Moment => {
-    if (f === 'string') {
-      const _format = handleFormat(f);
-      return moment(moment(v, defaultFormat), _format).utc();
-    } else {
-      const _format = handleFormat(f);
-      return moment(moment(v, defaultFormat), _format);
-    }
+    console.log(v);
+    const _format = handleFormat(f);
+    return moment(v, _format);
   };
 
   return (

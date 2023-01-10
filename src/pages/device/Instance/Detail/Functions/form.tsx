@@ -64,6 +64,8 @@ export default (props: FunctionProps) => {
         return <GeoPoint />;
       case 'object':
         return <MetadataJsonInput json={record.json} />;
+      case 'password':
+        return <Input.Password />;
       case 'date':
         return (
           // <>
@@ -219,7 +221,7 @@ export default (props: FunctionProps) => {
       formData.table.forEach((d: any) => {
         if (d.value) {
           if (d.type === 'date') {
-            data[d.id] = moment(d.value).format('YYYY-MM-DD HH:mm:ss');
+            data[d.id] = moment(d.value).format(d.format || 'YYYY-MM-DD HH:mm:ss');
           } else if (d.type === 'object') {
             data[d.id] = JSON.parse(d.value);
           } else {

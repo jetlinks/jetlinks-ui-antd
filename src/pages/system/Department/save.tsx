@@ -98,6 +98,7 @@ const Save = <T extends object>(props: SaveModalProps<T>) => {
           if (item) {
             if (item.children && item.children.length) {
               f.setFieldState(typeFiled.query('.sortIndex'), async (state) => {
+                console.log(item.children);
                 state.value = item.children[item.children.length - 1].sortIndex + 1;
               });
             } else {

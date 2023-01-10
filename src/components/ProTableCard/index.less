@@ -29,6 +29,7 @@
 
     .pro-table-card-item {
       display: flex;
+      cursor: pointer;
 
       .card-item-avatar {
         margin-right: 16px;
@@ -268,6 +269,14 @@
 
         &.error {
           background-color: rgba(#e50012, 0.1);
+        }
+
+        &.default {
+          background-color: rgba(229, 229, 229);
+        }
+
+        &.processing {
+          background-color: rgba(36, 178, 118, 0.1);
         }
 
         .card-state-content {

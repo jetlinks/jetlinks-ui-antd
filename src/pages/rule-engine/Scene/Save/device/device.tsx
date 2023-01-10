@@ -48,7 +48,13 @@ export default observer(() => {
     <div>
       <Form form={form} layout={'vertical'}>
         <Form.Item name="selector" label="选择方式" required>
-          <TopCard typeList={TypeList} />
+          <TopCard
+            typeList={TypeList}
+            onChange={() => {
+              TriggerDeviceModel.deviceKeys = [];
+              TriggerDeviceModel.selectorValues = [];
+            }}
+          />
         </Form.Item>
       </Form>
       {selector === 'fixed' ? <DeviceList /> : selector === 'org' ? <OrgList /> : null}

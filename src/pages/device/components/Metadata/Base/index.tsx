@@ -5,21 +5,22 @@ import { useParams } from 'umi';
 import DB from '@/db';
 import type { MetadataItem, MetadataType } from '@/pages/device/Product/typings';
 import MetadataMapping from './columns';
-import { DeleteOutlined, EditOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Edit from './Edit';
 import { observer } from '@formily/react';
 import MetadataModel from './model';
 import { Store } from 'jetlinks-store';
 import SystemConst from '@/utils/const';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
+// import PropertyImport from '@/pages/device/Product/Detail/PropertyImport';
 import { productModel } from '@/pages/device/Product';
-import { InstanceModel } from '@/pages/device/Instance';
+// import { InstanceModel } from '@/pages/device/Instance';
 import { asyncUpdateMedata, removeMetadata } from '../metadata';
 import type { permissionType } from '@/hooks/permission';
 import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { message } from 'antd';
+import { InstanceModel, service as instanceService } from '@/pages/device/Instance';
 
 interface Props {
   type: MetadataType;
@@ -39,6 +40,13 @@ const BaseMetadata = observer((props: Props) => {
   typeMap.set('product', productModel.current);
   typeMap.set('device', InstanceModel.detail);
 
+  const resetMetadata = async () => {
+    const resp = await instanceService.detail(param.id);
+    if (resp.status === 200) {
+      InstanceModel.detail = resp?.result || [];
+    }
+  };
+
   const removeItem = async (record: MetadataItem) => {
     const removeDB = () => {
       return DB.getDB().table(`${type}`).delete(record.id!);
@@ -50,6 +58,7 @@ const BaseMetadata = observer((props: Props) => {
       Store.set(SystemConst.REFRESH_METADATA_TABLE, true);
       MetadataModel.edit = false;
       MetadataModel.item = {};
+      resetMetadata();
     } else {
       onlyMessage('操作失败！', 'error');
     }
@@ -93,13 +102,13 @@ const BaseMetadata = observer((props: Props) => {
             }
           }}
           tooltip={{
-            title: operateLimits('add', type) ? '暂不支持' : '编辑',
+            title: operateLimits('updata', type) ? '当前的存储方式不支持编辑' : '编辑',
           }}
         >
           <EditOutlined />
         </PermissionButton>,
         <PermissionButton
-          isPermission={props.permission.update}
+          isPermission={props.permission.delete}
           type="link"
           key={'delete'}
           style={{ padding: 0 }}
@@ -185,19 +194,19 @@ const BaseMetadata = observer((props: Props) => {
           },
         }}
         toolBarRender={() => [
-          props.type === 'properties' && target === 'device' && (
-            <PermissionButton
-              isPermission={props.permission.update}
-              onClick={() => {
-                MetadataModel.importMetadata = true;
-              }}
-              key="button"
-              icon={<ImportOutlined />}
-              type="ghost"
-            >
-              导入属性
-            </PermissionButton>
-          ),
+          // props.type === 'properties' && target === 'device' && (
+          //   <PermissionButton
+          //     isPermission={props.permission.update}
+          //     onClick={() => {
+          //       MetadataModel.importMetadata = true;
+          //     }}
+          //     key="button"
+          //     icon={<ImportOutlined />}
+          //     type="ghost"
+          //   >
+          //     导入属性
+          //   </PermissionButton>
+          // ),
           <PermissionButton
             isPermission={props.permission.update}
             key={'add'}
@@ -211,7 +220,7 @@ const BaseMetadata = observer((props: Props) => {
             icon={<PlusOutlined />}
             type="primary"
             tooltip={{
-              title: operateLimits('add', type) ? '暂不支持' : '新增',
+              title: operateLimits('add', type) ? '当前的存储方式不支持新增' : '新增',
             }}
           >
             {intl.formatMessage({
@@ -221,7 +230,7 @@ const BaseMetadata = observer((props: Props) => {
           </PermissionButton>,
         ]}
       />
-      {MetadataModel.importMetadata && <PropertyImport type={target} />}
+      {/*{MetadataModel.importMetadata && <PropertyImport type={target} />}*/}
       {MetadataModel.edit && <Edit type={target} tabs={type} />}
     </>
   );

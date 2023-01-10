@@ -29,11 +29,17 @@ export default observer((props: Props) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    return () => {
+      set(FormModel.current, ['options', 'trigger'], {});
+    };
+  }, []);
+
+  useEffect(() => {
     if (FormModel.current.trigger!.device?.productId) {
       service.detail(FormModel.current.trigger!.device?.productId).then((res) => {
         if (res.status === 200) {
           TriggerDeviceModel.productDetail = res.result;
-          handleMetadata(res.result.metadata);
+          handleMetadata(res.result?.metadata);
         } else {
           Store.set('TriggerDeviceModel', {
             update: true,

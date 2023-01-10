@@ -205,7 +205,7 @@ const CardManagementNode = () => {
           <PermissionButton
             style={{ padding: 0 }}
             type="link"
-            isPermission={true}
+            isPermission={permission.view}
             key="view"
             onClick={() => {
               const url = getMenuPathByParams('iot-card/CardManagement/Detail', record.id);
@@ -221,7 +221,7 @@ const CardManagementNode = () => {
             type="link"
             key="bindDevice"
             style={{ padding: 0 }}
-            isPermission={permission.delete}
+            isPermission={permission.bind}
             tooltip={{ title: record.deviceId ? '解绑设备' : '绑定设备' }}
             popConfirm={
               record.deviceId
@@ -505,6 +505,9 @@ const CardManagementNode = () => {
         <ExportModal
           keys={bindKeys}
           onCancel={() => {
+            setExportVisible(false);
+          }}
+          onOk={() => {
             setExportVisible(false);
           }}
         />

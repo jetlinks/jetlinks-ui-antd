@@ -22,6 +22,7 @@ import {
   Radio,
   Select,
   Space,
+  Switch,
 } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import {
@@ -46,13 +47,16 @@ import { lastValueFrom } from 'rxjs';
 import SystemConst from '@/utils/const';
 import DB from '@/db';
 import _ from 'lodash';
-import { InstanceModel } from '@/pages/device/Instance';
+// import { InstanceModel } from '@/pages/device/Instance';
 import FRuleEditor from '@/components/FRuleEditor';
 import FIndicators from '@/components/FIndicators';
 import { action } from '@formily/reactive';
 import { asyncUpdateMedata, updateMetadata } from '../../metadata';
 import { onlyMessage } from '@/utils/util';
 import Editable from '@/components/Metadata/EditTable';
+import InputSelect from '../../../InputSelect';
+import { InstanceModel, service as instanceService } from '@/pages/device/Instance';
+import { useParams } from 'umi';
 
 interface Props {
   type: 'product' | 'device';
@@ -62,6 +66,7 @@ interface Props {
 const Edit = observer((props: Props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState<boolean>(false);
+  const param = useParams<{ id: string }>();
   const form = useMemo(
     () =>
       createForm({
@@ -170,7 +175,9 @@ const Edit = observer((props: Props) => {
       Checkbox,
       FormGrid,
       DatePicker,
+      Switch,
       FIndicators,
+      InputSelect,
     },
     scope: {
       async asyncOtherConfig(field: Field) {
@@ -247,15 +254,16 @@ const Edit = observer((props: Props) => {
           defaultMessage: '单位',
         }),
         'x-decorator': 'FormItem',
-        'x-component': 'Select',
+        'x-component': 'InputSelect',
         'x-visible': false,
-        'x-component-props': {
-          showSearch: true,
-          showArrow: true,
-          allowClear: true,
-          filterOption: (input: string, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
-        },
+        // 'x-component-props': {
+        //   showSearch: true,
+        //   showArrow: true,
+        //   allowClear: true,
+        //   mode: 'tags',
+        //   filterOption: (input: string, option: any) =>
+        //     option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+        // },
         'x-reactions': [
           {
             dependencies: ['.type'],
@@ -265,7 +273,7 @@ const Edit = observer((props: Props) => {
               },
             },
           },
-          '{{useAsyncDataSource(getUnit)}}',
+          // '{{useAsyncDataSource(getUnit)}}',
         ],
       },
       scale: {
@@ -324,21 +332,22 @@ const Edit = observer((props: Props) => {
         'x-decorator': 'FormItem',
         'x-component': 'Select',
         enum: DateTypeList,
-        default: 'string',
+        // default: 'yyyy-MM-DD HH:mm:ss',
+        'x-visible': false,
         'x-validator': [
           {
             required: true,
             message: '请选择时间格式',
           },
         ],
-        'x-reactions': {
-          dependencies: ['.type'],
-          fulfill: {
-            state: {
-              visible: "{{['date'].includes($deps[0])}}",
-            },
-          },
-        },
+        // 'x-reactions': {
+        //   dependencies: ['.type'],
+        //   fulfill: {
+        //     state: {
+        //       visible: "{{['date'].includes($deps[0])}}",
+        //     },
+        //   },
+        // },
       },
       enumConfig: {
         title: intl.formatMessage({
@@ -562,6 +571,7 @@ const Edit = observer((props: Props) => {
             'x-component': 'Select',
             enum: PropertySource,
             'x-visible': props.type === 'product',
+            default: 'device',
           },
           'virtualRule.type': {
             type: 'string',
@@ -581,6 +591,9 @@ const Edit = observer((props: Props) => {
           'virtualRule.script': {
             type: 'string',
             'x-component': 'FRuleEditor',
+            'x-component-props': {
+              id: (MetadataModel.item as any)?.id,
+            },
             'x-visible': false,
             'x-reactions': [
               {
@@ -588,6 +601,9 @@ const Edit = observer((props: Props) => {
                 fulfill: {
                   state: {
                     visible: '{{$deps[0]==="rule"}}',
+                    componentProps: {
+                      id: '{{$deps[1]}}',
+                    },
                   },
                   schema: {
                     'x-component-props.property': '{{$deps[1]}}',
@@ -601,11 +617,12 @@ const Edit = observer((props: Props) => {
             type: 'object',
             title: '规则配置',
             'x-visible': false,
-            'x-component': 'Editable.Popover',
+            // 'x-component': 'Editable.Popover',
             'x-reactions': {
               dependencies: ['.source'],
               fulfill: {
                 state: {
+                  // visible: '{{$deps[0]}}',
                   visible: '{{$deps[0]==="rule"}}',
                 },
               },
@@ -629,16 +646,37 @@ const Edit = observer((props: Props) => {
               //     },
               //   ],
               // },
-
+              isVirtualRule: {
+                type: 'boolean',
+                title: '规则配置',
+                'x-decorator': 'FormItem',
+                'x-component': 'Switch',
+              },
               windowType: {
                 type: 'string',
                 title: '窗口',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
+                required: true,
+                'x-validator': [
+                  {
+                    required: true,
+                    message: `请选择窗口`,
+                  },
+                ],
                 enum: [
                   { label: '时间窗口', value: 'time' },
                   { label: '次数窗口', value: 'num' },
                 ],
+                'x-visible': false,
+                'x-reactions': {
+                  dependencies: ['.isVirtualRule'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]}}',
+                    },
+                  },
+                },
                 'x-component-props': {
                   allowClear: true,
                 },
@@ -661,15 +699,62 @@ const Edit = observer((props: Props) => {
                 title: '聚合函数',
                 'x-decorator': 'FormItem',
                 'x-component': 'Select',
-                'x-reactions': '{{useAsyncDataSource(getStreamingAggType)}}',
+                required: true,
+                'x-visible': false,
+                'x-validator': [
+                  {
+                    required: true,
+                    message: `请选择聚合函数`,
+                  },
+                ],
+                'x-reactions': [
+                  {
+                    dependencies: ['.isVirtualRule'],
+                    fulfill: {
+                      state: {
+                        visible: '{{$deps[0]}}',
+                      },
+                    },
+                  },
+                  '{{useAsyncDataSource(getStreamingAggType)}}',
+                ],
               },
               window: {
                 type: 'object',
+                'x-visible': false,
+                'x-reactions': {
+                  dependencies: ['.isVirtualRule'],
+                  fulfill: {
+                    state: {
+                      visible: '{{$deps[0]}}',
+                    },
+                  },
+                },
                 properties: {
                   span: {
                     title: '窗口长度',
-                    'x-component': 'Input',
+                    'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
+                    required: true,
+                    'x-component-props': {
+                      style: {
+                        width: '100%',
+                      },
+                    },
+                    'x-validator': [
+                      {
+                        required: true,
+                        message: `请输入窗口长度`,
+                      },
+                      {
+                        format: 'integer',
+                        message: '请输入正整数',
+                      },
+                      {
+                        min: 1,
+                        message: '请输入正整数',
+                      },
+                    ],
                     'x-reactions': [
                       {
                         dependencies: ['..windowType'],
@@ -702,8 +787,29 @@ const Edit = observer((props: Props) => {
                   },
                   every: {
                     title: '步长',
-                    'x-component': 'Input',
+                    'x-component': 'NumberPicker',
                     'x-decorator': 'FormItem',
+                    required: true,
+                    'x-component-props': {
+                      style: {
+                        width: '100%',
+                      },
+                    },
+                    'x-validator': [
+                      {
+                        // triggerType: 'onBlur',
+                        validator: (value: any[]) => {
+                          return new Promise((resolve) => {
+                            const number = Number(value);
+                            if (number <= 0 || value.length > 64 || /[.]/.test(value)) {
+                              resolve('请输入非0正整数，最多可输入64个字符');
+                            } else {
+                              resolve('');
+                            }
+                          });
+                        },
+                      },
+                    ],
                     'x-reactions': [
                       {
                         dependencies: ['..windowType'],
@@ -928,7 +1034,7 @@ const Edit = observer((props: Props) => {
                                 return Promise.reject(new Error('请输入指标值'));
                               }
                             } else {
-                              if (value?.value !== undefined && value?.value[0] === undefined) {
+                              if (value?.value === '' || value?.value === undefined) {
                                 return Promise.reject(new Error('请输入指标值'));
                               }
                             }
@@ -1134,6 +1240,9 @@ const Edit = observer((props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'JsonParam',
+        'x-component-props': {
+          isFunction: true,
+        },
         'x-reactions': (field) => {
           field.setComponentProps({ keys: 'inputs' });
         },
@@ -1229,6 +1338,12 @@ const Edit = observer((props: Props) => {
   typeMap.set('device', InstanceModel.detail);
   const { type } = MetadataModel;
 
+  const resetMetadata = async () => {
+    const resp = await instanceService.detail(param.id);
+    if (resp.status === 200) {
+      InstanceModel.detail = resp?.result || [];
+    }
+  };
   const saveMetadata = async (deploy?: boolean) => {
     setLoading(true);
     let params;
@@ -1280,6 +1395,7 @@ const Edit = observer((props: Props) => {
         if (deploy) {
           Store.set('product-deploy', deploy);
         } else {
+          resetMetadata();
           message.success({
             key: 'metadata',
             content: '操作成功！',

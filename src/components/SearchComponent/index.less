@@ -26,6 +26,19 @@
       }
     }
   }
+  .small-action {
+    gap: 48px;
+    justify-content: flex-start;
+    width: 100%;
+
+    .more {
+      position: relative;
+    }
+
+    .advance {
+      right: 0;
+    }
+  }
 
   .form {
     :global {
@@ -47,6 +60,20 @@
 
       .ant-formily-item {
         margin-bottom: -24px;
+      }
+    }
+  }
+
+  .small-size {
+    flex-wrap: wrap;
+    :global {
+      .ant-formily-grid-layout {
+        grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+        width: 100%;
+      }
+      .ant-formily-item {
+        width: 100%;
+        margin-bottom: 24px;
       }
     }
   }

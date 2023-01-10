@@ -87,6 +87,7 @@ const Login: React.FC = () => {
   useEffect(getCode, []);
 
   useEffect(() => {
+    console.log('版本：' + localStorage.getItem(SystemConst.Version_Code));
     localStorage.clear();
     Service.getSystemVersion().then((resp) => {
       if (resp && resp.status === 200 && resp.result) {

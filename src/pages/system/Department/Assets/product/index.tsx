@@ -1,7 +1,7 @@
 // 资产分配-产品分类
 import type { ActionType, ProColumns } from '@jetlinks/pro-table';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { Badge, Modal, Space } from 'antd';
+import { Badge, Button, Dropdown, Menu, Modal, Space } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { observer } from '@formily/react';
 import type { ProductItem } from '@/pages/system/Department/typings';
@@ -34,11 +34,30 @@ export default observer((props: { parentId: string }) => {
   const [searchParam, setSearchParam] = useState({});
   const [deviceVisible, setDeviceVisible] = useState(false);
   const [updateVisible, setUpdateVisible] = useState(false);
-  const [updateId, setUpdateId] = useState('');
-  const [permissions, setPermissions] = useState<string[]>([]);
+  const [updateId, setUpdateId] = useState<string | string[]>('');
+  const [permissions, setPermissions] = useState<string[]>(['read']);
+  const [assetsType, setAssetsType] = useState([]);
+
+  // 资产类型的权限定义
+  const getAssetsType = () => {
+    service.getAssetsType('product').then((res) => {
+      if (res.status === 200) {
+        setAssetsType(
+          res.result.map((item: any) => ({
+            label: item.name,
+            value: item.id,
+            disabled: item.id === 'read',
+          })),
+        );
+      } else {
+        setAssetsType([]);
+      }
+    });
+  };
 
   useEffect(() => {
     if (AssetsModel.tabsIndex === ASSETS_TABS_ENUM.Product && actionRef.current) {
+      getAssetsType();
       actionRef.current.reload();
     }
   }, [AssetsModel.tabsIndex]);
@@ -100,7 +119,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'grantedPermissions',
       hideInSearch: true,
       render: (_, row) => {
-        return handlePermissionsMap(row.grantedPermissions);
+        return handlePermissionsMap(row.grantedPermissions, assetsType);
       },
       width: 80,
     },
@@ -167,7 +186,8 @@ export default observer((props: { parentId: string }) => {
             setPermissions(record.grantedPermissions!);
             setUpdateVisible(true);
           }}
-          isPermission={permission.edit}
+          // isPermission={permission.edit}
+          isPermission={permission.assert}
         >
           <EditOutlined />
         </PermissionButton>,
@@ -257,12 +277,54 @@ export default observer((props: { parentId: string }) => {
     });
   };
 
+  const menu = (
+    <Menu>
+      <Menu.Item key={'1'}>
+        <PermissionButton
+          icon={<DisconnectOutlined />}
+          key="unBind"
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否批量解除绑定',
+            }),
+            onConfirm: handleUnBind,
+          }}
+          isPermission={permission.bind}
+        >
+          {intl.formatMessage({
+            id: 'pages.system.role.option.unBindUser',
+            defaultMessage: '批量解绑',
+          })}
+        </PermissionButton>
+      </Menu.Item>
+      <Menu.Item key={'2'}>
+        <PermissionButton
+          icon={<EditOutlined />}
+          key="update"
+          isPermission={permission.assert}
+          onClick={() => {
+            if (Models.unBindKeys.length) {
+              setUpdateId([...Models.unBindKeys]);
+              setUpdateVisible(true);
+            } else {
+              onlyMessage('请勾选需要解绑的数据', 'warning');
+            }
+          }}
+        >
+          批量编辑
+        </PermissionButton>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="content">
       {Models.bind && (
         <Bind
           visible={Models.bind}
           onCancel={closeModal}
+          assetsType={assetsType}
           reload={() => {
             setDeviceVisible(true);
             actionRef.current?.reload();
@@ -291,6 +353,7 @@ export default observer((props: { parentId: string }) => {
         <UpdateModal
           permissions={permissions}
           visible={updateVisible}
+          assetsType={assetsType}
           id={updateId}
           type="product"
           targetId={props.parentId}
@@ -404,6 +467,7 @@ export default observer((props: { parentId: string }) => {
         cardRender={(record) => (
           <ExtraProductCard
             {...record}
+            assetsOptions={assetsType}
             actions={[
               <PermissionButton
                 key="update"
@@ -413,7 +477,8 @@ export default observer((props: { parentId: string }) => {
                   setPermissions(record.grantedPermissions!);
                   setUpdateVisible(true);
                 }}
-                isPermission={permission.edit}
+                // isPermission={permission.edit}
+                isPermission={permission.assert}
               >
                 <EditOutlined />
               </PermissionButton>,
@@ -459,29 +524,9 @@ export default observer((props: { parentId: string }) => {
               defaultMessage: '资产分配',
             })}
           </PermissionButton>,
-          <PermissionButton
-            icon={<DisconnectOutlined />}
-            key="unBind"
-            popConfirm={{
-              title: intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '是否批量解除绑定',
-              }),
-              onConfirm: handleUnBind,
-            }}
-            tooltip={{
-              title: intl.formatMessage({
-                id: 'pages.system.role.option.unBindUser',
-                defaultMessage: '批量解绑',
-              }),
-            }}
-            isPermission={permission.bind}
-          >
-            {intl.formatMessage({
-              id: 'pages.system.role.option.unBindUser',
-              defaultMessage: '批量解绑',
-            })}
-          </PermissionButton>,
+          <Dropdown overlay={menu} placement="bottom">
+            <Button>批量操作</Button>
+          </Dropdown>,
           // <Popconfirm
           //   title={intl.formatMessage({
           //     id: 'pages.system.role.option.unBindUser',

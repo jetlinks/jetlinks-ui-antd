@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { DeviceInstance } from '@/pages/device/Instance/typings';
 import { StatusColorEnum } from '@/components/BadgeStatus';
 import { TableCard, Ellipsis } from '@/components';
 import '@/style/common.less';
 import '../index.less';
 import { CheckOutlined } from '@ant-design/icons';
+import { Store } from 'jetlinks-store';
+import { Checkbox } from 'antd';
 
 export interface DeviceCardProps extends Partial<DeviceInstance> {
   detail?: React.ReactNode;
@@ -18,6 +20,11 @@ export interface DeviceCardProps extends Partial<DeviceInstance> {
   showBindBtn?: boolean;
   cardType?: 'bind' | 'unbind';
   showTool?: boolean;
+  assetsOptions?: any[];
+  permissionInfoList?: any[];
+  allAssets?: string[];
+  onAssetsChange?: (value?: any) => void;
+  isChecked?: boolean;
 }
 
 const defaultImage = require('/public/images/device-type-3-big.png');
@@ -26,6 +33,7 @@ export const PermissionsMap = {
   read: '查看',
   save: '编辑',
   delete: '删除',
+  share: '共享',
 };
 
 export const handlePermissionsMap = (permissions?: string[]) => {
@@ -36,6 +44,32 @@ export const handlePermissionsMap = (permissions?: string[]) => {
 
 export const ExtraDeviceCard = (props: DeviceCardProps) => {
   const [imgUrl, setImgUrl] = useState<string>(props.photoUrl || defaultImage);
+  const [assetKeys, setAssetKeys] = useState<string[]>(['read']);
+  const [disabled, setDisabled] = useState(true);
+  const disabledRef = useRef<boolean>(true);
+
+  const assetsOptions =
+    props.assetsOptions && props.permissionInfoList
+      ? props.assetsOptions.filter((item: any) =>
+          props.permissionInfoList!.some((pItem) => pItem.id === item.value),
+        )
+      : [];
+
+  useEffect(() => {
+    Store.subscribe('assets-device', (data: any) => {
+      if (data.isAll && data.bindKeys.includes(props.id)) {
+        setAssetKeys(data.assets);
+        setDisabled(true);
+        disabledRef.current = true;
+      } else if (!data.isAll && data.bindKeys.includes(props.id)) {
+        setDisabled(false);
+        disabledRef.current = false;
+      } else {
+        setDisabled(true);
+        disabledRef.current = true;
+      }
+    });
+  }, []);
 
   return (
     <TableCard
@@ -77,12 +111,24 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
               {/*</div>*/}
             </div>
             {props.cardType === 'bind' ? (
-              <div className={'flex-auto'}>
-                <label>说明</label>
-                <Ellipsis title={props.describe || ''} />
-                {/*<Tooltip title={props.describe}>*/}
-                {/*  <div className={'ellipsis'}>{props.describe}</div>*/}
-                {/*</Tooltip>*/}
+              <div className={'flex-auto stopPropagation'}>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Checkbox.Group
+                    options={assetsOptions?.map((item) => {
+                      return {
+                        ...item,
+                        disabled: disabled,
+                      };
+                    })}
+                    value={assetKeys}
+                    onChange={(e) => {
+                      if (!disabledRef.current) {
+                        setAssetKeys(e as string[]);
+                        props.onAssetsChange?.(e);
+                      }
+                    }}
+                  />
+                </div>
               </div>
             ) : (
               <div className={'flex-auto'}>

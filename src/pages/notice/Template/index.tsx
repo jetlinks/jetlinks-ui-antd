@@ -15,15 +15,18 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import Service from '@/pages/notice/Template/service';
 import ConfigService from '@/pages/notice/Config/service';
 import SearchComponent from '@/components/SearchComponent';
-import { history, useLocation } from 'umi';
+import { history } from 'umi';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { model } from '@formily/reactive';
 import Debug from './Debug';
 import Log from '@/pages/notice/Template/Log';
 import { downloadObject, onlyMessage } from '@/utils/util';
-import moment from 'moment';
 import { PermissionButton, ProTableCard } from '@/components';
-import NoticeCard, { typeList } from '@/components/ProTableCard/CardItems/noticeTemplate';
+import NoticeCard, {
+  typeList,
+  typeObj,
+  providerObj,
+} from '@/components/ProTableCard/CardItems/noticeTemplate';
 import { observer } from '@formily/react';
 import usePermissions from '@/hooks/permission';
 
@@ -39,60 +42,13 @@ export const state = model<{
   log: false,
 });
 
-const list = {
-  weixin: {
-    corpMessage: {
-      text: '企业消息',
-      status: 'corpMessage',
-    },
-    // officialMessage: {
-    //   text: '服务号消息',
-    //   status: 'officialMessage',
-    // },
-  },
-  dingTalk: {
-    dingTalkMessage: {
-      text: '钉钉消息',
-      status: 'dingTalkMessage',
-    },
-    dingTalkRobotWebHook: {
-      text: '群机器人消息',
-      status: 'dingTalkRobotWebHook',
-    },
-  },
-  voice: {
-    aliyun: {
-      text: '阿里云语音',
-      status: 'aliyun',
-    },
-  },
-  sms: {
-    aliyunSms: {
-      text: '阿里云短信',
-      status: 'aliyunSms',
-    },
-  },
-  email: {
-    embedded: {
-      text: '邮件',
-      status: 'embedded',
-    },
-  },
-  webhook: {
-    http: {
-      text: 'Webhook',
-      status: 'http',
-    },
-  },
-};
-
 const Template = observer(() => {
   const intl = useIntl();
-  const location = useLocation<{ id: string }>();
-  const id = (location as any).query?.id;
+  // const location = useLocation<{ id: string }>();
+  // const id = (location as any).query?.id;
   const actionRef = useRef<ActionType>();
 
-  const { permission: templatePermission } = usePermissions('notice');
+  const { permission: templatePermission } = usePermissions('notice/Template');
 
   const columns: ProColumns<TemplateItem>[] = [
     {
@@ -101,13 +57,20 @@ const Template = observer(() => {
       ellipsis: true,
     },
     {
-      dataIndex: 'provider',
+      dataIndex: 'type',
       title: '通知方式',
+      renderText: (text, record) => typeObj?.[record.type]?.text || record.type,
+      valueType: 'select',
+      valueEnum: typeObj,
+    },
+    {
+      dataIndex: 'provider',
+      title: '类型',
       renderText: (text, record) => {
         return typeList[record?.type][record?.provider];
       },
       valueType: 'select',
-      valueEnum: list[id],
+      valueEnum: providerObj,
     },
     {
       dataIndex: 'description',
@@ -130,7 +93,7 @@ const Template = observer(() => {
           isPermission={templatePermission.update}
           onClick={() => {
             state.current = record;
-            history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+            history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], record.id));
           }}
           tooltip={{
             title: intl.formatMessage({
@@ -149,10 +112,7 @@ const Template = observer(() => {
           tooltip={{ title: '导出' }}
           isPermission={templatePermission.export}
           onClick={() => {
-            downloadObject(
-              record,
-              `${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
-            );
+            downloadObject(record, `通知模板_${record.name}`);
           }}
         >
           <ArrowDownOutlined />
@@ -216,7 +176,7 @@ const Template = observer(() => {
   return (
     <PageContainer>
       <SearchComponent
-        defaultParam={[{ column: 'type$IN', value: id }]}
+        // defaultParam={[{ column: 'type$IN', value: id }]}
         field={columns}
         onSearch={(data) => {
           actionRef.current?.reset?.();
@@ -237,7 +197,7 @@ const Template = observer(() => {
               isPermission={templatePermission.add}
               onClick={() => {
                 state.current = undefined;
-                history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+                history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail']));
               }}
               key="button"
               icon={<PlusOutlined />}
@@ -304,13 +264,15 @@ const Template = observer(() => {
         cardRender={(record) => (
           <NoticeCard
             {...record}
-            type={id}
+            // type={id}
             detail={
               <div
                 style={{ fontSize: 18, padding: 8 }}
                 onClick={() => {
                   state.current = record;
-                  history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+                  history.push(
+                    getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], record.id),
+                  );
                 }}
               >
                 <EyeOutlined />
@@ -322,7 +284,9 @@ const Template = observer(() => {
                 key="edit"
                 onClick={() => {
                   state.current = record;
-                  history.push(getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], id));
+                  history.push(
+                    getMenuPathByParams(MENUS_CODE['notice/Template/Detail'], record.id),
+                  );
                 }}
               >
                 <EditOutlined />
@@ -343,10 +307,7 @@ const Template = observer(() => {
                 key="export"
                 isPermission={templatePermission.export}
                 onClick={() => {
-                  downloadObject(
-                    record,
-                    `${record.name}-${moment(new Date()).format('YYYY/MM/DD HH:mm:ss')}`,
-                  );
+                  downloadObject(record, `通知模板_${record.name}`);
                 }}
               >
                 <ArrowDownOutlined />

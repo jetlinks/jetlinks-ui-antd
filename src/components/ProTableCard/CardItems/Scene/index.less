@@ -20,9 +20,12 @@
       transform: skewX(45deg);
     }
   }
+  // 卡片样式
   .card-item-content-box {
+    // 触发条件
     .card-item-content-trigger {
       display: flex;
+      overflow: hidden;
       .card-item-content-trigger-item {
         width: max-content;
         color: rgba(0, 0, 0, 0.85);
@@ -38,6 +41,7 @@
         font-size: 15px;
       }
     }
+    // 执行动作
     .card-item-content-action-item {
       display: flex;
       margin-top: 5px;
@@ -48,22 +52,20 @@
         font-weight: bold;
         font-size: 18px;
       }
+      // 执行动作
       .card-item-content-action-item-right {
-        width: calc(100% - 48px);
         padding: 5px 16px;
         border: 1px solid rgba(0, 0, 0, 0.08);
         .card-item-content-action-item-right-item {
           display: flex;
           width: 100%;
-          .trigger-contents {
-            color: rgba(0, 0, 0, 0.85);
-            font-weight: bold;
-          }
+          overflow: hidden;
+          // 触发条件 当。。。。。
           .right-item-left {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            width: 15%;
+            width: max-content;
             .trigger-conditions {
               color: #fab247;
             }
@@ -71,12 +73,13 @@
               color: rgba(0, 0, 0, 0.55);
             }
           }
+          // 执行动作
           .right-item-right {
-            width: 85%;
+            width: max-content;
             .right-item-right-item {
               display: flex;
-              width: 100%;
-              overflow: hidden;
+              //overflow: hidden;
+              // 执行方式
               .trigger-ways {
                 width: 70px;
                 margin-right: 18px;
@@ -84,17 +87,22 @@
                 font-size: 16px;
                 white-space: nowrap;
               }
+              // 执行动作
               .right-item-right-item-contents {
                 display: flex;
                 align-items: center;
+                width: max-content;
                 min-width: calc(100% - 88px);
                 max-width: 100%;
+                // 执行动作内容
                 .right-item-right-item-contents-text {
                   display: flex;
+                  width: 100%;
+                  // 每个执行动作
                   .right-item-right-item-contents-item {
                     display: flex;
+                    flex-grow: 1;
                     align-items: center;
-                    width: max-content;
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
@@ -102,6 +110,7 @@
                       color: rgba(0, 0, 0, 0.85);
                       font-weight: bold;
                     }
+                    // 过滤条件
                     .right-item-right-item-contents-item-filter {
                       color: rgba(0, 0, 0, 0.65);
                     }
@@ -114,6 +123,7 @@
                     }
                   }
                 }
+                // 等***个执行动作
                 .right-item-right-item-contents-extra {
                   min-width: 100px;
                   color: #fab247;

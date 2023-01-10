@@ -152,8 +152,8 @@ export default (props: ItemProps) => {
               <img width={18} src={itemNotifyIconMap.get(data?.notify?.notifyType)} />
               微信
             </span>
-            向<span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
-            <span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            向<span className={'notify-text-highlight'}>{options?.orgName || ''}</span>
+            <span className={'notify-text-highlight'}>{options?.sendTo || ''}</span>
             <span className={'notify-text-highlight'}>{options?.tagName || ''}</span>
             发送
             <span className={'notify-text-highlight'}>
@@ -246,14 +246,13 @@ export default (props: ItemProps) => {
           <div>
             <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
             {data?.options?.type}
-            {data.options?.taglist.map((item: any) => (
+            {data.options?.taglist?.map((item: any) => (
               <span>
                 {item.type}
-                {item.name}
-                {item.value}
+                {item.name}为{item.value}
               </span>
             ))}
-            {data?.options?.productName}
+            的{data?.options?.productName}
             {data?.options?.properties}
           </div>
         );
@@ -261,7 +260,7 @@ export default (props: ItemProps) => {
         return (
           <div>
             <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
-            {data?.options?.type}与<span>{data?.options?.name}</span>具有相同
+            {data?.options?.type}与<span>{data?.options?.triggerName}</span>具有相同
             {data?.options?.relationName}的{data?.options?.productName}设备的
             {data?.options?.properties}
           </div>
@@ -353,6 +352,9 @@ export default (props: ItemProps) => {
 
   useEffect(() => {
     getParams();
+    return () => {
+      setParamsOptions([]);
+    };
   }, []);
 
   return (
@@ -545,6 +547,7 @@ export default (props: ItemProps) => {
       )}
       {triggerVisible && (
         <TriggerAlarm
+          id={FormModel.current?.id || ''}
           close={() => {
             setTriggerVisible(false);
           }}

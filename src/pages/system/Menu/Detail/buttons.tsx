@@ -146,6 +146,7 @@ export default (props: ButtonsProps) => {
       }),
       width: 220,
       dataIndex: 'id',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
@@ -154,12 +155,14 @@ export default (props: ButtonsProps) => {
       }),
       width: 300,
       dataIndex: 'name',
+      ellipsis: true,
     },
     {
       title: intl.formatMessage({
         id: 'page.system.menu.describe',
         defaultMessage: '说明',
       }),
+      ellipsis: true,
       dataIndex: 'description',
       // render: (_, row) => () => {
       //   console.log(row)
@@ -290,6 +293,7 @@ export default (props: ButtonsProps) => {
             resetForm();
             setVisible(false);
           }}
+          bodyStyle={{ paddingBottom: 0 }}
           confirmLoading={loading}
         >
           <Form form={form} layout={'vertical'}>
@@ -340,6 +344,9 @@ export default (props: ButtonsProps) => {
                 defaultMessage: '权限',
               })}
               required={true}
+              style={{
+                marginBottom: 0,
+              }}
             >
               <Input
                 allowClear
@@ -365,7 +372,12 @@ export default (props: ButtonsProps) => {
                 defaultMessage: '说明',
               })}
             >
-              <Input.TextArea disabled={disabled} placeholder={'请输入说明'} />
+              <Input.TextArea
+                disabled={disabled}
+                placeholder={'请输入说明'}
+                maxLength={200}
+                showCount={true}
+              />
             </Form.Item>
           </Form>
         </Modal>

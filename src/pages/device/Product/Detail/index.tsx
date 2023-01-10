@@ -306,6 +306,7 @@ const ProductDetail = observer(() => {
                   if (url) {
                     const params = new URLSearchParams();
                     params.append('q', JSON.stringify(searchParams));
+                    params.append('target', 'device-instance');
                     history.push(`${url}?${params.toString()}`);
                   }
                 }}

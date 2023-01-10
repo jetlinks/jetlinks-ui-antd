@@ -21,6 +21,7 @@ import PropertyTable from './PropertyTable';
 import { onlyMessage } from '@/utils/util';
 import Indicators from './Indicators';
 import { Empty } from '@/components';
+import PermissionButton from '../../../../../../components/PermissionButton';
 
 interface Props {
   data: Partial<PropertyMetadata>[];
@@ -51,6 +52,7 @@ const Property = (props: Props) => {
     pageSize: 8,
     currentPage: 0,
   });
+  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
   const [indicatorVisible, setIndicatorVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -94,31 +96,53 @@ const Property = (props: Props) => {
       render: (text: any, record: any) => (
         <Space size="middle">
           {record.expands?.type?.includes('write') && (
-            <Tooltip placement="top" title="设置属性至设备">
-              <a
-                onClick={() => {
-                  setVisible(true);
-                  setCurrentInfo(record);
-                }}
-              >
-                <EditOutlined />
-              </a>
-            </Tooltip>
+            <PermissionButton
+              type={'link'}
+              onClick={() => {
+                setVisible(true);
+                setCurrentInfo(record);
+              }}
+              tooltip={{
+                placement: 'top',
+                title: devicePermission.update ? '设置属性至设备' : '暂无权限，请联系管理员',
+              }}
+              style={{ padding: 0 }}
+              key={'edit'}
+              isPermission={devicePermission.update}
+            >
+              <EditOutlined />
+            </PermissionButton>
           )}
           {(record.expands?.metrics || []).length > 0 &&
             ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
               record.valueType?.type || '',
             ) && (
-              <Tooltip placement="top" title="指标">
-                <a
-                  onClick={() => {
-                    setIndicatorVisible(true);
-                    setCurrentInfo(record);
-                  }}
-                >
-                  <ClockCircleOutlined />
-                </a>
-              </Tooltip>
+              // <Tooltip placement="top" title="指标">
+              //   <a
+              //     onClick={() => {
+              //       setIndicatorVisible(true);
+              //       setCurrentInfo(record);
+              //     }}
+              //   >
+              //     <ClockCircleOutlined />
+              //   </a>
+              // </Tooltip>
+              <PermissionButton
+                type={'link'}
+                onClick={() => {
+                  setVisible(true);
+                  setCurrentInfo(record);
+                }}
+                tooltip={{
+                  placement: 'top',
+                  title: devicePermission.update ? '指标' : '暂无权限，请联系管理员',
+                }}
+                style={{ padding: 0 }}
+                key={'edit'}
+                isPermission={devicePermission.update}
+              >
+                <ClockCircleOutlined />
+              </PermissionButton>
             )}
           {record.expands?.type?.includes('read') && (
             <Tooltip placement="top" title="获取最新属性值">

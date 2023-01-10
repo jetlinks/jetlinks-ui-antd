@@ -147,6 +147,9 @@ const Edit = (props: Props) => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-component-props': {
+                    readOnly: true,
+                  },
                 },
               },
             },
@@ -165,6 +168,9 @@ const Edit = (props: Props) => {
                   type: 'string',
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
+                  'x-component-props': {
+                    readOnly: true,
+                  },
                 },
               },
             },
@@ -201,39 +207,39 @@ const Edit = (props: Props) => {
                 },
               },
             },
-            column4: {
-              type: 'void',
-              'x-component': 'ArrayTable.Column',
-              'x-component-props': {
-                width: 100,
-                title: '操作',
-                dataIndex: 'operations',
-              },
-              properties: {
-                item: {
-                  type: 'void',
-                  'x-component': 'FormItem',
-                  properties: {
-                    remove: {
-                      type: 'void',
-                      'x-component': 'RemoveData',
-                      // 'x-component-props': {
-                      //   tags: tags,
-                      // },
-                    },
-                  },
-                },
-              },
-            },
+            // column4: {
+            //   type: 'void',
+            //   'x-component': 'ArrayTable.Column',
+            //   'x-component-props': {
+            //     width: 100,
+            //     title: '操作',
+            //     dataIndex: 'operations',
+            //   },
+            //   properties: {
+            //     item: {
+            //       type: 'void',
+            //       'x-component': 'FormItem',
+            //       properties: {
+            //         remove: {
+            //           type: 'void',
+            //           'x-component': 'RemoveData',
+            //           // 'x-component-props': {
+            //           //   tags: tags,
+            //           // },
+            //         },
+            //       },
+            //     },
+            //   },
+            // },
           },
         },
-        properties: {
-          add: {
-            type: 'void',
-            'x-component': 'ArrayTable.Addition',
-            title: '添加',
-          },
-        },
+        // properties: {
+        //   add: {
+        //     type: 'void',
+        //     'x-component': 'ArrayTable.Addition',
+        //     title: '添加',
+        //   },
+        // },
       },
     },
   };
@@ -252,18 +258,28 @@ const Edit = (props: Props) => {
           props.close();
         } else {
           const list = (values?.tags || [])
-            .filter((item: any) => item?.key)
+            .filter((item: any) => item?.key && item?.value)
             .map((i: any) => {
               const { dataType, ...extra } = i;
               return { ...extra };
             });
-          const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
-          if (resp.status === 200) {
-            props.refresh();
-            // InstanceModel.detail = { ...InstanceModel.detail, tags: values.tags };
-            onlyMessage('操作成功！');
-            props.close();
+          if (list.length) {
+            // 填值
+            const resp = await service.saveTags(InstanceModel.detail?.id || '', list);
+            if (resp.status === 200) {
+              onlyMessage('操作成功！');
+            }
           }
+          const _list = (values?.tags || []).filter((item: any) => item?.key && !item?.value);
+          if (_list.length) {
+            // 删除值
+            _list.map(async (item: any) => {
+              if (item.id) {
+                await service.delTags(InstanceModel.detail?.id || '', item.id);
+              }
+            });
+          }
+          props.refresh();
         }
       }}
     >

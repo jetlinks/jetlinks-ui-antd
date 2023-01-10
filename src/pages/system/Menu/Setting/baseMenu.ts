@@ -49,147 +49,243 @@ export default [
         owner: 'iot',
         //parentId: '1',
         //id: '1-2',
-        url: '/iot/notice/Type',
+        url: '/iot/notice',
         icon: 'icon-tongzhiguanli',
         sortIndex: 2,
         showPage: ['template', 'notifier'],
         permissions: [],
-        buttons: [
+        children: [
           {
-            id: 'bind',
-            name: '同步用户',
-            permissions: [
+            code: 'notice/Config',
+            name: '通知配置',
+            owner: 'iot',
+            //parentId: '1',
+            //id: '1-2',
+            url: '/iot/notice/Config',
+            icon: 'icon-tongzhiguanli',
+            sortIndex: 1,
+            showPage: ['notifier'],
+            permissions: [],
+            buttons: [
               {
-                permission: 'notifier',
-                actions: ['query'],
+                id: 'bind',
+                name: '同步用户',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'user-third-party-manager',
+                    actions: ['query', 'save'],
+                  },
+                  {
+                    permission: 'user',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query'],
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'user-third-party-manager',
-                actions: ['query', 'save'],
+                id: 'log',
+                name: '通知记录',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'user',
-                actions: ['query'],
+                id: 'debug',
+                name: '调试',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query', 'send'],
+                  },
+                  {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'user',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'export',
+                name: '导出',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'import',
+                name: '导入',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'delete',
+                name: '删除',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query', 'delete'],
+                  },
+                ],
+              },
+              {
+                id: 'update',
+                name: '编辑',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query', 'save'],
+                  },
+                ],
+              },
+              {
+                id: 'add',
+                name: '新增',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query', 'save'],
+                  },
+                ],
               },
             ],
           },
           {
-            id: 'view',
-            name: '查看',
-            permissions: [
+            code: 'notice/Template',
+            name: '通知模板',
+            owner: 'iot',
+            //parentId: '1',
+            //id: '1-2',
+            url: '/iot/notice/Template',
+            icon: 'icon-tongzhiguanli',
+            sortIndex: 2,
+            showPage: ['template'],
+            permissions: [],
+            buttons: [
               {
-                permission: 'notifier',
-                actions: ['query'],
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query'],
-              },
-            ],
-          },
-          {
-            id: 'log',
-            name: '通知记录',
-            permissions: [
-              {
-                permission: 'notifier',
-                actions: ['query'],
+                id: 'log',
+                name: '通知记录',
+                permissions: [
+                  {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query'],
-              },
-            ],
-          },
-          {
-            id: 'debug',
-            name: '调试',
-            permissions: [
-              {
-                permission: 'notifier',
-                actions: ['query', 'send'],
-              },
-              {
-                permission: 'template',
-                actions: ['query'],
-              },
-              {
-                permission: 'user',
-                actions: ['query'],
-              },
-            ],
-          },
-          {
-            id: 'export',
-            name: '导出',
-            permissions: [
-              {
-                permission: 'notifier',
-                actions: ['query'],
+                id: 'debug',
+                name: '调试',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query', 'send'],
+                  },
+                  {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'user',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query'],
-              },
-            ],
-          },
-          {
-            id: 'import',
-            name: '导入',
-            permissions: [
-              {
-                permission: 'notifier',
-                actions: ['query', 'save'],
+                id: 'export',
+                name: '导出',
+                permissions: [
+                  {
+                    permission: 'template',
+                    actions: ['query'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query', 'save'],
-              },
-            ],
-          },
-          {
-            id: 'delete',
-            name: '删除',
-            permissions: [
-              {
-                permission: 'notifier',
-                actions: ['query', 'delete'],
+                id: 'import',
+                name: '导入',
+                permissions: [
+                  {
+                    permission: 'template',
+                    actions: ['query', 'save'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query', 'delete'],
-              },
-            ],
-          },
-          {
-            id: 'update',
-            name: '编辑',
-            permissions: [
-              {
-                permission: 'notifier',
-                actions: ['query', 'save'],
+                id: 'delete',
+                name: '删除',
+                permissions: [
+                  {
+                    permission: 'template',
+                    actions: ['query', 'delete'],
+                  },
+                ],
               },
               {
-                permission: 'template',
-                actions: ['query', 'save'],
+                id: 'update',
+                name: '编辑',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'template',
+                    actions: ['query', 'save'],
+                  },
+                ],
               },
-            ],
-          },
-          {
-            id: 'add',
-            name: '新增',
-            permissions: [
               {
-                permission: 'notifier',
-                actions: ['query', 'save'],
-              },
-              {
-                permission: 'template',
-                actions: ['query', 'save'],
+                id: 'add',
+                name: '新增',
+                permissions: [
+                  {
+                    permission: 'notifier',
+                    actions: ['query'],
+                  },
+                  {
+                    permission: 'template',
+                    actions: ['query', 'save'],
+                  },
+                ],
               },
             ],
           },
@@ -858,16 +954,16 @@ export default [
                   },
                 ],
               },
-              {
-                id: 'action',
-                name: '启/禁用',
-                permissions: [
-                  {
-                    permission: 'protocol-supports',
-                    actions: ['enable', 'disable', 'query', 'save'],
-                  },
-                ],
-              },
+              // {
+              //   id: 'action',
+              //   name: '启/禁用',
+              //   permissions: [
+              //     {
+              //       permission: 'protocol-supports',
+              //       actions: ['enable', 'disable', 'query', 'save'],
+              //     },
+              //   ],
+              // },
               {
                 id: 'delete',
                 name: '删除',
@@ -1303,24 +1399,6 @@ export default [
                 ],
               },
               {
-                id: 'action',
-                name: '启/禁用',
-                permissions: [
-                  {
-                    permission: 'firmware-manager',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'device-instance',
-                    actions: ['query'],
-                  },
-                  {
-                    permission: 'firmware-upgrade-task-manager',
-                    actions: ['query', 'deploy'],
-                  },
-                ],
-              },
-              {
                 id: 'delete',
                 name: '删除',
                 permissions: [
@@ -1375,7 +1453,7 @@ export default [
         permissions: [],
         children: [
           {
-            code: 'link/DataCollect/Dashboard',
+            code: 'DataCollect/Dashboard',
             name: '仪表盘',
             owner: 'iot',
             sortIndex: 1,
@@ -1398,11 +1476,11 @@ export default [
             buttons: [],
           },
           {
-            code: 'link/DataCollect/DataGathering',
-            name: '数据采集',
+            code: 'DataCollect/Channel',
+            name: '通道管理',
             owner: 'iot',
             sortIndex: 2,
-            url: '/iot/DataCollect/DataGathering',
+            url: '/iot/DataCollect/Channel',
             icon: 'icon-rizhifuwu',
             showPage: [
               'data-collect-channel',
@@ -1529,11 +1607,11 @@ export default [
             ],
           },
           {
-            code: 'link/DataCollect/IntegratedQuery',
-            name: '综合查询',
+            code: 'DataCollect/Collector',
+            name: '采集器',
             owner: 'iot',
             sortIndex: 3,
-            url: '/iot/DataCollect/IntegratedQuery',
+            url: '/iot/DataCollect/Collector',
             icon: 'icon-yingyongguanli',
             showPage: [
               'data-collect-channel',
@@ -2455,7 +2533,7 @@ export default [
                 name: '编辑',
                 permissions: [
                   {
-                    permission: 'rule-instance',
+                    permission: 'device-instance',
                     actions: ['query', 'save'],
                   },
                 ],
@@ -2465,8 +2543,26 @@ export default [
                 name: '下发',
                 permissions: [
                   {
-                    permission: 'rule-instance',
-                    actions: ['query', 'save'],
+                    permission: 'edge-operations',
+                    actions: ['invoke'],
+                  },
+                  {
+                    permission: 'device-instance',
+                    actions: ['query'],
+                  },
+                ],
+              },
+              {
+                id: 'view',
+                name: '查看',
+                permissions: [
+                  {
+                    permission: 'edge-operations',
+                    actions: ['invoke'],
+                  },
+                  {
+                    permission: 'device-instance',
+                    actions: ['query'],
                   },
                 ],
               },
@@ -2602,11 +2698,11 @@ export default [
           { permission: 'media-channel', actions: ['query', 'save', 'delete'] },
         ],
         buttons: [
-          {
-            id: 'view',
-            name: '查看',
-            permissions: [{ permission: 'media-device', actions: ['query'] }],
-          },
+          // {
+          //   id: 'view',
+          //   name: '查看',
+          //   permissions: [{ permission: 'media-device', actions: ['query'] }],
+          // },
         ],
       },
       {
@@ -2705,6 +2801,16 @@ export default [
         showPage: ['system_config'],
         permissions: [],
         buttons: [
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'system_config',
+                actions: ['query'],
+              },
+            ],
+          },
           {
             id: 'update',
             name: '保存',
@@ -2847,54 +2953,54 @@ export default [
               },
             ],
           },
-          {
-            id: 'edit',
-            name: '资产编辑',
-            permissions: [
-              {
-                permission: 'assets-bind',
-                actions: ['query', 'permission'],
-              },
-              {
-                permission: 'user',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-product',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-instance',
-                actions: ['query'],
-              },
-            ],
-          },
-          {
-            id: 'bind',
-            name: '资产解绑',
-            permissions: [
-              {
-                permission: 'assets-bind',
-                actions: ['unbind', 'query'],
-              },
-              {
-                permission: 'user',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-product',
-                actions: ['query'],
-              },
-              {
-                permission: 'device-instance',
-                actions: ['query'],
-              },
-              {
-                permission: 'organization',
-                actions: ['unbind-user'],
-              },
-            ],
-          },
+          // {
+          //   id: 'edit',
+          //   name: '资产编辑',
+          //   permissions: [
+          //     {
+          //       permission: 'assets-bind',
+          //       actions: ['query', 'permission'],
+          //     },
+          //     {
+          //       permission: 'user',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-product',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-instance',
+          //       actions: ['query'],
+          //     },
+          //   ],
+          // },
+          // {
+          //   id: 'bind',
+          //   name: '资产解绑',
+          //   permissions: [
+          //     {
+          //       permission: 'assets-bind',
+          //       actions: ['unbind', 'query'],
+          //     },
+          //     {
+          //       permission: 'user',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-product',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'device-instance',
+          //       actions: ['query'],
+          //     },
+          //     {
+          //       permission: 'organization',
+          //       actions: ['unbind-user'],
+          //     },
+          //   ],
+          // },
           {
             id: 'bind-user',
             name: '绑定用户',
@@ -2923,7 +3029,7 @@ export default [
           },
           {
             id: 'assert',
-            name: '分配资产',
+            name: '资产分配',
             permissions: [
               {
                 permission: 'assets-bind',
@@ -3123,16 +3229,17 @@ export default [
               },
             ],
           },
-          {
-            id: 'setting',
-            name: '配置',
-            permissions: [
-              {
-                permission: 'menu',
-                actions: ['query', 'save', 'grant'],
-              },
-            ],
-          },
+          // 超管才具备该权限
+          // {
+          //   id: 'setting',
+          //   name: '配置',
+          //   permissions: [
+          //     {
+          //       permission: 'menu',
+          //       actions: ['query', 'save', 'grant'],
+          //     },
+          //   ],
+          // },
           {
             id: 'update',
             name: '编辑',
@@ -3461,7 +3568,28 @@ export default [
         icon: 'icon-chakanAPI',
         showPage: ['open-api'],
         permissions: [{ permission: 'open-api', actions: ['query', 'save'] }],
-        buttons: [],
+        buttons: [
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query'],
+              },
+            ],
+          },
+          {
+            id: 'update',
+            name: '编辑',
+            permissions: [
+              {
+                permission: 'open-api',
+                actions: ['query', 'save'],
+              },
+            ],
+          },
+        ],
       },
       {
         code: 'system/Apply',
@@ -3501,6 +3629,10 @@ export default [
                 permission: 'role',
                 actions: ['query'],
               },
+              {
+                permission: 'open-api',
+                actions: ['query', 'save', 'delete'],
+              },
             ],
           },
           {
@@ -3518,6 +3650,10 @@ export default [
               {
                 permission: 'role',
                 actions: ['query'],
+              },
+              {
+                permission: 'open-api',
+                actions: ['query', 'save', 'delete'],
               },
             ],
           },
@@ -3799,6 +3935,16 @@ export default [
               {
                 permission: 'network-card',
                 actions: ['query', 'save'],
+              },
+            ],
+          },
+          {
+            id: 'view',
+            name: '查看',
+            permissions: [
+              {
+                permission: 'network-card',
+                actions: ['query'],
               },
             ],
           },

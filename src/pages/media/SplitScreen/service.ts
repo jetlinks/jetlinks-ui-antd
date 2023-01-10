@@ -14,7 +14,7 @@ export const ptzStart = (deviceId: string, channelId: string, type: string) =>
 
 // 云台控制-停止
 export const ptzStop = (deviceId: string, channelId: string) =>
-  request(`${url}/device/${deviceId}/${channelId}/_stop`, { method: 'POST' });
+  request(`${url}/device/${deviceId}/${channelId}/_ptz/STOP`, { method: 'POST' });
 
 // 云台控制-缩放、转向等
 export const ptzTool = (deviceId: string, channelId: string, direct: string, speed: number = 90) =>

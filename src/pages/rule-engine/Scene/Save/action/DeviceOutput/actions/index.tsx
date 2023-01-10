@@ -6,6 +6,7 @@ import DeviceModel from '../model';
 import FunctionCall from './functionCall';
 import ReadProperty from './ReadProperty';
 import WriteProperty from './WriteProperty';
+import { service } from '@/pages/device/Instance/index';
 
 interface Props {
   get: (data: any) => void;
@@ -27,27 +28,39 @@ export default observer((props: Props) => {
       label: '功能调用',
       value: 'INVOKE_FUNCTION',
       image: require('/public/images/scene/invoke-function.png'),
-      tip: '-',
+      tip: '',
     },
     {
       label: '读取属性',
       value: 'READ_PROPERTY',
       image: require('/public/images/scene/read-property.png'),
-      tip: '-',
+      tip: '',
     },
     {
       label: '设置属性',
       value: 'WRITE_PROPERTY',
       image: require('/public/images/scene/write-property.png'),
-      tip: '-',
+      tip: '',
     },
   ];
 
   useEffect(() => {
+    // console.log('-----------',DeviceModel.deviceDetail)
     if (DeviceModel.productDetail) {
-      const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
-      setProperties(metadata.properties);
-      setFunctions(metadata.functions);
+      if (DeviceModel.selector === 'fixed') {
+        service.detail(DeviceModel.deviceId).then((res) => {
+          if (res.status === 200) {
+            DeviceModel.deviceDetail = res.result || {};
+            const metadata = JSON.parse(res.result?.metadata);
+            setProperties(metadata.properties);
+            setFunctions(metadata.functions);
+          }
+        });
+      } else {
+        const metadata = JSON.parse(DeviceModel.productDetail?.metadata || '{}');
+        setProperties(metadata.properties);
+        setFunctions(metadata.functions);
+      }
     }
   }, [DeviceModel.productDetail]);
 
@@ -164,7 +177,7 @@ export default observer((props: Props) => {
             <ReadProperty
               properties={properties}
               onChange={(_, text) => {
-                console.log(text);
+                // console.log(text);
                 DeviceModel.propertiesName = text;
               }}
             />
@@ -199,11 +212,12 @@ export default observer((props: Props) => {
               }}
               onChange={(value, text, valueLable) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
+                console.log(item);
                 DeviceModel.propertiesName = text;
                 if (valueLable) {
                   DeviceModel.propertiesValue = valueLable;
                 } else {
-                  DeviceModel.propertiesValue = `${item}`;
+                  DeviceModel.propertiesValue = item;
                 }
               }}
               onRest={(value: any) => {

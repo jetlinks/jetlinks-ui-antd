@@ -60,10 +60,11 @@ const MapTree = (props: Props) => {
         metadataId: metaData.find((i: any) => i.name === element.name)?.metadataId,
         provider: data.find((it: any) => it.id === item.parentId).provider,
       }));
-      params.push(...array);
+      if (array) {
+        params.push(...array);
+      }
     });
     const filterParms = params.filter((item) => !!item.metadataId);
-    console.log(metaData);
     console.log('filterParms', filterParms);
     if (deviceId) {
       if (filterParms && filterParms.length !== 0) {
@@ -104,7 +105,7 @@ const MapTree = (props: Props) => {
       if (res.status === 200) {
         // console.log(res.result?.[0], 'data');
         setData(res.result?.[0]);
-        setExpandedKey([res.result?.[0].id]);
+        setExpandedKey([res.result?.[0]?.id]);
       }
     });
   }, []);
