@@ -294,7 +294,14 @@ const Finish = (props: Props) => {
         <div>
           <TitleComponent data={'基本信息'} />
           <Form name="basic" layout="vertical" form={form}>
-            <Form.Item label="名称" name="name" rules={[{ required: true, message: '请输入名称' }]}>
+            <Form.Item
+              label="名称"
+              name="name"
+              rules={[
+                { required: true, message: '请输入名称' },
+                { max: 64, message: '最多可输入64字符' },
+              ]}
+            >
               <Input placeholder="请输入名称" />
             </Form.Item>
             <Form.Item name="description" label="说明">

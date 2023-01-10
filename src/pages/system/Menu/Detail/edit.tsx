@@ -164,7 +164,10 @@ export default (props: EditProps) => {
                       defaultMessage: '编码',
                     })}
                     required={true}
-                    rules={[{ required: true, message: '请输入编码' }]}
+                    rules={[
+                      { required: true, message: '请输入编码' },
+                      { max: 64, message: '最多可输入64个字符' },
+                    ]}
                   >
                     <Input placeholder={'请输入编码'} />
                   </Form.Item>

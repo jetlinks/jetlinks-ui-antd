@@ -82,10 +82,18 @@ const AccessConfig = (props: Props) => {
               // },
             ],
     };
-    service.queryList({ ...temp, sorts: [{ name: 'createTime', order: 'desc' }] }).then((resp) => {
-      setDataSource(resp?.result);
-      setCurrent(resp?.result?.data?.[0]);
-    });
+    service
+      .queryList({
+        ...temp,
+        sorts: [
+          { name: 'id', value: productModel.current?.accessId },
+          { name: 'createTime', order: 'desc' },
+        ],
+      })
+      .then((resp) => {
+        setDataSource(resp?.result);
+        // setCurrent(resp?.result?.data?.[0]);
+      });
   };
 
   const columns: ProColumns<any>[] = [

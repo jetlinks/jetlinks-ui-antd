@@ -196,11 +196,11 @@ export default (props: Props) => {
               },
               {
                 max: 65535,
-                message: '请输入0-65535之间的正整数',
+                message: '请输入1-65535之间的正整数',
               },
               {
-                min: 0,
-                message: '请输入0-65535之间的正整数',
+                min: 1,
+                message: '请输入1-65535之间的正整数',
               },
             ],
             'x-reactions': {
