@@ -778,7 +778,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
         }}
         type="primary"
         overlay={historyDom}
-        overlayStyle={{ height: 350, overflow: 'auto' }}
+        overlayStyle={{ maxHeight: 350, overflow: 'auto' }}
         htmlType={'submit'}
       >
         搜索

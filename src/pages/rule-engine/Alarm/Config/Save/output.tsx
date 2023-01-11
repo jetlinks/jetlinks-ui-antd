@@ -1,7 +1,7 @@
 import { Modal } from 'antd';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, Input, Switch } from '@formily/antd';
-import { createForm, onFormInit } from '@formily/core';
+import { createForm, Field, onFieldChange, onFormInit } from '@formily/core';
 import type { ISchema } from '@formily/json-schema';
 import { service } from '@/pages/rule-engine/Alarm/Config';
 import { onlyMessage } from '@/utils/util';
@@ -21,11 +21,31 @@ const OutputSave = (props: Props) => {
     effects() {
       onFormInit(async (f) => {
         if (data) {
+          console.log(data);
           f.setInitialValues({
             // ...data?.data?.config?.config,
             address: data?.data?.config?.config?.address,
             topic: data?.data?.config?.config?.topic,
             state: data?.data?.state?.value === 'enabled' ? true : false,
+          });
+        }
+      });
+      onFieldChange('state', (field, form1) => {
+        const value = (field as Field).value;
+        console.log(value);
+        if (value) {
+          form1.setFieldState('address', (state) => {
+            state.visible = true;
+          });
+          form1.setFieldState('topic', (state) => {
+            state.visible = true;
+          });
+        } else {
+          form1.setFieldState('address', (state) => {
+            state.visible = false;
+          });
+          form1.setFieldState('topic', (state) => {
+            state.visible = false;
           });
         }
       });
@@ -68,10 +88,22 @@ const OutputSave = (props: Props) => {
   const outputSchema: ISchema = {
     type: 'object',
     properties: {
+      state: {
+        title: '状态',
+        type: 'string',
+        // required: true,
+        'x-decorator': 'FormItem',
+        'x-component': 'Switch',
+        default: false,
+        'x-component-props': {
+          checkedChildren: '禁用',
+          unCheckedChildren: '启用',
+        },
+      },
       address: {
         title: 'kafka地址',
         type: 'string',
-        // required: true,
+        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
@@ -87,7 +119,7 @@ const OutputSave = (props: Props) => {
       topic: {
         title: 'topic',
         type: 'string',
-        // required: true,
+        required: true,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
         'x-component-props': {
@@ -99,18 +131,6 @@ const OutputSave = (props: Props) => {
             message: '最多可输入64个字符',
           },
         ],
-      },
-      state: {
-        title: '状态',
-        type: 'string',
-        // required: true,
-        'x-decorator': 'FormItem',
-        'x-component': 'Switch',
-        default: false,
-        'x-component-props': {
-          checkedChildren: '禁用',
-          unCheckedChildren: '启用',
-        },
       },
       // layout2: {
       //   type: 'void',
