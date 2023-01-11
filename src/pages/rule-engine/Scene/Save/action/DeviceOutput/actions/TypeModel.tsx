@@ -103,6 +103,7 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     setLabelValue(props.label);
+    console.log('-------', props.label);
   }, []);
 
   const renderNode = (type: string) => {
