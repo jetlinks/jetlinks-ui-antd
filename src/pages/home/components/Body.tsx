@@ -9,7 +9,7 @@ interface BodyProps {
   url?: string;
 }
 
-const defaultUrl = require('/public/images/home/content.png');
+const defaultUrl = require('/public/images/home/content1.svg');
 export default (props: BodyProps) => {
   return (
     <div className={classNames('home-body', props.className)}>
