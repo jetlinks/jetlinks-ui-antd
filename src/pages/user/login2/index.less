@@ -9,17 +9,20 @@
 // //   -moz-box-sizing: border-box;
 // //   -webkit-box-sizing: border-box;
 // // }
-html, body{
+html,
+body {
   padding: 0;
   margin: 0;
 }
-.login{
+
+.login {
   width: 100%;
   height: 100vh;
   background: url(./img/banner.jpeg) repeat;
   position: relative;
 }
-.bg1{
+
+.bg1 {
   background: #347ebc;
   width: 100%;
   height: 237px;
@@ -27,7 +30,8 @@ html, body{
   position: absolute;
   top: calc((100vh - 237px) / 2);
 }
-.gyl{
+
+.gyl {
   width: 510px;
   height: 237px;
   color: #FFFFFF;
@@ -39,14 +43,23 @@ html, body{
   bottom: 0px;
   margin: auto;
 }
-.gy2{
+
+.gy2 {
   color: #fff;
   margin-left: 6px;
   font-size: 18px;
   text-align: center;
   margin-top: 10px;
 }
-.box{
+
+.record {
+  color: #eeeeee7a;
+  position: absolute;
+  top: 96%;
+  left: 39%;
+}
+
+.box {
   width: 355px;
   position: absolute;
   top: 0px;
@@ -58,21 +71,24 @@ html, body{
   align-items: center;
   justify-content: center;
 }
-.box1{
+
+.box1 {
   width: 100%;
   background: #fff;
   box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.4);
   border-radius: 5px;
   padding: 10%;
 }
-.header{
+
+.header {
   width: 100%;
   height: 35px;
   color: #347ebc;
   font-size: 1.5rem;
   text-align: center;
 }
-.item{
+
+.item {
   width: 100%;
   display: flex;
   margin: 10px 0px;
@@ -95,23 +111,26 @@ html, body{
   line-height: 41px;
 }
 
-.remember{
+.remember {
   display: flex;
   margin: 10px 0px;
   height: 40px;
   align-items: center;
 }
-.remember_box{
+
+.remember_box {
   width: 200px;
   display: flex;
   height: 40px;
   align-items: center;
   justify-content: flex-start;
 }
-.remember .text{
+
+.remember .text {
   margin-left: 10px;
   width: 100px;
 }
+
 .login .btn {
   border: none;
   color: #fff;
@@ -121,19 +140,22 @@ html, body{
   text-indent: 0rem;
   height: 40px;
 }
-.avatar{
+
+.avatar {
   width: 100%;
   display: flex;
   justify-content: center;
   height: 150px;
-  .avatarx{
+
+  .avatarx {
     width: 100px;
     height: 100px;
     border: 1px solid lightgray;
     border-radius: 50%;
   }
 }
-.code{
+
+.code {
   width: 85px;
   height: 35px;
   position: absolute;
@@ -141,21 +163,24 @@ html, body{
   justify-content: space-around;
   right: 1.2rem;
 }
-.code_img{
+
+.code_img {
   width: 80px;
   height: 35px;
 }
+
 @media (min-width:0px) and (max-width:1400px) {
-  .box{
+  .box {
     width: 340px;
   }
-  .gyl{
-   width: 400px;
+
+  .gyl {
+    width: 400px;
   }
 }
 
 @media (min-width:400px) and (max-width:800px) {
-  .box{
+  .box {
     right: 20%;
     width: 320px;
     top: 0px;
@@ -164,7 +189,8 @@ html, body{
     margin: auto;
     left: 0px;
   }
-   .gyl{
+
+  .gyl {
     position: absolute;
     top: 40px;
     font-size: 72px;
@@ -174,18 +200,19 @@ html, body{
     margin: 0 auto;
     left: 0;
     right: 0;
-   }
-   .gy2{
+  }
+
+  .gy2 {
     width: 100%;
     padding: 0 50px;
     text-align: center;
     font-size: 13px;
     height: 60px;
-   }
+  }
 }
 
 @media (min-width:330px) and (max-width:420px) {
-  .box{
+  .box {
     right: 20%;
     width: 300px;
     top: 20px;
@@ -194,7 +221,8 @@ html, body{
     margin: auto;
     left: 0px;
   }
-  .gyl{
+
+  .gyl {
     position: absolute;
     top: 6%;
     font-size: 36px;
@@ -204,18 +232,20 @@ html, body{
     margin: 0 auto;
     left: 0;
     right: 0;
-   }
-   .gy2{
+  }
+
+  .gy2 {
     width: 100%;
     padding: 0 50px;
     text-align: center;
     font-size: 13px;
     height: 60px;
     color: rgba(0, 0, 0, 0);
-   }
+  }
 }
+
 @media (min-width:0px) and (max-width:330px) {
-  .box{
+  .box {
     right: 20%;
     width: 280px;
     top: 20px;
@@ -224,7 +254,8 @@ html, body{
     margin: auto;
     left: 0px;
   }
-  .gyl{
+
+  .gyl {
     position: absolute;
     top: 10%;
     font-size: 36px;
@@ -234,23 +265,24 @@ html, body{
     margin: 0 auto;
     left: 0;
     right: 0;
-   }
-   .gy2{
+  }
+
+  .gy2 {
     width: 100%;
     padding: 0 50px;
     text-align: center;
     font-size: 13px;
     height: 60px;
     color: rgba(0, 0, 0, 0);
-   }
+  }
 }
 
 @media (max-height: 600px) {
-  .gyl{
+  .gyl {
     top: 0;
     margin: 0 auto;
     left: 0;
     right: 0;
     position: absolute;
-   }
+  }
 }

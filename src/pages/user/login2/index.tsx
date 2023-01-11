@@ -182,6 +182,9 @@ const Login: React.FC<Props> = props => {
         <div className={style.gy2}>MQTT TCP CoAP HTTP , 多消息协议适配 , 可视化规则引擎
         </div>
       </div>
+      <a href={'https://beian.miit.gov.cn/#/Integrated/index'} target="_blank" rel="noopener noreferrer" className={style.record}>
+            备案：渝ICP备19017719号-1
+          </a>
       {/* style={{ height: enable ? '387px' : '330px' }} */}
       <div className={style.box}>
         <div className={style.box1} >
