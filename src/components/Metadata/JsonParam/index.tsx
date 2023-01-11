@@ -203,11 +203,12 @@ const JsonParam = observer((props: Props) => {
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
-                      enum: DataTypeList.filter((item) =>
-                        ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
-                          item.value,
-                        ),
-                      ),
+                      // enum: DataTypeList.filter((item) =>
+                      //   ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+                      //     item.value,
+                      //   ),
+                      // ),
+                      enum: DataTypeList,
                       'x-validator': [
                         {
                           required: true,

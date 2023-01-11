@@ -126,8 +126,8 @@ const Bind = observer((props: Props) => {
     AssetsModel.params = {};
   };
 
-  const getSelectedRowsKey = (selectedRows) => {
-    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
+  const getSelectedRowsKey = (selectedRows: any) => {
+    return selectedRows.map((item: any) => item?.id).filter((item2: any) => !!item2 !== false);
   };
 
   useEffect(() => {
@@ -308,15 +308,15 @@ const Bind = observer((props: Props) => {
                   resp.result.data.map((item: any) => item.id),
                 );
                 if (assetsResp.status === 200) {
-                  newData = newData.map((item: any) => {
-                    const assetsItem = assetsResp.result.find(
-                      (aItem: any) => (aItem.assetId = item.id),
-                    );
-                    return {
-                      ...item,
-                      ...assetsItem,
-                    };
-                  });
+                  newData = newData?.reduce((x: any, y: any) => {
+                    const id = assetsResp.result.find((item: any) => item.assetId === y.id);
+                    if (id) {
+                      Object.assign(id, y);
+                    } else {
+                      x.push(y);
+                    }
+                    return x;
+                  }, assetsResp.result);
                 }
               }
 
