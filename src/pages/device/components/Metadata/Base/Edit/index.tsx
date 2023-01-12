@@ -1240,9 +1240,9 @@ const Edit = observer((props: Props) => {
         }),
         'x-decorator': 'FormItem',
         'x-component': 'JsonParam',
-        'x-component-props': {
-          isFunction: true,
-        },
+        // 'x-component-props': {
+        //   isFunction: true,
+        // },
         'x-reactions': (field) => {
           field.setComponentProps({ keys: 'inputs' });
         },

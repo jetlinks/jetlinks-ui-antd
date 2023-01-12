@@ -1,4 +1,4 @@
-import { createForm } from '@formily/core';
+import { createForm, onFormInit } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { InstanceModel, service } from '@/pages/device/Instance';
 import type { ISchema } from '@formily/json-schema';
@@ -21,12 +21,47 @@ interface Props {
 
 const Edit = (props: Props) => {
   const { metadata } = props;
+  console.log(metadata);
   const params = useParams<{ id: string }>();
   const id = InstanceModel.detail?.id || params?.id;
 
   const form = createForm({
     validateFirst: true,
     initialValues: InstanceModel.detail?.configuration,
+    effects: () => {
+      onFormInit((f) => {
+        if (InstanceModel.detail.accessProvider === 'OneNet') {
+          metadata?.[0].properties?.forEach((item: any) => {
+            f.setFieldState(item.property, (state) => {
+              state.validator = [
+                {
+                  required: true,
+                  message: `请输入${item.name}`,
+                },
+              ];
+            });
+          });
+        }
+        if (InstanceModel.detail.accessProvider === 'Ctwing') {
+          f.setFieldState('ctwing_imei', (state) => {
+            state.validator = [
+              {
+                required: true,
+                message: `请输入IMEI`,
+              },
+            ];
+          });
+          f.setFieldState('ctwing_sn', (state) => {
+            state.validator = [
+              {
+                required: true,
+                message: `请输入SN`,
+              },
+            ];
+          });
+        }
+      });
+    },
   });
 
   const SchemaField = createSchemaField({

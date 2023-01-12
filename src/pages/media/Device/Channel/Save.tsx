@@ -153,6 +153,10 @@ const Save = (props: SaveModalProps) => {
                 message: '请输入视频地址',
               },
               {
+                max: 128,
+                message: '最多可输入128个字符',
+              },
+              {
                 validator: (value: string) => {
                   const reg = /(http|https|rtsp|rtmp):\/\/([\w.]+\/?)\S*/;
                   return new Promise((resolve) => {
