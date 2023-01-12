@@ -88,7 +88,7 @@ const Save = (props: SaveType) => {
             () => ({
               async validator(_, value) {
                 if (value) {
-                  const validateId = await isValidateId(value);
+                  const validateId = props.type === 'add' ? await isValidateId(value) : '';
                   if (validateId === '') {
                     return Promise.resolve();
                   } else {

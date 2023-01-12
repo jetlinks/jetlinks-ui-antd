@@ -37,7 +37,7 @@ const Bind = observer((props: Props) => {
   const [isAll, setIsAll] = useState<boolean>(false);
   const bindChecks = useRef(new Map());
 
-  const columns: ProColumns<ProductItem>[] = [
+  const columns: ProColumns<any>[] = [
     {
       dataIndex: 'id',
       title: 'ID',
@@ -54,6 +54,49 @@ const Bind = observer((props: Props) => {
       // },
     },
     {
+      title: '资产权限',
+      render: (_, record) => {
+        let disabled = true;
+        let disabledAll = true;
+        const assetsOptions =
+          props.assetsType && record.permissionInfoList
+            ? props.assetsType.filter((item: any) =>
+                record.permissionInfoList!.some((pItem: any) => pItem.id === item.value),
+              )
+            : [];
+        if (isAll && Models.bindKeys.includes(record.id)) {
+          disabled = true;
+          disabledAll = true;
+        } else if (!isAll && Models.bindKeys.includes(record.id)) {
+          disabled = false;
+          disabledAll = false;
+        } else {
+          disabled = true;
+          disabledAll = true;
+        }
+
+        return (
+          <Checkbox.Group
+            options={assetsOptions?.map((item: any) => {
+              return {
+                ...item,
+                disabled: item.disabled !== true ? disabled : item.disabled,
+              };
+            })}
+            value={checkAssets}
+            onChange={(e: any) => {
+              setCheckAssets(e);
+              if (!disabledAll) {
+                if (bindChecks.current.has(record.id)) {
+                  bindChecks.current.set(record.id, e);
+                }
+              }
+            }}
+          />
+        );
+      },
+    },
+    {
       dataIndex: 'describe',
       title: intl.formatMessage({
         id: 'pages.system.description',
@@ -61,6 +104,7 @@ const Bind = observer((props: Props) => {
       }),
       hideInSearch: true,
     },
+
     {
       title: '状态',
       dataIndex: 'state',
@@ -317,6 +361,7 @@ const Bind = observer((props: Props) => {
                     }
                     return x;
                   }, assetsResp.result);
+                  console.log('--------', newData);
                 }
               }
 

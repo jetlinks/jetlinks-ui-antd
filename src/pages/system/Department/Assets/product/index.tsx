@@ -119,7 +119,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'grantedPermissions',
       hideInSearch: true,
       render: (_, row) => {
-        return handlePermissionsMap(row.grantedPermissions, assetsType);
+        return handlePermissionsMap(row.grantedPermissions);
       },
       width: 80,
     },
