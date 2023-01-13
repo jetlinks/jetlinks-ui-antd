@@ -119,7 +119,7 @@ export default observer((props: { parentId: string }) => {
       dataIndex: 'grantedPermissions',
       hideInSearch: true,
       render: (_, row) => {
-        return handlePermissionsMap(row.grantedPermissions, assetsType);
+        return handlePermissionsMap(row.grantedPermissions);
       },
       width: 80,
     },
@@ -241,8 +241,8 @@ export default observer((props: { parentId: string }) => {
     Models.bindKeys = [];
     Models.unBindKeys = [];
   };
-  const getSelectedRowsKey = (selectedRows) => {
-    return selectedRows.map((item) => item?.id).filter((item2) => !!item2 !== false);
+  const getSelectedRowsKey = (selectedRows: any) => {
+    return selectedRows.map((item: any) => item?.id).filter((item2: any) => !!item2 !== false);
   };
 
   useEffect(() => {

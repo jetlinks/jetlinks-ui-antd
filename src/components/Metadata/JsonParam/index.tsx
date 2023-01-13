@@ -14,7 +14,8 @@ import Editable from '../EditTable';
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
   keys?: string;
-  isFunction?: boolean;
+  // isFunction?: boolean;
+  isFilter?: string;
 }
 
 const JsonParam = observer((props: Props) => {
@@ -203,11 +204,18 @@ const JsonParam = observer((props: Props) => {
                       required: true,
                       'x-decorator': 'FormItem',
                       'x-component': 'Select',
-                      enum: DataTypeList.filter((item) =>
-                        ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
-                          item.value,
-                        ),
-                      ),
+                      // enum: DataTypeList.filter((item) =>
+                      //   ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(
+                      //     item.value,
+                      //   ),
+                      // ),
+                      enum:
+                        props.isFilter === 'yes'
+                          ? DataTypeList.filter(
+                              (item) => item.value !== 'array' && item.value !== 'object',
+                            )
+                          : DataTypeList,
+                      // enum: DataTypeList,
                       'x-validator': [
                         {
                           required: true,
@@ -254,7 +262,7 @@ const JsonParam = observer((props: Props) => {
                       'x-decorator': 'FormItem',
                       'x-component': 'ArrayParam',
                       'x-component-props': {
-                        isFunction: props.isFunction,
+                        // isFunction: props.isFunction,
                       },
                       'x-reactions': {
                         dependencies: ['..valueType.type'],
@@ -301,9 +309,7 @@ const JsonParam = observer((props: Props) => {
                           dependencies: ['..valueType.type'],
                           fulfill: {
                             state: {
-                              visible:
-                                !props.isFunction &&
-                                "{{['int','float','long','double'].includes($deps[0])}}",
+                              visible: "{{['int','float','long','double'].includes($deps[0])}}",
                             },
                           },
                         },
@@ -367,9 +373,7 @@ const JsonParam = observer((props: Props) => {
                             dependencies: ['..type'],
                             fulfill: {
                               state: {
-                                visible:
-                                  !props.isFunction &&
-                                  "{{['string','password'].includes($deps[0])}}",
+                                visible: "{{['string','password'].includes($deps[0])}}",
                               },
                             },
                           },
@@ -405,7 +409,7 @@ const JsonParam = observer((props: Props) => {
                     dependencies: ['..valueType.type'],
                     fulfill: {
                       state: {
-                        visible: !props.isFunction && "{{['float','double'].includes($deps[0])}}",
+                        visible: "{{['float','double'].includes($deps[0])}}",
                       },
                     },
                   },
@@ -417,7 +421,8 @@ const JsonParam = observer((props: Props) => {
                   'x-decorator': 'FormItem',
                   'x-component': 'JsonParam',
                   'x-component-props': {
-                    isFunction: props.isFunction,
+                    // isFunction: props.isFunction,
+                    isFilter: 'yes',
                   },
                   'x-reactions': {
                     dependencies: ['.valueType.type'],

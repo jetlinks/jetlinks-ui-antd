@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import styles from './index.less';
 import { onlyMessage } from '@/utils/util';
 import { useOption } from '@/pages/rule-engine/Scene/Save/components/Buttons/index';
+import { FormModel } from '../..';
 
 type DropdownButtonOptions = {
   title: string;
@@ -92,13 +93,17 @@ const DropdownButton = (props: DropdownButtonProps) => {
 
   const DropdownRender = useMemo(() => {
     return (
-      <div className={styles['dropdown-content']}>
-        <Tree
-          selectedKeys={myValue ? [myValue] : []}
-          onSelect={treeSelect}
-          treeData={props.options}
-          fieldNames={props.fieldNames}
-        />
+      <div className={styles['dropdown-content']} style={{ background: '#fff', padding: '0 16px' }}>
+        {props.options.length !== 0 ? (
+          <Tree
+            selectedKeys={myValue ? [myValue] : []}
+            onSelect={treeSelect}
+            treeData={props.options}
+            fieldNames={props.fieldNames}
+          />
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        )}
       </div>
     );
   }, [props.options, myValue]);
@@ -142,7 +147,8 @@ const DropdownButton = (props: DropdownButtonProps) => {
       <div
         className={classNames(styles['dropdown-button'], props.className, typeClassName)}
         onClick={() => {
-          if (props.options.length === 0 && props.type !== 'termType') {
+          console.log(props.options, myValue, FormModel.current.trigger?.device);
+          if (!FormModel.current.trigger?.device && props.type !== 'termType') {
             onlyMessage('请先配置设备触发规则', 'warning');
           }
           if (props.options.length === 0 && props.type === 'termType') {

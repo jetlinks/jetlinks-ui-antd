@@ -328,6 +328,10 @@ const CardDetail = () => {
               <Descriptions.Item label={'卡号'}>{detail.id}</Descriptions.Item>
               <Descriptions.Item label={'ICCID'}>{detail.iccId}</Descriptions.Item>
               <Descriptions.Item label={'绑定设备'}>{detail.deviceName}</Descriptions.Item>
+              <Descriptions.Item label={'平台类型'}>
+                {detail.operatorPlatformType?.text}
+              </Descriptions.Item>
+              <Descriptions.Item label={'平台名称'}>{detail.platformConfigName}</Descriptions.Item>
               <Descriptions.Item label={'运营商'}>{detail.operatorName}</Descriptions.Item>
               <Descriptions.Item label={'类型'}>{detail.cardType?.text}</Descriptions.Item>
               <Descriptions.Item label={'激活日期'}>

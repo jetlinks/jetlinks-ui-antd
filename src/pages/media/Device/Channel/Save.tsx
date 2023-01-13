@@ -88,6 +88,12 @@ const Save = (props: SaveModalProps) => {
               gridSpan: 1,
               tooltip: '若不填写，系统将自动生成唯一ID',
             },
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
           name: {
             type: 'string',
@@ -147,6 +153,10 @@ const Save = (props: SaveModalProps) => {
                 message: '请输入视频地址',
               },
               {
+                max: 128,
+                message: '最多可输入128个字符',
+              },
+              {
                 validator: (value: string) => {
                   const reg = /(http|https|rtsp|rtmp):\/\/([\w.]+\/?)\S*/;
                   return new Promise((resolve) => {
@@ -198,6 +208,12 @@ const Save = (props: SaveModalProps) => {
             'x-decorator-props': {
               gridSpan: 1,
             },
+            'x-validator': [
+              {
+                max: 64,
+                message: '最多可输入64个字符',
+              },
+            ],
           },
           address: {
             type: 'string',

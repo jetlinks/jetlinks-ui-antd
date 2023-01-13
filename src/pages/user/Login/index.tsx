@@ -320,8 +320,14 @@ const Login: React.FC = () => {
             src={basis.backgroud || require('/public/images/login.png')}
             style={{ width: '100%', height: '100%' }}
           />
-          {/*<div className={styles.systemName}>{SystemConst.SYSTEM_NAME}</div>*/}
-          {/*<div className={styles.systemDesc}>OPEN SOURCE INTERNET OF THINGS BASIC PLATFORM</div>*/}
+          <a
+            href={'https://beian.miit.gov.cn/#/Integrated/index'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.records}
+          >
+            备案：渝ICP备19017719号-1
+          </a>
         </div>
       </div>
     </Spin>

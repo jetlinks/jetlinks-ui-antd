@@ -557,7 +557,7 @@ const Detail = observer(() => {
 
   registerValidateRules({
     batchCheckEmail(value) {
-      const regEmail = /^([A-Za-z0-9_\-\.])+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+      const regEmail = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
       let error;
       if (value) {
         value.some((item: string) => {

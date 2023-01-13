@@ -1,7 +1,7 @@
 import './index.less';
-import { message } from 'antd';
 import useHistory from '@/hooks/route/useHistory';
 import Title from './Title';
+import { onlyMessage } from '@/utils/util';
 
 const Image = {
   1: require('/public/images/home/1.png'),
@@ -31,7 +31,7 @@ const GuideItem = (props: GuideItemProps) => {
     if (props.url && props.auth) {
       history.push(`${props.url}`, props.param);
     } else {
-      message.warning('暂无权限，请联系管理员');
+      onlyMessage('暂无权限，请联系管理员', 'warning');
     }
   };
 

@@ -13,5 +13,8 @@ export type CardManagement = {
   activationDate: string;
   updateTime: string;
   cardStateType: any;
+  cardState: any;
   describe: string;
+  platformConfigName: string;
+  operatorPlatformType: any;
 };

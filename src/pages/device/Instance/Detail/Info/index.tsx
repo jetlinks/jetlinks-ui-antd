@@ -123,7 +123,7 @@ const Info = observer(() => {
               defaultMessage: '连接协议',
             })}
           >
-            {InstanceModel.detail?.protocolName}
+            {InstanceModel.detail?.transport}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({
@@ -131,7 +131,7 @@ const Info = observer(() => {
               defaultMessage: '消息协议',
             })}
           >
-            {InstanceModel.detail?.transport}
+            {InstanceModel.detail?.protocolName}
           </Descriptions.Item>
           <Descriptions.Item
             label={intl.formatMessage({

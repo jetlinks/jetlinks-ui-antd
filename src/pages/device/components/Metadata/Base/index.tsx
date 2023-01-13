@@ -21,6 +21,7 @@ import { PermissionButton } from '@/components';
 import { onlyMessage } from '@/utils/util';
 import { message } from 'antd';
 import { InstanceModel, service as instanceService } from '@/pages/device/Instance';
+import { service as productService } from '@/pages/device/Product';
 
 interface Props {
   type: MetadataType;
@@ -129,9 +130,17 @@ const BaseMetadata = observer((props: Props) => {
   ];
 
   const initData = useCallback(async () => {
-    const result = await DB.getDB().table(`${type}`).toArray();
-    console.log(result);
-    setData(result.sort((a, b) => b?.sortsIndex - a?.sortsIndex));
+    // const result = await DB.getDB().table(`${type}`).toArray();
+    const resp =
+      target === 'product'
+        ? await productService.detail(param.id)
+        : await instanceService.detail(param.id);
+    if (resp.status === 200) {
+      InstanceModel.detail = resp?.result || [];
+      const item = JSON.parse(resp.result?.metadata || '{}');
+      // console.log(item)
+      setData(item[type]?.sort((a: any, b: any) => b?.sortsIndex - a?.sortsIndex));
+    }
   }, [param.id, type]);
 
   useEffect(() => {

@@ -3,6 +3,7 @@ import SystemConst from '@/utils/const';
 
 class DexieDB {
   public db: Dexie;
+  public id: string | undefined;
 
   constructor() {
     this.db = new Dexie(SystemConst.API_BASE);
@@ -15,15 +16,17 @@ class DexieDB {
       functions: 'id,name',
       tags: 'id,name',
     });
+    this.id = undefined;
   }
 
-  getDB() {
+  getDB(id?: string) {
+    this.id = id;
     if (this.db && this.db?.verno === 0) {
       // 考虑优化
       // 获取不到真实的数据库版本
       // 所以当获取到的数据库版本号为0则删除数据库重新初始化
       this.db.delete();
-      this.db = new Dexie(SystemConst.API_BASE);
+      this.db = new Dexie(`${SystemConst.API_BASE}_${id}`);
       this.db.version(1);
       return this.db;
     }
@@ -36,11 +39,11 @@ class DexieDB {
    * @param extendedSchema
    */
   updateSchema = async (extendedSchema: Record<string, string | null>) => {
-    await this.getDB().close();
-    await this.getDB()
+    await this.getDB(this.id!).close();
+    await this.getDB(this.id!)
       .version(this.db.verno + 1)
       .stores(extendedSchema);
-    return this.getDB().open();
+    return this.getDB(this.id!).open();
   };
 }
 

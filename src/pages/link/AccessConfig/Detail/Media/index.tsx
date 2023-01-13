@@ -247,6 +247,10 @@ const Media = (props: Props) => {
                   required: true,
                   message: '请输入SIP域',
                 },
+                {
+                  max: 64,
+                  message: '最大可输入64个字符',
+                },
               ],
             },
             'configuration.sipId': {
@@ -264,6 +268,10 @@ const Media = (props: Props) => {
                 {
                   required: true,
                   message: '请输入SIP ID',
+                },
+                {
+                  max: 64,
+                  message: '最大可输入64个字符',
                 },
               ],
             },

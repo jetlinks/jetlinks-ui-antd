@@ -285,7 +285,7 @@ const Device = () => {
                           ? '设备已禁用'
                           : '',
                     }
-                  : undefined
+                  : { title: '更新通道' }
               }
               key={'updateChannel'}
               isPermission={permission.update}

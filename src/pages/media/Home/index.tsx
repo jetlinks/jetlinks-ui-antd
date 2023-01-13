@@ -1,5 +1,5 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import { Col, message, Row, Tooltip } from 'antd';
+import { Col, Row, Tooltip } from 'antd';
 import { PermissionButton } from '@/components';
 import { getMenuPathByCode } from '@/utils/menu';
 import useHistory from '@/hooks/route/useHistory';
@@ -11,6 +11,7 @@ import DeviceModal from './deviceModal';
 import './index.less';
 import { Body, Guide, Statistics } from '@/pages/home/components';
 import Steps from '@/pages/home/components/Steps';
+import { onlyMessage } from '@/utils/util';
 
 const permissionTip = '暂无权限，请联系管理员';
 
@@ -44,7 +45,7 @@ export default () => {
         save: true,
       });
     } else {
-      message.warning(permissionTip);
+      onlyMessage(permissionTip, 'warning');
     }
   };
 
@@ -52,7 +53,7 @@ export default () => {
     if (splitScreenUrl) {
       history.push(splitScreenUrl);
     } else {
-      message.warning(permissionTip);
+      onlyMessage(permissionTip, 'warning');
     }
   };
 
@@ -60,7 +61,7 @@ export default () => {
     if (channelUrl) {
       setVisible(true);
     } else {
-      message.warning(permissionTip);
+      onlyMessage(permissionTip, 'warning');
     }
   };
 
@@ -124,7 +125,7 @@ export default () => {
                     if (!!dashBoardUrl) {
                       history.push(`${dashBoardUrl}`);
                     } else {
-                      message.warning('暂无权限，请联系管理员');
+                      onlyMessage('暂无权限，请联系管理员', 'warning');
                     }
                   }}
                 >
