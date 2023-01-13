@@ -80,6 +80,13 @@ class Service extends BaseService<ChannelItem> {
   // 播放云端回放
   playbackStart = (recordId: string) =>
     request(`${this.uri}/record/${recordId}.mp4`, { method: 'GET' });
+
+  // 检验通道ID唯一性
+  isChannelId = (params: any) =>
+    request(`${this.uri}/channel/channelId/_validate`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;
