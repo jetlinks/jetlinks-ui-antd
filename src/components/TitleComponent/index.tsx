@@ -8,7 +8,7 @@ interface TitleComponentProps {
 }
 const TitleComponent = (props: TitleComponentProps) => {
   return (
-    <div className="title" style={props.style}>
+    <div className="title" style={{ ...props.style, marginBottom: 16 }}>
       <div className={'title-content'}>
         {/*<div className={'title-before'}></div>*/}
         {/*<span></span>*/}

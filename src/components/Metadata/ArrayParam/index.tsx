@@ -50,8 +50,9 @@ const ArrayParam = (props: Props) => {
             title: '元素类型',
             'x-decorator': 'FormItem',
             'x-component': 'Select',
-            enum: DataTypeList.filter((item) =>
-              ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(item.value),
+            enum: DataTypeList.filter(
+              (item) => item.value !== 'array' && item.value !== 'object',
+              // ['int', 'long', 'float', 'double', 'string', 'boolean', 'date'].includes(item.value),
             ),
             'x-validator': [
               {

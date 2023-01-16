@@ -18,6 +18,7 @@ const server = new Server();
 export default (props: UpdateModalProps) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState<any>([]);
 
   const saveData = useCallback(async () => {
     const data = form.getFieldsValue();
@@ -59,6 +60,10 @@ export default (props: UpdateModalProps) => {
         permissions: props.permissions,
       });
     }
+    // console.log('1------------', props.assetsType)
+    // console.log('2------------', props.permissions)
+    const item = props.assetsType.filter((it: any) => props.permissions.indexOf(it.value) > -1);
+    setOptions(item);
   }, [props.permissions, form]);
 
   return (
@@ -72,7 +77,7 @@ export default (props: UpdateModalProps) => {
     >
       <Form form={form}>
         <Form.Item name="permissions" label="资产权限" required>
-          <Checkbox.Group options={props.assetsType} />
+          <Checkbox.Group options={options} />
         </Form.Item>
       </Form>
     </Modal>
