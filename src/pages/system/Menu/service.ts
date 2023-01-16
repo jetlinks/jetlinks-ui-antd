@@ -36,6 +36,12 @@ class Service extends BaseService<MenuItem> {
     request(`${SystemConst.API_BASE}/system/resources/permission`, {
       method: 'GET',
     });
+  //判断编码唯一性
+  isCode = (params: any) =>
+    request(`${SystemConst.API_BASE}/menu/code/_validate`, {
+      method: 'GET',
+      params,
+    });
 }
 
 export default Service;

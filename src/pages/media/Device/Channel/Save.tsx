@@ -1,5 +1,5 @@
 // Modal 弹窗，用于新增、修改数据
-import { createForm } from '@formily/core';
+import { createForm, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Form, FormGrid, FormItem, FormTab, Input, Select, Password } from '@formily/antd';
 import { Modal } from 'antd';
@@ -38,6 +38,33 @@ const Save = (props: SaveModalProps) => {
 
   const form = createForm({
     validateFirst: true,
+  });
+
+  registerValidateRules({
+    async isChanelId(value: string) {
+      if (!value) return '';
+      if (String(value).length > 64) {
+        return {
+          type: 'error',
+          message: '最多可输入64个字符',
+        };
+      } else {
+        const res = await service.isChannelId({
+          deviceId: props.deviceId,
+          channelId: value,
+        });
+        if (res.status === 200) {
+          const msg = res.result.passed
+            ? ''
+            : {
+                type: 'error',
+                message: '该ID已存在',
+              };
+          return msg;
+        }
+      }
+      return '';
+    },
   });
 
   useEffect(() => {
@@ -88,12 +115,7 @@ const Save = (props: SaveModalProps) => {
               gridSpan: 1,
               tooltip: '若不填写，系统将自动生成唯一ID',
             },
-            'x-validator': [
-              {
-                max: 64,
-                message: '最多可输入64个字符',
-              },
-            ],
+            'x-validator': { isChanelId: true },
           },
           name: {
             type: 'string',

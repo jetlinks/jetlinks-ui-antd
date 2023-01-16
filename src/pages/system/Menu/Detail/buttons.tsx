@@ -320,6 +320,23 @@ export default (props: ButtonsProps) => {
                     callback();
                   },
                 },
+                // () => ({
+                //   async validator(_, value) {
+                //     if(!!id){
+
+                //     }
+                //     if (value) {
+                //       const validateId = id ? await isValidateId(value) : '';
+                //       if (validateId === '') {
+                //         return Promise.resolve();
+                //       } else {
+                //         return Promise.reject(new Error(`${validateId}`));
+                //       }
+                //     } else {
+                //       return Promise.reject(new Error('请输入卡号'));
+                //     }
+                //   },
+                // }),
               ]}
             >
               <Input disabled={!!(disabled || id)} placeholder={'请输入编码'} />
