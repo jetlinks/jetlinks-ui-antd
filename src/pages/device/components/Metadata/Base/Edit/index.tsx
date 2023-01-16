@@ -242,11 +242,11 @@ const Edit = observer((props: Props) => {
                   label: 'object(结构体)',
                 },
               ]
-            : MetadataModel.type === 'functions'
-            ? DataTypeList.filter((item) => item.value !== 'file')
-            : MetadataModel.type === 'tags'
-            ? DataTypeList.filter((item) => item.value !== 'file' && item.value !== 'password')
-            : DataTypeList,
+            : // : MetadataModel.type === 'functions'
+              // ? DataTypeList.filter((item) => item.value !== 'file')
+              // : MetadataModel.type === 'tags'
+              // ? DataTypeList.filter((item) => item.value !== 'file' && item.value !== 'password')
+              DataTypeList,
       },
       unit: {
         title: intl.formatMessage({
