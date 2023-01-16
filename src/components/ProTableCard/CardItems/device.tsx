@@ -117,7 +117,7 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
                     options={assetsOptions?.map((item) => {
                       return {
                         ...item,
-                        disabled: disabled,
+                        disabled: item.disabled !== true ? disabled : item.disabled,
                       };
                     })}
                     value={assetKeys}

@@ -14,7 +14,7 @@ import Editable from '../EditTable';
 // 不算是自定义组件。只是抽离了JSONSchema
 interface Props {
   keys?: string;
-  // isFunction?: boolean;
+  isFunction?: boolean;
   isFilter?: string;
 }
 
@@ -209,12 +209,11 @@ const JsonParam = observer((props: Props) => {
                       //     item.value,
                       //   ),
                       // ),
-                      enum:
-                        props.isFilter === 'yes'
-                          ? DataTypeList.filter(
-                              (item) => item.value !== 'array' && item.value !== 'object',
-                            )
-                          : DataTypeList,
+                      enum: !props.isFunction
+                        ? DataTypeList.filter(
+                            (item) => item.value !== 'array' && item.value !== 'object',
+                          )
+                        : DataTypeList,
                       // enum: DataTypeList,
                       'x-validator': [
                         {
