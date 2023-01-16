@@ -34,7 +34,7 @@ const Bind = observer((props: Props) => {
   const [searchParam, setSearchParam] = useState({});
   const [loading, setLoading] = useState(false);
   const [checkAssets, setCheckAssets] = useState<string[]>(['read']);
-  const [isAll, setIsAll] = useState<boolean>(false);
+  const [isAll, setIsAll] = useState<boolean>(true);
   const bindChecks = useRef(new Map());
 
   const columns: ProColumns<any>[] = [
@@ -199,7 +199,9 @@ const Bind = observer((props: Props) => {
           <Switch
             checkedChildren="开"
             unCheckedChildren="关"
+            defaultChecked={true}
             onChange={(e) => {
+              console.log(e);
               setIsAll(e);
               Store.set('assets-product', {
                 isAll: e,
@@ -209,23 +211,26 @@ const Bind = observer((props: Props) => {
             }}
           />
         </div>
-        <div>
-          <Checkbox.Group
-            options={props.assetsType}
-            value={checkAssets}
-            onChange={(e: any) => {
-              Store.set('assets-product', {
-                isAll: isAll,
-                assets: e,
-                bindKeys: Models.bindKeys,
-              });
-              bindChecks.current.forEach((_, key) => {
-                bindChecks.current.set(key, e);
-              });
-              setCheckAssets(e);
-            }}
-          />
-        </div>
+        {isAll && (
+          <div>
+            <Checkbox.Group
+              options={props.assetsType}
+              value={checkAssets}
+              onChange={(e: any) => {
+                Store.set('assets-product', {
+                  isAll: isAll,
+                  assets: e,
+                  bindKeys: Models.bindKeys,
+                });
+                bindChecks.current.forEach((_, key) => {
+                  bindChecks.current.set(key, e);
+                });
+                setCheckAssets(e);
+              }}
+            />
+          </div>
+        )}
+
         {/*<PermissionModal*/}
         {/*  type="product"*/}
         {/*  parentId={props.parentId}*/}
@@ -304,14 +309,28 @@ const Bind = observer((props: Props) => {
               //     productId: selectedRows.map((item) => item.id),
               //   };
               // },
-              onSelect: (record, selected, selectedRows) => {
+              onSelect: (record: any, selected, selectedRows) => {
                 if (selected) {
-                  Models.bindKeys = [
-                    ...new Set([...Models.bindKeys, ...getSelectedRowsKey(selectedRows)]),
-                  ];
-                  bindChecks.current.set(record.id, checkAssets);
+                  // console.log('---------',record.permissionInfoList)
+                  const isShare = record.permissionInfoList.find(
+                    (item: any) => item.id === 'share',
+                  );
+                  if (isShare && isShare.length !== 0) {
+                    Models.bindKeys = [
+                      ...new Set([...Models.bindKeys, ...getSelectedRowsKey(selectedRows)]),
+                    ];
+                    bindChecks.current.set(record.id, checkAssets);
+                  } else {
+                    onlyMessage('该资产不支持共享', 'warning');
+                  }
                 } else {
                   Models.bindKeys = Models.bindKeys.filter((item) => item !== record.id);
+                  bindChecks.current.set(record.id, ['read']);
+                  Store.set('assets-product', {
+                    isAll: false,
+                    id: record.id,
+                    delete: true,
+                  });
                   bindChecks.current.delete(record.id);
                 }
                 Store.set('assets-product', {
@@ -325,9 +344,11 @@ const Bind = observer((props: Props) => {
               },
               onSelectAll: (selected, selectedRows, changeRows) => {
                 if (selected) {
-                  Models.bindKeys = [
-                    ...new Set([...Models.bindKeys, ...getSelectedRowsKey(selectedRows)]),
-                  ];
+                  const arr = selectedRows.filter(
+                    (item: any) => !!item.permissionInfoList.find((it: any) => it.id === 'share'),
+                  );
+                  // console.log(arr)
+                  Models.bindKeys = [...new Set([...Models.bindKeys, ...getSelectedRowsKey(arr)])];
                 } else {
                   const unChangeRowsKeys = getSelectedRowsKey(changeRows);
                   Models.bindKeys = Models.bindKeys

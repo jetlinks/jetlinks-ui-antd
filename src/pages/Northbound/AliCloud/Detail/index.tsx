@@ -448,7 +448,7 @@ const Detail = observer(() => {
       <Card>
         <Row gutter={24}>
           <Col span={14}>
-            <TitleComponent data={'基本信息'} />
+            <TitleComponent data={'基本信息'} style={{ marginBottom: 16 }} />
             <Form form={form} layout="vertical">
               <SchemaField
                 schema={schema}

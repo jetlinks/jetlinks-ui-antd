@@ -107,7 +107,7 @@ export const ExtraProductCard = (props: ProductCardProps) => {
   const [assetKeys, setAssetKeys] = useState<string[]>(['read']);
   const [disabled, setDisabled] = useState(true);
   const disabledRef = useRef<boolean>(true);
-  console.log(props.assetsOptions, props.permissionInfoList);
+  // console.log(props.assetsOptions, props.permissionInfoList);
   const assetsOptions =
     props.assetsOptions && props.permissionInfoList
       ? props.assetsOptions.filter((item: any) =>
@@ -121,9 +121,12 @@ export const ExtraProductCard = (props: ProductCardProps) => {
         setAssetKeys(data.assets);
         setDisabled(true);
         disabledRef.current = true;
-      } else if (!data.isAll && data.bindKeys.includes(props.id)) {
+      } else if (!data.isAll && data.bindKeys?.includes(props.id)) {
         setDisabled(false);
         disabledRef.current = false;
+      } else if (!data.isAll && data.delete && props.id === data.id) {
+        console.log(data);
+        setAssetKeys(['read']);
       } else {
         setDisabled(true);
         disabledRef.current = true;
@@ -187,7 +190,7 @@ export const ExtraProductCard = (props: ProductCardProps) => {
                     })}
                     value={assetKeys}
                     onChange={(e) => {
-                      console.log('assetKeys', disabledRef.current, assetKeys, e);
+                      console.log('assetKeys', assetKeys, e);
                       if (!disabledRef.current) {
                         setAssetKeys(e as string[]);
                         props.onAssetsChange?.(e);

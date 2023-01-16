@@ -390,7 +390,7 @@ const Config = () => {
     <Row>
       <Col span={14}>
         <Card style={{ height: 780 }}>
-          <TitleComponent data={'告警级别配置'} />
+          <TitleComponent data={'告警级别配置'} style={{ marginBottom: 16 }} />
           <Form form={levelForm}>
             <SchemaField schema={levelSchema} />
             <PermissionButton
