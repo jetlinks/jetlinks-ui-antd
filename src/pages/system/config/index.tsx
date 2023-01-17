@@ -13,7 +13,7 @@ import logo from '../../../assets/icon.png';
 
 interface Props extends FormComponentProps {
     dispatch: Dispatch;
-    settings: DefaultSettings
+    settings: DefaultSettings | any
 }
 const Config: React.FC<Props> = props => {
     const [loading, setLoading] = useState(false);
@@ -103,6 +103,15 @@ const Config: React.FC<Props> = props => {
                                                 <Select.Option value="light">light</Select.Option>
                                                 <Select.Option value="dark">dark</Select.Option>
                                             </Select>
+                                        )}
+                                    </Form.Item>
+                                    <Form.Item
+                                        label="备案信息"
+                                    >
+                                        {getFieldDecorator('record', {
+                                            initialValue: settings.record || ''
+                                        })(
+                                            <Input />
                                         )}
                                     </Form.Item>
                                     {/* <Form.Item
