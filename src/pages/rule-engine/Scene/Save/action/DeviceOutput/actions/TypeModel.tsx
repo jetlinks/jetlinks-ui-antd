@@ -1,5 +1,5 @@
 import ParamsSelect, { ItemProps } from '@/pages/rule-engine/Scene/Save/components/ParamsSelect';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Input, InputNumber, Select, Tree } from 'antd';
 import MTimePicker from '../../../components/ParamsSelect/components/MTimePicker';
 import moment from 'moment';
@@ -36,14 +36,8 @@ export default observer((props: Props) => {
   const [builtInList, setBuiltInList] = useState<any[]>([]);
   const [labelValue, setLabelValue] = useState<any>('');
   const [open, setOpen] = useState<boolean>(false);
+  const optionMap = useRef<Map<string, any>>(new Map());
 
-  const filterLabel = (nodes: any[]) => {
-    let lable: any;
-    nodes.forEach((item) => {
-      lable = item.children?.find((it: any) => it.id === props.value);
-    });
-    return lable?.description;
-  };
   const filterParamsData = (type?: string, data?: any[]): any[] => {
     if (type && data) {
       return data.filter((item) => {
@@ -52,6 +46,7 @@ export default observer((props: Props) => {
           item.children = _children;
           return _children.length ? true : false;
         } else if (item.type === type) {
+          optionMap.current.set(item.id, item);
           return true;
         }
         return false;
@@ -69,14 +64,14 @@ export default observer((props: Props) => {
     };
     queryBuiltInParams(FormModel.current, _params).then((res: any) => {
       if (res.status === 200) {
+        optionMap.current.clear();
         const _data = BuiltInParamsHandleTreeData(res.result);
         const filterData = filterParamsData(props.type, _data);
-        // console.log('_data', _data);
-        // console.log('filterData', filterData);
-        // console.log('type',props.type)
         setBuiltInList(filterData);
-        const label = filterLabel(filterData);
-        setLabelValue(label);
+        if (props.value) {
+          const label = optionMap.current.get(props.value);
+          setLabelValue(label?.description);
+        }
       }
     });
   };
@@ -98,13 +93,15 @@ export default observer((props: Props) => {
   useEffect(() => {
     setValue(props.value);
     // setLabelValue(props.label);
-    // console.log('typemodel', props.value);
   }, [props.value]);
 
   useEffect(() => {
     setLabelValue(props.label);
-    console.log('-------', props.label);
   }, []);
+
+  useEffect(() => {
+    DeviceModel.actionName = labelValue;
+  }, [labelValue]);
 
   const renderNode = (type: string) => {
     switch (type) {

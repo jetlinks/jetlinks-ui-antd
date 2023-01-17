@@ -28,7 +28,7 @@ export default (props: Props) => {
   const ref = useRef<any>('');
 
   useEffect(() => {
-    // console.log(props.value);
+    // console.log('props.value----',props.value,props.properties);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -41,7 +41,6 @@ export default (props: Props) => {
             setPropertiesValue(props.value[key].value);
             setSource(props.value[key].source);
             const propertiesItem = props.properties.find((item: any) => item.id === key);
-            // console.log(propertiesItem,'11111111')
             if (propertiesItem) {
               setPropertiesType(propertiesItem.valueType.type);
               if (propertiesItem.valueType.type === 'enum') {
@@ -51,7 +50,6 @@ export default (props: Props) => {
                   (item: any) => item.value === props.value[key].value,
                 )?.text;
                 setLabel(text);
-                // console.log(text);
               }
             }
           });
@@ -63,7 +61,7 @@ export default (props: Props) => {
   }, [props.properties]);
 
   useEffect(() => {
-    if (props.onChange) {
+    if (props.onChange && propertiesValue) {
       const obj = {
         [propertiesId || 0]: {
           value: propertiesValue,

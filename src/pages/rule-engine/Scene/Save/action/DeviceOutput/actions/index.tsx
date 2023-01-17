@@ -94,6 +94,7 @@ export default observer((props: Props) => {
     if (DeviceModel.message.functionId) {
       setFunctionId(DeviceModel.message.functionId);
     }
+    console.log('DeviceModel.message----------', DeviceModel.message);
   }, [DeviceModel.message]);
 
   useEffect(() => {
@@ -187,6 +188,7 @@ export default observer((props: Props) => {
           <Form.Item
             name={['message', 'properties']}
             label="设置属性"
+            required
             rules={[
               // { required: true, message: '请选择属性' },
               () => ({
@@ -212,7 +214,7 @@ export default observer((props: Props) => {
               }}
               onChange={(value, text, valueLable) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
-                console.log(item);
+                // console.log(item);
                 DeviceModel.propertiesName = text;
                 if (valueLable) {
                   DeviceModel.propertiesValue = valueLable;

@@ -166,7 +166,7 @@ export default observer((props: Props) => {
     if (_options.selector === 'variable') {
       _options.name = DeviceModel.selectorValues?.[0]?.name;
     }
-    console.log('----------', item, _options, DeviceModel.propertiesValue);
+    // console.log('----------', item, _options, DeviceModel.propertiesValue);
     props.save(item, _options);
     init();
   };

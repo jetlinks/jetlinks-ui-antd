@@ -29,6 +29,7 @@ import { onlyMessage } from '@/utils/util';
 import Parsing from './Parsing';
 import EdgeMap from './EdgeMap';
 import MapChannel from './MapChannel';
+import { service as api } from '../../Product/index';
 
 export const deviceStatus = new Map();
 deviceStatus.set('online', <Badge status="success" text={'在线'} />);
@@ -327,13 +328,19 @@ const InstanceDetail = observer(() => {
                 placement: 'topLeft',
               }}
               isPermission={!!getMenuPathByCode(MENUS_CODE['device/Product'])}
-              onClick={() => {
-                const url = getMenuPathByParams(
-                  MENUS_CODE['device/Product/Detail'],
-                  InstanceModel.detail?.productId,
-                );
-                if (url) {
-                  history.replace(url);
+              onClick={async () => {
+                if (InstanceModel.detail?.productId) {
+                  //为了判断资产权限
+                  const res = await api.detail(InstanceModel.detail?.productId);
+                  if (res.status === 200) {
+                    const url = getMenuPathByParams(
+                      MENUS_CODE['device/Product/Detail'],
+                      InstanceModel.detail?.productId,
+                    );
+                    if (url) {
+                      history.replace(url);
+                    }
+                  }
                 }
               }}
             >

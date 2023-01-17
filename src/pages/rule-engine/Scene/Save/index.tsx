@@ -37,8 +37,8 @@ export const defaultBranches = [
     key: 'branches_1',
     shakeLimit: {
       enabled: false,
-      time: 0,
-      threshold: 0,
+      time: 1,
+      threshold: 1,
       alarmFirst: false,
     },
     then: [],
