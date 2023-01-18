@@ -28,7 +28,7 @@ export default (props: Props) => {
   const ref = useRef<any>('');
 
   useEffect(() => {
-    // console.log('props.value----',props.value,props.properties);
+    // console.log('props.value----', props.value);
     if (props.value) {
       if (props.properties && props.properties.length) {
         if (0 in props.value) {
@@ -37,8 +37,12 @@ export default (props: Props) => {
           setPropertiesValue(undefined);
         } else {
           Object.keys(props.value).forEach((key: string) => {
+            const it =
+              props.value[key].source === 'fixed'
+                ? props.value[key]?.value
+                : props.value[key]?.upperKey;
             setPropertiesId(key);
-            setPropertiesValue(props.value[key].value);
+            setPropertiesValue(it);
             setSource(props.value[key].source);
             const propertiesItem = props.properties.find((item: any) => item.id === key);
             if (propertiesItem) {
@@ -68,11 +72,17 @@ export default (props: Props) => {
           source: source,
         },
       };
+      const upperObj = {
+        [propertiesId || 0]: {
+          upperKey: propertiesValue,
+          source: source,
+        },
+      };
       //处理枚举外部回显
       if (ref.current) {
-        props.onChange(obj, textRef.current, ref.current);
+        props.onChange(source === 'upper' ? upperObj : obj, textRef.current, ref.current);
       } else {
-        props.onChange(obj, textRef.current);
+        props.onChange(source === 'upper' ? upperObj : obj, textRef.current);
       }
     }
   }, [propertiesValue, source]);
@@ -133,7 +143,7 @@ export default (props: Props) => {
               }
             }}
             onChange={(value, sources, text) => {
-              // console.log(value, sources);
+              console.log(value, sources);
               // console.log(text);
               ref.current = text;
               setPropertiesValue(value);

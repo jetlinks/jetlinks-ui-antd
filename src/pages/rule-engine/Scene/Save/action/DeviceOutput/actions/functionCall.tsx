@@ -25,7 +25,7 @@ export default (props: FunctionCallProps) => {
   const formRef = useRef<ProFormInstance<any>>();
 
   useEffect(() => {
-    console.log(props.value, props.functionData);
+    // console.log(props.value, props.functionData);
     if (props.functionData && props.functionData.length) {
       setEditableRowKeys(props.functionData.map((d) => d.id));
       if (props.value) {
@@ -56,6 +56,7 @@ export default (props: FunctionCallProps) => {
 
   const getItemNode = (record: any) => {
     const type = record.type;
+    // console.log('------', record)
     return (
       <TypeModel
         value={record.value}
@@ -65,6 +66,20 @@ export default (props: FunctionCallProps) => {
         branchGroup={props.branchGroup}
         thenName={props.thenName}
         format={record?.format}
+        onChange={(value, source) => {
+          record.source = source;
+          record.value = value;
+          record.upperKey = value;
+          // props.onChange(value)
+          // const arr = data.filter((item:any)=>item.id!==record.id)
+          // console.log('-----typeModel', arr, record,[record],data)
+          // formRef.current?.setFieldsValue({
+          //   table: [
+          //     ...arr,
+          //     record
+          //   ],
+          // });
+        }}
       />
     );
   };
@@ -100,7 +115,7 @@ export default (props: FunctionCallProps) => {
       submitter={false}
       onValuesChange={() => {
         const values = formRef.current?.getFieldsValue();
-        // console.log(values, 'values');
+        // console.log(values.table, 'values');
         if (props.onChange) {
           props.onChange(
             values.table.map((item: any) => ({

@@ -378,7 +378,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               ValueRef.current.value = v;
               if (!!metricsOptions.length) {
                 if (DoubleFilter.includes(termType)) {
-                  labelCache.current[2] = { 0: v?.value[0], 1: v?.value[1] };
+                  labelCache.current[2] = { 0: v?.value?.[0], 1: v?.value[1] };
                 } else {
                   labelCache.current[2] = { 0: lb };
                 }
