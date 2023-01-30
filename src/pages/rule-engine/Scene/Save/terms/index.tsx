@@ -73,8 +73,8 @@ export default observer((props: Props) => {
             key: 'branches_' + key,
             shakeLimit: {
               enabled: false,
-              time: 0,
-              threshold: 0,
+              time: 1,
+              threshold: 1,
               alarmFirst: false,
             },
             then: [],

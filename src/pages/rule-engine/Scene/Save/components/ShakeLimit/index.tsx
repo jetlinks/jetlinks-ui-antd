@@ -40,13 +40,18 @@ export default (props: ShakeLimitProps) => {
   };
 
   const timeChange = (value: number | null) => {
-    setTime(value);
-    props.onChange?.('time', value);
+    if (value) {
+      setTime(value);
+      props.onChange?.('time', value);
+      console.log(value);
+    }
   };
 
   const thresholdChange = (value: number | null) => {
-    setThreshold(value);
-    props.onChange?.('threshold', value);
+    if (value) {
+      setThreshold(value);
+      props.onChange?.('threshold', value);
+    }
   };
 
   const alarmFirstChange = (value: boolean) => {

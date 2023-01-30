@@ -104,6 +104,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   const [valueOptions] = useState<any>(undefined);
   const [metricsOptions, setMetricsOptions] = useState<any[]>([]);
   const [valueType, setValueType] = useState('');
+  const [isRange, setIsRange] = useState<boolean>(false);
 
   const { paramOptions, valueOptions: paramsValueOptions } = useOption(props.options, 'column');
 
@@ -193,6 +194,15 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   useEffect(() => {
     labelCache.current = props.label || [undefined, undefined, {}, 'and'];
   }, [props.label]);
+
+  // useEffect(()=>{
+  //   if(props.data.value?.source && metricsOptions.length!==0){
+  //     const arr = metricsOptions.filter((item:any)=>item.range)
+  //     if(arr.length!==0){
+  //       setIsRange(true)
+  //     }
+  //   }
+  // },[metricsOptions])
 
   return (
     <div className="terms-params-item">
@@ -293,11 +303,11 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             });
           }}
         />
-        {DoubleFilter.includes(termType) && !metricsOptions.length ? (
+        {DoubleFilter.includes(termType) && !isRange ? (
           <>
             <ParamsDropdown
               options={valueOptions}
-              metricsOptions={metricsOptions.filter((mItem) => {
+              metricsOptions={metricsOptions?.filter((mItem) => {
                 if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
                   return mItem.range;
                 } else {
@@ -315,6 +325,13 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                   value: [v.value, ValueRef.current.value?.value?.[1]],
                   source: v.source,
                 };
+                // console.log('-----',v.source,v.value)
+                if (v.source === 'metric' && v.value) {
+                  setIsRange(true);
+                  _myValue.value = v.value;
+                } else {
+                  setIsRange(false);
+                }
                 ValueRef.current.value = _myValue;
                 setValue(_myValue);
                 labelCache.current[2] = { ...labelCache.current[2], 0: lb };
@@ -326,14 +343,14 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             />
             <ParamsDropdown
               options={valueOptions}
-              metricsOptions={metricsOptions.filter((mItem) => {
-                if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
-                  return mItem.range;
-                } else {
-                  return !mItem.range;
-                }
-              })}
-              isMetric={!!metricsOptions.length}
+              // metricsOptions={metricsOptions?.filter((mItem) => {
+              //   if (ValueRef.current.termType && DoubleFilter.includes(ValueRef.current.termType)) {
+              //     return mItem.range;
+              //   } else {
+              //     return !mItem.range;
+              //   }
+              // })}
+              // isMetric={!!metricsOptions.length}
               type="value"
               placeholder="参数值"
               valueType={valueType}
@@ -378,7 +395,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               ValueRef.current.value = v;
               if (!!metricsOptions.length) {
                 if (DoubleFilter.includes(termType)) {
-                  labelCache.current[2] = { 0: v?.value?.[0], 1: v?.value[1] };
+                  labelCache.current[2] = { 0: v?.value?.[0], 1: v?.value?.[1] };
                 } else {
                   labelCache.current[2] = { 0: lb };
                 }
