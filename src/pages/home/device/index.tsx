@@ -17,9 +17,7 @@ const Device = () => {
   const rulePermission = PermissionButton.usePermission('rule-engine/Instance').permission;
 
   const [productCount, setProductCount] = useState<number>(0);
-  const [productMessage, setProductMessage] = useState<string>();
   const [deviceCount, setDeviceCount] = useState<number>(0);
-  const [deviceMessage, setDeviceMessage] = useState<string>();
 
   const [productVisible, setProductVisible] = useState<boolean>(false);
   const [deviceVisible, setDeviceVisible] = useState<boolean>(false);
@@ -29,9 +27,9 @@ const Device = () => {
     if (resp.status === 200) {
       setProductCount(resp.result);
     }
-    if (resp.status === 403) {
-      setProductMessage('暂无权限');
-    }
+    // if (resp.status === 403) {
+    //   setProductMessage('暂无权限');
+    // }
   };
 
   const getDeviceCount = async () => {
@@ -39,9 +37,9 @@ const Device = () => {
     if (resp.status === 200) {
       setDeviceCount(resp.result);
     }
-    if (resp.status === 403) {
-      setDeviceMessage('暂无权限');
-    }
+    // if (resp.status === 403) {
+    //   setDeviceMessage('暂无权限');
+    // }
   };
 
   useEffect(() => {
@@ -84,7 +82,7 @@ const Device = () => {
       },
     },
   ];
-
+  console.log(!!productPermission.view);
   return (
     <Row gutter={24}>
       <Col span={14}>
@@ -103,13 +101,13 @@ const Device = () => {
               name: '产品数量',
               value: productCount,
               children: require('/public/images/home/top-2.svg'),
-              permission: productMessage,
+              permission: !!productPermission.view ? '' : '暂无权限',
             },
             {
               name: '设备数量',
               value: deviceCount,
               children: '',
-              permission: deviceMessage,
+              permission: !!devicePermission.view ? '' : '暂无权限',
             },
           ]}
           title="设备统计"

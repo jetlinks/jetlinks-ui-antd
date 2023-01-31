@@ -106,7 +106,7 @@ const Login: React.FC = () => {
         const ico: any = document.querySelector('link[rel="icon"]');
         ico.href = res.result.ico;
         setBasis(res.result);
-        console.log(res.result);
+        // console.log(res.result);
         if (res.result.title) {
           document.title = res.result.title;
         } else {
@@ -114,6 +114,21 @@ const Login: React.FC = () => {
         }
       }
     });
+
+    //备案配置
+    // Service.detail(['record']).then((res) => {
+    //   if (res.status === 200) {
+    //     console.log(res.result);
+    //     const item = res.result?.filter((item: any) => item.scope === 'record');
+    //     setRecord(item?.[0].properties.record);
+    //   }
+    // })
+    // Service.settingDetail('amap').then((res) => {
+    //   if (res.status === 200) {
+    //     console.log(res.result);
+    //     setRecord(res.result)
+    //   }
+    // });
   }, []);
 
   const SchemaField = createSchemaField({
@@ -302,32 +317,37 @@ const Login: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div className={styles.bottom}>
-            <div className={styles.view}>JETLINKS团队全新力作可视化大屏系统</div>
-            <div className={styles.url}>
-              <div style={{ height: 33 }}>
-                <img src={viewLogo} />
+          {basis.recommend ? (
+            <div className={styles.bottom}>
+              <div className={styles.view}>JETLINKS团队全新力作可视化大屏系统</div>
+              <div className={styles.url}>
+                <div style={{ height: 33 }}>
+                  <img src={viewLogo} />
+                </div>
+                <a href={'https://view.jetlinks.cn/'} target="_blank" rel="noopener noreferrer">
+                  体验DEMO
+                </a>
               </div>
-              <a href={'https://view.jetlinks.cn/'} target="_blank" rel="noopener noreferrer">
-                体验DEMO
-              </a>
             </div>
-          </div>
+          ) : (
+            <div style={{ height: '8%' }}></div>
+          )}
         </div>
         <div className={styles.right}>
           <img
             src={basis.backgroud || require('/public/images/login.png')}
             style={{ width: '100%', height: '100%' }}
           />
-          <a
-            href={'https://beian.miit.gov.cn/#/Integrated/index'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.records}
-          >
-            备案：渝ICP备19017719号-1
-          </a>
+          {basis.record && (
+            <a
+              href={'https://beian.miit.gov.cn/#/Integrated/index'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.records}
+            >
+              {basis.record}
+            </a>
+          )}
         </div>
       </div>
     </Spin>
