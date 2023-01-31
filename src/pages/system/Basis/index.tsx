@@ -116,11 +116,7 @@ const Basis = () => {
               >
                 <Input placeholder="请输入" />
               </Form.Item>
-              <Form.Item
-                label="备案信息"
-                name="record"
-                // hidden
-              >
+              <Form.Item label="备案信息" name="record" hidden>
                 <Input placeholder="请输入" />
               </Form.Item>
               <Form.Item label="首页推荐" name="recommend" valuePropName="checked" hidden>
