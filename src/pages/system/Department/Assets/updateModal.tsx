@@ -60,8 +60,8 @@ export default (props: UpdateModalProps) => {
         permissions: props.permissions,
       });
     }
-    // console.log('1------------', props.assetsType)
-    // console.log('2------------', props.permissions)
+    console.log('1------------', props.assetsType);
+    console.log('2------------', props.permissions);
     const item = props.assetsType.filter((it: any) => props.permissions.indexOf(it.value) > -1);
     setOptions(item);
   }, [props.permissions, form]);

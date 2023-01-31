@@ -91,6 +91,7 @@ export default observer((props: TermsProps) => {
                   rules={[
                     {
                       validator(_, v) {
+                        // console.log('-----v',v)
                         if (v !== undefined) {
                           if (!Object.keys(v).length) {
                             return Promise.reject(new Error('该数据已发生变更，请重新配置'));
@@ -162,6 +163,7 @@ export default observer((props: TermsProps) => {
                       });
                     }}
                     onValueChange={(data) => {
+                      // console.log('----data',data)
                       const newList = [...listRef.current];
                       newList[index] = {
                         ...item,

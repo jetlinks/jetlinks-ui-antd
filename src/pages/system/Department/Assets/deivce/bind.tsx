@@ -390,9 +390,9 @@ const Bind = observer((props: Props) => {
               code: resp.message,
               result: {
                 data: newData as DeviceItem[],
-                pageIndex: 0,
-                pageSize: 0,
-                total: 0,
+                pageIndex: resp.result.pageIndex,
+                pageSize: resp.result.pageIndex,
+                total: resp.result.total,
               },
               status: resp.status,
             };

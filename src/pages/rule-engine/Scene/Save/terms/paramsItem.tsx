@@ -392,6 +392,11 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 _value.metric = item.id;
               }
               setValue(_value);
+              if (v.source === 'metric' && v.value) {
+                setIsRange(true);
+              } else {
+                setIsRange(false);
+              }
               ValueRef.current.value = v;
               if (!!metricsOptions.length) {
                 if (DoubleFilter.includes(termType)) {

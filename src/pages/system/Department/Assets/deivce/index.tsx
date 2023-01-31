@@ -300,7 +300,13 @@ export default observer((props: { parentId: string }) => {
         <PermissionButton
           icon={<DisconnectOutlined />}
           key="unBind"
-          onClick={handleUnBind}
+          popConfirm={{
+            title: intl.formatMessage({
+              id: 'pages.system.role.option.unBindUser',
+              defaultMessage: '是否批量解除绑定',
+            }),
+            onConfirm: handleUnBind,
+          }}
           isPermission={permission.bind}
         >
           {intl.formatMessage({

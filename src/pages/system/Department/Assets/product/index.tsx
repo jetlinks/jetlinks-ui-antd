@@ -37,6 +37,7 @@ export default observer((props: { parentId: string }) => {
   const [updateId, setUpdateId] = useState<string | string[]>('');
   const [permissions, setPermissions] = useState<string[]>(['read']);
   const [assetsType, setAssetsType] = useState([]);
+  const recordRef = useRef<any>([]);
 
   // 资产类型的权限定义
   const getAssetsType = () => {
@@ -304,6 +305,14 @@ export default observer((props: { parentId: string }) => {
           key="update"
           isPermission={permission.assert}
           onClick={() => {
+            const arr = recordRef.current.map((item: any) => item.grantedPermissions);
+            console.log(arr);
+            //求权限交集
+            const list = arr.reduce((total: any, next: any) => {
+              return [...total].filter((item) => new Set(next).has(item));
+            });
+            setPermissions(list);
+            // console.log(list)
             if (Models.unBindKeys.length) {
               setUpdateId([...Models.unBindKeys]);
               setUpdateVisible(true);
@@ -440,9 +449,11 @@ export default observer((props: { parentId: string }) => {
         rowSelection={{
           selectedRowKeys: Models.unBindKeys,
           // onChange: (selectedRowKeys, selectedRows) => {
-          //   Models.unBindKeys = selectedRows.map((item) => item.id);
+          //   console.log(selectedRows)
           // },
           onSelect: (record, selected, selectedRows) => {
+            recordRef.current = selectedRows;
+            // console.log('selectedRows',selectedRows)
             if (selected) {
               Models.unBindKeys = [
                 ...new Set([...Models.unBindKeys, ...getSelectedRowsKey(selectedRows)]),
