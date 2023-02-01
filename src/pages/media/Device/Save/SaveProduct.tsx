@@ -9,6 +9,7 @@ interface SaveProps {
   reload: (id: string, data: any) => void;
   type: string;
   close?: () => void;
+  deviceType?: string;
 }
 
 export default (props: SaveProps) => {
@@ -50,7 +51,7 @@ export default (props: SaveProps) => {
   const onSubmit = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      formData.deviceType = 'device';
+      formData.deviceType = props.deviceType ? props.deviceType : 'device';
       setLoading(true);
       const resp = await service.saveProduct(formData);
       if (resp.status === 200) {

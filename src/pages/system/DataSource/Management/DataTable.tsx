@@ -61,6 +61,20 @@ const DataTable = (props: Props) => {
           {
             validateId: true,
           },
+          {
+            validator: (value: any) => {
+              return new Promise((resolve) => {
+                if (value) {
+                  const first = value.slice(0, 1);
+                  if (typeof Number(first) === 'number' && !isNaN(Number(first))) {
+                    resolve('不能以数字开头');
+                  } else {
+                    resolve('');
+                  }
+                }
+              });
+            },
+          },
         ],
         required: true,
       },

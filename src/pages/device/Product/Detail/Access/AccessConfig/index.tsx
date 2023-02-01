@@ -159,7 +159,8 @@ const AccessConfig = (props: Props) => {
       width={1200}
       title={'设备接入配置'}
       onOk={async () => {
-        if (!!current) {
+        if (current.id) {
+          console.log(current);
           const obj: any = {
             ...productModel.current,
             transportProtocol: current?.transport,

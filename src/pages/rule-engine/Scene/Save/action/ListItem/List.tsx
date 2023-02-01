@@ -9,6 +9,7 @@ import { pick } from 'lodash';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
+import { randomString } from '@/utils/util';
 
 interface ListProps {
   branchesName: number;
@@ -87,7 +88,8 @@ export default (props: ListProps) => {
           branchGroup={props.parallel ? 1 : 0}
           branchesName={props.branchesName}
           data={{
-            key: `${props.type}_${props.actions.length}`,
+            // key: `${props.type}_${props.actions.length}`,
+            key: randomString(),
           }}
           close={() => {
             setVisible(false);

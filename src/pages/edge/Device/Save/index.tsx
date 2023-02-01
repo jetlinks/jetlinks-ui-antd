@@ -276,6 +276,7 @@ const Save = (props: Props) => {
         close={() => {
           setVisible(false);
         }}
+        deviceType={'gateway'}
         reload={(productId: string, name: string) => {
           form.setFieldsValue({ productId });
           productList.push({
