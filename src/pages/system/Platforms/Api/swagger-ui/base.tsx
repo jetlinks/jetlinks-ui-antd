@@ -131,21 +131,36 @@ export default observer(() => {
     return newEntity;
   };
 
-  const getResult = (name: string, oldName: string = '') => {
-    if (name === oldName) {
+  const getResult = (name: string, level = 1) => {
+    if (!ApiModel.components[name]) {
+      return [];
+    }
+    // console.log('level-------',level,name,oldName)
+
+    if (level >= 10) {
       // 禁止套娃
       return [];
     }
+    // debugger;
     const entity = cloneDeep(ApiModel.components[name].properties);
+    // console.log('entity---',entity,ApiModel.components[name])
+
     Object.keys(entity).forEach((key) => {
       const type = entity[key].type;
+      console.log('key', key);
+      // if(name===oldName) return;
+
       if ((entity[key].items && entity[key].items.$ref) || entity[key].$ref) {
         const _ref = entity[key].$ref || entity[key].items.$ref;
         const refName = _ref.split('/').pop();
+        // console.log('refName-----',refName,name,type)
+
         if (type === 'array') {
-          entity[key] = [getResult(refName, name)];
+          // console.log(entity[key])
+          entity[key] = [getResult(refName, level + 1)];
         } else {
-          entity[key] = getResult(refName, name);
+          entity[key] = getResult(refName, level + 1);
+          // console.log(entity[key])
         }
       } else if (type) {
         if (type.includes('integer')) {
@@ -157,6 +172,7 @@ export default observer(() => {
         }
       }
     });
+
     return entity;
   };
 
@@ -166,7 +182,6 @@ export default observer(() => {
     }
 
     const entity = cloneDeep(ApiModel.components[name].properties);
-    console.log(entity);
 
     const newArr: any[] = [];
     if (name === oldName) {
@@ -180,19 +195,15 @@ export default observer(() => {
         description: entity[key].description,
         type: type,
       };
-      // console.log(obj)
 
       if ((entity[key].items && entity[key].items.$ref) || entity[key].$ref) {
         const _ref = entity[key].$ref || entity[key].items.$ref;
         const refName = _ref.split('/').pop();
-        console.log(refName);
         if (refName) {
           obj.type = refName;
-          obj.children = handleResponseParam(refName, name);
+          // obj.children = handleResponseParam(refName, name);
         }
       }
-
-      console.log(obj);
       newArr.push(obj);
     });
     return newArr;
@@ -203,10 +214,10 @@ export default observer(() => {
     console.log('----', Object.keys(ApiModel.swagger.responses));
     Object.keys(ApiModel.swagger.responses).forEach((key) => {
       const refUrl = ObjectFindValue('$ref', ApiModel.swagger.responses[key]);
-      console.log('1-----', refUrl, ApiModel.swagger.responses[key]);
+      // console.log('1-----', refUrl, ApiModel.swagger.responses[key]);
       const _entityName = refUrl.split('/').pop();
 
-      console.log('2-------', _entityName);
+      // console.log('2-------', _entityName);
       newArr.push({
         code: key,
         description: ApiModel.swagger.responses[key].description,
@@ -215,7 +226,7 @@ export default observer(() => {
         result: key !== '400' ? getResult(_entityName) : {},
       });
     });
-    console.log(newArr);
+    // console.log(newArr);
     setResponseData(newArr);
   };
 

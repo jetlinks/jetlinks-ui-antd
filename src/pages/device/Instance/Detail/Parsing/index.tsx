@@ -17,9 +17,9 @@ const Parsing = (props: Props) => {
   const service = new Service('device-instance');
   const { minHeight } = useDomFullHeight(`.parsing`);
   const { permission } = PermissionButton.usePermission('device/Instance');
-  const [value, setValue] = useState(
-    '//解码函数\r\nfunction decode(context) {\r\n    //原始报文\r\n    var buffer = context.payload();\r\n    // 转为json\r\n    // var json = context.json();\r\n    //mqtt 时通过此方法获取topic\r\n    // var topic = context.topic();\r\n\r\n    // 提取变量\r\n    // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n    //温度属性\r\n    var temperature = buffer.getShort(3) * 10;\r\n    //湿度属性\r\n    var humidity = buffer.getShort(6) * 10;\r\n    return {\r\n        "temperature": temperature,\r\n        "humidity": humidity\r\n    };\r\n}\r\n',
-  );
+  const defaultValue =
+    '//解码函数\r\nfunction decode(context) {\r\n    //原始报文\r\n    var buffer = context.payload();\r\n    // 转为json\r\n    // var json = context.json();\r\n    //mqtt 时通过此方法获取topic\r\n    // var topic = context.topic();\r\n\r\n    // 提取变量\r\n    // var topicVars = context.pathVars("/{deviceId}/**",topic)\r\n    //温度属性\r\n    var temperature = buffer.getShort(3) * 10;\r\n    //湿度属性\r\n    var humidity = buffer.getShort(6) * 10;\r\n    return {\r\n        "temperature": temperature,\r\n        "humidity": humidity\r\n    };\r\n}\r\n';
+  const [value, setValue] = useState<any>('');
   const ref = useRef(null);
   const size = useSize(ref);
   const monRef = useRef<any>();
@@ -77,10 +77,15 @@ const Parsing = (props: Props) => {
         if (res.result?.deviceId) {
           setReadOnly(false);
           setTopTitle('rest');
+          setValue(
+            res.result?.configuration?.script ? res.result?.configuration?.script : defaultValue,
+          );
         } else {
           setReadOnly(true);
           setTopTitle('edit');
-          setValue(res.result?.configuration?.script);
+          setValue(
+            res.result?.configuration?.script ? res.result?.configuration?.script : defaultValue,
+          );
         }
       }
     });
@@ -107,7 +112,11 @@ const Parsing = (props: Props) => {
   const getProductCode = (productId: string) => {
     service.productCode(productId).then((res) => {
       if (res.status === 200) {
-        setValue(res.result?.configuration?.script);
+        if (res.result) {
+          setValue(res.result?.configuration?.script);
+        } else {
+          setValue(defaultValue);
+        }
       }
     });
   };

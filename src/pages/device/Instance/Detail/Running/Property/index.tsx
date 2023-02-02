@@ -130,7 +130,7 @@ const Property = (props: Props) => {
               <PermissionButton
                 type={'link'}
                 onClick={() => {
-                  setVisible(true);
+                  setIndicatorVisible(true);
                   setCurrentInfo(record);
                 }}
                 tooltip={{

@@ -117,6 +117,10 @@ export const ExtraProductCard = (props: ProductCardProps) => {
 
   useEffect(() => {
     Store.subscribe('assets-product', (data: any) => {
+      // console.log('-------',data)
+      if (data.delete && data.id === 'rest') {
+        setAssetKeys(['read']);
+      }
       if (data.isAll && data.bindKeys.includes(props.id)) {
         setAssetKeys(data.assets);
         setDisabled(true);

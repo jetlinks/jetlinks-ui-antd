@@ -171,6 +171,10 @@ const Bind = observer((props: Props) => {
   const unSelect = () => {
     Models.bindKeys = [];
     AssetsModel.params = {};
+    Store.set('assets-product', {
+      id: 'rest',
+      delete: true,
+    });
   };
 
   const getSelectedRowsKey = (selectedRows: any) => {
@@ -281,7 +285,6 @@ const Bind = observer((props: Props) => {
           // onReset={() => {
           //   // 重置分页及搜索参数
           //   actionRef.current?.reset?.();
-          //   setSearchParam({});
           // }}
           target="department-assets-product"
         />
