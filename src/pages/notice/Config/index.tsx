@@ -177,6 +177,7 @@ const Config = observer(() => {
         <PermissionButton
           style={{ padding: 0 }}
           type="link"
+          isPermission={configPermission.delete}
           popConfirm={{
             onConfirm: async () => {
               await service.remove(record.id);

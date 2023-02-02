@@ -177,7 +177,11 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   useEffect(() => {
     setTermType(props.data.termType || '');
     setValue(props.data.value);
+    // console.log(props.data.value,'-----')
     setColumn(props.data.column || '');
+    // if(props.data.value?.source === 'metric'){
+    //   setIsRange(true)
+    // }
     ValueRef.current = props.data || {};
     convertLabelValue(props.data.column);
     if (!firstLockRef.current) {
@@ -195,14 +199,15 @@ const ParamsItem = observer((props: ParamsItemProps) => {
     labelCache.current = props.label || [undefined, undefined, {}, 'and'];
   }, [props.label]);
 
-  // useEffect(()=>{
-  //   if(props.data.value?.source && metricsOptions.length!==0){
-  //     const arr = metricsOptions.filter((item:any)=>item.range)
-  //     if(arr.length!==0){
-  //       setIsRange(true)
-  //     }
-  //   }
-  // },[metricsOptions])
+  useEffect(() => {
+    if (props.data.value?.source === 'metric') {
+      const arr = metricsOptions.filter((item: any) => item.range);
+      // console.log(arr)
+      if (arr.length !== 0) {
+        setIsRange(true);
+      }
+    }
+  }, [metricsOptions]);
 
   return (
     <div className="terms-params-item">

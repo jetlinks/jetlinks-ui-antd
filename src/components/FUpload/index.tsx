@@ -43,7 +43,9 @@ const FUpload = connect((props: Props) => {
       }}
       multiple={false}
       onChange={handleChange}
-      progress={{}}
+      progress={{
+        format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+      }}
       showUploadList={{
         removeIcon: (
           <DeleteOutlined
