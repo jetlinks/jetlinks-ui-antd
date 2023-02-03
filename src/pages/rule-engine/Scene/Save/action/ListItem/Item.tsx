@@ -409,6 +409,8 @@ export default (props: ItemProps) => {
                   label={props.options?.terms?.[index]}
                   actionColumns={props.options?.otherColumns}
                   onColumnsChange={(columns) => {
+                    console.log('-----', columns);
+
                     const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
                     let newColumns = [...filterColumns.values()];
                     if (optionsRef.current?.otherColumns) {

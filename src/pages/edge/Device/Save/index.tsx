@@ -2,7 +2,7 @@ import { Col, Form, Input, Modal, Row, Select } from 'antd';
 import { service } from '@/pages/device/Instance';
 import { useEffect, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
-import { UploadImage } from '@/components';
+import { PermissionButton, UploadImage } from '@/components';
 import { debounce } from 'lodash';
 import encodeQuery from '@/utils/encodeQuery';
 import { onlyMessage } from '@/utils/util';
@@ -25,6 +25,7 @@ const Save = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
+  const { permission } = PermissionButton.usePermission('device/Product');
 
   useEffect(() => {
     if (data && Object.keys(data).length) {
@@ -243,14 +244,16 @@ const Save = (props: Props) => {
             </Form.Item>
           </Col>
           <Col span={2} style={{ margin: '35px 0 0 0' }}>
-            <a
-              style={{ marginLeft: 10 }}
+            <PermissionButton
+              isPermission={permission.add}
+              type="link"
+              disabled={!!data?.id}
               onClick={() => {
                 setVisible(true);
               }}
             >
               <PlusOutlined />
-            </a>
+            </PermissionButton>
           </Col>
         </Row>
         <Row>

@@ -63,6 +63,7 @@ export const handleOptionsLabel = (data: any, type?: string) => {
       const c = data[0];
       const t = data[1];
       const v = data[2];
+      const range = data[4];
       const termsTypeKey = {
         eq: '等于_value',
         neq: '不等于_value',
@@ -85,12 +86,16 @@ export const handleOptionsLabel = (data: any, type?: string) => {
       };
       const _value = isObject(v) ? Object.values(v) : [v];
       const typeStr = type ? typeKey[type] : '';
-      if (DoubleFilter.includes(t)) {
+      if (DoubleFilter.includes(t) && !range) {
         const str = termsTypeKey[t].replace('_value', _value[0]).replace('_value2', _value[1]);
         return `${c} ${str} ${typeStr} `;
+      } else if (DoubleFilter.includes(t) && !!range) {
+        const str = termsTypeKey[t].replace('_value和_value2', _value[0]);
+        return `${c} ${str} ${typeStr} `;
+      } else {
+        const str = termsTypeKey[t].replace('_value', _value[0]);
+        return `${c} ${str} ${typeStr} `;
       }
-      const str = termsTypeKey[t].replace('_value', _value[0]);
-      return `${c} ${str} ${typeStr} `;
     } catch (e) {
       return data;
     }
@@ -196,7 +201,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   }, [props.options]);
 
   useEffect(() => {
-    labelCache.current = props.label || [undefined, undefined, {}, 'and'];
+    labelCache.current = props.label || [undefined, undefined, {}, 'and', ''];
   }, [props.label]);
 
   useEffect(() => {
@@ -392,6 +397,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             valueType={valueType}
             value={value}
             onChange={(v, lb, item) => {
+              console.log('-----', v, lb, item);
               const _value = { ...v };
               if (item) {
                 _value.metric = item.id;
@@ -404,15 +410,17 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               }
               ValueRef.current.value = v;
               if (!!metricsOptions.length) {
-                if (DoubleFilter.includes(termType)) {
+                if (DoubleFilter.includes(termType) && !isRange) {
                   labelCache.current[2] = { 0: v?.value?.[0], 1: v?.value?.[1] };
                 } else {
                   labelCache.current[2] = { 0: lb };
+                  labelCache.current[4] = 'range';
                 }
               } else {
                 labelCache.current[2] = { 0: lb };
               }
               labelCache.current[3] = props.data.type;
+              console.log('labelCache------', [...labelCache.current]);
               props.onLabelChange?.([...labelCache.current]);
               valueEventChange(_value);
             }}

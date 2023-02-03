@@ -175,6 +175,7 @@ export default observer((props: TermsProps) => {
                       });
                     }}
                     onColumns={(_columns) => {
+                      console.log('_columns-----', _columns);
                       set(optionsColumnsRef.current, [props.name, index], _columns);
                       props.onColumnsChange(optionsColumnsRef.current);
                     }}
