@@ -30,7 +30,7 @@ const DataTable = (props: Props) => {
     validateId(value) {
       if (!value) return '';
       const reg = new RegExp('^[0-9a-zA-Z_\\\\-]+$');
-      return reg.exec(value) ? '' : 'ID只能由数字、字母、下划线、中划线组成';
+      return reg.exec(value) ? '' : '名称只能由数字、字母、下划线、中划线组成';
     },
   });
 

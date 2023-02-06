@@ -261,10 +261,10 @@ const Save = () => {
               field.selfErrors = '';
             }
           });
-          onFieldReact('apiServer.appId', (field: any) => {
-            const value = (field as Field).value;
-            console.log(value);
-          });
+          // onFieldReact('apiServer.appId', (field: any) => {
+          //   const value = (field as Field).value;
+          //   console.log(value);
+          // });
         },
       }),
     [id],
@@ -1966,14 +1966,6 @@ const Save = () => {
     }
   }, [location]);
 
-  useEffect(() => {
-    const item = form.getValuesIn('provider');
-    // console.log(item, form.getState())
-    // setType(localStorage.getItem('type'))
-
-    console.log(item, form.getState());
-  }, []);
-
   return (
     <PageContainer>
       <Card>
@@ -2015,8 +2007,12 @@ const Save = () => {
       {visible && (
         <MenuPage
           data={detail}
-          close={() => {
+          close={(isOk?: any) => {
             setVisiable(false);
+            if (isOk) {
+              const url = getMenuPathByCode('system/Apply');
+              history.push(url);
+            }
           }}
         />
       )}

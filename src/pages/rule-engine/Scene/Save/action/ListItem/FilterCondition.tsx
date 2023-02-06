@@ -188,6 +188,8 @@ export default observer((props: FilterProps) => {
           showLabelKey="fullName"
           isTree={true}
           onChange={(_value, item) => {
+            // console.log('_value-----',_value)
+
             setValue({
               value: undefined,
               source: 'fixed',
@@ -198,11 +200,13 @@ export default observer((props: FilterProps) => {
             const _termTypeOptions: any[] =
               node.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) || [];
             setTtOptions(_termTypeOptions);
-            if (!node.metadata) {
-              columnsRef.current = [node.column];
+            if (node.metadata) {
+              columnsRef.current[0] = node.column;
             } else {
               columnsRef.current = [];
             }
+            console.log('columnsRef.current', columnsRef.current);
+            props.onColumns(columnsRef.current);
             // 默认选中第一个
             let _termTypeValue = undefined;
             if (_termTypeOptions.length) {
@@ -215,6 +219,7 @@ export default observer((props: FilterProps) => {
             }
             ValueRef.current.column = _value!;
             labelCache.current[0] = node.fullName;
+
             valueChange({
               column: _value,
               value: {
@@ -284,7 +289,7 @@ export default observer((props: FilterProps) => {
                 labelCache.current[3] = props.data.type;
 
                 if (v.source === 'upper') {
-                  if (!node.metadata) {
+                  if (node.metadata) {
                     columnsRef.current[1] = node.column;
                   } else {
                     columnsRef.current.splice(1, 1);
@@ -327,7 +332,7 @@ export default observer((props: FilterProps) => {
                 labelCache.current[3] = props.data.type;
 
                 if (v.source === 'upper') {
-                  if (!node.metadata) {
+                  if (node.metadata) {
                     columnsRef.current[2] = node.column;
                   } else {
                     columnsRef.current.splice(2, 1);
@@ -364,15 +369,15 @@ export default observer((props: FilterProps) => {
               setValue({
                 ...v,
               });
-              console.log('node.column-----', node, v);
+              console.log('node.column-----', node);
               if (v.source === 'upper') {
-                if (!node.metadata) {
+                if (node.metadata) {
                   columnsRef.current[1] = node.column;
                 } else {
                   columnsRef.current.splice(1, 1);
                 }
               } else {
-                columnsRef.current = [];
+                columnsRef.current.length = 1;
               }
 
               props.onColumns(columnsRef.current);

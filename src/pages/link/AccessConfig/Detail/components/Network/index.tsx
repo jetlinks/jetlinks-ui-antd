@@ -170,31 +170,31 @@ const Network = (props: Props) => {
             description={
               <span>
                 暂无数据
-                {getButtonPermission('link/Type', ['add']) ? (
-                  '请联系管理员进行配置'
-                ) : (
-                  <Button
-                    type="link"
-                    onClick={() => {
-                      const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
-                      const tab: any = window.open(
-                        `${origin}/#${url}?type=${
-                          NetworkTypeMapping.get(props.provider?.id) || ''
-                        }`,
-                      );
-                      tab!.onTabSaveSuccess = (value: any) => {
-                        if (value.status === 200) {
-                          setNetworkCurrent(value.result?.id);
-                          queryNetworkList(props.provider?.id, {
-                            include: networkCurrent || '',
-                          });
-                        }
-                      };
-                    }}
-                  >
-                    去新增
-                  </Button>
-                )}
+                {getButtonPermission('link/Type', ['add'])
+                  ? '请联系管理员进行配置'
+                  : ''
+                    // <Button
+                    //   type="link"
+                    //   onClick={() => {
+                    //     const url = getMenuPathByCode(MENUS_CODE['link/Type/Detail']);
+                    //     const tab: any = window.open(
+                    //       `${origin}/#${url}?type=${
+                    //         NetworkTypeMapping.get(props.provider?.id) || ''
+                    //       }`,
+                    //     );
+                    //     tab!.onTabSaveSuccess = (value: any) => {
+                    //       if (value.status === 200) {
+                    //         setNetworkCurrent(value.result?.id);
+                    //         queryNetworkList(props.provider?.id, {
+                    //           include: networkCurrent || '',
+                    //         });
+                    //       }
+                    //     };
+                    //   }}
+                    // >
+                    //   去新增
+                    // </Button>
+                }
               </span>
             }
           />

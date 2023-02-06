@@ -127,6 +127,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
     termType: '',
     value: undefined,
   });
+  const enumRef = useRef<any>([]);
 
   const valueChange = useCallback(
     (_value: any) => {
@@ -182,7 +183,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   useEffect(() => {
     setTermType(props.data.termType || '');
     setValue(props.data.value);
-    // console.log(props.data.value,'-----')
+    console.log('props.data-----', props.data);
     setColumn(props.data.column || '');
     // if(props.data.value?.source === 'metric'){
     //   setIsRange(true)
@@ -255,6 +256,10 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           showLabelKey="fullName"
           isTree={true}
           onChange={(_value, item) => {
+            console.log('item.node---', item.node);
+            if (item.node && item.node.dataType === 'enum') {
+              enumRef.current = item.node.options;
+            }
             setValue({
               value: undefined,
               source: 'manual',
@@ -396,8 +401,9 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             placeholder="参数值"
             valueType={valueType}
             value={value}
+            enumList={enumRef.current}
             onChange={(v, lb, item) => {
-              console.log('-----', v, lb, item);
+              // console.log('-----', v, lb, item);
               const _value = { ...v };
               if (item) {
                 _value.metric = item.id;

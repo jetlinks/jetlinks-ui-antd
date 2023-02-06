@@ -7,7 +7,7 @@ type Action = {
 
 type Trigger = {
   type: string;
-  device: Record<string, unknown>;
+  device: Record<string, any>;
 };
 
 export enum ParallelEnum {

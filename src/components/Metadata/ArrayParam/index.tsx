@@ -1,5 +1,5 @@
 import { createSchemaField } from '@formily/react';
-import { Editable, FormItem, FormLayout, Input, NumberPicker, Select } from '@formily/antd';
+import { FormItem, FormLayout, Input, NumberPicker, Select } from '@formily/antd';
 import type { ISchema } from '@formily/json-schema';
 import './index.less';
 import { DataTypeList, DateTypeList, FileTypeList } from '@/pages/device/data';
@@ -7,6 +7,7 @@ import { Store } from 'jetlinks-store';
 import JsonParam from '@/components/Metadata/JsonParam';
 import EnumParam from '@/components/Metadata/EnumParam';
 import BooleanEnum from '@/components/Metadata/BooleanParam';
+import Editable from '../EditTable';
 
 interface Props {
   isFunction?: boolean;

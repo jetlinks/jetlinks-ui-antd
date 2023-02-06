@@ -142,27 +142,27 @@ const Protocol = (props: Props) => {
             description={
               <span>
                 暂无数据
-                {getButtonPermission('link/Protocol', ['add']) ? (
-                  '请联系管理员进行配置'
-                ) : props.view ? (
-                  ''
-                ) : (
-                  <Button
-                    type="link"
-                    onClick={() => {
-                      const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
-                      const tab: any = window.open(`${origin}/#${url}?save=true`);
-                      tab!.onTabSaveSuccess = (resp: any) => {
-                        if (resp.status === 200) {
-                          setProtocolCurrent(resp.result?.id);
-                          queryProtocolList(props.provider?.id);
-                        }
-                      };
-                    }}
-                  >
-                    去新增
-                  </Button>
-                )}
+                {getButtonPermission('link/Protocol', ['add'])
+                  ? '请联系管理员进行配置'
+                  : props.view
+                  ? ''
+                  : ''
+                    // <Button
+                    //   type="link"
+                    //   onClick={() => {
+                    //     const url = getMenuPathByCode(MENUS_CODE[`link/Protocol`]);
+                    //     const tab: any = window.open(`${origin}/#${url}?save=true`);
+                    //     tab!.onTabSaveSuccess = (resp: any) => {
+                    //       if (resp.status === 200) {
+                    //         setProtocolCurrent(resp.result?.id);
+                    //         queryProtocolList(props.provider?.id);
+                    //       }
+                    //     };
+                    //   }}
+                    // >
+                    //   去新增
+                    // </Button>
+                }
               </span>
             }
           />

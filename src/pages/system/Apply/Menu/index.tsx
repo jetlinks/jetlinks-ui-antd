@@ -73,6 +73,7 @@ const MenuPage = (props: Props) => {
     const res = await service.saveOwnerTree('iot', data.id, datalist);
     if (res?.status === 200) {
       onlyMessage('操作成功');
+      props.close(true);
     }
   };
 
@@ -110,6 +111,7 @@ const MenuPage = (props: Props) => {
         props.close();
       }}
       onOk={() => {
+        // props.close(true)
         const items = filterTree(treeData, [...keys, ...half]);
         if (owner) {
           if (items && items.length !== 0) {
