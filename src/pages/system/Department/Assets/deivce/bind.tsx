@@ -143,6 +143,10 @@ const Bind = observer((props: Props) => {
   const unSelect = () => {
     Models.bindKeys = [];
     AssetsModel.params = {};
+    Store.set('assets-device', {
+      delete: true,
+      id: 'rest',
+    });
   };
 
   const getSelectedRowsKey = (selectedRows: any) => {
@@ -211,6 +215,7 @@ const Bind = observer((props: Props) => {
         <Switch
           checkedChildren="开"
           unCheckedChildren="关"
+          defaultChecked={true}
           onChange={(e) => {
             setIsAll(e);
             Store.set('assets-device', {
@@ -334,7 +339,7 @@ const Bind = observer((props: Props) => {
               } else {
                 Models.bindKeys = Models.bindKeys.filter((item) => item !== record.id);
                 bindChecks.current.set(record.id, ['read']);
-                Store.set('assets-product', {
+                Store.set('assets-device', {
                   isAll: false,
                   id: record.id,
                   delete: true,
@@ -390,9 +395,9 @@ const Bind = observer((props: Props) => {
               code: resp.message,
               result: {
                 data: newData as DeviceItem[],
-                pageIndex: 0,
-                pageSize: 0,
-                total: 0,
+                pageIndex: resp.result.pageIndex,
+                pageSize: resp.result.pageIndex,
+                total: resp.result.total,
               },
               status: resp.status,
             };

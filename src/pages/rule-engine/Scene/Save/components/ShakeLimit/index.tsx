@@ -40,13 +40,18 @@ export default (props: ShakeLimitProps) => {
   };
 
   const timeChange = (value: number | null) => {
-    setTime(value);
-    props.onChange?.('time', value);
+    if (value) {
+      setTime(value);
+      props.onChange?.('time', value);
+      console.log(value);
+    }
   };
 
   const thresholdChange = (value: number | null) => {
-    setThreshold(value);
-    props.onChange?.('threshold', value);
+    if (value) {
+      setThreshold(value);
+      props.onChange?.('threshold', value);
+    }
   };
 
   const alarmFirstChange = (value: boolean) => {
@@ -66,7 +71,7 @@ export default (props: ShakeLimitProps) => {
       {enabled ? (
         <>
           <InputNumber
-            min={0}
+            min={1}
             max={100}
             precision={0}
             value={time}
@@ -76,7 +81,7 @@ export default (props: ShakeLimitProps) => {
           />
           <span>秒内发送</span>
           <InputNumber
-            min={0}
+            min={1}
             max={100}
             precision={0}
             value={threshold}

@@ -80,6 +80,8 @@ export default observer((props: Props) => {
             format: datum.valueType ? datum.valueType.format : undefined,
             options: datum.valueType ? datum.valueType.elements : undefined,
             value: undefined,
+            source: undefined,
+            upperKey: undefined,
           });
         }
         setFunctionList(array);
@@ -187,6 +189,7 @@ export default observer((props: Props) => {
           <Form.Item
             name={['message', 'properties']}
             label="设置属性"
+            required
             rules={[
               // { required: true, message: '请选择属性' },
               () => ({
@@ -212,12 +215,14 @@ export default observer((props: Props) => {
               }}
               onChange={(value, text, valueLable) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
-                console.log(item);
+                const item1 = value[Object.keys(value)?.[0]]?.upperKey;
+                const source = value[Object.keys(value)?.[0]]?.source;
+                console.log(value);
                 DeviceModel.propertiesName = text;
                 if (valueLable) {
                   DeviceModel.propertiesValue = valueLable;
                 } else {
-                  DeviceModel.propertiesValue = item;
+                  DeviceModel.propertiesValue = source === 'fixed' ? item : item1;
                 }
               }}
               onRest={(value: any) => {

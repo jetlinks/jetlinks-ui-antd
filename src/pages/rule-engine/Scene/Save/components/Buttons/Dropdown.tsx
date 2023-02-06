@@ -148,7 +148,11 @@ const DropdownButton = (props: DropdownButtonProps) => {
         className={classNames(styles['dropdown-button'], props.className, typeClassName)}
         onClick={() => {
           console.log(props.options, myValue, FormModel.current.trigger?.device);
-          if (!FormModel.current.trigger?.device && props.type !== 'termType') {
+          if (
+            FormModel.current.trigger?.type === 'device' &&
+            !FormModel.current.trigger?.device &&
+            props.type !== 'termType'
+          ) {
             onlyMessage('请先配置设备触发规则', 'warning');
           }
           if (props.options.length === 0 && props.type === 'termType') {

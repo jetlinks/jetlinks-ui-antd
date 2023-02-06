@@ -159,8 +159,8 @@ export default (props: TableProps) => {
                   style={{ padding: 0, width: '100%', textAlign: 'left' }}
                   onClick={() => {
                     console.log(record);
-                    ApiModel.swagger = record;
                     ApiModel.showTable = false;
+                    ApiModel.swagger = record;
                   }}
                 >
                   <span className={'ellipsis'}>{text}</span>

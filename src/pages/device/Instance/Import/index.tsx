@@ -64,6 +64,10 @@ const FileFormat = (props: any) => {
 };
 
 const NormalUpload = (props: any) => {
+  // console.log(props.fileType)
+  // console.log('-----', props.fileType.fileType)
+  // const { fileType } = props?.fileType
+
   const [importLoading, setImportLoading] = useState(false);
   const [flag, setFlag] = useState<boolean>(true);
   const [count, setCount] = useState<number>(0);
@@ -108,9 +112,25 @@ const NormalUpload = (props: any) => {
       <Space>
         <Upload
           action={`/${SystemConst.API_BASE}/file/static`}
-          accept={'.xlsx, .csv'}
+          // accept={'.xlsx, .csv'}
+          accept={props?.fileType?.fileType === 'csv' ? '.csv' : '.xlsx'}
           headers={{
             'X-Access-Token': Token.get(),
+          }}
+          beforeUpload={(file) => {
+            console.log('-----', file);
+            const fileType = props?.fileType?.fileType === 'csv' ? 'csv' : 'xlsx';
+
+            const isCsv = file.type === 'text/csv';
+            const isXlsx =
+              file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            if (!isCsv && fileType !== 'xlsx') {
+              onlyMessage('请上传.csv格式文件', 'warning');
+            }
+            if (!isXlsx && fileType !== 'csv') {
+              onlyMessage('请上传.xlsx格式文件', 'warning');
+            }
+            return (isCsv && fileType !== 'xlsx') || (isXlsx && fileType !== 'csv');
           }}
           onChange={async (info) => {
             if (info.file.status === 'done') {
@@ -216,6 +236,8 @@ const Import = (props: Props) => {
             product,
           };
         });
+        const value = field.value;
+        console.log('-----', value);
       });
       onFieldValueChange('upload', (field) => {
         if (!field.value) {

@@ -80,6 +80,11 @@ const Service = {
     request(`/${SystemConst.API_BASE}/application/${clientId}/info`, {
       method: 'GET',
     }),
+  detail: (data?: any) =>
+    request(`/${SystemConst.API_BASE}/system/config/scopes`, {
+      method: 'POST',
+      data,
+    }),
 };
 
 export default Service;

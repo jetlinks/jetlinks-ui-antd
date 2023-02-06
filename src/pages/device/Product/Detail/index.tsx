@@ -331,7 +331,7 @@ const ProductDetail = observer(() => {
         // </Tooltip>
       }
       subTitle={
-        permission.update ? (
+        permission.action ? (
           <Popconfirm
             title={productModel.current?.state === 1 ? '确认禁用' : '确认启用'}
             onConfirm={() => {

@@ -279,7 +279,7 @@ export default (props: ParamsDropdownProps) => {
     if (props.metricsOptions) {
       let _value = props.value?.value;
       if ('name' in props) {
-        _value = props.value?.value[props.name!];
+        _value = props.value?.value?.[props.name!];
       }
       findLabel(_value, props.metricsOptions || [], 'name');
     }

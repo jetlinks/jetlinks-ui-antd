@@ -683,7 +683,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                 {item.name}
               </Typography.Text>
               <Popconfirm
-                title="确定删除嘛"
+                title="确定删除？"
                 onConfirm={async (e) => {
                   e?.stopPropagation();
                   const response = await service.history.remove(`${target}-search`, item.key);

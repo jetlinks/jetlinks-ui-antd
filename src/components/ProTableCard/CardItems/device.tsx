@@ -57,13 +57,18 @@ export const ExtraDeviceCard = (props: DeviceCardProps) => {
 
   useEffect(() => {
     Store.subscribe('assets-device', (data: any) => {
+      if (data.delete && data.id === 'rest') {
+        setAssetKeys(['read']);
+      }
       if (data.isAll && data.bindKeys.includes(props.id)) {
         setAssetKeys(data.assets);
         setDisabled(true);
         disabledRef.current = true;
-      } else if (!data.isAll && data.bindKeys.includes(props.id)) {
+      } else if (!data.isAll && data.bindKeys?.includes(props.id)) {
         setDisabled(false);
         disabledRef.current = false;
+      } else if (!data.isAll && data.delete && props.id === data.id) {
+        setAssetKeys(['read']);
       } else {
         setDisabled(true);
         disabledRef.current = true;

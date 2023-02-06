@@ -364,7 +364,7 @@ export default observer((props: FilterProps) => {
               setValue({
                 ...v,
               });
-
+              console.log('node.column-----', node, v);
               if (v.source === 'upper') {
                 if (!node.metadata) {
                   columnsRef.current[1] = node.column;
@@ -372,8 +372,9 @@ export default observer((props: FilterProps) => {
                   columnsRef.current.splice(1, 1);
                 }
               } else {
-                columnsRef.current.length = 1;
+                columnsRef.current = [];
               }
+
               props.onColumns(columnsRef.current);
               labelCache.current[2] = { 0: lb };
               labelCache.current[3] = props.data.type;

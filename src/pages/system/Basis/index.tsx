@@ -1,5 +1,5 @@
 import { UploadImage } from '@/components';
-import { Card, Col, Form, Input, Row, Select } from 'antd';
+import { Card, Col, Form, Input, Row, Select, Switch } from 'antd';
 import Service from './service';
 import { useModel } from '@@/plugin-model/useModel';
 import usePermissions from '@/hooks/permission';
@@ -60,9 +60,6 @@ const Basis = () => {
           properties: {
             'base-path': formData['base-path'],
           },
-          // properties: {
-          //   basePath: formData.basePath,
-          // },
         },
       ];
       const res = await service.save(item);
@@ -118,6 +115,12 @@ const Basis = () => {
                 rules={[{ required: true, message: 'base-path必填' }]}
               >
                 <Input placeholder="请输入" />
+              </Form.Item>
+              <Form.Item label="备案信息" name="record" hidden>
+                <Input placeholder="请输入" />
+              </Form.Item>
+              <Form.Item label="首页推荐" name="recommend" valuePropName="checked" hidden>
+                <Switch />
               </Form.Item>
               <Row gutter={[24, 24]}>
                 <Col>

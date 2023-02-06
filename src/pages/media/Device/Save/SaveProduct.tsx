@@ -9,6 +9,7 @@ interface SaveProps {
   reload: (id: string, data: any) => void;
   type: string;
   close?: () => void;
+  deviceType?: string;
 }
 
 export default (props: SaveProps) => {
@@ -50,7 +51,7 @@ export default (props: SaveProps) => {
   const onSubmit = async () => {
     const formData = await form.validateFields();
     if (formData) {
-      formData.deviceType = 'device';
+      formData.deviceType = props.deviceType ? props.deviceType : 'device';
       setLoading(true);
       const resp = await service.saveProduct(formData);
       if (resp.status === 200) {
@@ -112,23 +113,24 @@ export default (props: SaveProps) => {
         >
           <Input placeholder={'请输入产品名称'} />
         </Form.Item>
-        {extendFormItem.map((item: any) => {
-          let messageType = '请输入';
-          if (item.type === 'enum') {
-            messageType = '请选择';
-          }
-          return (
-            <Form.Item
-              name={item.name}
-              label={item.label}
-              required={item.required}
-              rules={[{ required: true, message: `${messageType}${item.label}` }]}
-              initialValue={item.value}
-            >
-              {handlerItem(item.type, item.label, item.options)}
-            </Form.Item>
-          );
-        })}
+        {props.deviceType !== 'gateway' &&
+          extendFormItem.map((item: any) => {
+            let messageType = '请输入';
+            if (item.type === 'enum') {
+              messageType = '请选择';
+            }
+            return (
+              <Form.Item
+                name={item.name}
+                label={item.label}
+                required={item.required}
+                rules={[{ required: true, message: `${messageType}${item.label}` }]}
+                initialValue={item.value}
+              >
+                {handlerItem(item.type, item.label, item.options)}
+              </Form.Item>
+            );
+          })}
         <Form.Item
           name={'accessId'}
           label={'接入网关'}

@@ -49,12 +49,16 @@ export default () => {
     </PermissionButton>,
     <PermissionButton
       type={'link'}
+      disabled={record.state.value === 'disabled'}
       onClick={() => {
         setCurrent(record);
         setIssueVisible(true);
       }}
       tooltip={{
-        title: type !== 'list' ? '' : '下发',
+        title:
+          type !== 'list'
+            ? `${record.state.value === 'disabled' ? '请先启用，再下发' : undefined}`
+            : '下发',
       }}
       style={{ padding: 0 }}
       isPermission={permission.setting}

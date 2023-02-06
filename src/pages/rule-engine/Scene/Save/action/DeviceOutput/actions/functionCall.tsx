@@ -23,9 +23,10 @@ interface FunctionCallProps {
 export default (props: FunctionCallProps) => {
   const [editableKeys, setEditableRowKeys] = useState<React.Key[]>([]);
   const formRef = useRef<ProFormInstance<any>>();
+  const [data, setData] = useState<any>([]);
 
   useEffect(() => {
-    console.log(props.value, props.functionData);
+    // console.log('----props', props.value);
     if (props.functionData && props.functionData.length) {
       setEditableRowKeys(props.functionData.map((d) => d.id));
       if (props.value) {
@@ -35,17 +36,22 @@ export default (props: FunctionCallProps) => {
             return {
               ...item,
               value: oldValue.value,
+              source: oldValue?.source,
+              upperKey: oldValue?.upperKey,
             };
           }
           return item;
         });
+        // console.log('----tableData',tableData)
         formRef.current?.setFieldsValue({
           table: tableData,
         });
+        setData(tableData);
       } else {
         formRef.current?.setFieldsValue({
           table: props.functionData,
         });
+        setData(props.functionData);
       }
     } else {
       formRef.current?.setFieldsValue({
@@ -65,11 +71,24 @@ export default (props: FunctionCallProps) => {
         branchGroup={props.branchGroup}
         thenName={props.thenName}
         format={record?.format}
+        source={record?.source}
+        onChange={(value, source) => {
+          record.source = source;
+          record.value = value;
+          record.upperKey = value;
+
+          const arr = data.filter((item: any) => item.id !== record.id);
+          if (value && source) {
+            formRef.current?.setFieldsValue({
+              table: [...arr, record],
+            });
+          }
+        }}
       />
     );
   };
 
-  const columns: ProColumns<FunctionTableDataType>[] = [
+  const columns: ProColumns<any>[] = [
     {
       dataIndex: 'name',
       title: '参数名称',
@@ -98,17 +117,38 @@ export default (props: FunctionCallProps) => {
       formRef={formRef}
       name={props.name || 'proForm'}
       submitter={false}
-      onValuesChange={() => {
-        const values = formRef.current?.getFieldsValue();
-        // console.log(values, 'values');
+      onValuesChange={async () => {
+        const values = await formRef.current?.validateFields();
+        console.log('------values', values.table);
+        const arr = values.table.map((item: any) => {
+          if (item.source === 'fixed') {
+            return {
+              name: item.id,
+              value: item.value,
+              source: item.source,
+            };
+          } else {
+            return {
+              name: item.id,
+              upperKey: item.value,
+              source: item.source,
+            };
+          }
+        });
+        console.log('------arr', arr);
         if (props.onChange) {
           props.onChange(
             values.table.map((item: any) => ({
               name: item.id,
               value: item.value,
+              upperKey: item.value,
+              source: item.source,
             })),
           );
         }
+        // if (props.onChange) {
+        //   props.onChange(arr);
+        // }
       }}
     >
       <EditableProTable

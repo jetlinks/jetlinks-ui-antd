@@ -36,6 +36,8 @@ const Bind = observer((props: Props) => {
   const [checkAssets, setCheckAssets] = useState<string[]>(['read']);
   const [isAll, setIsAll] = useState<boolean>(true);
   const bindChecks = useRef(new Map());
+  const recordRef = useRef<any>([]);
+  const recordMap = new Map();
 
   const columns: ProColumns<any>[] = [
     {
@@ -139,7 +141,7 @@ const Bind = observer((props: Props) => {
 
   const handleBind = () => {
     if (Models.bindKeys.length) {
-      setLoading(true);
+      // setLoading(true);
       const _data: any[] = [];
       bindChecks.current.forEach((value, key) => {
         _data.push({
@@ -150,6 +152,7 @@ const Bind = observer((props: Props) => {
           permission: value,
         });
       });
+      // console.log(_data)
       service.bind('product', _data).subscribe({
         next: () => onlyMessage('操作成功'),
         error: () => onlyMessage('操作失败', 'error'),
@@ -168,6 +171,10 @@ const Bind = observer((props: Props) => {
   const unSelect = () => {
     Models.bindKeys = [];
     AssetsModel.params = {};
+    Store.set('assets-product', {
+      id: 'rest',
+      delete: true,
+    });
   };
 
   const getSelectedRowsKey = (selectedRows: any) => {
@@ -217,13 +224,21 @@ const Bind = observer((props: Props) => {
               options={props.assetsType}
               value={checkAssets}
               onChange={(e: any) => {
+                recordRef.current?.forEach((it: any) => {
+                  recordMap.set(it.id, it.permissionInfoList);
+                });
+                // console.log(recordMap)
                 Store.set('assets-product', {
                   isAll: isAll,
                   assets: e,
                   bindKeys: Models.bindKeys,
                 });
                 bindChecks.current.forEach((_, key) => {
-                  bindChecks.current.set(key, e);
+                  const arr = recordMap
+                    .get(key)
+                    .filter?.((item: any) => e.includes(item.id))
+                    .map((it: any) => it.id);
+                  bindChecks.current.set(key, arr);
                 });
                 setCheckAssets(e);
               }}
@@ -270,7 +285,6 @@ const Bind = observer((props: Props) => {
           // onReset={() => {
           //   // 重置分页及搜索参数
           //   actionRef.current?.reset?.();
-          //   setSearchParam({});
           // }}
           target="department-assets-product"
         />
@@ -311,7 +325,9 @@ const Bind = observer((props: Props) => {
               // },
               onSelect: (record: any, selected, selectedRows) => {
                 if (selected) {
-                  // console.log('---------',record.permissionInfoList)
+                  const arr = record.permissionInfoList
+                    .map((it: any) => it.id)
+                    .filter?.((item: any) => checkAssets.includes(item));
                   const isShare = record.permissionInfoList.find(
                     (item: any) => item.id === 'share',
                   );
@@ -319,7 +335,8 @@ const Bind = observer((props: Props) => {
                     Models.bindKeys = [
                       ...new Set([...Models.bindKeys, ...getSelectedRowsKey(selectedRows)]),
                     ];
-                    bindChecks.current.set(record.id, checkAssets);
+                    bindChecks.current.set(record.id, arr);
+                    console.log('checkAssets----', arr);
                   } else {
                     onlyMessage('该资产不支持共享', 'warning');
                   }
@@ -385,14 +402,14 @@ const Bind = observer((props: Props) => {
                   console.log('--------', newData);
                 }
               }
-
+              recordRef.current = newData;
               return {
                 code: resp.message,
                 result: {
                   data: newData as ProductItem[],
-                  pageIndex: 0,
-                  pageSize: 0,
-                  total: 0,
+                  pageIndex: resp.result.pageIndex,
+                  pageSize: resp.result.pageIndex,
+                  total: resp.result.total,
                 },
                 status: resp.status,
               };

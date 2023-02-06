@@ -92,7 +92,10 @@ const Save = (props: Props) => {
         delete values.id;
       }
       setLoading(true);
-      const resp = (await service.update(values)) as any;
+      const resp =
+        props.model === 'add'
+          ? await service.update(values)
+          : await service.modify(values.id, values);
       setLoading(false);
       if (resp.status === 200) {
         onlyMessage('保存成功');
