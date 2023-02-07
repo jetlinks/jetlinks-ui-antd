@@ -232,6 +232,12 @@ export default (props: ParamsDropdownProps) => {
           });
           break;
         case 'enum':
+          props.enumList?.forEach((item) => {
+            if (item.id === v) {
+              setLabel(item.name);
+            }
+          });
+          break;
         case 'object':
           findLabel(v, props.options || []);
           break;
@@ -242,7 +248,7 @@ export default (props: ParamsDropdownProps) => {
           setLabel(v + '');
       }
     },
-    [props.options, props.BuiltInOptions],
+    [props.options, props.BuiltInOptions, props.enumList],
   );
 
   const initData = useCallback(() => {

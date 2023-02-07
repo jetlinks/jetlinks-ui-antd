@@ -280,13 +280,15 @@ const Save = (props: Props) => {
           setVisible(false);
         }}
         deviceType={'gateway'}
-        reload={(productId: string, name: string) => {
-          form.setFieldsValue({ productId });
+        reload={(productId: string, result: any) => {
+          console.log('------', productId, result.name);
+
           productList.push({
-            id: productId,
-            name,
+            value: productId,
+            label: result.name,
           });
           setProductList([...productList]);
+          form.setFieldsValue({ productId: productId });
         }}
       />
     </Modal>

@@ -65,13 +65,19 @@ const Save = (props: Props) => {
         }
       });
       onFieldValueChange('versionOrder', async (field, f1) => {
+        console.log(data);
         const value = (field as Field).value;
         const productId = (field.query('.productId').take() as Field).value;
         if (field.modified && productId && value) {
           const resp = await service.validateVersion(productId, value);
           if (resp.status === 200) {
             f1.setFieldState('versionOrder', (state) => {
-              state.selfErrors = resp.result ? ['版本序号已存在'] : undefined;
+              if (data?.id && data.versionOrder === value) {
+                state.selfErrors = undefined;
+              } else {
+                state.selfErrors = resp.result ? ['版本序号已存在'] : undefined;
+              }
+              // state.selfErrors = resp.result ? ['版本序号已存在'] : undefined;
             });
           }
         }

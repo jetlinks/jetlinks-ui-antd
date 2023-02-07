@@ -42,6 +42,7 @@ const Debug = observer(() => {
 
           onFieldReact('variableDefinitions.*.type', async (field) => {
             const value = (field as Field).value;
+            console.log('value----', value);
 
             const format = field.query('.value').take() as Field;
             const _id = field.query('.id').take() as Field;
@@ -64,6 +65,9 @@ const Debug = observer(() => {
                   format.setComponent(Input);
                   break;
                 case 'number':
+                  format.setComponent(NumberPicker, {});
+                  break;
+                case 'double':
                   format.setComponent(NumberPicker, {});
                   break;
                 case 'file':

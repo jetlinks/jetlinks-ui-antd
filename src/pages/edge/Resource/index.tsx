@@ -18,6 +18,8 @@ import Issue from './Issue';
 import Service from './service';
 import ResourceCard from '@/components/ProTableCard/CardItems/edge/Resource';
 import moment from 'moment';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
 
 export const service = new Service('entity/template');
 
@@ -29,6 +31,8 @@ export default () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [issueVisible, setIssueVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('edge/Resource');
+
+  const history = useHistory<Record<string, string>>();
 
   const tools = (record: ResourceItem, type: 'card' | 'list') => [
     <PermissionButton
@@ -157,6 +161,7 @@ export default () => {
       dataIndex: 'id',
       width: 200,
       ellipsis: true,
+      hideInSearch: true,
       fixed: 'left',
     },
     {
@@ -253,7 +258,22 @@ export default () => {
         rowKey="id"
         search={false}
         pagination={{ pageSize: 10 }}
-        cardRender={(record) => <ResourceCard {...record} actions={tools(record, 'card')} />}
+        cardRender={(record) => (
+          <ResourceCard
+            {...record}
+            onClick={() => {
+              const url = getMenuPathByParams(
+                MENUS_CODE['device/Instance/Detail'],
+                record.sourceId,
+              );
+              console.log(url);
+              if (url) {
+                history.push(url);
+              }
+            }}
+            actions={tools(record, 'card')}
+          />
+        )}
       />
       {visible && (
         <Save
