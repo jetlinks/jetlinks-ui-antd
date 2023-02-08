@@ -61,7 +61,7 @@ export default () => {
       tooltip={{
         title:
           type !== 'list'
-            ? `${record.state.value === 'disabled' ? '请先启用，再下发' : undefined}`
+            ? `${record.state.value === 'disabled' ? '请先启用，再下发' : ''}`
             : '下发',
       }}
       style={{ padding: 0 }}
@@ -179,7 +179,7 @@ export default () => {
     {
       title: '所属边缘网关',
       width: 150,
-      dataIndex: 'sourceId',
+      dataIndex: 'sourceName',
       ellipsis: true,
     },
     {

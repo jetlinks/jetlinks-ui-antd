@@ -179,10 +179,10 @@ const Detail = observer(() => {
                   placeholder: '请输入接口地址',
                 },
                 'x-validator': [
-                  {
-                    max: 64,
-                    message: '最多可输入64个字符',
-                  },
+                  // {
+                  //   max: 64,
+                  //   message: '最多可输入64个字符',
+                  // },
                   {
                     required: true,
                     message: '请输入接口地址',

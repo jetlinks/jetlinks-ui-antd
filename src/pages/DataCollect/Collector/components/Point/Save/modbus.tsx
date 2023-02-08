@@ -364,6 +364,10 @@ export default (props: Props) => {
             'x-decorator-props': {
               gridSpan: 2,
               layout: 'level',
+              style: {
+                marginBottom: '6px',
+                marginTop: '6px',
+              },
             },
             'x-component-props': {
               placeholder: '请选择非标准协议写入配置',
@@ -384,7 +388,7 @@ export default (props: Props) => {
               gridSpan: 2,
               style: {
                 backgroundColor: '#fafafa',
-                padding: 20,
+                padding: 6,
               },
             },
             'x-component': 'FormGrid',
@@ -420,6 +424,8 @@ export default (props: Props) => {
                     justifyContent: 'space-around',
                     minWidth: '130px',
                     height: '50px',
+                    marginBottom: '6px',
+                    marginTop: '6px',
                   },
                   options: [
                     { label: '是', value: true },

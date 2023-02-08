@@ -248,6 +248,10 @@ const Detail = observer(() => {
                     max: 64,
                     message: '最多可输入64个字符',
                   },
+                  {
+                    required: true,
+                    message: '请输入corpId',
+                  },
                 ],
               },
               corpSecret: {
@@ -270,6 +274,10 @@ const Detail = observer(() => {
                   {
                     max: 64,
                     message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入corpSecret',
                   },
                 ],
               },
@@ -294,6 +302,12 @@ const Detail = observer(() => {
                 title: 'AppSecret',
                 'x-component': 'Input',
                 required: true,
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请输入secret',
+                  },
+                ],
                 'x-decorator': 'FormItem',
                 'x-component-props': {
                   placeholder: '请输入secret',
@@ -342,6 +356,10 @@ const Detail = observer(() => {
                     max: 64,
                     message: '最多可输入64个字符',
                   },
+                  {
+                    required: true,
+                    message: '请输入AppKey',
+                  },
                 ],
               },
               appSecret: {
@@ -356,6 +374,10 @@ const Detail = observer(() => {
                   {
                     max: 64,
                     message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入AppSecret',
                   },
                 ],
                 'x-reactions': {
@@ -375,6 +397,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入webhook',
                 },
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请输入webhook',
+                  },
+                ],
                 'x-reactions': {
                   dependencies: ['provider'],
                   fulfill: {
@@ -422,6 +450,10 @@ const Detail = observer(() => {
                     max: 64,
                     message: '最多可输入64个字符',
                   },
+                  {
+                    required: true,
+                    message: '请输入accessKeyId',
+                  },
                 ],
               },
               secret: {
@@ -436,6 +468,10 @@ const Detail = observer(() => {
                   {
                     max: 64,
                     message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入secret',
                   },
                 ],
               },
@@ -472,6 +508,12 @@ const Detail = observer(() => {
                         width: '180px',
                       },
                     },
+                    'x-validator': [
+                      {
+                        required: true,
+                        message: '请输入服务器地址',
+                      },
+                    ],
                     'x-component': 'FAutoComplete',
                     'x-decorator': 'FormItem',
                     enum: [
@@ -498,6 +540,10 @@ const Detail = observer(() => {
                         min: 1,
                         max: 65535,
                         message: '请输入1～65535之间的正整数',
+                      },
+                      {
+                        required: true,
+                        message: '请输入端口',
                       },
                     ],
                     'x-component': 'NumberPicker',
@@ -545,6 +591,10 @@ const Detail = observer(() => {
                     max: 64,
                     message: '最多可输入64个字符',
                   },
+                  {
+                    required: true,
+                    message: '请输入发件人',
+                  },
                 ],
               },
               username: {
@@ -560,6 +610,10 @@ const Detail = observer(() => {
                     max: 64,
                     message: '最多可输入64个字符',
                   },
+                  {
+                    required: true,
+                    message: '请输入用户名',
+                  },
                 ],
               },
               password: {
@@ -574,6 +628,10 @@ const Detail = observer(() => {
                   {
                     max: 64,
                     message: '最多可输入64个字符',
+                  },
+                  {
+                    required: true,
+                    message: '请输入密码',
                   },
                 ],
               },
@@ -597,6 +655,12 @@ const Detail = observer(() => {
                 'x-component-props': {
                   placeholder: '请输入Webhook',
                 },
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请输入Webhook',
+                  },
+                ],
                 'x-component': 'Input',
                 'x-decorator': 'FormItem',
               },
@@ -627,6 +691,10 @@ const Detail = observer(() => {
                               max: 64,
                               message: '最多可输入64个字符',
                             },
+                            {
+                              required: true,
+                              message: '请输入KEY',
+                            },
                           ],
                         },
                       },
@@ -645,6 +713,10 @@ const Detail = observer(() => {
                             {
                               max: 64,
                               message: '最多可输入64个字符',
+                            },
+                            {
+                              required: true,
+                              message: '请输入VALUE',
                             },
                           ],
                         },
