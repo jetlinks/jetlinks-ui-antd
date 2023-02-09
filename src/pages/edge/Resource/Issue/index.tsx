@@ -38,6 +38,7 @@ export default (props: Props) => {
       dataIndex: 'productName',
       ellipsis: true,
       valueType: 'select',
+      index: 1,
       request: async () => {
         const res = await api.getProductList();
         if (res.status === 200) {

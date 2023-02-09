@@ -269,6 +269,8 @@ export default () => {
               console.log(url);
               if (url) {
                 history.push(url);
+              } else {
+                onlyMessage('暂无权限，请联系管理员', 'warning');
               }
             }}
             actions={tools(record, 'card')}

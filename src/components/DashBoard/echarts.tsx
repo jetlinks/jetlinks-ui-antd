@@ -61,6 +61,7 @@ export default (props: EchartsProps) => {
   const [loading, setLoading] = useState(false);
 
   const initEcharts = (dom: HTMLDivElement) => {
+    console.log('------------init');
     if (!dom) return;
     chartsRef.current = chartsRef.current || echarts.init(dom);
     // chartsRef.current.clear()
@@ -98,10 +99,11 @@ export default (props: EchartsProps) => {
   }, [props.options, chartsRef.current]);
 
   useEffect(() => {
+    // console.log('------------init')
     if (loading) {
       setTimeout(() => {
         initEcharts(chartsDom.current);
-      }, 100);
+      }, 300);
     }
   }, [loading]);
 

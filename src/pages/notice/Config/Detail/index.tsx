@@ -430,6 +430,12 @@ const Detail = observer(() => {
               regionId: {
                 title: 'RegionId',
                 required: true,
+                'x-validator': [
+                  {
+                    required: true,
+                    message: '请选择regionId',
+                  },
+                ],
                 'x-component-props': {
                   placeholder: '请选择regionId',
                 },

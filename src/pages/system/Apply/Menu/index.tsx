@@ -1,11 +1,14 @@
+import { getMenuPathByCode } from '@/utils/menu';
 import { onlyMessage } from '@/utils/util';
 import { Modal, Tree, Select } from 'antd';
 import { useEffect, useState } from 'react';
+import { useHistory } from 'umi';
 import { service } from '../index';
 
 interface Props {
   close: Function;
   data: any;
+  tag?: string;
 }
 
 const MenuPage = (props: Props) => {
@@ -17,6 +20,7 @@ const MenuPage = (props: Props) => {
   const [half, setHalf] = useState<string[]>([]);
   const [ownerList, setOwenrList] = useState<any>([]);
   const [owner, setOwner] = useState<any>();
+  const history = useHistory();
 
   //获取集成菜单
   const getMenus = async () => {
@@ -94,7 +98,8 @@ const MenuPage = (props: Props) => {
   };
 
   useEffect(() => {
-    console.log(data);
+    console.log(data, props.tag);
+
     if (data.id) {
       getOwner();
       getMenus();
@@ -108,7 +113,14 @@ const MenuPage = (props: Props) => {
       title="集成菜单"
       width={600}
       onCancel={() => {
-        props.close();
+        // props.close();
+        if (props.tag === 'add' && data) {
+          props.close();
+          const url = getMenuPathByCode('system/Apply/Save');
+          history.push(`${url}?id=${data.id}`);
+        } else {
+          props.close();
+        }
       }}
       onOk={() => {
         // props.close(true)

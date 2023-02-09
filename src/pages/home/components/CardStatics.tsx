@@ -8,6 +8,7 @@ type StatisticsItem = {
   children: React.ReactNode | string;
   permission?: any;
   node?: any;
+  style?: any;
 };
 
 interface StatisticsProps {
@@ -48,7 +49,7 @@ const CardStatistics = (props: StatisticsProps) => {
             ) : (
               <div
                 className={'item-index-echarts'}
-                style={item.style || { height: 75, width: 110 }}
+                style={item.style || { height: 75, width: 110, minHeight: 75 }}
               >
                 {item.children}
               </div>
