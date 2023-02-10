@@ -86,10 +86,11 @@ export const handleOptionsLabel = (data: any, type?: string) => {
       };
       const _value = isObject(v) ? Object.values(v) : [v];
       const typeStr = type ? typeKey[type] : '';
-      if (DoubleFilter.includes(t) && !range) {
+      if (DoubleFilter.includes(t) && _value.length === 2) {
         const str = termsTypeKey[t].replace('_value', _value[0]).replace('_value2', _value[1]);
         return `${c} ${str} ${typeStr} `;
-      } else if (DoubleFilter.includes(t) && !!range) {
+      } else if (DoubleFilter.includes(t) && !!range && _value.length === 1) {
+        console.log(_value, range);
         const str = termsTypeKey[t].replace('_value和_value2', _value[0]);
         return `${c} ${str} ${typeStr} `;
       } else {
@@ -127,6 +128,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
     termType: '',
     value: undefined,
   });
+  const enumRef = useRef<any>([]);
 
   const valueChange = useCallback(
     (_value: any) => {
@@ -156,6 +158,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             [];
           setTtOptions(_termTypeOptions);
           setValueType(labelOptions.dataType);
+          enumRef.current = labelOptions.options;
           if (labelOptions.metrics) {
             // 指标值
             const _metrics = labelOptions.metrics.map((mItem: any) => ({
@@ -182,7 +185,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
   useEffect(() => {
     setTermType(props.data.termType || '');
     setValue(props.data.value);
-    // console.log(props.data.value,'-----')
+    // console.log('props.data-----', props.data);
     setColumn(props.data.column || '');
     // if(props.data.value?.source === 'metric'){
     //   setIsRange(true)
@@ -255,6 +258,10 @@ const ParamsItem = observer((props: ParamsItemProps) => {
           showLabelKey="fullName"
           isTree={true}
           onChange={(_value, item) => {
+            console.log('item.node---', item.node);
+            if (item.node && item.node.dataType === 'enum') {
+              enumRef.current = item.node.options;
+            }
             setValue({
               value: undefined,
               source: 'manual',
@@ -396,6 +403,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
             placeholder="参数值"
             valueType={valueType}
             value={value}
+            enumList={enumRef.current}
             onChange={(v, lb, item) => {
               console.log('-----', v, lb, item);
               const _value = { ...v };
@@ -412,6 +420,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
               if (!!metricsOptions.length) {
                 if (DoubleFilter.includes(termType) && !isRange) {
                   labelCache.current[2] = { 0: v?.value?.[0], 1: v?.value?.[1] };
+                  labelCache.current.length = 3;
                 } else {
                   labelCache.current[2] = { 0: lb };
                   labelCache.current[4] = 'range';
@@ -420,7 +429,7 @@ const ParamsItem = observer((props: ParamsItemProps) => {
                 labelCache.current[2] = { 0: lb };
               }
               labelCache.current[3] = props.data.type;
-              console.log('labelCache------', [...labelCache.current]);
+              // console.log('labelCache------', [...labelCache.current]);
               props.onLabelChange?.([...labelCache.current]);
               valueEventChange(_value);
             }}

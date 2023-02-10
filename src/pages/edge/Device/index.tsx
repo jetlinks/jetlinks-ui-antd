@@ -3,7 +3,7 @@ import { DeviceInstance } from '@/pages/device/Instance/typings';
 import SearchComponent from '@/components/SearchComponent';
 import { ActionType, ProColumns } from '@jetlinks/pro-table';
 import moment from 'moment';
-import { Badge, Button, Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import { service as categoryService } from '@/pages/device/Category';
 import { InstanceModel, service, statusMap } from '@/pages/device/Instance';
 import { useIntl } from '@@/plugin-locale/localeExports';
@@ -36,13 +36,15 @@ export default () => {
   const history = useHistory<Record<string, string>>();
   const [importVisible, setImportVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('edge/Device');
+  const devicePermission = PermissionButton.usePermission('device/Instance').permission;
 
   const tools = (record: DeviceInstance, type: 'card' | 'list') => [
     type === 'list' && (
-      <Button
+      <PermissionButton
         type={'link'}
         style={{ padding: 0 }}
         key={'detail'}
+        isPermission={permission.view && devicePermission.view}
         onClick={() => {
           InstanceModel.current = record;
           const url = getMenuPathByParams(MENUS_CODE['device/Instance/Detail'], record.id);
@@ -57,7 +59,7 @@ export default () => {
         >
           <EyeOutlined />
         </Tooltip>
-      </Button>
+      </PermissionButton>
     ),
     <PermissionButton
       type={'link'}

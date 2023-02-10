@@ -197,7 +197,7 @@ const Center = () => {
           </div>
           <div className={styles.content}>
             <Descriptions column={4} layout="vertical" labelStyle={{ fontWeight: 600 }}>
-              <Descriptions.Item label="登录账号">{data?.username}</Descriptions.Item>
+              <Descriptions.Item label="用户名">{data?.username}</Descriptions.Item>
               <Descriptions.Item label="账号ID">
                 <Ellipsis title={data?.id} tooltip={{ placement: 'topLeft' }} maxWidth={'90%'} />
               </Descriptions.Item>

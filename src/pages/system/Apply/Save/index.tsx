@@ -46,6 +46,7 @@ const Save = () => {
   const [detail, setDetail] = useState<any>({});
   const accessRef = useRef<any>([]);
   const [type, setType] = useState<any>('internal-standalone');
+  const [tag, setTag] = useState<string>('add');
 
   const provider1 = require('/public/images/apply/provider1.png');
   const provider2 = require('/public/images/apply/provider2.png');
@@ -261,10 +262,10 @@ const Save = () => {
               field.selfErrors = '';
             }
           });
-          onFieldReact('apiServer.appId', (field: any) => {
-            const value = (field as Field).value;
-            console.log(value);
-          });
+          // onFieldReact('apiServer.appId', (field: any) => {
+          //   const value = (field as Field).value;
+          //   console.log(value);
+          // });
         },
       }),
     [id],
@@ -324,7 +325,7 @@ const Save = () => {
           const isPage = data.integrationModes.includes('page');
           if (isPage) {
             setVisiable(true);
-            setDetail(data);
+            setDetail(res.result);
           } else {
             onlyMessage('保存成功');
             const url = getMenuPathByCode('system/Apply');
@@ -1957,22 +1958,15 @@ const Save = () => {
     setView(false);
     const params = new URLSearchParams(location.search);
     const item = params.get('id');
-    // console.log(id);
+    console.log(id);
     if (item) {
       setId(item);
+      setTag('edit');
     }
     if (location && location.state) {
       setView(location.state.view);
     }
   }, [location]);
-
-  useEffect(() => {
-    const item = form.getValuesIn('provider');
-    // console.log(item, form.getState())
-    // setType(localStorage.getItem('type'))
-
-    console.log(item, form.getState());
-  }, []);
 
   return (
     <PageContainer>
@@ -2015,8 +2009,13 @@ const Save = () => {
       {visible && (
         <MenuPage
           data={detail}
-          close={() => {
+          tag={tag}
+          close={(isOk?: any) => {
             setVisiable(false);
+            if (isOk) {
+              const url = getMenuPathByCode('system/Apply');
+              history.push(url);
+            }
           }}
         />
       )}

@@ -12,7 +12,7 @@ export enum TimeKey {
   'year' = 'year',
 }
 
-export type TimeType = keyof typeof TimeKey;
+export type TimeType = keyof typeof TimeKey | undefined;
 
 type ValueType = { start: number; end: number; type: TimeType };
 
@@ -97,7 +97,7 @@ export default forwardRef((props: ExtraTimePickerProps, ref) => {
           onChange={(rangeValue) => {
             setRadioValue(undefined);
             if (rangeValue && rangeValue.length === 2) {
-              change(rangeValue[0]!.valueOf(), rangeValue[1]!.valueOf(), radioValue!);
+              change(rangeValue[0]!.valueOf(), rangeValue[1]!.valueOf(), undefined);
             }
             if (props.pickerTimeChange) {
               props.pickerTimeChange();

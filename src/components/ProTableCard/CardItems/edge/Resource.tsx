@@ -29,7 +29,7 @@ export default (props: ResourceCardProps) => {
         disabled: StatusColorEnum.error,
       }}
     >
-      <div className={'pro-table-card-item'}>
+      <div className={'pro-table-card-item'} onClick={props.onClick}>
         <div className={'card-item-avatar'}>
           <img width={88} height={88} src={defaultImage} alt={''} />
         </div>

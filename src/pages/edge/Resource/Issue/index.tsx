@@ -11,6 +11,7 @@ import styles from '@/pages/link/AccessConfig/Detail/components/Network/index.le
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { onlyMessage } from '@/utils/util';
 import Result from './Result';
+import { service as api } from '@/pages/device/Instance';
 interface Props {
   data: Partial<ResourceItem>;
   cancel: () => void;
@@ -36,6 +37,15 @@ export default (props: Props) => {
       }),
       dataIndex: 'productName',
       ellipsis: true,
+      valueType: 'select',
+      index: 1,
+      request: async () => {
+        const res = await api.getProductList();
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
     },
     {
       title: intl.formatMessage({
@@ -50,9 +60,12 @@ export default (props: Props) => {
         id: 'pages.device.instance.registrationTime',
         defaultMessage: '注册时间',
       }),
-      dataIndex: 'registryTime',
+      dataIndex: 'registerTime',
       width: '200px',
-      render: (text: any) => (text ? moment(text).format('YYYY-MM-DD HH:mm:ss') : ''),
+      valueType: 'dateTime',
+      render: (_: any, row) => {
+        return row.createTime ? moment(row.registerTime).format('YYYY-MM-DD HH:mm:ss') : '';
+      },
       sorter: true,
     },
     {
@@ -179,7 +192,7 @@ export default (props: Props) => {
                 type: 'and',
               },
             ],
-            sorts: [{ name: 'createTime', order: 'desc' }],
+            sorts: [{ name: 'registerTime', order: 'desc' }],
           })
         }
       />

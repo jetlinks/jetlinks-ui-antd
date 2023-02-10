@@ -25,12 +25,13 @@ export interface ParamsDropdownProps {
   icon?: ReactNode;
   open?: boolean;
   openChange?: (open: boolean) => void;
+  enumList?: any[];
 }
 
 interface MenusProps {
   value: any;
   options?: any[];
-  onChange: (value: any, lb: any, node) => void;
+  onChange: (value: any, lb: any, node: any) => void;
 }
 
 const Menus = (props: MenusProps) => {
@@ -50,7 +51,7 @@ const Menus = (props: MenusProps) => {
         selectedKeys={value ? [value] : undefined}
         items={props.options}
         onClick={({ key, item }: { key: any; item: any }) => {
-          console.log(item.props);
+          // console.log(item.props);
           const _item = props.options?.find((a) => a.value === item.props.value);
           setValue(key);
           if (_item) {
@@ -91,7 +92,7 @@ export default (props: ParamsDropdownProps) => {
       if (config.name && Array.isArray(_v)) {
         _value = _v[config.name];
       }
-
+      // console.log('type---',type,props.enumList)
       switch (type) {
         case 'int':
         case 'long':
@@ -119,10 +120,15 @@ export default (props: ParamsDropdownProps) => {
             />
           );
         case 'enum':
+          const _enums = props.enumList?.map((item) => ({
+            label: item.name,
+            value: item.id,
+            key: item.id,
+          }));
           return (
             <Menus
               value={_value}
-              options={props.options}
+              options={_enums}
               onChange={(v, l) => {
                 onValueChange(v, l);
                 setOpen(false);
@@ -226,6 +232,12 @@ export default (props: ParamsDropdownProps) => {
           });
           break;
         case 'enum':
+          props.enumList?.forEach((item) => {
+            if (item.id === v) {
+              setLabel(item.name);
+            }
+          });
+          break;
         case 'object':
           findLabel(v, props.options || []);
           break;
@@ -236,7 +248,7 @@ export default (props: ParamsDropdownProps) => {
           setLabel(v + '');
       }
     },
-    [props.options, props.BuiltInOptions],
+    [props.options, props.BuiltInOptions, props.enumList],
   );
 
   const initData = useCallback(() => {

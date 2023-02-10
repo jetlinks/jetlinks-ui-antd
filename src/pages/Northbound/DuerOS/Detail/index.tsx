@@ -252,6 +252,16 @@ const Save = () => {
           gridSpan: 1,
         },
         required: true,
+        'x-validator': [
+          {
+            max: 64,
+            message: '最多可输入64个字符',
+          },
+          {
+            required: true,
+            message: '请输入名称',
+          },
+        ],
         'x-component-props': {
           placeholder: '请输入名称',
         },

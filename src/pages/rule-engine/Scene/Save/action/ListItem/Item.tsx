@@ -409,15 +409,18 @@ export default (props: ItemProps) => {
                   label={props.options?.terms?.[index]}
                   actionColumns={props.options?.otherColumns}
                   onColumnsChange={(columns) => {
-                    console.log('-----', columns);
+                    // console.log('columns-----', columns);
 
                     const filterColumns = new Set(flattenDeep(columns)); // 平铺去重
+                    // console.log('filterColumns-----',filterColumns)
+
                     let newColumns = [...filterColumns.values()];
                     if (optionsRef.current?.otherColumns) {
                       newColumns = [...optionsRef.current.otherColumns, ...newColumns];
                     }
                     optionsRef.current['columns'] = newColumns;
                     optionsRef.current['termsColumns'] = columns;
+                    // console.log('optionsRef.current-----',optionsRef.current)
                     props.onUpdate(cacheValueRef.current, optionsRef.current);
                   }}
                   onAddGroup={() => {

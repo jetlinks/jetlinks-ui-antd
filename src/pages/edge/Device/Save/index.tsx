@@ -258,7 +258,7 @@ const Save = (props: Props) => {
         </Row>
         <Row>
           <Col span={24}>
-            <Form.Item label={intlFormat('pages.table.description', '说明')} name={'description'}>
+            <Form.Item label={intlFormat('pages.table.description', '说明')} name={'describe'}>
               <Input.TextArea
                 placeholder={
                   intlFormat('pages.form.tip.input', '请输入') +
@@ -280,13 +280,15 @@ const Save = (props: Props) => {
           setVisible(false);
         }}
         deviceType={'gateway'}
-        reload={(productId: string, name: string) => {
-          form.setFieldsValue({ productId });
+        reload={(productId: string, result: any) => {
+          console.log('------', productId, result.name);
+
           productList.push({
-            id: productId,
-            name,
+            value: productId,
+            label: result.name,
           });
           setProductList([...productList]);
+          form.setFieldsValue({ productId: productId });
         }}
       />
     </Modal>
