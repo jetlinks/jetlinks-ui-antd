@@ -1481,7 +1481,7 @@ export default [
             showPage: [
               'dashboard',
               'data-collect-channel',
-              'data-collect-opc',
+              // 'data-collect-opc',
               'data-collector',
               'things-collector',
             ],
@@ -1503,7 +1503,7 @@ export default [
             icon: 'icon-rizhifuwu',
             showPage: [
               'data-collect-channel',
-              'data-collect-opc',
+              // 'data-collect-opc',
               'data-collector',
               'things-collector',
             ],
@@ -1634,7 +1634,7 @@ export default [
             icon: 'icon-yingyongguanli',
             showPage: [
               'data-collect-channel',
-              'data-collect-opc',
+              // 'data-collect-opc',
               'data-collector',
               'things-collector',
             ],

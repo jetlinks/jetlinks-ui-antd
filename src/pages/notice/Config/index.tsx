@@ -376,7 +376,6 @@ const Config = observer(() => {
                         <ArrowDownOutlined />
                         导出
                       </PermissionButton>
-                      ,
                     </Menu.Item>
                     {(record.provider === 'dingTalkMessage' ||
                       record.provider === 'corpMessage') && (

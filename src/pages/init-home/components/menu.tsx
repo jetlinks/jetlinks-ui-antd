@@ -43,6 +43,7 @@ const Menu = forwardRef((props: { onChange?: (menu: any) => void }, ref) => {
         resp.result.map((item: any) => JSON.parse(item).id),
         BaseMenu,
       );
+      // console.log(newTree)
       const _count = menuCount(newTree);
       menuRef.current = newTree;
       setCount(_count);

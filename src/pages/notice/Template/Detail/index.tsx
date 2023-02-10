@@ -649,6 +649,12 @@ const Detail = observer(() => {
           placeholder: '请选择绑定配置',
         },
         required: true,
+        'x-validator': [
+          {
+            required: true,
+            message: '请选择绑定配置',
+          },
+        ],
         'x-decorator-props': {
           tooltip: '使用固定的通知配置来发送此通知模版',
         },
@@ -695,6 +701,10 @@ const Detail = observer(() => {
                       {
                         max: 64,
                         message: '最多可输入64个字符',
+                      },
+                      {
+                        required: true,
+                        message: '请输入AgentID',
                       },
                     ],
                   },
@@ -786,6 +796,12 @@ const Detail = observer(() => {
                           placeholder: '请选择消息模版',
                         },
                         required: true,
+                        'x-validator': [
+                          {
+                            required: true,
+                            message: '请输入AgentID',
+                          },
+                        ],
                         'x-decorator-props': {
                           gridSpan: 1,
                           tooltip: '微信公众号中配置的消息模版',
@@ -934,6 +950,10 @@ const Detail = observer(() => {
                         max: 64,
                         message: '最多可输入64个字符',
                       },
+                      {
+                        required: true,
+                        message: '请输入AgentID',
+                      },
                     ],
                   },
                   layout: {
@@ -1001,6 +1021,12 @@ const Detail = observer(() => {
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     required: true,
+                    'x-validator': [
+                      {
+                        required: true,
+                        message: '请选择消息类型',
+                      },
+                    ],
                     'x-component-props': {
                       placeholder: '请选择消息类型',
                     },
@@ -1025,6 +1051,10 @@ const Detail = observer(() => {
                           {
                             max: 64,
                             message: '最多可输入64个字符',
+                          },
+                          {
+                            required: true,
+                            message: '请输入标题',
                           },
                         ],
                       },
@@ -1053,6 +1083,10 @@ const Detail = observer(() => {
                           {
                             max: 64,
                             message: '最多可输入64个字符',
+                          },
+                          {
+                            required: true,
+                            message: '请输入标题',
                           },
                         ],
                       },
@@ -1126,6 +1160,12 @@ const Detail = observer(() => {
                     'x-component-props': {
                       placeholder: '请选择类型',
                     },
+                    'x-validator': [
+                      {
+                        required: true,
+                        message: '请选择类型',
+                      },
+                    ],
                     default: 'tts',
                     enum: [
                       { label: '语音通知', value: 'voice' },
@@ -1149,6 +1189,12 @@ const Detail = observer(() => {
                           gridSpan: 1,
                         },
                         required: true,
+                        'x-validator': [
+                          {
+                            required: true,
+                            message: '请输入模版ID',
+                          },
+                        ],
                         'x-component-props': {
                           placeholder: '请输入模版ID',
                         },
@@ -1270,6 +1316,12 @@ const Detail = observer(() => {
                       code: {
                         title: '模版',
                         required: true,
+                        'x-validator': [
+                          {
+                            required: true,
+                            message: '请选择模版',
+                          },
+                        ],
                         'x-component': 'Select',
                         'x-decorator': 'FormItem',
                         'x-decorator-props': {
@@ -1304,6 +1356,12 @@ const Detail = observer(() => {
                   signName: {
                     title: '签名',
                     required: true,
+                    'x-validator': [
+                      {
+                        required: true,
+                        message: '请输入签名',
+                      },
+                    ],
                     'x-component': 'Select',
                     'x-decorator': 'FormItem',
                     'x-decorator-props': {
@@ -1351,6 +1409,10 @@ const Detail = observer(() => {
                     max: 64,
                     message: '最多可输入64个字符',
                   },
+                  {
+                    required: true,
+                    message: '请输入标题',
+                  },
                 ],
               },
               sendTo: {
@@ -1397,6 +1459,12 @@ const Detail = observer(() => {
                         gridSpan: 23,
                       },
                       required: true,
+                      'x-validator': [
+                        {
+                          required: true,
+                          message: '请上传文件或输入文件名称',
+                        },
+                      ],
                       'x-component-props': {
                         type: 'file',
                         display: 'name',
@@ -1521,6 +1589,10 @@ const Detail = observer(() => {
             max: 500,
             message: '最多可输入500个字符',
           },
+          {
+            require: true,
+            message: '请输入模版内容',
+          },
         ],
       },
       variableDefinitions: {
@@ -1574,6 +1646,10 @@ const Detail = observer(() => {
                       max: 64,
                       message: '最多可输入64个字符',
                     },
+                    {
+                      require: true,
+                      message: '请输入名称',
+                    },
                   ],
                 },
               },
@@ -1588,6 +1664,12 @@ const Detail = observer(() => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Select',
                   required: true,
+                  'x-validator': [
+                    {
+                      require: true,
+                      message: '请选择类型',
+                    },
+                  ],
                   enum: [
                     { label: '字符串', value: 'string' },
                     { label: '时间', value: 'date' },
@@ -1601,6 +1683,12 @@ const Detail = observer(() => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { title: '格式', width: '300px' },
               required: true,
+              'x-validator': [
+                {
+                  require: true,
+                  message: '请输入格式',
+                },
+              ],
               properties: {
                 format: {
                   type: 'string',

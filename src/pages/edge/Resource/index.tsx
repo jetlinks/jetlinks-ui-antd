@@ -20,6 +20,7 @@ import ResourceCard from '@/components/ProTableCard/CardItems/edge/Resource';
 import moment from 'moment';
 import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
 import { useHistory } from 'umi';
+import { service as api } from '@/pages/device/Instance';
 
 export const service = new Service('entity/template');
 
@@ -175,12 +176,69 @@ export default () => {
       dataIndex: 'category',
       width: 150,
       ellipsis: true,
+      valueType: 'select',
+      valueEnum: {
+        OPC_UA: {
+          text: 'OPC UA接入',
+          status: 'OPC_UA',
+        },
+        MODBUS_TCP: {
+          text: 'Modbus TCP接入',
+          status: 'MODBUS_TCP',
+        },
+        snap7: {
+          text: 'S7-200接入',
+          status: 'snap7',
+        },
+        BACNetIp: {
+          text: 'BACnet接入',
+          status: 'BACNetIp',
+        },
+        MODBUS_RTU: {
+          text: 'MODBUS_RTU接入',
+          status: 'MODBUS_RTU',
+        },
+      },
+    },
+    {
+      title: '所属边缘网关',
+      width: 150,
+      dataIndex: 'sourceId',
+      ellipsis: true,
+      valueType: 'select',
+      hideInTable: true,
+      request: async () => {
+        const res: any = await api.queryNoPagingPost({
+          terms: [
+            {
+              terms: [
+                {
+                  column: 'productId$product-info',
+                  value: 'accessProvider is official-edge-gateway',
+                },
+              ],
+              type: 'and',
+            },
+          ],
+          sorts: [
+            {
+              name: 'createTime',
+              order: 'desc',
+            },
+          ],
+        });
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
     },
     {
       title: '所属边缘网关',
       width: 150,
       dataIndex: 'sourceName',
       ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: '创建时间',

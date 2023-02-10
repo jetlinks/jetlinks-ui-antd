@@ -60,7 +60,10 @@ const notifyRender = (data: ActionsType | undefined) => {
       }
       return (
         <span>
-          通过钉钉向{data?.options?.notifierName || data?.notify?.notifierId}发送
+          通过钉钉 向 {data?.options?.orgName || ''}
+          {data?.options?.tagName || ''}
+          {data?.options?.sendTo || ''}
+          发送
           {data?.options?.templateName || data?.notify?.templateId}
         </span>
       );
