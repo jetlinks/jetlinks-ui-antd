@@ -18,6 +18,9 @@ import Issue from './Issue';
 import Service from './service';
 import ResourceCard from '@/components/ProTableCard/CardItems/edge/Resource';
 import moment from 'moment';
+import { getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { useHistory } from 'umi';
+import { service as api } from '@/pages/device/Instance';
 
 export const service = new Service('entity/template');
 
@@ -29,6 +32,8 @@ export default () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [issueVisible, setIssueVisible] = useState<boolean>(false);
   const { permission } = PermissionButton.usePermission('edge/Resource');
+
+  const history = useHistory<Record<string, string>>();
 
   const tools = (record: ResourceItem, type: 'card' | 'list') => [
     <PermissionButton
@@ -57,7 +62,7 @@ export default () => {
       tooltip={{
         title:
           type !== 'list'
-            ? `${record.state.value === 'disabled' ? '请先启用，再下发' : undefined}`
+            ? `${record.state.value === 'disabled' ? '请先启用，再下发' : ''}`
             : '下发',
       }}
       style={{ padding: 0 }}
@@ -157,6 +162,7 @@ export default () => {
       dataIndex: 'id',
       width: 200,
       ellipsis: true,
+      hideInSearch: true,
       fixed: 'left',
     },
     {
@@ -170,12 +176,69 @@ export default () => {
       dataIndex: 'category',
       width: 150,
       ellipsis: true,
+      valueType: 'select',
+      valueEnum: {
+        OPC_UA: {
+          text: 'OPC UA接入',
+          status: 'OPC_UA',
+        },
+        MODBUS_TCP: {
+          text: 'Modbus TCP接入',
+          status: 'MODBUS_TCP',
+        },
+        snap7: {
+          text: 'S7-200接入',
+          status: 'snap7',
+        },
+        BACNetIp: {
+          text: 'BACnet接入',
+          status: 'BACNetIp',
+        },
+        MODBUS_RTU: {
+          text: 'MODBUS_RTU接入',
+          status: 'MODBUS_RTU',
+        },
+      },
     },
     {
       title: '所属边缘网关',
       width: 150,
       dataIndex: 'sourceId',
       ellipsis: true,
+      valueType: 'select',
+      hideInTable: true,
+      request: async () => {
+        const res: any = await api.queryNoPagingPost({
+          terms: [
+            {
+              terms: [
+                {
+                  column: 'productId$product-info',
+                  value: 'accessProvider is official-edge-gateway',
+                },
+              ],
+              type: 'and',
+            },
+          ],
+          sorts: [
+            {
+              name: 'createTime',
+              order: 'desc',
+            },
+          ],
+        });
+        if (res.status === 200) {
+          return res.result.map((pItem: any) => ({ label: pItem.name, value: pItem.id }));
+        }
+        return [];
+      },
+    },
+    {
+      title: '所属边缘网关',
+      width: 150,
+      dataIndex: 'sourceName',
+      ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: '创建时间',
@@ -253,7 +316,24 @@ export default () => {
         rowKey="id"
         search={false}
         pagination={{ pageSize: 10 }}
-        cardRender={(record) => <ResourceCard {...record} actions={tools(record, 'card')} />}
+        cardRender={(record) => (
+          <ResourceCard
+            {...record}
+            onClick={() => {
+              const url = getMenuPathByParams(
+                MENUS_CODE['device/Instance/Detail'],
+                record.sourceId,
+              );
+              console.log(url);
+              if (url) {
+                history.push(url);
+              } else {
+                onlyMessage('暂无权限，请联系管理员', 'warning');
+              }
+            }}
+            actions={tools(record, 'card')}
+          />
+        )}
       />
       {visible && (
         <Save

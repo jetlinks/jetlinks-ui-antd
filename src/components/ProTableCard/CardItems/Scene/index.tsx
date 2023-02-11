@@ -12,6 +12,8 @@ import MyTooltip from './MyTooltip';
 import { handleOptionsLabel } from '@/pages/rule-engine/Scene/Save/terms/paramsItem';
 import { isArray } from 'lodash';
 import TriggerAlarm from '@/pages/rule-engine/Scene/Save/action/TriggerAlarm';
+import { getMenuPathByCode, getMenuPathByParams, MENUS_CODE } from '@/utils/menu';
+import { history } from 'umi';
 
 const imageMap = new Map();
 imageMap.set('timer', require('/public/images/scene/scene-timer.png'));
@@ -58,7 +60,10 @@ const notifyRender = (data: ActionsType | undefined) => {
       }
       return (
         <span>
-          通过钉钉向{data?.options?.notifierName || data?.notify?.notifierId}发送
+          通过钉钉 向 {data?.options?.orgName || ''}
+          {data?.options?.tagName || ''}
+          {data?.options?.sendTo || ''}
+          发送
           {data?.options?.templateName || data?.notify?.templateId}
         </span>
       );
@@ -425,10 +430,28 @@ const TriggerRender = (data: SceneCardProps) => {
                 if (data.trigger?.device?.selector === 'fixed') {
                   // 自定义
                   //selectorValues
+                  if (!!getMenuPathByCode(MENUS_CODE['device/Instance'])) {
+                    const url = getMenuPathByParams(
+                      MENUS_CODE['device/Instance/Detail'],
+                      data.trigger?.device?.selectorValues[0]?.value,
+                    );
+                    if (url) {
+                      history.replace(url);
+                    }
+                  }
                 } else if (data.trigger?.device?.selector === 'org') {
                   // 组织
                 } else if (data.trigger?.device?.selector === 'all') {
                   // 产品
+                  if (!!getMenuPathByCode(MENUS_CODE['device/Product'])) {
+                    const url = getMenuPathByParams(
+                      MENUS_CODE['device/Product/Detail'],
+                      data.trigger?.device?.productId,
+                    );
+                    if (url) {
+                      history.replace(url);
+                    }
+                  }
                 }
               }
             }}

@@ -70,7 +70,7 @@ export default observer((props: Props) => {
         setBuiltInList(filterData);
         if (props.value) {
           const label = optionMap.current.get(props.value);
-          setLabelValue(label?.description);
+          setLabelValue(label?.fullName);
         }
       }
     });
@@ -92,7 +92,6 @@ export default observer((props: Props) => {
 
   useEffect(() => {
     setValue(props.value);
-    // setLabelValue(props.label);
   }, [props.value]);
 
   useEffect(() => {
@@ -212,7 +211,7 @@ export default observer((props: Props) => {
             }}
             onChange={(_: any, timeString: string) => {
               // setDateOpen(false)
-              console.log('timeString', timeString);
+              // console.log('timeString', timeString);
               setValue(timeString);
               setLabelValue(timeString);
               if (props.onChange) {
@@ -254,20 +253,21 @@ export default observer((props: Props) => {
             treeData={builtInList}
             height={300}
             defaultExpandAll
+            defaultSelectedKeys={[props.value]}
             fieldNames={{ title: 'name', key: 'id' }}
             onSelect={(selectedKeys, e) => {
-              // console.log('e.node', e.node);
+              // console.log('e.node', e.node, e);
               if (e.node.metadata) {
                 if (props.onColumns) {
                   props.onColumns(e.node.column);
                 }
               }
               setOpen(false);
-              setLabelValue(e.node.description);
-              DeviceModel.actionName = e.node.description;
+              setLabelValue(e.node.fullName);
+              DeviceModel.actionName = e.node.fullName;
               setValue(selectedKeys[0]);
               if (props.onChange) {
-                props.onChange(selectedKeys[0], source, e.node.description);
+                props.onChange(selectedKeys[0], source, e.node.fullName);
               }
             }}
           />
@@ -323,7 +323,7 @@ export default observer((props: Props) => {
             setObjVisable(false);
           }}
           ok={(param) => {
-            console.log('------', param);
+            // console.log('------', param);
             if (props.onChange) {
               props.onChange(JSON.parse(param));
             }

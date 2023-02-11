@@ -1,6 +1,6 @@
 import SystemConst from '@/utils/const';
 import Token from '@/utils/token';
-import { downloadObject } from '@/utils/util';
+import { downloadTxT } from '@/utils/util';
 import { Col, Input, Modal, Row } from 'antd';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useEffect, useState } from 'react';
@@ -90,7 +90,7 @@ const Publish = (props: Props) => {
               <a
                 style={{ marginLeft: 20 }}
                 onClick={() => {
-                  downloadObject(errMessage || '', '下发失败原因');
+                  downloadTxT(errMessage || '', '下发失败原因');
                 }}
               >
                 下载

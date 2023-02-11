@@ -238,11 +238,7 @@ const Configuration = () => {
           key="action"
           style={{ padding: 0 }}
           popConfirm={{
-            title: `${
-              record.state?.value !== 'disabled'
-                ? '禁用告警不会影响关联的场景状态，确定要禁用吗'
-                : '确认启用'
-            }?`,
+            title: `${record.state?.value !== 'disabled' ? '确认禁用' : '确认启用'}?`,
             onConfirm: async () => {
               if (record.state?.value === 'disabled') {
                 await service._enable(record.id);
@@ -375,11 +371,7 @@ const Configuration = () => {
                 isPermission={permission.action}
                 style={{ padding: 0 }}
                 popConfirm={{
-                  title: `${
-                    record.state?.value !== 'disabled'
-                      ? '禁用告警不会影响关联的场景状态，确定要禁用吗'
-                      : '确认启用'
-                  }?`,
+                  title: `${record.state?.value !== 'disabled' ? '确认禁用' : '确认启用'}?`,
                   onConfirm: async () => {
                     if (record.state?.value === 'disabled') {
                       await service._enable(record.id);

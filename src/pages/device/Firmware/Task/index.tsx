@@ -6,7 +6,7 @@ import { useRef, useState } from 'react';
 import { useIntl } from '@@/plugin-locale/localeExports';
 import {
   ControlOutlined,
-  DeleteOutlined,
+  // DeleteOutlined,
   EyeOutlined,
   PlusOutlined,
   StopOutlined,
@@ -16,7 +16,7 @@ import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import type { FirmwareItem } from '@/pages/device/Firmware/typings';
 import Save from './Save';
-import { onlyMessage } from '@/utils/util';
+// import { onlyMessage } from '@/utils/util';
 import { PermissionButton, AIcon } from '@/components';
 import useDomFullHeight from '@/hooks/document/useDomFullHeight';
 import usePermissions from '@/hooks/permission';
@@ -181,40 +181,40 @@ const Task = observer(() => {
           <EyeOutlined />
         </PermissionButton>,
         <UpgradeBtn data={record} actions={actionRef.current} key="btn" />,
-        <PermissionButton
-          key="delete"
-          type={'link'}
-          style={{ padding: 0 }}
-          isPermission={permission.delete}
-          tooltip={{
-            title: '删除',
-          }}
-          popConfirm={{
-            title:
-              record.waiting > 0 || record.processing > 0
-                ? '删除将导致正在进行的任务终止，确定要删除吗？'
-                : intl.formatMessage({
-                    id: 'pages.data.option.remove.tips',
-                    defaultMessage: '确认删除？',
-                  }),
-            onConfirm: async () => {
-              const resp = await service.deleteTask(record.id);
-              if (resp.status === 200) {
-                onlyMessage(
-                  intl.formatMessage({
-                    id: 'pages.data.option.success',
-                    defaultMessage: '操作成功!',
-                  }),
-                );
-                actionRef.current?.reload();
-              } else {
-                message.error(resp?.message || '删除失败！');
-              }
-            },
-          }}
-        >
-          <DeleteOutlined />
-        </PermissionButton>,
+        // <PermissionButton
+        //   key="delete"
+        //   type={'link'}
+        //   style={{ padding: 0 }}
+        //   isPermission={permission.delete}
+        //   tooltip={{
+        //     title: '删除',
+        //   }}
+        //   popConfirm={{
+        //     title:
+        //       record.waiting > 0 || record.processing > 0
+        //         ? '删除将导致正在进行的任务终止，确定要删除吗？'
+        //         : intl.formatMessage({
+        //             id: 'pages.data.option.remove.tips',
+        //             defaultMessage: '确认删除？',
+        //           }),
+        //     onConfirm: async () => {
+        //       const resp = await service.deleteTask(record.id);
+        //       if (resp.status === 200) {
+        //         onlyMessage(
+        //           intl.formatMessage({
+        //             id: 'pages.data.option.success',
+        //             defaultMessage: '操作成功!',
+        //           }),
+        //         );
+        //         actionRef.current?.reload();
+        //       } else {
+        //         message.error(resp?.message || '删除失败！');
+        //       }
+        //     },
+        //   }}
+        // >
+        //   <DeleteOutlined />
+        // </PermissionButton>,
       ],
     },
   ];

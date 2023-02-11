@@ -298,7 +298,7 @@ const Detail = observer(() => {
                 style={{ padding: 0 }}
                 isPermission={permission.update}
                 tooltip={{
-                  title: '重试',
+                  title: '查看',
                 }}
                 onClick={() => {
                   setVisible(true);

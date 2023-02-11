@@ -105,6 +105,7 @@ const DeviceBoard = () => {
           format: 'HH:mm',
         };
       default:
+        console.log('swich---');
         const time = dt.end - dt.start;
         const hour = 60 * 60 * 1000;
         const days = hour * 24;
@@ -132,6 +133,7 @@ const DeviceBoard = () => {
 
   const getEcharts = async () => {
     const data = ref.current!.getValues();
+    console.log('data---', data);
     const res = await service.dashboard([
       {
         dashboard: 'collector',

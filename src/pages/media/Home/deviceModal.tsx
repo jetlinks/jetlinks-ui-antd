@@ -117,6 +117,7 @@ export default (props: DeviceModalProps) => {
       <SearchComponent<DeviceItem>
         field={columns}
         enableSave={false}
+        model={'simple'}
         onSearch={async (data) => {
           setSearchParam(data);
         }}

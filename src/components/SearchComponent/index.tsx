@@ -211,12 +211,16 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
             const _column = (typeFiled as Field).value;
             const _field = field.find((item) => item.dataIndex === _column);
             if (_column === 'id') {
-              if (isModified) {
-                f.setFieldState(typeFiled.query('.termType'), async (state) => {
-                  state.value = 'eq';
-                  state.dataSource = termType;
-                });
-              }
+              f.setFieldState(typeFiled.query('.termType'), async (state) => {
+                state.value = 'eq';
+                state.dataSource = termType;
+              });
+              // if (isModified) {
+              //   f.setFieldState(typeFiled.query('.termType'), async (state) => {
+              //     state.value = 'eq';
+              //     state.dataSource = termType;
+              //   });
+              // }
               f.setFieldState(typeFiled.query('.value'), async (state) => {
                 state.componentType = 'Input';
                 state.componentProps = {
