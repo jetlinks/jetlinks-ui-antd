@@ -26,7 +26,7 @@ jobs:
           yarn install
           yarn run build
           cp -r dist docker/
-          docker build -t registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks/jetlinks-ui:$(node -p "require('./package.json').version") ./docker
+          docker build -t registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks-ui::$(node -p "require('./package.json').version") ./docker
 
       - name: Push Docker
-        run: docker push registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks/jetlinks-ui:$(node -p "require('./package.json').version")
+        run: docker push registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks-ui:$(node -p "require('./package.json').version")
