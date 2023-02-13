@@ -22,10 +22,10 @@ jobs:
           yarn install
           yarn run build
           cp -r dist docker/
-          docker build -t registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-pro:$(node -p "require('./package.json').version") ./docker
+          docker build -t registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks/jetlinks-ui:$(node -p "require('./package.json').version") ./docker
 
       - name: Login Docker Repo
-        run: echo "${{ secrets.ALIYUN_DOCKER_REPO_PWD }}" | docker login registry.cn-shenzhen.aliyuncs.com -u ${{ secrets.ALIYUN_DOCKER_REPO_USERNAME }} --password-stdin
+        run: echo "${{ secrets.ALIYUN_DOCKER_REPO_PWD }}" | docker login registry.cn-hangzhou.aliyuncs.com -u ${{ secrets.ALIYUN_DOCKER_REPO_USERNAME }} --password-stdin
 
       - name: Push Docker
-        run: docker push registry.cn-shenzhen.aliyuncs.com/jetlinks/jetlinks-ui-pro:$(node -p "require('./package.json').version")
+        run: docker push registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks/jetlinks-ui:$(node -p "require('./package.json').version")
