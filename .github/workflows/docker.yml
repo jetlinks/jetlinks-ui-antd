@@ -11,6 +11,7 @@ jobs:
       - name: Checkout
         uses: aliyun/acr-login@v1 # 使用阿里云镜像服务action
         with:
+          persist-credentials: false
           login-server: registry.cn-hangzhou.aliyuncs.com # 务必正确填写镜像容器服务的登录地址
           username: "${{ secrets.REGISTRY_USERNAME }}" # 引用GitHub repo设置的镜像容器服务用户名
           password: "${{ secrets.REGISTRY_PASSWORD }}" # 引用GitHub repo设置的镜像容器服务密码
