@@ -7,10 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     # runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v3
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: aliyun/acr-login@v1 # 使用阿里云镜像服务action
         with:
-          persist-credentials: false
+          login-server: registry.cn-hangzhou.aliyuncs.com # 务必正确填写镜像容器服务的登录地址
+          username: "${{ secrets.REGISTRY_USERNAME }}" # 引用GitHub repo设置的镜像容器服务用户名
+          password: "${{ secrets.REGISTRY_PASSWORD }}" # 引用GitHub repo设置的镜像容器服务密码
 #      - name: Cache npm Repository
 #        uses: actions/cache@v1
 #        with:
@@ -23,9 +26,6 @@ jobs:
           yarn run build
           cp -r dist docker/
           docker build -t registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks/jetlinks-ui:$(node -p "require('./package.json').version") ./docker
-
-      - name: Login Docker Repo
-        run: echo "${{ secrets.ALIYUN_DOCKER_REPO_PWD }}" | docker login registry.cn-hangzhou.aliyuncs.com -u ${{ secrets.ALIYUN_DOCKER_REPO_USERNAME }} --password-stdin
 
       - name: Push Docker
         run: docker push registry.cn-hangzhou.aliyuncs.com/sky-devops/jetlinks/jetlinks-ui:$(node -p "require('./package.json').version")
