@@ -1590,7 +1590,7 @@ const Detail = observer(() => {
             message: '最多可输入500个字符',
           },
           {
-            require: true,
+            required: true,
             message: '请输入模版内容',
           },
         ],

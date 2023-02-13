@@ -123,6 +123,8 @@ export default (props: TableProps) => {
     grantCache.current = addGrant;
 
     setLoading(true);
+    // console.log('addGrant----',addGrant)
+    // console.log('addOperations----',addOperations)
     if (props.isOpenGranted === false) {
       // console.log(props.grantKeys)
       // console.log(addGrant,'add')
@@ -134,8 +136,12 @@ export default (props: TableProps) => {
         onlyMessage('操作成功');
       }
     } else {
-      const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
-      const resp = await service.addApiGrant(code!, { operations: addOperations });
+      const resp2 = await service.removeApiGrant(code!, {
+        operations: removeOperations.filter((item) => item.permissions),
+      });
+      const resp = await service.addApiGrant(code!, {
+        operations: addOperations.filter((item) => item.permissions),
+      });
       if (resp.status === 200 || resp2.status === 200) {
         getApiGrant();
         onlyMessage('操作成功');
@@ -143,6 +149,13 @@ export default (props: TableProps) => {
     }
     setLoading(false);
   }, [selectKeys, location, dataSource, props.isOpenGranted]);
+
+  useEffect(() => {
+    console.log('GrantKeys-=========', GrantKeys);
+    if (GrantKeys) {
+      setSelectKeys(GrantKeys);
+    }
+  }, [GrantKeys]);
 
   return (
     <div className={'platforms-api-table'}>

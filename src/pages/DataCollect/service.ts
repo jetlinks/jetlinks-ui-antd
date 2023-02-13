@@ -174,6 +174,10 @@ class Service {
       method: 'GET',
       params: data,
     });
+  public getProviders = () =>
+    request(`/${SystemConst.API_BASE}/gateway/device/providers`, {
+      method: 'GET',
+    });
 }
 
 const service = new Service();

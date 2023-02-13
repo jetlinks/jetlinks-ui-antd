@@ -90,8 +90,13 @@ export const handleOptionsLabel = (data: any, type?: string) => {
         const str = termsTypeKey[t].replace('_value', _value[0]).replace('_value2', _value[1]);
         return `${c} ${str} ${typeStr} `;
       } else if (DoubleFilter.includes(t) && !!range && _value.length === 1) {
-        console.log(_value, range);
-        const str = termsTypeKey[t].replace('_value和_value2', _value[0]);
+        console.log(_value, range, t);
+        let str;
+        if (t === 'in' || t === 'nin') {
+          str = termsTypeKey[t].replace('_value,_value2', _value[0]);
+        } else {
+          str = termsTypeKey[t].replace('_value和_value2', _value[0]);
+        }
         return `${c} ${str} ${typeStr} `;
       } else {
         const str = termsTypeKey[t].replace('_value', _value[0]);

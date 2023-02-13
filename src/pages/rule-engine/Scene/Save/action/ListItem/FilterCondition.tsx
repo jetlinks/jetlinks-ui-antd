@@ -53,6 +53,7 @@ export default observer((props: FilterProps) => {
 
   const [deleteVisible, setDeleteVisible] = useState(false);
   const columnsRef = useRef<string[]>([]);
+  const oldLableRef = useRef<any>();
 
   const ValueRef = useRef<Partial<TermsType>>({
     column: '',
@@ -82,6 +83,7 @@ export default observer((props: FilterProps) => {
     (columnValue?: string) => {
       if (columnValue) {
         const labelOptions = columnOptionsMap.get(columnValue);
+        console.log('labelOptions------', labelOptions, props.data);
         if (labelOptions) {
           const _termTypeOptions: any[] =
             labelOptions?.termTypes?.map((tItem: any) => ({ title: tItem.name, key: tItem.id })) ||
@@ -140,6 +142,10 @@ export default observer((props: FilterProps) => {
 
   useEffect(() => {
     labelCache.current = props.label || [undefined, undefined, {}, 'and'];
+    console.log('labelCache.current-------', props.label);
+    if (props.label) {
+      oldLableRef.current = props.label;
+    }
   }, [props.label]);
 
   useEffect(() => {

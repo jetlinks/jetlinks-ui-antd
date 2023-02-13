@@ -167,10 +167,9 @@ export default (props: EditProps) => {
                     rules={[
                       { required: true, message: '请输入编码' },
                       { max: 64, message: '最多可输入64个字符' },
-
                       () => ({
                         async validator(_, value) {
-                          if (value) {
+                          if (value && value.length < 64) {
                             const res = await service.isCode({ code: value, owner: 'iot' });
                             if (res.result.passed) {
                               return Promise.resolve();
