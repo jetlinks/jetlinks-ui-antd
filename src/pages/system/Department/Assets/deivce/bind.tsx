@@ -374,7 +374,7 @@ const Bind = observer((props: Props) => {
             if (resp.status === 200) {
               newData = [...resp.result.data];
               const assetsResp = await service.getBindingAssets(
-                'product',
+                'device',
                 resp.result.data.map((item: any) => item.id),
               );
               if (assetsResp.status === 200) {

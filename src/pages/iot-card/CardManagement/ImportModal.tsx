@@ -17,6 +17,7 @@ const ImportModal = (props: ImportModalType) => {
   const [configId, setConfigId] = useState('');
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const { data: platformList, run: platformRun } = useRequest(service.queryPlatformNoPage, {
     manual: true,
@@ -62,9 +63,26 @@ const ImportModal = (props: ImportModalType) => {
   }, []);
 
   return (
-    <Modal title={'导入'} visible={true} onOk={props.onCancel} onCancel={props.onCancel}>
-      <Form layout={'vertical'}>
-        <Form.Item label={'平台对接'}>
+    <Modal
+      title={'导入'}
+      visible={true}
+      onOk={async () => {
+        // props.onCancel()
+        const res = await form.validateFields();
+        if (res) {
+          props.onCancel();
+          // console.log(res)
+        }
+      }}
+      onCancel={props.onCancel}
+    >
+      <Form layout={'vertical'} form={form}>
+        <Form.Item
+          label={'平台对接'}
+          name={'platform'}
+          required
+          rules={[{ required: true, message: '请选择平台对接' }]}
+        >
           <Select
             showSearch
             placeholder={'请选择平台对接'}

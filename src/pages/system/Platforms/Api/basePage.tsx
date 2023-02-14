@@ -5,6 +5,7 @@ import { service } from '../index';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
 import { onlyMessage } from '@/utils/util';
 import PermissionButton from '@/components/PermissionButton';
+import _ from 'lodash';
 
 interface TableProps {
   data: any;
@@ -123,12 +124,9 @@ export default (props: TableProps) => {
     grantCache.current = addGrant;
 
     setLoading(true);
-    // console.log('addGrant----',addGrant)
-    // console.log('addOperations----',addOperations)
     if (props.isOpenGranted === false) {
-      // console.log(props.grantKeys)
-      // console.log(addGrant,'add')
-      // console.log(removeGrant,'del')
+      console.log('del-------', removeGrant);
+      console.log('add-------', addGrant);
       const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
       const resp = await service.apiOperationsAdd(addGrant);
       if (resp.status === 200 || resp2.status === 200) {
@@ -194,6 +192,7 @@ export default (props: TableProps) => {
             ? {
                 selectedRowKeys: selectKeys,
                 onSelect: (record, selected) => {
+                  console.log('selected----', selected);
                   if (selected) {
                     const newArr = [...selectKeys, record.operationId];
                     setSelectKeys(newArr);
@@ -202,6 +201,7 @@ export default (props: TableProps) => {
                   }
                 },
                 onSelectAll: (selected, selectedRows) => {
+                  // console.log('selectedRows',selected,selectedRows)
                   if (selected) {
                     // const items = selectedRows.filter((item) => !!item).map((item) => item.operationId).concat(props.grantKeys)
                     // console.log(items)
@@ -212,7 +212,13 @@ export default (props: TableProps) => {
                         .concat(GrantKeys),
                     );
                   } else {
-                    setSelectKeys([]);
+                    // setSelectKeys([]);
+                    // console.log(dataSource,GrantKeys)
+                    const diffList = _.difference(
+                      GrantKeys,
+                      dataSource.map((item) => item.operationId),
+                    );
+                    setSelectKeys(diffList);
                   }
                 },
               }
@@ -227,7 +233,7 @@ export default (props: TableProps) => {
             onClick={save}
             key={'update'}
             type={'primary'}
-            style={{ padding: 0, width: 50 }}
+            style={{ padding: 0, width: 80 }}
             loading={loading}
           >
             保存

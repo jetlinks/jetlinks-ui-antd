@@ -10,6 +10,7 @@ import { useIntl } from '@@/plugin-locale/localeExports';
 import SearchComponent from '@/components/SearchComponent';
 import Detail from '@/pages/Log/Access/Detail';
 import { useDomFullHeight } from '@/hooks';
+import { Ellipsis } from '@/components';
 
 const service = new BaseService('logger/access');
 
@@ -96,9 +97,16 @@ const Access = () => {
         defaultMessage: '请求用户',
       }),
       dataIndex: 'context.username',
-      width: 100,
+      width: 200,
       render: (text, record: any) =>
-        record?.context?.username ? <Tag color="geekblue">{record?.context?.username}</Tag> : '',
+        record?.context?.username ? (
+          <Tag color="geekblue">
+            {/* {record?.context?.username} */}
+            <Ellipsis title={record?.context?.username} style={{ maxWidth: 170 }} />
+          </Tag>
+        ) : (
+          ''
+        ),
     },
     {
       title: intl.formatMessage({

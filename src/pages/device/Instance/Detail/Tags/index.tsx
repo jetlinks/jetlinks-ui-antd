@@ -24,6 +24,7 @@ const Tags = () => {
   useEffect(() => {
     if (tag) {
       setTags([...tag] || []);
+      console.log(tag);
     }
   }, [tag]);
 
@@ -59,7 +60,13 @@ const Tags = () => {
           <Descriptions.Item span={1} label={`${item.name}（${item.key})`} key={item.key}>
             <Tooltip title={item.value || ''} placement="topLeft">
               <div className="ellipsis" style={{ maxWidth: 300 }}>
-                {item.value || ''}
+                {/* {item.value || ''} */}
+                {item.type === 'enum'
+                  ? `${
+                      item?.dataType?.elements?.find((it: any) => it.value === item.value)?.text ||
+                      ''
+                    }`
+                  : `${item.value || ''}`}
               </div>
             </Tooltip>
           </Descriptions.Item>

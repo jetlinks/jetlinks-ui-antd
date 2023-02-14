@@ -165,6 +165,7 @@ const Detail = observer(() => {
           });
           onFieldValueChange('type', async (field, f) => {
             const value = field.value;
+
             setTypeItem(value);
             if (!value) return;
             f.setFieldState('provider', (state1) => {
@@ -173,6 +174,12 @@ const Detail = observer(() => {
               }
               state1.dataSource = typeList[value];
             });
+            if (field.modified) {
+              // console.log('value------',value)
+              f.setFieldState('configId', (state2) => {
+                state2.value = undefined;
+              });
+            }
           });
           onFieldValueChange('provider', async (field, form1) => {
             const value = field.value;
@@ -1359,7 +1366,7 @@ const Detail = observer(() => {
                     'x-validator': [
                       {
                         required: true,
-                        message: '请输入签名',
+                        message: '请选择签名',
                       },
                     ],
                     'x-component': 'Select',
@@ -1368,7 +1375,7 @@ const Detail = observer(() => {
                       tooltip: '用于短信内容签名信息显示',
                     },
                     'x-component-props': {
-                      placeholder: '请输入签名',
+                      placeholder: '请选择签名',
                     },
                     'x-reactions': {
                       dependencies: ['configId'],

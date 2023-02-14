@@ -69,7 +69,7 @@ export default (props: Props) => {
         ];
         const arr = resp.result
           .filter((item: any) => item.id === 'modbus-tcp' || item.id === 'opc-ua')
-          .map((it: any) => (it.id === 'opc-ua' ? 'OPC_UA' : 'MODBUS_TCP'));
+          .map((it: any) => (it?.id === 'opc-ua' ? 'OPC_UA' : 'MODBUS_TCP'));
         const providers = list.filter((item: any) => arr.includes(item.value));
         setProviderList(providers);
         if (arr.includes('OPC_UA')) {
