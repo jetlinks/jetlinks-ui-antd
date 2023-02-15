@@ -22,7 +22,7 @@ export default (props: TableProps) => {
   const [selectKeys, setSelectKeys] = useState<string[]>([]);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [GrantKeys, setGrantKeys] = useState<string[] | undefined>(undefined);
+  const [GrantKeys, setGrantKeys] = useState<any>([]);
   const { permission } = PermissionButton.usePermission('system/Platforms/Setting');
 
   const grantCache = useRef<string[]>([]);
@@ -91,14 +91,14 @@ export default (props: TableProps) => {
     const code = param.get('code');
     // 和原有已授权数据进行对比
     const addGrant = selectKeys.filter((key) => {
-      if (grantCache.current.includes(key)) {
+      if (GrantKeys.includes(key)) {
         return false;
       }
       return true;
     });
 
     // 获取删除的数据
-    const removeGrant = grantCache.current.filter((key) => {
+    const removeGrant = GrantKeys.filter((key: any) => {
       if (selectKeys.includes(key)) {
         return false;
       }
@@ -125,8 +125,8 @@ export default (props: TableProps) => {
 
     setLoading(true);
     if (props.isOpenGranted === false) {
-      console.log('del-------', removeGrant);
-      console.log('add-------', addGrant);
+      // console.log('del-------', removeGrant);
+      // console.log('add-------', addGrant);
       const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
       const resp = await service.apiOperationsAdd(addGrant);
       if (resp.status === 200 || resp2.status === 200) {
@@ -135,7 +135,7 @@ export default (props: TableProps) => {
       }
     } else {
       const resp2 = await service.removeApiGrant(code!, {
-        operations: removeOperations.filter((item) => item.permissions),
+        operations: removeOperations.filter((item: any) => item.permissions),
       });
       const resp = await service.addApiGrant(code!, {
         operations: addOperations.filter((item) => item.permissions),
@@ -149,7 +149,7 @@ export default (props: TableProps) => {
   }, [selectKeys, location, dataSource, props.isOpenGranted]);
 
   useEffect(() => {
-    console.log('GrantKeys-=========', GrantKeys);
+    // console.log('GrantKeys-=========', GrantKeys);
     if (GrantKeys) {
       setSelectKeys(GrantKeys);
     }
@@ -218,6 +218,7 @@ export default (props: TableProps) => {
                       GrantKeys,
                       dataSource.map((item) => item.operationId),
                     );
+                    // console.log('diffList---',diffList)
                     setSelectKeys(diffList);
                   }
                 },

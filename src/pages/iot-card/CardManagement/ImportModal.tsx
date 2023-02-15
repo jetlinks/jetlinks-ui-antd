@@ -4,7 +4,7 @@ import { useRequest } from 'ahooks';
 import { service } from '@/pages/iot-card/CardManagement/index';
 import Token from '@/utils/token';
 import SystemConst from '@/utils/const';
-import { downloadFile } from '@/utils/util';
+import { downloadFile, onlyMessage } from '@/utils/util';
 import { CheckOutlined } from '@ant-design/icons';
 
 type ImportModalType = {
@@ -47,6 +47,9 @@ const ImportModal = (props: ImportModalType) => {
     if (info.file.status === 'done') {
       const resp = info.file.response || { result: '' };
       submitData(resp.result);
+    }
+    if (!info.file.status) {
+      setLoading(false);
     }
   };
 
@@ -124,6 +127,21 @@ const ImportModal = (props: ImportModalType) => {
                 }}
                 showUploadList={false}
                 onChange={fileChange}
+                beforeUpload={(file) => {
+                  const type = fileType === 'csv' ? 'csv' : 'xlsx';
+
+                  const isCsv = file.type === 'text/csv';
+                  const isXlsx =
+                    file.type ===
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                  if (!isCsv && type !== 'xlsx') {
+                    onlyMessage('请上传.csv格式文件', 'warning');
+                  }
+                  if (!isXlsx && type !== 'csv') {
+                    onlyMessage('请上传.xlsx格式文件', 'warning');
+                  }
+                  return (isCsv && type !== 'xlsx') || (isXlsx && type !== 'csv');
+                }}
               >
                 <Button loading={loading}>上传文件</Button>
               </Upload>

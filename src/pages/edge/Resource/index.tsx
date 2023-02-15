@@ -267,7 +267,7 @@ export default () => {
           status: 'enabled',
         },
         disabled: {
-          text: '异常',
+          text: '禁用',
           status: 'disabled',
         },
       },
