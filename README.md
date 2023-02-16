@@ -13,8 +13,10 @@ $ yarn
 $ yarn start:dev
 ```
 
+`注意：请不要使用npm安装和启动项目` 
+
 `注意：请不要使用npm安装和启动项目`
-`注意：请不要使用npm安装和启动项目`
+
 `注意：请不要使用npm安装和启动项目`
 
 More instructions at [doc](https://doc.jetlinks.cn).
