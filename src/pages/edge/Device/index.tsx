@@ -86,6 +86,9 @@ export default () => {
           }
         });
       }}
+      tooltip={{
+        title: type === 'list' ? '远程控制' : '',
+      }}
       isPermission={permission.setting}
       style={{ padding: 0 }}
       key={'control'}
@@ -102,7 +105,7 @@ export default () => {
       isPermission={permission.password}
       key={'reset'}
       popConfirm={{
-        title: '确认重置密码？',
+        title: '确认重置密码为P@ssw0rd？',
         onConfirm: () => {
           service.restPassword(record.id).then((resp: any) => {
             if (resp.status === 200) {
@@ -162,10 +165,15 @@ export default () => {
       }}
       isPermission={permission.action}
       tooltip={{
-        title: intl.formatMessage({
-          id: `pages.data.option.${record.state.value !== 'notActive' ? 'disabled' : 'enabled'}`,
-          defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
-        }),
+        title:
+          type === 'list'
+            ? intl.formatMessage({
+                id: `pages.data.option.${
+                  record.state.value !== 'notActive' ? 'disabled' : 'enabled'
+                }`,
+                defaultMessage: record.state.value !== 'notActive' ? '禁用' : '启用',
+              })
+            : '',
       }}
     >
       {record.state.value !== 'notActive' ? <StopOutlined /> : <PlayCircleOutlined />}
@@ -185,7 +193,7 @@ export default () => {
       tooltip={
         record.state.value !== 'notActive'
           ? { title: intl.formatMessage({ id: 'pages.device.instance.deleteTip' }) }
-          : undefined
+          : { title: type !== 'list' ? '' : '删除' }
       }
       disabled={record.state.value !== 'notActive'}
       popConfirm={{

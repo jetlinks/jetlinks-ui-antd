@@ -181,7 +181,7 @@ const Apply = () => {
         ) : null,
         isApiService(record.integrationModes) ? (
           <PermissionButton
-            key={'api'}
+            key={'viewApi'}
             type={'link'}
             style={{ padding: 0 }}
             isPermission={permission.update || permission.add}

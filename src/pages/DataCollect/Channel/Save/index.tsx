@@ -19,15 +19,11 @@ interface Props {
 export default (props: Props) => {
   const [data, setData] = useState<Partial<ChannelItem>>(props.data);
   const [authTypeList, setAuthTypeList] = useState<any[]>([]);
+  const [providerList, setProviderList] = useState<any[]>([]);
+  const [securityModesList, setSecurityModesList] = useState<any[]>([]);
+  const [securityPolicyList, setSecurityPolicyList] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (props.data?.id) {
-      service.queryChannelByID(props.data.id).then((resp) => {
-        if (resp.status === 200) {
-          setData(resp.result);
-        }
-      });
-    }
+  const getAuth = () => {
     service.queryAuthTypeList({}).then((resp) => {
       if (resp.status === 200) {
         setAuthTypeList(
@@ -40,6 +36,61 @@ export default (props: Props) => {
         );
       }
     });
+  };
+
+  const getSecurityModesList = async () => {
+    const res = await service.querySecurityModesList({});
+    if (res.status === 200) {
+      const list = res.result.map((item: any) => ({
+        label: item,
+        value: item,
+      }));
+      setSecurityModesList(list);
+    }
+  };
+
+  const getSecurityPolicyList = async () => {
+    const res = await service.querySecurityPolicyList({});
+    if (res.status === 200) {
+      const list = res.result.map((item: any) => ({
+        label: item,
+        value: item,
+      }));
+      setSecurityPolicyList(list);
+    }
+  };
+
+  const getProviders = () => {
+    service.getProviders().then((resp) => {
+      if (resp.status === 200) {
+        const list = [
+          { label: 'OPC UA', value: 'OPC_UA' },
+          { label: 'Modbus TCP', value: 'MODBUS_TCP' },
+        ];
+        const arr = resp.result
+          .filter((item: any) => item.id === 'modbus-tcp' || item.id === 'opc-ua')
+          .map((it: any) => (it?.id === 'opc-ua' ? 'OPC_UA' : 'MODBUS_TCP'));
+        const providers = list.filter((item: any) => arr.includes(item.value));
+        setProviderList(providers);
+        if (arr.includes('OPC_UA')) {
+          getAuth();
+          getSecurityModesList();
+          getSecurityPolicyList();
+        }
+        // console.log('providers---',providers)
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (props.data?.id) {
+      service.queryChannelByID(props.data.id).then((resp) => {
+        if (resp.status === 200) {
+          setData(resp.result);
+        }
+      });
+    }
+    getProviders();
   }, [props.data]);
 
   const form = createForm({
@@ -47,8 +98,8 @@ export default (props: Props) => {
     initialValues: data || {},
   });
 
-  const getSecurityPolicyList = () => service.querySecurityPolicyList({});
-  const getSecurityModesList = () => service.querySecurityModesList({});
+  // const getSecurityPolicyList = () => service.querySecurityPolicyList({});
+  // const getSecurityModesList = () => service.querySecurityModesList({});
   const getCertificateList = () => service.queryCertificateList({});
 
   const useAsyncDataSource = (services: (arg0: Field) => Promise<any>) => (field: Field) => {
@@ -138,16 +189,7 @@ export default (props: Props) => {
               placeholder: '请选择通讯协议',
             },
             'x-disabled': props.data?.id,
-            enum: [
-              { label: 'OPC UA', value: 'OPC_UA' },
-              { label: 'Modbus TCP', value: 'MODBUS_TCP' },
-            ],
-            'x-validator': [
-              {
-                required: true,
-                message: '请选择通讯协议',
-              },
-            ],
+            enum: providerList,
           },
           'configuration.host': {
             title: 'Modbus主机IP',
@@ -275,8 +317,9 @@ export default (props: Props) => {
                 message: '请选择安全策略',
               },
             ],
+            enum: securityPolicyList,
             'x-reactions': [
-              '{{useAsyncDataSource(getSecurityPolicyList)}}',
+              // '{{useAsyncDataSource(getSecurityPolicyList)}}',
               {
                 dependencies: ['..provider'],
                 fulfill: {
@@ -303,8 +346,9 @@ export default (props: Props) => {
                 message: '请选择安全模式',
               },
             ],
+            enum: securityModesList,
             'x-reactions': [
-              '{{useAsyncDataSource(getSecurityModesList)}}',
+              // '{{useAsyncDataSource(getSecurityModesList)}}',
               {
                 dependencies: ['..provider'],
                 fulfill: {

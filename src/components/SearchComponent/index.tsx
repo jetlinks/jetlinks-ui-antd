@@ -237,7 +237,7 @@ const SearchComponent = <T extends Record<string, any>>(props: Props<T>) => {
                   f.setFieldState(typeFiled.query('.termType'), async (state) => {
                     state.value = 'eq';
                     state.dataSource = termType;
-                    if (_field?.dataIndex === 'state') {
+                    if (_field?.dataIndex === 'state' || _field?.dataIndex === 'status') {
                       state.dataSource = [
                         { label: '=', value: 'eq' },
                         { label: '!=', value: 'not' },
