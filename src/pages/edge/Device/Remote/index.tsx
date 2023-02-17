@@ -6,33 +6,27 @@ import { service } from '@/pages/device/Instance';
 const Remote = () => {
   const location = useLocation();
   const [url, setUrl] = useState<string>('');
-  const [id, setId] = useState<string>('');
 
-  const _stop = async () => await service._stopControl(id);
+  const _stop = async (id: string) => await service._stopControl(id);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const deviceId = params.get('id');
     if (deviceId) {
-      setId(deviceId);
       service._control(deviceId).then((resp: any) => {
         if (resp.status === 200) {
-          // window.open(resp.result);
           console.log(resp.result);
-          //   http://120.77.179.54:8811/
           const item = `http://${resp.result?.url}/#/login?token=${resp.result.token}`;
           setUrl(item);
         }
       });
     }
-  }, [location]);
-
-  useEffect(() => {
     return () => {
-      console.log('---------');
-      _stop();
+      if (deviceId) {
+        _stop(deviceId);
+      }
     };
-  }, []);
+  }, [location]);
 
   return (
     <PageContainer>
