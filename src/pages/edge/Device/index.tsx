@@ -80,11 +80,13 @@ export default () => {
     <PermissionButton
       type={'link'}
       onClick={() => {
-        service._control(record.id).then((resp: any) => {
-          if (resp.status === 200) {
-            window.open(resp.result);
-          }
-        });
+        const url = getMenuPathByParams(MENUS_CODE['edge/Device/Remote']);
+        history.push(`${url}?id=${record?.id}`);
+        // service._control(record.id).then((resp: any) => {
+        //   if (resp.status === 200) {
+        //     window.open(resp.result);
+        //   }
+        // });
       }}
       tooltip={{
         title: type === 'list' ? '远程控制' : '',
