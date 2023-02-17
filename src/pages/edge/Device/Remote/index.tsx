@@ -19,7 +19,8 @@ const Remote = () => {
         if (resp.status === 200) {
           // window.open(resp.result);
           console.log(resp.result);
-          const item = `${resp.result?.url}`;
+          //   http://120.77.179.54:8811/
+          const item = `http://${resp.result?.url}/#/login?token=${resp.result.token}`;
           setUrl(item);
         }
       });
