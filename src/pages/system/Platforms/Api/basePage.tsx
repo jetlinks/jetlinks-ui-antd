@@ -5,6 +5,7 @@ import { service } from '../index';
 import { ApiModel } from '@/pages/system/Platforms/Api/base';
 import { onlyMessage } from '@/utils/util';
 import PermissionButton from '@/components/PermissionButton';
+import _ from 'lodash';
 
 interface TableProps {
   data: any;
@@ -21,7 +22,7 @@ export default (props: TableProps) => {
   const [selectKeys, setSelectKeys] = useState<string[]>([]);
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [GrantKeys, setGrantKeys] = useState<string[] | undefined>(undefined);
+  const [GrantKeys, setGrantKeys] = useState<any>([]);
   const { permission } = PermissionButton.usePermission('system/Platforms/Setting');
 
   const grantCache = useRef<string[]>([]);
@@ -90,14 +91,14 @@ export default (props: TableProps) => {
     const code = param.get('code');
     // 和原有已授权数据进行对比
     const addGrant = selectKeys.filter((key) => {
-      if (grantCache.current.includes(key)) {
+      if (GrantKeys.includes(key)) {
         return false;
       }
       return true;
     });
 
     // 获取删除的数据
-    const removeGrant = grantCache.current.filter((key) => {
+    const removeGrant = GrantKeys.filter((key: any) => {
       if (selectKeys.includes(key)) {
         return false;
       }
@@ -124,9 +125,8 @@ export default (props: TableProps) => {
 
     setLoading(true);
     if (props.isOpenGranted === false) {
-      // console.log(props.grantKeys)
-      // console.log(addGrant,'add')
-      // console.log(removeGrant,'del')
+      // console.log('del-------', removeGrant);
+      // console.log('add-------', addGrant);
       const resp2 = removeGrant.length ? await service.apiOperationsRemove(removeGrant) : {};
       const resp = await service.apiOperationsAdd(addGrant);
       if (resp.status === 200 || resp2.status === 200) {
@@ -134,8 +134,12 @@ export default (props: TableProps) => {
         onlyMessage('操作成功');
       }
     } else {
-      const resp2 = await service.removeApiGrant(code!, { operations: removeOperations });
-      const resp = await service.addApiGrant(code!, { operations: addOperations });
+      const resp2 = await service.removeApiGrant(code!, {
+        operations: removeOperations.filter((item: any) => item.permissions),
+      });
+      const resp = await service.addApiGrant(code!, {
+        operations: addOperations.filter((item) => item.permissions),
+      });
       if (resp.status === 200 || resp2.status === 200) {
         getApiGrant();
         onlyMessage('操作成功');
@@ -143,6 +147,13 @@ export default (props: TableProps) => {
     }
     setLoading(false);
   }, [selectKeys, location, dataSource, props.isOpenGranted]);
+
+  useEffect(() => {
+    // console.log('GrantKeys-=========', GrantKeys);
+    if (GrantKeys) {
+      setSelectKeys(GrantKeys);
+    }
+  }, [GrantKeys]);
 
   return (
     <div className={'platforms-api-table'}>
@@ -181,6 +192,7 @@ export default (props: TableProps) => {
             ? {
                 selectedRowKeys: selectKeys,
                 onSelect: (record, selected) => {
+                  console.log('selected----', selected);
                   if (selected) {
                     const newArr = [...selectKeys, record.operationId];
                     setSelectKeys(newArr);
@@ -189,6 +201,7 @@ export default (props: TableProps) => {
                   }
                 },
                 onSelectAll: (selected, selectedRows) => {
+                  // console.log('selectedRows',selected,selectedRows)
                   if (selected) {
                     // const items = selectedRows.filter((item) => !!item).map((item) => item.operationId).concat(props.grantKeys)
                     // console.log(items)
@@ -199,7 +212,14 @@ export default (props: TableProps) => {
                         .concat(GrantKeys),
                     );
                   } else {
-                    setSelectKeys([]);
+                    // setSelectKeys([]);
+                    // console.log(dataSource,GrantKeys)
+                    const diffList = _.difference(
+                      GrantKeys,
+                      dataSource.map((item) => item.operationId),
+                    );
+                    // console.log('diffList---',diffList)
+                    setSelectKeys(diffList);
                   }
                 },
               }
@@ -214,7 +234,7 @@ export default (props: TableProps) => {
             onClick={save}
             key={'update'}
             type={'primary'}
-            style={{ padding: 0, width: 50 }}
+            style={{ padding: 0, width: 80 }}
             loading={loading}
           >
             保存

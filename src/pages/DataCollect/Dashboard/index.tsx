@@ -105,10 +105,11 @@ const DeviceBoard = () => {
           format: 'HH:mm',
         };
       default:
-        console.log('swich---');
         const time = dt.end - dt.start;
         const hour = 60 * 60 * 1000;
         const days = hour * 24;
+        const year = days * 365;
+        // console.log('month---',month);
         if (time <= hour) {
           return {
             limit: Math.abs(Math.ceil(time / (60 * 60))),
@@ -120,6 +121,12 @@ const DeviceBoard = () => {
             limit: Math.abs(Math.ceil(time / hour)),
             interval: '1h',
             format: 'HH:mm',
+          };
+        } else if (time >= year) {
+          return {
+            limit: Math.abs(Math.ceil(time / days / 31)) + 1,
+            interval: '1M',
+            format: 'yyyy年-M月',
           };
         } else {
           return {
@@ -133,7 +140,6 @@ const DeviceBoard = () => {
 
   const getEcharts = async () => {
     const data = ref.current!.getValues();
-    console.log('data---', data);
     const res = await service.dashboard([
       {
         dashboard: 'collector',
@@ -167,8 +173,8 @@ const DeviceBoard = () => {
         grid: {
           top: '2%',
           bottom: '5%',
-          left: '65px',
-          right: 0,
+          left: '55px',
+          right: '2.5%',
         },
         series: [
           {

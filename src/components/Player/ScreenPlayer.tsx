@@ -324,7 +324,10 @@ export default forwardRef((props: ScreenProps, ref) => {
                 {/*  <QuestionCircleOutlined />*/}
                 {/*</Tooltip>*/}
               </div>
-              <div className={'screen-tool-save'}>
+              <div
+                className={'screen-tool-save'}
+                style={{ display: 'flex', flexDirection: 'row-reverse', alignItems: 'center' }}
+              >
                 <Popover
                   content={
                     <Form style={{ width: '217px' }} form={historyForm}>
@@ -353,7 +356,7 @@ export default forwardRef((props: ScreenProps, ref) => {
                         type={'primary'}
                         onClick={saveHistory}
                         loading={loading}
-                        style={{ width: '100%', marginTop: 16 }}
+                        style={{ width: '100%', marginRight: 16 }}
                       >
                         保存
                       </Button>

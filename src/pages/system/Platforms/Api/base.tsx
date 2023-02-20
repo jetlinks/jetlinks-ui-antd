@@ -17,6 +17,7 @@ export const ApiModel = model<{
   components: any;
   swagger: any;
   debugger: any;
+  key?: any;
 }>({
   data: [],
   baseUrl: '',
@@ -80,7 +81,7 @@ export default observer((props: ApiPageProps) => {
         }
       });
     } else {
-      console.log(props.code, 1111111);
+      // console.log(props.code, 1111111);
       service.getApiGranted(code!).then((resp: any) => {
         if (resp.status === 200) {
           setGrantKeys(resp.result);

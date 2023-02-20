@@ -250,7 +250,7 @@ export default () => {
       xAxis: {
         type: 'category',
         data: xAxis,
-        boundaryGap: false,
+        boundaryGap: true,
       },
       tooltip: {
         trigger: 'axis',
@@ -260,8 +260,8 @@ export default () => {
         type: 'value',
       },
       grid: {
-        left: 60,
-        right: 0,
+        left: 70,
+        right: 10,
         top: 10,
         bottom: 20,
       },
@@ -298,7 +298,7 @@ export default () => {
     setJvmOptions({
       xAxis: {
         type: 'category',
-        boundaryGap: false,
+        boundaryGap: true,
         data: arrayReverse(xAxis),
       },
       tooltip: {
@@ -359,7 +359,7 @@ export default () => {
     setCpuOptions({
       xAxis: {
         type: 'category',
-        boundaryGap: false,
+        boundaryGap: true,
         data: arrayReverse(xAxis),
       },
       tooltip: {

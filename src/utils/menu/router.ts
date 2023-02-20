@@ -41,6 +41,7 @@ export enum MENUS_CODE {
   'DataCollect/Channel' = 'DataCollect/Channel',
   'DataCollect/Collector' = 'DataCollect/Collector',
   'edge/Device' = 'edge/Device',
+  'edge/Device/Remote' = 'edge/Device/Remote',
   'edge/Resource' = 'edge/Resource',
   'Log' = 'Log',
   'media/Cascade' = 'media/Cascade',

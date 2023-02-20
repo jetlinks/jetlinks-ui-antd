@@ -626,11 +626,12 @@ const Access = () => {
           <Col span={12}>
             <div className={styles.config}>
               <div className={styles.item}>
-                <TitleComponent
-                  data={
-                    <span>
-                      接入方式
-                      <Tooltip
+                <div style={{ display: 'flex', width: 150, alignItems: 'flex-start' }}>
+                  <TitleComponent
+                    data={
+                      <span>
+                        接入方式
+                        {/* <Tooltip
                         title={
                           !!(productModel.current?.count && productModel.current?.count > 0)
                             ? '产品下有设备实例时不能更换接入方式'
@@ -651,13 +652,34 @@ const Access = () => {
                         >
                           更换
                         </Button>
-                      </Tooltip>
-                      {/* <Button onClick={async()=>{
+                      </Tooltip> */}
+                        {/* <Button onClick={async()=>{
                           await service.productGuideDetail()
                         }}>删除</Button> */}
-                    </span>
-                  }
-                />
+                      </span>
+                    }
+                  />
+                  <Tooltip
+                    title={
+                      !!(productModel.current?.count && productModel.current?.count > 0)
+                        ? '产品下有设备实例时不能更换接入方式'
+                        : ''
+                    }
+                  >
+                    <Button
+                      size="small"
+                      type="primary"
+                      ghost
+                      style={{ marginLeft: 20 }}
+                      disabled={!!(productModel.current?.count && productModel.current?.count > 0)}
+                      onClick={() => {
+                        setConfigVisible(true);
+                      }}
+                    >
+                      更换
+                    </Button>
+                  </Tooltip>
+                </div>
                 <div className={styles.context}>
                   {/*<Tooltip placement="topLeft" title={access?.name}>*/}
                   {/*  <div className="ellipsis-70">{access?.name}</div>*/}

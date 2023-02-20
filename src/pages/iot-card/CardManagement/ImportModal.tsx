@@ -4,7 +4,7 @@ import { useRequest } from 'ahooks';
 import { service } from '@/pages/iot-card/CardManagement/index';
 import Token from '@/utils/token';
 import SystemConst from '@/utils/const';
-import { downloadFile } from '@/utils/util';
+import { downloadFile, onlyMessage } from '@/utils/util';
 import { CheckOutlined } from '@ant-design/icons';
 
 type ImportModalType = {
@@ -17,6 +17,7 @@ const ImportModal = (props: ImportModalType) => {
   const [configId, setConfigId] = useState('');
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
   const { data: platformList, run: platformRun } = useRequest(service.queryPlatformNoPage, {
     manual: true,
@@ -47,6 +48,9 @@ const ImportModal = (props: ImportModalType) => {
       const resp = info.file.response || { result: '' };
       submitData(resp.result);
     }
+    if (!info.file.status) {
+      setLoading(false);
+    }
   };
 
   const downFileFn = (type: string) => {
@@ -62,9 +66,26 @@ const ImportModal = (props: ImportModalType) => {
   }, []);
 
   return (
-    <Modal title={'导入'} visible={true} onOk={props.onCancel} onCancel={props.onCancel}>
-      <Form layout={'vertical'}>
-        <Form.Item label={'平台对接'}>
+    <Modal
+      title={'导入'}
+      visible={true}
+      onOk={async () => {
+        // props.onCancel()
+        const res = await form.validateFields();
+        if (res) {
+          props.onCancel();
+          // console.log(res)
+        }
+      }}
+      onCancel={props.onCancel}
+    >
+      <Form layout={'vertical'} form={form}>
+        <Form.Item
+          label={'平台对接'}
+          name={'platform'}
+          required
+          rules={[{ required: true, message: '请选择平台对接' }]}
+        >
           <Select
             showSearch
             placeholder={'请选择平台对接'}
@@ -106,6 +127,21 @@ const ImportModal = (props: ImportModalType) => {
                 }}
                 showUploadList={false}
                 onChange={fileChange}
+                beforeUpload={(file) => {
+                  const type = fileType === 'csv' ? 'csv' : 'xlsx';
+
+                  const isCsv = file.type === 'text/csv';
+                  const isXlsx =
+                    file.type ===
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                  if (!isCsv && type !== 'xlsx') {
+                    onlyMessage('请上传.csv格式文件', 'warning');
+                  }
+                  if (!isXlsx && type !== 'csv') {
+                    onlyMessage('请上传.xlsx格式文件', 'warning');
+                  }
+                  return (isCsv && type !== 'xlsx') || (isXlsx && type !== 'csv');
+                }}
               >
                 <Button loading={loading}>上传文件</Button>
               </Upload>

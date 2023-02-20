@@ -1,4 +1,5 @@
 import { Col, Row, Select } from 'antd';
+import { isBoolean } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import TypeModel from './TypeModel';
 // import { useEffect, useState } from "react";
@@ -65,7 +66,7 @@ export default (props: Props) => {
   }, [props.properties]);
 
   useEffect(() => {
-    if (props.onChange && propertiesValue) {
+    if (props.onChange && (propertiesValue || isBoolean(propertiesValue))) {
       const obj = {
         [propertiesId || 0]: {
           value: propertiesValue,
@@ -143,7 +144,7 @@ export default (props: Props) => {
               }
             }}
             onChange={(value, sources, text) => {
-              console.log(value, sources);
+              // console.log(value, sources);
               // console.log(text);
               ref.current = text;
               setPropertiesValue(value);
