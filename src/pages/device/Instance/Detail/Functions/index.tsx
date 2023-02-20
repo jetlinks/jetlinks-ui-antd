@@ -3,7 +3,7 @@ import { InstanceModel } from '@/pages/device/Instance';
 import type { FunctionMetadata } from '@/pages/device/Product/typings';
 import FnForm from './form';
 import AModel from './AdvancedMode';
-import { useDomFullHeight } from '@/hooks';
+// import { useDomFullHeight } from '@/hooks';
 import Empty from '@/pages/device/components/Empty';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -11,10 +11,10 @@ const Functions = () => {
   const functionList = JSON.parse(InstanceModel.detail.metadata || '{}')
     .functions as FunctionMetadata[];
 
-  const { minHeight } = useDomFullHeight(`.device-detail-function`);
+  // const { minHeight } = useDomFullHeight(`.device-detail-function`);
 
   return (
-    <Card className={'device-detail-function'} style={{ minHeight: minHeight }}>
+    <Card className={'device-detail-function'}>
       {functionList && functionList.length ? (
         <Tabs>
           <Tabs.TabPane tab={'精简模式'} key={1}>
@@ -68,7 +68,7 @@ const Functions = () => {
           </Tabs.TabPane>
         </Tabs>
       ) : (
-        <div style={{ height: minHeight - 150 }}>
+        <div>
           <Empty />
         </div>
       )}
