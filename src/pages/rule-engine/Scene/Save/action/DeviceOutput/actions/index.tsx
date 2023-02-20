@@ -7,6 +7,7 @@ import FunctionCall from './functionCall';
 import ReadProperty from './ReadProperty';
 import WriteProperty from './WriteProperty';
 import { service } from '@/pages/device/Instance/index';
+import { isBoolean } from 'lodash';
 
 interface Props {
   get: (data: any) => void;
@@ -194,9 +195,10 @@ export default observer((props: Props) => {
               // { required: true, message: '请选择属性' },
               () => ({
                 validator(_, value) {
-                  const isValue = Object.values(value)?.[0];
-                  // console.log('-------',isValue,value)
-                  if (isValue) {
+                  const isValue: any = Object.values(value)?.[0];
+                  console.log('-------', isValue, isBoolean(isValue?.value));
+
+                  if (isValue || isBoolean(isValue?.value)) {
                     return Promise.resolve();
                   }
                   return Promise.reject(new Error('请选择属性'));
@@ -217,7 +219,7 @@ export default observer((props: Props) => {
                 const item = value[Object.keys(value)?.[0]]?.value;
                 const item1 = value[Object.keys(value)?.[0]]?.upperKey;
                 const source = value[Object.keys(value)?.[0]]?.source;
-                console.log(value);
+                console.log('changeValue-------', value);
                 DeviceModel.propertiesName = text;
                 if (valueLable) {
                   DeviceModel.propertiesValue = valueLable;

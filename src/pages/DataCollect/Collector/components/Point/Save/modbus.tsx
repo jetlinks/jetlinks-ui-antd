@@ -42,7 +42,7 @@ export default (props: Props) => {
         ...props.data?.configuration,
         parameter: {
           ...props.data?.configuration?.parameter,
-          writeByteCount: [props.data?.configuration?.parameter?.writeByteCount],
+          writeByteCount: props.data?.configuration?.parameter?.writeByteCount,
         },
       },
       nspwc:

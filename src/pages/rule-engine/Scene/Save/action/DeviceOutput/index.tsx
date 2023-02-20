@@ -148,7 +148,7 @@ export default observer((props: Props) => {
       _options.propertiesValue =
         typeof DeviceModel.propertiesValue === 'object'
           ? JSON.stringify(DeviceModel.propertiesValue)
-          : DeviceModel.propertiesValue;
+          : `${DeviceModel.propertiesValue}`;
       _options.columns = DeviceModel.columns;
       _options.otherColumns = DeviceModel.columns;
       const cur: any = Object.values(value.message.properties)?.[0];

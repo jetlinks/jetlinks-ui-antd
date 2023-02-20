@@ -6,7 +6,7 @@ import './index.less';
 import TriggerAlarm from '../TriggerAlarm';
 import { AddButton } from '@/pages/rule-engine/Scene/Save/components/Buttons';
 import FilterGroup from './FilterGroup';
-import { cloneDeep, flattenDeep, set } from 'lodash';
+import { cloneDeep, flattenDeep, isBoolean, set } from 'lodash';
 import { Popconfirm, Space } from 'antd';
 import { TermsType } from '@/pages/rule-engine/Scene/typings';
 import { FormModel } from '@/pages/rule-engine/Scene/Save';
@@ -236,8 +236,11 @@ export default (props: ItemProps) => {
             <AIcon type={typeIconMap[data!.device!.message!.messageType]} />
             <span style={{ paddingRight: 4 }}>{data?.options?.type}</span>
             <AIcon type={'icon-mubiao'} style={{ paddingRight: 2 }} />
-            {`${data?.options?.name} ${data?.options?.properties} ${
-              data?.options?.propertiesValue ? `为 ${data?.options?.propertiesValue}` : ''
+            {`${data?.options?.name} ${data?.options?.properties} 
+            ${
+              (isBoolean(data?.options?.propertiesValue) ? true : data?.options?.propertiesValue)
+                ? `为 ${data?.options?.propertiesValue}`
+                : ''
             }`}
           </div>
         );

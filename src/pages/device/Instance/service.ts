@@ -399,6 +399,11 @@ class Service extends BaseService<DeviceInstance> {
     request(`/${SystemConst.API_BASE}/edge/remote/${deviceId}/url`, {
       method: 'GET',
     });
+  public _stopControl = (deviceId: string) =>
+    request(`/${SystemConst.API_BASE}/edge/remote/${deviceId}/stop`, {
+      method: 'POST',
+      data: {},
+    });
 }
 
 export default Service;

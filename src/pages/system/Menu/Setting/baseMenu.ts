@@ -2463,7 +2463,7 @@ export default [
             name: '网关设备',
             owner: 'iot',
             sortIndex: 1,
-            url: '/iot/edge/Devic',
+            url: '/iot/edge/Device',
             icon: 'icon-bumenguanli',
             showPage: ['edge-operations'],
             permissions: [
