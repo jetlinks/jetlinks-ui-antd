@@ -147,7 +147,7 @@ const EditTable = (props: Props) => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { title: '精度' },
               properties: {
-                precision: {
+                scale: {
                   type: 'number',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',
