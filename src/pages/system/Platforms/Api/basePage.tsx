@@ -107,6 +107,7 @@ export default (props: TableProps) => {
 
     const addOperations = addGrant.map((a: string) => {
       const item = dataSource.find((b) => b.operationId === a);
+      console.log('item', item);
       return {
         id: a,
         permissions: item?.security,
@@ -134,11 +135,19 @@ export default (props: TableProps) => {
         onlyMessage('操作成功');
       }
     } else {
+      // console.log('del',removeOperations);
+      // console.log('add',addOperations,addGrant);
       const resp2 = await service.removeApiGrant(code!, {
-        operations: removeOperations.filter((item: any) => item.permissions),
+        operations: removeOperations.map((item: any) => ({
+          ...item,
+          permissions: item.permissions ? item.permissions : [],
+        })),
       });
       const resp = await service.addApiGrant(code!, {
-        operations: addOperations.filter((item) => item.permissions),
+        operations: addOperations.map((item) => ({
+          ...item,
+          permissions: item.permissions ? item.permissions : [],
+        })),
       });
       if (resp.status === 200 || resp2.status === 200) {
         getApiGrant();
@@ -169,7 +178,6 @@ export default (props: TableProps) => {
                   type={'link'}
                   style={{ padding: 0, width: '100%', textAlign: 'left' }}
                   onClick={() => {
-                    console.log(record);
                     ApiModel.showTable = false;
                     ApiModel.swagger = record;
                   }}

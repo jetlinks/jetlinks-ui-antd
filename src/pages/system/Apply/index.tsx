@@ -425,7 +425,7 @@ const Apply = () => {
                         </Menu.Item>
                       )}
                       {isApiService(record.integrationModes) && (
-                        <Menu.Item key="empowerment">
+                        <Menu.Item key="api">
                           <PermissionButton
                             key={'api'}
                             type={'link'}

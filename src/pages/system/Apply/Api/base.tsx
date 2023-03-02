@@ -76,9 +76,8 @@ export default observer((props: ApiPageProps) => {
   }, []);
 
   useEffect(() => {
-    console.log(ApiModel.data);
+    console.log('----------', ApiModel.data);
   }, [ApiModel.data]);
-  console.log(ApiModel.showTable);
 
   return (
     <div className={'platforms-api'}>
