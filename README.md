@@ -8,7 +8,7 @@ Language : 🇺🇸 | [🇨🇳](./README.zh-CN.md)
 
 ```bash
 $ git clone git@github.com:jetlinks/jetlinks-ui-antd.git
-$ cd <your-project-name>
+$ cd jetlinks-ui-antd
 $ yarn
 $ yarn start:dev
 ```
