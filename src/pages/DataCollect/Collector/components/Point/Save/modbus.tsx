@@ -57,11 +57,41 @@ export default (props: Props) => {
     effects: () => {
       onFieldValueChange('configuration.function', (field, f) => {
         const value = (field as Field).value;
-        // console.log(value)
         if (value === 'InputRegisters') {
           f.setFieldState('configuration.codec.provider', (state) => {
-            console.log(state.dataSource);
             state.dataSource = state.dataSource?.filter((item) => item.value !== 'bool');
+          });
+          f.setFieldState('accessModes', (state) => {
+            state.componentProps = {
+              placeholder: '请选择访问类型',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [{ label: '读', value: 'read' }],
+            };
+          });
+        } else {
+          f.setFieldState('accessModes', (state) => {
+            state.componentProps = {
+              placeholder: '请选择访问类型',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '读', value: 'read' },
+                { label: '写', value: 'write' },
+              ],
+            };
           });
         }
       });
