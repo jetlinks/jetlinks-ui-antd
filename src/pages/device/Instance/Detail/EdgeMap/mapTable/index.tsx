@@ -1,6 +1,11 @@
 import PermissionButton from '@/components/PermissionButton';
 import TitleComponent from '@/components/TitleComponent';
-import { DisconnectOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  DisconnectOutlined,
+  PlayCircleOutlined,
+  QuestionCircleOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { FormItem, ArrayTable, Editable, Select, NumberPicker } from '@formily/antd';
 import { createForm, Field, FormPath, onFieldReact } from '@formily/core';
 import type { Response } from '@/utils/typings';
@@ -51,35 +56,142 @@ const MapTable = (props: Props) => {
     return <>{text?.metadataName}</>;
   };
   const StatusRender = (propsRender: any) => {
+    // console.log(propsRender.value,'---------')
+    const record = ArrayTable.useRecord?.();
+    const index = ArrayTable.useIndex?.();
+    const state = record(index)?.state;
     if (propsRender.value) {
-      return <Badge status="success" text={'已绑定'} />;
+      if (state.value === 'enabled') {
+        return <Badge status="success" text={'在线'} />;
+      } else {
+        return <Badge status="warning" text={'离线'} />;
+      }
     } else {
       return <Badge status="error" text={'未绑定'} />;
     }
   };
+  const save = async (item: any) => {
+    const res = await service.saveMap(edgeId, item);
+    if (res.status === 200) {
+      onlyMessage('保存成功');
+      if (props.formRef) {
+        props.close();
+      } else {
+        reload('save');
+      }
+    }
+  };
+  const form = createForm({
+    values: {
+      requestList: metaData,
+    },
+    effects: () => {
+      onFieldReact('requestList.*.channelId', async (field, f) => {
+        const value = (field as Field).value;
+        // console.log(field, 'provider')
+        if (value) {
+          const param = channelList.find((item: any) => item.value === value);
+          const providerPath = FormPath.transform(
+            field.path,
+            /\d+/,
+            (index) => `requestList.${parseInt(index)}.provider`,
+          );
+          f.setFieldState(providerPath, (state) => {
+            state.value = param?.provider;
+          });
+        }
+        const path = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `requestList.${parseInt(index)}.collectorId`,
+        );
+        const path1 = FormPath.transform(
+          field.path,
+          /\d+/,
+          (index) => `requestList.${parseInt(index)}.pointId`,
+        );
+        f.setFieldState(path, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
+        });
+        f.setFieldState(path1, (state) => {
+          if (value) {
+            state.required = true;
+            form.validate();
+          } else {
+            state.required = false;
+            form.validate();
+          }
+        });
+      });
+    },
+  });
   const ActionButton = () => {
     const record = ArrayTable.useRecord?.();
     const index = ArrayTable.useIndex?.();
     return (
-      <PermissionButton
-        isPermission={permission.update}
-        style={{ padding: 0 }}
-        disabled={!record(index)?.id}
-        tooltip={{
-          title: '解绑',
-        }}
-        popConfirm={{
-          title: '确认解绑',
-          disabled: !record(index)?.id,
-          onConfirm: async () => {
-            remove(record(index)?.id);
-          },
-        }}
-        key="unbind"
-        type="link"
-      >
-        <DisconnectOutlined />
-      </PermissionButton>
+      <>
+        <PermissionButton
+          isPermission={permission.update}
+          style={{ padding: 0 }}
+          disabled={!record(index)?.id}
+          tooltip={{
+            title: '解绑',
+          }}
+          popConfirm={{
+            title: '确认解绑',
+            disabled: !record(index)?.id,
+            onConfirm: async () => {
+              remove(record(index)?.id);
+            },
+          }}
+          key="unbind"
+          type="link"
+        >
+          <DisconnectOutlined />
+        </PermissionButton>
+        {record(index).id && (
+          <PermissionButton
+            isPermission={permission.update}
+            style={{ padding: 0, marginLeft: 10 }}
+            // disabled={!record(index)?.id}
+            tooltip={{
+              title: record(index).state.value === 'enabled' ? '禁用' : '启用',
+            }}
+            popConfirm={{
+              title: record(index).state.value === 'enabled' ? '确认禁用' : '确认启用',
+              disabled: !record(index)?.id,
+              onConfirm: async () => {
+                const value: any = await form.submit();
+                const array = value.requestList.filter((item: any) => item.channelId);
+                const findArray = array.find((item: any) => item.id === record(index)?.id);
+                const arr = {
+                  ...findArray,
+                  state: record(index).state.value === 'enabled' ? 'disabled' : 'enabled',
+                };
+                const filterArray = array.filter((item: any) => item.id !== record(index)?.id);
+                console.log('array----', array, findArray);
+                const submitData = {
+                  deviceId: deviceId,
+                  provider: array[0]?.provider,
+                  requestList: [...filterArray, arr],
+                };
+                console.log('submitData', submitData);
+                save(submitData);
+              },
+            }}
+            key="unbind"
+            type="link"
+          >
+            {record(index).state.value === 'enabled' ? <StopOutlined /> : <PlayCircleOutlined />}
+          </PermissionButton>
+        )}
+      </>
     );
   };
 
@@ -152,68 +264,6 @@ const MapTable = (props: Props) => {
     },
   });
 
-  const save = async (item: any) => {
-    const res = await service.saveMap(edgeId, item);
-    if (res.status === 200) {
-      onlyMessage('保存成功');
-      if (props.formRef) {
-        props.close();
-      } else {
-        reload('save');
-      }
-    }
-  };
-
-  const form = createForm({
-    values: {
-      requestList: metaData,
-    },
-    effects: () => {
-      onFieldReact('requestList.*.channelId', async (field, f) => {
-        const value = (field as Field).value;
-        // console.log(field, 'provider')
-        if (value) {
-          const param = channelList.find((item: any) => item.value === value);
-          const providerPath = FormPath.transform(
-            field.path,
-            /\d+/,
-            (index) => `requestList.${parseInt(index)}.provider`,
-          );
-          f.setFieldState(providerPath, (state) => {
-            state.value = param?.provider;
-          });
-        }
-        const path = FormPath.transform(
-          field.path,
-          /\d+/,
-          (index) => `requestList.${parseInt(index)}.collectorId`,
-        );
-        const path1 = FormPath.transform(
-          field.path,
-          /\d+/,
-          (index) => `requestList.${parseInt(index)}.pointId`,
-        );
-        f.setFieldState(path, (state) => {
-          if (value) {
-            state.required = true;
-            form.validate();
-          } else {
-            state.required = false;
-            form.validate();
-          }
-        });
-        f.setFieldState(path1, (state) => {
-          if (value) {
-            state.required = true;
-            form.validate();
-          } else {
-            state.required = false;
-            form.validate();
-          }
-        });
-      });
-    },
-  });
   const add = async () => {
     const value = await props.formRef.validateFields();
     const mapValue: any = await form.submit();
@@ -457,13 +507,16 @@ const MapTable = (props: Props) => {
               const submitData = {
                 deviceId: deviceId,
                 provider: array[0]?.provider,
-                requestList: array,
+                requestList: array.map((item: any) => ({
+                  ...item,
+                  state: 'enabled',
+                })),
               };
               save(submitData);
             }
           }}
         >
-          保存
+          保存并启用
         </PermissionButton>
       </div>
       <div>
