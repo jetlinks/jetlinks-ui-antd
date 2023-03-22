@@ -219,7 +219,7 @@ export default (props: FunctionProps) => {
     if (id && formData.table) {
       const data = {};
       formData.table.forEach((d: any) => {
-        if (d.value) {
+        if (d.value !== undefined) {
           if (d.type === 'date') {
             data[d.id] = moment(d.value).format(d.format || 'YYYY-MM-DD HH:mm:ss');
           } else if (d.type === 'object') {
