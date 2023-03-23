@@ -156,7 +156,7 @@ export default observer((props: Props) => {
                 }}
               />
             </Form.Item>
-            {functionId && (
+            {functionId && !!functionList.length && (
               <Form.Item
                 name={['message', 'inputs']}
                 rules={[{ required: true, message: '请输入功能值' }]}

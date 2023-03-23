@@ -30,7 +30,7 @@ const Bind = observer((props: Props) => {
   const [searchParam, setSearchParam] = useState({});
   const [loading, setLoading] = useState(false);
   const [checkAssets, setCheckAssets] = useState<string[]>(['read']);
-  const [isAll, setIsAll] = useState<boolean>(false);
+  const [isAll, setIsAll] = useState<boolean>(true);
   const bindChecks = useRef(new Map());
 
   const columns: ProColumns<DeviceItem>[] = [

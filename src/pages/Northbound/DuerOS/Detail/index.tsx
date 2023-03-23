@@ -92,15 +92,17 @@ const Save = () => {
         effects() {
           onFormInit(async (form1) => {
             await getTypes();
-            await getProduct();
-            if (id === ':id') return;
+            if (!id || id === ':id') {
+              await getProduct();
+              return;
+            }
+            await getProduct({ value: id } as any);
             const resp = await service.detail(id);
             /// 单独处理一下applianceType
             const _data = resp.result;
             if (_data) {
               _data.applianceType = _data?.applianceType?.value;
             }
-            console.log(_data, 'data');
             form1.setValues(_data);
           });
           onFieldReact('actionMappings.*.layout.action', (field, f) => {
@@ -561,7 +563,8 @@ const Save = () => {
                             dependencies: ['..messageType'],
                             fulfill: {
                               state: {
-                                visible: '{{["INVOKE_FUNCTION"].includes($deps[0])}}',
+                                visible:
+                                  '{{["INVOKE_FUNCTION"].includes($deps[0]) && $self.value && $self.value?.length}}',
                               },
                             },
                           },
