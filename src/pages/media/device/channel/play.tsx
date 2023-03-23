@@ -135,6 +135,8 @@ const Play = (props: Props) => {
                           if (resp.status === 200) {
                             setVideo(false);
                             setIsStart(true);
+                          } else {
+                            setIsStart(true);
                           }
                         });
                     }
@@ -153,6 +155,8 @@ const Play = (props: Props) => {
                         .subscribe(resp => {
                           if (resp.status === 200) {
                             setVideo(true);
+                            setIsStart(true);
+                          } else {
                             setIsStart(true);
                           }
                         });

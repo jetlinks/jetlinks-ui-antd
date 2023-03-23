@@ -5,7 +5,7 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
- export default {
+export default {
   dev: {
     '/jetlinks': {
       // target: 'http://192.168.33.222:8844/',
@@ -14,8 +14,8 @@
       // ws: 'http://water.zlkjhb.com:9000/jetlinks',
       // ws: 'ws://test.jetlinks.cn/jetlinks',
       // target: 'http://test.jetlinks.cn/jetlinks',
-      target: 'http://47.112.117.31:9010/',
-      ws: 'ws://47.112.117.31:9010/',
+      target: 'http://47.118.55.83:8844/',
+      ws: 'ws://47.118.55.83:8844/',
       // ws: 'ws://demo.jetlinks.cn/jetlinks',
       // target: 'http://demo.jetlinks.cn/jetlinks',
       changeOrigin: true,
