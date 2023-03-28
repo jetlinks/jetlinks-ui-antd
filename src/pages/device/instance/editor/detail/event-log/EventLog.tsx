@@ -25,8 +25,12 @@ const EventLog: React.FC<Props> = props => {
         title: item.name,
         dataIndex: `${item.id}_format`,
         ellipsis: true,
-        render: (text: any) => typeof text === 'object' ?
-          JSON.stringify(text) : text
+        render: (text: any, row: any) => {
+          if (typeof text === 'object') {
+            return JSON.stringify(text)
+          }
+          return JSON.stringify(row[`${props.item.id}_format`] || {})
+        }
       };
     }) : [{
       title: "数据",
