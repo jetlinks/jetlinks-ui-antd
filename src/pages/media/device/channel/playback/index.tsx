@@ -3,7 +3,9 @@ import { Calendar, Card, Col, Icon, List, message, Modal, Row, Select, Spin, Too
 import Progress from './Progress'
 import Service from '../../service'
 import moment, { Moment } from "moment";
+
 import _ from "lodash";
+import {downloadFileByUrl} from "@/utils/utils";
 
 interface Props {
     data: any;
@@ -28,6 +30,7 @@ const Playback = (props: Props) => {
     const [playList, setPlayList] = useState<string[]>([]);
     const [playData, setPlayData] = useState<string | number>('')
     const [flag, setFlag] = useState<any>({})
+    const [cloudDownloadVisible, setCloudDownLoadVisible] = useState(false)
 
     const getLocalTime = (dateTime: Moment) => {
         setSpinning(true)
@@ -302,7 +305,7 @@ const Playback = (props: Props) => {
                                                 setLocalToServer(undefined)
                                             }}><Tooltip title="播放"><Icon type="play-circle" /></Tooltip></a>)
                                         }
-                                        
+
                                         <a onClick={() => {
                                             if (type === 'local') { // 查看
                                                 if (filesList[item.startTime]) {
@@ -322,11 +325,27 @@ const Playback = (props: Props) => {
                                                         if (resp.status === 200) {
                                                             message.success('操作成功')
                                                             filesList[item.startTime] = {}
-                                                            setFilesList({ ...filesList })
+                                                            setFilesList( { ...filesList })
                                                         }
                                                     })
                                                 }
                                             } else {
+                                              console.log(item)
+                                              if (!cloudDownloadVisible) {
+                                                setCloudDownLoadVisible(true)
+                                                service.cloudDownload(item.id).then(res => {
+                                                  console.log(res.data)
+                                                  setCloudDownLoadVisible(false)
+                                                  // const blob = new Blob([res.data], { type: 'mp4' });
+                                                  // const url = URL.createObjectURL(blob);
+                                                  // downloadFileByUrl(url,'', 'mp4')
+                                                }).catch(() => {
+                                                  setCloudDownLoadVisible(false)
+                                                })
+
+                                              } else {
+                                                setCloudDownLoadVisible(false)
+                                              }
                                                 const formElement = document.createElement('form');
                                                 formElement.style.display = 'display:none;';
                                                 formElement.method = 'get';
@@ -346,8 +365,15 @@ const Playback = (props: Props) => {
                                                 formElement.submit();
                                                 document.body.removeChild(formElement);
                                             }
-                                        }}>{type === 'server' ? <Tooltip title="下载录像文件"><Icon type="download" /></Tooltip>
-                                            : (!!filesList[item.startTime] ? <Tooltip title="查看"><Icon type="eye" /></Tooltip> : <Tooltip title="下载到云端"><Icon type="cloud-download" /></Tooltip>)}</a></div>
+                                        }}>{
+                                          type === 'server' ? <Tooltip title="下载录像文件"><Icon type="download" /></Tooltip>
+                                            : (!!filesList[item.startTime]
+                                              ? <Tooltip title="查看"><Icon type="eye" /></Tooltip>
+                                              : <Tooltip title="下载到云端">
+                                                <Icon type={ cloudDownloadVisible ? "loading" :"cloud-download"} />
+                                              </Tooltip>)
+                                        }</a>
+                                    </div>
                                 </List.Item>}
                             />
                         </Card>

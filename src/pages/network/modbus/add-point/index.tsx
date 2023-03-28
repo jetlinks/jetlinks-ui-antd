@@ -86,6 +86,7 @@ const AddPoint = (props: Props) => {
                             <Select.Option value={'Coils'}>线圈寄存器</Select.Option>
                             <Select.Option value={'HoldingRegisters'}>保存寄存器</Select.Option>
                             <Select.Option value={'InputRegisters'}>输入寄存器</Select.Option>
+                            <Select.Option value={'DiscreteInputs'}>离散输入寄存器</Select.Option>
                         </Select>)}
                     </Form.Item>
                     <Form.Item key="unitId" label="从站ID">
@@ -182,6 +183,19 @@ const AddPoint = (props: Props) => {
                                 <Radio value={true}>是</Radio>
                             </Radio.Group>
                         )}
+                    </Form.Item>
+                    <Form.Item key="revertBytesIn" label="高低位配置">
+                      {getFieldDecorator('codecConfig.revertBytesIn', {
+                        rules: [
+                          { required: true, message: '请选择' }
+                        ],
+                        initialValue: props.data?.codecConfig?.revertBytesIn || false,
+                      })(
+                        <Radio.Group>
+                          <Radio value={false}>否</Radio>
+                          <Radio value={true}>是</Radio>
+                        </Radio.Group>
+                      )}
                     </Form.Item>
                     <Form.Item key="scaleFactor" label={
                         <span>

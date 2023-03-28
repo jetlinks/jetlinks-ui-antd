@@ -53,9 +53,9 @@ const Access = (props: Props) => {
             propertiesMap[payload.value.property] = payload.value.formatValue
             setPropertiesMap({ ...propertiesMap })
         },
-            () => { // setDataSource(result) 
+            () => { // setDataSource(result)
             },
-            () => { // setDataSource(result) 
+            () => { // setDataSource(result)
             });
         setProperties$(propertiesWs);
     };
@@ -214,7 +214,7 @@ const Access = (props: Props) => {
                         }}>绑定设备</Button>
                     </div>
                     {
-                        deviceList.length > 0 ? <Tabs defaultActiveKey={device.id} tabPosition={'left'} style={{ height: 700 }} onChange={(e) => {
+                        deviceList.length > 0 ? <Tabs defaultActiveKey={device.id} tabPosition={'left'} onChange={(e) => {
                             setSearchParams({ pageSize: 10, pageIndex: 0 })
                             const data = deviceList.find(item => item.id === e)
                             if (data) {

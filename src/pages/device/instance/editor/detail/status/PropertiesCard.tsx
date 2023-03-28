@@ -113,7 +113,9 @@ const PropertiesCard: React.FC<Props> = props => {
     // 刷新数据
     service.getProperty(device.id, item.id).subscribe(
       () => {},
-      () => {},
+      () => {
+        setLoading(false)
+      },
       () => {
         setLoading(false);
       },
@@ -172,7 +174,7 @@ const PropertiesCard: React.FC<Props> = props => {
               title={
                 typeof data.formatValue === 'object'
                   ? JSON.stringify(data.formatValue)
-                  : data.formatValue
+                  : (data.formatValue || data.value)
               }
               style={{ width: '100%' }}
             />

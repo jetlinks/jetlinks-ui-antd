@@ -46,11 +46,12 @@ const Debug: React.FC<Props> = props => {
   }, []);
 
   const start = () => {
+    const _context = !context ? '{}' : context
     if (configId) {
       apis.notifier
         .debugTemplate(data.id, {
           template: configList.find(i => i.id === configId),
-          context: JSON.parse(JSON.stringify(context) || '{}'),
+          context: JSON.parse(_context),
         })
         .then(res => {
           setLoading(false);

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, message, Modal, Select, Spin } from 'antd';
+import {Input, message, Modal, Select, Spin} from 'antd';
 import apis from '@/services';
+import TimeOut from "@/pages/network/modbus/save/TimeOut";
 
 interface Props extends FormComponentProps {
     close: Function;
@@ -77,6 +78,7 @@ const Save = (props: Props) => {
                             initialValue: props.data.port,
                         })(<Input placeholder="请输入" />)}
                     </Form.Item>
+
                     <Form.Item key="serverId" label="集群">
                         {getFieldDecorator('serverId', {
                             rules: [
@@ -93,6 +95,13 @@ const Save = (props: Props) => {
                             </Select>
                         )}
                     </Form.Item>
+                  <Form.Item key="requsetTimeout" label="超时时间">
+                    {getFieldDecorator('configuration.requsetTimeout', {
+                      initialValue: 0,
+                    })(
+                      <TimeOut />
+                      )}
+                  </Form.Item>
                 </Form>
             </Spin>
         </Modal>

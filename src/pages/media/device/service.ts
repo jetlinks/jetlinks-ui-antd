@@ -2,7 +2,7 @@ import BaseService from '@/services/crud';
 import request from '@/utils/request';
 import { defer, from } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-
+const token = localStorage.getItem('x-access-token');
 class Service extends BaseService<any> {
   public queryProduct = (params: any) =>
     defer(() =>
@@ -176,6 +176,12 @@ class Service extends BaseService<any> {
         map(resp => resp),
       ),
     );
+  public cloudDownload = (id: string) => request(`/jetlinks/media/record/${id}.mp4?:X_Access_Token=${token}&download=true`, {
+    method: 'GET',
+    headers: {
+      responseType: 'arraybuffer'
+    }
+  })
 }
 
 export default Service;

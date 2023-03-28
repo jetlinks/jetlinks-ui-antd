@@ -5,7 +5,7 @@ import { isEqual } from 'lodash';
 import proxy from '../../config/proxy';
 import moment from "moment";
 
-/* eslint no-useless-escape:0 import/prefer-default-export:0 */
+/* eslint no-useless-escape:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 
 export const isUrl = (path: string): boolean => reg.test(path);
@@ -143,3 +143,13 @@ export const converFilter = (data: any, flag: string) => {
   });
   return tempData;
 }
+
+export const downloadFileByUrl = (url: string, name: string, type: string) => {
+  const downNode = document.createElement('a');
+  downNode.style.display = 'none';
+  downNode.download = `${name}.${type}`;
+  downNode.href = url;
+  document.body.appendChild(downNode);
+  downNode.click();
+  document.body.removeChild(downNode);
+};

@@ -158,13 +158,18 @@ const Modbus = () => {
                     />
                 </Card>
                 <Card bordered={false}>
-                    <div style={{ margin: '10px 0' }}><Button type="primary" onClick={() => {
+                    <div style={{ margin: '10px 0' }}>
+                      <Button type="primary" onClick={() => {
                         setVisible(true)
                         setCurrent({})
-                    }}>新增</Button></div>
-                    <Table dataSource={dataSource?.data || []} rowKey='id' columns={columns}
-                    onChange={onTableChange}
-                        pagination={{
+                      }}>新增</Button>
+                    </div>
+                    <Table
+                      dataSource={dataSource?.data || []}
+                      rowKey='id'
+                      columns={columns}
+                      onChange={onTableChange}
+                      pagination={{
                             current: dataSource.pageIndex + 1,
                             total: dataSource.total,
                             pageSize: dataSource.pageSize || 10,
@@ -175,7 +180,8 @@ const Modbus = () => {
                                 `共 ${total} 条记录 第  ${dataSource.pageIndex + 1}/${Math.ceil(
                                     dataSource.total / dataSource.pageSize,
                                 )}页`,
-                        }} />
+                        }}
+                    />
                 </Card>
             </PageHeaderWrapper>
             {
