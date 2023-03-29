@@ -205,7 +205,7 @@ const AddPoint = (props: Props) => {
                                 {/* little */}
                                 <Radio value={false}>AB</Radio>
                                 {/* big */}
-                                <Radio value={true}>CD</Radio>
+                                <Radio value={true}>BA</Radio>
                             </Radio.Group>
                         )}
                     </Form.Item>
@@ -237,7 +237,7 @@ const AddPoint = (props: Props) => {
                           {/* little */}
                           <Radio value={false}>AB</Radio>
                           {/* big */}
-                          <Radio value={true}>CD</Radio>
+                          <Radio value={true}>BA</Radio>
                         </Radio.Group>
                       )}
                     </Form.Item>
