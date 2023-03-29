@@ -97,7 +97,7 @@ const Save = (props: Props) => {
                     </Form.Item>
                   <Form.Item key="requsetTimeout" label="超时时间">
                     {getFieldDecorator('configuration.requsetTimeout', {
-                      initialValue: 0,
+                      initialValue: 1000,
                     })(
                       <TimeOut />
                       )}

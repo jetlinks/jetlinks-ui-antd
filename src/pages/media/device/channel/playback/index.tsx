@@ -307,6 +307,7 @@ const Playback = (props: Props) => {
                                         }
 
                                         <a onClick={() => {
+
                                             if (type === 'local') { // 查看
                                                 if (filesList[item.startTime]) {
                                                     setLocalToServer(item)
@@ -316,12 +317,14 @@ const Playback = (props: Props) => {
                                                     getServerTime(dateTime)
                                                     setType('server')
                                                 } else {
+                                                  setSpinning(true)
                                                     service.startVideo(props.data.deviceId, props.data.channelId, {
                                                         local: false,
                                                         startTime: item.startTime,
                                                         endTime: item.endTime,
                                                         downloadSpeed: 4
                                                     }).subscribe(resp => {
+                                                      setSpinning(false)
                                                         if (resp.status === 200) {
                                                             message.success('操作成功')
                                                             filesList[item.startTime] = {}
@@ -330,22 +333,22 @@ const Playback = (props: Props) => {
                                                     })
                                                 }
                                             } else {
-                                              console.log(item)
-                                              if (!cloudDownloadVisible) {
-                                                setCloudDownLoadVisible(true)
-                                                service.cloudDownload(item.id).then(res => {
-                                                  console.log(res.data)
-                                                  setCloudDownLoadVisible(false)
-                                                  // const blob = new Blob([res.data], { type: 'mp4' });
-                                                  // const url = URL.createObjectURL(blob);
-                                                  // downloadFileByUrl(url,'', 'mp4')
-                                                }).catch(() => {
-                                                  setCloudDownLoadVisible(false)
-                                                })
-
-                                              } else {
-                                                setCloudDownLoadVisible(false)
-                                              }
+                                              // console.log(item)
+                                              // if (!cloudDownloadVisible) {
+                                              //   setCloudDownLoadVisible(true)
+                                              //   service.cloudDownload(item.id).then(res => {
+                                              //     console.log(res.data)
+                                              //     setCloudDownLoadVisible(false)
+                                              //     // const blob = new Blob([res.data], { type: 'mp4' });
+                                              //     // const url = URL.createObjectURL(blob);
+                                              //     // downloadFileByUrl(url,'', 'mp4')
+                                              //   }).catch(() => {
+                                              //     setCloudDownLoadVisible(false)
+                                              //   })
+                                              //
+                                              // } else {
+                                              //   setCloudDownLoadVisible(false)
+                                              // }
                                                 const formElement = document.createElement('form');
                                                 formElement.style.display = 'display:none;';
                                                 formElement.method = 'get';
@@ -370,7 +373,7 @@ const Playback = (props: Props) => {
                                             : (!!filesList[item.startTime]
                                               ? <Tooltip title="查看"><Icon type="eye" /></Tooltip>
                                               : <Tooltip title="下载到云端">
-                                                <Icon type={ cloudDownloadVisible ? "loading" :"cloud-download"} />
+                                                <Icon type={"cloud-download"} />
                                               </Tooltip>)
                                         }</a>
                                     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
 import { Icon, Input, InputNumber, message, Modal, Radio, Select, Spin, Tooltip } from 'antd';
@@ -14,6 +14,7 @@ interface Props extends FormComponentProps {
 const AddPoint = (props: Props) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [metaData, setMetaData] = useState<any[]>([]);
+    const [revertKeys, setRevertKeys] = useState<[boolean, boolean]>([false, false])
     const {
         data,
         masterId,
@@ -42,6 +43,24 @@ const AddPoint = (props: Props) => {
             }
         })
     }, []);
+
+    const handleRevertBytesLabel = useCallback(() => {
+      if (revertKeys[0] && revertKeys[1]) {
+        return 'DCBA'
+      } else if (!revertKeys[0] && revertKeys[1]) {
+        return 'BADC'
+      } else if (revertKeys[0] && !revertKeys[1]) {
+        return 'CDAB'
+      } else {
+        return 'ABCD'
+      }
+    }, [revertKeys])
+
+    useEffect(() => {
+      if (data && data.id) { // 编辑
+        setRevertKeys([data.codecConfig.revertBytes, data.codecConfig.revertBytesIn])
+      }
+    }, [data])
 
     return (
         <Modal
@@ -171,29 +190,54 @@ const AddPoint = (props: Props) => {
                             initialValue: props.data.quantity,
                         })(<InputNumber style={{ width: '100%' }} placeholder="请输入" />)}
                     </Form.Item>
-                    <Form.Item key="revertBytes" label="变换器寄存器高低字节">
+                    <Form.Item key="revertBytes" label="双字高低位切换">
                         {getFieldDecorator('codecConfig.revertBytes', {
                             rules: [
-                                { required: true, message: '请选择' }
+                                { required: true, message: '请选择' },
+                              { validator(_, value, callback) {
+                                  setRevertKeys([value, revertKeys[1]])
+                                  callback()
+                                }}
                             ],
                             initialValue: props.data?.codecConfig?.revertBytes || false,
                         })(
                             <Radio.Group>
-                                <Radio value={false}>否</Radio>
-                                <Radio value={true}>是</Radio>
+                                {/* little */}
+                                <Radio value={false}>AB</Radio>
+                                {/* big */}
+                                <Radio value={true}>CD</Radio>
                             </Radio.Group>
                         )}
                     </Form.Item>
-                    <Form.Item key="revertBytesIn" label="高低位配置">
+                    <Form.Item
+                      key="revertBytesIn"
+                      label="单字高低位切换"
+                      help={(
+                        <>
+                          <div>
+                            <span>当前内存布局：{ handleRevertBytesLabel() }</span>
+                          </div>
+                          <div>
+                            <span>只有4字节数据类型(int32、ieee754 foat) 具有4种内存布局，其它只有ABCD、DCBA两种内存布局(以双字配置为准)</span>
+                          </div>
+                        </>
+                      )}
+                    >
                       {getFieldDecorator('codecConfig.revertBytesIn', {
                         rules: [
-                          { required: true, message: '请选择' }
+                          { required: true, message: '请选择' },
+                          { validator(_, value, callback) {
+                              setRevertKeys([revertKeys[0], value])
+                            callback()
+                          }}
                         ],
                         initialValue: props.data?.codecConfig?.revertBytesIn || false,
                       })(
                         <Radio.Group>
-                          <Radio value={false}>否</Radio>
-                          <Radio value={true}>是</Radio>
+                          {/* little */}
+                          <Radio value={false}>AB</Radio>
+                          {/* big */}
+                          <Radio value={true}>CD</Radio>
                         </Radio.Group>
                       )}
                     </Form.Item>
