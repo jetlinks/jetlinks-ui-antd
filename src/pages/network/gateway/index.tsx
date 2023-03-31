@@ -33,7 +33,7 @@ const Gateway: React.FC<Props> = props => {
   } = props;
   const initState: State = {
     data: props.gateway,
-    searchParam: {},
+    searchParam: { pageSize: 10 },
     saveVisible: false,
     currentItem: {},
     providerList: [],
@@ -263,7 +263,18 @@ const Gateway: React.FC<Props> = props => {
               columns={columns}
               rowKey="id"
               onChange={onTableChange}
-              pagination={false}
+              pagination={{
+                current: result.pageIndex + 1,
+                total: result.total,
+                pageSize: result.pageSize,
+                showQuickJumper: true,
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100'],
+                showTotal: (total: number) =>
+                  `共 ${total} 条记录 第  ${result.pageIndex + 1}/${Math.ceil(
+                    result.total / result.pageSize,
+                  )}页`,
+              }}
             />
           </div>
         </div>
