@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'antd/es/form';
 import { FormComponentProps } from 'antd/lib/form';
-import { Input, message, Modal, Select, Spin } from 'antd';
+import { Input, message, Modal, Select, Spin, Radio } from 'antd';
 import apis from '@/services';
 import TimeOut from '@/pages/network/modbus/save/TimeOut';
 
@@ -13,6 +13,9 @@ interface Props extends FormComponentProps {
 const Save = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [clusterList, setClusterList] = useState<any[]>([]);
+  const [mergeRequest, setMergeRequest] = useState<boolean>(
+    props.data?.configuration?.mergeRequest || false,
+  );
   const {
     form: { getFieldDecorator },
     form,
@@ -87,14 +90,31 @@ const Save = (props: Props) => {
               </Select>,
             )}
           </Form.Item>
-          <Form.Item key="requsetTimeout" label="超时时间">
-            {getFieldDecorator('configuration.requsetTimeout', {
-              initialValue:
-                props.data?.configuration?.requsetTimeout !== undefined
-                  ? props.data?.configuration?.requsetTimeout
-                  : 1000,
-            })(<TimeOut />)}
+          <Form.Item key="mergeRequest" label="超时开关">
+            {getFieldDecorator('configuration.mergeRequest', {
+              initialValue: props.data?.configuration?.mergeRequest || false,
+            })(
+              <Radio.Group
+                buttonStyle="solid"
+                onChange={e => {
+                  setMergeRequest(e.target.value);
+                }}
+              >
+                <Radio.Button value={false}>关</Radio.Button>
+                <Radio.Button value={true}>开</Radio.Button>
+              </Radio.Group>,
+            )}
           </Form.Item>
+          {mergeRequest && (
+            <Form.Item key="requsetTimeout" label="超时时间">
+              {getFieldDecorator('configuration.requsetTimeout', {
+                initialValue:
+                  props.data?.configuration?.requsetTimeout !== undefined
+                    ? props.data?.configuration?.requsetTimeout
+                    : 1000,
+              })(<TimeOut />)}
+            </Form.Item>
+          )}
         </Form>
       </Spin>
     </Modal>
