@@ -90,7 +90,7 @@ const Save = (props: Props) => {
               </Select>,
             )}
           </Form.Item>
-          <Form.Item key="mergeRequest" label="是否合并采集请求">
+          <Form.Item key="mergeRequest" label="合并采集">
             {getFieldDecorator('configuration.mergeRequest', {
               initialValue: props.data?.configuration?.mergeRequest || true,
             })(
