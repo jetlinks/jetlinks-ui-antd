@@ -92,7 +92,7 @@ const Save = (props: Props) => {
           </Form.Item>
           <Form.Item key="mergeRequest" label="是否合并采集请求">
             {getFieldDecorator('configuration.mergeRequest', {
-              initialValue: props.data?.configuration?.mergeRequest || false,
+              initialValue: props.data?.configuration?.mergeRequest || true,
             })(
               <Radio.Group buttonStyle="solid">
                 <Radio.Button value={false}>否</Radio.Button>
