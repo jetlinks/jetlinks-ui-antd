@@ -24,7 +24,7 @@ const Management = () => {
   const [tableList, setTableList] = useState<any[]>([]);
   const [param, setParam] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
-  const { minHeight } = useDomFullHeight(`.management`);
+  const { minHeight } = useDomFullHeight(`.management`, 52);
 
   const queryTables = (key: string) => {
     setLoading(true);
@@ -35,6 +35,7 @@ const Management = () => {
       setLoading(false);
     });
   };
+  console.log(minHeight)
 
   const handleSearch = (refresh: boolean) => {
     service.rdbTree(id).then((resp) => {
@@ -91,8 +92,8 @@ const Management = () => {
   return (
     <PageContainer>
       <Spin spinning={loading}>
-        <Card className="management" style={{ minHeight }}>
-          <div className={styles.datasourceBox}>
+        <Card className="management">
+          <div className={styles.datasourceBox} style={{ minHeight }}>
             <div className={styles.left}>
               <Input.Search
                 placeholder="请输入"

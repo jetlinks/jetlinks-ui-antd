@@ -60,7 +60,7 @@ const Access = (props: Props) => {
             dt={props.data}
             data={protocol}
             provider={props.provider}
-            prev={prev}
+            prev={props.provider?.id !== 'child-device' ? prev : undefined}
             next={(param) => {
               setProtocol(param);
               next();

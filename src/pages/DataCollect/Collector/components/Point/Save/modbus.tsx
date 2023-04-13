@@ -1,5 +1,5 @@
 import { Button, Modal } from 'antd';
-import { createForm, Field, registerValidateRules } from '@formily/core';
+import { createForm, Field, onFieldValueChange, registerValidateRules } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import React, { useEffect, useState } from 'react';
 import * as ICONS from '@ant-design/icons';
@@ -54,6 +54,48 @@ export default (props: Props) => {
   const form = createForm({
     validateFirst: true,
     initialValues: data || {},
+    effects: () => {
+      onFieldValueChange('configuration.function', (field, f) => {
+        const value = (field as Field).value;
+        if (value === 'InputRegisters') {
+          f.setFieldState('configuration.codec.provider', (state) => {
+            state.dataSource = state.dataSource?.filter((item) => item.value !== 'bool');
+          });
+          f.setFieldState('accessModes', (state) => {
+            state.componentProps = {
+              placeholder: '请选择访问类型',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [{ label: '读', value: 'read' }],
+            };
+          });
+        } else {
+          f.setFieldState('accessModes', (state) => {
+            state.componentProps = {
+              placeholder: '请选择访问类型',
+              model: 'multiple',
+              itemStyle: {
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                minWidth: '130px',
+                height: '50px',
+              },
+              options: [
+                { label: '读', value: 'read' },
+                { label: '写', value: 'write' },
+              ],
+            };
+          });
+        }
+      });
+    },
   });
 
   const SchemaField = createSchemaField({
@@ -121,7 +163,7 @@ export default (props: Props) => {
       if (!(Number(value) % 1 === 0)) {
         return {
           type: 'error',
-          message: '请输入0~255之间的正整数',
+          message: '请输入0~999999999之间的正整数',
         };
       }
       return '';
@@ -174,7 +216,7 @@ export default (props: Props) => {
             enum: [
               { label: '01线圈寄存器', value: 'Coils' },
               { label: '03保存寄存器', value: 'HoldingRegisters' },
-              { label: '04输入寄存器', value: 'DiscreteInputs' },
+              { label: '04输入寄存器', value: 'InputRegisters' },
             ],
             'x-validator': [
               {
@@ -199,8 +241,8 @@ export default (props: Props) => {
                 message: '请输入地址',
               },
               {
-                max: 255,
-                message: '请输入0-255之间的正整数',
+                max: 999999999,
+                message: '请输入0-999999999之间的正整数',
               },
               {
                 min: 0,
@@ -290,7 +332,7 @@ export default (props: Props) => {
                 dependencies: ['..function', 'configuration.parameter.quantity'],
                 fulfill: {
                   state: {
-                    visible: '{{$deps[0] === "HoldingRegisters"}}',
+                    visible: '{{$deps[0] === "HoldingRegisters" || $deps[0] === "InputRegisters"}}',
                     selfErrors:
                       '{{$deps[1] && $self.value && {"int8:": 1, "int16": 2, "int32": 4, "int64": 8, "ieee754_float": 4, "ieee754_double": 8, "hex": 1}[$self.value] > $deps[1] * 2 ? "数据类型长度需 <= 寄存器数量 * 2" : ""}}',
                   },

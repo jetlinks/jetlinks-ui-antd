@@ -4,6 +4,7 @@ import { createForm } from '@formily/core';
 import { createSchemaField } from '@formily/react';
 import { Button } from 'antd';
 import RemoveData from './RemoveData';
+import {useMemo} from "react";
 
 interface Props {
   onChange: (data: any) => void;
@@ -28,11 +29,11 @@ const EditTable = (props: Props) => {
     },
   });
 
-  const form = createForm({
+  const form = useMemo( () => createForm({
     initialValues: {
       array: _data,
     },
-  });
+  }), [props?.data]);
 
   const schema = {
     type: 'object',
@@ -147,7 +148,7 @@ const EditTable = (props: Props) => {
               'x-component': 'ArrayTable.Column',
               'x-component-props': { title: '精度' },
               properties: {
-                precision: {
+                scale: {
                   type: 'number',
                   'x-decorator': 'FormItem',
                   'x-component': 'NumberPicker',

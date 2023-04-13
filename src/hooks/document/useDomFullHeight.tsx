@@ -1,5 +1,6 @@
 import type { MutableRefObject } from 'react';
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
+import ResizeObserver from 'resize-observer-polyfill';
 
 type TargetValue<T> = T | undefined | null;
 
@@ -29,30 +30,35 @@ const getTargetElement = <T extends TargetType>(target: BasicTarget<T> | string)
 
 const useDomFullHeight = (target: BasicTarget | string, extraHeight: number = 0) => {
   const [state, setState] = useState(100);
+  const resizeObserver = useRef<ResizeObserver | undefined>()
+
+  const cleanup = () => {
+    if (resizeObserver.current) {
+      resizeObserver.current?.disconnect()
+      resizeObserver.current = undefined
+    }
+  }
 
   useEffect(() => {
     const el = getTargetElement(target);
-    let resizeObserver: ResizeObserver | undefined;
+    cleanup()
     if (el) {
-      resizeObserver = new ResizeObserver((entries) => {
-        entries.forEach((entry) => {
-          const bodyClient = document.body.getBoundingClientRect();
-          const domClient = entry.target.getBoundingClientRect();
-          if (domClient.y < 50) {
-            setState(100);
-          } else {
-            setState(bodyClient.height - domClient.y - 24 - extraHeight);
-          }
-        });
+      resizeObserver.current = new ResizeObserver((entries) => {
+        const bodyClient = document.body.getBoundingClientRect();
+        const domClient = el.getBoundingClientRect();
+
+        if (domClient.y < 50) {
+          setState(100);
+        } else {
+          setState(bodyClient.height - domClient.y - 24 - extraHeight);
+        }
       });
 
-      resizeObserver.observe(el);
+      resizeObserver.current.observe(el);
     }
 
     return () => {
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
+      cleanup()
     };
   }, [target]);
 

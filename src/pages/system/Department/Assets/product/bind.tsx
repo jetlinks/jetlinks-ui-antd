@@ -362,12 +362,19 @@ const Bind = observer((props: Props) => {
               onSelectAll: (selected, selectedRows, changeRows) => {
                 if (selected) {
                   const arr = selectedRows.filter(
-                    (item: any) => !!item.permissionInfoList.find((it: any) => it.id === 'share'),
+                    (item: any) => !!item?.permissionInfoList.find((it: any) => it.id === 'share'),
                   );
-                  // console.log(arr)
+                  arr.forEach((e: any) => {
+                    const list = e?.permissionInfoList
+                      .map((it: any) => it.id)
+                      .filter?.((item: any) => checkAssets.includes(item));
+                    bindChecks.current.set(e.id, list);
+                  });
                   Models.bindKeys = [...new Set([...Models.bindKeys, ...getSelectedRowsKey(arr)])];
+                  console.log('onSelectAll', arr);
                 } else {
                   const unChangeRowsKeys = getSelectedRowsKey(changeRows);
+                  unChangeRowsKeys.forEach((item: any) => bindChecks.current.delete(item.id));
                   Models.bindKeys = Models.bindKeys
                     .concat(unChangeRowsKeys)
                     .filter((item) => !unChangeRowsKeys.includes(item));

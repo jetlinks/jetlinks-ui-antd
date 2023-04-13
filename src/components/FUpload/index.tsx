@@ -12,6 +12,7 @@ interface Props {
   onChange: (value: any) => void;
   placeholder: string;
   beforeUpload: any;
+  showUploadList: boolean
 }
 
 const FUpload = connect((props: Props) => {
@@ -46,7 +47,7 @@ const FUpload = connect((props: Props) => {
       progress={{
         format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
       }}
-      showUploadList={{
+      showUploadList={props.showUploadList !== undefined ? props.showUploadList : {
         removeIcon: (
           <DeleteOutlined
             onClick={() => {

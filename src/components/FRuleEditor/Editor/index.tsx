@@ -5,8 +5,8 @@ import { monaco } from 'react-monaco-editor';
 import { JMonacoEditor } from '@/components/FMonacoEditor';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type * as monacoEditor from 'monaco-editor';
-import { Store } from 'jetlinks-store';
 import { State } from '@/components/FRuleEditor';
+import {EventEmitter} from "@/components/FRuleEditor/util";
 
 const symbolList = [
   {
@@ -102,11 +102,13 @@ const Editor = (props: Props) => {
   };
 
   useEffect(() => {
+    console.log('props.value', props.value)
     setValue(props.value);
   }, [props.value]);
 
   const handleInsertCode = useCallback(
     (_value: string) => {
+      console.log(_value)
       const editor = editorRef.current;
       if (!editor || !_value) return;
       const position = editor.getPosition()!;
@@ -129,9 +131,9 @@ const Editor = (props: Props) => {
   useEffect(() => {
     let subscription: any = null;
     if (props.mode === 'advance') {
-      subscription = Store.subscribe('add-operator-value', handleInsertCode);
+      subscription = EventEmitter.subscribe('add-operator-value', handleInsertCode);
     }
-    return () => subscription?.unsubscribe();
+    return () => subscription?.unsubscribe('add-operator-value', handleInsertCode);
   }, [props.mode]);
 
   return (
@@ -208,7 +210,7 @@ const Editor = (props: Props) => {
             setValue(c);
             if (props.mode !== 'advance') {
               State.code = c;
-              Store.set('rule-editor-value', State.code);
+              EventEmitter.set('rule-editor-value', State.code);
             }
             props.onValueChange?.(c);
           }}
