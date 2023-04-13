@@ -96,6 +96,7 @@
     "react-json-view": "^1.21.3",
     "react-markdown": "^8.0.0",
     "react-monaco-editor": "^0.46.0",
+    "resize-observer-polyfill": "^1.5.1",
     "rxjs": "^7.2.0",
     "rxjs-websockets": "8",
     "umi": "^3.5.0",

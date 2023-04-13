@@ -114,7 +114,8 @@ export default observer((props: Props) => {
             min={0}
             precision={type === 'double' || type === 'float' ? 2 : 0}
             onChange={(e: any) => {
-              onChange(e);
+              setValue(e)
+              setLabelValue(e);
             }}
             style={{ width: '100%' }}
             placeholder={'请输入'}
@@ -229,9 +230,9 @@ export default observer((props: Props) => {
             onChange={(e) => {
               setValue(e.target.value);
               setLabelValue(e.target.value);
-              if (props.onChange) {
-                props.onChange(e.target.value, source);
-              }
+              // if (props.onChange) {
+              //   props.onChange(e.target.value, source);
+              // }
             }}
           />
         );
@@ -291,12 +292,17 @@ export default observer((props: Props) => {
           // setOpen(false)
           setValue(val);
           setSource(tabKey);
-          if (props.onChange) {
-            props.onChange(val, tabKey);
-          }
+          // if (props.onChange) {
+          //   props.onChange(val, tabKey);
+          // }
         }}
         open={open}
-        openChange={setOpen}
+        openChange={(val) => {
+          setOpen(val)
+          if (!val) {
+            props.onChange?.(value, source);
+          }
+        }}
         type={props.type}
         labelValue={labelValue}
       />
@@ -311,6 +317,7 @@ export default observer((props: Props) => {
               props.onChange(param);
             }
             setValue(param);
+            setLabelValue(param)
             setVisible(false);
           }}
         />
@@ -328,6 +335,7 @@ export default observer((props: Props) => {
               props.onChange(JSON.parse(param));
             }
             setValue(param);
+            setLabelValue(JSON.parse(param))
             setObjVisable(false);
           }}
         />

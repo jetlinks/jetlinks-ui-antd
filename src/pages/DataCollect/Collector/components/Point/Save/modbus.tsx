@@ -163,7 +163,7 @@ export default (props: Props) => {
       if (!(Number(value) % 1 === 0)) {
         return {
           type: 'error',
-          message: '请输入0~255之间的正整数',
+          message: '请输入0~999999999之间的正整数',
         };
       }
       return '';
@@ -241,8 +241,8 @@ export default (props: Props) => {
                 message: '请输入地址',
               },
               {
-                max: 255,
-                message: '请输入0-255之间的正整数',
+                max: 999999999,
+                message: '请输入0-999999999之间的正整数',
               },
               {
                 min: 0,

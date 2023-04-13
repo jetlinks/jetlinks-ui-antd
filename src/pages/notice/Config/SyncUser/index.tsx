@@ -108,7 +108,7 @@ const SyncUser = observer(() => {
                 );
               }
               setTreeData(_data);
-              setDept(resp.result[0].id);
+              setDept(resp.result?.[0]?.id);
             }
           })
           .finally(() => setLoading(false));
@@ -124,7 +124,7 @@ const SyncUser = observer(() => {
                 );
               }
               setTreeData(__data);
-              setDept(resp.result[0].id);
+              setDept(resp.result?.[0]?.id);
             }
           })
           .finally(() => setLoading(false));
@@ -190,7 +190,7 @@ const SyncUser = observer(() => {
                 request={(params) =>
                   service
                     .queryZipSyncUser(
-                      id === 'dingTalk' ? 'dingTalk' : 'wechat',
+                      id === 'dingTalk' ? 'dingtalk' : 'wechat',
                       id,
                       state.current?.provider || '',
                       state.current?.id || '',

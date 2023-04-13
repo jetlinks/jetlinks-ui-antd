@@ -42,7 +42,7 @@ class Service extends BaseService<ConfigItem> {
       request(`${SystemConst.API_BASE}/notifier/dingtalk/corp/${configId}/${departmentId}/users`),
     wechatDept: (configId: string) =>
       request(`${SystemConst.API_BASE}/notifier/wechat/corp/${configId}/departments`),
-    getDeptUser: (type: 'wechat' | 'dingTalk', configId: string, departmentId: string) =>
+    getDeptUser: (type: 'wechat' | 'dingtalk', configId: string, departmentId: string) =>
       request(`${SystemConst.API_BASE}/notifier/${type}/corp/${configId}/${departmentId}/users`, {
         method: 'GET',
       }),
@@ -79,7 +79,7 @@ class Service extends BaseService<ConfigItem> {
   };
 
   public queryZipSyncUser = (
-    type: 'wechat' | 'dingTalk',
+    type: 'wechat' | 'dingtalk',
     _type: string,
     provider: string,
     configId: string,

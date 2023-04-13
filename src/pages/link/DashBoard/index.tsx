@@ -258,6 +258,9 @@ export default () => {
       },
       yAxis: {
         type: 'value',
+        axisLabel: {
+          formatter: (_value: any) => networkValueRender(_value),
+        },
       },
       grid: {
         left: 70,

@@ -15,7 +15,7 @@ import { Empty } from '@/components';
 interface Props {
   provider: any;
   data: string;
-  prev: () => void;
+  prev?: () => void;
   next: (data: string) => void;
   view?: boolean;
   dt?: any;
@@ -173,9 +173,12 @@ const Protocol = (props: Props) => {
       </div>
       <div className={styles.action}>
         <Space style={{ marginTop: 20 }}>
-          <Button style={{ margin: '0 8px' }} onClick={() => props.prev()}>
-            上一步
-          </Button>
+          {
+            props.prev !== undefined ?
+            <Button style={{ margin: '0 8px' }} onClick={() => props.prev!()}>
+              上一步
+            </Button> : null
+          }
           <Button
             type="primary"
             onClick={() => {
