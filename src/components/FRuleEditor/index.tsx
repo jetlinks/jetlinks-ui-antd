@@ -3,7 +3,7 @@ import Editor from '@/components/FRuleEditor/Editor';
 import { model } from '@formily/reactive';
 import { observer } from '@formily/react';
 import { useEffect } from 'react';
-import { Store } from 'jetlinks-store';
+import {EventEmitter} from "@/components/FRuleEditor/util";
 
 export const State = model<{
   model: 'simple' | 'advance';
@@ -29,14 +29,16 @@ interface Props {
 
 const FRuleEditor = observer((props: Props) => {
   const { value, onChange, property, virtualRule } = props;
+  console.log(virtualRule)
   useEffect(() => {
     // console.log(value, 111111111);
     State.property = property;
-    const subscription = Store.subscribe('rule-editor-value', onChange);
+    const subscription = EventEmitter.subscribe('rule-editor-value', onChange);
     State.code = value;
     return () => {
+      console.log('unsubscribe')
+      subscription.unsubscribe('rule-editor-value', onChange);
       State.code = '';
-      subscription.unsubscribe();
     };
   }, []);
   return (

@@ -206,7 +206,7 @@ const Category = observer(() => {
           if (sorter.order) {
             setSortParam({ name: sorter.columnKey, order: sorter.order.replace('end', '') });
           } else {
-            setSortParam({ name: 'sortIndex', value: 'asc' });
+            setSortParam({ name: 'sortIndex', order: 'asc' });
           }
         }}
         headerTitle={

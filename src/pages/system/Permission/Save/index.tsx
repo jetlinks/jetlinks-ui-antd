@@ -94,7 +94,7 @@ const Save = (props: Props) => {
             triggerType: 'onBlur',
             validator: (value: string) => {
               return new Promise((resolve) => {
-                if (!value) resolve('');
+                if (!value) return resolve('');
                 service
                   .validateField({ id: value })
                   .then((resp) => {

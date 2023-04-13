@@ -3,6 +3,7 @@ import { createForm, registerValidateRules } from '@formily/core';
 import type { ISchema } from '@formily/react';
 import { createSchemaField } from '@formily/react';
 import { Modal } from 'antd';
+import {useMemo} from "react";
 
 interface Props {
   close: () => void;
@@ -11,10 +12,10 @@ interface Props {
 }
 
 const DataTable = (props: Props) => {
-  const form = createForm({
+  const form = useMemo(() => createForm({
     validateFirst: true,
     initialValues: props.data,
-  });
+  }), [props.data])
 
   const SchemaField = createSchemaField({
     components: {

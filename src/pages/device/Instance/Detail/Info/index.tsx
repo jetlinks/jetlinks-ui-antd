@@ -93,19 +93,14 @@ const Info = observer(() => {
             {/*  </div>*/}
             {/*</Tooltip>*/}
           </Descriptions.Item>
-          <Descriptions.Item label={'产品分类'}>
-            <Ellipsis
-              title={InstanceModel.detail?.classifiedName}
-              tooltip={{ placement: 'topLeft' }}
-              style={{ maxWidth: 250 }}
-              limitWidth={250}
-            />
-            {/*<Tooltip placement="topLeft" title={InstanceModel.detail?.classifiedName}>*/}
-            {/*  <div className="ellipsis" style={{ maxWidth: 250 }}>*/}
-            {/*    {InstanceModel.detail?.classifiedName}*/}
-            {/*  </div>*/}
-            {/*</Tooltip>*/}
-          </Descriptions.Item>
+          {/*<Descriptions.Item label={'产品分类'}>*/}
+          {/*  <Ellipsis*/}
+          {/*    title={InstanceModel.detail?.classifiedName}*/}
+          {/*    tooltip={{ placement: 'topLeft' }}*/}
+          {/*    style={{ maxWidth: 250 }}*/}
+          {/*    limitWidth={250}*/}
+          {/*  />*/}
+          {/*</Descriptions.Item>*/}
           <Descriptions.Item
             label={intl.formatMessage({
               id: 'pages.device.instanceDetail.deviceType',

@@ -533,11 +533,11 @@ const ActionRender = (data: ActionRenderProps) => {
               >
                 <div className={styles['card-item-content-action-item-right-item']}>
                   {/*触发条件*/}
-                  {type === 'device' && (item.shakeLimit?.enabled || data.options?.when?.[index]) && (
+                  {type === 'device' && (item?.shakeLimit?.enabled || data.options?.when?.[index]) && (
                     <div
                       className={styles['right-item-left']}
                       style={{
-                        maxWidth: Array.isArray(item.then) && item?.then.length ? '15%' : '100%',
+                        maxWidth: Array.isArray(item?.then) && item?.then.length ? '15%' : '100%',
                       }}
                     >
                       <MyTooltip
@@ -548,13 +548,13 @@ const ActionRender = (data: ActionRenderProps) => {
                           {conditionsRender(data.options?.when || [], index)}
                         </div>
                       </MyTooltip>
-                      {item.shakeLimit?.enabled && (
+                      {item?.shakeLimit?.enabled && (
                         <MyTooltip
-                          title={`(${item.shakeLimit?.time}秒内发生${item.shakeLimit?.threshold}
+                          title={`(${item?.shakeLimit?.time}秒内发生${item?.shakeLimit?.threshold}
                             次以上时执行一次)`}
                         >
                           <div className={classNames(styles['trigger-shake'], 'ellipsis')}>
-                            ({item.shakeLimit?.time}秒内发生{item.shakeLimit?.threshold}
+                            ({item?.shakeLimit?.time}秒内发生{item?.shakeLimit?.threshold}
                             次以上时执行一次)
                           </div>
                         </MyTooltip>
@@ -562,7 +562,7 @@ const ActionRender = (data: ActionRenderProps) => {
                     </div>
                   )}
                   {/*执行动作*/}
-                  {Array.isArray(item.then) && item?.then.length ? (
+                  {Array.isArray(item?.then) && item?.then.length ? (
                     <div
                       className={styles['right-item-right']}
                       style={{ maxWidth: type === 'device' ? '85%' : '100%' }}

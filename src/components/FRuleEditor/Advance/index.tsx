@@ -4,7 +4,7 @@ import Operator from '../Operator';
 import styles from './index.less';
 import Editor from '@/components/FRuleEditor/Editor';
 import { useRef, useState } from 'react';
-import { Store } from 'jetlinks-store';
+import {EventEmitter} from "@/components/FRuleEditor/util";
 
 interface Props {
   model: 'advance' | 'simple';
@@ -26,7 +26,7 @@ const Advance = (props: Props) => {
       title="设置属性规则"
       onCancel={() => onChange('simple')}
       onOk={() => {
-        Store.set('rule-editor-value', cacheRef.current);
+        EventEmitter.set('rule-editor-value', cacheRef.current);
         onChange('simple');
       }}
       // okButtonProps={{

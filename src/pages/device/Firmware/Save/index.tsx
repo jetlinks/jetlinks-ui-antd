@@ -313,6 +313,7 @@ const Save = (props: Props) => {
             'x-component-props': {
               type: 'file',
               placeholder: '请上传文件',
+              showUploadList: false,
             },
             'x-decorator-props': {
               gridSpan: 2,

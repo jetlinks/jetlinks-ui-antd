@@ -29,8 +29,8 @@ export default (props: ActionsProps) => {
   const firstLockRef = useRef(true);
 
   useEffect(() => {
-    const parallelArr = props.thenOptions.filter((item) => item.parallel);
-    const serialArr = props.thenOptions.filter((item) => !item.parallel);
+    const parallelArr = props.thenOptions.filter((item) => item && item.parallel);
+    const serialArr = props.thenOptions.filter((item) => item && !item.parallel);
     setParallelArray(parallelArr);
     setSerialArray(serialArr);
     const isSerialActions = serialArr.some((item) => {
