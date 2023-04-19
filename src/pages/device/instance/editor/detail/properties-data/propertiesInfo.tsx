@@ -20,6 +20,8 @@ import encodeQueryParam from '@/utils/encodeParam';
 import moment, { Moment } from 'moment';
 import { FormComponentProps } from "antd/es/form";
 import { Axis, Chart, Geom, Legend, Tooltip } from "bizcharts";
+import Slider from 'bizcharts-plugin-slider';
+import DataSet from '@antv/data-set';
 import { Map } from "react-amap";
 import img26 from './img/img-26.png';
 import mark_b from "@/pages/device/location/img/mark_b.png";
@@ -135,7 +137,6 @@ const PropertiesInfo: React.FC<Props> = props => {
     tabsType: '1',
   };
 
-
   const [marksCreated, setMarksCreated] = useState(initState.marksCreated);
   const [mapCenter, setMapCenter] = useState(initState.mapCenter);
   const [propertiesInfo, setPropertiesInfo] = useState<any>({});
@@ -176,11 +177,12 @@ const PropertiesInfo: React.FC<Props> = props => {
   };
 
   const statisticsChart = (params?: any) => {
+    params.paging = false
     apis.deviceInstance.propertieInfo(props.deviceId, encodeQueryParam(params))
       .then((response: any) => {
         if (response.status === 200) {
           const dataList: any[] = [];
-          response.result.data.forEach((item: any) => {
+          response.result.data?.forEach((item: any) => {
             dataList.push({
               year: moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss'),
               value: Number(item.value),
@@ -328,7 +330,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           pageSize: 60,
           sorts: {
             field: 'timestamp',
-            order: 'desc',
+            order: 'asc',
           },
           terms: { property: props.item.id },
         }
@@ -391,7 +393,7 @@ const PropertiesInfo: React.FC<Props> = props => {
           pageSize: 60,
           sorts: {
             field: 'timestamp',
-            order: 'desc',
+            order: 'asc',
           },
           terms: { ...params, property: props.item.id },
         }
@@ -467,6 +469,28 @@ const PropertiesInfo: React.FC<Props> = props => {
     },
   };
 
+  const ds = new DataSet({
+    state: {
+      start: 0,
+      end: 1,
+    },
+  });
+
+  const dv = ds.createView().source(gatewayData);
+  dv.transform({
+    type: 'filter',
+    callback(_: any, idx: number) {
+      const date = idx / (gatewayData.length || 1);
+      return date <= ds.state.end && date >= ds.state.start;
+    },
+  });
+
+  const handleSliderChange = e => {
+    const { startRadio, endRadio } = e;
+    ds.setState('start', startRadio);
+    ds.setState('end', endRadio);
+  };
+
   return (
     <Modal
       title="属性详情"
@@ -512,7 +536,7 @@ const PropertiesInfo: React.FC<Props> = props => {
                   pageSize: 60,
                   sorts: {
                     field: 'timestamp',
-                    order: 'desc',
+                    order: 'asc',
                   },
                   terms: { ...params, property: props.item.id },
                 }
@@ -547,12 +571,14 @@ const PropertiesInfo: React.FC<Props> = props => {
             <Tabs.TabPane tab="图表" key="2">
               <Chart
                 height={400}
-                data={gatewayData}
+                data={dv}
+                padding={'auto'}
                 scale={{
                   value: {},
                   year: {
-                    range: [0, 0.96],
-                    type: 'timeCat'
+                    range: [0, 1],
+                    type: 'timeCat',
+                    mask: 'YYYY-MM-DD HH:mm:ss'
                   },
                 }}
                 forceFit
@@ -581,6 +607,19 @@ const PropertiesInfo: React.FC<Props> = props => {
                 ]}
                 />
               </Chart>
+              <Slider
+                data={gatewayData}
+                padding={[20, 130, 95, 130]}
+                xAxis="year"
+                yAxis="value"
+                scales={{
+                  year: {
+                    type: "time",
+                    mask: "YYYY-MM-DD HH:mm:ss"
+                  }
+                }}
+                onChange={handleSliderChange}
+              />
             </Tabs.TabPane>
           )}
 

@@ -26,8 +26,13 @@ const EventLog: React.FC<Props> = props => {
         dataIndex: `${item.id}_format`,
         ellipsis: true,
         render: (text: any, row: any) => {
-          if (typeof text === 'object') {
-            return JSON.stringify(text)
+          if (text) {
+            return typeof text === 'object' ? JSON.stringify(text) : text
+          }
+
+          if (row[`${props.item.id}_format`]) {
+            const dvgData = row[`${props.item.id}_format`].dvg?.[0]
+            return typeof dvgData === 'object' ? JSON.stringify(dvgData) : (dvgData?.[item.id])
           }
           return JSON.stringify(row[`${props.item.id}_format`] || {})
         }
