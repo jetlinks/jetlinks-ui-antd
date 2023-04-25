@@ -805,8 +805,8 @@ const Detail = observer(() => {
   return (
     <PageContainer>
       <Card>
-        <Row>
-          <Col span={10}>
+        <Row gutter={24}>
+          <Col span={12}>
             <Form className={styles.form} form={form} layout={'vertical'}>
               <SchemaField scope={{ useAsyncDataSource, getTypes }} schema={schema} />
               <FormButtonGroup.Sticky>
@@ -823,7 +823,7 @@ const Detail = observer(() => {
               </FormButtonGroup.Sticky>
             </Form>
           </Col>
-          <Col span={12} push={2}>
+          <Col span={12}>
             {docMap?.[typeItem]?.[providerItem]}
           </Col>
         </Row>

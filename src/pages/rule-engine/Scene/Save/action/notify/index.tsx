@@ -57,6 +57,7 @@ export const NotifyModel = model<{
 export default observer((props: Props) => {
   const WayRef = useRef<{ save: any }>();
   const VariableRef = useRef<{ save: any }>();
+  const otherColumns = useRef<Array<string | undefined>>([])
 
   useEffect(() => {
     NotifyModel.notify = {
@@ -82,7 +83,11 @@ export default observer((props: Props) => {
           <VariableDefinitions
             value={NotifyModel.notify.variables}
             name={props.name}
+            options={props.options}
             ref={VariableRef}
+            optionsChange={(v) => {
+              otherColumns.current = v
+            }}
           />
         );
       default:
@@ -134,7 +139,9 @@ export default observer((props: Props) => {
       const resp = await VariableRef.current?.save();
       if (resp) {
         NotifyModel.notify.variables = resp;
-        const { options, ...extra } = NotifyModel.notify;
+        let { options, ...extra } = NotifyModel.notify;
+        const columns = new Set([...(options?.columns || []), ...otherColumns.current.filter(item => item)])
+        Object.assign(options, {columns: [...columns.values()], otherColumns: otherColumns.current})
         props.save(
           {
             notify: { ...extra },

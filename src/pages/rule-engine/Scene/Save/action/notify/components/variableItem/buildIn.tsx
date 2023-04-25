@@ -16,6 +16,7 @@ interface BuiltInProps {
   value?: ChangeType;
   data?: any;
   onChange?: (value: ChangeType) => void;
+  optionsChange?: (value?: string) => void
   name: number;
 }
 
@@ -26,7 +27,7 @@ export default (props: BuiltInProps) => {
 
   const [builtInList, setBuiltInList] = useState<any[]>([]);
 
-  const onChange = (_source: string = 'fixed', _value?: any, _upperKey?: string) => {
+  const onChange = (_source: string = 'fixed', _value?: any, _upperKey?: string, options?: string) => {
     const obj: ChangeType = {
       source: _source,
     };
@@ -39,6 +40,8 @@ export default (props: BuiltInProps) => {
     if (props.onChange) {
       props.onChange(obj);
     }
+    props.optionsChange?.(options)
+
   };
 
   // const treeDataChildrenFilter: any = (arr: any[], type: string) => {
@@ -121,8 +124,10 @@ export default (props: BuiltInProps) => {
         <TreeSelect
           value={upperKey}
           treeData={builtInList}
-          onChange={(key) => {
-            onChange(source, undefined, key);
+          onChange={(key, extra) => {
+            const item = extra?.[0]?.props
+            let option = item?.metadata ? item.column : undefined
+            onChange(source, undefined, key, option);
           }}
           fieldNames={{ label: 'name', value: 'id' }}
           placeholder={'请选择参数'}
