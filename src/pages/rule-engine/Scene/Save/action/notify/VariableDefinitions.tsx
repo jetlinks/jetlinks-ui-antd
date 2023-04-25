@@ -6,17 +6,28 @@ import Org from './components/variableItem/org';
 import Tag from './components/variableItem/tag';
 import BuildIn from './components/variableItem/buildIn';
 import InputFile from './components/variableItem/inputFile';
-import { forwardRef, useCallback, useImperativeHandle } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import {cloneDeep} from "lodash";
 
 interface Props {
   name: number;
   value?: any;
+  options?: Record<string, any>
+  optionsChange?: (v: Array<string | undefined>) => void
 }
 
 export default forwardRef((props: Props, ref) => {
   const [form] = Form.useForm();
-  const typeComponents = (item: any) => {
+  const options = useRef<Array<string | undefined>>(props.options?.otherColumns || [])
+
+  const optionsChange = (v: string | undefined, index: number) => {
+    options.current[index] = v
+    props.optionsChange?.([...options.current])
+  }
+
+  const typeComponents = (item: any, index: number) => {
     const type = item.expands?.businessType || item.type;
+    options.current[index] = undefined
     switch (type) {
       case 'user':
         return <User />;
@@ -29,7 +40,9 @@ export default forwardRef((props: Props, ref) => {
       case 'link':
         return <Input placeholder={'请输入' + item.name} />;
       default:
-        return <BuildIn data={item} name={props.name} />;
+        return <BuildIn data={item} name={props.name} optionsChange={(v) => {
+          optionsChange(v, index)
+        }} />;
     }
   };
 
@@ -141,13 +154,13 @@ export default forwardRef((props: Props, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    save: saveBtn,
+    save: saveBtn
   }));
 
   return NotifyModel.variable.length ? (
     <div>
       <Form form={form} layout={'vertical'}>
-        {(NotifyModel?.variable || []).map((item) => {
+        {(NotifyModel?.variable || []).map((item, index) => {
           const type = item.expands?.businessType || item?.type;
           let initialValue = undefined;
           const rules = getRules(item, type);
@@ -188,7 +201,7 @@ export default forwardRef((props: Props, ref) => {
               required={type !== 'file' ? true : false}
               rules={rules}
             >
-              {typeComponents(item)}
+              {typeComponents(item, index)}
             </Form.Item>
           );
         })}

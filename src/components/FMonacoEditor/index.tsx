@@ -3,7 +3,9 @@ import { connect, mapProps } from '@formily/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { MonacoEditorProps } from 'react-monaco-editor/lib/types';
 
-interface Props extends MonacoEditorProps {}
+interface Props extends MonacoEditorProps {
+  warpStyle?: any
+}
 
 export const JMonacoEditor = (props: Props) => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ export const JMonacoEditor = (props: Props) => {
           setLoading(true);
         }, 100);
       }}
-      style={{ height: '100%', width: '100%' }}
+      style={{ height: '100%', width: '100%', ...(props.warpStyle || {}) }}
     >
       {loading && (
         <MonacoEditor
