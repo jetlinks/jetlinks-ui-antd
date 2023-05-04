@@ -156,6 +156,8 @@ const filterUrl = [
   '/authorize/login',
   '/sso/bind-code/',
   '/sso/providers',
+  '/application/',
+  '/system/config/',
 ];
 const requestInterceptor = (url: string, options: RequestOptionsInit) => {
   // const {params} = options;
