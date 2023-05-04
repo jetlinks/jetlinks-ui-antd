@@ -9,12 +9,11 @@ import { catchError, filter, mergeMap } from 'rxjs/operators';
 import Service from '@/pages/user/Login/service';
 import * as ICONS from '@ant-design/icons';
 import React from 'react';
+import Token from "@/utils/token";
 
 const Oauth = () => {
   const intl = useIntl();
-  const logo = require('/public/logo.svg');
   const bindPage = require('/public/images/bind/bindPage.png');
-  const headerImg = require('/public/logo.png');
 
   const [isLogin, setIsLogin] = useState<boolean>(true);
   const [captcha, setCaptcha] = useState<{ key?: string; base64?: string }>({});
@@ -22,6 +21,9 @@ const Oauth = () => {
   const [appName, setAppName] = useState<string>('');
   const [params, setParams] = useState<any>({});
   const [internal, setLinternal] = useState<any>();
+  const [headerImg, setHeaderImg] = useState(require('/public/logo.png'))
+  const [logo, setLogo] = useState('/public/logo.svg')
+  const [title, setTitle] = useState()
   const loadingRef = useRef<boolean>(true);
 
   const loginRef = useRef<Partial<LoginParam>>({});
@@ -80,6 +82,7 @@ const Oauth = () => {
     properties: {
       username: {
         type: 'string',
+        title: '用户名',
         'x-decorator': 'FormItem',
         'x-validator': { required: true, message: '请输入用户名！' },
         'x-component': 'Input',
@@ -93,6 +96,7 @@ const Oauth = () => {
       },
       password: {
         type: 'string',
+        title: '密码',
         'x-validator': { required: true, message: '请输入密码！' },
         'x-decorator': 'FormItem',
         'x-component': 'Password',
@@ -106,6 +110,7 @@ const Oauth = () => {
       },
       verifyCode: {
         type: 'string',
+        title: '验证码',
         'x-visible': !!captcha.key,
         'x-decorator': 'FormItem',
         'x-component': 'Input',
@@ -128,23 +133,35 @@ const Oauth = () => {
   };
 
   const getLoginUser = async (data?: any) => {
-    const res = await Service.queryCurrent();
-    if (res && res.status === 200) {
-      setUerName(res.result.user.name);
-      setIsLogin(true);
-      initApplication(data.client_id || params.client_id);
-      if (data.internal === 'true' || internal === 'true') {
-        goOAuth2(data);
+    const token = localStorage.getItem('X-Access-Token')
+    if (token) {
+      const res = await Service.queryCurrent();
+      if (res && res.status === 200) {
+        setUerName(res.result.user.name);
+        setIsLogin(true);
+        initApplication(data?.client_id || params.client_id);
+        setTimeout(() => {
+          loadingRef.current = false;
+        });
+        if (data?.internal === 'true' || internal === 'true') {
+          goOAuth2(data);
+        }
+      } else if (res.status === 401) {
+        setIsLogin(false);
+        getCode();
+        initApplication(data?.client_id || params.client_id);
+        setTimeout(() => {
+          loadingRef.current = false;
+        });
+      } else {
+        setIsLogin(false);
+        setTimeout(() => {
+          loadingRef.current = false;
+        });
       }
-    } else if (res.status === 401) {
-      setIsLogin(false);
-      getCode();
-      initApplication(data.client_id || params.client_id);
-      setTimeout(() => {
-        loadingRef.current = false;
-      });
     } else {
-      setIsLogin(false);
+      setIsLogin(false)
+      initApplication(data?.client_id || params.client_id);
       setTimeout(() => {
         loadingRef.current = false;
       });
@@ -181,8 +198,25 @@ const Oauth = () => {
     }
   };
 
+  const getSettingDetail = () => {
+    Service.settingDetail('front').then((res: any) => {
+      if (res.status === 200) {
+        const ico: any = document.querySelector('link[rel="icon"]');
+        ico.href = res.result.ico;
+        setHeaderImg(res.result.logo)
+        setLogo(res.result.logo)
+        setTitle(res.result.title || 'JetLinks')
+        if (res.result.title) {
+          document.title = `OAuth授权-${res.result.title}`;
+        } else {
+          document.title = 'OAuth授权';
+        }
+      }
+    });
+  }
+
   useEffect(() => {
-    document.title = 'OAuth授权-jetlinks';
+    getSettingDetail()
     getCode();
   }, []);
 
@@ -236,8 +270,9 @@ const Oauth = () => {
         <div className="oauth-content-header">
           <img src={headerImg} />
         </div>
+        <h2>授权登录</h2>
         <div className="oauth-content-login">
-          <Form form={loginForm} layout="horizontal" size="large" onAutoSubmit={doLogin}>
+          <Form form={loginForm} layout={"vertical"} size="large" onAutoSubmit={doLogin}>
             <SchemaField schema={schema} />
             <Submit block size="large">
               {intl.formatMessage({
@@ -267,7 +302,8 @@ const Oauth = () => {
         >
           <div className="oauth-header">
             <div className="oauth-header-left">
-              <img src={logo} />
+              <img style={{ height: 56 }} src={logo} />
+              <span style={{ fontSize: 22, fontWeight: 600 }}>{ title }</span>
             </div>
             {/* <div className="oauth-header-right">
         <a style={{ color: 'rgb(0 0 0 / 70%)' }}>{userName || '-'}</a>
@@ -286,6 +322,7 @@ const Oauth = () => {
                 <div className="oauth-content-header">
                   <img src={headerImg} />
                 </div>
+                <h2>授权登录</h2>
                 <div className="oauth-content-content">
                   <div className="oauth-content-content-text">
                     {`您正在授权登录,${appName || '-'}将获得以下权限:`}
