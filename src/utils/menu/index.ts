@@ -328,7 +328,7 @@ export const getMenus = (extraRoutes: IRouteProps[]): any[] => {
       name: route.name,
       path: route.url,
       icon: route.icon,
-      hideInMenu: !!route.hideInMenu,
+      hideInMenu: !!route.hideInMenu || ['message-subscribe','account-center'].includes(route.code),
       exact: route.level !== 1,
       children: getMenus(children),
     };
