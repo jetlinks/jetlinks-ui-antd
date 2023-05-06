@@ -314,7 +314,7 @@ export default observer(() => {
           return {
             code: response.message,
             result: {
-              data: response.result,
+              data: response.result?.filter(item => !(['message-subscribe','account-center'].includes(item.code))),
               pageIndex: 0,
               pageSize: 0,
               total: 0,
