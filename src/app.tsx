@@ -152,16 +152,21 @@ export async function getInitialState(): Promise<{
  * @param options
  */
 const filterUrl = [
+  '/system/version',
+  '/system/config/front',
   '/authorize/captcha/config',
   '/authorize/login',
   '/sso/bind-code/',
   '/sso/providers',
+  '/application/',
 ];
 const requestInterceptor = (url: string, options: RequestOptionsInit) => {
   // const {params} = options;
-  let authHeader = {};
-  if (!filterUrl.some((fUrl) => url.includes(fUrl))) {
-    authHeader = { 'X-Access-Token': Token.get() || '' };
+  const authHeader = { 'X-Access-Token': Token.get() || '' };
+  const token = Token.get()
+  if (!token && !filterUrl.some((fUrl) => url.includes(fUrl))) {
+    location.href = loginPath
+    return
   }
   return {
     url: `${url}`,
