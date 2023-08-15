@@ -71,13 +71,13 @@ const Status: React.FC<Props> = props => {
     let eventsMap = {};
     events?.forEach((item: any) => eventsMap[item.id] = item);
 
-    const [index, setIndex] = useState<number>(15);
+    const [index, setIndex] = useState<number>(40);
 
     const service = new Service();
 
     useEffect(() => {
         const list1: any = []
-        metadata.properties.slice(0, 15).map((item: any) => {
+        metadata.properties.slice(0, 40).map((item: any) => {
             list1.push(item.id)
         })
         setPropertiesList([...list1])
@@ -177,7 +177,7 @@ const Status: React.FC<Props> = props => {
             }else{
                 return propertyCard.splice(0, index)
             }
-            
+
 
         }, [device, index]);
 
